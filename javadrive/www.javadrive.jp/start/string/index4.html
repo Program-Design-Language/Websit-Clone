@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文字列と文字列の比較 - Stringクラスを使った文字列処理 - Java入門</title>
+<meta name="keywords" content="文字列と文字列の比較,Stringクラス,文字列" />
+<meta name="description" content="文字列と文字列を比較する方法について検証します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/string/" itemprop="url"><span itemprop="title">Stringクラスを使った文字列処理</span></a></li>
+		</ul>
+</div>
+
+			<h1>文字列と文字列の比較</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					変数に格納されている値がある整数に等しいかどうかは「==」演算子を使って次のようにすることで確認できました。
+					</p>
+
+<pre class="fixcode">
+int num = 5;
+
+if (num == 5){
+  /* 等しい時の処理 */
+}
+</pre>
+
+					<p>
+					これに対して文字列が他の文字列と等しいかどうか調べる場合には注意が必要です。これはStringクラスの変数が参照型のためです。
+					</p>
+
+					<p>
+					次の例を試して下さい。
+					</p>
+
+<pre class="fixcode">
+String str1 = "abc";
+String str2 = "abc";
+
+if (str1 == str2){
+  System.out.println("等しい");
+}else{
+  System.out.println("等しくない");
+}
+</pre>
+
+					<p>
+					これを実際に試すと結果は「等しい」と出ます。これはたまたまです。"abc"という文字列をどこかの入れ物に入れてその位置を最初に変数「str1」に代入し、次に同じように"abc"という文字列を先ほどとは別の入れ物に入れてその位置を変数「str2」に代入するため、この二つの単に比較しても本来等しくならないはずですが、Javaではこのような時に1番目と2番目で同じ"abc"の位置を代入しているようです。(文字列は一度作成すると変更不可なのでこのようにしても問題はおきません)。
+					</p>
+
+					<p>
+					ではもう一つ例を試して下さい。
+					</p>
+
+<pre class="fixcode">
+String str1 = "abc";
+String str2 = "ab";
+
+str2 = str2 + "c";
+
+if (str1 == str2){
+  System.out.println("等しい");
+}else{
+  System.out.println("等しくない");
+}
+</pre>
+
+					<p>
+					今度は「等しくない」と表示されます。どちらも同じ文字列である"abc"を表すStringクラスのオブジェクトですが、今度の場合は同じ文字列であっても「str2 = str2 + "c";」を実行した時に入れ物を別に作り文字列"abc"を格納した後でその入れ物の位置を変数に代入しています。よって変数「str1」と変数「str2」に代入された入れ物の位置は異なります。
+					</p>
+
+					<p>
+					文字列と文字列を比較する場合、「==」演算子を使うと同じ文字列でも等しいと判定されたり等しくないと判定されたりします。どういった時にどう判定されるのかはJavaの実装にも依存してしまいますのでオブジェクトの比較ではなく同じ文字列が格納さえているかどうか調べる時には「==」演算子は使わないで下さい。
+					</p>
+
+					<h2>equalsメソッド</h2>
+
+					<p>
+					オブジェクトが同一なのかを調べるのではなく、オブジェクトに格納されている文字列が単に同じかどうか調べるにはStringクラスで用意されているequalsメソッドを使います。実際には次のように記述します。
+					</p>
+
+<pre class="fixcomment">
+文字列オブジェクト1.equals(文字列オブジェクト1)
+</pre>
+
+					<p>
+					この場合、文字列オブジェクト1が表す文字列と文字列オブジェクト2が表す文字列が同じであった場合にtrueとなります。よって文字列が他の文字列と同じ文字の並びとなっているかどうか調べるには次のように記述します。
+					</p>
+
+<pre class="fixcode">
+String str1 = "abc";
+String str2 = "ab";
+
+str2 = str2 + "c";
+
+if (str1.equals(str2)){
+  System.out.println("等しい");
+}else{
+  System.out.println("等しくない");
+}
+</pre>
+
+					<p>
+					今度は変数「str1」と変数「str2」に代入されている入れ物の位置は異なりますが、入れ物に入っている文字列は同じですので「等しい」と表示されます。
+					</p>
+
+					<p>
+					今回はどちらも変数に代入したものを比較していますが、次のようにどちらかを文字列の値で記述しても結構です。
+					</p>
+
+<pre class="fixcode">
+String str = "abc";
+
+if (str.equals(<span class="red">"abc"</span>)){
+  System.out.println("等しい");
+}
+
+if (<span class="red">"abc"</span>.equals(str)){
+  System.out.println("等しい");
+}
+</pre>
+
+					<h2>サンプル</h2>
+
+					<p>
+					では簡単な例で試しておきます。
+					</p>
+
+					<p>
+					<a href="JSample4_1.java" tppabs="https://www.javadrive.jp/start/string/JSample4_1.java">JSample4_1.java</a>
+					</p>
+
+<pre class="fixcode">
+class JSample4_1{
+  public static void main(String args[]){
+    String str1 = "abc";
+    String str2 = "abc";
+    String str3 = "ab";
+
+    System.out.println("str1 = " + str1);
+    System.out.println("str2 = " + str2);
+
+    if (str1 == str2){
+      System.out.println("等しい");
+    }else{
+      System.out.println("等しくない");
+    }
+
+    str3 = str3 + "c";
+
+    System.out.println("str1 = " + str1);
+    System.out.println("str3 = " + str3);
+
+    if (str1 == str3){
+      System.out.println("等しい");
+    }else{
+      System.out.println("等しくない");
+    }
+
+    System.out.println("equalsメソッドで比較");
+    if (str1.equals(str3)){
+      System.out.println("等しい");
+    }else{
+      System.out.println("等しくない");
+    }
+  }
+}
+</pre>
+
+					<p>
+					コンパイル後に実行すると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/start/string/img/p4-1.png" alt="p4-1" width="509" height="259" />
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[参考]Googleマップを使って座標(緯度と経度)とズームレベルを取得する | Google Maps JavaScript API入門</title>
+<meta name="description" content="Google Maps APIを使う時には地図を表示する位置やマーカーや情報ウィンドウを設置する位置など座標の情報が必要になることが多いです。例えば富士山を地図で表示するには富士山の座標が必要となります。ここではGoogleマップを使って特定の場所の座標(と合わせてズームレベル)を調べる方法を解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/" itemprop="url"><span itemprop="title">地図の表示</span></a></li>
+		</ul>
+</div>
+
+			<h1>[参考]Googleマップを使って座標(緯度と経度)とズームレベルを取得する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Google Maps APIを使う時には地図を表示する位置やマーカーや情報ウィンドウを設置する位置など座標の情報が必要になることが多いです。例えば富士山を地図で表示するには富士山の座標が必要となります。ここではGoogleマップを使って特定の場所の座標(と合わせてズームレベル)を調べる方法を解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">緯度と経度を取得する</a><br />
+			2.<a href="#section2">サンプルコード</a><br />
+			3.<a href="#section3">百分率表記と度分秒表記とは</a><br />
+			</p>
+
+<h2><a id="section1">緯度と経度を取得する</a></h2>
+
+			<p>
+			任意の場所の緯度と経度を調べる方法はいくつかありますが、ここではGoogle マップを使って調べる方法を確認します。まずGoole マップ上で緯度と経度を取得したい場所が地図に表示されるように移動して下さい。
+			</p>
+
+			<p>
+			<a href="javascript:if(confirm('http://maps.google.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://maps.google.co.jp/'" tppabs="http://maps.google.co.jp/">http://maps.google.co.jp/</a>
+			</p>
+
+			<p>
+			<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-1.png" alt="p4-1" width="640" height="400" />
+			</p>
+
+			<p>
+			座標を調べたい場所が地図の中央に表示されるように地図を移動して下さい。
+			</p>
+
+			<p>
+			<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-2.png" alt="p4-2" width="640" height="400" />
+			</p>
+
+			<p>
+			ブラウザのURLを見て下さい。GoogleマップのURLは表示されている地図の中心の座標とズームレベルで構成されています。
+			</p>
+
+			<p>
+			<img src="img/p4-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-3.png" alt="p4-3" width="640" height="400" class="waku" />
+			</p>
+
+			<p>
+			URLの形式は次の通りです。
+			</p>
+
+<pre class="fixcomment">
+https://www.google.co.jp/maps/@緯度,経度,ズームレベルz?hl=ja
+</pre>
+
+			<p>
+			今は次のように表示されており、座標が(35.1858948,136.9473611)、地図のズームレベルは17であることが分かります。
+			</p>
+
+<pre class="fixcode">
+https://www.google.co.jp/maps/@35.1858948,136.9473611,17z?hl=ja
+</pre>
+
+			<p>
+			試しに地図の位置は変えずに地図をズームインしてより詳細な地図を表示してみて下さい。
+			</p>
+
+			<p>
+			<img src="img/p4-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-4.png" alt="p4-4" width="640" height="400" />
+			</p>
+
+			<p>
+			URLを見てみると緯度と経度は変わらずズームレベルの値だけが変わっていることが分かります。
+			</p>
+
+			<p>
+			<img src="img/p4-5.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-5.png" alt="p4-5" width="640" height="400" class="waku" />
+			</p>
+
+			<p>
+			このようにGoogleマップを使用することで、任意の地点の座標を簡単に調べることができます。
+			</p>
+
+<h2><a id="section2">サンプルコード</a></h2>
+
+			<p>
+			それでは先ほど取得した座標とズームレベルを指定して地図を表示する簡単なサンプルを作成し、取得した座標が正しいかどうかを確認してみます。
+			</p>
+
+			<ul class="linktext">
+			<li class="title"><a href="map/code4_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/map/code4_1.js">code4_1.js</a></li>
+			</ul>
+
+<pre class="fixcode">
+function initMap() {
+  var opts = {
+    zoom: 17,
+    center: new google.maps.LatLng(35.1858948,136.9473611)
+  };
+
+  var map = new google.maps.Map(document.getElementById("map"), opts);
+}
+</pre>
+
+			<ul class="linktext">
+			<li class="title"><a href="map/map4_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/map/map4_1.html">map4_1.html</a></li>
+			</ul>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Google Maps API サンプル&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;p&gt;座標の取得サンプル&lt;/p&gt;
+
+    &lt;div id="map" style="width:620px; height:400px"&gt;&lt;/div&gt;
+
+    &lt;script type="text/javascript" src="code4_1.js"&gt;
+    &lt;/script&gt;
+
+    &lt;script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=APIKey&callback=initMap"&gt;
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			ブラウザで上記ページを開くと次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-6.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-6.png" alt="p4-6" width="640" height="600" class="waku" />
+			</p>
+
+			<p>
+			先ほど取得した座標とズームレベルを設定して地図を表示してみると、Googleマップで表示した場所と同じ場所をGoogle Maps APIを使って表示することができました。
+			</p>
+
+<h2><a id="section3">百分率表記と度分秒表記とは</a></h2>
+
+			<p>
+			最後に緯度と経度に関する参考情報です。Google Maps APIで緯度と経度を指定する時には百分率表記を使いますが、他に度分秒表記という「東経130度20分35秒」などのような記述方法もよく使われます。この度分秒表記から百分率表記への変換方法は次の通りです。 
+			</p>
+
+<pre class="fixcomment">
+百分率表記 ＝ 度 ＋ (分／60) ＋ (秒／3600)
+</pre>
+
+			<p>
+			例えば「東経130度20分35秒」は下記のようになります。 
+			</p>
+
+<pre class="fixcomment">
+百分率表記 ＝ 度 ＋ (分／60) ＋ (秒／3600)
+           ＝ 130 ＋ (20／60) ＋ (35／3600)
+           ＝ 130.3431
+</pre>
+
+			<p>
+			また経度と緯度には、「東経」「西経」と「北緯」「南緯」という区分があります。
+			</p>
+
+			<p>
+			<img src="img/p4-7.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p4-7.png" alt="p4-7" width="319" height="298" />
+			</p>
+
+			<p>
+			経度に関してはロンドンのグリニッジ天文台を通過する南北の線を基準として、東側を「東経」、西側を「西経」となります。それぞれ0～180度の値を取ります。また緯度に関しては赤道を軸として、北半球を「北緯」、南半球を「南緯」となります。それぞれ0～90度の値を取ります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

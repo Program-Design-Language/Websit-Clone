@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 基準時間からの経過ミリ秒を取得する(Date.parse, Date.UTC, Date.now)</title>
+<meta name="description" content="Date オブジェクトの静的メソッドである Date.parse 、 Date.UTC 、 Date.now は引数に指定した値によって決まる日時に対する基準時間(1970年1月1日00:00:00 UTC)からの経過ミリ秒の値を返します。ここでは Date オブジェクトの Date.parse メソッド、 Date.UTC メソッド、および Date.now メソッドの使い方について解説します。">
+
+<meta property="og:title" content="基準時間からの経過ミリ秒を取得する(Date.parse, Date.UTC, Date.now)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/date_class/index7.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/date_class/img/p7-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Date オブジェクトの静的メソッドである Date.parse 、 Date.UTC 、 Date.now は引数に指定した値によって決まる日時に対する基準時間(1970年1月1日00:00:00 UTC)からの経過ミリ秒の値を返します。ここでは Date オブジェクトの Date.parse メソッド、 Date.UTC メソッド、および Date.now メソッドの使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Dateオブジェクト",
+    "item": "https://www.javadrive.jp/javascript/date_class/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/date_class/">Dateオブジェクト</a></li>
+				</ul>
+			</div>
+
+			<h1>基準時間からの経過ミリ秒を取得する(Date.parse, Date.UTC, Date.now)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Date オブジェクトの静的メソッドである Date.parse 、 Date.UTC 、 Date.now は引数に指定した値によって決まる日時に対する基準時間(1970年1月1日00:00:00 UTC)からの経過ミリ秒の値を返します。ここでは Date オブジェクトの Date.parse メソッド、 Date.UTC メソッド、および Date.now メソッドの使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">文字列で指定した値から決まる日時について基準時間からの経過ミリ秒を取得する(Date.parse)</a></li>
+			<li><a href="#section2">指定した年や時の値から決まる日時について基準時間からの経過ミリ秒を取得する(Date.UTC)</a></li>
+			<li><a href="#section3">現在日時について基準時間からの経過ミリ秒を取得する(Date.now)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">文字列で指定した値から決まる日時について基準時間からの経過ミリ秒を取得する(Date.parse)</a></h2>
+
+			<p>
+			Date オブジェクトの Date.parse メソッドは、文字列で指定した日時に対する基準時間(1970年1月1日00:00:00 UTC)からの経過ミリ秒を返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Date.parse(日付を表す文字列)
+</pre>
+</div>
+
+			<p>
+			引数には日付を表す文字列を指定します。形式は決まってはいませんが、 ISO 8601 の形式での指定が望ましいようです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+YYYY-MM-DDThh:mm:ss.000Z
+YYYY-MM-DDThh:mm:ss.000+00:00
+</pre>
+</div>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+console.log(Date.parse('1970-01-01T00:00:01Z'));
+<span class="bold">&gt;&gt; 1000</span>
+
+console.log(Date.parse('2020-04-15T12:34:18Z'));
+<span class="bold">&gt;&gt; 1586954058000</span>
+
+console.log(Date.parse('1992-11-04T21:02:45.227+09:00'));
+<span class="bold">&gt;&gt; 720878565227</span>
+</pre>
+</div>
+
+			<p>
+			文字列として引数に指定した日時に対する 1970年1月1日00:00:00 UTC からの経過ミリ秒をそれぞれ取得しました。
+			</p>
+
+<h2><a id="section2">指定した年や時の値から決まる日時について基準時間からの経過ミリ秒を取得する(Date.UTC)</a></h2>
+
+			<p>
+			Date オブジェクトの Date.UTC メソッドは、引数の年や月、分や秒の値によって指定した日時に対する基準時間(1970年1月1日00:00:00 UTC)からの経過ミリ秒を返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Date.UTC(年[, 月[, 日[, 時[, 分[, 秒[, ミリ秒]]]]]])
+</pre>
+</div>
+
+			<p>
+			値は UTC タイムゾーンでの値を指定します。年は 4 桁の数値、月は 0 から 11 の数値( 0 が 1 月、 11 が 12 月です)、日は 1 から 31 の数値、時は 0 から 23 の数値、分は 0 から 59 の数値、秒は 0 から 59 の数値、ミリ秒は 0 から 999 の数値で指定します。年は必須ですが、年以外は省略可能です。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+console.log(Date.UTC(1970,0,1,0,0,1));
+<span class="bold">&gt;&gt; 1000</span>
+
+console.log(Date.UTC(2020,3,15,12,34,18));
+<span class="bold">&gt;&gt; 1586954058000</span>
+</pre>
+</div>
+
+			<p>
+			引数の年や月で指定した日時に対する 1970年1月1日00:00:00 UTC からの経過ミリ秒をそれぞれ取得しました。
+			</p>
+
+<h2><a id="section3">現在日時について基準時間からの経過ミリ秒を取得する(Date.now)</a></h2>
+
+			<p>
+			Date オブジェクトの Date.now メソッドは、現在日時に対する基準時間(1970年1月1日00:00:00 UTC)からの経過ミリ秒を返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Date.now()
+</pre>
+</div>
+
+			<p>
+			対象となる現在の日時は自動的に取得されます。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let millisecond = Date.now();
+console.log(millisecond);
+<span class="bold">&gt;&gt; 1602937250760</span>
+
+let d = new Date(millisecond);
+console.log(d.toUTCString());
+<span class="bold">&gt;&gt; 1602937250760</span>
+</pre>
+</div>
+
+			<p>
+			現在日時に対する 1970年1月1日00:00:00 UTC からの経過ミリ秒をそれぞれ取得しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Date オブジェクトの Date.parse メソッド、 Date.UTC メソッド、および Date.now メソッドの使い方について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

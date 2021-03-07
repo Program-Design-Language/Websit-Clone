@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ステータスコードの設定(setStatus) - クライアントへの出力 - サーブレット入門</title>
+<meta name="keywords" content="setStatus,HttpServletResponse,サーブレット" />
+<meta name="description" content="ステータスコードの設定" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/response/" itemprop="url"><span itemprop="title">クライアントへの出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>ステータスコードの設定(setStatus)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			クライアントにレスポンスを返す際に、ステータスコードを設定しなかった場合にはデフォルトで「SC_OK」が設定されます。正常なデータを返す場合にはこのままで構いませんが他のステータスコードをクライアントに返す方法を確認します。
+			</p>
+
+			<p>
+			ステータスコードを設定するには「HttpServletResponse」インターフェースで定義されている「setStatus」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+setStatus
+public void setStatus(int sc)
+</pre>
+<pre class="mexplain">
+Sets the status code for this response. This method is used to set the 
+return status code when there is no error (for example, for the status 
+codes SC_OK or SC_MOVED_TEMPORARILY). If there is an error, and the caller 
+wishes to invoke an error-page defined in the web application, the 
+sendError method should be used instead. 
+
+The container clears the buffer and sets the Location header, preserving 
+cookies and other headers. 
+
+Parameters:
+  sc - the status code
+</pre>
+
+			<p>
+			このメソッドを使う場合はエラーが発生せずに正常にデータが送信される場合に利用します。引数には「HttpServletResponse」インターフェースで定義されてる定数を使用します。一部を抜粋すると次のようなものがあります。
+			</p>
+
+<table class="pro">
+<tr><th>コード</th><th>定数</th></tr>
+<tr><td>200</td><td>SC_OK</td></tr>
+<tr><td>204</td><td>SC_NO_CONTENT</td></tr>
+<tr><td>301</td><td>SC_MOVED_PERMANENTLY</td></tr>
+<tr><td>302</td><td>SC_MOVED_TEMPORARILY</td></tr>
+<tr><td>403</td><td>SC_FORBIDDEN</td></tr>
+<tr><td>404</td><td>SC_NOT_FOUND</td></tr>
+<tr><td>500</td><td>SC_INTERNAL_SERVER_ERROR</td></tr>
+<tr><td>503</td><td>SC_SERVICE_UNAVAILABLE</td></tr>
+</table>
+
+			<p>
+			ステータスコードは他にも数多く用意されています。200番台は「成功」、300番台は「転送」、400番台は「クライアント側のエラー」、500番台は「サーバ側のエラー」を表します。「setStatus」メソッドは200番台又は300番台のステータスコードを設定する時に利用します。
+			</p>
+
+			<p>
+			「setStatus」メソッドを使ってスタータスコードの設定を行った場合、画面に表示する内容は別途作成する必要があります。
+			</p>
+
+			<h2>エラー系のスタータスコードの設定</h2>
+
+			<p>
+			エラー系の400番台及び500番台のステータスコードを設定する場合には「HttpServletResponse」インターフェースで定義されている「sendError」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+sendError
+public void sendError(int sc)
+               throws java.io.IOException
+</pre>
+<pre class="mexplain">
+Sends an error response to the client using the specified status code
+and clearing the buffer. 
+
+If the response has already been committed, this method throws an
+IllegalStateException. After using this method, the response should be
+considered to be committed and should not be written to. 
+
+Parameters:
+  sc - the error status code 
+Throws: 
+  java.io.IOException - If an input or output exception occurs 
+  java.lang.IllegalStateException - If the response was committed 
+    before this method call
+</pre>
+
+			<p>
+			「sendError」メソッドを使う場合にはスタータスコードの設定を行うと同時に画面に表示される内容を自動で作成します。その為、一般的なエラー表示が画面に行われます。
+			</p>
+
+			<p>
+			もし独自のメッセージを画面に表示したい場合には引数の異なる「sendError」メッセージが用意されています。
+			</p>
+
+<pre class="mheader">
+sendError
+public void sendError(int sc, java.lang.String msg)
+               throws java.io.IOException
+</pre>
+<pre class="mexplain">
+Sends an error response to the client using the specified status. The 
+server defaults to creating the response to look like an HTML-formatted 
+server error page containing the specified message, setting the content 
+type to "text/html", leaving cookies and other headers unmodified. If 
+an error-page declaration has been made for the web application 
+corresponding to the status code passed in, it will be served back in 
+preference to the suggested msg parameter. 
+
+If the response has already been committed, this method throws an
+IllegalStateException. After using this method, the response should
+be considered to be committed and should not be written to. 
+
+Parameters:
+  sc - the error status code
+  msg - the descriptive message 
+Throws: 
+  java.io.IOException - If an input or output exception occurs 
+  java.lang.IllegalStateException - If the response was committed
+</pre>
+
+			<p>
+			どのように表示されるかはサーブレットコンテナに依存しますが、引数に指定した文字列がエラーページ内に合わせて表示されます。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで試して見ます。別途用意したHTMLフォームから希望するステータスコードを送付すると、それに対応した処理を行います。
+			</p>
+
+			<p>
+			フォームが含まれるHTMLページは、次のような簡単なものです。
+			</p>
+
+			<p>
+			<a href="formsample5.html" tppabs="https://www.javadrive.jp/servlet/response/formsample5.html">formsample5.html</a>
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" Content="text/html;charset=Shift_JIS"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;スタータスコードの選択&lt;/p&gt;
+
+&lt;form action="/sample/ResponseSample3" method="get"&gt;
+
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;スタータスコード&lt;/td&gt;
+&lt;td&gt;
+&lt;select name="code" size="3" multiple&gt;
+&lt;option value="200"&gt;SC_OK&lt;/option&gt;
+&lt;option value="404"&gt;SC_NOT_FOUND&lt;/option&gt;
+&lt;option value="500"&gt;SC_INTERNAL_SERVER_ERROR&lt;/option&gt;
+&lt;/select&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;input type="submit" name="button1" value="送信"&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			次にフォームから送られてくるリクエストパラメータを処理するサーブレットを作成します。
+			</p>
+
+			<p>
+			<a href="ResponseSample3.java.htm" tppabs="https://www.javadrive.jp/servlet/response/ResponseSample3.java">ResponseSample3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ResponseSample3 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    String tmp;
+
+    String code = "";
+    tmp = request.getParameter("code");
+    if (tmp == null || tmp.length() == 0){
+      code = "200";
+    }else{
+      code = tmp;
+    }
+
+    if (code.equals("200")){
+      response.setStatus(HttpServletResponse.SC_OK);
+
+      StringBuffer sb = new StringBuffer();
+
+      sb.append("&lt;html&gt;");
+      sb.append("&lt;head&gt;");
+      sb.append("&lt;title&gt;サンプル&lt;/title&gt;");
+      sb.append("&lt;/head&gt;");
+      sb.append("&lt;body&gt;");
+
+      sb.append("&lt;p&gt;200:SC_OK&lt;/p&gt;");
+
+      sb.append("&lt;/body&gt;");
+      sb.append("&lt;/html&gt;");
+
+      out.println(new String(sb));
+      out.close();
+    }else{
+      if (code.equals("404")){
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, "見つかりません");
+      }else if (code.equals("500")){
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+}
+</pre>
+
+			<p>
+			サンプルプログラムをコンパイルして作成した「ResponseSample3.class」ファイルを別途作成した「web.xml」ファイルを次のように配置します。
+			</p>
+
+<pre class="fixcomment">
+D:&yen; -- servlet-sample
+        |
+        +-- WEB-INF
+             |
+             +-- (formsample5.html)
+             |
+             +-- (web.xml)
+             |
+             +-- classes
+                  |
+                  +-- (ResponseSample3.class)
+</pre>
+
+			<p>
+			web.xmlファイルは次のようになります。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;ResponseSample3&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;ResponseSample3&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;ResponseSample3&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/ResponseSample3&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			コンテキストファイルを作成し「(Tomcatをインストールしたディレクトリ)&yen;Tomcat 5.5&yen;conf&yen;Catalina&yen;localhost&yen;」ディレクトリに「sample.xml」ファイルとして保存します。内容は以下の通りです。
+			</p>
+
+
+<pre class="fixcomment">
+&lt;Context path="/sample"
+docBase="d:/servlet-sample/sample"&gt;
+&lt;/Context&gt;
+</pre>
+
+			<p>
+			準備は以上です。ではTomcatを再起動してから「http://localhost:8080/sample/formsample5.html」へブラウザでアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p3.png" tppabs="https://www.javadrive.jp/servlet/response/img/p3.png" alt="ステータスコードの設定" width="488" height="379">
+			</p>
+
+			<p>
+			フォームが表示されます。まず「SC_OK」を選択してから「送信」ボタンをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p4.png" tppabs="https://www.javadrive.jp/servlet/response/img/p4.png" alt="ステータスコードの設定" width="489" height="381">
+			</p>
+
+			<p>
+			この場合は「setStatus」メソッドを使ってステータスコードを設定しています。画面に表示される内容は自分で出力したものになります。
+			</p>
+
+			<p>
+			では元のフォーム画面に戻って今度は「SC_NOT_FOUND」を選択してから「送信」ボタンをクリックします。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/servlet/response/img/p5.png" alt="ステータスコードの設定" width="488" height="379">
+			</p>
+
+			<p>
+			今度はTomcat側でエラー画面を自動で作成してくれます。基本的には通常Tomcatが出力するエラー画面と同じです。今回は別途表示メッセージを指定しているため合わせて表示されています。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/servlet/response/img/p6.png" alt="ステータスコードの設定" width="488" height="379">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

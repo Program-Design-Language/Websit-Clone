@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まとめてファイルに書き込む - テキストファイルの入出力 - Java入門</title>
+<meta name="keywords" content="BufferedWriter,テキストファイル,入門,Java" />
+<meta name="description" content="まとめてファイルに書き込む" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/stream/" itemprop="url"><span itemprop="title">テキストファイルの入出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>まとめてファイルに書き込む</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					FileReaderクラスにBufferedReaderクラスを組み合わせて利用したように、FileWriterクラスの場合も効率良く書き込むためのBufferedWriterクラスが用意されています。
+					</p>
+
+					<p>
+					使い方は下記のようになります。
+					</p>
+
+<pre class="fixcode">
+File file = new File(file_name);
+FileWriter filewriter = new FileWriter(file);
+BufferedWriter bw = new BufferedWriter(<span class="red">filewriter</span>);
+</pre>
+
+					<p>
+					FileWriterクラスのオブジェクトを作成するところまでは今までと同じですが、このオブジェクトを引数としてBufferedWriterクラスのオブジェクトを作成します。そしてFileWriterクラスのオブジェクトではなく、BufferedWriterクラスのオブジェクトに対して書き込み用のメソッドを実行してテキストファイルにテキストを書き出します。
+					</p>
+
+					<p>
+					上記はまとめて下記のように記述しても構いません。
+					</p>
+
+<pre class="fixcode">
+File file = new File(file_name);
+BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+</pre>
+
+					<h2>自動で判別された改行文字の出力</h2>
+
+					<p>
+					BufferedWriterクラスのオブジェクトを使って書き込みを行う場合も"write"メソッドを使う点は同じです。ただ、改行文字を出力するためのメソッドが別に用意されています。
+					</p>
+
+					<p>
+					前のサンプルでは改行文字として「\r\n」を書き出していました。Windowsの場合はそれでいいですけど、OSによって改行文字が「\n」だけのものもあります。その為、前のサンプルをWindows以外の環境で利用すると思ったとおりの動作をしない場合があります。
+					</p>
+
+					<p>
+					BufferedWriterクラスで用意されている"newLine"メソッドは、プログラムを実行しているOSなどの環境に合わせ、その環境に適した改行コードを自動で判断して出力してくれます。(実際には、プログラムのソースコードはどのOSでも同じものを使えますが、コンパイルする時にはOS毎のコンパイラがありますので、コンパイルする時点でOSに合った改行文字を出力するように調整しているのだと思います)。
+					</p>
+
+<pre class="mheader">
+newLine
+public void newLine() throws IOException
+</pre>
+<pre class="mexplain">
+改行文字を書き込みます。改行文字は、システムの line.separator プロパティにより定義され、必
+ずしも単一の改行文字 (「\n」) であるとは限りません。
+
+例外:
+  IOException - 入出力エラーが発生した場合
+</pre>
+
+					<p>
+					"newLine"メソッドを実行すると、ファイルに改行文字が書き込まれます。使い方としては下記のような感じです。
+					</p>
+
+<pre class="fixcode">
+File file = new File(file_name);
+BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+bw.write("こんにちは");
+bw.newLine();
+</pre>
+
+					<h2>ファイルを閉じる</h2>
+
+					<p>
+					また、BufferedWriterクラスを使う場合にも、使い終わったら閉じておく必要があります。BufferedWriterクラスでもFileWriterクラスと同じように"close"メソッドを使います。
+					</p>
+
+<pre class="mheader">
+close
+public void close() throws IOException
+</pre>
+<pre class="mexplain">
+ストリームを閉じます。
+
+例外:
+  IOException - 入出力エラーが発生した場合
+</pre>
+
+					<p>
+					BufferedWriterクラスのオブジェクトに対して"close"処理を行えば、その元になっているFileWriterクラスの方は"close"しなくても構いません。
+					</p>
+
+					<h2>サンプル</h2>
+
+					<p>
+					ではBufferedWriterクラスを使って前のサンプルを書き直してみましょう。
+					</p>
+
+					<p>
+					<a href="streamTest6.java" tppabs="https://www.javadrive.jp/start/stream/streamTest6.java">streamTest6.java</a>
+					</p>
+
+<pre class="fixcode">
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+
+class streamTest6{
+  public static void main(String args[]){
+    try{
+      File file = new File("c:\\tmp\\test.txt");
+
+      if (checkBeforeWritefile(file)){
+        BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+
+        bw.write("こんにちは");
+        bw.newLine();
+        bw.write("お元気ですか？");
+        bw.newLine();
+
+        bw.close();
+      }else{
+        System.out.println("ファイルに書き込めません");
+      }
+    }catch(IOException e){
+      System.out.println(e);
+    }
+  }
+
+  private static boolean checkBeforeWritefile(File file){
+    if (file.exists()){
+      if (file.isFile() &amp;&amp; file.canWrite()){
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+</pre>
+
+					<p>
+					上記をコンパイルして実際に実行してみると下記のようになります。
+					</p>
+
+					<p>
+					<img src="img/p9.png" tppabs="https://www.javadrive.jp/start/stream/img/p9.png" alt="p9" width="517" height="187" alt="0">
+					</p>
+
+					<p>
+					対象のファイルに書き込みが行われます。
+					</p>
+
+					<p>
+					<img src="img/p10.png" tppabs="https://www.javadrive.jp/start/stream/img/p10.png" alt="p10" width="424" height="203" alt="0">
+					</p>
+
+					<p>
+					改行もきちんと行われています。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

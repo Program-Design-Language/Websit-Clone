@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | PatternオブジェクトとMatcherオブジェクトを作成する</title>
+<meta name="description" content="正規表現を使ってどのような文字列とマッチさせるのかを定義したものがパターンです。最初に文字列としてパターンを定義したあと、パターン文字列から Pattern オブジェクトを取得します。そして Pattern オブジェクトが対象の文字列とマッチするかどうか調べるのが Matcher オブジェクト( Matcher クラスのインスタンス)です。ここでは Java の正規表現で文字列としてパターンを定義したあと Pattern オブジェクトと Matcher オブジェクトを作成する手順について解説します。">
+
+<meta property="og:title" content="PatternオブジェクトとMatcherオブジェクトを作成する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/regex/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/regex/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現を使ってどのような文字列とマッチさせるのかを定義したものがパターンです。最初に文字列としてパターンを定義したあと、パターン文字列から Pattern オブジェクトを取得します。そして Pattern オブジェクトが対象の文字列とマッチするかどうか調べるのが Matcher オブジェクト( Matcher クラスのインスタンス)です。ここでは Java の正規表現で文字列としてパターンを定義したあと Pattern オブジェクトと Matcher オブジェクトを作成する手順について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "Java正規表現の使い方",
+	"item": "https://www.javadrive.jp/start/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/">Java正規表現の使い方</a></li>
+				</ul>
+			</div>
+
+			<h1>PatternオブジェクトとMatcherオブジェクトを作成する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現を使ってどのような文字列とマッチさせるのかを定義したものがパターンです。最初に文字列としてパターンを定義したあと、パターン文字列から Pattern オブジェクトを取得します。そして Pattern オブジェクトが対象の文字列とマッチするかどうか調べるのが Matcher オブジェクト( Matcher クラスのインスタンス)です。ここでは Java の正規表現で文字列としてパターンを定義したあと Pattern オブジェクトと Matcher オブジェクトを作成する手順について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">パターンを文字列で定義する</a></li>
+			<li><a href="#section2">Patternオブジェクトを作成する</a></li>
+			<li><a href="#section3">Matcherオブジェクトを作成する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">パターンを文字列で定義する</a></h2>
+
+			<p>
+			最初にパターンを文字列として定義します。例えば対象の文字列の中に hey という文字列が含まれるかどうかを調べる場合のパターンは "hey" になります。
+			</p>
+
+<div class="titlebox1">
+<p>
+"hey"
+</p>
+</div>
+
+			<p>
+			この場合、次のような文字列とマッチします。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="red">hey</span>ou
+〇 be<span class="red">hey</span>er
+〇 good<span class="red">hey</span>
+</pre>
+</div>
+
+			<p>
+			正規表現ではメタ文字と呼ばれる特別な意味を持つ文字を使用してパターンを定義することができます。例えば対象の文字列に jpg という文字列が文字列の末尾に含まれるかどうかを調べる場合は、末尾を表すメタ文字である "$" を使って "jpg$" と記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+jpg$
+</pre>
+</div>
+
+			<p>
+			この場合、末尾に "jpg" がある文字列とだけマッチします。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 photo.<span class="red">jpg</span>
+&#10005; <span class="red">jpg</span>tool
+</pre>
+</div>
+
+			<p>
+			メタ文字は数多くの種類が用意されています。詳しい解説は別のページで行います。
+			</p>
+
+<h2><a id="section2">Patternオブジェクトを作成する</a></h2>
+
+			<p>
+			パターンを表す文字列を定義したら、パターン文字列をコンパイルして Pattern オブジェクトを作成します。これは Pattern クラス( java.util.regex.Pattern )のインスタンスです。 Pattern クラスにはコンストラクタが用意されておらず、クラスメソッドである compile メソッドを使ってインスタンスを取得します。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public static Pattern compile​(String regex)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+regex - コンパイルされる表現<br>
+<br>
+戻り値:<br>
+パターンにコンパイルする指定された正規表現<br>
+<br>
+例外:<br>
+PatternSyntaxException - 表現の構文が無効である場合
+</p>
+</div>
+
+			<p>
+			1 番目の引数に文字列で定義したパターンを記述します。戻り値として Pattern クラスのインスタンスを取得できます。
+			</p>
+
+			<p>
+			例えば、パターン文字列 "jpg$" から Pattern オブジェクトを作成するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+// java.util.regex.*のインポートが必要です
+import java.util.regex.*;
+
+String regex = "jpg$";
+Pattern p = Pattern.compile(regex);
+</pre>
+</div>
+
+			<p>
+			Pattern オブジェクトを作成できました。
+			</p>
+
+			<p>
+			なお型推論を利用して次のように記述することもできます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+String regex = "jpg$";
+var p = Pattern.compile(regex);
+</pre>
+</div>
+
+			<p>
+			型推論については「<a href="../var/index9.html" tppabs="https://www.javadrive.jp/start/var/index9.html">変数宣言で型推論を利用する</a>」を参照されてください。
+			</p>
+
+<h2><a id="section3">Matcherオブジェクトを作成する</a></h2>
+
+			<p>
+			実際に対象の文字列がパターンとマッチするかどうかを調べる役割をするのが Matcher オブジェクトです。これは Matcher クラス( java.util.regex.Matcher )のインスタンスです。 Matcher クラスにはコンストラクタが用意されておらず、 Pattern クラスのクラスメソッドである matcher メソッドを使ってインスタンスを取得します。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public Matcher matcher​(CharSequence input)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+input - マッチされる文字シーケンス<br>
+<br>
+戻り値:<br>
+このパターンの新しい正規表現エンジン
+</p>
+</div>
+
+			<p>
+			1 番目の引数に CharSequence インターフェースを実装したクラスのインスタンスを指定します。例えば String クラス, StringBuffer クラス, StringBuilder クラスなどのインスタンスです。例えばマッチするか調査する対象の文字列を文字列として指定してください。戻り値として Matcher クラスのインスタンスを取得できます。
+			</p>
+
+			<p>
+			例えば、パターン文字列 "jpg$" から Pattern オブジェクトを作成し、対象の文字列として "profile.jpg" とマッチするかどうかを調べる Matcher オブジェクトを作成するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+// java.util.regex.*のインポートが必要です
+import java.util.regex.*;
+
+String regex = "jpg$";
+Pattern p = Pattern.compile(regex);
+Matcher m = p.matcher​("profile.jpg");
+</pre>
+</div>
+
+			<p>
+			Matcher オブジェクトを作成できました。
+			</p>
+
+			<p>
+			あとは Matcher クラスで用意されているいくつかのメソッドを使って、実際にマッチしたかどうかを取得します。それぞれの方法については、次のページ以降で順番に解説していきます。
+			</p>
+
+			<p>
+			なお型推論を利用して次のように記述することもできます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+String regex = "jpg$";
+var p = Pattern.compile(regex);
+var m = p.matcher​("profile.jpg");
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。文字列エディタで次のように記述したあと、 JSample2-1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample2_1{
+  public static void main(String[] args){
+    String regex = "jpg$";
+    Pattern p = Pattern.compile(regex);
+    Matcher m = p.matcher​("profile.jpg");
+
+    if (m.find()){
+      System.out.println("パターンにマッチします");
+      System.out.println("マッチした部分は " + m.group() + " です");
+    }else{
+      System.out.println("パターンにマッチしません");
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample2_1.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample2_1
+</p>
+</div>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/start/regex/img/p2-1.png" alt="Matcherオブジェクトを作成する(1)" width="723" height="353">
+			</p>
+
+			<p>
+			対象の文字列がパターンとマッチしたかどうかを調べ、マッチした場合は対象の文字列の中のマッチした部分を表示しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			文字列としてパターンを定義したあと Pattern オブジェクトを作成し、そのあとで Matcher オブジェクトを作成するまでの手順について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

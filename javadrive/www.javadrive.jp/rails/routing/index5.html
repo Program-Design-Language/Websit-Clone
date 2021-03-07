@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リソースベースのルーティング設定 - Ruby on Rails入門</title>
+<meta name="keywords" content="リソースベースのルーティング設定" />
+<meta name="description" content="RailsでRESTfulなアプリケーションを設計した場合に設定するリソースベースのルーティングについて解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/routing/" itemprop="url"><span itemprop="title">ルーティングの設定</span></a></li>
+		</ul>
+</div>
+
+			<h1>リソースベースのルーティング設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			RESTという考え方に従って作られたアプリケーションなどをRESTfulなアプリケーションと読んだりします。Railsの現在のバージョンではRESTfulなアプリケーションを作成するための機能が用意されており、特に理由が無ければその機能を使ったほうが簡潔にアプリケーションの作成が行えます。ここではRESTfulなRailsアプリケーションを作成する場合の、リソースベースのルーティング設定方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">RESTfulな設計</a><br />
+			2.<a href="#section2">resourcesメソッドを使ったルーティング設定</a><br />
+			3.<a href="#section3">動作確認</a><br />
+			</p>
+
+<h2><a id="section1">RESTfulな設計</a></h2>
+
+			<p>
+			まずRESTについて簡単に解説しておきます。RESTとはアプリケーションの設計方法の1つで、操作の対象となるリソースをURLを使って表し、それに対してHTTPメソッドの「GET」「POST」「DELETE」「PUT」を使って操作を行なうというものです。あるURLへGETを使ってアクセスすれば、結果を取得でき、同じURLへPUTでアクセスすれば新しく作成されるよう設定を行ないます。
+			</p>
+
+			<p>
+			Railsのアプリケーションの場合、対象となるリソースはデータベースのテーブルがほとんどです。このリソースを表すURLが例えば「http://localhost:3000/sample」だったとします。RESTの考え方に従えば、この1つのURLに対してHTTPメソッドのGETでアクセスすればデータを取得し、PUTでアクセスすればデータの作成が行われるようにします。
+			</p>
+
+			<p>
+			Railsでは利用者からのリクエストで呼び出されるのはアクションですので、URLとHTTPメソッドの組み合わせ毎に呼び出されるアクションをルーティングとして設定すればいいことになります。そこで例えば次のようなルーティングを設定することになります。
+			</p>
+
+<pre class="fixcode">
+GET    'sample' =&gt; 'books#index'
+POST   'sample' =&gt; 'books#create'
+DELETE 'sample' =&gt; 'books#destroy'
+PUT    'sample' =&gt; 'books#update'
+</pre>
+
+			<p>
+			ただ実際には「GET」でアクセスした場合に、テーブルのデータ一覧を取得したい場合もありますし、指定したデータだけを取得したい場合もあります。また新規にデータを登録する場合と、既存のデータを更新する場合には、登録画面を表示するように呼び出せると便利です。そこで次の7つのルーティングを設定します。
+			</p>
+
+<pre class="fixcode">
+GET    'sample'     =&gt; 'books#index'
+GET    'sample/:id' =&gt; 'books#show'
+GET    'sample/new' =&gt; 'books#new'
+POST   'sample'     =&gt; 'books#create'
+GET    'sample/:id/edit' =&gt; 'books#edit'
+DELETE 'sample/:id' =&gt; 'books#destroy'
+PUT    'sample/:id' =&gt; 'books#update'
+</pre>
+
+			<p>
+			RESTfulなアプリケーションでは対象となるリソース毎にコントローラは異なるけれど同じ名前の7つのアクションを用意しルーティングを設定するようにします。URLを見れば何に対してどんな操作を行なうとしているのかが簡単に分かります。
+			</p>
+
+<h2><a id="section2">resourcesメソッドを使ったルーティング設定</a></h2>
+
+			<p>
+			RESTfulな仕組みにしたがって手動でルーティングを設定してももちろんいいのですが、Railsではリソースをベースにしたルーティングを設定するための便利な仕組みが用意されています。「config/routes.rb」ファイルの先頭のほうにサンプルが記載されています。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  # Sample resource route (maps HTTP verbs to controller actions automatically):
+  #   resources :products
+
+end
+</pre>
+
+			<p>
+			書式は次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+resources :リソース名
+</pre>
+
+			<p>
+			resourcesメソッドに対象となるリソース名を指定した1行をルーティングとして記述するだけで、先程の記載した7つのルーティングが自動的に設定されます。
+			</p>
+
+			<p>
+			リソース名に指定した名前はリクエストのURL及び呼び出されるアクションのコントロール名として使われます。
+			</p>
+
+			<p>
+			ではresourcesメソッドを設定するとどのようなルーティングが設定されるのかを確認してみます。「config/routes.rb」ファイルに次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  resources :blogs
+
+end
+</pre>
+
+			<p>
+			そして設定されたルーティングを確認するために「rake routes」を実行します。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/rails/routing/img/p5-1.png" alt="p5-1" width="517" height="312" />
+			</p>
+
+			<p>
+			7つのルーティングが設定されていることが確認できます。リソース名として指定した名前がコントローラ名やリクエストのURLとして使用されていることも分かります。
+			</p>
+
+<h2><a id="section3">動作確認</a></h2>
+
+			<p>
+			それでは実際に試してみます。「sample2」アプリケーションには新たに「blogs」コントローラを作成し、さらに「index」「new」「edit」「show」アクションをを作成します。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/rails/routing/img/p5-2.png" alt="p5-2" width="517" height="390" />
+			</p>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルをテキストエディタで開き、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  resources :blogs
+
+end
+</pre>
+
+			<p>
+			それでは準備ができましたのでRailsアプリケーションを起動して下さい。そしてまずブラウザから「http://localhost:3000/blogs」へアクセスして下さい。すると次のように「index」アクションが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/rails/routing/img/p5-3.png" alt="p5-3" width="528" height="368" />
+			</p>
+
+			<p>
+			続いてパラメータ付きの「http://localhost:3000/blogs/3」へアクセスして下さい。すると次のように「show」アクションが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/rails/routing/img/p5-4.png" alt="p5-4" width="528" height="368" />
+			</p>
+
+			<p>
+			続いてパスに「new」を追加した「http://localhost:3000/blogs/new」へアクセスして下さい。すると次のように「new」アクションが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p5-5.png" tppabs="https://www.javadrive.jp/rails/routing/img/p5-5.png" alt="p5-5" width="528" height="368" />
+			</p>
+
+			<p>
+			最後にパラメータとパスに「edit」を追加した「http://localhost:3000/blogs/3/edit」へアクセスして下さい。すると次のように「edit」アクションが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p5-6.png" tppabs="https://www.javadrive.jp/rails/routing/img/p5-6.png" alt="p5-6" width="528" height="368" />
+			</p>
+
+			<p>
+			リソースベースのルーティング設定を行った場合、自動的に7つのルーティングが設定されますが、別のアクションへのルーティングを追加したり逆に使わないアクションへのルーティングを削除することもできます。これらは次のページ以降で順に解説していきます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

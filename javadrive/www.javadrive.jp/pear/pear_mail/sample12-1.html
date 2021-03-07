@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サンプル</title>
+</head>
+<body>
+
+<pre>
+
+&lt;?php
+require_once("Mail.php");
+require_once("Mail/mime.php");
+
+$params = array(
+  "host" =&gt; "xxx.xxx.xx",
+  "port" =&gt; 587,
+  "auth" =&gt; true,
+  "username" =&gt; "xxx@xxx.xxx.xx",
+  "password" =&gt; "xxxxx"
+);
+
+$mailObject = Mail::factory("smtp", $params);
+
+$recipients = "xxx@xxx.xxx.xx";
+
+$body = &lt;&lt;&lt;EOS
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" Content="text/html;charset=Shift_JIS"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;HTMLメールのテスト&lt;/h1&gt;
+&lt;p&gt;
+HTMLメールのテストです。setHTMLBodyメソッドを使います。
+&lt;/p&gt;
+&lt;p&gt;
+&lt;img src="./star.png" width="50" height="50"&gt;
+&lt;/p&gt;
+&lt;p&gt;
+星の画像を表示しています。
+&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOS;
+
+$mimeObject = new Mail_Mime("\n");
+$mimeObject -&gt; setHTMLBody($body);
+$mimeObject -&gt; addHTMLImage("./star.png", "image/png");
+
+$bodyParam = array(
+  "head_charset" =&gt; "ISO-2022-JP",
+  "html_charset" =&gt; "Shift_Jis"
+);
+
+$body = $mimeObject -&gt; get($bodyParam);
+
+$addHeaders = array(
+  "To" =&gt; "xxx@xxx.xxx.xx",
+  "From" =&gt; "xxx@xxx.xxx.xx",
+  "Subject" =&gt; mb_encode_mimeheader("テストメール")
+);
+
+$headers = $mimeObject -&gt; headers($addHeaders);
+
+$mailObject -&gt; send($recipients, $headers, $body);
+
+?&gt;
+
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pagerクラスのオブジェクトの作成 - ページング(PEAR::Pager) - PEAR入門</title>
+<meta name="keywords" content="Pager,PEAR::Pager,入門,PEAR" />
+<meta name="description" content="Pagerクラスのオブジェクトの作成" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_pager/" itemprop="url"><span itemprop="title">ページング(PEAR::Pager)</span></a></li>
+		</ul>
+</div>
+
+			<h1>Pagerクラスのオブジェクトの作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			まずPagerを利用するためにはPagerクラスのオブジェクトを作成する必要があります。Pagerクラスにはコンストラクタも用意されていますが現在非推奨となっており、オブジェクトを作成するにはPagerクラスで用意されている「factory」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+Pager::factory()
+object &factory (array $options)
+</pre>
+<pre class="mexplain">
+引数：
+  $options  オプションを格納した配列
+戻り値：
+  Pagerクラスオブジェクト。失敗した場合はPEAR_Error オブジェクト
+</pre>
+
+			<p>
+			引数にはPagerクラスを作成するのに必要なオプションを連想配列で指定します。ここでは対象となるアイテムの一覧やアイテムの数を指定します。
+			</p>
+
+			<p>
+			設定可能なオプションの一覧は次の通りです。
+			</p>
+
+<table class="pro">
+<tr><th>オプション名</th><th>型</th><th>内容</th></tr>
+<tr><td>itemData</td><td>array</td><td>対象となるアイテムを格納した配列</td></tr>
+<tr><td>totalItems</td><td>integer</td><td>対象となるアイテム数(itemDataが未指定の場合に使用)</td></tr>
+<tr><td>perPage</td><td>integer</td><td>1ページごとに表示されるアイテム数</td></tr>
+<tr><td>delta</td><td>integer</td><td>現在のページの前後に表示するページ番号の数</td></tr>
+<tr><td>mode</td><td>string</td><td>動作モードを指定。ジャンプ型(Jumping)又はスライド型(Sliding)</td></tr>
+<tr><td>httpMethod</td><td>string</td><td>使用するHTTPメソッド。「GET」又は「POST」</td></tr>
+<tr><td>formID</td><td>string</td><td>POSTモードで使用するHTMLフォームを指定</td></tr>
+<tr><td>importQuery</td><td>boolean</td><td>変数と値がクエリ文字列からインポートするならTRUE</td></tr>
+<tr><td>currentPage</td><td>integer</td><td>初期ページ番号</td></tr>
+<tr><td>expanded</td><td>boolean</td><td>TRUEの場合、ウィンドウサイズは2*delta+1</td></tr>
+<tr><td>linkClass</td><td>string</td><td>リンクのスタイルのためのCSSクラス</td></tr>
+<tr><td>urlVar</td><td>string</td><td>ページ番号を示すためのクエリ変数名(デフォルトは「pageID」)</td></tr>
+<tr><td>path</td><td>string</td><td>ページへの絶対パス(ページ名は除く)</td></tr>
+<tr><td>fileName</td><td>string</td><td>ページ名。appendがTRUEなら"%d"</td></tr>
+<tr><td>fixFileName</td><td>boolean</td><td>FALSEなら、オプションfileNameは上書きされません</td></tr>
+<tr><td>append</td><td>boolean</td><td>TRUEならpageIDはクエリ文字列としてURLに追加。FALSEならfileNameに従ってURLに埋め込まれる(デフォルトは「TRUE」)</td></tr>
+<tr><td>altFirst</td><td>string</td><td>最初のページのリンクに表示されるalt文。デフォルトは「first page」</td></tr>
+<tr><td>altPrev</td><td>string</td><td>前のページのリンクに表示されるalt文。デフォルトは「previous page」</td></tr>
+<tr><td>altNext</td><td>string</td><td>次のページのリンクに表示されるalt文。デフォルトは「next page」</td></tr>
+<tr><td>altLast</td><td>string</td><td>最後のページのリンクに表示されるalt文。デフォルトは「last page」</td></tr>
+<tr><td>altPage</td><td>string</td><td>ページ番号の前に表示されるalt文。デフォルトは「page」</td></tr>
+<tr><td>prevImg</td><td>string</td><td>前のページのリンクである「&lt;&lt;」の代替文字。&lt;img&gt;タグも可能</td></tr>
+<tr><td>nextImg</td><td>string</td><td>次のページのリンクである「&lgt;&gt;」の代替文字。&lt;img&gt;タグも可能</td></tr>
+<tr><td>separator</td><td>string</td><td>ページ番号を分けるための区切り文字。カンマやハイフンの他に&lt;img&gt;タグも可能</td></tr>
+<tr><td>spacesBeforeSeparator</td><td>integer</td><td>区切り文字の前のスペース数</td></tr>
+<tr><td>spacesAfterSeparator</td><td>integer</td><td>区切り文字の後のスペース数</td></tr>
+<tr><td>curPageLinkClassName</td><td>string</td><td>現在のページのリンクのスタイルのためのCSSクラス</td></tr>
+<tr><td>curPageSpanPre</td><td>string</td><td>現在のページのリンクの前のテキスト</td></tr>
+<tr><td>curPageSpanPost</td><td>string</td><td>現在のページのリンクの後のテキスト</td></tr>
+<tr><td>firstPagePre</td><td>string</td><td>最初のページ番号の前の文字。任意の文字列の他に&lt;img&gt;タグも可能</td></tr>
+<tr><td>firstPageText</td><td>string</td><td>最初のページ番号の文字</td></tr>
+<tr><td>firstPagePost</td><td>string</td><td>最初のページ番号の後の文字。任意の文字列の他に&lt;img&gt;タグも可能</td></tr>
+<tr><td>lastPagePre</td><td>string</td><td>最後のページ番号の前の文字。任意の文字列の他に&lt;img&gt;タグも可能</td></tr>
+<tr><td>lastPageText</td><td>string</td><td>最後のページ番号の文字</td></tr>
+<tr><td>lastPagePost</td><td>string</td><td>最後のページ番号の後の文字。任意の文字列の他に&lt;img&gt;タグも可能</td></tr>
+<tr><td>clearIfVoid</td><td>boolean</td><td>1ページしか無い場合にPageリンクを表示しないかどうか</td></tr>
+<tr><td>useSessions</td><td>boolean</td><td>TRUEの場合、ページごとに表示するアイテム数は、$_SESSION[$_sessionVar] 変数に保存</td></tr>
+<tr><td>closeSession</td><td>boolean</td><td>TRUEの場合、セッションはR/Wされた後にクローズする</td></tr>
+<tr><td>sessionVar</td><td>string</td><td>perPageの値を格納するセッション変数名(1ページに複数のPagerを使用する場合に利用)</td></tr>
+<tr><td>showAllText</td><td>string</td><td>generated by getPerPageSelectBox() getPerPageSelectBox() で生成されたセレクトボックスでの 'show all'オプションのために使用されるテキスト</td></tr>
+<tr><td>pearErrorMode</td><td>constant</td><td>raiseError()でPEAR_ERRORモードを使用するかどうか(デフォルトは「PEAR_ERROR_RETURN」)</td></tr>
+</table>
+
+			<p>
+			数多くのオプションがありますが、必ず指定しなければいけないオプションは「itemData」又は「totalItems」となります。また「append」が「FALSE」に設定されている場合は「filename」も指定が必要です。
+			</p>
+
+			<p>
+			例えば次のように記述します。
+			</p>
+
+<pre class="fixcode">
+$options = array(
+  "totalItems" =&gt; 200,
+  "delta" =&gt; 10,
+  "perPage" =&gt; 8
+);
+
+$pager =&amp; Pager::factory($options);
+</pre>
+
+			<p>
+			Pagerクラスのオブジェクトはこのように作成します。
+			</p>
+
+			<h2>基本情報の設定</h2>
+
+			<p>
+			オプションの中で一番基本となるオプションを確認しておきます。
+			</p>
+
+			<p>
+			まず表示対象となるアイテム数を設定します。オプションの「totalItems」を使います。
+			</p>
+
+<pre class="fixcode">
+array(
+  "totalItems" =&gt; アイテム数
+);
+</pre>
+
+			<p>
+			次に1ページ毎に表示されるアイテム数を設定します。オプションの「perPage」を使います。
+			</p>
+
+<pre class="fixcode">
+array(
+  "totalItems" =&gt; アイテム数,
+  "perPage" =&gt; 1ページ毎に表示されるアイテム数
+);
+</pre>
+
+			<p>
+			アイテム数と1ページ毎に表示されるアイテム数からページ数が計算されます。例えばアイテム数が「50」で1ページに表示されるアイテム数が「8」だった場合にはページ総数は「7」となります。アイテム数が「100」で1ページ毎に表示されるアイテム数が「30」だった場合にはページ総数は「4」となります。
+			</p>
+
+			<p>
+			例えば次のように記述します。
+			</p>
+
+<pre class="fixcode">
+$options = array(
+  "totalItems" =&gt; 50,
+  "perPage" =&gt; 8
+);
+
+$pager =&amp; Pager::factory($options);
+</pre>
+
+			<p>
+			ナビゲーションリンクを作成した時に一度に表示されるページ数を設定します。オプションの「delta」を使います。
+			</p>
+
+<pre class="fixcode">
+array(
+  "totalItems" =&gt; アイテム数,
+  "perPage" =&gt; 1ページ毎に表示されるアイテム数,
+  "delta" =&gt; リンクに表示されるページ数
+);
+</pre>
+
+			<p>
+			「delta」に「5」を指定した場合には現在のページも含めて「1 2 3 4 5」のようにリンクが表示されます。
+			</p>
+
+			<p>
+			例えば次のように記述します。
+			</p>
+
+<pre class="fixcode">
+$options = array(
+  "totalItems" =&gt; 50,
+  "perPage" =&gt; 8,
+  "delta" =&gt; 10
+);
+
+$pager =&amp; Pager::factory($options);
+</pre>
+
+			<p>
+			「delta」の指定を省略した場合、総ページ数が10以上の場合は「10」、総ページ数が10より小さい場合は総ページ数と同じに設定されます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

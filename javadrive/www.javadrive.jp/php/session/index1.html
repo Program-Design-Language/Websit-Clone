@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>セッションの開始 - セッション管理 - PHP入門</title>
+<meta name="keywords" content="開始,セッション,入門,PHP" />
+<meta name="description" content="セッションの開始" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/session/" itemprop="url"><span itemprop="title">セッション管理</span></a></li>
+		</ul>
+</div>
+
+			<h1>セッションの開始</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			まず最初にセッションについて簡単にご説明します。セッションはクッキーと似ていますが、クッキーの場合は管理したい値をクライアント側に保存するのに対し、セッションではサーバ側で管理することです。そしてクライアント側にはどのセッションを使っているかを識別するためのセッションIDだけをクライアント側に保存します。このセッションIDをクライアント側に保存するためにクッキーを使うのが一般的です(つまりセッションを使う場合は同時にクッキーも使います)。
+			</p>
+
+			<p>
+			クッキーだけを使って値をクライアント側に保存する場合は盗み見られる場合などもあります。セッションでは値はサーバ側にセッション変数として保存されますので大事なデータを扱う場合などはセッションの方を出来る限り使います。
+			</p>
+
+			<p>
+			では実際に使ってみましょう。まずクライアントからアクセスが最初にあった場合に、新しいセッションを作成しセッションを開始する必要があります。それにはsession_start関数を使います。
+			</p>
+
+<pre class="mheader">
+session_start
+bool session_start()
+</pre>
+<pre class="mexplain">
+session_start() は、セッションを作成します。もしくは、リクエスト上で
+GET,POSTまたはクッキーにより渡されたセッションIDセッションに基づき現
+在のセッションを復帰します
+
+返り値:
+  常にTRUEを返します。
+</pre>
+
+			<p>
+			セッションがまだ開始されていない状態でこの関数が呼ばれた場合は、新しいセッションを開始しセッションIDを割り当てます。セッションIDはクライアント側にクッキー名「PHPSESSID」で保存されます。(クライアントがクッキーを利用できなくなっている場合は他のページで記載します)。
+			</p>
+
+			<p>
+			セッションが開始されているクライアント(セッションIDがクッキーとして保存されているクライアント)からアクセスがあった場合にこの関数を使っても新たにセッションを開始しなおすのではなく、サーバ側で保存されているセッション変数が利用できるように準備してくれるだけです。
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+    session_start();
+?&gt;
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。まずセッションを開始させて、クライアント側にセッションIDがクッキーとして書き込まれるのかどうかを確認してみましょう。
+			</p>
+
+			<p>
+			<a href="sessiontest1.php.htm" tppabs="https://www.javadrive.jp/php/session/sessiontest1.php">sessiontest1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+    session_start();
+?&gt;
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+    if (!isset($_COOKIE["PHPSESSID"])){
+        print('初回の訪問です。セッションを開始します。');
+    }else{
+        print('セッションは開始しています。&lt;br&gt;');
+        print('セッションIDは '.$_COOKIE["PHPSESSID"].' です。');
+    }
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/php/session/img/p1.png" alt="PHPでセッション開始" width="495" height="293">
+			</p>
+
+			<p>
+			最初にアクセスした時にセッションが開始されます。その時、セッションIDが割り当てられ自動的にクライアントにクッキーを使ってセッションIDが保存されます。ここでブラウザの再読み込みなどでページを更新して下さい。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/php/session/img/p2.png" alt="PHPでセッション開始" width="494" height="294">
+			</p>
+
+			<p>
+			今度はクッキー名「PHPSESSID」がクライアントから送られてきます。セッションは新規に開始されず以前のものが利用されます。セッションIDを表示して見ると分かりますが、セッションIDはランダムな値が使われるようになっています。
+			</p>
+
+			<p>
+			今回はセッションを開始して、セッションIDをクライアントに保存するところまでを確認しました。次のページではセッションを利用して保存しておきたい値をサーバに保存する方法を確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

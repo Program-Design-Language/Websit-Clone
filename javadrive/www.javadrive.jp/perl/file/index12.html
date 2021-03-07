@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文字コードの指定 - ファイル操作 - Perl入門</title>
+<meta name="keywords" content="文字コードの指定,ファイル操作,入門,Perl" />
+<meta name="description" content="文字コードの指定" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/perl/" itemprop="url"><span itemprop="title">Perl入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/perl/file/" itemprop="url"><span itemprop="title">ファイル操作</span></a></li>
+		</ul>
+</div>
+
+			<h1>文字コードの指定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					ファイルからテキストデータを読み込む場合には、ファイルの文字コードをPerlの内部的な文字コードに変換する必要があります。またファイルへテキストデータを書き出す場合はPerlの内部的な文字コードからファイルで使用する文字コードへ変換する必要があります。
+					</p>
+
+					<p>
+					入出力に関する文字コードを設定する方法としては、全ての入出力に対してまとめて指定する方法と、「open」関数を使用する時に個別に指定する方法があります。
+					</p>
+
+					<h2>open プラグマ</h2>
+
+					<p>
+					まずは全ての入力、全ての出力、又は全ての入出力に対してまとめて文字コード指定する方法を確認します。「open」プラグマを使います。
+					</p>
+
+<pre class="fixcomment">
+use open IN  =&gt; ":utf8";
+use open OUT =&gt; ":utf8";
+use open IO =&gt; ":utf8";
+</pre>
+
+<pre class="fixcomment">
+use open IN  =&gt; ":encoding(文字コード)";
+use open OUT =&gt; ":encoding(文字コード)";
+use open IO =&gt; ":encoding(文字コード)";
+</pre>
+
+					<p>
+					「use open IN」は入力の文字コードを、「use open OUT」は出力の文字コードを、「use open IO」は入出力の文字コードを指定します。
+					</p>
+
+					<p>
+					文字コードの指定方法は、UTF-8の場合は「:utf8」と記述し、UTF-8以外の場合は「:encoding(文字コード)」で記述します。例えば「encoding(euc-jp)」や「encoding(cp932)」のように記述します。
+					</p>
+
+<pre class="fixcode">
+use open IN  =&gt; ":utf8";
+use open OUT  =&gt; ":encoding(cp932)";
+</pre>
+
+					<p>
+					また入出力をまとめて指定する場合は次のように記述することも可能です。
+					</p>
+
+<pre class="fixcode">
+use open IO ":utf8";
+use open IO ":encoding(cp932)";
+</pre>
+
+					<p>
+					入力の対象となるファイルや、出力の対象となるファイルが同じ文字コードとなっている場合はこの記述方法を使用して下さい。
+					</p>
+
+					<h2>open関数の引数に指定する</h2>
+
+					<p>
+					個々のファイルとのやり取りの時に個別に文字コードを設定する方法です。「open」関数の3つの引数を指定する書式を使います。
+					</p>
+
+<pre class="fixcomment">
+open(ファイルハンドル名, "モード:文字コード", "ファイル名");
+</pre>
+
+					<p>
+					モードを指定する時に合わせて文字コードを指定します。文字コードの指定方法は「open」プラグマの時と同じくUTF-8の場合は「utf8」と記述し、それ以外の場合は「encoding(文字コード)」と記述します。
+					</p>
+
+					<p>
+					例えば次のように記述します。
+					</p>
+
+<pre class="fixcode">
+open(DATAFILE, "&lt;:utf8", "datain.txt");
+open(DATAFILE, "&gt;:encoding(cp932)", "dataout.txt");
+</pre>
+
+					<p>
+					この場合、「datain.txt」を読み込みで開く時に文字コードをUTF-8に設定し、「dataout.txt」を書き込みで開く時に文字コードを「cp932」に設定します。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なプログラムで確認して見ます。
+					</p>
+
+					<p>
+					<a href="test12-1.pl.htm" tppabs="https://www.javadrive.jp/perl/file/test12-1.pl">test12-1.pl</a>
+					</p>
+
+<pre class="fixcode">
+use strict;
+use warnings;
+use utf8;
+binmode STDIN, ':encoding(cp932)';
+binmode STDOUT, ':encoding(cp932)';
+binmode STDERR, ':encoding(cp932)';
+
+open(DATAFILE, "&lt;:utf8", "data12-1.txt") or die("Error:$!");
+
+while(my $line = &lt;DATAFILE&gt;){
+  chomp($line);
+  print "$line&yen;n";
+}
+
+close(DATAFILE);
+
+open(DATAFILE, "&gt;:encoding(cp932)", "data12-2.txt") or die("Error:$!");
+
+print DATAFILE "加藤 花子&yen;n";
+print DATAFILE "東京都新宿区&yen;n";
+print DATAFILE "女性";
+
+close(DATAFILE);
+</pre>
+
+					<p>
+					上記を「test12-1.pl」の名前で保存します。保存する時の文字コードは「UTF-8」として下さい。
+					</p>
+
+					<p>
+					今回はカレントディレクトリに「data12-1.txt」と言うファイルを用意します。ファイルの文字コードはUTF-8(BOM無し)に設定してあります。
+					</p>
+
+					<p>
+					コマンドプロンプトを起動し、プログラムを保存したディレクトリに移動してから次のように実行して下さい。
+					</p>
+
+					<p>
+					<img src="img/p12-1.png" tppabs="https://www.javadrive.jp/perl/file/img/p12-1.png" alt="文字コードの指定" width="509" height="246">
+					</p>
+
+					<p>
+					「UTF-8」で記述されたファイルの内容を読み込み画面に表示しています。
+					</p>
+
+					<p>
+					また「data12-2.txt」と言うファイル名を指定し書き込み用にファイルを開いています。「data12-2.txt」は存在していないファイルですので新規に作成されます。書き込み時の文字コードとして「cp932(Shift_JIS)」を指定していますので、作成された「data12-2.txt」ファイルの文字コードは「cp932」となっています。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

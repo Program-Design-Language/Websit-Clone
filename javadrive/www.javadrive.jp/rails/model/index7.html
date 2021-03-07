@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新しいマイグレーションを追加してテーブルを変更 - Ruby on Rails入門</title>
+<meta name="keywords" content="新しいマイグレーションを追加してテーブルを変更" />
+<meta name="description" content="新しいマイグレーションを追加してテーブルにカラムを追加したり削除したりする方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/model/" itemprop="url"><span itemprop="title">モデルとデータベース</span></a></li>
+		</ul>
+</div>
+
+			<h1>新しいマイグレーションを追加してテーブルを変更</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			モデルを作成することで自動的にテーブルを作成するためのマイグレーションスクリプトが作成されますが、作成したテーブルにカラムやインデックスを追加するといった変更についてもマイグレーション機能を使って行なうことができます。ここでは新しいマイグレーションスクリプトを作成してテーブルに変更を加える方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">マイグレーションスクリプトの作成</a><br />
+			2.<a href="#section2">カラムの追加と削除の場合</a><br />
+			3.<a href="#section3">マイグレーションスクリプトの削除</a><br />
+			4.<a href="#section4">マイグレーションスクリプトの実行</a><br />
+			</p>
+
+<h2><a id="section1">マイグレーションスクリプトの作成</a></h2>
+
+			<p>
+			マイグレーションを使ってテーブルに変更を行う場合、以前のマイグレーションスクリプトを修正するのではなく、変更を加える為の別のマイグレーションスクリプトを作成し実行します。
+			</p>
+
+			<p>
+			モデルを作成する時に自動で作成されるものではなく、新しくマイグレーションスクリプトを作成するには次のように実行します。
+			</p>
+
+<pre class="fixcomment">
+rails generate migration クラス名
+</pre>
+
+			<p>
+			クラス名は任意ですが、通常は「行なう処理＋テーブル名」のようになります。例えば「AddColumnTitles」です。
+			</p>
+
+			<p>
+			では実際に実行してみます。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-1.png" alt="p7-1" width="517" height="286" />
+			</p>
+
+			<p>
+			マイグレーションスクリプトファイルが「db/migrate/20120416054354_add_column_titles.rb」に作成されており中身は次のようになっています。
+			</p>
+
+<pre class="fixcode">
+class AddColumnTitles &lt; ActiveRecord::Migration
+  def up
+  end
+
+  def down
+  end
+end
+</pre>
+
+			<p>
+			中身が空のupメソッドとdownメソッドが定義されてクラスが記述されています。クラス名は先程実行する時に指定したクラス名となっています。あとは実行した処理をupメソッドの中に記述し、変更を元に戻すための処理をdownメソッドの中に記述します。
+			</p>
+
+<pre class="fixcode">
+class AddColumnTitles &lt; ActiveRecord::Migration
+  def up
+    add_column :titles, :place, :string
+  end
+
+  def down
+    remove_column :titles, :place, :string
+  end
+end
+</pre>
+
+			<p>
+			これでテーブルに変更を加えるためのマイグレーションスクリプトが完成しました。
+			</p>
+
+<h2><a id="section2">カラムの追加と削除の場合</a></h2>
+
+			<p>
+			カラムの追加、またはカラムの削除を行いたい場合、「rails generate migration」を実行する時に特別な規則に従った名前を指定し、引数に追加又は削除するカラム名とデータ型の組み合わせを指定することで、自動的に「add_column」又は「remove_column」メソッドを呼び出す文がスクリプトファイル内に記載されます。
+			</p>
+
+			<p>
+			書式は次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+rails generate migration クラス名 カラム名:データ型( カラム名:データ型)
+</pre>
+
+			<p>
+			クラス名は「AddXXXToYYY」または「RemoveXXXFromYYY」とします。「YYY」にはテーブル名を指定します。「XXX」には追加又は削除するカラム名を指定するのですが違う文字列でも構いません(複数のカラムを同時に追加する場合などは指定できないので)。
+			</p>
+
+			<p>
+			では実際に実行してみます。まずはinteger型の「price」カラムとstring型の「author」カラムを追加してみます。
+			</p>
+
+<pre class="fixcode">
+rails generate migration AddDetailsToTitles price:integer author:string
+</pre>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-2.png" alt="p7-2" width="517" height="286" />
+			</p>
+
+			<p>
+			マイグレーションスクリプトファイルが「db/migrate/20120416072618_add_details_to_titles.rb」に作成されており中身は次のようになっています。
+			</p>
+
+<pre class="fixcode">
+class AddDetailsToTitles &lt; ActiveRecord::Migration
+  def change
+    add_column :titles, :price, :integer
+
+    add_column :titles, :author, :string
+
+  end
+end
+</pre>
+
+			<p>
+			クラス名で指定したテーブルに対して指定した2つのカラムを追加するための文が記述されています。(add_columnとremove_columnの呼び出したがそれぞれ使われるため、upメソッドとdownメソッドではなくchangeメソッドが使われています。詳しくは「<a href="index5.html#section2" tppabs="https://www.javadrive.jp/rails/model/index5.html#section2">up、down、changeメソッド</a>」をご参照下さい)。
+			</p>
+
+			<p>
+			次に先程追加したstring型の「author」カラムを削除してみます。
+			</p>
+
+<pre class="fixcode">
+rails generate migration RemoveAuthorFromTitles author:string
+</pre>
+
+			<p>
+			<img src="img/p7-3.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-3.png" alt="p7-3" width="517" height="286" />
+			</p>
+
+			<p>
+			マイグレーションスクリプトファイルが「db/migrate/20120416074444_remove_author_from_titles.rb」に作成されており中身は次のようになっています。
+			</p>
+
+<pre class="fixcode">
+class RemoveAuthorFromTitles &lt; ActiveRecord::Migration
+  def up
+    remove_column :titles, :author
+      end
+
+  def down
+    add_column :titles, :author, :string
+  end
+end
+</pre>
+
+			<p>
+			クラス名で指定したテーブルに対してカラムを削除するための文が記述されています。(この場合はchangeメソッドではなくupメソッドとdownメソッドを分けて記述する必要があります)。
+			</p>
+
+			<p>
+			このように比較的使われるとカラムの追加と削除についてはここでご紹介した方法を使うと少し簡単にマイグレーションスクリプトを作成できます。
+			</p>
+
+<h2><a id="section3">マイグレーションスクリプトの削除</a></h2>
+
+			<p>
+			作成したマイグレーションスクリプトを実行する前に削除する方法を確認しておきます。現在このアプリケーションでは4つのマイグレーションスクリプトが作成されており、3つはまだ実行されていません。
+			</p>
+
+			<p>
+			<img src="img/p7-4.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-4.png" alt="p7-4" width="542" height="378" />
+			</p>
+
+			<p>
+			挙動を確認するために同じようなマイグレーションスクリプトを作成しました。そのため「20120416054354_add_column_titles.rb」と「20120416072618_add_details_to_titles.rb」については内容が一部同じとなっています。そこで「20120416054354_add_column_titles.rb」の方を削除します。
+			</p>
+
+			<p>
+			「rails generate migration」コマンドで作成したマイグレーションに関するファイルを削除するには次のコマンドを実行します。
+			</p>
+
+<pre class="fixcomment">
+rails destroy migration クラス名
+</pre>
+
+			<p>
+			では実際に試してみます。コマンドプロンプトを起動し、MySQL用のアプリケーションのルートに移動し次のようにコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcode">
+rails destroy migration AddColumnTitles
+</pre>
+
+			<p>
+			<img src="img/p7-5.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-5.png" alt="p7-5" width="517" height="286" />
+			</p>
+
+			<p>
+			「rails generate model migration」で作成されたファイルが全て「rails destroy migration」で削除されていることが確認できます。
+			</p>
+
+<h2><a id="section4">マイグレーションスクリプトの実行</a></h2>
+
+			<p>
+			では作成したマイグレーションスクリプトを実行してテーブルに変更を加えてみます。実行する前に現在のバージョンを確認しておきます。
+			</p>
+
+			<p>
+			<img src="img/p7-6.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-6.png" alt="p7-6" width="517" height="286" />
+			</p>
+
+			<p>
+			現在のバージョンは「20120415162250」です。この時点で実行されていないマイグレーションスクリプトは2つあります。
+			</p>
+
+			<p>
+			<img src="img/p7-7.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-7.png" alt="p7-7" width="542" height="378" />
+			</p>
+
+			<p>
+			それではマイグレーションスクリプトを実行します。コマンドプロンプトを起動しアプリケーションルートに移動後、次のように実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rake db:migrate
+</pre>
+
+			<p>
+			<img src="img/p7-8.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-8.png" alt="p7-8" width="517" height="286" />
+			</p>
+
+			<p>
+			実行結果を見て頂くとお分かり頂けるように2つあった実行されていないマイグレーションスクリプトがバージョンが低い順に実行されていることが分かります。
+			</p>
+
+			<p>
+			では再度バージョンを確認しておきます。
+			</p>
+
+			<p>
+			<img src="img/p7-9.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-9.png" alt="p7-9" width="517" height="286" />
+			</p>
+
+			<p>
+			バージョンが「20120415162250」から「20120416074444」に変更されています。
+			</p>
+
+			<p>
+			2つのマイグレーションスクリプトが実行された結果、「price」カラムと「author」カラムがまず追加され、その後で「author」カラムが削除されていますの「price」カラムだけが追加されているはずです。ではMySQLに接続して確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p7-10.png" tppabs="https://www.javadrive.jp/rails/model/img/p7-10.png" alt="p7-10" width="517" height="286" />
+			</p>
+
+			<p>
+			「price」カラムだけが追加されているのが確認できます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

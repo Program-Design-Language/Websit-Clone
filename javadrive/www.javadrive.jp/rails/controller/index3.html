@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アクションからテンプレートを呼び出す - Ruby on Rails入門</title>
+<meta name="keywords" content="アクションからテンプレートを呼び出す" />
+<meta name="description" content="Railsアプリケーションにてアクションからテンプレートを呼び出して結果を利用者に返す方法を解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/controller/" itemprop="url"><span itemprop="title">コントローラとアクション</span></a></li>
+		</ul>
+</div>
+
+			<h1>アクションからテンプレートを呼び出す</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			利用者からアクションが呼び出されると、アクションはモデルを使ってデータベースからデータを取得するなどを行い、何らかの結果を利用者へ返します。この時、アクションはビュー(テンプレート)を使って利用者へ返す結果を作成します。ここではアクションからテンプレートを呼び出す方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">テンプレートの呼び出し</a><br />
+			2.<a href="#section2">別のアクション用のテンプレートを呼び出す</a><br />
+			3.<a href="#section3">アクションメソッドがなくテンプレートだけがある場合</a><br />
+			4.<a href="#section4">テンプレートが存在しない場合</a><br />
+			</p>
+
+<h2><a id="section1">テンプレートの呼び出し</a></h2>
+
+			<p>
+			Railsではアクションが呼び出された場合、何らかの結果を一度だけ利用者へ返す必要があります。アクションメソッド内で直接利用者へ結果を出力することも可能ですが、通常はビューに該当するテンプレートを使って利用者へ返す結果を作成し出力します。
+			</p>
+
+			<p>
+			特に指定しない場合、アクションが利用するテンプレートは「アクション名.html.erb」という名前のテンプレートを呼び出します。その為、アクションメソッドの中で直接出力を行なったりリダイレクトなどをしなかった場合は、メソッドの最後で自動的にテンプレートが呼び出されることになっています。
+			</p>
+
+			<p>
+			極端な話、次のようにアクションメソッド内が空の場合、メソッドの中では何も処理が行われませんが、最後に「アクション名.html.erb」という名前のテンプレートが自動的に呼び出されます。
+			</p>
+
+<pre class="fixcode">
+class FriendsController &lt; ApplicationController
+  def new
+  end
+end
+</pre>
+
+			<p>
+			アクションから自動的に呼び出されるテンプレートの保存場所は「app/views/コントロール名/」です。例えば「frines」コントローラの「new」アクションが使用するテンプレートは「app/views/friends/new.html.erb」となりますので、手動でテンプレートを作成される場合はこの場所のこのファイル名で作成して下さい。
+			</p>
+
+			<p>
+			では実際に試してみます。「sample」アプリケーションの中に新しく「photos」コントローラを作成し、さらに「index」アクションを同時に作成します。
+			</p>
+
+<pre class="fixcode">
+rails generate controller photos index
+</pre>
+
+			<p>
+			<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-1.png" alt="p3-1" width="517" height="312" />
+			</p>
+
+			<p>
+			作成されたコントローラクラス(app/controllers/photos_controller.rb)を見てみます。
+			</p>
+
+<pre class="fixcode">
+class PhotosController &lt; ApplicationController
+  def index
+  end
+end
+</pre>
+
+			<p>
+			「index」アクションのメソッドの中には何も定義されていません。
+			</p>
+
+			<p>
+			次に「index」アクションから呼び出すテンプレートを作成します。今回の場合は「app/views/photos/index.html.erb」となるのですが、コントローラの作成時にアクションを同時に作成した場合、そのアクションのデフォルトテンプレートも自動的に作成されています。
+			</p>
+
+			<p>
+			<img src="img/p3-2.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-2.png" alt="p3-2" width="547" height="444" />
+			</p>
+
+			<p>
+			自動で作成された「index.html.erb」の中身を確認すると次のような記述がされています。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Photos#index&lt;/h1&gt;
+&lt;p&gt;Find me in app/views/photos/index.html.erb&lt;/p&gt;
+</pre>
+
+			<p>
+			アクションを呼び出した場合、途中で別の出力を返していない場合はアクション名と同じ名前のテンプレートが呼び出され、テンプレートによって作成された結果が利用者へ返されますので、今回「index」アクションを呼び出すと「index.html.erb」によって作成された結果が利用者へ返されることになるわけです。
+			</p>
+
+			<p>
+			では「sample」アプリケーションを実行して下さい。
+			</p>
+
+			<p>
+			<img src="img/p3-3.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-3.png" alt="p3-3" width="517" height="286" />
+			</p>
+
+			<p>
+			次にブラウザから「http://localhost:3000/photos/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p3-4.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-4.png" alt="p3-4" width="517" height="336" />
+			</p>
+
+			<p>
+			※ テンプレートを使ってどのように利用者へ返す結果を作成するのかについては別のページで解説します。
+			</p>
+
+<h2><a id="section2">別のアクション用のテンプレートを呼び出す</a></h2>
+
+			<p>
+			アクション内で条件分岐などを行い、その結果としてデフォルトのテンプレートではない別のアクション用のテンプレートを呼び出したい場合もあります。
+			</p>
+
+			<p>
+			そのような場合は次の構文を使って明示的に呼び出すテンプレート指定することができます。まずは同じコントローラに含まれるアクションに対応したテンプレートを呼び出す場合です。
+			</p>
+
+<pre class="fixcomment">
+render :action =&gt; 'アクション名'
+render 'アクション名'
+</pre>
+
+			<p>
+			別のコントローラに含まれるアクションに対応したテンプレートを呼び出す場合は次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+render :template =&gt; 'コントローラ名/アクション名'
+render 'コントローラ名/アクション名'
+</pre>
+
+			<p>
+			いずれの場合も、指定したアクションを呼び出しているのではなく、アクション名がついたテンプレートを呼び出して利用者へ返す結果を作成しているだけという点に注意して下さい。その為、アクションは実際にコントローラクラス内で定義されている必要はありません。
+			</p>
+
+			<p>
+			例えばindexアクションから同じコントローラ内のnewアクションの名前が付いたテンプレートを呼び出す場合は次のように記述します。
+			</p>
+
+<pre class="fixcode">
+def index
+  render "new"
+end
+</pre>
+
+			<p>
+			この場合、実際に呼び出されるテンプレートは「app/views/photos/new.html.erb」となります。
+			</p>
+
+			<p>
+			別のbooksコントローラ内のshowアクションの名前が付いたテンプレートを呼び出す場合は次のように記述します。
+			</p>
+
+<pre class="fixcode">
+def index
+  render "books/show"
+end
+</pre>
+
+			<p>
+			では実際に試して見ます。先程作成したコントローラのクラス(app/controllers/photos_controller.rb)を次のように変更します。
+			</p>
+
+<pre class="fixcode">
+class PhotosController &lt; ApplicationController
+  def index
+    render "show"
+  end
+end
+</pre>
+
+			<p>
+			次に「app/views/photos/show.html.erb」というファイルを作成し、次のように記述します。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Photos#show&lt;/h1&gt;
+&lt;p&gt;Find me in app/views/photos/show.html.erb&lt;/p&gt;
+</pre>
+
+			<p>
+			これで準備はできましたのでアプリケーションを起動し、ブラウザから「http://localhost:3000/photos/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p3-5.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-5.png" alt="p3-5" width="517" height="336" />
+			</p>
+
+			<p>
+			このように「index」アクションを呼び出された時、「show」アクションのテンプレートを使って利用者へ結果を返すことができました。
+			</p>
+
+<h2><a id="section3">アクションメソッドがなくテンプレートだけがある場合</a></h2>
+
+			<p>
+			アクションが呼び出された時、アクションメソッドが定義されていなくてもアクション名が付けられたテンプレートだけあればテンプレートを使って結果が作成されて利用者へ出力されます。
+			</p>
+
+			<p>
+			では実際に試して見ます。先程作成したコントローラのクラス(app/controllers/photos_controller.rb)を次のように変更します。
+			</p>
+
+<pre class="fixcode">
+class PhotosController &lt; ApplicationController
+end
+</pre>
+
+			<p>
+			「index」アクションのメソッドに関する記述を削除しました。ただ「app/views/photos/index.html.erb」はそのまま残してあります。
+			</p>
+
+			<p>
+			ではブラウザから「http://localhost:3000/photos/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p3-6.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-6.png" alt="p3-6" width="517" height="336" />
+			</p>
+
+			<p>
+			このように「index」アクションを呼び出された時、「index」アクションメソッドが定義されていなくても「index」アクションの名前が付いたテンプレートがあればテンプレートを使って利用者へ結果を返すことができました。
+			</p>
+
+<h2><a id="section4">テンプレートが存在しない場合</a></h2>
+
+			<p>
+			アクションメソッド内で直接結果を出力しなければ、アクション名が付けられたテンプレートが自動的に呼び出されますが、そのテンプレートが存在しない場合はエラーとなります。
+			</p>
+
+			<p>
+			では実際に試して見ます。先程作成したコントローラのクラス(app/controllers/photos_controller.rb)を次のように変更します。
+			</p>
+
+<pre class="fixcode">
+class PhotosController &lt; ApplicationController
+  def index
+  end
+end
+</pre>
+
+			<p>
+			そして「index」アクションの名前が付いた「app/views/photos/index.html.erb」を削除します。
+			</p>
+
+			<p>
+			ではブラウザから「http://localhost:3000/photos/index」へアクセスして下さい。すると次のようにエラーが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p3-7.png" tppabs="https://www.javadrive.jp/rails/controller/img/p3-7.png" alt="p3-7" width="517" height="336" />
+			</p>
+
+			<p>
+			エラーメッセージは「Template is missing」です。このエラーメッセージが出た場合は、テンプレートが存在しているかどうか確認してみて下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

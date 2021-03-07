@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データの取得(SELECT) - データベース接続 - サーブレット入門</title>
+<meta name="keywords" content="SELECT,データベース,サーブレット" />
+<meta name="description" content="データの取得(SELECT)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/database/" itemprop="url"><span itemprop="title">データベース接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>データの取得(SELECT)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			データベース接続が出来ましたので、データベースへSQL文を発行してデータを取得してみます。
+			</p>
+
+			<p>
+			SQL文を発行して結果を表示するには次の手順を行います。
+			</p>
+
+<pre class="fixcomment">
+SQL文を実行し結果を取得するためのステートメントを作成する
+データベースへ問い合わせを実行する
+データベースからの結果を取得する
+リソースを開放する
+</pre>
+
+			<p>
+			では順を追って確認していきます。
+			</p>
+
+			<h2>ステートメントを作成する</h2>
+
+			<p>
+			ステートメントは問い合わせを実行したり、問い合わせの結果の取得に関するベースになるものです。ステートメントは「java.sql.Statement」インターフェースのオブジェクトですが、作成するにはコネクションから作成します。具体的には「Connection」インターフェースで定義されている"createStatement"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+createStatement
+Statement createStatement() throws SQLException
+</pre>
+<pre class="mexplain">
+SQL 文をデータベースに送るための Statement オブジェクトを生成します。パ
+ラメータなしの SQL 文は通常、Statement オブジェクトを使用して実行されま
+す。同じ SQL 文が多数回実行される場合は、PreparedStatement オブジェクト
+を使用する方が効率的です。 
+
+返される Statement オブジェクトを使って作成された結果セットは、デフォル
+トでは、TYPE_FORWARD_ONLY の型で、CONCUR_READ_ONLY の並行処理レベルを持
+ちます。 
+
+戻り値:
+  新しいデフォルト Statement オブジェクト 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  Statement stmt = conn.createStatement();
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<h2>問い合わせの実行</h2>
+
+			<p>
+			ステートメントを作成したらSQL文を作成しデータベースに問い合わせを行います。問い合わせを実行するには「Statement」インターフェースで用意されている"executeQuery"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+executeQuery
+ResultSet executeQuery(String sql) throws SQLException
+</pre>
+<pre class="mexplain">
+単一の ResultSet オブジェクトを返す、指定された SQL 文を実行します。
+
+パラメータ:
+  sql - データベースに送られる SQL 文。通常静的 SQL SELECT 文 
+戻り値:
+  指定されたクエリーによって作成されたデータを含む ResultSet オブジェ
+    クト。null にはならない 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合、または指定さ
+    れた SQL 文が単一の ResultSet オブジェクト以外のものを生成する場合
+</pre>
+
+			<p>
+			引数にはデータベースに送りたいSQL文が書かれた文字列を指定します。"executeQuery"メソッドを実行した結果、データベースから何らかの結果が帰ってくる場合には「ResultSet」インターフェースのオブジェクトとして取得できます。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  Statement stmt = conn.createStatement();
+  String sql = "SELECT * FROM kabukatable";
+  ResultSet rs = stmt.executeQuery(sql);
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<h2>結果の取得</h2>
+
+			<p>
+			SELECTなどのSQL文をデータベースへ送ると結果として複数の行を取得できます。取得した行などの情報は「ResultSet」インターフェースのオブジェクトに格納されていますので、このオブジェクトから実際の値を取得していきます。
+			</p>
+
+			<p>
+			「ResultSet」インターフェースのオブジェクトにはカーソルという概念があります。「ResultSet」オブジェクトには複数の行が含まれていますが、カーソルは「ResultSetオブジェクト」の中での現在の行の位置を表します。
+			</p>
+
+			<p>
+			最初はカーソルは先頭の行の1つ前にあります。その為、「ResultSet」から何か値を取り出そうとすると、まずカーソルを1つ進めて最初の行の位置にカーソルとを持って行きます。それからデータを取り出すと、「ResultSet」内にある最初の行のデータを取り出せます。次の行のデータを取り出す場合にはカーソルを再度1つ進めて次の行位置にまで持っていってから改めてデータを取り出すことになります。
+			</p>
+
+			<p>
+			カーソルを動かすには「ResultSet」インターフェースで定義されている"next"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+next
+boolean next() throws SQLException
+</pre>
+<pre class="mexplain">
+カーソルを現在の位置から 1 行下に移動します。ResultSet のカーソルは、初
+期状態では最初の行の前に位置付けられています。メソッド next の最初の呼び
+出しによって、最初の行が現在の行になります。2 番目の呼び出しによって 2 
+行目が現在の行になり、以降同様に続きます。 
+
+現在の行で入力ストリームがオープンしている場合、next メソッドへの呼び出
+しは暗黙的にそのストリームをクローズさせます。新しい行が読み込まれるとき
+に、ResultSet オブジェクトの警告チェーンはクリアされます。
+
+戻り値:
+  新しい現在の行が有効な場合は true、それ以上行がない場合は false 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			カーソルは初期状態で最初の行の1つ前にあることに注意して、「ResultSet」オブジェクトに含まれる全ての行を処理するような場合には次のように記述します。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  Statement stmt = conn.createStatement();
+  String sql = "SELECT * FROM kabukatable";
+  ResultSet rs = stmt.executeQuery(sql);
+
+  while(rs.next()){
+    /* 行からデータを取得 */
+  }
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<p>
+			次に現在の行に含まれるカラムの値を取得してみます。カラムは色々なデータ型がありますので、カラムの型に対応した多くのgetXXXXメソッドが用意されています。例えばString型の結果が含まれているカラムから値を取得するには「ResultSet」インターフェースで用意されている"getString"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getString
+String getString(String columnName) throws SQLException
+</pre>
+<pre class="mexplain">
+この ResultSet オブジェクトの現在行にある指定された列の値を、Java プログ
+ラミング言語の String として取得します。 
+
+パラメータ:
+  columnName - 列の SQL 名 
+戻り値:
+  列値。値が SQL NULL の場合、返される値は null 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			引数にカラム名を指定してメソッドを実行すると、現在の行の中の指定のカラムの値を取得することが出来ます。
+			</p>
+
+			<p>
+			データ型毎にメソッドが用意されていますが、一部を紹介すると次のようなものがあります。
+			</p>
+
+<pre class="fixcomment">
+boolean getBoolean(String columnName)
+byte getByte(String columnName)
+Date getDate(String columnName)
+double getDouble(String columnName)
+int getInt(String columnName)
+long getLong(String columnName)
+Timestamp getTimestamp(String columnName)
+</pre>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  Statement stmt = conn.createStatement();
+  String sql = "SELECT * FROM kabukatable";
+  ResultSet rs = stmt.executeQuery(sql);
+
+  while(rs.next()){
+    int code = rs.getInt("code");
+    String company = rs.getString("company");
+  }
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<h2>リソースの開放</h2>
+
+			<p>
+			使わなくなった「ResultSet」オブジェクトは"close"メソッドを使ってリソースを開放しておきましょう。
+			</p>
+
+<pre class="mheader">
+close
+void close() throws SQLException
+</pre>
+<pre class="mexplain">
+自動的にクローズされるとき、これを待つのではなく、ただちに ResultSet オ
+ブジェクトのデータベースと JDBC リソースを解放します。 
+
+注: ResultSet オブジェクトは、このオブジェクトを生成した Statement オブ
+ジェクトが閉じられるとき、再実行されるとき、または一連の複数の結果から次
+の結果を取り出すのに使用されるときに、その Statement によって自動的にク
+ローズされます。ResultSet オブジェクトがガベージコレクトされるときにも自
+動的にクローズされます。
+
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			また「Statement」オブジェクトも同様に"close"メソッドを使ってリソースを開放します。
+			</p>
+
+<pre class="mheader">
+close
+void close() throws SQLException
+</pre>
+<pre class="mexplain">
+自動的にクローズされるときに Statement オブジェクトのデータベースと 
+JDBC リソースが解放されるのを待つのではなく、ただちにそれらを解放します。
+データベースのリソースを占有するのを避けるために、通常は、作業が終了し
+たらすぐにリソースを解放するようにしてください。 
+
+すでにクローズされた Statement オブジェクトで close メソッドを呼び出す
+と、操作は行われません。 
+
+注: Statement オブジェクトは、ガベージコレクトされるときは自動的にクロー
+ズされます。Statement オブジェクトがクローズされるとき、その現在の 
+ResultSet オブジェクトが存在すれば、それもクローズされます。 
+
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  Statement stmt = conn.createStatement();
+  String sql = "SELECT * FROM kabukatable";
+  ResultSet rs = stmt.executeQuery(sql);
+
+  while(rs.next()){
+    int code = rs.getInt("code");
+    String company = rs.getString("company");
+  }
+
+  rs.close();
+  stmt.close();
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルプログラムで試してみましょう。
+			</p>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;databasetest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;DatabaseTest2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;databasetest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/databasetest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。
+			</p>
+
+			<p>
+			<a href="DatabaseTest2.java.htm" tppabs="https://www.javadrive.jp/servlet/database/DatabaseTest2.java">DatabaseTest2.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
+
+public class DatabaseTest2 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;データベーステスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    Connection conn = null;
+    String url = "jdbc:mysql://localhost/jdbctestdb";
+    String user = "testuser";
+    String password = "testpass";
+
+    try {
+      Class.forName("com.mysql.jdbc.Driver").newInstance();
+      conn = DriverManager.getConnection(url, user, password);
+
+      Statement stmt = conn.createStatement();
+      String sql = "SELECT * FROM kabukatable";
+      ResultSet rs = stmt.executeQuery(sql);
+
+      while(rs.next()){
+        int code = rs.getInt("code");
+        String company = rs.getString("company");
+        out.println("&lt;p&gt;");
+        out.println("コード:" + code + ", 会社名:" + company);
+        out.println("&lt;/p&gt;");
+      }
+
+      rs.close();
+      stmt.close();
+    }catch (ClassNotFoundException e){
+      out.println("ClassNotFoundException:" + e.getMessage());
+    }catch (SQLException e){
+      out.println("SQLException:" + e.getMessage());
+    }catch (Exception e){
+      out.println("Exception:" + e.getMessage());
+    }finally{
+      try{
+        if (conn != null){
+          conn.close();
+        }
+      }catch (SQLException e){
+        out.println("SQLException:" + e.getMessage());
+      }
+    }
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;database&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/database/databasetest」へアクセスしてみます。
+			</p>
+
+			<p>
+			<img src="img/p18.png" tppabs="https://www.javadrive.jp/servlet/database/img/p18.png" alt="データの取得" width="508" height="309">
+			</p>
+
+			<p>
+			今回のサンプルでは「kabukatable」テーブルにある全データを取り出して表示してみました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

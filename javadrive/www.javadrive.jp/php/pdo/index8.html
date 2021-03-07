@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>prepareメソッド - PDOの利用 - PHP入門</title>
+<meta name="keywords" content="prepare,PDO,PHP入門" />
+<meta name="description" content="prepareメソッド" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/pdo/" itemprop="url"><span itemprop="title">PDOの利用</span></a></li>
+		</ul>
+</div>
+
+			<h1>prepareメソッド</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			prepareメソッドはqueryメソッドと似たような機能を提供しますが、SQL文の基本部分が同じで値だけ異なるような場合(例えば同じテーブルに値だけ変えて何回もデータを挿入するような場合です)に効率よく行える機能を提供してくれます。
+			</p>
+
+<pre class="mheader">
+PDO::prepare
+PDOStatement PDO::prepare ( string statement [, array driver_options] )
+</pre>
+<pre class="mexplain">
+PDOStatement::execute() メソッドによって実行される SQL ステートメントを
+準備します。 SQL ステートメントは、文が実行されるときに実際の値に置き換
+えられる 0 個もしくはそれ以上の名前 (:name) もしくは疑問符(?) パラメータ
+マークを含むことができます。 名前と疑問符パラメータを同一 SQL ステートメ
+ント中で使用することはできません。 どちらか一方か、他のパラメータ形式を
+使用してください。 
+
+異なるパラメータを用いて複数回実行されるような文に対し PDO::prepare()と 
+PDOStatement::execute() をコールすることで、ドライバがクライアントまたは
+サーバ側にクエリプランやメタ情報を キャッシュさせるよう調整するため、ア
+プリケーションのパフォーマンスを最適化します。また、パラメータに手動でク
+オートする必要がなくなるので SQL インジェクション攻撃から保護する助けに
+なります。
+
+PDO は元々この機能をサポートしていないドライバに対して プリペアドステー
+トメントとバインドパラメータをエミュレートします。このため、ある形式をサ
+ポートしているがその他の形式をサポートしていないドライバの場合、名前もし
+くは疑問符形式のパラメータを他の適当な値に書き換えることも可能です。
+
+引数：
+  statement  準備、発行する SQL ステートメント。
+  driver_options  この配列は、このメソッドによって返されるPDOStatement 
+    オブジェクトに対して 1 もしくはそれ以上の key=&gt;value の組を含みます。
+    通常、スクロール可能なカーソルを要求するために PDO::ATTR_CURSOR に 
+    PDO::CURSOR_SCROLL を設定する場合に使用することになるでしょう。
+返り値：
+  もしデータベースサーバが正常に文を準備する場合、 PDO::prepare() は 
+    PDOStatement オブジェクトを返します。 もしデータベースサーバが文
+    を準備できなかった場合、 PDO::prepare() は FALSE を返します。
+</pre>
+
+			<p>
+			引数に指定したSQL文をデータベースに対して発行してくれます。queryメソッドと違う点は、SQL文の一部を変数のように記述しておき、その部分に当てはめる値を後から指定できる点です。
+			</p>
+
+			<p>
+			またパラメータを自動的にエスケープ処理をしてくれるため、個別のパラメータについてエスケープ処理を行う必要が無くなります。その為、値が固定で無いSQLを使う場合には、queryメソッドではなくprepareメソッドを使うのが基本となると思います。
+			</p>
+
+			<p>
+			例えば下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin where id &gt; ? AND id &lt; ?';
+$stmt = $dbh-&gt;prepare($sql);
+</pre>
+
+			<p>
+			上記のSQL文の中で「?」が書かれた部分が2箇所あります。この「?」の部分が後で値を指定する箇所となります。
+			</p>
+
+			<p>
+			また「?」ではなく、それぞれ名前を付けたパラメータで指定することも可能です。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin where id &gt; :kagen AND id &lt; :jyougen';
+$stmt = $dbh-&gt;prepare($sql);
+</pre>
+
+			<p>
+			SQL文の中で「:param_name」のようにコロンの後に名前を付けたパラメータを使って後で値を指定する箇所を記述する事も出来ます。
+			</p>
+
+			<p>
+			prepareメソッド自体はデータベースに送信しようとするSQL文の準備をしているだけです。実際にSQL文をデータベースに送るにはPDOStatementクラスで用意されている「execute」メソッドを使います。そして、この「execute」メソッドを実行する際に、先ほど後で指定するとしておいた箇所に入る実際の値を指定します。
+			</p>
+
+			<h2>prepareメソッドで用意したSQL文の発行</h2>
+
+			<p>
+			"execute"メソッドは下記のように定義されています。
+			</p>
+
+<pre class="mheader">
+PDOStatement::execute
+bool PDOStatement::execute ( [array input_parameters] )
+</pre>
+<pre class="mexplain">
+プリペアドステートメントを実行します。もし、プリペアドステートメントがパ
+ラメータマーカを含む場合、次のいずれかを行わなければなりません。
+
+・パラメータマーカに PHP 変数をバインドするため 
+  PDOStatement::bindParam() をコールする。 関連づけされたパラメータマー
+  カがあれば、バインドされた変数は入力値を渡す もしくは出力値を受け取り
+  ます。
+
+・入力専用のパラメータ値の配列を渡す
+
+引数：
+  input-parameters  実行される SQL 文の中のバインドパラメータと同数の要
+    素からなる、値の配列。
+返り値：
+  成功した場合に TRUE を、失敗した場合に FALSE を返します。
+</pre>
+
+			<p>
+			「execute」メソッドを実行するSQL文に引数があった場合(後で値を指定するために「?」や名前付きパラメータを指定した場合)、「execute」メソッドの引数に、値を配列の形で指定します。
+			</p>
+
+			<p>
+			例えば「?」を使って2箇所値を指定するようなSQL文を使った場合で考えます。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin where id &gt; ? AND id &lt; ?';
+$stmt = $dbh-&gt;prepare($sql);
+</pre>
+
+			<p>
+			最初の部分に数字の「2」を、次の部分に数字の「4」を指定しようとした場合には下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin where id &gt; ? AND id &lt; ?';
+$stmt = $dbh-&gt;prepare($sql);
+$stmt-&gt;execute(array(2, 4));
+</pre>
+
+			<p>
+			名前付きパラメータを使った場合は、値の指定の仕方が若干異なります。具体的には下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin where id &gt; :kagen AND id &lt; :jyougen';
+$stmt = $dbh-&gt;prepare($sql);
+$stmt-&gt;execute(array(':kagen'=&gt;2, ':jyougen'=&gt;4));
+</pre>
+
+			<p>
+			「execute」メソッドを実行した結果、PDOStatementクラスのオブジェクトには「query」メソッドの場合と同じくSQL文の実行結果が含まれています(SELECT文のような結果がある場合)。そこから実際の値を取り出す方法は「query」メソッドの場合と同じく「fetch」メソッドを使います。(詳しくは『<a href="index7.html" tppabs="https://www.javadrive.jp/php/pdo/index7.html">queryメソッド</a>』を参照して下さい)。
+			</p>
+
+			<p>
+			では実際に試してみます。下記では一度条件を指定してSELECT文を実行した後で、条件の部分だけを変えて再度SELECT文を実行しています。
+			</p>
+
+			<p>
+			<a href="pdotest6.php.htm" tppabs="https://www.javadrive.jp/php/pdo/pdotest6.php">pdotest6.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$dsn = 'mysql:dbname=uriage;host=localhost';
+$user = 'testuser';
+$password = 'testuser';
+
+try{
+    $dbh = new PDO($dsn, $user, $password);
+
+    print('&lt;br&gt;');
+
+    if ($dbh == null){
+        print('接続に失敗しました。&lt;br&gt;');
+    }else{
+        print('接続に成功しました。&lt;br&gt;');
+    }
+
+    $dbh-&gt;query('SET NAMES sjis');
+
+    print('IDが1より大きく5より小さいものです：&lt;br&gt;');
+
+    $sql = 'select id, name from shouhin where id &gt; ? AND id &lt; ?';
+    $stmt = $dbh-&gt;prepare($sql);
+    $stmt-&gt;execute(array(1, 5));
+
+    while($result = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){
+        print($result['id']);
+        print($result['name'].'&lt;br&gt;');
+    }
+
+    print('IDが3より大きく6より小さいものです：&lt;br&gt;');
+
+    $stmt-&gt;execute(array(3, 6));
+
+    while($result = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){
+        print($result['id']);
+        print($result['name'].'&lt;br&gt;');
+    }
+}catch (PDOException $e){
+    print('Error:'.$e-&gt;getMessage());
+    die();
+}
+
+$dbh = null;
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p15.png" tppabs="https://www.javadrive.jp/php/pdo/img/p15.png" alt="prepareとexecute" width="479" height="333">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

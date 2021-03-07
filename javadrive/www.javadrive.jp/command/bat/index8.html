@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマンドプロンプト | バッチファイルで条件分岐を使う(IF)</title>
+<meta name="description" content="バッチファイルでは IF コマンドを使用して記述した条件が一致する場合にコマンドを実行させることができます。条件には文字列と文字列を比較したり、指定したファイルが存在するかなどを記述することができます。ここでは IF コマンドを使いバッチファイルの中で条件分岐を行う方法について解説します。">
+
+<meta property="og:title" content="バッチファイルで条件分岐を使う(IF)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/command/bat/index8.html">
+<meta property="og:image" content="https://www.javadrive.jp/command/bat/img/p8-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="バッチファイルでは IF コマンドを使用して記述した条件が一致する場合にコマンドを実行させることができます。条件には文字列と文字列を比較したり、指定したファイルが存在するかなどを記述することができます。ここでは IF コマンドを使いバッチファイルの中で条件分岐を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "コマンドプロンプトの使い方",
+    "item": "https://www.javadrive.jp/command/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "バッチファイルの作成",
+    "item": "https://www.javadrive.jp/command/bat/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/command/">コマンドプロンプトの使い方</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/command/bat/">バッチファイルの作成</a></li>
+				</ul>
+			</div>
+
+			<h1>バッチファイルで条件分岐を使う(IF)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			バッチファイルでは IF コマンドを使用して記述した条件が一致する場合にコマンドを実行させることができます。条件には文字列と文字列を比較したり、指定したファイルが存在するかなどを記述することができます。ここでは IF コマンドを使いバッチファイルの中で条件分岐を行う方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">IFコマンドの使い方</a></li>
+			<li><a href="#section2">文字列と文字列を比較する</a></li>
+			<li><a href="#section3">数値と数値を比較する</a></li>
+			<li><a href="#section4">条件式で変数が未定義の場合にエラーにならないようにする</a></li>
+			<li><a href="#section5">ファイルやディレクトリが存在するかどうかを調べる</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">IFコマンドの使い方</a></h2>
+
+			<p>
+			IF コマンドにはいくつか書式がありますが、基本となる記述方法は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF 条件式 コマンド
+</p>
+</div>
+
+			<p>
+			条件式には文字列と文字列を比較したりファイルが存在するかどうかなどを記述します。この条件を満たす場合だけ条件式の後に記述されたコマンドが実行されます。
+			</p>
+
+			<p>
+			条件式を満たす場合の他に満たさなかった場合には別のコマンドを実行させることもできます。次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF 条件式 コマンドA ELSE コマンドB
+</p>
+</div>
+
+			<p>
+			条件式が満たされる場合にはコマンドA、満たされなかった場合にはコマンドBが実行されます。
+			</p>
+
+			<p>
+			また IF コマンドは括弧()を使って複数行に分けて記述することもできます。条件式が満たされた場合に複数のコマンドを実行したい場合などにはこちらの方が記述しやすいかもしれません。注意して頂きたいのは「(」の前と「)」の後には必ず半角スペースを記述する必要があります。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF 条件式 (<br>
+&nbsp;&nbsp;コマンドA1<br>
+&nbsp;&nbsp;コマンドA2<br>
+) ELSE (<br>
+&nbsp;&nbsp;コマンドB1<br>
+&nbsp;&nbsp;コマンドB2<br>
+)
+</p>
+</div>
+
+			<p>
+			それでは条件式の記述の仕方をみていきます。
+			</p>
+
+<h2><a id="section2">文字列と文字列を比較する</a></h2>
+
+			<p>
+			条件式で文字列Aと文字列Bが等しいかどうかを判断するには次のように記述します。文字列Aと文字列Bが等しい場合にコマンドが実行されます。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF 文字列A==文字列B コマンド
+</p>
+</div>
+
+			<p>
+			条件式の前に NOT を記述すると文字列Aと文字列Bが等しくない場合にコマンドが実行されます。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF not 文字列A==文字列B コマンド
+</p>
+</div>
+
+			<p>
+			変数に格納されている値と比較する場合は次のように記述します。比較する文字列の部分も変数でも構いません。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF %変数名%==文字列 コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル if.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set answer=<br>
+set /p answer=本を英語で何と言いますか？<br>
+<br>
+if %answer%==BOOK (<br>
+&nbsp;&nbsp;echo 正解です！<br>
+ ) else (<br>
+&nbsp;&nbsp;echo 残念、不正解です<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると質問が表示されますので回答を入力してください。
+			</p>
+
+			<p>
+			<img src="img/p8-1.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-1.png" alt="文字列と文字列を比較する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			正しい回答を入力すると「正解です！」と表示され、誤った回答をすると「残念、不正解です」と表示されます。
+			</p>
+
+			<p>
+			<img src="img/p8-2.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-2.png" alt="文字列と文字列を比較する(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section3">数値と数値を比較する</a></h2>
+
+			<p>
+			文字列と文字列を比較する場合、等しいかどうかだけではなく比較演算子を使って条件式が正しいかどうかの判断をすることができます。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF 文字列A 比較演算子 文字列B コマンド
+</p>
+</div>
+
+			<p>
+			/I オプションを付けると大文字と小文字の区別を行わずに比較します。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF /I 文字列A 比較演算子 文字列B コマンド
+</p>
+</div>
+
+			<p>
+			使用できる比較演算子は次のようなものがあります。
+			</p>
+
+<table class="pro">
+<tr><th>演算子</th><th>意味</th></tr>
+<tr><td>EQU</td><td>等しい</td></tr>
+<tr><td>NEQ</td><td>等しくない</td></tr>
+<tr><td>LSS</td><td>より小さい</td></tr>
+<tr><td>LEQ</td><td>以下</td></tr>
+<tr><td>GTR</td><td>より大きい</td></tr>
+<tr><td>GEQ</td><td>以上</td></tr>
+
+			<p>
+			この書式は文字列どうしで比較する場合にも使えますが、文字列Aと文字列Bがそれぞれ数字だった場合には、文字列が数値に変換されて比較されるため、数値と数値を比較するためにも使用することができます。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル if.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set answer=<br>
+set /p answer=年齢は何歳ですか？<br>
+<br>
+if %answer%==BOOK (<br>
+&nbsp;&nbsp;echo 正解です！<br>
+ ) else (<br>
+&nbsp;&nbsp;echo 残念、不正解です<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると質問が表示されますので回答を入力してください。
+			</p>
+
+			<p>
+			<img src="img/p8-3.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-3.png" alt="数値と数値を比較する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			入力した数値が18以上かそうでないかによってそれぞれ回答が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p8-4.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-4.png" alt="数値と数値を比較する(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section4">条件式で変数が未定義の場合にエラーにならないようにする</a></h2>
+
+			<p>
+			条件式で変数に格納された値を比較する場合、変数が未定義だとエラーが発生します。先程のサンプルのようにユーザーが入力された値を変数に格納し、変数を文字列や数値と比較する場合などには注意が必要です。
+			</p>
+
+			<p>
+			文字列と文字列で比較する時に使用したバッチファイルを実行したあと、何も入力せずに[Enter]キーを押してみてください。エラーが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p8-5.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-5.png" alt="条件式で変数が未定義の場合にエラーにならないようにする(1)" width="723" height="352">
+			</p>
+
+			<p>
+			このような場合は、条件式の左側と右側をそれぞれダブルクォーテーションで囲ってください。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set answer=
+set /p answer=本を英語で何と言いますか？<br>
+<br>
+if <span class="red">"%answer%"=="BOOK"</span> (<br>
+&nbsp;&nbsp;echo 正解です！<br>
+ ) else (<br>
+&nbsp;&nbsp;echo 残念、不正解です<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行してみると、入力が省略された場合でもエラーとなりません。
+			</p>
+
+			<p>
+			<img src="img/p8-6.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-6.png" alt="条件式で変数が未定義の場合にエラーにならないようにする(2)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			また IF コマンドの次の書式を使って変数が定義されているかどうかを判定することもできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF DEFINED 変数 コマンド
+</p>
+</div>
+
+<div class="titlebox2">
+<p>
+IF NOT DEFINED 変数 コマンド
+</p>
+</div>
+
+			<p>
+			変数が定義されていれば条件式が真となりコマンドが実行されます。NOT を付けた場合は変数が定義されていない場合に条件式が真となりコマンドが実行されます。
+			</p>
+
+			<p>
+			この書式と GOTO コマンドを利用して、何も入力されなかった場合は入力をやり直すようにバッチファイルを書き換えてみます。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<span class="red">:start</span><br>
+set answer=<br>
+set /p answer=本を英語で何と言いますか？<br>
+<br>
+<span class="red">if not defined answer (<br>
+&nbsp;&nbsp;echo 値を入力しなおしてください<br>
+&nbsp;&nbsp;goto start<br>
+)</span><br>
+<br>
+if "%answer%"=="BOOK"</span> (<br>
+&nbsp;&nbsp;echo 正解です！<br>
+ ) else (<br>
+&nbsp;&nbsp;echo 残念、不正解です<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行したあと、質問が表示されたときに何も入力せずに[Enter]キーを押すと、メッセージを表示したあと改めて入力をうながします。
+			</p>
+
+			<p>
+			<img src="img/p8-7.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-7.png" alt="条件式で変数が未定義の場合にエラーにならないようにする(3)" width="723" height="352">
+			</p>
+
+			<p>
+			何か入力をしてから[Enter]キーを押せば、回答が正しいかどうかの判定をします。
+			</p>
+
+			<p>
+			<img src="img/p8-8.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-8.png" alt="条件式で変数が未定義の場合にエラーにならないようにする(4)" width="723" height="352">
+			</p>
+
+<h2><a id="section5">ファイルやディレクトリが存在するかどうかを調べる</a></h2>
+
+			<p>
+			IF コマンドでは条件式としてファイルやディレクトリが存在するかどうかを記述できる書式が用意されています。
+			</p>
+
+<div class="titlebox2">
+<p>
+IF [NOT] EXIST ファイル名 コマンド
+</p>
+</div>
+
+			<p>
+			ファイル名に指定したファイルが存在する場合は条件式が真となりコマンドが実行されます。ファイル名だけを記述した場合はカレントディレクトリ内にあるかどうかを探します。カレントディレクトリ以外のファイルを探す場合は絶対パス付きで指定してください。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル if.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set answer=<br>
+set /p answer=ファイル名を入力してください<br>
+<br>
+if exist %answer% (<br>
+&nbsp;&nbsp;echo ファイルは存在します<br>
+ ) else (<br>
+&nbsp;&nbsp;echo ファイルは存在しません<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行するとファイル名の入力待ちとなります。
+			</p>
+
+			<p>
+			<img src="img/p8-9.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-9.png" alt="ファイルやディレクトリが存在するかどうかを調べる(1)" width="723" height="352">
+			</p>
+
+			<p>
+			入力したファイル名がカレントディレクトリに存在するかどうかを調べて対応するメッセージを表示します。
+			</p>
+
+			<p>
+			<img src="img/p8-10.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-10.png" alt="ファイルやディレクトリが存在するかどうかを調べる(2)" width="723" height="352">
+			</p>
+
+			<p>
+			カレントディレクトリ内にあるサブディレクトリ名を入力した場合も存在した場合は条件式が真となります。ただファイルなのかディレクトリなのかは判別できません。
+			</p>
+
+			<p>
+			<img src="img/p8-11.png" tppabs="https://www.javadrive.jp/command/bat/img/p8-11.png" alt="ファイルやディレクトリが存在するかどうかを調べる(3)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			IF コマンドを使ってバッチファイルの中で条件分岐を行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

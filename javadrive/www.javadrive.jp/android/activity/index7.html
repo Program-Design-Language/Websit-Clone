@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コールバックメソッドがどのタイミングで呼ばれるのかのテスト - Androidプログラミング入門 | JavaDrive</title>
+<meta name="keywords" content="コールバックメソッドがどのタイミングで呼ばれるのかのテスト" />
+<meta name="description" content="簡単なサンプルを使ってコールバックメソッドがどのタイミングで呼ばれるのかのテストします。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/android/" itemprop="url"><span itemprop="title">Androidプログラミング入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/android/activity/" itemprop="url"><span itemprop="title">アクティビティ(Activity)を使った画面作成とレイアウト</span></a></li>
+		</ul>
+</div>
+
+			<h1>コールバックメソッドがどのタイミングで呼ばれるのかのテスト</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前のページにて<a href="index2.html" tppabs="https://www.javadrive.jp/android/activity/index2.html">アクティビティのライフサイクル</a>について解説しました。その中でアクティビティが色々な状態に変わるたびにonCreateなどのコールバックメソッドが呼ばれるという説明をしましたが、このページでは簡単なサンプルを使って実際にどのような操作をすると、どのメソッドが呼び出されるのかを実験してみます。
+			</p>
+
+			<p>
+			1.<a href="#section1">ソースコードの修正</a><br />
+			2.<a href="#section2">テストの実行</a><br />
+			</p>
+
+<h2><a id="section1">ソースコードの修正</a></h2>
+
+			<p>
+			Eclipseで新しいプロジェクトを作成すると、デフォルトで次のようなソースコードが作成されます。
+			</p>
+
+<pre class="fixcode">
+package jp.javadrive.hello;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class HelloActivity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+    }
+}
+</pre>
+
+			<p>
+			onCreateメソッドだけオーバーライドされていますが、残りの6つのメソッドも同じようにオーバーライドします。修正後のソースは次のようになります。
+			</p>
+
+<pre class="fixcode">
+package jp.javadrive.sample1;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+
+public class Sample1Activity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.v("LifeCycle", "onCreate");
+        setContentView(R.layout.main);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.v("LifeCycle", "onStart");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.v("LifeCycle", "onResume");
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.v("LifeCycle", "onPause");
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        Log.v("LifeCycle", "onRestart");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.v("LifeCycle", "onStop");
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.v("LifeCycle", "onDestroy");
+    }
+}
+</pre>
+
+			<p>
+			各メソッドが呼び出されるとLogクラスを使ってログを書き出すようにしています。(onCreateメソッドにもログ出力用のコードが追加されていますのでご注意下さい)。出力されたログはEclipseのLogCatビューに表示されます。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-1.png" alt="p7-1" width="512" height="362" />
+			</p>
+
+			<p>
+			LogCatビューが表示されていなかった場合は、「ウィンドウ」メニューの中の「ビューの表示」メニューをクリックし、さらに「LogCat」メニューをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-2.png" alt="p7-2" width="566" height="320" class="waku"/>
+			</p>
+
+			<p>
+			では実行します。
+			</p>
+
+<h2><a id="section2">テストの実行</a></h2>
+
+			<p>
+			では先程ソースコードを修正したプロジェクトを実行します。まずホーム画面から開始します。
+			</p>
+
+			<p>
+			<img src="img/p7-3.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-3.png" alt="p7-3" width="481" height="452" class="waku" />
+			</p>
+
+<h3>アクティビティの開始</h3>
+
+			<p>
+			表示されたアイコンをクリックしてアプリを起動します。
+			</p>
+
+			<p>
+			<img src="img/p7-4.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-4.png" alt="p7-4" width="481" height="452" class="waku" />
+			</p>
+
+			<p>
+			この時、LogCatビューを見ると次のようにログが出力されています。
+			</p>
+
+			<p>
+			<img src="img/p7-5.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-5.png" alt="p7-5" width="561" height="259" class="waku" />
+			</p>
+
+			<p>
+			onCreateメソッド、onStartメソッド、onResumeメソッドの順でコールバックメソッドが呼び出されています。これはアクティビティのライフサイクルのページでご説明した下記の部分に該当します。
+			</p>
+
+			<p>
+			<img src="img/p7-6.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-6.png" alt="p7-6" width="189" height="311" />
+			</p>
+
+<h3>別のアクティビティが開始</h3>
+
+			<p>
+			では別のアクティビティを開始してみます。エミュレーター上の電話のアイコンをクリックします。
+			</p>
+
+			<p>
+			<img src="img/p7-7.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-7.png" alt="p7-7" width="481" height="452" class="waku" />
+			</p>
+
+			<p>
+			この時、LogCatビューを見ると次のようにログが出力されています。
+			</p>
+
+			<p>
+			<img src="img/p7-8.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-8.png" alt="p7-8" width="563" height="256" class="waku" />
+			</p>
+
+			<p>
+			onPauseメソッドが呼び出されています。
+			</p>
+
+			<p>
+			そしてエミュレーター上では新しいアクティビティが表示され、元のアクティビティは隠れて見えなくなりました。
+			</p>
+
+			<p>
+			<img src="img/p7-9.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-9.png" alt="p7-9" width="481" height="452" class="waku" />
+			</p>
+
+			<p>
+			この時、LogCatビューを見ると次のようにログが出力されています。
+			</p>
+
+			<p>
+			<img src="img/p7-10.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-10.png" alt="p7-10" width="562" height="259" class="waku" />
+			</p>
+
+			<p>
+			onStopメソッドが呼び出されています。これはアクティビティのライフサイクルのページでご説明した下記の部分に該当します。
+			</p>
+
+			<p>
+			<img src="img/p7-11.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-11.png" alt="p7-11" width="274" height="241" />
+			</p>
+
+<h3>元のアクティビティが再び表示</h3>
+
+			<p>
+			次にエミュレーター上のBackアイコンをクリックして元のアクティビティを再び表示させてみます。
+			</p>
+
+			<p>
+			<img src="img/p7-12.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-12.png" alt="p7-12" width="481" height="452" class="waku" />
+			</p>
+
+			<p>
+			この時、LogCatビューを見ると次のようにログが出力されています。
+			</p>
+
+			<p>
+			<img src="img/p7-13.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-13.png" alt="p7-13" width="562" height="260" class="waku" />
+			</p>
+
+			<p>
+			onRestartメソッド、onStartメソッド、onResumeメソッドが順に呼び出されています。これはアクティビティのライフサイクルのページでご説明した下記の部分に該当します。
+			</p>
+
+			<p>
+			<img src="img/p7-14.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-14.png" alt="p7-14" width="379" height="312" />
+			</p>
+
+<h3>アクティビティの終了</h3>
+
+			<p>
+			ではもう一度エミュレーター上のBackアイコンをクリックして最初のホーム画面を表示させます。
+			</p>
+
+			<p>
+			<img src="img/p7-15.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-15.png" alt="p7-15" width="481" height="452" class="waku" />
+			</p>
+
+			<p>
+			この時、LogCatビューを見ると次のようにログが出力されています。
+			</p>
+
+			<p>
+			<img src="img/p7-16.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-16.png" alt="p7-16" width="562" height="260" class="waku" />
+			</p>
+
+			<p>
+			onPauseメソッド、onStopメソッド、onDestroyメソッドが順に呼び出されています。これはアクティビティのライフサイクルのページでご説明した下記の部分に該当します。
+			</p>
+
+			<p>
+			<img src="img/p7-17.png" tppabs="https://www.javadrive.jp/android/activity/img/p7-17.png" alt="p7-17" width="186" height="311" />
+			</p>
+
+			<p>
+			このようにアクティビティのライフサイクルのところで解説したそのままの形でコールバックメソッドが呼び出されていることが確認できました。実際にはメモリが必要になった場合などに今回説明した挙動とは異なる動きをする場合もありますが、基本的には今回ご説明した通りのタイミングでコールバックメソッドが呼び出されますので、必要な処理を行いたいメソッドをオーバーライドして処理を記述するようにして下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

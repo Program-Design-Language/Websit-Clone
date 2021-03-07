@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | 正規表現グループを設定してパターンの一部にマッチした文字列を取得する</title>
+<meta name="description" content="正規表現のパターンの中に正規表現グループ(キャプチャグループ)を設定することで、パターン全体にマッチした文字列とは別に、パターンの中の一部分にマッチした文字列を取得することができます。ここでは Java の正規表現で正規表現グループを利用する方法について解説します。">
+
+<meta property="og:title" content="正規表現グループを設定してパターンの一部にマッチした文字列を取得する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/regex/index13.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/regex/img/p13-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現のパターンの中に正規表現グループ(キャプチャグループ)を設定することで、パターン全体にマッチした文字列とは別に、パターンの中の一部分にマッチした文字列を取得することができます。ここでは Java の正規表現で正規表現グループを利用する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "Java正規表現の使い方",
+	"item": "https://www.javadrive.jp/start/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/">Java正規表現の使い方</a></li>
+				</ul>
+			</div>
+
+			<h1>正規表現グループを設定してパターンの一部にマッチした文字列を取得する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現のパターンの中に正規表現グループ(キャプチャグループ)を設定することで、パターン全体にマッチした文字列とは別に、パターンの中の一部分にマッチした文字列を取得することができます。ここでは Java の正規表現で正規表現グループを利用する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">正規表現グループを設定する</a></li>
+			<li><a href="#section2">正規表現グループでマッチした文字列を取得する</a></li>
+			<li><a href="#section3">正規表現グループでキャプチャした最初の文字と最後の文字のインデックスを取得する</a></li>
+			<li><a href="#section4">パターンの中の正規表現グループ数を取得する</a></li>
+			<li><a href="#section5">マッチした文字列の取得を行わない正規表現グループを設定する</a></li>
+			<li><a href="#section6">先にマッチした値と同じ値にあとからマッチするパターン</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">正規表現グループを設定する</a></h2>
+
+			<p>
+			正規表現のパターンの中で正規表現グループを設定するには、設定したい部分を括弧()で囲んでください。
+			</p>
+
+<div class="titlebox2">
+<pre>
+abc(def)ghi
+</pre>
+</div>
+
+			<p>
+			ここで使用する括弧はグループ化の時に指定した括弧と同じものです。グループ化のためにパターンの一部を括弧で囲うと、正規表現グループもあわせて設定されます。
+			</p>
+
+			<p>
+			例えば次のパターンを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "\d{3}-\d{4}";
+</pre>
+</div>
+
+			<p>
+			対象の文字列 "郵便番号は123-4567です" はこのパターンにマッチし、パターン全体がマッチする文字列は 123-4567 です。この時、パターンの中の \d{4} の部分にマッチした部分だけを取得するには正規表現グループを設定します。正規表現グループを設定するには、パターンの中の設定したい部分を括弧で囲います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "\d{3}-(\d{4})";
+</pre>
+</div>
+
+			<p>
+			グループ 1 は次の箇所に設定されました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+グループ 1 : \d{4}
+</pre>
+</div>
+
+			<p>
+			これで文字列がパターンにマッチした時、パターン全体に対してマッチした文字列 123-4567 とは別に、正規表現グループの部分にマッチした 4567 を取得することができます。正規表現グループにマッチした文字列をキャプチャと呼ぶこともあり、また正規表現グループのことをキャプチャグループと呼ぶこともあります。
+			</p>
+
+			<p>
+			正規表現グループは 1 つのパターンの中に複数設定することができます。パターンの中の \d{3} の部分にマッチした部分も取得するために、もう一つ正規表現グループを設定しました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "(\d{3})-(\d{4})";
+</pre>
+</div>
+
+			<p>
+			グループ 1 および グループ 2 は次の箇所に設定されました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+グループ 1 : \d{3}
+グループ 2 : \d{4}
+</pre>
+</div>
+
+			<p>
+			複数の正規表現グループを設定した場合は、前から順番にグループ 1 、グループ 2 のようにインデックスが設定され、あとから正規表現グループのインデックスを指定してマッチした文字列を参照します。
+			</p>
+
+			<p>
+			なおグループのインデックスは、パターンを左から右へ見ていき、括弧の ( が出てきた順番にインデックスが割り当てられていきます。
+			</p>
+
+<h2><a id="section2">正規表現グループでマッチした文字列を取得する</a></h2>
+
+			<p>
+			正規表現グループを設定したパターンを使用し、 find メソッドなどを実行してマッチに成功すると、正規表現グループ毎にマッチした文字列を参照することができます。参照を行うには Matcher クラスの group メソッドを使用します。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public String group​(int group)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+group - この正規表現エンジンのパターンに指定されている前方参照を行う正規表現グループのインデックス<br>
+<br>
+戻り値:<br>
+前回のマッチ時にグループによって前方参照された部分シーケンス(空の場合もある)。グループが入力の一部へのマッチに失敗した場合はnull<br>
+<br>
+例外:<br>
+IllegalStateException - マッチがまだ試みられていない場合、または前回のマッチ操作が失敗した場合<br>
+IndexOutOfBoundsException - 指定されたインデックスを持つ前方参照を行う正規表現グループがそのパターンに含まれない場合
+</p>
+</div>
+
+			<p>
+			1 番目の引数にグループのインデックスを指定します。戻り値として指定したインデックスの正規表現グループでマッチした文字列が返されます。
+			</p>
+
+			<p>
+			なおインデックスに 0 を指定して group メソッドを実行すると、パターン全体とマッチした文字列が返されます。これは引数なしで group メソッドを呼び出したときの戻り値と同じです。(引数なしの group メソッドについては「<a href="index5.html" tppabs="https://www.javadrive.jp/start/regex/index5.html">パターンとマッチした部分文字列の情報を取得する(Matcher.start,Matcher.end,Matcher.group)</a>」を参照してください)。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample13_1{
+  public static void main(String[] args){
+    String regex = "(\\d{3})-(\\d{4})";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("〒123-4567");
+    if (m.find()){
+      System.out.println(m.group());   // 123-4567
+      System.out.println(m.group(0));  // 123-4567
+      System.out.println(m.group(1));  // 123
+      System.out.println(m.group(2));  // 4567
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンに設定した正規表現グループ毎にマッチした文字列を取得することができました。
+			</p>
+
+			<p>
+			<img src="img/p13-1.png" tppabs="https://www.javadrive.jp/start/regex/img/p13-1.png" alt="正規表現グループでマッチした文字列を取得する(1)" width="728" height="144">
+			</p>
+
+<h2><a id="section3">正規表現グループでキャプチャした最初の文字と最後の文字のインデックスを取得する</a></h2>
+
+			<p>
+			正規表現グループとマッチした文字列の最初の文字のインデックスと最後の文字のインデックスを取得することができます。インデックスの取得を行うには Matcher クラスの start メソッドと end メソッドを使用します。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public int start​(int group)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+group - この正規表現エンジンのパターンに指定されている前方参照を行う正規表現グループのインデックス<br>
+<br>
+戻り値:<br>
+グループによって前方参照された最初の文字のインデックス。マッチは成功したがグループ自体はどの部分にもマッチしなかった場合は-1<br>
+<br>
+例外:<br>
+IllegalStateException - マッチがまだ試みられていない場合、または前回のマッチ操作が失敗した場合<br>
+IndexOutOfBoundsException - 指定されたインデックスを持つ前方参照を行う正規表現グループがそのパターンに含まれない場合
+</p>
+</div>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public int end​(int group)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+group - この正規表現エンジンのパターンに指定されている前方参照を行う正規表現グループのインデックス<br>
+<br>
+戻り値:<br>
+グループによって前方参照された最後の文字の後のオフセット。マッチは成功したがグループ自体はどの部分にもマッチしなかった場合は-1<br>
+<br>
+例外:<br>
+IllegalStateException - マッチがまだ試みられていない場合、または前回のマッチ操作が失敗した場合<br>
+IndexOutOfBoundsException - 指定されたインデックスを持つ前方参照を行う正規表現グループがそのパターンに含まれない場合
+</p>
+</div>
+
+			<p>
+			どちらのメソッドも 1 番目の引数にグループのインデックスを指定します。戻り値として指定したインデックスの正規表現グループでマッチした文字列が最初の文字のインデックス、および最後の文字の次の文字のインデックスが返ります。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample13_2{
+  public static void main(String[] args){
+    String regex = "(\\d{3})-(\\d{4})";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("〒123-4567");
+    if (m.find()){
+      System.out.println(m.group(1));  // 123
+      System.out.println(m.start(1));  // 1
+      System.out.println(m.end(1));    // 4
+      System.out.println(m.group(2));  // 4567
+      System.out.println(m.start(2));  // 5
+      System.out.println(m.end(2));    // 9
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンに設定した正規表現グループ毎にマッチした文字列を取得し、マッチした部分のインデックスをそれぞれ取得しました。
+			</p>
+
+			<p>
+			<img src="img/p13-2.png" tppabs="https://www.javadrive.jp/start/regex/img/p13-2.png" alt="正規表現グループでキャプチャした最初の文字と最後の文字のインデックスを取得する(1)" width="728" height="312">
+			</p>
+
+<h2><a id="section4">パターンの中の正規表現グループ数を取得する</a></h2>
+
+			<p>
+			パターンに設定されている正規表現グループの数を取得するには Matcher クラスの groupCount メソッドを使用します。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public int groupCount()</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+戻り値:<br>
+この正規表現エンジンのパターンに指定されている前方参照を行う正規表現グループの数
+</p>
+</div>
+
+			<p>
+			戻り値として、パターンに設定されている正規表現グループの数を返します。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample13_3{
+  public static void main(String[] args){
+    String regex = "((\\d{3})-(\\d{4}))";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("〒123-4567");
+    if (m.find()){
+      System.out.println(m.groupCount());  // 3
+
+      for (int i = 1; i &lt;= m.groupCount(); i++){
+        System.out.println(m.group(i));
+      }
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンに設定した正規表現グループの数を取得し、グループの数だけ正規表現グループとマッチした文字列を画面に出力しています。
+			</p>
+
+<h2><a id="section5">マッチした文字列の取得を行わない正規表現グループを設定する</a></h2>
+
+			<p>
+			グループ化のために使用した括弧であってもパターンの中で括弧()で囲われると正規表現グループが設定されます。例えば選択のときのグループ化などです。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "A(Red|red)B";
+</pre>
+</div>
+
+			<p>
+			マッチした文字列を取得する予定がない場合で、明示的に文字列の取得を行いたくない場合には括弧()の中の最初に ? を記述することでキャプチャを行わないキャプチャグループを設定できます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?:パターン)
+</pre>
+</div>
+
+			<p>
+			「(」と「)」で囲う代わりに「(?:」と「)」で囲います。この書式で囲んだ場合はグループ化としての機能は同じですがキャプチャは行われません。例えば先ほどの選択のためのグループ化であれば次のように記述することでグループを記述したことによるマッチした文字列の取得を行いません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "A(?Red|red)B";
+</pre>
+</div>
+
+			<p>
+			マッチした文字列の取得が目的でないグループに対して使用すると便利です。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample13_4{
+  public static void main(String[] args){
+    String regex = "製品(?:Code|コード):([A-Z]{2})-(\\d{2})";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("製品コード:AZ-07");
+    if (m.find()){
+      System.out.println(m.groupCount());  // 2
+      System.out.println(m.group(1));      // AZ
+      System.out.println(m.group(2));      // 07
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンの中で括弧で囲まれた箇所は 3 箇所ありますが 1 つ目の括弧には ? が記述されているのでマッチした文字列の取得を行いません。その為、マッチした文字列の取得を行う正規表現グループの数は 2 となります。
+			</p>
+
+<h2><a id="section6">先にマッチした値と同じ値にあとからマッチするパターン</a></h2>
+
+			<p>
+			パターンの中で正規表現グループを設定した場合、正規表現グループでマッチした値を同じパターン内から参照し、既にマッチした値と同じ値にマッチするようにパターンに記述することができます。
+			</p>
+
+			<p>
+			参照する場合は、インデックス 1 の正規表現グループでマッチした値を参照するには \1 、インデックス 2 の正規表現グループでマッチした値を参照するには \2 のようにパターン内に記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "(ABC).*\\1";
+</pre>
+</div>
+
+			<p>
+			この場合、 ABC から始まり、任意の文字が 0 回以上続いたあと、 1 番目のキャプチャグループでキャプチャした値と同じ値が続くパターンとなります。 1 番目のキャプチャグループでキャプチャした値は ABC なので /ABC.*ABC/ というパターンと同じです。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample13_5{
+  public static void main(String[] args){
+    String regex = "&lt;(.+)&gt;(.*)&lt;/\\1&gt;";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("AAA&lt;div&gt;BBB&lt;span&gt;CCC&lt;/span&gt;DDD&lt;/div&gt;EEE");
+    if (m.find()){
+      System.out.println(m.group(2));  // BBB&lt;span&gt;CCC&lt;/span&gt;DDD
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは最初に見つかったタグ(今回の場合は &lt;div&gt; )と同じ名前の閉じタグ(今回の場合は &lt;/div&gt; )で囲まれた文字列にマッチしています。同じ名前の閉じタグを探すためにキャプチャした値を後から参照しています。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java の正規表現で複数の文字列のいずれかにマッチするパターンを記述する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

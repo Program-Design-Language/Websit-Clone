@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | Cookieで指定可能な属性の種類と設定方法</title>
+<meta name="description" content="Cookie に値を書き込むときは NAME=VALUE の値が必須ですが、 値を書き込むときに Cookie の有効期限や Cookie が送信されるドメインなど色々な属性を合わせて指定して書き込むことができます。ここでは Cookie で指定可能な属性の種類と使い方と JavaScript から設定を行う方法について解説します。">
+
+<meta property="og:title" content="Cookieで指定可能な属性の種類と設定方法">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/webpage/index18.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/webpage/img/p18-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Cookie に値を書き込むときは NAME=VALUE の値が必須ですが、 値を書き込むときに Cookie の有効期限や Cookie が送信されるドメインなど色々な属性を合わせて指定して書き込むことができます。ここでは Cookie で指定可能な属性の種類と使い方と JavaScript から設定を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "ブラウザでのJavaScriptの利用",
+    "item": "https://www.javadrive.jp/javascript/webpage/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/webpage/">ブラウザでのJavaScriptの利用</a></li>
+				</ul>
+			</div>
+
+			<h1>Cookieで指定可能な属性の種類と設定方法</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Cookie に値を書き込むときは NAME=VALUE の値が必須ですが、 値を書き込むときに Cookie の有効期限や Cookie が送信されるドメインなど色々な属性を合わせて指定して書き込むことができます。ここでは Cookie で指定可能な属性の種類と使い方と JavaScript から設定を行う方法について解説します。
+			</p>
+
+			<p>
+			※ Cookie の読み書きを JavaScript を使って行う基本点な使い方については「<a href="index17.html" tppabs="https://www.javadrive.jp/javascript/webpage/index17.html">Cookieへの書き込みと読み出し(document.cookie)</a>」を参照されてください。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">Cookieの属性の種類と指定方法</a></li>
+			<li><a href="#section2">Cookieの有効期限(Expires属性とMax-Age属性)</a></li>
+			<li><a href="#section3">Cookieを送信するドメイン(Domain属性)</a></li>
+			<li><a href="#section4">Cookieを送信するパス(Path属性)</a></li>
+			<li><a href="#section5">Secure属性とHttpOnly属性</a></li>
+			<li><a href="#section6">SameSite属性</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">Cookieの属性の種類と指定方法</a></h2>
+
+			<p>
+			Cookie に値を書き込むときに指定できる属性には次のようなものがあります。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Expires=DATE   Cookieの有効期限(日付)
+Max-Age=DATE   Cookieの有効期限(秒数)
+Domain=DAMAIN  Cookieを送信するドメイン
+Path=PATH      Cookieを送信するPATH
+Secure         https の通信を使用しているときだけクッキーを送信
+HttpOnly       document.cookieを使ってCookieを扱えなくする
+SameSite=VAL   他サイト経由でリクエスト時にCookieを送信するかどうか
+</pre>
+</div>
+
+			<p>
+			Cookie に値を書き込むとき、属性を指定する場合には次のようにセミコロン(;)のあとに 属性名=値 を記述します。複数の属性を指定することもできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+document.cookie = 'NAME=VALUE; Max-Age=100; Domain=example.com'
+</p>
+</div>
+
+			<p>
+			なお document.cookie を使ってブラウザに保存された Cookie を取得しても、それぞれの値に設定された属性は取得することができません。例えば次のように Max-Age 属性をつけて値を書き込んでも、値を取得すると old=27 のみ取得します。
+			</p>
+
+<div class="titlebox1">
+<p>
+document.cookie = 'old=27; Max-Age=100;';
+alert(document.cookie);
+</p>
+</div>
+
+			<p>
+			Cookie に保存された値の属性を確認したい場合は、ブラウザの機能を使って確認されてください。例えば Chrome の場合はデベロッパーツールから確認できます。(確認方法については「<a href="index17.html#section2" tppabs="https://www.javadrive.jp/javascript/webpage/index17.html#section2">Chromeのデベロッパーツールで保存されているCookieを確認する</a>」を参照されてください)。
+			</p>
+
+			<p>
+			<img src="img/p18-1.png" tppabs="https://www.javadrive.jp/javascript/webpage/img/p18-1.png" alt="Cookieの属性の種類と指定方法(1)" width="728" height="400">
+			</p>
+
+			<p>
+			<img src="img/p18-2.png" tppabs="https://www.javadrive.jp/javascript/webpage/img/p18-2.png" alt="Cookieの属性の種類と指定方法(2)" width="728" height="440" class="waku">
+			</p>
+
+			<p>
+			それではそれぞれの属性について説明します。
+			</p>
+
+<h2><a id="section2">Cookieの有効期限(Expires属性とMax-Age属性)</a></h2>
+
+			<p>
+			Cookie の有効期限は日付形式または秒数で指定します。指定しなかった場合の Cookie の有効期限はセッション終了までとなります。
+			</p>
+
+			<p>
+			日付の形式で指定する場合は Expires 属性に対して「Wdy, DD-Mon-YYYY HH:MM:SS GMT」の形式で指定します。例えば次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">Expires=Wed, 06 Jan 2021 08:11:26 GMT</span>';
+</pre>
+</div>
+
+			<p>
+			秒数で指定する場合は Max-Age 属性に対して有効な期間を表す秒数を指定します。例えば次のようになります。下記の場合は 100 秒となります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">Max-Age=100</span>';
+</pre>
+</div>
+
+			<p>
+			例えば有効期限を 100 秒に設定した場合、 Cookie に値を書き込んでから 100 秒経過すると自動的に Cookie から対象の値が削除されます。
+			</p>
+
+<h2><a id="section3">Cookieを送信するドメイン(Domain属性)</a></h2>
+
+			<p>
+			ブラウザに保存された Cookie は、デフォルトでは Cookie を保存したページのホスト名と同じホスト名のページにアクセスした時にだけ Cookie を送信します。例えば www.example.com/dir/index.html にアクセスした時に保存された Cookie は、同じホストの www.example.com にあるページにアクセスした時に送信されます。 sub.www.example.com などサブドメインへは送信されません。
+			</p>
+
+			<p>
+			Domain 属性には Cookie を発行したホストか、その上位ドメインを設定できます。 Domain 属性を設定した場合、そのドメインおよびサブドメインを使ったホストに対して Cookie が送信されるようになります。例えば example.com を設定する場合は次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">Domain=example.com</span>';
+</pre>
+</div>
+
+			<p>
+			この場合、 Cookie を発行したホストである www.example.com に加えて blog.example.com や host.example.com にあるページにアクセスした時にも Cookie を送信します。また sub.www.example.com にあるページにアクセスした時も Cookie を送信します。
+			</p>
+
+			<p>
+			なおまったく別のドメインを Domain 属性に指定した場合は、その値は Cookie に書き込まれません。
+			</p>
+
+<h2><a id="section4">Cookieを送信するパス(Path属性)</a></h2>
+
+			<p>
+			ブラウザに保存された Cookie は、デフォルトでは Cookie を保存したページと同じパスのページにアクセスした時にだけ Cookie を送信します。例えば www.example.com/dir/index.html にアクセスした時に発行された Cookie は /dir/index と前方一致するパスのページにアクセスした時にだけ送信されます。
+			</p>
+
+			<p>
+			PATH 属性には Cookie を発行したときと同じパスかよりルートディレクトリに近いパスを設定できます。 Path 属性を設定した場合、指定したパスと前方一致するパスのページにアクセスした時に Cookie が送信されるようになります。例えば /dir を設定する場合は次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">Path=/dir</span>';
+</pre>
+</div>
+
+			<p>
+			この場合、 /dir/index.html に加えて /dir/inde2.html や /directory など Path 属性に設置した値と前方一致するパスのページににアクセスした時に Cookie を送信します。
+			</p>
+
+			<p>
+			なおまったく別のパス(例えば /img )を Path 属性に指定した場合は、その値は Cookie に書き込まれません。
+			</p>
+
+<h2><a id="section5">Secure属性とHttpOnly属性</a></h2>
+
+			<p>
+			Secure 属性を記述されている場合、 HTTPS の通信を行っている場合だけ Cookie の送信が行われます。 HTTP で通信を行っている場合は Cookie は送信されません。 Secure 属性を設定する場合は次のように単に Secure とだけ記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">Secure</span>';
+</pre>
+</div>
+
+			<p>
+			HttpOnly 属性を記述されている場合、 JavaScript の document.cookie では値を取得することができません。また document.cookie に対して HttpOnly 属性がついた値を Cookie に書き込むこともできません。 HttpOnly 属性を設定する場合は次のように単に HttpOnly とだけ記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">HttpOnly</span>';
+</pre>
+</div>
+
+<h2><a id="section6">SameSite属性</a></h2>
+
+			<p>
+			SameSite 属性は、例えば A というサイトから B というサイトへリンクなどを経由して遷移するときに、ブラウザに保存されている B の Cookie を送信するかどうかのコントロールをおこなうための属性です。
+			</p>
+
+			<p>
+			設定可能な値は strict, lax, none のいずれかです。 strict を設定した場合は B の Cookie を送信しません。 lax の場合は GET や HEAD など安全なメソッドの場合だけ Cookie が送信され、 POST の場合には送信されません。 none の場合は制限なく B の Cookie を送信します。
+			</p>
+
+			<p>
+			SameSite 属性に strict を設定する場合は次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">SameSite=strict</span>';
+</pre>
+</div>
+
+			<p>
+			Chrome では 2021年1月 の時点で SameSite 属性の設定が行われていない場合は lax が指定されたものとして扱われます。また none を指定する場合は、同時に Secure 属性を設定することが必須となっています。
+			</p>
+
+<div class="titlebox1">
+<pre>
+document.cookie = 'A=B; <span class="red">SameSite=none; Secure</span>';
+</pre>
+</div>
+
+			<p>
+			SameSite 属性にいずれの設定を行った場合でも、ブラウザのアドレスバーに B のサイトの URL を直接入力して B のサイトへアクセスしたような場合には B の Cookie は送信されます。 SameSite 属性に strict または lax を設定することで CSRF (クロスサイト・リクエスト・フォージェリ) のようなセキュリティの問題を防止する効果があると言われています。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;サンプル&lt;/h1&gt;
+
+&lt;p id="msg"&gt;Cookieの読み書きを行います。&lt;/p&gt;
+
+&lt;script&gt;
+document.cookie = 'old=27; SameSite=strict; Secure';
+document.cookie = 'address=Tokyo; Max-Age=100';
+
+let e = document.getElementById('msg');
+e.insertAdjacentHTML('afterend', '&lt;p&gt;' + document.cookie + '&lt;/p&gt;');
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			ブラウザで Web ページを表示すると、先に Cookie を書き込んだあと、今度は保存されている Cookie を読み込んでブラウザに表示します。
+			</p>
+
+			<p>
+			<img src="img/p18-3.png" tppabs="https://www.javadrive.jp/javascript/webpage/img/p18-3.png" alt="Cookieの読み込みと書き込み(3)" width="728" height="400" class="waku">
+			</p>
+
+			<p>
+			Chrome のデベロッパーツールで Cookie 保存されている Cookie を確認してみると、保存されている name=old の値に対しては SameSite 属性と SameSite 属性が設定されており、 name=address の値に対しては Max-Age 属性が設定されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p18-4.png" tppabs="https://www.javadrive.jp/javascript/webpage/img/p18-4.png" alt="Cookieの読み込みと書き込み(4)" width="728" height="460">
+			</p>
+
+			<p>
+			<img src="img/p18-5.png" tppabs="https://www.javadrive.jp/javascript/webpage/img/p18-5.png" alt="Cookieの読み込みと書き込み(5)" width="728" height="248" class="waku">
+			</p>
+
+			<p>
+			name=address の値は有効期限が 100 秒なので、 Cookie に値が保存されてから 100 秒経過したあとでコンソール画面で document.cookie を参照してみると name=address の値だけが消えていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p18-6.png" tppabs="https://www.javadrive.jp/javascript/webpage/img/p18-6.png" alt="Cookieの読み込みと書き込み(6)" width="728" height="600" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Cookie で指定可能な属性の種類と JavaScript から設定を行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

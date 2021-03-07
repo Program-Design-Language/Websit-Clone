@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ファイルに書き込む(fwrite) - ファイル関数 - PHP関数</title>
+<meta name="keywords" content="fwrite,ファイル関数,関数,PHP" />
+<meta name="description" content="ファイルに書き込む(fwrite)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/phpfunc/" itemprop="url"><span itemprop="title">PHP関数</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/phpfunc/file/" itemprop="url"><span itemprop="title">ファイル関数</span></a></li>
+		</ul>
+</div>
+
+			<h1>ファイルに書き込む(fwrite)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ファイルからデータを書き込みます。fwrite関数を使います。この関数ではバイナリモードで書き込みが行われます。
+			</p>
+
+<pre class="mheader">
+fwrite
+int fwrite(resource handle, string string [, int length])
+</pre>
+<pre class="mexplain">
+引数のハンドルで指定したファイルポインタの位置に指定した文字列を書き
+こみます。バイト数が指定されている場合は、バイト数分だけ書き込みます。
+(指定したバイト数よりも文字列が小さい場合には文字列を書き込んだ時点
+で終了)。
+
+引数：
+  handle  対象となるファイルのハンドル
+  string  書き込む文字列
+  length  一度に書き込む最大バイト数
+返り値：
+  書き込んだバイト数。エラーが起こった場合はFALSE
+</pre>
+
+			<p>
+			書き込まれる位置はfopenで指定したモードによって異なります。「r+」「w」「w+」「x」「x+」の場合はファイルポイントが先頭に設定されますので、上書きでファイルの先頭から上書きで書き込みが行われます。「a」「a+」の場合はファイルポインタがファイルの最後に設定されますので、既存のファイルの内容の最後に追加される形で書き込みが行われます。
+			</p>
+
+			<p>
+			またバイナリモードでの書き込みですので、Windows環境で使う場合にはfopenのモードに「b」を追加して下さい。(例：「ab」「wb」)。
+			</p>
+
+			<p>
+			実際の流れは下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$data = 'abcdefg';
+
+$fp = fopen('filename', 'ab');
+
+if ($fp){
+    if (flock($fp, LOCK_EX)){
+        if (fwrite($fp,  $data) === FALSE){
+            print('ファイル書き込みに失敗しました');
+        }else{
+            print($data.'をファイルに書き込みました');
+        }
+
+        flock($fp, LOCK_UN);
+    }else{
+        print('ファイルロックに失敗しました');
+    }
+}
+
+fclose($fp);
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試して見ます。
+			</p>
+
+			<p>
+			<a href="functest43.php.htm" tppabs="https://www.javadrive.jp/phpfunc/file/functest43.php">functest43.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+$data = 'abcdefg';
+
+$fp = fopen('sample.txt', 'ab');
+
+if ($fp){
+    if (flock($fp, LOCK_EX)){
+        if (fwrite($fp,  $data) === FALSE){
+            print('ファイル書き込みに失敗しました&lt;br&gt;');
+        }else{
+            print($data.'をファイルに書き込みました&lt;br&gt;');
+        }
+
+        flock($fp, LOCK_UN);
+    }else{
+        print('ファイルロックに失敗しました&lt;br&gt;');
+    }
+}
+
+$flag = fclose($fp);
+
+if ($flag){
+    print('無事クローズしました');
+}else{
+    print('クローズに失敗しました');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			書き込みの対象となる"sample.txt"は下記のようなファイルです。
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p8.png" alt="fwriteのテスト" width="501" height="305">
+			</p>
+
+			<p>
+			サンプルプログラムをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p9.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p9.png" alt="fwriteのテスト" width="527" height="283">
+			</p>
+
+			<p>
+			今回は追加する形で書き込みを行いましたので"sample.txt"は下記のようになっています。
+			</p>
+
+			<p>
+			<img src="img/p10.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p10.png" alt="fwriteのテスト" width="425" height="245">
+			</p>
+
+			<p>
+			では次に上書きした場合も試してみます。
+			</p>
+
+			<p>
+			<a href="functest44.php.htm" tppabs="https://www.javadrive.jp/phpfunc/file/functest44.php">functest44.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+$data = 'abcdefg';
+
+$fp = fopen('sample.txt', 'wb');
+
+if ($fp){
+    if (flock($fp, LOCK_EX)){
+        if (fwrite($fp,  $data) === FALSE){
+            print('ファイル書き込みに失敗しました&lt;br&gt;');
+        }else{
+            print($data.'をファイルに書き込みました&lt;br&gt;');
+        }
+
+        flock($fp, LOCK_UN);
+    }else{
+        print('ファイルロックに失敗しました&lt;br&gt;');
+    }
+}
+
+$flag = fclose($fp);
+
+if ($flag){
+    print('無事クローズしました');
+}else{
+    print('クローズに失敗しました');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			書き込みの対象となる"sample.txt"は下記のようなファイルです。
+			</p>
+
+			<p>
+			<img src="img/p11.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p11.png" alt="fwriteのテスト" width="501" height="305">
+			</p>
+
+			<p>
+			サンプルプログラムをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p12.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p12.png" alt="fwriteのテスト" width="525" height="283">
+			</p>
+
+			<p>
+			今回は上書きする形で書き込みを行いましたので"sample.txt"は下記のようになっています。
+			</p>
+
+			<p>
+			<img src="img/p13.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p13.png" alt="fwriteのテスト" width="441" height="236">
+			</p>
+
+			<p>
+			上書きの場合は、既存の内容が全て消えた上で頭から書き込みということになりますので注意して下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

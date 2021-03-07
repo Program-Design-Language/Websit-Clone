@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パラメータの取得 - Ruby on Rails入門</title>
+<meta name="keywords" content="パラメータの取得" />
+<meta name="description" content="Railsアプリケーションにて利用者から送られて来たリクエストに含まれるパラメータを取得する方法を確認します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/controller/" itemprop="url"><span itemprop="title">コントローラとアクション</span></a></li>
+		</ul>
+</div>
+
+			<h1>パラメータの取得</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			通常アプリケーションを利用する場合、単にリクエストだけを送信することは少なく、例えば新しいデータを登録する場合には登録する情報をブラウザ上で入力し、パラメータとしてリクエストと一緒に送信されてきます。ここでは送られて来たパラメータをアプリケーション側で取り出して利用する方法を確認します。
+			</p>
+
+			<p>
+			1.<a href="#section1">パラメータの取得</a><br />
+			2.<a href="#section2">クエリ形式でのパラメータ</a><br />
+			3.<a href="#section3">POSTを使って送信されたパラメータの取得</a><br />
+			4.<a href="#section4">パラメータでハッシュを渡す</a><br />
+			5.<a href="#section5">パラメータで配列を渡す</a><br />
+			</p>
+
+<h2><a id="section1">パラメータの取得</a></h2>
+
+			<p>
+			利用者からのリクエストにパラメータをどのように含めるのかは「<a href="../routing/index.htm" tppabs="https://www.javadrive.jp/rails/routing/">ルーティングの設定</a>」次第ではありますが、HTTPメソッドとしてGETを使う場合、Railsでは次のようなURL形式でパラメータをURLに含めてリクエストを送信します。
+			</p>
+
+			<p>
+			例として「travels」コントローラの「show」アクションを呼び出す時にパラメータ名「id」の値をリクエストに含める場合は次のようなRLでアクセスします。
+			</p>
+
+<pre class="fixcode">
+http://localhost:3000/travels/show/10
+</pre>
+
+			<p>
+			これに対し、例えばルーティングを次のように設定します。
+			</p>
+
+<pre class="fixcode">
+match 'travels/show/:id' =&gt; 'travels#show'
+</pre>
+
+			<p>
+			するとリクエストに含まれる「10」という値をパラメータ名「id」で取得することができます。そしてアクションメソッドの中では、次のように記述することでパラメータ名を指定して値を取得することができます。
+			</p>
+
+<pre class="fixcomment">
+params[:パラメータ名]
+</pre>
+
+			<p>
+			先程の場合であれば次のように記述を行うことでパラーメータの値を取得して利用できます。
+			</p>
+
+<pre class="fixcode">
+class TravelsController &lt; ApplicationController
+  def show
+    @id = params[:id]
+  end
+end
+</pre>
+
+			<div class="borderdiv">
+			なおパラメータの値を取得すると文字列となります。10などの値であっても数値ではありませんのでご注意下さい。
+			</div>
+
+			<p>
+			では実際に試してみます。「sample」アプリケーションの中に新しく「travels」コントローラを作成し、さらに「show」アクションを同時に作成します。
+			</p>
+
+<pre class="fixcode">
+rails generate controller travels show
+</pre>
+
+			<p>
+			<img src="img/p6-1.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-1.png" alt="p6-1" width="517" height="312" />
+			</p>
+
+			<p>
+			作成されたコントローラクラス(app/controllers/travels_controller.rb)を次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class TravelsController &lt; ApplicationController
+  def show
+    render :text =&gt; "id = #{params[:id]}"
+  end
+end
+</pre>
+
+			<p>
+			またルーティングの設定ファイルである「config/routes.rb」を次のように修正します。
+			</p>
+
+<pre class="fixcode">
+Sample::Application.routes.draw do
+  get "travels/show/:id" =&gt; "travels#show"
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/travels/show/8」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-2.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-2.png" alt="p6-2" width="474" height="305" />
+			</p>
+
+			<p>
+			リクエストのURLに含まれるパラメータの値を取得して出力しています。
+			</p>
+
+			<p>
+			ではパラメータが複数の場合も試してみます。「show」メソッドを次のように変更します。
+			</p>
+
+<pre class="fixcode">
+class TravelsController &lt; ApplicationController
+  def show
+    render :text =&gt; "upper = #{params[:upper]}, lower = #{params[:lower]}"
+  end
+end
+</pre>
+
+			<p>
+			またルーティングの設定ファイルである「config/routes.rb」を次のように修正します。
+			</p>
+
+<pre class="fixcode">
+Sample::Application.routes.draw do
+  get "travels/show/:upper/:lower" =&gt; "travels#show"
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/travels/show/32/15」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-3.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-3.png" alt="p6-3" width="474" height="305" />
+			</p>
+
+			<p>
+			リクエストのURLに含まれる複数のパラメータの値を取得して出力することができました。
+			</p>
+
+<h2><a id="section2">クエリ形式でのパラメータ</a></h2>
+
+			<p>
+			Railsの場合はあまり使われないかもしれないですが、クエリ形式でパラメータを渡すこともできます。クエリ形式とは次のような形式のURLのことです。
+			</p>
+
+<pre class="fixcode">
+http://localhost:3000/travels/show?upper=35&amp;lower=10
+</pre>
+
+			<p>
+			URLの最後に「?」に続けて「パラメータ名=値」を記述します。複数のパラメータがある場合は「&amp;」でつなげて記述します。
+			</p>
+
+			<p>
+			では実際に試してみます。今回はルーティングの設定ファイルである「config/routes.rb」を次のように修正します。
+			</p>
+
+<pre class="fixcode">
+Sample::Application.routes.draw do
+  get "travels/show" =&gt; "travels#show"
+end
+</pre>
+
+			<p>
+			パラメータに関する部分だけを削除しました。(今回の場合は単に「get "travels/show"」とだけ記載して頂いて結構です)。
+			</p>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/travels/show?upper=40&amp;lower=21」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-4.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-4.png" alt="p6-4" width="474" height="305" />
+			</p>
+
+			<p>
+			このようにクエリ形式でパラーメータを指定した場合でもパラメータの値を取得して出力することができました。
+			</p>
+
+<h2><a id="section3">POSTを使って送信されたパラメータの取得</a></h2>
+
+			<p>
+			HTTPメソッドとしてPOSTを使って送信されたパラメータを取得する場合も確認しておきます。次のようなフォームが含まれるHTMLページを作成しました。
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /&gt;
+&lt;title&gt;POSTサンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;POSTサンプル&lt;/p&gt;
+  
+&lt;form method="post" action="/travels/show"&gt;
+ &lt;p&gt;
+ 旅行先：&lt;input type="text" name="dest" /&gt;&lt;br /&gt;
+ 人数：&lt;input type="text" name="num" /&gt;人&lt;br /&gt;
+ &lt;input type="submit" value="送信" /&gt;
+ &lt;/p&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			method属性には「POST」を指定し、action属性には「/travels/show」を指定して「travels」コントロールの「show」アクションを呼び出すようにします。
+			</p>
+
+			<p>
+			作成したHTMLページを「public/post.html」に保存しました。
+			</p>
+
+			<p>
+			<img src="img/p6-5.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-5.png" alt="p6-5" width="547" height="421" />
+			</p>
+
+			<p>
+			続いて「show」メソッドを次のように変更します。(日本語が含まれているので「# coding: utf-8」を忘れないで下さい)。
+			</p>
+
+<pre class="fixcode">
+# coding: utf-8
+
+class TravelsController &lt; ApplicationController
+  def show
+    render :text =&gt; "旅行先 = #{params[:dest]}, 人数 = #{params[:num]}人"
+  end
+end
+</pre>
+
+			<p>
+			またルーティングの設定ファイルである「config/routes.rb」を次のように修正します。
+			</p>
+
+<pre class="fixcode">
+Sample::Application.routes.draw do
+  post "travels/show" =&gt; "travels#show"
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/post.html」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-6.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-6.png" alt="p6-6" width="474" height="305" />
+			</p>
+
+			<p>
+			テキストボックスへ適当に値を入力し、「送信」ボタンを押して下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-7.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-7.png" alt="p6-7" width="474" height="305" />
+			</p>
+
+			<p>
+			次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p6-8.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-8.png" alt="p6-8" width="474" height="305" />
+			</p>
+
+			<p>
+			このようにPOSTを使って送信した場合でもパラメータの値を取得して出力することができました。
+			</p>
+
+<h2><a id="section4">パラメータでハッシュを渡す</a></h2>
+
+			<p>
+			パラメータとして値を渡す場合、ハッシュを使って渡すこともできます。複数のパラメータを送信する場合に、個々にパラメータ名を付けるのではなく、キーと値を組み合わせたハッシュとして渡すと、受け取ったアクション側で便利な場合があります。詳しいことは別のページにて解説しますので、ここではハッシュを渡す方法だけを確認しておきます。
+			</p>
+
+			<p>
+			ハッシュを送る場合はパラメータ名を指定していた部分にハッシュ名[キー名]を指定します。では先程作成したpost.htmlファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /&gt;
+&lt;title&gt;POSTサンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;POSTサンプル&lt;/p&gt;
+  
+&lt;form method="post" action="/travels/show"&gt;
+ &lt;p&gt;
+ 旅行先：&lt;input type="text" <span class="red">name="travel[dest]"</span> /&gt;&lt;br /&gt;
+ 人数：&lt;input type="text" <span class="red">name="travel[num]"</span> /&gt;人&lt;br /&gt;
+ &lt;input type="submit" value="送信" /&gt;
+ &lt;/p&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			続いて「show」メソッドを次のように変更します。
+			</p>
+
+<pre class="fixcode">
+# coding: utf-8
+
+class TravelsController &lt; ApplicationController
+  def show
+    travel = params[:travel]
+    render :text =&gt; "旅行先 = #{travel['dest']}, 人数 = #{travel['num']}人"
+  end
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/post.html」へアクセスし、表示されたフォームに適当に値を入力し、「送信」ボタンを押して下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-9.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-9.png" alt="p6-9" width="474" height="305" />
+			</p>
+
+			<p>
+			次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p6-10.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-10.png" alt="p6-10" width="474" height="305" />
+			</p>
+
+			<p>
+			このようにパラメータとしてハッシュを渡すことができました。
+			</p>
+
+<h2><a id="section5">パラメータで配列を渡す</a></h2>
+
+			<p>
+			今度は配列をパラメータとして渡す場合と確認します。
+			</p>
+
+			<p>
+			配列を送る場合はパラメータ名を指定したいた部分に配列名[]を指定します。では先程作成したpost.htmlファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /&gt;
+&lt;title&gt;POSTサンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;旅行に行ってみたい場所は&lt;/p&gt;
+  
+&lt;form method="post" action="/travels/show"&gt;
+ &lt;p&gt;
+ 候補1：&lt;input type="text" <span class="red">name="travel[]"</span> /&gt;&lt;br /&gt;
+ 候補2：&lt;input type="text" <span class="red">name="travel[]"</span> /&gt;&lt;br /&gt;
+ 候補3：&lt;input type="text" <span class="red">name="travel[]"</span> /&gt;&lt;br /&gt;
+ &lt;input type="submit" value="送信" /&gt;
+ &lt;/p&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			続いて「show」メソッドを次のように変更します。
+			</p>
+
+<pre class="fixcode">
+# coding: utf-8
+
+class TravelsController &lt; ApplicationController
+  def show
+    travel = params[:travel]
+    render :text =&gt; "行きたい場所 = #{travel[0]}, #{travel[1]}, #{travel[2]}"
+  end
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/post.html」へアクセスし、表示されたフォームに適当に値を入力し、「送信」ボタンを押して下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-11.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-11.png" alt="p6-11" width="474" height="305" />
+			</p>
+
+			<p>
+			次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p6-12.png" tppabs="https://www.javadrive.jp/rails/controller/img/p6-12.png" alt="p6-12" width="474" height="305" />
+			</p>
+
+			<p>
+			このようにパラメータとして配列を渡すことができました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

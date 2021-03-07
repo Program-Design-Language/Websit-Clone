@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 要素のスタイルを取得・設定(getComputedStyle)</title>
+<meta name="description" content="要素にスタイルを設定するには style タグの中で設定したり要素毎に style 属性を使って設定することができますが、 JavaScript からはプロパティを使用して要素に対してスタイルを設定できます。また要素に最終的に適用されているスタイルを取得するには Windows オブジェクトの getComputedStyle メソッドを使います。ここでは要素ノードに対してプロパティを使ってスタイルを設定したり、要素に設定されているスタイルを取得する方法について解説します。">
+
+<meta property="og:title" content="要素のスタイルを取得・設定(getComputedStyle))">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/dom/index28.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/dom/img/p28-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="要素にスタイルを設定するには style タグの中で設定したり要素毎に style 属性を使って設定することができますが、 JavaScript からはプロパティを使用して要素に対してスタイルを設定できます。また要素に最終的に適用されているスタイルを取得するには Windows オブジェクトの getComputedStyle メソッドを使います。ここでは要素ノードに対してプロパティを使ってスタイルを設定したり、要素に設定されているスタイルを取得する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "DOM入門",
+    "item": "https://www.javadrive.jp/javascript/dom/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/dom/">DOM入門</a></li>
+				</ul>
+			</div>
+
+			<h1>要素のスタイルを取得・設定(getComputedStyle)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			要素にスタイルを設定するには style タグの中で設定したり要素毎に style 属性を使って設定することができますが、 JavaScript からはプロパティを使用して要素に対してスタイルを設定できます。また要素に最終的に適用されているスタイルを取得するには Windows オブジェクトの getComputedStyle メソッドを使います。ここでは要素ノードに対してプロパティを使ってスタイルを設定したり、要素に設定されているスタイルを取得する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">スタイルの基本</a></li>
+			<li><a href="#section2">スタイルを設定する(プロパティ)</a></li>
+			<li><a href="#section3">設定されているスタイルをリセットする</a></li>
+			<li><a href="#section4">スタイルを取得する(getComputedStyleメソッド)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">スタイルの基本</a></h2>
+
+			<p>
+			HTML では要素に対するスタイルの設定を style タグや個々の要素に対する style 属性で設定できます。(外部のスタイルシートに記述しておき読み込むこともできます)。
+			</p>
+
+			<p>
+			最初に style タグを使って HTML ページ全体に適用されるスタイルを設定してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+<span class="red">&lt;style type="text/css"&gt;
+p{
+  color:#ff0000;
+  font-size:24px;
+}
+&lt;/style&gt;</span>
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p&gt;Hello&lt;/p&gt;
+&lt;p&gt;Bye!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			このページには p タグが 2 つ含まれまれています。 style タグの中で p タグに対して文字色とフォントサイズに関するスタイルを設定しており、どちらの p タグにも同じようにスタイルが適用されています。
+			</p>
+
+			<p>
+			<img src="img/p28-1.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p28-1.png" alt="スタイルの基本(1)" width="728" height="300" class="waku">
+			</p>
+
+			<p>
+			次に個々の p タグに対して style 属性を使ってスタイルを設定してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;style type="text/css"&gt;
+p{
+  color:#ff0000;
+  font-size:24px;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p <span class="red">style="font-weight:bold;"</span>&gt;Hello&lt;/p&gt;
+&lt;p <span class="red">style="color:#0000ff;"</span>&gt;Bye!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			style タグの中で p タグに対するスタイルを設定したままで、個々の p タグに対して style 属性が設定されています。 1 つ目の p タグには sytle タグでは設定していない種類のスタイルを設定し、 2 つ目の p タグには style で設定している文字色のスタイルを重ねて設定しました。この HTML ページをブラウザで開くと次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p28-2.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p28-2.png" alt="スタイルの基本(2)" width="728" height="300" class="waku">
+			</p>
+
+			<p>
+			style タグと style 属性で異なる種類のスタイルを設定した場合は、それぞれのスタイルが適用されます。 style タグと style 属性で同じ種類のスタイルをそれぞれ設定した場合、 style 属性の方が優先順位が高いため style 属性で設定した値が適用されます。
+			</p>
+
+			<p>
+			一つ目の p タグは style タグで設定されたスタイルに加えて sytle 属性で設定された太字のスタイルが設定されています。二つ目の p タグは style タグと style 属性で同じ文字色の関するスタイルが設定されていますが、 style 属性の方が優先順位が高いため style 属性で設定したスタイルが設定されています。
+			</p>
+
+			<p>
+			このようにスタイルを設定する場合は、優先順位が一番高いインラインでの style 属性に対して設定します(より正確には !important などの設定を考慮する必要があります)。また最終的に対象の要素に設定されているスタイルを取得するには、 style 属性の値だけではなく style タグなどすべてのスタイルの設定情報を組み合わせた結果を取得する必要があります。
+			</p>
+
+<h2><a id="section2">スタイルを設定する(プロパティ)</a></h2>
+
+			<p>
+			要素のスタイルを設定するには、 HTMLElement オブジェクトの style プロパティに値を設定します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+element.style.プロパティ名 = 'value'
+</pre>
+</div>
+
+			<p>
+			この形式でスタイルを設定した場合、要素に対してインラインでの style 属性を設定した場合と同じになります。また既に style 属性を使って設定されている他のプロパティには影響しません。
+			</p>
+
+			<p>
+			例えば color プロパティに値を設定する場合は次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let element = document.getElementById('xxx');
+element.style.color = '#0000ff';
+</pre>
+</div>
+
+			<p>
+			CSS でのプロパティ名が margin-left などのようにハイフンを含む場合、 JavaScript で指定する場合は marginLeft のようにハイフンの直後の文字を大文字に変更した上でハイフンを省略したものを使用してください。
+			</p>
+
+			<p>
+			いくつかの例を次の記載します。特に float だけは cssFloat と指定する必要があるのでご注意ください。
+			</p>
+
+<div class="titlebox3">
+<pre>
+CSS             JavaScript
+---------------------------
+color           color
+height          height
+
+font-size       fontSize
+text-align      textAlign
+
+float           cssFloat
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;スタイルを設定&lt;/title&gt;
+&lt;style type="text/css"&gt;
+p{
+  color:#0000ff;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p id="address" style="font-weight:bold;"&gt;東京都港区南青山&lt;/p&gt;
+
+&lt;button onClick="setElement();"&gt;スタイルを設定&lt;/button&gt;
+
+&lt;script&gt;
+function setElement(){
+    let element = document.getElementById('address');
+    element.style.width = '200px';
+    element.style.border = '1px solid #ff0000';
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 id 属性が address の要素ノードを取得し、スタイルを設定します。
+			</p>
+
+			<p>
+			<img src="img/p28-3.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p28-3.png" alt="スタイルを設定する(プロパティ)(1)" width="728" height="520" class="waku">
+			</p>
+
+			<p>
+			確認してみると、対象の要素の style 属性に設定したスタイルが追加されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p28-4.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p28-4.png" alt="スタイルを設定する(プロパティ)(2)" width="728" height="520" class="waku">
+			</p>
+
+<h2><a id="section3">設定されているスタイルをリセットする</a></h2>
+
+			<p>
+			HTMLElement オブジェクトの style プロパティに対して null を設定すると、そのプロパティのスタイルがリセットされます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+element.style.プロパティ名 = null
+</pre>
+</div>
+
+			<p>
+			ただしこの方法でリセットできるのは style 属性で設定されているプロパティだけです。 style タグで設定されているプロパティについてはリセットできません。
+			</p>
+
+			<p>
+			例えば color プロパティをリセットするには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let element = document.getElementById('xxx');
+element.style.color = null;
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;スタイルをリセット&lt;/title&gt;
+&lt;style type="text/css"&gt;
+p{
+  color:#0000ff;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p id="address" style="font-weight:bold;"&gt;東京都港区南青山&lt;/p&gt;
+
+&lt;button onClick="setElement();"&gt;スタイルをリセット&lt;/button&gt;
+
+&lt;script&gt;
+function setElement(){
+    let element = document.getElementById('address');
+    element.style.fontWeight = null;
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 id 属性が address の要素ノードを取得し、要素に style 属性を使って設定されていたスタイルをリセットします。
+			</p>
+
+			<p>
+			<img src="img/p28-5.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p28-5.png" alt="設定されているスタイルをリセットする(1)" width="728" height="520" class="waku">
+			</p>
+
+<h2><a id="section4">スタイルを取得する(getComputedStyleメソッド)</a></h2>
+
+			<p>
+			要素に設定されているスタイルを取得するには Windows オブジェクトの getComputedStyle メソッドを使用します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+window.getComputedStyle(element)
+</pre>
+</div>
+
+			<p>
+			引数にスタイルを取得する Element オブジェクトを指定します。戻り値は CSSStyleDeclaration オブジェクトです。このメソッドを使って取得した場合は読み取り専用となります。
+			</p>
+
+			<p>
+			CSSStyleDeclaration オブジェクトから特定のプロパティの値を取得するには、 CSSStyleDeclaration オブジェクトの getPropertyValue メソッドを使用します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+style.getPropertyValue(property)
+</pre>
+</div>
+
+			<p>
+			引数には取得したいプロパティの名前を文字列で指定します。プロパティ名は 'font-size' のように CSS で使用する場合と同じ形式で指定します。
+			</p>
+
+			<p>
+			例えば color プロパティの値を取得するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let element = document.getElementById('xxx');
+let style = window.getComputedStyle(element);
+let value = style.getPropertyValue('color');
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;スタイルを取得&lt;/title&gt;
+&lt;style type="text/css"&gt;
+p{
+  color:#0000ff;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p id="address" style="font-weight:bold;"&gt;東京都港区南青山&lt;/p&gt;
+
+&lt;button onClick="setElement();"&gt;スタイルを取得&lt;/button&gt;
+
+&lt;script&gt;
+function setElement(){
+    let element = document.getElementById('address');
+    let style = window.getComputedStyle(element);
+
+    console.log('color:' + style.getPropertyValue('color'));
+    console.log('font-weight:' + style.getPropertyValue('font-weight'));
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 id 属性が address の要素ノードを取得し、要素に設定されているスタイルの中で指定したプロパティの値を取得しコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p28-6.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p28-6.png" alt="スタイルを取得する(getComputedStyleメソッド)(1)" width="728" height="420" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			要素ノードに対してプロパティを使ってスタイルを設定したり、要素に設定されているスタイルを取得する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

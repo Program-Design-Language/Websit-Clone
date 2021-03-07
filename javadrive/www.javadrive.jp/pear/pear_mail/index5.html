@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本語のメールを送信する - メール送信(PEAR::Mail) - PEAR入門</title>
+<meta name="keywords" content="日本語,PEAR::Mail,入門,PEAR" />
+<meta name="description" content="日本語のメールを送信する" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_mail/" itemprop="url"><span itemprop="title">メール送信(PEAR::Mail)</span></a></li>
+		</ul>
+</div>
+
+			<h1>日本語のメールを送信する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ヘッダーや本文に日本語などのマルチバイト文字列を使う場合にはメールを送信する前に適切なエンコーディングを行う必要があります。
+			</p>
+
+			<p>
+			まずメールヘッダーに日本語が含まれる場合です。サブジェクトやメールアドレスの一部に日本語が含まれる場合が想定されます。メールヘッダーについては文字コードとして「ISO-2022-JP」の"B" encodingを使います。
+			</p>
+
+			<p>
+			メールヘッダーを変換するには「mb_encode_mimeheader」関数を使います。(詳しくは『<a href="../../phpfunc/string/index6.html" tppabs="https://www.javadrive.jp/phpfunc/string/index6.html">MIMEヘッダの文字列をエンコードする(mb_encode_mimeheader)</a>』を参照して下さい)。
+			</p>
+
+			<p>
+			例えば次のように記述します。
+			</p>
+
+<pre class="fixcode">
+$recipients = "xxx@xxx.xxx, xxx@xxx,xxx";
+$headers = array(
+  "To" =&gt; "xxx@xxx.xxxx",
+  "From" =&gt; "xxx@xxxx.xxxx",
+  "Subject" =&gt; mb_encode_mimeheader("テストメール")
+);
+</pre>
+
+			<p>
+			今回はサブジェクトに日本語を利用する場合に「mb_encode_mimeheader」関数を使って変換しています。
+			</p>
+
+			<p>
+			次にメール本文に日本語が含まれる場合です。メール本文は文字コードとして「ISO-2022-JP」を使って変換します。
+			</p>
+
+			<p>
+			文字列を任意の文字コードに変換するには「mb_convert_encoding」関数を使います。(詳しくは『<a href="../../phpfunc/string/index5.html" tppabs="https://www.javadrive.jp/phpfunc/string/index5.html">文字エンコードを変換する(mb_convert_encoding)</a>』を参照して下さい)。
+			</p>
+
+			<p>
+			例えば次のように記述します。
+			</p>
+
+<pre class="fixcode">
+$recipients = "xxx@xxx.xxx, xxx@xxx,xxx";
+$headers = array(
+  "To" =&gt; "xxx@xxx.xxxx",
+  "From" =&gt; "xxx@xxxx.xxxx",
+  "Subject" =&gt; mb_encode_mimeheader("テストメール")
+);
+$body = "日本語メールのテストです。";
+$body = mb_convert_encoding($body, "ISO-2022-JP", "auto");
+</pre>
+
+			<p>
+			元の文字列の文字コードが決まっている場合には「auto」の代わりに固定の文字コードを指定して下さい。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで実際に試してみます。 
+			</p>
+
+			<p>
+			<a href="sample5-1.html" tppabs="https://www.javadrive.jp/pear/pear_mail/sample5-1.html">sample5-1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Mail.php");
+
+$params = array(
+  "host" =&gt; "xxx.xxx.xx",
+  "port" =&gt; 587,
+  "auth" =&gt; true,
+  "username" =&gt; "xxx@xxx.xxx.xx",
+  "password" =&gt; "xxxxxxxxx"
+);
+
+$mailObject = Mail::factory("smtp", $params);
+
+$recipients = "xxx@xxx.xxx.xx";
+$headers = array(
+  "To" =&gt; "xxx@xxx.xxx.xx",
+  "From" =&gt; "xxx@xxx.xxx.xx",
+  "Subject" =&gt; mb_encode_mimeheader("テストメール")
+);
+
+$body = "日本語メールのテストです。";
+$body = mb_convert_encoding($body, "ISO-2022-JP", "auto");
+
+$mailObject -&gt; send($recipients, $headers, $body);
+
+?&gt;
+</pre>
+
+			<p>
+			※SMTPサーバやメール送信先などは書き換えて使用して下さい。ポート番号も「Outbound Port25 Blocking」などの関係で25番ポートではなく587番ポートなどが使われていますがこちらも環境に合わせて変更して下さい。
+			</p>
+
+			<p>
+			メール送信用PHPを呼び出すためのHTMLファイルを用意しました。
+			</p>
+
+			<p>
+			<a href="mail5-1.html" tppabs="https://www.javadrive.jp/pear/pear_mail/mail5-1.html">mail5-1.html</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;メール送信テスト&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="./sample5-1.php"&gt;メール送信&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			ではメール送信用HTMLファイルをWWWサーバに設置しブラウザで見てみると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/pear/pear_mail/img/p5-1.png" alt="日本語メールの送信" width="502" height="308">
+			</p>
+
+			<p>
+			「メール送信」と書かれたリンクをクリックするとメールが送信されます。実際に届いたメールを確認すると次のようにヘッダーも本文も無事日本語を使えていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/pear/pear_mail/img/p5-2.png" alt="日本語メールの送信" width="368" height="151" style="border:1px solid #888888;">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

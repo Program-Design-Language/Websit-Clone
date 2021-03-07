@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>matchメソッドを使ったルーティング設定 - Ruby on Rails入門</title>
+<meta name="keywords" content="matchメソッドを使ったルーティング設定" />
+<meta name="description" content="matchメソッドを使ったRESTfulではないルーティングの記述方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/routing/" itemprop="url"><span itemprop="title">ルーティングの設定</span></a></li>
+		</ul>
+</div>
+
+			<h1>matchメソッドを使ったルーティング設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前のページに引き続いてリソースベースではないルーティングの設定方法について解説します。ここではmatchメソッドを使い、リクエストのURLと呼び出すアクションを1対1で結びつけていくルーティングの設定方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">matchメソッドを使った基本書式</a><br />
+			2.<a href="#section2">HTTPメソッドの指定</a><br />
+			3.<a href="#section3">パラメータの指定</a><br />
+			4.<a href="#section4">動作確認</a><br />
+			5.<a href="#section5">asオプションでルーティングに名前を付ける</a><br />
+			</p>
+
+<h2><a id="section1">matchメソッドを使った基本書式</a></h2>
+
+			<p>
+			matchメソッドを使ったルーティングでは、利用者からもリクエストのURLのパスと呼び出すアクションを結び付けていきます。「config/routes.rb」ファイルには色々な設定サンプルがコメントとして表示されていますが、今回使用するルーティングも先頭付記に次のように記述されています。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  # Sample of regular route:
+  #   match 'products/:id' =&gt; 'catalog#view'
+  # Keep in mind you can assign values other than :controller and :action
+
+end
+</pre>
+
+			<p>
+			matchメソッドを使った書式は次のとおりです
+			</p>
+
+<pre class="fixcomment">
+match 'パス' =&gt; 'コントローラ名#アクション名'
+</pre>
+
+			<p>
+			パスというのはリクエストのURLの中の「http://localhost:3000/パス」の部分です。例えば「http://localhost:3000/disp」というURLへアクセスした時に「books」コントローラの「show」アクションを呼び出したい場合には次のようにルーティングを設定します。
+			</p>
+
+<pre class="fixcode">
+match 'disp' =&gt; 'books#show'
+</pre>
+
+			<p>
+			このようにURLに含まれる任意のパスに対して実際に呼び出すアクションを設定することができます。
+			</p>
+
+			<p>
+			同じように「http://localhost:3000/mybook/disp」というURLへアクセスした時に呼び出したい場合は次のようにルーティングを設定します。
+			</p>
+
+<pre class="fixcode">
+match 'mybook/disp' =&gt; 'books#show'
+</pre>
+
+			<p>
+			もし「http://localhost:3000/books/show」というURLへアクセスした時に「books」コントローラの「show」アクションを呼び出したい場合のようにパスがコントローラ名とアクション名の組み合わせと同じ場合は右側の部分は省略できます。よって次の2つの記述は同じルーティングを表します。
+			</p>
+
+<pre class="fixcode">
+match 'books/show' =&gt; 'books#show'
+match 'books/show'
+</pre>
+
+<h2><a id="section2">HTTPメソッドの指定</a></h2>
+
+			<p>
+			利用可能なHTTPメソッドを指定することも可能です。HTTPメソッドとは GET や POST のことです。指定しない場合は全てのHTTPメソッドが対象となりますが、GET だけ又は POST だけといった制限を加えることができます。指定する場合は via オプションを使って次のように記述します。
+			</p>
+
+<pre class="fixcode">
+match 'disp' =&gt; 'books#show', :via =&gt; :get
+match 'disp' =&gt; 'books#show', :via =&gt; :post
+</pre>
+
+			<p>
+			また via オプションを使用するかわりに、次のように記述することもできます。
+			</p>
+
+<pre class="fixcode">
+get 'disp' =&gt; 'books#show'
+post 'disp' =&gt; 'books#show'
+</pre>
+
+			<p>
+			HTTPメソッドは GET や POST だけではなく PUT や DELETE も指定可能です。
+			</p>
+
+<h2><a id="section3">パラメータの指定</a></h2>
+
+			<p>
+			パラメータを指定する場合は「:パラメータ名」を使用して次のように記述します。
+			</p>
+
+<pre class="fixcode">
+match 'disp/:type' =&gt; 'books#show'
+match 'disp/:type/:price' =&gt; 'books#show'
+match 'disp(/:type(/:price))' =&gt; 'books#show'
+</pre>
+
+			<p>
+			1番目はパラメータが1つのもので「http://localhost:3000/disp/business」というURLでリクエストを送信すると、「show」アクションが呼び出されそのアクションの中で「param[:type]」で値を取り出すことができます。2番目はパラメータが複数になった場合、3番目はパラメータを省略可能にした場合です。
+			</p>
+
+			<p>
+			省略可能なパラメータにはデフォルト値を設定することもできます。デフォルト値を指定する場合は defaults オプションを使って次のように記述します。
+			</p>
+
+<pre class="fixcode">
+match 'disp(/:type)' =&gt; 'books#show', :defaults =&gt; {:type =&gt; 'novel'}
+</pre>
+
+			<p>
+			「type」パラメータが省略された場合はデフォルトの値として「novel」が設定されます。デフォルト値が指定できるのはパラメータだけでコントローラやアクションのデフォルト値は指定できません。
+			</p>
+
+<h2><a id="section4">動作確認</a></h2>
+
+			<p>
+			それでは実際に試してみます。現在「sample2」アプリケーションには「info」コントローラと「books」コントローラが作成されており、「info」コントローラには「index」アクション、「books」コントローラには「show」アクションが定義してあります。
+			</p>
+
+			<p>
+			今回ルーティングの設定として「config/routes.rb」ファイルをテキストエディタで開き、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  match 'disp(/:type(/:price))' =&gt; 'books#show'
+  post 'info/index'
+  get 'index' =&gt; 'info#index'
+
+end
+</pre>
+
+			<p>
+			次にコントローラでパラメータを処理するために「app/controllers/books_controller.rb」ファイルを次のように記述しました。リクエストのURLに含まれるパラメータを取得して変数に設定しています。
+			</p>
+
+<pre class="fixcode">
+class BooksController &lt; ApplicationController
+  def show
+    @type = params[:type]
+    @price = params[:price]
+  end
+end
+</pre>
+
+			<p>
+			最後にコントローラで設定した変数をビューの中で参照し利用者へ返すようにします。「app/views/books/show.html.erb」ファイルを次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Books#show&lt;/h1&gt;
+&lt;p&gt;Find me in app/views/books/show.html.erb&lt;/p&gt;
+&lt;p&gt;type = &lt;%= @type %&gt;&lt;/p&gt;
+&lt;p&gt;price = &lt;%= @price %&gt;&lt;/p&gt;
+</pre>
+
+			<p>
+			それでは準備ができましたのでRailsアプリケーションを起動して下さい。そしてまずブラウザから「http://localhost:3000/disp/novel/1000」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/rails/routing/img/p4-1.png" alt="p4-1" width="500" height="335" />
+			</p>
+
+			<p>
+			続いて「http://localhost:3000/info/index」へアクセスして下さい。すると次のようにエラー表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/rails/routing/img/p4-2.png" alt="p4-2" width="500" height="335" />
+			</p>
+
+			<p>
+			ルーティングの設定は行われていますがHTTPメソッドとしてPOSTが指定してあったためGETでリクエストを送信した場合はマッチしませんでした。
+			</p>
+
+			<p>
+			最後に「http://localhost:3000/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-3.png" tppabs="https://www.javadrive.jp/rails/routing/img/p4-3.png" alt="p4-3" width="500" height="335" />
+			</p>
+
+			<p>
+			以上のようにmatchメソッドを使って1つ1つルーティングの設定を定義していくことで、任意のパスに対して呼び出すアクションを結びつけることが出来ます。
+			</p>
+
+<h2><a id="section5">asオプションでルーティングに名前を付ける</a></h2>
+
+			<p>
+			先程ルーティングの設定として「config/routes.rb」ファイルをテキストエディタで開き、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  match 'disp(/:type(/:price))' =&gt; 'books#show'
+  post 'info/index'
+  get 'index' =&gt; 'info#index'
+
+end
+</pre>
+
+			<p>
+			「rake routes」コマンドを使って設定されているルーティングを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p4-4.png" tppabs="https://www.javadrive.jp/rails/routing/img/p4-4.png" alt="p4-4" width="517" height="286" />
+			</p>
+
+			<p>
+			見て頂くとお分かり頂けるように2番目と3番目のルーティングには先頭に「info_index」や「index」という記述があります。これはルーティングの名前です。
+			</p>
+
+			<p>
+			「<a href="../template/index8.html" tppabs="https://www.javadrive.jp/rails/template/index8.html">link_toメソッドを使ったリンクの作成</a>」の箇所で詳しくご説明いたしますが、ルーティングに名前が付いているとテンプレートの中でlink_toメソッドでリンク先を指定する時に、ルーティングに設定された名前を使って指定することができます。
+			</p>
+
+			<p>
+			設定したルーティングによっては自動で名前が付くものもありますが、asオプションを使って明示的に名前を付けることができます。例えば次のように指定します。
+			</p>
+
+<pre class="fixcomment">
+match 'パス' =&gt; 'コントローラ名#アクション名', as: '名前'
+</pre>
+
+			<p>
+			'名前'で指定した文字列が、このルーティングの名前になります。
+			</p>
+
+			<p>
+			では実際に試してみます。「config/routes.rb」ファイルをテキストエディタで開き、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  match 'disp(/:type(/:price))' =&gt; 'books#show', as: 'books_show'
+  post 'info/index'
+  get 'index' =&gt; 'info#index', as: 'gindex'
+
+end
+</pre>
+
+			<p>
+			「rake routes」コマンドを使って設定されているルーティングを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p4-5.png" tppabs="https://www.javadrive.jp/rails/routing/img/p4-5.png" alt="p4-5" width="517" height="286" />
+			</p>
+
+			<p>
+			指定した名前が付けられていることが確認できます。デフォルトで名前が付けられていたルーティングについても、明示的に指定した名前のほうが優先されます。実際の使い方は先程記載したテンプレートの解説ページでご確認下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

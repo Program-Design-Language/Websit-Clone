@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サンプル</title>
+</head>
+<body>
+
+<pre>
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$counter_file = 'counter.txt';
+$counter_lenght = 8;
+
+$fp = fopen($counter_file, 'r+');
+
+if ($fp){
+    if (flock($fp, LOCK_EX)){
+
+        $counter = fgets($fp, $counter_lenght);
+        $counter++;
+
+        rewind($fp);
+
+        if (fwrite($fp,  $counter) === FALSE){
+            print('ファイル書き込みに失敗しました');
+        }
+
+        flock($fp, LOCK_UN);
+    }
+}
+
+fclose($fp);
+
+$format = '%0'.$counter_lenght.'d';
+$new_counter = sprintf($format, $counter);
+
+for ($i = 0 ; $i &lt;= 9 ; $i++){
+    $num = (string)$i;
+    $img_num = '&lt;img src="./img/b'.$i.'.png"&gt;';
+    $new_counter = str_replace($num, $img_num, $new_counter);
+}
+
+$size = ' width="16" height="18" border="0"&gt;';
+$new_counter = str_replace('&gt;', $size, $new_counter);
+
+print('訪問者数:'.$new_counter.'人目です');
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+
+</body>
+</html>

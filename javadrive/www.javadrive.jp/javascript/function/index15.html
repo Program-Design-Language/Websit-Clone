@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 再帰関数を利用する</title>
+<meta name="description" content="再帰関数とは関数内で自分自身の関数を呼びだすことです。ここでは JavaScript における再帰関数の使い方と具体的にどのようなケースで利用できるのかについて解説します。">
+
+<meta property="og:title" content="再帰関数を利用する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/function/index15.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/function/img/p15-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="再帰関数とは関数内で自分自身の関数を呼びだすことです。ここでは JavaScript における再帰関数の使い方と具体的にどのようなケースで利用できるのかについて解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "関数",
+    "item": "https://www.javadrive.jp/javascript/function/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/function/">関数</a></li>
+				</ul>
+			</div>
+
+			<h1>再帰関数を利用する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			再帰関数とは関数内で自分自身の関数を呼びだすことです。ここでは JavaScript における再帰関数の使い方と具体的にどのようなケースで利用できるのかについて解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">再帰関数の記述方法</a></li>
+			<li><a href="#section2">再帰関数の具体的な利用方法</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">再帰関数の記述方法</a></h2>
+
+			<p>
+			再帰関数とは関数内から自分自身の関数を呼びだすことです。次の例を見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function test(){
+  test();
+}
+
+test();
+</pre>
+</div>
+
+			<p>
+			関数 test は関数内で自分自身である test 関数を呼びだしています。このように関数内で自分自身の関数を呼びだす関数のことを再帰関数といいます。
+			</p>
+
+			<p>
+			再帰関数を利用する場合の明確なルールがあるわけではありませんが、無限ループにならないようにこの条件になったら自分自身の呼び出しを終了するような記述が必要となります。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function test(){
+  if (条件式) {
+    test();
+  }
+
+  return;
+}
+
+test();
+</pre>
+</div>
+
+			<p>
+			この例では条件式を満たしている間は自分自身である test 関数を再帰的に呼び出しますが、条件式を満たさなくなったら自分自身を呼び出すのをやめて関数を終了します。より具体的な例として次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function test(n){
+  console.log('Hello');
+
+  if (n != 0) {
+    test(n - 1);
+  }
+
+  console.log('Bye');
+}
+
+test(2);
+
+<span class="bold">&gt;&gt; Hello
+&gt;&gt; Hello
+&gt;&gt; Hello
+&gt;&gt; Bye
+&gt;&gt; Bye
+&gt;&gt; Bye</span>
+</pre>
+</div>
+
+			<p>
+			この場合は次のような処理が順に行われます。
+			</p>
+
+<div class="titlebox3">
+<pre>
+ 1) test 関数(1)が呼び出される。引数として 2 が渡される。
+ 2) Hello が出力される
+ 3) test 関数(1)内の条件式は 2 != 0 となり true となる
+ 4) test 関数(2)が呼び出される。引数として 1 が渡される
+ 5) Hello が出力される 
+ 6) test 関数(2)内の条件式は 1 != 0 となり true となる
+ 7) test 関数(3)が呼び出される。引数として 0 が渡される
+ 8) Hello が出力される 
+ 9) test 関数(3)内の条件式は 0 != 0 となり false となる
+10) Bye が出力される 
+11) test 関数(3) が終了する
+12) Bye が出力される 
+13) test 関数(2) が終了する
+14) Bye が出力される 
+15) test 関数(1) が終了する
+16) 最初に関数を呼びだした次の処理へ移る
+</pre>
+</div>
+
+			<p>
+			結果としてコンソールには Hello が 3 回 Bye が 3 回出力されます。このように関数が再帰的に呼び出されるたびに条件式が変化していき、最終的に再帰的に関数を呼びださなくなります。最後の関数呼び出しが終了すると、その関数呼び出しを行った次の処理へ進み、結果的に順番に関数の呼び出しが終了していきます。最後に一番最初に呼び出された関数の呼び出しが終了し、関数を呼びだした次の処理へ移ります。
+			</p>
+
+			<p>
+			もし再帰関数の処理の流れが分かりにくい場合は、次のような同じ処理を行う関数がいくつもある場合を考えてみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function testC(n){
+  console.log('Hello');
+
+  if (n != 0) {
+//    testD(n - 1);
+  }
+
+  console.log('Bye');
+}
+
+
+function testB(n){
+  console.log('Hello');
+
+  if (n != 0) {
+    testC(n - 1);
+  }
+
+  console.log('Bye');
+}
+
+function testA(n){
+  console.log('Hello');
+
+  if (n != 0) {
+    testB(n - 1);
+  }
+
+  console.log('Bye');
+}
+
+testA(2);
+</pre>
+</div>
+
+			<p>
+			最初に関数 testA を呼び出し、関数 testA 内で関数 testB を呼び出し、関数 testB 内で関数 testC を呼び出します。関数 testC 内では条件式が false となるためそれ以上他の関数を呼びだすことはなく、呼び出された順に関数の処理が終了していきます。
+			</p>
+
+			<p>
+			再帰関数とは、このように同じ処理を行う関数を複数記述する代わりに自分自身の関数を呼びだすことです。慣れないと処理の流れが分かりにくいですが、自分自身と同じ関数が別にあってそれを呼び出していると考えると分かりやすいかもしれません。
+			</p>
+
+<h2><a id="section2">再帰関数の具体的な利用方法</a></h2>
+
+			<p>
+			再帰関数は簡単な階乗の計算などから複雑なアルゴリズムの解決方法まで幅広い利用がされていますが、今回は階乗の計算を例に愚弟的な利用方法についてみていきます。
+			</p>
+
+			<p>
+			階乗というのは例えば数値の 5 の階乗を計算すると 5 * 4 * 3 * 2 * 1 = 120 を求めるものです。これを再帰関数を使って計算すると次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function calc(n){
+  if (n == 0){
+    return 1;
+  }
+
+  return n * calc(n - 1);
+}
+
+console.log(calc(5));
+<span class="bold">&gt;&gt; 120</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは関数が呼び出されるたびに次のような計算が行われていきます。
+			</p>
+
+<div class="titlebox3">
+<pre>
+ 1) 関数の戻り値として 5 * calc(4) を計算するため calc(4) が呼び出される
+ 2) calc(4) が呼び出され 4 * calc(3) を計算するため calc(3) が呼び出される
+ 3) calc(3) が呼び出され 3 * calc(2) を計算するため calc(2) が呼び出される
+ 4) calc(2) が呼び出され 2 * calc(1) を計算するため calc(1) が呼び出される
+ 5) calc(1) が呼び出され 1 * calc(0) を計算するため calc(0) が呼び出される
+ 6) calc(0) が呼び出され return 1 が実行される
+ 7) return 1 * 1 が実行される
+ 8) return 2 * 1 * 1 が実行される
+ 9) return 3 * 2 * 1 * 1 が実行される
+10) return 4 * 3 * 2 * 1 * 1 が実行される
+11) return 5 * 4 * 3 * 2 * 1 * 1 が実行される
+12) 120 がコンソールに出力される
+</pre>
+</div>
+
+			<p>
+			関数内の戻り値を計算するところで自分自身である関数を呼びだしています。条件式が true となるまで再帰的に関数が呼び出され、再帰関数の呼び出しが行われなくなった時点で順に戻り値が計算されていき、最終的な結果が呼び出し元に戻ります。
+			</p>
+
+			<p>
+			今回のような階乗の計算は再帰関数を使用しなくても計算が行えますが、再帰関数の使い方を覚えておくと極めて簡潔に処理を記述できる場合があります。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			JavaScript における再帰関数の使い方と具体的にどのようなケースで利用できるのかについて解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

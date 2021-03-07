@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データベースに格納された他のカラムの取得 - ユーザー認証(PEAR::Auth) - PEAR入門</title>
+<meta name="keywords" content="他のカラムの取得,PEAR::Auth,入門,PEAR" />
+<meta name="description" content="データベースに格納された他のカラムの取得" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_auth/" itemprop="url"><span itemprop="title">ユーザー認証(PEAR::Auth)</span></a></li>
+		</ul>
+</div>
+
+			<h1>データベースに格納された他のカラムの取得</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			認証用データベースにはユーザー名とパスワードだけを登録していましたが、同じテーブルに別のカラムを用意しておくことでPEAR::Authの仕組みを使って取り出すことが可能です。
+			</p>
+
+			<h2>データベースの準備</h2>
+
+			<p>
+			まずデータベース側の準備をします。今回は氏名と部署を表すカラムを追加してみましょう。
+			</p>
+
+			<p>
+			<img src="img/p20.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p20.png" alt="PEAR::AUTHで他の情報の取得" width="514" height="340">
+			</p>
+
+			<p>
+			これでカラムが追加されました。次に既に登録されている行について、追加したカラムに値をセットしておきます。
+			</p>
+
+			<p>
+			<img src="img/p21.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p21.png" alt="PEAR::AUTHで他の情報の取得" width="513" height="355">
+			</p>
+
+			<h2>Authクラスのコンストラクタの変更</h2>
+
+			<p>
+			データベース側の準備が出来ましたので実際に取り出してみます。データベースからユーザー名とパスワード以外のカラムの値を取得する時には、Authクラスのコンストラクタの2番目の引数であるオプションを指定する時に、取り出したいカラム名を「db_fields」をキーにして配列に追加します。
+			</p>
+
+			<p>
+			例えば今までは下記のように記述していました。
+			</p>
+
+<pre class="fixcode">
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password"
+);
+</pre>
+
+			<p>
+			他のカラムも取得する場合は下記のように記述します。
+			</p>
+
+<pre class="fixcode">
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password",
+    <span class="red">"db_fields" =&gt; "*"</span>
+);
+</pre>
+
+			<p>
+			上記のように「*」を指定した場合には、テーブルに含まれる全てのカラムを後で利用する事が出来るようになります。
+			</p>
+
+			<h2>認証済みユーザーの指定したカラムの値を取り出す</h2>
+
+			<p>
+			先ほどの形式でAuthクラスのオブジェクトを作成しましたら、Authクラスで用意されている「getAuthData」メソッドを使って他のカラムの値を取り出すことができます。具体的な利用方法は下記の通りです。
+			</p>
+
+<pre class="fixcode">
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password",
+    "db_fields" =&gt; "*"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+
+$authobj-&gt;start();
+
+if ($authobj-&gt;getAuth()){
+    <span class="red">$name = $authobj-&gt;getAuthData("name");
+    $post = $authobj-&gt;getAuthData("post");</span>
+}
+</pre>
+
+			<p>
+			「getAuthData」メソッド引数に取り出したいカラム名を指定することで、現在認証されたユーザーが登録されている行にある指定のカラムの値を取り出すことが出来ます。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみましょう。
+			</p>
+
+			<p>
+			<a href="sample9-1.html" tppabs="https://www.javadrive.jp/pear/pear_auth/sample9-1.html">sample9-1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;PHP認証テスト&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;?php
+
+require_once "Auth/Auth.php";
+
+function loginFunction($username, $status){
+    if ($status == AUTH_WRONG_LOGIN){
+        print("ユーザー名又はパスワードが間違っています&lt;br&gt;");
+    }
+
+    print("&lt;form method=&yen;"post&yen;" action=&yen;"".$_SERVER['PHP_SELF']."&yen;"&gt;");
+    print("&lt;table&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;ユーザー名&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=&yen;"text&yen;" name=&yen;"username&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;パスワード&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=&yen;"password&yen;" name=&yen;"password&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td colspan=&yen;"2&yen;"&gt;&lt;input type=&yen;"submit&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;/table&gt;");
+    print("&lt;/form&gt;");
+}
+
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password",
+    "db_fields" =&gt; "*"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+
+$authobj-&gt;start();
+
+if ($authobj-&gt;getAuth()){
+    $name = $authobj-&gt;getAuthData("name");
+    $post = $authobj-&gt;getAuthData("post");
+
+    print("こんにちは&lt;br&gt;");
+    print("名前 : ".$name."&lt;br&gt;");
+    print("部署 : ".$post);
+}
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記をWWWサーバに設置しブラウザで見てみると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p22.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p22.png" alt="PEAR::AUTHで他の情報の取得" width="489" height="353">
+			</p>
+
+			<p>
+			ただしいユーザー名とパスワードを入力し「クエリ送信」ボタンを押すと下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p23.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p23.png" alt="PEAR::AUTHで他の情報の取得" width="490" height="352">
+			</p>
+
+			<p>
+			認証後に該当のカラムの値を取り出せているようなのですけど、文字化けしてしまっています。
+			</p>
+
+			<p>
+			これは私のMySQLの環境が「SJIS」で設定してあるためです。文字化けを回避するには「SET NAMES sjis」を実行しておかなければならないのですがPEAR::Authを使う場合にはデータベースに固有のクエリを送信する機能がありません。PEAR::AuthではPEAR::DBを利用してデータベースへ接続しているのですけど、PEAR::AuthのオブジェクトからPEAR::DBのデータベースオブジェクトを取り出すこともできません。
+			</p>
+
+			<p>
+			その為、文字化けを開始するにはまずPEAR::DBクラスのオブジェクトを作成しておき、それを元にPEAR::Authを利用するようにする必要があります。これは次のページで確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

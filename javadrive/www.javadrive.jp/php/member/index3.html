@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アクセス修飾子- クラスの定義 - PHP入門</title>
+<meta name="keywords" content="アクセス修飾子,クラスの定義,入門,PHP" />
+<meta name="description" content="アクセス修飾子" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/member/" itemprop="url"><span itemprop="title">クラスの定義</span></a></li>
+		</ul>
+</div>
+
+			<h1>アクセス修飾子</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			アクセス修飾子とはメンバ変数やメソッドにどこからアクセスできるかを指定するものです。指定には「public」「private」「protected」の3つのどれかを指定します。
+			</p>
+
+			<p>
+			まずメンバ変数に指定した場合を見てみましょう。
+			</p>
+
+<pre class="fixcomment">
+class Test{
+  <span class="red">public</span> メンバ変数名;
+  <span class="red">private</span> メンバ変数名;
+  <span class="red">protected</span> メンバ変数名;
+}
+</pre>
+
+			<p>
+			上記のように、メンバ変数の前にアクセス修飾子を付けることで、そのメンバ変数へのアクセス可能範囲を指定できます。
+			</p>
+
+			<p>
+			それぞれのアクセス修飾子毎に、アクセス権がどのようになるかは次の通りです。
+			</p>
+
+<pre class="fixcomment">
+public     クラス内、クラス外のどこからでもアクセス可能
+private    同じクラス内からのみアクセス可能
+protected  同じクラス、及び子クラスからアクセス可能
+</pre>
+
+			<p>
+			「protected」はクラスの継承を行った時に関係してきますので、ここでは「public」と「private」に絞って見てみます。
+			</p>
+
+			<p>
+			まず「public」です。「public」は基本的にアクセスに制限がかかりませんのでクラス内からでもクラス外からでもアクセスが許可されます。具体的には今までのサンプルで見てきたようにクラス内のメソッド内から参照されたり、クラスからオブジェクトを作成し、オブジェクトからメンバ変数の値を獲得したり変更したりといったことが可能です。
+			</p>
+
+<pre class="fixcode">
+$tv = new Television();
+<span class="red">$tv-&gt;channelNo = 9</span>;
+$tv-&gt;setChannel(5);
+
+class Television(){
+  public $channelNo;
+
+  function setChannel($channel){
+    <span class="red">$this-&gt;channelNo = $channel</span>;
+    $this-&gt;dispChannel();
+  }
+}
+</pre>
+
+			<p>
+			これに対して「private」を指定した場合には、同じクラス内からはアクセス出来ますが、クラスの外からはアクセスが出来なくなります。つまりクラスからオブジェクトを作成し、そのオブジェクトを経由してメンバ変数の値を確認することが出来ません。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では今までのサンプルでメンバ変数のアクセス修飾子を「private」に変更して試してみましょう。
+			</p>
+
+			<p>
+			<a href="classtest3.php.htm" tppabs="https://www.javadrive.jp/php/member/classtest3.php">classtest3.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$tv = new Television();
+$tv-&gt;channelNo = 5;
+$tv-&gt;dispChannel();
+
+class Television{
+  private $channelNo;
+
+  function dispChannel(){
+    print('現在のチャンネルは'.$this-&gt;channelNo);
+  }
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記のファイルをWWWサーバに設置しブラウザ経由で見ると画面には何も表示されずWWWサーバのエラーログに下記のように出力されます。
+			</p>
+
+<pre class="fixcomment">
+[Thu Jun 22 02:41:18 2006] [error] [client 127.0.0.1] PHP Fatal error:
+  Cannot access private property Television::$channelNo in D:&yen;&yen;Apache 
+  Group&yen;&yen;Apache2&yen;&yen;htdocs&yen;&yen;sample&yen;&yen;classtest3.php on line 8
+</pre>
+
+			<p>
+			「private」なメンバ変数にクラスから作成したオブジェクト経由でアクセスしようとした為にエラーとなりました。このようにクラス外部からのアクセスを制限したい場合に「private」を使用します。
+			</p>
+
+			<h2>メンバメソッドへのアクセス修飾子の適用</h2>
+
+			<p>
+			メンバメソッドに対しても同じようにアクセス修飾子を指定できます。今までのサンプルでもそうでしたが、アクセス修飾子を指定しない場合には「public」が指定されたものとみなされます。それに対して「private」を指定した場合には、クラス内部からしか(クラス内の他のメソッド内からしか)アクセスが許可されなくなります。
+			</p>
+
+			<p>
+			アクセス修飾子を付ける場合には、メソッドを表す「function」の前に記述します。
+			</p>
+
+<pre class="fixcomment">
+class Test{
+  <span class="red">public</span> function メソッド名(){
+  }
+
+  <span class="red">private</span> function メソッド名(){
+  }
+
+  <span class="red">protected</span> function メソッド名(){
+  }
+}
+</pre>
+
+			<p>
+			例えば下記のような使い方を行います。
+			</p>
+
+<pre class="fixcode">
+$tv = new Television();
+$tv-&gt;setChannel(5);
+
+class Television{
+  private $channelNo;
+
+  private function dispChannel(){
+    print('現在のチャンネルは'.$this-&gt;channelNo);
+  }
+
+  public function setChannel($channel){
+    $this-&gt;channelNo = $channel;
+    $this-&gt;dispChannel();
+  }
+}
+</pre>
+
+			<p>
+			上記では「dispChannel」メソッドの前に「private」を付与してみました。「dispChannel」メソッドは同じクラス内である「setChannel」メソッドから呼び出されていますが、同じクラス内なので問題はありません。ただし、オブジェクトから直接「dispChannel」を呼ぶことは出来なくなりました。
+			</p>
+
+			<p>
+			アクセス修飾子はこのようにクラス内でしか見せたくない情報を守ったり、外部から直接呼び出す必要が無いメソッドに対しては、呼び出せないようにしたりと言ったことを明確にすることが出来ます。このことにより、誤った使いかたを未然に防止したり、後からソースコードを見て、どのような目的の変数やメソッドなのかが理解しやすくなります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

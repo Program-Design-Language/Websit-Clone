@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | 文字列の中でパターンとマッチする部分があるか検索する(Matcher.find)</title>
+<meta name="description" content="Matcher クラスの find メソッドは、対象の文字列の中でパターンとマッチする部分があるかを検索します。また find メソッドを実行してマッチした場合、もう一度同じ文字列に対して find メソッドを実行すると、前回マッチした部分以降の残りの部分でマッチするかを調べることができます。ここでは Java の正規表現で find メソッドを使って文字列の中でがパターンとマッチする部分があるか検索する方法について解説します。">
+
+<meta property="og:title" content="文字列の中でパターンとマッチする部分があるか検索する(Matcher.find)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/regex/index4.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/regex/img/p4-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Matcher クラスの find メソッドは、対象の文字列の中でパターンとマッチする部分があるかを検索します。また find メソッドを実行してマッチした場合、もう一度同じ文字列に対して find メソッドを実行すると、前回マッチした部分以降の残りの部分でマッチするかを調べることができます。ここでは Java の正規表現で find メソッドを使って文字列の中でがパターンとマッチする部分があるか検索する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "Java正規表現の使い方",
+	"item": "https://www.javadrive.jp/start/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/">Java正規表現の使い方</a></li>
+				</ul>
+			</div>
+
+			<h1>文字列の中でパターンとマッチする部分があるか検索する(Matcher.find)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Matcher クラスの find メソッドは、対象の文字列の中でパターンとマッチする部分があるかを検索します。また find メソッドを実行してマッチした場合、もう一度同じ文字列に対して find メソッドを実行すると、前回マッチした部分以降の残りの部分でマッチするかを調べることができます。ここでは Java の正規表現で find メソッドを使って文字列の中でがパターンとマッチする部分があるか検索する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">findメソッドの使い方</a></li>
+			<li><a href="#section2">findメソッドを連続して実行する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">findメソッドの使い方</a></h2>
+
+			<p>
+			Matcher クラスの find メソッドは対象の文字列の中でパターンとマッチする部分があるかを調べます。書式は次の通りです。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public boolean find()</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+戻り値:<br>
+入力シーケンスの部分シーケンスがこの正規表現エンジンのパターンとマッチした場合にのみtrue
+</p>
+</div>
+
+			<p>
+			対象の文字列の先頭文字から順に Matcher オブジェクトのパターンとマッチするか検索していきます。マッチすれば true 、そうでなければ false が戻り値として返ります。 matches メソッドの場合は文字列全体とマッチする必要がありましたが、 find メソッドの場合は文字列の中でパターンとマッチする部分があれば true を返します。
+			</p>
+
+			<p>
+			例えば、パターン文字列 "[0-9]{2}" で対象の文字列が "CODE24-11-75" だった場合、パターンは対象の文字列の一部とマッチするので true となります。
+			</p>
+
+			<p>
+			<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/start/regex/img/p4-1.png" alt="matchesメソッドの使い方(1)" width="728" height="200">
+			</p>
+
+			<p>
+			※ パターン文字列 "[0-9]{2}" は 数値が 2 つ続く文字列とマッチします。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+// java.util.regex.*のインポートが必要です
+import java.util.regex.*;
+
+String regex = "[0-9]{2}";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher​("CODE24-11-75");
+System.out.println(m.find());  // true
+</pre>
+</div>
+
+			<p>
+			パターン "[0-9]{2}" は "CODE24-11-75" の中の "24" の部分と最初にマッチするので true を返します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample4-1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample4_1{
+  public static void main(String[] args){
+    String regex = "[0-9]{2}";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("CODE24-11-75");
+    if (m.find()){
+      System.out.println("マッチしました");
+      System.out.println(m.group());
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample4_1.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample4_1
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/start/regex/img/p4-2.png" alt="findメソッドの使い方(2)" width="723" height="353">
+			</p>
+
+			<p>
+			find メソッドを使ってパターンが対象の文字列にマッチするかどうか確認し、マッチした場合はマッチした文字列を画面に出力しました。(groupメソッドについては「<a href="index5.html" tppabs="https://www.javadrive.jp/start/regex/index5.html">パターンとマッチした部分文字列の情報を取得する</a>」で解説します)。
+			</p>
+
+<h2><a id="section2">findメソッドを連続して実行する</a></h2>
+
+			<p>
+			find メソッドを最初に実行したときは対象の文字列の先頭文字からマッチするか検索していきます。 find メソッドを実行してマッチしたあと、もう一度 find メソッドを実行すると、今度は文字列の先頭からではなく前回マッチした最後の文字の次の文字からマッチするかどうかを検索していきます。
+			</p>
+
+			<p>
+			<img src="img/p4-3.png" tppabs="https://www.javadrive.jp/start/regex/img/p4-3.png" alt="findメソッドを連続して実行する(1)" width="723" height="424">
+			</p>
+
+			<p>
+			find メソッドはマッチしなかった場合に false を返すので、対象の文字列の中でパターンが複数の箇所でマッチする場合に、順番にマッチした部分を取得するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+// java.util.regex.*のインポートが必要です
+import java.util.regex.*;
+
+String regex = "[0-9]{2}";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher​("CODE24-11-75");
+while (m.find()){
+  System.out.println(m.group());
+}
+</pre>
+</div>
+
+			<p>
+			group メソッドは次のページで解説しますが、マッチした部分を戻り値として返すメソッドです。パターンが対象の文字列とマッチするかどうか調べ、マッチした場合はその次の文字から再びマッチするかどうかを調べます。文字列の最後まで到達し、マッチしなくなったら終了です。
+			</p>
+
+			<p>
+			なお検索の開始位置をリセットするには、これまで使っていた find メソッドとは引数の数が異なる次の find メソッドを使います。書式は次の通りです。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public boolean find​(int start)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+start - マッチの検索を開始するインデックス<br>
+<br>
+戻り値:<br>
+入力シーケンスの指定されたインデックス以降の部分シーケンスが、この正規表現エンジンのパターンとマッチした場合にのみtrue<br>
+<br>
+例外:<br>
+IndexOutOfBoundsException - startがゼロより小さい場合、またはstartが入力シーケンスの長さより大きい場合。
+</p>
+</div>
+
+			<p>
+			1 番目の引数に、検索を開始するインデックスを指定します。例えば文字列の先頭から検索を行いたい場合は 0 を指定します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample4-2.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample4_2{
+  public static void main(String[] args){
+    String regex = "[0-9]{2}";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("CODE24-11-75");
+    while (m.find()){
+      System.out.println(m.group());
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample4_2.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample4_2
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-4.png" tppabs="https://www.javadrive.jp/start/regex/img/p4-4.png" alt="findメソッドを連続して実行する(2)" width="723" height="353">
+			</p>
+
+			<p>
+			find メソッドを使ってパターンが対象の文字列にマッチするかどうか確認し、マッチした場合はマッチした文字列を画面に出力しました。これを対象の文字列に対してマッチしなくなるまで繰り返します。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java の正規表現で find メソッドを使って文字列の中でがパターンとマッチする部分があるか検索する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

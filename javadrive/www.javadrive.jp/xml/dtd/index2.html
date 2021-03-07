@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XML文書がDTDに準拠しているか検証する | XML入門</title>
+<meta name="description" content="DTD の記述方法を見ていく前に、作成した XML 文書が DTD に照らし合わせて問題ないかどうかをチェックする方法について解説します。">
+
+<meta property="og:title" content="XML文書がDTDに準拠しているか検証する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/xml/dtd/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/xml/dtd/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="DTD の記述方法を見ていく前に、作成した XML 文書が DTD に照らし合わせて問題ないかどうかをチェックする方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "XML入門",
+	"item": "https://www.javadrive.jp/xml/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "DTDによるXML構造の定義",
+	"item": "https://www.javadrive.jp/xml/dtd/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/xml/">XML入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/xml/dtd/">DTDによるXML構造の定義</a></li>
+				</ul>
+			</div>
+
+			<h1>XML文書がDTDに準拠しているか検証する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			DTD の記述方法を見ていく前に、作成した XML 文書が DTD に照らし合わせて問題ないかどうかをチェックする方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">XML文書がDTDに準拠しているか検証する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">XML文書がDTDに準拠しているか検証する</a></h2>
+
+			<p>
+			XML文書がDTDに準拠しているか検証するためのツールについて、いくつかのところから提供されていますが、今回は次のサービスを利用しました(このサイトに問題があるかどうかの保証はできません。利用される場合は自己責任でお願いいたします)。
+			</p>
+
+			<p>
+			・<a href="javascript:if(confirm('http://xmlvalidator.new-studio.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://xmlvalidator.new-studio.org/'" tppabs="http://xmlvalidator.new-studio.org/">http://xmlvalidator.new-studio.org/</a>
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/xml/dtd/img/p2-1.png" alt="XML文書がDTDに準拠しているか検証する(1)" width="728" height="460">
+			</p>
+
+			<p>
+			DTD をチェックしたあとで「ファイルを選択」をクリックしてください。ファイル選択ダイアログが表示されますので、検証したい XML 文書のファイルを選択してください。
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/xml/dtd/img/p2-2.png" alt="XML文書がDTDに準拠しているか検証する(2)" width="728" height="320" class="waku">
+			</p>
+
+			<p>
+			今回は次のような XML 文書を事前に作成し保存したものを選択しました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+
+&lt;!DOCTYPE 在庫データ[
+    &lt;!ELEMENT 在庫データ (商品)&gt;
+    &lt;!ELEMENT 商品 (名前, 個数)&gt;
+    &lt;!ELEMENT 名前 (#PCDATA)&gt;
+    &lt;!ELEMENT 個数 (#PCDATA)&gt;
+]&gt;
+
+&lt;在庫データ&gt;
+    &lt;商品&gt;
+        &lt;名前&gt;自転車&lt;/名前&gt;
+        &lt;個数&gt;20&lt;/個数&gt;
+    &lt;/商品&gt;
+&lt;/在庫データ&gt;
+</pre>
+</div>
+
+			<p>
+			ファイルの選択が終わりましたら「Check」をクリックしてください。
+			</p>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/xml/dtd/img/p2-3.png" alt="XML文書がDTDに準拠しているか検証する(3)" width="728" height="320" class="waku">
+			</p>
+
+			<p>
+			次のように「Validation successful!」と表示されれば妥当な XML 文書です。(妥当な XML 文書とは DTD によって取り決められたルールに適合している文書のことです。)
+			</p>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/xml/dtd/img/p2-4.png" alt="XML文書がDTDに準拠しているか検証する(4)" width="728" height="460">
+			</p>
+
+			<p>
+			では先ほどの XML 文書を少し変更し、 DTD に従っていない文書にしてみます。(タグ名を「個数」から「商品数」に変更してあります)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+
+&lt;!DOCTYPE 在庫データ[
+    &lt;!ELEMENT 在庫データ (商品)&gt;
+    &lt;!ELEMENT 商品 (名前, 個数)&gt;
+    &lt;!ELEMENT 名前 (#PCDATA)&gt;
+    &lt;!ELEMENT 個数 (#PCDATA)&gt;
+]&gt;
+
+&lt;在庫データ&gt;
+    &lt;商品&gt;
+        &lt;名前&gt;自転車&lt;/名前&gt;
+        <span class="red">&lt;商品数&gt;20&lt;/商品数&gt;</span>
+    &lt;/商品&gt;
+&lt;/在庫データ&gt;
+</pre>
+</div>
+
+			<p>
+			先ほどと同じようにチェックを行ってみると、今度は 2 つのエラーが表示されました。
+			</p>
+
+			<p>
+			<img src="img/p2-5.png" tppabs="https://www.javadrive.jp/xml/dtd/img/p2-5.png" alt="XML文書がDTDに準拠しているか検証する(5)" width="728" height="460">
+			</p>
+
+			<p>
+			このように検証ツールを使用することで、作成した XML 文書が DTD で定めたルールに従って作成されているかを確認することができます。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			作成した XML 文書が DTD に照らし合わせて問題ないかどうかをチェックする方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

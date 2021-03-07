@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データの取得(SELECT) - SQLiteへの接続 - PHP入門</title>
+<meta name="keywords" content="SELECT,SQLite,PHP入門" />
+<meta name="description" content="データの取得(SELECT)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/sqlite/" itemprop="url"><span itemprop="title">SQLiteへの接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>データの取得(SELECT)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			次にデータの取得を行います。SELECTを使いますが、今回は結果を取得するので「sqlite_query」関数を使います。
+			</p>
+
+			<p>
+			「sqlite_query」関数を実行した結果resource型の値を受け取りますが、その中にはSELECTの結果としての複数のフィールドに関する値が複数の行数分だけ帰ってきています。
+			</p>
+
+			<p>
+			resource型の値から実際のデータを取り出すためには「sqlite_fetch_array」関数を使います。
+			</p>
+
+<pre class="mheader">
+sqlite_fetch_array
+array sqlite_fetch_array(resource result
+   [, int result_type [, bool decode_binary]])
+</pre>
+<pre class="mexplain">
+指定した結果ハンドル result から次のレコードを取得 します。レコードがも
+うない場合は FALSEを返し、それ以外は レコードデータを含む連想配列を返し
+ます。
+
+引数:
+  result  SQLite 結果リソース。
+  result_type  オプションの result_type パラメータには定数を指定でき、返
+    される配列の添字を定義します。 SQLITE_ASSOC を用いると、連想配列の添
+    字(名前フィールド)のみが 返されます。一方、SQLITE_NUM は、数値の添字
+    (フィールド番号)のみを返します。SQLITE_BOTH は、連想配列の添字と数値
+    の添字の両方を返します。SQLITE_BOTH がこの関数のデフォルトです。
+  decode_binary  decode_binary パラメータが TRUE (デフォルト)に 設定され
+    た場合、PHP はバイナリエンコーディングをデコードします。 これは、
+    sqlite_escape_string() によりエンコードされたデータに適用されます。
+    sqlite をサポートする他のアプリケーションにより作成されたデータベー
+    スを処理する時以外は、この値をデフォルトのままにしておくべきです。
+返り値:
+  結果セットの次レコードの配列を返します。 次レコードの位置が最終レコー
+    ド以降の場合、FALSE を返します。
+</pre>
+
+			<p>
+			「result_type」の値で結果をどのような配列として取得するかを指定できます。「SQLITE_NUM」の場合は0から始まる数値のインデックスで配列にアクセスできます。「SQLITE_ASSOC」の場合は項目名による連想配列の形です。
+			</p>
+
+			<p>
+			例として下記のようなSELECTを発行した場合で考えて見ます。
+			</p>
+
+<pre class="fixcode">
+$sql = "SELECT id, name FROM shouhin";
+$result = sqlite_query($link, $sql, SQLITE_BOTH, $sqliteerror);
+if (!$result) {
+    die('クエリーが失敗しました。'.$sqliteerror);
+}
+</pre>
+
+			<p>
+			「SQLITE_NUM」を指定する場合は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$rows = sqlite_fetch_array($result, SQLITE_NUM);
+print($rows[0]);
+print($rows[1]);
+</pre>
+
+			<p>
+			「SQLITE_ASSOC」を指定する場合は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$rows = sqlite_fetch_array($result, SQLITE_ASSOC);
+print($rows['id']);
+print($rows['name']);
+</pre>
+
+			<p>
+			次に全ての行を取得する時に、結果としていくつの行が帰ってきたかを確認する方法です。「sqlite_num_rows」関数を使います。
+			</p>
+
+<pre class="mheader">
+sqlite_num_rows
+int sqlite_num_rows(resource result)
+</pre>
+<pre class="mexplain">
+バッファされた結果セット result のレコード数を返します。
+
+引数:
+  result  SQLite 結果リソース。
+返り値:
+  レコード数
+</pre>
+
+			<p>
+			以上のことからクエリーの結果に含まれる全ての行のデータを取り出すには、下記のような感じで記述します。
+			</p>
+
+<pre class="fixcode">
+$sql = "SELECT id, name FROM shouhin";
+$result = sqlite_query($link, $sql, SQLITE_BOTH, $sqliteerror);
+if (!$result) {
+    die('クエリーが失敗しました。'.$sqliteerror);
+}
+
+for ($i = 0 ; $i &lt; sqlite_num_rows($result) ; $i++){
+    $rows = sqlite_fetch_array($result, SQLITE_ASSOC);
+    print($rows['id']);
+    print($rows['name']);
+}
+</pre>
+
+			<p>
+			では実際に試してみます。
+			</p>
+
+			<p>
+			<a href="sqlitetest7.php.htm" tppabs="https://www.javadrive.jp/php/sqlite/sqlitetest7.php">sqlitetest7.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$link = sqlite_open('test.db', 0666, $sqliteerror);
+if (!$link) {
+    die('接続失敗です。'.$sqliteerror);
+}
+
+print('接続に成功しました。&lt;br&gt;');
+
+$sql = "SELECT id, name FROM shouhin";
+$result = sqlite_query($link, $sql, SQLITE_BOTH, $sqliteerror);
+if (!$result) {
+    die('クエリーが失敗しました。'.$sqliteerror);
+}
+
+for ($i = 0 ; $i &lt; sqlite_num_rows($result) ; $i++){
+    $rows = sqlite_fetch_array($result, SQLITE_ASSOC);
+    print('id='.$rows['id']);
+    print(',name='.$rows['name'].'&lt;br&gt;');
+}
+
+sqlite_close($link);
+
+print('切断しました。&lt;br&gt;');
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p11.png" tppabs="https://www.javadrive.jp/php/sqlite/img/p11.png" alt="データの取得" width="469" height="270">
+			</p>
+
+			<p>
+			今までテーブルに追加してきたデータを取得できました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

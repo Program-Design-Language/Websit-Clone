@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テキストエリアへ入力済みのテキストに対する追加/挿入/置き換え | Swingを使ってみよう</title>
+<meta name="description" content="テキストエリアには初期値を設定する以外に入力済みのテキストに対してテキストを追加したり任意の位置に挿入したり、または既存のテキストを他のテキストで置き換えることができます。ここではテキストエリアのテキストに対する追加や挿入や置き換えを行う方法について解説します。">
+
+<meta property="og:title" content="テキストエリアへ入力済みのテキストに対する追加/挿入/置き換え">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/tutorial/jlabel/index14.html">
+<meta property="og:image" content="https://www.javadrive.jp/tutorial/jlabel/img/p14-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="テキストエリアに入力されるテキストは複数行になる場合が多いですが、ここではテキストエリアに入力されたテキストを取得し、 1 行毎に分割して処理する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jtextarea/" itemprop="url"><span itemprop="title">テキストエリアの作成(JTextAreaクラス)</span></a></li>
+		</ul>
+</div>
+
+			<h1>テキストエリアへ入力済みのテキストに対する追加/挿入/置き換え</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			テキストエリアには初期値を設定する以外に入力済みのテキストに対してテキストを追加したり任意の位置に挿入したり、または既存のテキストを他のテキストで置き換えることができます。ここではテキストエリアのテキストに対する追加や挿入や置き換えを行う方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">テキストエリアにテキストを追加する</a></li>
+			<li><a href="#section2">テキストエリアの任意の位置にテキストを挿入する</a></li>
+			<li><a href="#section3">テキストエリアの任意の範囲のテキストを別のテキストで置き換える</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">テキストエリアにテキストを追加する</a></h2>
+
+			<p>
+			テキストエリアに入力済みのテキストの末尾に他のテキストを追加するには JTextArea クラスで定義されている append メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public void append?(String str)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定されたテキストをドキュメントの末尾に追加します。 モデルがnullの場合、あるいは文字列がnullか空の場合には何も行いません。<br>
+<br>
+パラメータ:<br>
+str - 挿入するテキスト
+</p>
+</div>
+
+			<p>
+			引数には末尾に追加する文字列を String クラスのオブジェクトを使って指定します。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea textarea = new JTextArea("Hello!");
+textarea.append("Bye!");
+</pre>
+</div>
+
+			<p>
+			この場合、テキストエリアに入力されているテキストは "Hello!Bye!" となります。
+			</p>
+
+			<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample14_1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+class JSample14_1 extends JFrame implements ActionListener{
+  JTextArea textarea;
+  JTextField text;
+
+  public static void main(String args[]){
+    JSample14_1 frame = new JSample14_1("MyTitle");
+    frame.setVisible(true);
+  }
+
+  JSample14_1(String title){
+    setTitle(title);
+    setBounds(100, 100, 600, 400);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    textarea = new JTextArea();
+
+    text = new JTextField(20);
+    JButton button = new JButton("Append");
+    button.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(text);
+    p.add(button);
+
+    Container contentPane = getContentPane();
+    contentPane.add(textarea, BorderLayout.CENTER);
+    contentPane.add(p, BorderLayout.SOUTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String str = text.getText();
+    textarea.append(str);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			次のようにコンパイルを行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+javac JSample14_1.java
+</pre>
+</div>
+
+			<p>
+			<img src="img/p14-1.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-1.png" alt="テキストエリアにテキストを追加する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			コンパイルが終わりましたら実行します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+java JSample14_1
+</pre>
+</div>
+
+			<p>
+			テキストエリアを画面中央いっぱいに追加し、画面下部にテキストフィールドとボタンを 1 つずつ追加しています。
+			</p>
+
+			<p>
+			<img src="img/p14-2.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-2.png" alt="テキストエリアにテキストを追加する(2)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアにテキストを入力したあと、画面下部のテキストフィールドにテキストを入力してからボタンをクリックしてください。
+			</p>
+
+			<p>
+			<img src="img/p14-3.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-3.png" alt="テキストエリアにテキストを追加する(3)" width="586" height="393">
+			</p>
+
+			<p>
+			<img src="img/p14-4.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-4.png" alt="テキストエリアにテキストを追加する(4)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアに入力されているテキストの末尾にテキストフィールドに入力したテキストが追加されました。
+			</p>
+
+<h2><a id="section2">テキストエリアの任意の位置にテキストを挿入する</a></h2>
+
+			<p>
+			テキストエリアに入力済みのテキストの任意の位置に他のテキストを挿入するには JTextArea クラスで定義されている insert メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public void insert?(String str, int pos)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定されたテキストを指定の位置に挿入します。 モデルがnullの場合、あるいはテキストがnullまたは空の場合は何も行いません。<br>
+<br>
+パラメータ:<br>
+str - 挿入するテキスト<br>
+pos - 挿入位置&gt;= 0<br>
+<br>
+例外:<br>
+IllegalArgumentException - posがモデル内の無効な位置にある場合
+</p>
+</div>
+
+			<p>
+			1 番目の引数には挿入する文字列を String クラスのオブジェクトを使って指定します。 2 番目の引数には挿入する位置を int 型の数値で指定します。位置は先頭の文字の前の位置が 0 、先頭の位置と次の文字の間の位置が 1 、といった感じになります。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea textarea = new JTextArea("Hello!Bye!");
+textarea.insert?("Thanks!", 6);
+</pre>
+</div>
+
+			<p>
+			この場合、テキストエリアに入力されているテキストは "Hello!Thanks!Bye!" となります。
+			</p>
+
+			<p>
+			なおこの後のサンプルで、テキストエリアの中でキャレットが今置かれている位置を取得する方法として JTextArea クラスの親クラスである JTextComponent で用意されている setCaretPosition メソッドを使っています。 
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public int getCaretPosition()
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+テキスト・コンポーネントのテキスト挿入キャレットの位置を返します。<br>
+<br>
+戻り値:<br>
+テキスト・コンポーネントのテキスト挿入キャレットの位置(0以上)
+</p>
+</div>
+
+			<p>
+			メソッドを実行すると、キャレットの位置を int 型の数値で返します。位置に関する考え方は insert? メソッドの位置の考え方と同じです。
+			</p>
+
+			<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample14_2.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+class JSample14_2 extends JFrame implements ActionListener{
+  JTextArea textarea;
+  JTextField text;
+
+  public static void main(String args[]){
+    JSample14_2 frame = new JSample14_2("MyTitle");
+    frame.setVisible(true);
+  }
+
+  JSample14_2(String title){
+    setTitle(title);
+    setBounds(100, 100, 600, 400);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    textarea = new JTextArea();
+
+    text = new JTextField(20);
+    JButton button = new JButton("Insert");
+    button.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(text);
+    p.add(button);
+
+    Container contentPane = getContentPane();
+    contentPane.add(textarea, BorderLayout.CENTER);
+    contentPane.add(p, BorderLayout.SOUTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String str = text.getText();
+    int pos = textarea.getCaretPosition();
+    textarea.insert(str, pos);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			次のようにコンパイルを行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+javac JSample14_2.java
+</pre>
+</div>
+
+			<p>
+			<img src="img/p14-5.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-5.png" alt="テキストエリアの任意の位置にテキストを挿入する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			コンパイルが終わりましたら実行します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+java JSample14_2
+</pre>
+</div>
+
+			<p>
+			テキストエリアを画面中央いっぱいに追加し、画面下部にテキストフィールドとボタンを 1 つずつ追加しています。
+			</p>
+
+			<p>
+			<img src="img/p14-6.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-6.png" alt="テキストエリアの任意の位置にテキストを挿入する(2)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアにテキストを入力したあと、テキストを挿入したい位置にキャレットを置いてください。
+			</p>
+
+			<p>
+			<img src="img/p14-7.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-7.png" alt="テキストエリアの任意の位置にテキストを挿入する(3)" width="586" height="393">
+			</p>
+
+			<p>
+			その後で画面下部のテキストフィールドにテキストを入力してからボタンをクリックしてください。
+			</p>
+
+			<p>
+			<img src="img/p14-8.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-8.png" alt="テキストエリアの任意の位置にテキストを挿入する(4)" width="586" height="393">
+			</p>
+
+			<p>
+			<img src="img/p14-9.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-9.png" alt="テキストエリアの任意の位置にテキストを挿入する(5)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアに入力されているテキストの中でキャレットがあった位置にテキストフィールドに入力したテキストが挿入されました。
+			</p>
+
+<h2><a id="section3">テキストエリアの任意の範囲のテキストを別のテキストで置き換える</a></h2>
+
+			<p>
+			テキストエリアに入力済みのテキストの中で、任意の範囲のテキストを別のテキストで置き換えるには JTextArea クラスで定義されている replaceRange メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public void replaceRange?(String str, int start, int end)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定された開始位置から終了位置までのテキストを、新しい指定テキストで置き換えます。 モデルがnullの場合は何も行いません。 新しい文字列がnullまたは空の場合は、単純にdeleteを実行します。<br>
+<br>
+パラメータ:<br>
+str - 置換えに使用するテキスト<br>
+start - 開始位置&gt;= 0<br>
+end - 終了位置&gt;= start<br>
+<br>
+例外:<br>
+IllegalArgumentException - 範囲の一部がモデル内の無効な位置にある場合
+</p>
+</div>
+
+			<p>
+			1 番目の引数には置き換える文字列を String クラスのオブジェクトを使って指定します。 2 番目の引数には置き換える位置の開始位置を int 型の数値で指定します。 3 番目の引数には置き換える位置の終了位置を int 型の数値で指定します。位置は先頭の文字の前の位置が 0 、先頭の位置と次の文字の間の位置が 1 、といった感じになります。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea textarea = new JTextArea("Hello!Bye!");
+textarea.replaceRange?("ELLO", 1, 5);
+</pre>
+</div>
+
+			<p>
+			この場合、テキストエリアに入力されているテキストは "HELLO!Bye!" となります。
+			</p>
+
+			<p>
+			なおこの後のサンプルで、テキストエリアの中で現在選択されている位置を取得する方法として JTextArea クラスの親クラスである JTextComponent で用意されている getSelectionStart メソッドおよび getSelectionEnd メソッドを使っています。 
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public int getSelectionStart()
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+選択したテキストの開始位置を返します。 ドキュメントが空の場合は0、選択領域がない場合はドットの値を返します。<br>
+<br>
+戻り値:<br>
+開始位置&gt;= 0
+</p>
+</div>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public int getSelectionEnd()
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+選択したテキストの末尾位置を返します。 ドキュメントが空の場合は0、選択領域がない場合はドットの値を返します。<br>
+<br>
+戻り値:<br>
+末尾位置&gt;= 0
+</p>
+</div>
+
+			<p>
+			それぞれのメソッドを実行すると、テキストエリアの中で現在選択されている位置の開始位置と終了位置をそれぞれ int 型の数値で返します。位置に関する考え方は replaceRange? メソッドの位置の考え方と同じです。
+			</p>
+
+			<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample14_3.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+class JSample14_3 extends JFrame implements ActionListener{
+  JTextArea textarea;
+  JTextField text;
+
+  public static void main(String args[]){
+    JSample14_3 frame = new JSample14_3("MyTitle");
+    frame.setVisible(true);
+  }
+
+  JSample14_3(String title){
+    setTitle(title);
+    setBounds(100, 100, 600, 400);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    textarea = new JTextArea();
+
+    text = new JTextField(20);
+    JButton button = new JButton("Replace");
+    button.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(text);
+    p.add(button);
+
+    Container contentPane = getContentPane();
+    contentPane.add(textarea, BorderLayout.CENTER);
+    contentPane.add(p, BorderLayout.SOUTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String str = text.getText();
+    int start_pos = textarea.getSelectionStart();
+    int end_pos = textarea.getSelectionEnd();
+    textarea.replaceRange(str, start_pos, end_pos);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			次のようにコンパイルを行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+javac JSample14_3.java
+</pre>
+</div>
+
+			<p>
+			<img src="img/p14-10.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-10.png" alt="テキストエリアの任意の範囲のテキストを別のテキストで置き換える(1)" width="723" height="352">
+			</p>
+
+			<p>
+			コンパイルが終わりましたら実行します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+java JSample14_2
+</pre>
+</div>
+
+			<p>
+			テキストエリアを画面中央いっぱいに追加し、画面下部にテキストフィールドとボタンを 1 つずつ追加しています。
+			</p>
+
+			<p>
+			<img src="img/p14-11.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-11.png" alt="テキストエリアの任意の範囲のテキストを別のテキストで置き換える(2)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアにテキストを入力したあと、テキストを置き換えたい部分をマウスまたはテキストで選択してください。
+			</p>
+
+			<p>
+			<img src="img/p14-12.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-12.png" alt="テキストエリアの任意の範囲のテキストを別のテキストで置き換える(3)" width="586" height="393">
+			</p>
+
+			<p>
+			その後で画面下部のテキストフィールドにテキストを入力してからボタンをクリックしてください。
+			</p>
+
+			<p>
+			<img src="img/p14-13.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-13.png" alt="テキストエリアの任意の範囲のテキストを別のテキストで置き換える(4)" width="586" height="393">
+			</p>
+
+			<p>
+			<img src="img/p14-14.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p14-14.png" alt="テキストエリアの任意の範囲のテキストを別のテキストで置き換える(5)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアに入力されているテキストの中で選択されていた部分がテキストフィールドに入力したテキストで置き換えられました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			テキストエリアのテキストに対する追加や挿入や置き換えを行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

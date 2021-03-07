@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リダイレクトの設定 - Ruby on Rails入門</title>
+<meta name="keywords" content="リダイレクトの設定" />
+<meta name="description" content="Railsアプリケーションにて別のページへリダイレクトを行なう方法を解説します。ステータスコードの設定も可能です。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/controller/" itemprop="url"><span itemprop="title">コントローラとアクション</span></a></li>
+		</ul>
+</div>
+
+			<h1>リダイレクトの設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			リダイレクトとは、別のURLを呼び出すリクエストを利用者のブラウザから送信してもらうように要求することです。最初に呼び出されたアクションから別のアクションを呼び出しているのではなく、利用者から新しいURLに対してリクエストを出しなおしてもらう点に注意して下さい。ここではリダイレクトの方法とどういった挙動をするのかについてご説明します。
+			</p>
+
+			<p>
+			1.<a href="#section1">リダイレクトした時の挙動</a><br />
+			2.<a href="#section2">ステータスコードの変更</a><br />
+			3.<a href="#section3">リダイレクト使用時のDoubleRenderError</a><br />
+			</p>
+
+<h2><a id="section1">リダイレクトした時の挙動</a></h2>
+
+			<p>
+			リダイレクトを行なうには redirect_to メソッドを使います。リダイレクト先としてはアプリケーション内の別のアクションを呼び出したり、アプリケーション外のURLなどが指定できます。
+			</p>
+
+			<p>
+			別のアクションへのリダイレクトは次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+redirect_to :action =&gt; 'アクション名'
+redirect_to :controller =&gt; 'コントローラ名' :action =&gt; 'アクション名'
+</pre>
+
+			<p>
+			同じコントローラ内のアクションに対するリダイレクトの場合はアクション名だけを指定し、別のコントローラに含まれるアクションに対するリダイレクトの場合はコントローラ名とアクション名を指定して下さい。
+			</p>
+
+			<p>
+			パスや他のサイトのURLを指定することもできます。
+			</p>
+
+<pre class="fixcomment">
+redirect_to '/url/index'
+redirect_to 'http://www.google.co.jp/''
+</pre>
+
+			<p>
+			では実際に試してみます。「sample」アプリケーションの中に新しく「plans」コントローラを作成し、さらに「src1」「src2」「src3」「dest」アクションを同時に作成します。
+			</p>
+
+<pre class="fixcode">
+rails generate controller plans src1 src2 src3 dest
+</pre>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-1.png" alt="p5-1" width="517" height="390" />
+			</p>
+
+			<p>
+			作成されたコントローラクラス(app/controllers/plans_controller.rb)を次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class PlansController &lt; ApplicationController
+  def src1
+    redirect_to :action =&gt; 'dest'
+  end
+
+  def src2
+    redirect_to '/plans/dest'
+  end
+
+  def src3
+    redirect_to 'http://www.google.co.jp/'
+  end
+
+  def dest
+  end
+end
+</pre>
+
+			<p>
+			今回「src1」及び「src2」アクションを呼び出した場合、「dest」アクションへリダイレクトしています。また「src3」アクションを呼び出した場合、「http://www.google.co.jp/」へリダイレクトしています。
+			</p>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザからまず「http://localhost:3000/plans/src1」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-2.png" alt="p5-2" width="506" height="139" />
+			</p>
+
+			<p>
+			<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-3.png" alt="p5-3" width="506" height="336" />
+			</p>
+
+			<p>
+			「dest」アクションが呼び出されテンプレートを使って結果が出力されています。
+			</p>
+
+			<p>
+			またブラウザに表示されているURLも「http://localhost:3000/plans/src1」から「http://localhost:3000/plans/dest」に変わっています。リダイレクトは新しいURLへ再度リクエストを送信するように指示するものなので、今回「src1」を呼び出した結果「dest」を新しく呼び出すように指示が返ってくるため、ブラウザは自動的に新しいリクエストである「http://localhost:3000/plans/dest」へアクセスしているためです。
+			</p>
+
+			<p>
+			確認のためコマンドプロンプトからcurlを使って問い合わせを行なってみます。
+			</p>
+
+			<p>
+			<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-4.png" alt="p5-4" width="517" height="299" />
+			</p>
+
+			<p>
+			スタータスコード 302 が返ってきていることが確認できます。302は一時的に移動することを表すコードで、移動先はLocationヘッダに設定されて返ってきます。今回は「http://localhost:3000/plans/dest」が設定されているため、この応答を受け取ったブラウザは改めて「http://localhost:3000/plans/dest」へリクエストを送信しています。
+			</p>
+
+			<p>
+			次にブラウザから「http://localhost:3000/plans/src2」へアクセスして下さい。こちらも同じ「dest」へリダイレクトしているため、先程と同じ結果となります。
+			</p>
+
+			<p>
+			<img src="img/p5-5.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-5.png" alt="p5-5" width="506" height="336" />
+			</p>
+
+			<p>
+			最後にブラウザから「http://localhost:3000/plans/src3」へアクセスして下さい。こちらも外部のサイトへリダイレクトしているため、別のサイトが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-6.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-6.png" alt="p5-6" width="506" height="336" />
+			</p>
+
+<h2><a id="section2">ステータスコードの変更</a></h2>
+
+			<p>
+			先程確認した通り、リダイレクトを行なった場合に最初に利用者へはステータスコードとして302(一時的な変更)が返されます。このステータスコードを場合によっては301(恒久的な変更)に変更したい場合があります。この場合は次の書式を使用して下さい。
+			</p>
+
+<pre class="fixcomment">
+redirect_to :action =&gt; 'アクション名', :status =&gt; ステータスコード
+</pre>
+
+			<p>
+			では先程作成したコントローラクラス(app/controllers/plans_controller.rb)の中の「src1」メソッドを次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class PlansController &lt; ApplicationController
+  def src1
+    redirect_to :action =&gt; 'dest', :status =&gt; 301
+  end
+
+  def dest
+  end
+end
+</pre>
+
+			<p>
+			ステータスコードとして301を返すように設定しました。ではブラウザから「http://localhost:3000/plans/src1」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-7.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-7.png" alt="p5-7" width="539" height="336" />
+			</p>
+
+			<p>
+			スタータスコードが変わってもリダイレクトされることに変わりはないので、「dest」アクションを呼び出すURLへリダイレクトされた結果が表示されています。では今後はコマンドプロンプトからcurlを使って問い合わせを行なってみます。
+			</p>
+
+			<p>
+			<img src="img/p5-8.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-8.png" alt="p5-8" width="517" height="299" />
+			</p>
+
+			<p>
+			スタータスコード 301 が返ってきていることが確認できます。このように必要な場合にはステータスコードを設定してリダイレクトして下さい。
+			</p>
+
+<h2><a id="section3">リダイレクト使用時のDoubleRenderError</a></h2>
+
+			<p>
+			「<a href="index4.html#section2" tppabs="https://www.javadrive.jp/rails/controller/index4.html#section2">renderメソッド</a>」でも解説しましたが、Railsでは二度レンダリングを行おうとするとDoubleRenderErrorが発生します。
+			</p>
+
+			<p>
+			リダイレクトを行った場合も同じ扱いとなりますので、「redirect_to」メソッドを使ってリダイレクトを行ったあとはそのメソッドの最後で自動的にテンプレートが呼び出されることはありませんし、リダイレクトの後で「render」メソッドを明示的に呼び出すとエラーが発生します。
+			</p>
+
+			<p>
+			例として先程作成したコントローラクラス(app/controllers/plans_controller.rb)の中の「src1」メソッドを次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class PlansController &lt; ApplicationController
+  def src1
+    redirect_to :action =&gt; 'dest'
+    render :text =&gt; 'End'
+  end
+
+  def dest
+  end
+end
+</pre>
+
+			<p>
+			ではブラウザから「http://localhost:3000/plans/src1」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-9.png" tppabs="https://www.javadrive.jp/rails/controller/img/p5-9.png" alt="p5-9" width="560" height="362" />
+			</p>
+
+			<p>
+			「AbstractController::DoubleRenderError」が発生します。またエラーになることから分かる通り「redirect_to」文を実行してもメソッドは終了せず次の文へ処理が進む点に注意して下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

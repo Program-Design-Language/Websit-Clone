@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URL書き換え - セッション管理 - サーブレット入門</title>
+<meta name="keywords" content="URL書き換え,セッション,サーブレット" />
+<meta name="description" content="URL書き換え" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/session/" itemprop="url"><span itemprop="title">セッション管理</span></a></li>
+		</ul>
+</div>
+
+			<h1>URL書き換え</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			今までのサンプルではクライアント側のブラウザでクッキーを受け入れる設定になっていることが前提となっていました。セッションは開始された後、セッションIDをクライアント側にクッキーとして保存することで、クライアントを識別しどのセッションがどのクライアントのためのものなのかを識別しているためです。
+			</p>
+
+			<p>
+			ただ、不特定多数のクライアントから利用されるサーブレットの場合、全てのクライアントがクッキーを受け入れる設定になっているわけではありません。クッキーが使えないクライアントからでもセッションを利用できるようにするためにはURLをセッションID付きのものに書き換える必要があります。
+			</p>
+
+			<p>
+			クッキーが使える場合に、クライアントからはサーブレットへのリクエストと同時に自分が持っているクッキーをサーバに送ってきます。その仕組みの変わりに、サーブレットへのリクエストそのものにセッションIDを含めてしまうということになります。これはURLを次のように書き換えることで対応出来ます。
+			</p>
+
+			<p>
+			通常のサーブレットへのリンク：
+			</p>
+
+<pre class="fixcomment">
+http://localhost:8080/session/sessiontest
+</pre>
+
+			<p>
+			セッションID付サーブレットへのリンク：
+			</p>
+
+<pre class="fixcomment">
+http://localhost:8080/session/sessiontest;jsessionid=(セッションID)
+</pre>
+
+			<p>
+			このようにセッションID付きのURLをクリックするなどしてサーバへリクエストを送ると、サーバ側ではそこからセッションIDを抜き出してクッキーがある場合と同じような処理をしてくれます。
+			</p>
+
+			<p>
+			ここでURLに付加するセッションIDは、クライアント毎にそしてセッション毎に異なるため、固定して記述することは出来ません。まずクライアントが最初にサーバへアクセスした時にセッションを開始し、そこからセッションIDを取得した上で、それ以降クリックされる全てのURLにセッションIDを付与した形でHTMLをサーブレットが出力する必要があります。
+			</p>
+
+			<p>
+			このセッションID付きのURLの生成ですが、「HttpServletResponse」インターフェースで定義されている"encodeURL"メソッドを使うことで自動的に行うことができます。
+			</p>
+
+<pre class="mheader">
+encodeURL
+public java.lang.String encodeURL(java.lang.String url)
+</pre>
+<pre class="mexplain">
+Encodes the specified URL by including the session ID in it, or, if 
+encoding is not needed, returns the URL unchanged. The implementation
+of this method includes the logic to determine whether the session ID
+needs to be encoded in the URL. For example, if the browser supports 
+cookies, or session tracking is turned off, URL encoding is unnecessary. 
+
+For robust session tracking, all URLs emitted by a servlet should be 
+run through this method. Otherwise, URL rewriting cannot be used with 
+browsers which do not support cookies. 
+
+Parameters:
+  url - the url to be encoded. 
+Returns:
+  the encoded URL if encoding is needed; the unchanged URL otherwise.
+</pre>
+
+			<p>
+			このメソッドは引数にURLを表す文字列を指定して実行すると、セッションID付きのURLに変換して出力してくれます。サーブレットを通じて出力されるリンクは全てこのメソッドを通した結果得られるURLを使う必要があります。
+			</p>
+
+			<p>
+			例として、下記のような記述を行っていたサーブレットを考えてみます。
+			</p>
+
+<pre class="fixcode">
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+  throws IOException, ServletException{
+
+  response.setContentType("text/html; charset=Shift_JIS");
+  PrintWriter out = response.getWriter();
+
+  HttpSession session = request.getSession(true);
+
+  out.println("&lt;a href=&yen;"/session/sessiontest&yen;"&gt;再表示&lt;/a&gt;");
+}
+</pre>
+
+			<p>
+			URL書き換えを行う場合には次のように記述します。
+			</p>
+
+<pre class="fixcode">
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+  throws IOException, ServletException{
+
+  response.setContentType("text/html; charset=Shift_JIS");
+  PrintWriter out = response.getWriter();
+
+  HttpSession session = request.getSession(true);
+
+  String eURL = response.encodeURL("/session/sessiontest");
+  out.println("&lt;a href=&yen;"" + eURL + "&yen;"&gt;再表示&lt;/a&gt;");
+}
+</pre>
+
+			<p>
+			またこのメソッドは、必要無ければ書き換えを行いません。つまりクッキーが使える状態で、クッキーからセッションIDを取得出来る場合にはこのメソッドを使ってもセッションIDの付与は行われません。少し分かりにくいのでこの後のサンプルで確認して下さい。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では試してみます。
+			</p>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;sessiontest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;SessionTest8&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;sessiontest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/sessiontest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。
+			</p>
+
+			<p>
+			<a href="SessionTest8.java.htm" tppabs="https://www.javadrive.jp/servlet/session/SessionTest8.java">SessionTest8.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.Date;
+
+public class SessionTest8 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    HttpSession session = request.getSession(false);
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;セッションテスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    if (session == null){
+      out.println("&lt;p&gt;セッションを開始します&lt;/p&gt;");
+      session = request.getSession(true);
+    }else{
+      out.println("&lt;p&gt;セッション中です&lt;/p&gt;");
+    }
+
+    String session_id = session.getId();
+
+    out.println("&lt;p&gt;");
+    out.println("セッションIDは" + session_id + "です&lt;br&gt;");
+    out.println("&lt;/p&gt;");
+
+    String url = "/session/sessiontest";
+    String eURL = response.encodeURL(url);
+
+    out.println("&lt;p&gt;");
+    out.println("書き換え前: " + url + "&lt;br&gt;");
+    out.println("書き換え後: " + eURL);
+    out.println("&lt;/p&gt;");
+
+    out.println("&lt;a href=&yen;"" + eURL + "&yen;"&gt;再表示&lt;/a&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;session&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/session/sessiontest」へアクセスしてみます。クッキーは無効にしておいて下さい。
+			</p>
+
+			<p>
+			<img src="img/p19.png" tppabs="https://www.javadrive.jp/servlet/session/img/p19.png" alt="URL書き換えによるセッション利用" width="522" height="403">
+			</p>
+
+			<p>
+			URLがどのように書き換えられるのかを表示しています。また「再表示」の箇所にはセッションIDを付与されたURLがリンクされています(画面下部で確認して下さい)。では「再表示」をクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p20.png" tppabs="https://www.javadrive.jp/servlet/session/img/p20.png" alt="URL書き換えによるセッション利用" width="522" height="405">
+			</p>
+
+			<p>
+			クッキーが使えない状態でもセッションは維持されています。
+			</p>
+
+			<p>
+			次にブラウザの設定でクッキーを有効にした状態で同じテストをしてみます。
+			</p>
+
+			<p>
+			<img src="img/p21.png" tppabs="https://www.javadrive.jp/servlet/session/img/p21.png" alt="URL書き換えによるセッション利用" width="522" height="407">
+			</p>
+
+			<p>
+			クッキーが有効な状態でもセッション開始時の場合はURL書き換えは行われます。では「再表示」をクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p22.png" tppabs="https://www.javadrive.jp/servlet/session/img/p22.png" alt="URL書き換えによるセッション利用" width="521" height="407">
+			</p>
+
+			<p>
+			セッションが維持されるのは同じですが、今度はURL書き換えが行われません。正確には分からないのですが、クッキーが使える状態の場合はクッキーからセッションIDが取得できたため、URL書き換えによるURLへのセッションID付与が行われませんでした。
+			</p>
+
+			<p>
+			※今回のテストではブラウザをFireFoxにしていますが、Internet Explorerでクッキーの無効化がうまく出来なかったためです。
+			</p>
+
+			<p>
+			URL書き換えはクッキーが使えないクライアントでもセッションを利用できるようになり便利なのですが、URL自体にセッションIDを記述してしまうとセッションIDがそのままログなどにも残ってしまいセキュリティ上問題があります。その為、この方法は推奨はされておらずあくまでクッキー利用を前提にしたほうがいいかと思います。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

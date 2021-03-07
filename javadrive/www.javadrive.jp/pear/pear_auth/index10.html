@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>作成したデータベースオブジェクトを引数に指定 - ユーザー認証(PEAR::Auth) - PEAR入門</title>
+<meta name="keywords" content="データベースオブジェクト,PEAR::Auth,入門,PEAR" />
+<meta name="description" content="作成したデータベースオブジェクトを引数に指定" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_auth/" itemprop="url"><span itemprop="title">ユーザー認証(PEAR::Auth)</span></a></li>
+		</ul>
+</div>
+
+			<h1>作成したデータベースオブジェクトを引数に指定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			PEAR::Authで認証にデータベースを利用する場合、PEAR::DBを内部的に使ってデータベースへ接続します。データベース関連は隠蔽されており全て自動で行ってくれますのであまり意識する必要は無いのですが、MySQLなどを利用する場合にクライアント文字コードを設定したいなど個別のクエリを発行したくてもそのメソッドが用意されていません。
+			</p>
+
+			<p>
+			そこでまずPEAR::DBを使ってデータベースオブジェクトを作成しておいてから、そのデータベースオブジェクトをPEAR::Auth側で使うようにしてみます。こうすることで個別のクエリの発行はデータベースオブジェクトを使って行う事ができるようになります。
+			</p>
+
+			<p>
+			※PEAR::DBの使い方については『<a href="../pear_db/index.htm" tppabs="https://www.javadrive.jp/pear/pear_db/index.html">PEAR::DBの使い方</a>』を参照して下さい。
+			</p>
+
+			<p>
+			ではまずPEAR::DBを使ってデータベースへ接続を行います。
+			</p>
+
+<pre class="fixcode">
+require_once 'DB.php';
+
+$dsn = 'mysqli://authuser:authpass@localhost/authdb';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+</pre>
+
+			<p>
+			次にクライアント文字コードを設定するために「SET NAMES sjis」をMySQLへ送信します。
+			</p>
+
+<pre class="fixcode">
+require_once 'DB.php';
+
+$dsn = 'mysqli://authuser:authpass@localhost/authdb';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$db-&gt;query('SET NAMES sjis');
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+</pre>
+
+			<p>
+			次に作成したデータベースオブジェクトを使ってAuthクラスのオブジェクトを作成します。作成するにはオプションのDSNの文字列を指定していた部分にDSN文字列の代わりに先に作成したデータベースオブジェクトを指定します。
+			</p>
+
+<pre class="fixcode">
+require_once 'DB.php';
+
+$dsn = 'mysqli://authuser:authpass@localhost/authdb';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$db-&gt;query('SET NAMES sjis');
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$params = array(
+    <span class="red">"dsn" =&gt; $db,</span>
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password",
+    "db_fields" =&gt; "*"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+</pre>
+
+			<p>
+			これで先に作成したデータベースオブジェクトを元にAuthクラスのオブジェクトを作成出来ました。後は今までと同じですのでデータベースオブジェクトについては特に意識せずに利用します。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみましょう。
+			</p>
+
+			<p>
+			<a href="sample10-1.html" tppabs="https://www.javadrive.jp/pear/pear_auth/sample10-1.html">sample10-1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;PHP認証テスト&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;?php
+
+require_once "Auth/Auth.php";
+require_once 'DB.php';
+
+function loginFunction($username, $status){
+    if ($status == AUTH_WRONG_LOGIN){
+        print("ユーザー名又はパスワードが間違っています&lt;br&gt;");
+    }
+
+    print("&lt;form method=&yen;"post&yen;" action=&yen;"".$_SERVER['PHP_SELF']."&yen;"&gt;");
+    print("&lt;table&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;ユーザー名&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=&yen;"text&yen;" name=&yen;"username&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;パスワード&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=&yen;"password&yen;" name=&yen;"password&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td colspan=&yen;"2&yen;"&gt;&lt;input type=&yen;"submit&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;/table&gt;");
+    print("&lt;/form&gt;");
+}
+
+$dsn = 'mysqli://authuser:authpass@localhost/authdb';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$db-&gt;query('SET NAMES sjis');
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$params = array(
+    "dsn" =&gt; $db,
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password",
+    "db_fields" =&gt; "*"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+
+$authobj-&gt;start();
+
+if ($authobj-&gt;getAuth()){
+    $name = $authobj-&gt;getAuthData("name");
+    $post = $authobj-&gt;getAuthData("post");
+
+    print("こんにちは&lt;br&gt;");
+    print("名前 : ".$name."&lt;br&gt;");
+    print("部署 : ".$post);
+}
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記をWWWサーバに設置しブラウザで見てみると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p24.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p24.png" alt="PEAR::DBで作成したデータベースオブジェクトを使う" width="490" height="354">
+			</p>
+
+			<p>
+			ただしいユーザー名とパスワードを入力し「クエリ送信」ボタンを押すと下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p25.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p25.png" alt="PEAR::DBで作成したデータベースオブジェクトを使う" width="491" height="354">
+			</p>
+
+			<p>
+			今度は文字化けせずにカラムの値を取り出して表示することが出来ました。
+			</p>
+
+			<p>
+			一応うまくいきましたがこの記述の仕方が効率がいい記述方法なのかどうかは分かりません。また分かりましたら更新いたします。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

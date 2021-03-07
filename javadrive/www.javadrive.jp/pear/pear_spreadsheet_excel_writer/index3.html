@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ワークブックの作成と保存 - Excelファイル作成(PEAR::Spreadsheet_Excel_Writer) - PEAR入門</title>
+<meta name="keywords" content="ワークブックの作成と保存,PEAR::Spreadsheet_Excel_Writer,入門,PEAR" />
+<meta name="description" content="ワークブックの作成と保存" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/" itemprop="url"><span itemprop="title">Excelファイル作成(PEAR::Spreadsheet_Excel_Writer)</span></a></li>
+		</ul>
+</div>
+
+			<h1>ワークブックの作成と保存</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					Excelファイルの作成は、まずワークブックを作成し、その次にワークシートの作成やワークシートに対してセルの追加などを行います。そして最後にワークブックを閉じて終了となります。
+					</p>
+
+					<p>
+					ではまずワークブックの作成と保存について確認します。
+					</p>
+
+					<h2>ワークブックの作成</h2>
+
+					<p>
+					Excelではワークブック単位で管理しており1つのワークブックを1つのファイルとして保存することになります。そこでまずワークブックを作成します。ワークブックはSpreadsheet_Excel_Writer_Workbookクラスとして用意されていますが、ワークブックを作成するためにSpreadsheet_Excel_Writer_Workbookクラスを継承したSpreadsheet_Excel_Writerクラスが用意されています。
+					</p>
+
+<pre class="fixcode">
+class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
+{
+  // ...
+}
+</pre>
+
+					<p>
+					Spreadsheet_Excel_Writerクラスのコンストラクタは次のようになっています。
+					</p>
+
+<pre class="mheader">
+Spreadsheet_Excel_Writer ([string $filename=''])
+</pre>
+<pre class="mexplain">
+コンストラクタです。ワークブックを作成します。
+
+パラメータ:
+  $filename  オプションで、ワークブックのファイル名を指定します。
+戻り値:
+  作成したワークブック
+</pre>
+
+					<p>
+					ワークブックオブジェクトを表すSpreadsheet_Excel_Writer_Workbookクラスのオブジェクトを作成します。引数にはワークブックのファイル名を指定して下さい。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer('sample.xls');
+?&gt;
+</pre>
+
+					<p>
+					PHPプログラムが配置されているディレクトリに指定したファイル名でExcelファイルが作成されます。
+					</p>
+
+					<h2>ワークブックを閉じる</h2>
+
+					<p>
+					ワークブックに対する処理が終了したら最後にワークブックを閉じる必要があります。Spreadsheet_Excel_Writer_Workbookクラスで用意されているcloseメソッドを使います。
+					</p>
+
+<pre class="mheader">
+mixed Workbook::close ()
+</pre>
+<pre class="mexplain">
+ワークブックの作成終了時のメソッドを呼び出します。 全てのワークブックで、
+最後に必ずこのメソッドを呼ばなければなりません。
+
+戻り値:
+  成功した場合は true、失敗した場合は PEAR_Error を返します。
+</pre>
+
+					<p>
+					closeメソッドを呼び出すことでワークブックに対する操作を完了します。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer('sample.xls');
+$workbook-&gt;close();
+?&gt;
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なサンプルで試してみます。
+					</p>
+
+					<p>
+					<a href="sample3-1.html" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/sample3-1.html">sample3-1.php</a>
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer('./sheet/sample3-1.xls');
+$worksheet =& $workbook-&gt;addWorksheet('サンプル');
+$workbook-&gt;close();
+
+print('&lt;html&gt;');
+print('&lt;head&gt;');
+print('&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /&gt;');
+print('&lt;/head&gt;');
+print('&lt;body&gt;');
+print('&lt;p&gt;&lt;a href="./sheet/sample3-1.xls"&gt;Excelファイル&lt;/a&gt;&lt;/p&gt;');
+print('&lt;/body&gt;&lt;/html&gt;');
+?&gt;
+</pre>
+
+					<p>
+					上記のファイルをWWWサーバのドキュメントルート以下に設置しブラウザからアクセスすると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p3-1.png" alt="ワークブックの作成と保存" width="498" height="321">
+					</p>
+
+					<p>
+					ワークシートを1枚も追加していないとエラーとなるためワークシートをワークブックに追加しています。ワークシートの追加については別のページで確認します。
+					</p>
+
+					<p>
+					ワークブックが含まれるExcelファイルがサーバ側に作成され、作成されたExcelファイルに対するリンクが表示されます。リンクをクリックすればExcelファイルをアプリケーションで開くか保存するかの選択ダイアログなどが表示されます(ご利用のブラウザによる)のでローカルファイルに一度保存してExcelで開くと次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p3-2.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p3-2.png" alt="ワークブックの作成と保存" width="415" height="302">
+					</p>
+
+					<p>
+					<img src="img/p3-3.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p3-3.png" alt="ワークブックの作成と保存" width="489" height="342">
+					</p>
+
+					<p>
+					Excelで利用可能なファイルが作成出来ていることが確認できます。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | 条件に一致するファイルやディレクトリの一覧を取得する</title>
+<meta name="description" content="Python の glob モジュールで用意されている glob 関数を使って、指定した条件に一致するファイルやディレクトリの一覧を取得する方法について解説します。">
+
+<meta property="og:title" content="条件に一致するファイルやディレクトリの一覧を取得する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/file/index14.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/file/img/p14-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Python の glob モジュールで用意されている glob 関数を使って、指定した条件に一致するファイルやディレクトリの一覧を取得する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "ファイルの管理",
+    "item": "https://www.javadrive.jp/python/file/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/file/">ファイルの管理</a></li>
+				</ul>
+			</div>
+
+			<h1>条件に一致するファイルやディレクトリの一覧を取得する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Python の glob モジュールで用意されている glob 関数を使って、指定した条件に一致するファイルやディレクトリの一覧を取得する方法について解説します。
+			</p>
+
+
+			<p>
+			※ pathlib モジュールを使って条件に一致するファイルやディレクトリの一覧を取得するには「<a href="index15.html" tppabs="https://www.javadrive.jp/python/file/index15.html">条件に一致するファイルやディレクトリの一覧を取得する(pathlibモジュール)</a>」を参照されてください。 
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">条件に一致するファイルやディレクトリを取得する</a></li>
+			<li><a href="#section2">サブディレクトリも含めて一覧を取得する</a></li>
+			<li><a href="#section3">条件に一致するファイルやディレクトリのすべてが含まれるリストではなくイテレータを取得する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">条件に一致するファイルやディレクトリを取得する</a></h2>
+
+			<p>
+			指定した条件に一致するファイルやディレクトリの一覧を取得するには glob モジュールで用意されている glob 関数を使用します。
+			</p>
+
+<div class="titlebox2">
+<p>
+glob.glob(pathname, *, recursive=False)
+</p>
+</div>
+
+			<p>
+			1 番目の引数に指定したパスとマッチするファイルやディレクトリが要素として追加されたリストを取得します。この時、パスには次の特殊な文字を指定することができます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+*      0文字以上の任意の文字
+?      1文字の任意の文字
+[abc]  括弧の中のいずれかの文字
+</pre>
+</div>
+
+			<p>
+			それぞれ使い方を見ていきます。
+			</p>
+
+	<h3>*:0文字以上の任意の文字</h3>
+
+			<p>
+			* は 0 文字以上の任意の文字とマッチします。例えばパスとして *.txt と指定した場合は a.txt や memo.txt など 0 文字以上の任意の文字列＋'.txt' と一致するファイルやディレクトリの一覧を取得できます。
+			</p>
+
+			<p>
+			下記は末尾が .txt で終わるファイルおよびディレクトリの一覧を取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.glob('./test/*.txt'):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\book.txt
+&gt;&gt; ./test\cup.txt
+&gt;&gt; ./test\pen.txt</span>
+</pre>
+</div>
+
+			<p>
+			下記は b から始まるファイルおよびディレクトリの一覧を取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.glob('./test/b*'):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\back
+&gt;&gt; ./test\book.png
+&gt;&gt; ./test\book.txt</span>
+</pre>
+</div>
+
+	<h3>?:1文字の任意の文字</h3>
+
+			<p>
+			? は 1 文字以上の任意の文字とマッチします。例えばパスとして ?.txt と指定した場合は a.txt や b.txt など 1 文字以上の任意の文字列＋'.txt' と一致するファイルやディレクトリの一覧を取得できます。 1 文字ではない abc.txt などにはマッチしません。
+			</p>
+
+			<p>
+			下記は 3 文字の任意の文字で始まり .txt で終わるファイルおよびディレクトリの一覧を取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.glob('./test/???.txt'):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\cup.txt
+&gt;&gt; ./test\pen.txt</span>
+</pre>
+</div>
+
+	<h3>[abc]:括弧の中のいずれかの文字</h3>
+
+			<p>
+			[] は括弧の中に記述した文字のいずれか 1 文字とマッチします。例えばパスとして 199[789].txt と指定した場合は 1997.txt や 1998.txt や 1999.txt と一致するファイルやディレクトリの一覧を取得できます。 1 文字ではない abc.txt などにはマッチしません。
+			</p>
+
+			<p>
+			また [3-6] や [a-e] などのようにハイフンを記述することで文字の範囲を指定することができます。 [3-6] は [3456] と書いた場合と同じですし、 [a-e] は [abcde] と書いた場合と同じです。
+			</p>
+
+			<p>
+			下記では、最初に a から e までの文字で始まり任意の文字が続いたあと .txt で終わるファイルおよびディレクトリの一覧を取得し、次に c から z までの文字で始まり任意の文字が続いたあと .txt で終わるファイルおよびディレクトリの一覧を取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.glob('./test/[a-e]*.txt'):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\book.txt
+&gt;&gt; ./test\cup.txt</span>
+
+for name in glob.glob('./test/[c-z]*.txt'):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\cup.txt
+&gt;&gt; ./test\pen.txt</span>
+</pre>
+</div>
+
+	<h3>特殊な文字を文字として扱う</h3>
+
+			<p>
+			* ? [] は glob 関数の中では特別な意味を持ちますが、これらの文字を単なる文字として扱い場合には [] で囲んで記述します。例えば * を 0 文字以上の任意の文字ではなく、文字として * と一致させたい場合は [*] と記述します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample14-1.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+print(glob.glob('./test/*.txt'))
+</pre>
+</div>
+
+			<p>
+			プログラムと同じディレクトリの中に test という名前のディレクトリがあり、 test ディレクトリの中に次のようにファイルとディレクトリが含まれています。
+			</p>
+
+			<p>
+			<img src="img/p14-1.png" tppabs="https://www.javadrive.jp/python/file/img/p14-1.png" alt="ファイルやディレクトリの存在を確認する(1)" width="728" height="380">
+			</p>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample14-1.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p14-2.png" tppabs="https://www.javadrive.jp/python/file/img/p14-2.png" alt="ファイルやディレクトリの存在を確認する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			指定したパスとマッチするファイルとディレクトリの一覧を取得しました。
+			</p>
+
+<h2><a id="section2">サブディレクトリも含めて一覧を取得する</a></h2>
+
+			<p>
+			glob 関数の引数で recursive=True を指定すると、特殊文字として ** が使用できるようになります。
+			</p>
+
+<div class="titlebox2">
+<p>
+glob.glob(pathname, *, recursive=False)
+</p>
+</div>
+
+			<p>
+			パスの中で ** を使用すると、すべてのファイル、 0 個以上のディレクトリとサブディレクトリにマッチするようになります。例えばパスとして ./**/*.txt と指定した場合は a.txt や memo.txt など カレントディレクトリのファイルの他に、 ./doc/b.txt や ./doc/back/2020/report.txt などサブディレクトリにあるファイルも対象となります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.glob('./test/**/*.txt', recursive=True):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\book.txt
+&gt;&gt; ./test\cup.txt
+&gt;&gt; ./test\pen.txt
+&gt;&gt; ./test\back\2018.txt
+&gt;&gt; ./test\back\2019.txt
+&gt;&gt; ./test\back\2020.txt
+&gt;&gt; ./test\back\old\2017.txt</span>
+</pre>
+</div>
+
+			<p>
+			サブディレクトリを再帰的に検索して条件に一致するファイルを取得します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample14-2.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+print(glob.glob('./test/**/*.txt', recursive=True))
+</pre>
+</div>
+
+			<p>
+			プログラムと同じディレクトリの中に test という名前のディレクトリがあり、 test ディレクトリの中に次のようにファイルとディレクトリが含まれています。
+			</p>
+
+			<p>
+			<img src="img/p14-3.png" tppabs="https://www.javadrive.jp/python/file/img/p14-3.png" alt="サブディレクトリも含めて一覧を取得する(1)" width="723" height="482">
+			</p>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample14-2.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p14-4.png" tppabs="https://www.javadrive.jp/python/file/img/p14-4.png" alt="サブディレクトリも含めて一覧を取得する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			サブディレクトリも含めて指定したパスとマッチするファイルとディレクトリの一覧を取得しました。
+			</p>
+
+<h2><a id="section3">条件に一致するファイルやディレクトリのすべてが含まれるリストではなくイテレータを取得する</a></h2>
+
+			<p>
+			glob 関数は条件に一致するすべてのファイルやディレクトリが含まれるリストを結果として返しますが、リストを返す代わりに条件に一致するファイルやディレクトリに順番にアクセスできるイテレータを取得することができます。 glob 関数の代わりに iglob 関数を使用します。
+			</p>
+
+<div class="titlebox2">
+<p>
+glob.iglob(pathname, *, recursive=False)
+</p>
+</div>
+
+			<p>
+			リストではなくイテレータを返す以外は glob 関数と使い方は同じです。
+			</p>
+
+			<p>
+			実際には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.iglob('./test/**/*.txt', recursive=True):
+  print(name)
+
+<span class="bold">&gt;&gt; ./test\book.txt
+&gt;&gt; ./test\cup.txt
+&gt;&gt; ./test\pen.txt
+&gt;&gt; ./test\back\2018.txt
+&gt;&gt; ./test\back\2019.txt
+&gt;&gt; ./test\back\2020.txt
+&gt;&gt; ./test\back\old\2017.txt</span>
+</pre>
+</div>
+
+			<p>
+			非常に数多くのファイルやディレクトリが一致するような場合には、すべての結果をまとめて取得するのではなく都度取得するイテレータを使ったほうが実行環境への負担は少なくなります。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample14-3.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import glob
+
+for name in glob.iglob('./test/**/*.txt', recursive=True):
+  print(name)
+</pre>
+</div>
+
+			<p>
+			プログラムと同じディレクトリの中に test という名前のディレクトリがあり、 test ディレクトリの中に次のようにファイルとディレクトリが含まれています。
+			</p>
+
+			<p>
+			<img src="img/p14-5.png" tppabs="https://www.javadrive.jp/python/file/img/p14-5.png" alt="条件に一致するファイルやディレクトリのすべてが含まれるリストではなくイテレータを取得する(1)" width="723" height="482">
+			</p>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample14-3.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p14-6.png" tppabs="https://www.javadrive.jp/python/file/img/p14-6.png" alt="条件に一致するファイルやディレクトリのすべてが含まれるリストではなくイテレータを取得する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			サブディレクトリも含めて指定したパスとマッチするファイルとディレクトリを順に取得しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Python の glob モジュールで用意されている glob 関数を使って、指定した条件に一致するファイルやディレクトリの一覧を取得する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

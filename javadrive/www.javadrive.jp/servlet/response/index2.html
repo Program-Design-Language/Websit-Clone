@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コンテンツタイプの設定(setContentType) - クライアントへの出力 - サーブレット入門</title>
+<meta name="keywords" content="setContentType,HttpServletResponse,サーブレット" />
+<meta name="description" content="コンテンツタイプの設定" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/response/" itemprop="url"><span itemprop="title">クライアントへの出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>コンテンツタイプの設定(setContentType)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			クライアントに対して何か出力するにあたってまず行うべき事はどのようなデータを送るのかを指定するコンテンツタイプの設定です。HTTPレスポンスヘッダの中の「Content-Type」を設定します。
+			</p>
+
+			<p>
+			コンテンツタイプには次のような種類があります。
+			</p>
+
+<table class="pro">
+<tr><th style="width:100px">種類</th><th style="width:100px">拡張子</th><th style="width:200px">Content-Type</th></tr>
+<tr><td>HTMLファイル</td><td>html, htm</td><td>text/html</td></tr>
+<tr><td>テキストファイル</td><td>txt</td><td>text/plain</td></tr>
+<tr><td>GIF</td><td>gif</td><td>image/gif</td></tr>
+<tr><td>PNG</td><td>png</td><td>image/png</td></tr>
+<tr><td>Windows 実行ファイル</td><td>exe</td><td>application/octet-stream</td></tr>
+</table>
+
+			<p>
+			クライアントは受け取ったデータのヘッダーに含まれるコンテンツタイプを見て、データをどのようにするかを処理するかを判別します。例えばブラウザに表示したり、ファイルに保存するかどうかを確認したり、といったことです。この挙動はブラウザやクライアント側の設定に依存します。
+			</p>
+
+			<p>
+			コンテンツタイプを設定するには「HttpServletResponse」インターフェースの親インターフェースである「ServletResponse」インタフェースで定義されている「setContentType」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+setContentType
+public void setContentType(java.lang.String type)
+</pre>
+<pre class="mexplain">
+Sets the content type of the response being sent to the client, if the 
+response has not been committed yet. The given content type may include 
+a character encoding specification, for example, text/html;charset=UTF-8. 
+The response's character encoding is only set from the given content 
+type if this method is called before getWriter is called. 
+
+This method may be called repeatedly to change content type and character 
+encoding. This method has no effect if called after the response has been 
+committed. It does not set the response's character encoding if it is 
+called after getWriter has been called or after the response has been 
+committed. 
+
+Containers must communicate the content type and the character encoding 
+used for the servlet response's writer to the client if the protocol 
+provides a way for doing so. In the case of HTTP, the Content-Type 
+header is used. 
+
+Parameters:
+  type - a String specifying the MIME type of the content
+</pre>
+
+			<p>
+			実際に使う場合には次のように記述します。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Sample extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html");
+
+    /* ... */
+  }
+}
+</pre>
+
+			<p>
+			またコンテンツタイプの中には含まれるデータの文字セットを合わせて指定できるものがあります。例えばHTMLファイルやテキストファイルです。文字コードを合わせて指定する場合には次のように「charset=」の後に文字コードを記述します。
+			</p>
+
+<pre class="fixcode">
+response.setContentType("text/html;charset=Shift_JIS");
+</pre>
+
+			<p>
+			※文字コードの種類については『<a href="javascript:if(confirm('http://www.iana.org/assignments/character-sets  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.iana.org/assignments/character-sets'" tppabs="http://www.iana.org/assignments/character-sets">IANA character-sets</a>』などを参考にして下さい。
+			</p>
+
+			<p>
+			文字コードを設定しなかった場合には次のページで説明する通りデータ本文が「ISO-8859-1(Latin1)」でエンコードされます。その為、日本語を扱うデータの場合は文字化けしてしまいますので注意して下さい。
+			</p>
+
+			<h2>setCharacterEncodingメソッド</h2>
+
+			<p>
+			文字セットの指定には「HttpServletResponse」インターフェースの親インターフェースである「ServletResponse」インタフェースで定義されている「setCharacterEncoding」メソッドを使っても設定が可能です。
+			</p>
+
+<pre class="mheader">
+setCharacterEncoding
+public void setCharacterEncoding(java.lang.String charset)
+</pre>
+<pre class="mexplain">
+Sets the character encoding (MIME charset) of the response being sent to 
+the client, for example, to UTF-8. If the character encoding has already 
+been set by setContentType(java.lang.String) or setLocale(java.util.Locale), 
+this method overrides it. Calling setContentType(java.lang.String) with 
+the String of text/html and calling this method with the String of UTF-8 
+is equivalent with calling setContentType with the String of 
+text/html; charset=UTF-8. 
+
+This method can be called repeatedly to change the character encoding.
+This method has no effect if it is called after getWriter has been called 
+or after the response has been committed. 
+
+Containers must communicate the character encoding used for the servlet
+response's writer to the client if the protocol provides a way for doing 
+so. In the case of HTTP, the character encoding is communicated as part 
+of the Content-Type header for text media types. Note that the character 
+encoding cannot be communicated via HTTP headers if the servlet does not 
+specify a content type; however, it is still used to encode text written 
+via the servlet response's writer. 
+
+Parameters:
+  charset - a String specifying only the character set defined by IANA
+    Character Sets (http://www.iana.org/assignments/character-sets)
+</pre>
+
+			<p>
+			使い方としては次のようになります。
+			</p>
+
+<pre class="fixcode">
+response.setContentType("text/html");
+response.setCharacterEncoding("Shift_JIS");
+</pre>
+
+			<p>
+			これは次のように記述した場合とまったく同じです。
+			</p>
+
+<pre class="fixcode">
+response.setContentType("text/html;charset=Shift_JIS");
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで試して見ます。今回は文字コードを設定した場合としなかった場合でブラウザでの出力を比較します。
+			</p>
+
+			<p>
+			<a href="ResponseSample1.java.htm" tppabs="https://www.javadrive.jp/servlet/response/ResponseSample1.java">ResponseSample1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ResponseSample1 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+
+    StringBuffer sb = new StringBuffer();
+
+    sb.append("&lt;html&gt;");
+    sb.append("&lt;head&gt;");
+    sb.append("&lt;title&gt;サンプル&lt;/title&gt;");
+    sb.append("&lt;/head&gt;");
+    sb.append("&lt;body&gt;");
+
+    sb.append("&lt;p&gt;Sample Page&lt;/p&gt;");
+    sb.append("&lt;p&gt;サンプルページ&lt;/p&gt;");
+
+    sb.append("&lt;/body&gt;");
+    sb.append("&lt;/html&gt;");
+
+    out.println(new String(sb));
+
+    out.close();
+  }
+}
+</pre>
+
+			<p>
+			<a href="ResponseSample2.java.htm" tppabs="https://www.javadrive.jp/servlet/response/ResponseSample2.java">ResponseSample2.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ResponseSample2 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    StringBuffer sb = new StringBuffer();
+
+    sb.append("&lt;html&gt;");
+    sb.append("&lt;head&gt;");
+    sb.append("&lt;title&gt;サンプル&lt;/title&gt;");
+    sb.append("&lt;/head&gt;");
+    sb.append("&lt;body&gt;");
+
+    sb.append("&lt;p&gt;Sample Page&lt;/p&gt;");
+    sb.append("&lt;p&gt;サンプルページ&lt;/p&gt;");
+
+    sb.append("&lt;/body&gt;");
+    sb.append("&lt;/html&gt;");
+
+    out.println(new String(sb));
+
+    out.close();
+  }
+}
+</pre>
+
+			<p>
+			2つのサンプルプログラムの違いは「setContentType」メソッドの引数に文字セットを指定しているかどうかです。
+			</p>
+
+			<p>
+			サンプルプログラムをコンパイルして作成した「ResponseSample1.class」ファイルと「ResponseSample2.class」ファイルを別途作成した「web.xml」ファイルを次のように配置します。
+			</p>
+
+<pre class="fixcomment">
+D:&yen; -- servlet-sample
+        |
+        +-- WEB-INF
+             |
+             +-- (web.xml)
+             |
+             +-- classes
+                  |
+                  +-- (ResponseSample1.class)
+                  |
+                  +-- (ResponseSample2.class)
+</pre>
+
+			<p>
+			web.xmlファイルは次のようになります。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;ResponseSample1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;ResponseSample1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;ResponseSample1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/ResponseSample1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;ResponseSample2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;ResponseSample2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;ResponseSample2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/ResponseSample2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			コンテキストファイルを作成し「(Tomcatをインストールしたディレクトリ)&yen;Tomcat 5.5&yen;conf&yen;Catalina&yen;localhost&yen;」ディレクトリに「sample.xml」ファイルとして保存します。内容は以下の通りです。
+			</p>
+
+
+<pre class="fixcomment">
+&lt;Context path="/sample"
+docBase="d:/servlet-sample/sample"&gt;
+&lt;/Context&gt;
+</pre>
+
+			<p>
+			準備は以上です。ではTomcatを再起動してから「http://localhost:8080/sample/ResponseSample1」へブラウザでアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/servlet/response/img/p1.png" alt="コンテンツタイプの設定" width="487" height="291">
+			</p>
+
+			<p>
+			コンテンツタイプの文字コードが設定されていなかったためデータ本文はLatin1でエンコードされてクライアントに送られてきます。その為、日本語は文字化けして表示されてしまいます。
+			</p>
+
+			<p>
+			では「http://localhost:8080/sample/ResponseSample2」へブラウザでアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/servlet/response/img/p2.png" alt="コンテンツタイプの設定" width="487" height="291">
+			</p>
+
+			<p>
+			今度は適切な文字コードが設定されていますので日本語が含まれるデータをブラウザに返した場合でも、文字化けせずに表示されます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

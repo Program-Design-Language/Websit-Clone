@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指定した数だけ閲覧履歴を前後に移動 - WebViewクラス - Androidプログラミング入門 | JavaDrive</title>
+<meta name="keywords" content="goBackOrForward,WebView,Android" />
+<meta name="description" content="指定した数だけ閲覧履歴を前後に移動" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/android/" itemprop="url"><span itemprop="title">Androidプログラミング入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/android/webview/" itemprop="url"><span itemprop="title">WebViewクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>指定した数だけ閲覧履歴を前後に移動</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					「goBack」及び「goForward」は前後に1つだけ移動しましたが移動する数を指定できるメソッドも用意されています。数を指定して移動する場合には「WebView」クラスで用意されている「goBackOrForward」メソッドを使います。
+					</p>
+
+<pre class="mheader">
+goBackOrForward
+public void goBackOrForward(int steps)
+</pre>
+<pre class="mexplain">
+Go to the history item that is the number of steps away from the current 
+item. Steps is negative if backward and positive if forward.
+
+Parameters:
+  steps  The number of steps to take back or forward in the back forward
+    list.
+</pre>
+
+					<p>
+					引数に履歴を移動する数をint型の値で指定します。負の値を指定した場合には戻り、正の値を指定した場合には進みます。
+					</p>
+
+					<p>
+					具体的には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+@Override protected void onCreate(Bundle icicle) {
+    super.onCreate(icicle);
+
+    WebView webview = new WebView(this);
+
+    /* ... */
+
+    webview.goBackOrForward(-2);
+}
+</pre>
+
+					<h2>移動が可能かどうか確認する</h2>
+
+					<p>
+					数を指定して移動する場合でも履歴が存在するのかどうかを確認するためのメソッドが用意されています。移動ができるかどうかを調べるには「WebView」クラスで用意されている「canGoBackOrForward」メソッドを使います。
+					</p>
+
+<pre class="mheader">
+canGoBackOrForward
+public boolean canGoBackOrForward(int steps)
+</pre>
+<pre class="mexplain">
+Return true if the page can go back or forward the given number of steps.
+
+Parameters:
+  steps  The negative or positive number of steps to move the history.
+Returns:
+  移動可能かどうかを表すboolean型の値
+</pre>
+
+					<p>
+					引数に履歴を確認する数をint型の値で指定します。負の値を指定した場合には戻り、正の値を指定した場合には進む方向の履歴を確認します。そしてメソッドを実行後の戻り値が「true」の場合には戻る事が可能な履歴があることになります。
+					</p>
+
+					<p>
+					具体的には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+@Override protected void onCreate(Bundle icicle) {
+    super.onCreate(icicle);
+
+    WebView webview = new WebView(this);
+
+    /* ... */
+
+    if (webview.canGoBackOrForward(5)){
+        webview.goBackOrForward(5);
+    }
+}
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					それでは実際に試してみます。プロジェクトを作成しソースコードを次のように変更しました。
+					</p>
+
+					<p>
+					<a href="Test04_01.java" tppabs="https://www.javadrive.jp/android/webview/Test04_01.java">Test04_01.java</a>
+					</p>
+
+<pre class="fixcode">
+package jp.javadrive.android;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.LinearLayout;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.widget.Button;
+import android.view.View.OnClickListener;
+
+public class Test04_01 extends Activity implements OnClickListener{
+
+    private final int FP = ViewGroup.LayoutParams.FILL_PARENT; 
+    private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT; 
+
+    private Button buttonFirst;
+    private Button buttonLast;
+    private WebView webview;
+
+    @Override protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        setContentView(linearLayout);
+
+
+        LinearLayout btnLinearLayout = new LinearLayout(this);
+        btnLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        buttonFirst = new Button(this);
+        buttonFirst.setText("First");
+        buttonFirst.setOnClickListener(this);
+
+        buttonLast = new Button(this);
+        buttonLast.setText("Last");
+        buttonLast.setOnClickListener(this);
+
+        btnLinearLayout.addView(buttonFirst, createParam(WC, WC));
+        btnLinearLayout.addView(buttonLast, createParam(WC, WC));
+
+
+        webview = new WebView(this);
+        webview.loadUrl("http://www.google.co.jp/");
+
+        linearLayout.addView(btnLinearLayout, createParam(FP, WC));
+        linearLayout.addView(webview, createParam(WC, WC));
+    }
+
+    private LinearLayout.LayoutParams createParam(int w, int h){
+        return new LinearLayout.LayoutParams(w, h);
+    }
+
+    public void onClick(View v) {
+        if (v == buttonFirst){
+            int count = -1;
+            while(webview.canGoBackOrForward(count)){
+                count--;
+            }
+
+            webview.goBackOrForward(count + 1);
+        }else if (v == buttonLast){
+            int count = 1;
+            while(webview.canGoBackOrForward(count)){
+                count++;
+            }
+
+            webview.goBackOrForward(count - 1);
+        }
+    }
+}
+</pre>
+
+					<p>
+					ビルド後にエミュレーター上で実行します。
+					</p>
+
+					<p>
+					<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/android/webview/img/p4-1.png" alt="指定した数だけ閲覧履歴を前後に移動" width="346" height="379">
+					</p>
+
+					<p>
+					初期値として指定したURLが表示されます。では2回ほど別のページへ順に移動していきます。
+					</p>
+
+					<p>
+					<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/android/webview/img/p4-2.png" alt="指定した数だけ閲覧履歴を前後に移動" width="346" height="384">
+					</p>
+
+					<p>
+					<img src="img/p4-3.png" tppabs="https://www.javadrive.jp/android/webview/img/p4-3.png" alt="指定した数だけ閲覧履歴を前後に移動" width="344" height="383">
+					</p>
+
+					<p>
+					今回のサンプルでは履歴の最初または最後に移動するボタンを設置しています。ではまず「First」と書かれたボタンをクリックして下さい。一番最初のページへ戻ります。
+					</p>
+
+					<p>
+					<img src="img/p4-4.png" tppabs="https://www.javadrive.jp/android/webview/img/p4-4.png" alt="指定した数だけ閲覧履歴を前後に移動" width="342" height="383">
+					</p>
+
+					<p>
+					今度は「Last」と書かれたボタンをクリックして下さい。履歴の一番最後のページへ進みます。
+					</p>
+
+					<p>
+					<img src="img/p4-5.png" tppabs="https://www.javadrive.jp/android/webview/img/p4-5.png" alt="指定した数だけ閲覧履歴を前後に移動" width="345" height="380">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

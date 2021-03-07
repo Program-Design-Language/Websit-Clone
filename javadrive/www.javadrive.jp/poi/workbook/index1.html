@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ワークブックの新規作成 - ワークブック - Apache POIでExcelを操作</title>
+<meta name="keywords" content="ワークブックの新規作成,POI" />
+<meta name="description" content="ワークブックの新規作成方法について確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/poi/" itemprop="url"><span itemprop="title">Apache POIでExcelを操作</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/poi/workbook/" itemprop="url"><span itemprop="title">ワークブック</span></a></li>
+		</ul>
+</div>
+
+			<h1>ワークブックの新規作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Apache POIにおいてワークブックは「HSSFWorkbook」クラス及び「XSSFWorkbook」クラスを使います。「HSSFWorkbook」クラスはExcel2003までのファイルフォーマットを扱うもの、「XSSFWorkbook」クラスはExcel2007におけるOOXML(Office Open XML)形式のファイルフォーマットを扱うためのものです。
+			</p>
+
+			<h2>HSSFWorkbookクラス</h2>
+
+			<p>
+			HSSFWorkbookクラスのクラス定義は次のようになっています。
+			</p>
+
+<pre class="fixcomment">
+public class HSSFWorkbook
+extends POIDocument implements Workbook
+</pre>
+
+<pre class="fixcomment">
+java.lang.Object
+ Ｌ org.apache.poi.POIDocument
+     Ｌ org.apache.poi.hssf.usermodel.HSSFWorkbook
+</pre>
+
+			<p>
+			コンストラクタは7つ用意されています。
+			</p>
+
+<table class="pro">
+<tr><th>コンストラクタの概要</th></tr>
+<tr><td><span class="red">HSSFWorkbook()</span><br />Creates new HSSFWorkbook from scratch (start here!)</td></tr>
+<tr><td><span class="red">HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)</span><br />given a POI POIFSFileSystem object, and a specific directory within it, read in its Workbook and populate the high and low level models.</td></tr>
+<tr><td><span class="red">HSSFWorkbook(java.io.InputStream s)</span><br />--</td></tr>
+<tr><td><span class="red">HSSFWorkbook(java.io.InputStream s, boolean preserveNodes)</span><br />Companion to HSSFWorkbook(POIFSFileSystem), this constructs the POI filesystem around your inputstream.</td></tr>
+<tr><td><span class="red">HSSFWorkbook(POIFSFileSystem fs)</span><br />--</td></tr>
+<tr><td><span class="red">HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)</span><br />given a POI POIFSFileSystem object, read in its Workbook and populate the high and low level models.</td></tr>
+<tr><td><span class="red">protected HSSFWorkbook(Workbook book)</span><br />--</td></tr>
+</table>
+
+			<p>
+			新規にワークブックを作成するためには1番目のコンストラクタを使用します。
+			</p>
+
+<pre class="mheader">
+HSSFWorkbook
+public HSSFWorkbook()
+</pre>
+<pre class="mexplain">
+Creates new HSSFWorkbook from scratch (start here!) 
+</pre>
+
+			<p>
+			使い方としては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+HSSFWorkbook wb = new HSSFWorkbook();
+</pre>
+
+			<p>
+			これでExcel2003までのファイルフォーマットに対応したワークブックを表すオブジェクトが作成されました。このオブジェクトに対してシートを追加したりすることが可能になります。(なお実際のファイルが作成されたわけではありません)。
+			</p>
+
+			<h2>XSSFWorkbookクラス</h2>
+
+			<p>
+			XSSFWorkbookクラスのクラス定義は次のようになっています。
+			</p>
+
+<pre class="fixcomment">
+public class XSSFWorkbook
+extends POIXMLDocument implements Workbook, java.lang.Iterable&lt;XSSFSheet&gt;
+</pre>
+
+<pre class="fixcomment">
+java.lang.Object
+ Ｌ org.apache.poi.POIXMLDocumentPart
+     Ｌ org.apache.poi.POIXMLDocument
+         Ｌ org.apache.poi.xssf.usermodel.XSSFWorkbook
+</pre>
+
+			<p>
+			コンストラクタは4つ用意されています。
+			</p>
+
+<table class="pro">
+<tr><th>コンストラクタの概要</th></tr>
+<tr><td><span class="red">XSSFWorkbook()</span><br />Create a new SpreadsheetML workbook.</td></tr>
+<tr><td><span class="red">XSSFWorkbook(java.io.InputStream is)</span><br />--</td></tr>
+<tr><td><span class="red">XSSFWorkbook(OPCPackage pkg)</span><br />Constructs a XSSFWorkbook object given a OpenXML4J Package object, see www.openxml4j.org.</td></tr>
+<tr><td><span class="red">XSSFWorkbook(java.lang.String path)</span><br />Constructs a XSSFWorkbook object given a file name.</td></tr>
+</table>
+
+			<p>
+			新規にワークブックを作成するためには1番目のコンストラクタを使用します。
+			</p>
+
+<pre class="mheader">
+XSSFWorkbook
+public XSSFWorkbook()
+</pre>
+<pre class="mexplain">
+Create a new SpreadsheetML workbook. 
+</pre>
+
+			<p>
+			使い方としては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+XSSFWorkbook wb = new XSSFWorkbook();
+</pre>
+
+			<p>
+			これでExcel2007で使用可能なOOXML形式のファイルフォーマットに対応したワークブックを表すオブジェクトが作成されました。このオブジェクトに対してシートを追加したりすることが可能になります。(なお実際のファイルが作成されたわけではありません)。
+			</p>
+
+			<h2>Workbookインターフェース</h2>
+
+			<p>
+			HSSFWorkbookクラス及びXSSFWorkbookクラスはどちらもWorkbookインターフェースを実装したクラスとなっています。
+			</p>
+
+			<p>
+			これらのクラス及びインターフェースは次のように定義されていました。
+			</p>
+
+<pre class="fixcomment">
+org.apache.poi.hssf.usermodel.HSSFWorkbook;
+org.apache.poi.xssf.usermodel.XSSFWorkbook;
+org.apache.poi.ss.usermodel.Workbook;
+</pre>
+
+			<p>
+			HSSFに対応したワークブックを作成したりシートを作成したりする場合は「hssf」ユーザーモデルと呼ばれるものを使用しています。またXSSFに対応したものは「xssf」ユーザーモデルと呼ばれるものを使用しています。この二つの完全に区別し、扱うファイルフォーマット毎に対応したユーザーモデルを使うことも可能ですが、新たに導入された「ss」ユーザーモデルを使用すると、どちらのファイルフォーマットに対応したものであっても同じように扱うことができあす。
+			</p>
+
+			<p>
+			WorkbookインターフェースはHSSFWorkbookクラス及びXSSFWorkbookクラスに共通するインターフェースですが「ss」ユーザーモデルに基づいています。今後ワークブックオブジェクトを作成する場合は、次のように記述していきます。
+			</p>
+
+<pre class="fixcode">
+Workbook wb1 = new HSSFWorkbook();
+Workbook wb2 = new XSSFWorkbook();
+</pre>
+
+			<p>
+			作成したワークブックオブジェクトに対しては、同じく「ss」ユーザーモデルに基づいたシートやセルなどを追加することができますので、どちらのファイルフォーマットであっても同じように処理することが可能となります。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			実際に試してみましょう。
+			</p>
+
+			<p>
+			<a href="javascript:if(confirm('http://div.wifi-cloud.jp/redir/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://div.wifi-cloud.jp/redir/'" tppabs="https://www.javadrive.jp/poi/workbook/Sample1_1.java">Sample1_1.java</a>
+			</p>
+
+<pre class="fixcode">
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+
+public class Sample1_1{
+  public static void main(String[] args){
+    HSSFWorkbook wb1 = new HSSFWorkbook();
+    XSSFWorkbook wb2 = new XSSFWorkbook();
+
+    Workbook wb3 = new HSSFWorkbook();
+    Workbook wb4 = new XSSFWorkbook();
+  }
+}
+</pre>
+
+			<p>
+			今回の場合はオブジェクトを作成しているだけなので、コンパイル後に実行してみても特に何も起きません。では次のページにて、作成したオブジェクトをファイルに保存する方法を確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

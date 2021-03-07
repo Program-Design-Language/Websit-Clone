@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマンドプロンプト | 環境変数の値の参照と設定(SET)</title>
+<meta name="description" content="環境変数に設定されている値を参照したり、新しい値を設定するために使用する SET コマンドの使い方について解説します。">
+
+<meta property="og:title" content="環境変数の値の参照と設定(SET)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/command/command/index4.html">
+<meta property="og:image" content="https://www.javadrive.jp/command/command/img/p4-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="環境変数に設定されている値を参照したり、新しい値を設定するために使用する SET コマンドの使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "コマンドプロンプトの使い方",
+    "item": "https://www.javadrive.jp/command/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "コマンド実行に関するコマンド一覧",
+    "item": "https://www.javadrive.jp/command/command/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/command/">コマンドプロンプトの使い方</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/command/command/">コマンド実行に関するコマンド一覧</a></li>
+				</ul>
+			</div>
+
+			<h1>環境変数の値の参照と設定(SET)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			環境変数に設定されている値を参照したり、新しい値を設定するために使用する SET コマンドの使い方について解説します。なおコマンドプロンプトから SET コマンドを使って環境変数に値を設定した場合、そのコマンドプロンプト内でのみ有効となる一時的な設定となります。永続的に環境変数の値を設定するには SETX コマンドを使うか、 Windows の環境変数の設定画面から行います。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">SETコマンドの使い方</a></li>
+			<li><a href="#section2">環境変数と設定されている値の一覧を表示する</a></li>
+			<li><a href="#section3">指定した環境変数の値を参照する</a></li>
+			<li><a href="#section4">環境変数に値を設定する</a></li>
+			<li><a href="#section5">環境変数の値を削除する</a></li>
+			<li><a href="#section6">|や&lt;など特殊な文字を環境変数の値として設定する</a></li>
+			<li><a href="#section7">環境変数に式の結果を設定する</a></li>
+			<li><a href="#section8">ユーザーからの入力を受け取り環境変数に設定する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">SETコマンドの使い方</a></h2>
+
+			<p>
+			SET コマンドは環境変数の値を参照したり、新しい値を設定したり、または削除するために使用します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<p>
+SET [変数名=[文字列]]
+</p>
+</div>
+
+			<p>
+			いくつのかのオプションがありますが、それぞれ確認していきます。
+			</p>
+
+			<p>
+			なお環境変数とはOSが参照する設定を保存するためのものです。例えばコマンドを実行する時にどのディレクトリ探すのかを設定した PATH や、一時的な作業ファイルなどを保管するために使用するディレクトリを設定した TEMP などがあります。
+			</p>
+
+<h2><a id="section2">環境変数と設定されている値の一覧を表示する</a></h2>
+
+			<p>
+			最初に現在作成されている環境変数と値の一覧を表示します。SET コマンドを引数無しで次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+set
+</p>
+</div>
+
+			<p>
+			コマンドを実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/command/command/img/p4-1.png" alt="環境変数と設定されている値の一覧を表示する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			ご自身でインストールしたアプリケーションが設定した環境変数などもあるので表示される内容は利用者ごとに異なりますが、多くの環境変数が作成されていることが分かります。
+			</p>
+
+			<p>
+			環境変数と値の一覧を表示する時にフィルタをかけることができます。例えば P で始まる環境変数だけを表示したい場合には次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+set p
+</p>
+</div>
+
+			<p>
+			さらに絞って PA で始まる環境変数の値だけを表示したい場合には次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+set pa
+</p>
+</div>
+
+			<p>
+			ではあとの方で実際にコマンドを実行してみます。PA から始まる環境変数だけが表示されました。
+			</p>
+
+			<p>
+			<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/command/command/img/p4-2.png" alt="環境変数と設定されている値の一覧を表示する(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section3">指定した環境変数の値を参照する</a></h2>
+
+			<p>
+			指定した環境変数の値を参照したい場合には次のように ％環境変数名% で参照することができます。
+			</p>
+
+<div class="titlebox2">
+<p>
+%環境変数名%
+</p>
+</div>
+
+			<p>
+			例えば環境変数 PATHEXT の値を参照して表示するには次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+echo %pathext%
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-3.png" tppabs="https://www.javadrive.jp/command/command/img/p4-3.png" alt="指定した環境変数の値を参照する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			環境変数 PATHEXT に設定されている値が表示されました。
+			</p>
+
+<h2><a id="section4">環境変数に値を設定する</a></h2>
+
+			<p>
+			環境変数に値を設定するには次の書式を使います。
+			</p>
+
+<div class="titlebox2">
+<p>
+set 環境変数名=値
+</p>
+</div>
+
+			<p>
+			存在する環境変数に新しい値を設定することもできますし、新しい環境変数に値を設定することもできます。なおコマンドプロンプトから SET コマンドを使って環境変数に値を設定しても、設定した値が有効なのは SET コマンドを実行したコマンドプロンプト内だけです。
+			</p>
+
+			<p>
+			例として環境変数 PATHEXT に新しい値を設定してみます。次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+echo %pathext%<br>
+set pathext=.ext;.bat<br>
+echo %pathext%
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-4.png" tppabs="https://www.javadrive.jp/command/command/img/p4-4.png" alt="環境変数に値を設定する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			既存の環境変数に新しい値を設定することができました。
+			</p>
+
+			<p>
+			それではコマンドプロンプトを一度終了したあと、あらためてコマンドプロンプトを起動して環境変数 PATHTXT の値を参照してみてください。
+			</p>
+
+			<p>
+			<img src="img/p4-5.png" tppabs="https://www.javadrive.jp/command/command/img/p4-5.png" alt="環境変数に値を設定する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			環境変数 PATHEXT の値が変更前に戻っていることが確認できます。このように SET コマンドを使って環境変数の値を変更しても、有効なのは SET コマンドを実行したコマンドプロンプト内だけです。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			環境変数に値を設定する時に、既存の値に追加したい場合には次のように %環境変数名% に追加する値を続けて記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+set 環境変数名=%環境変数名%追加する値
+</p>
+</div>
+
+			<p>
+			%環境変数名% は現在設定されている値を参照しますので、新しい値として現在の値と追加する値を合わせたものを設定することになります。(区切り文字などが必要な場合は「追加する値」の前に区切り文字を記述することを忘れないでください)。
+			</p>
+
+			<p>
+			例として環境変数 PATHEXT に既存の値に加えて .JAVA を加えてみます。環境変数 PATHEXT の区切り文字はセミコロン(;)なので、次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+echo %pathext%<br>
+set pathext=%pathext$;.JAVA<br>
+echo %pathext%
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-6.png" tppabs="https://www.javadrive.jp/command/command/img/p4-6.png" alt="環境変数に値を設定する(3)" width="723" height="352">
+			</p>
+
+			<p>
+			既存の値に新しい値を追加して環境変数に設定することができました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			次に新しい環境変数に値を設定してみます。次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+set myname=Yamada Tarou<br>
+echo %myname%
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-7.png" tppabs="https://www.javadrive.jp/command/command/img/p4-7.png" alt="環境変数に値を設定する(4)" width="723" height="352">
+			</p>
+
+			<p>
+			新しい環境変数が作成されて値を設定することができました。バッチファイル内などで変数を使用したい場合には、この新しい環境変数を作成して値を設定するという書式を利用し、環境変数をいわゆる変数のように利用します。
+			</p>
+
+<h2><a id="section5">環境変数の値を削除する</a></h2>
+
+			<p>
+			環境変数の値を削除するには次のように値を記述しないで SET コマンドを実行してください。
+			</p>
+
+<div class="titlebox2">
+<p>
+SET 環境変数名=
+</p>
+</div>
+			<p>
+			例として環境変数 PATHEXT の値を削除してみます。次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+echo %pathext%<br>
+set pathext=<br>
+echo %pathext%
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-8.png" tppabs="https://www.javadrive.jp/command/command/img/p4-8.png" alt="環境変数の値をクリアする(1)" width="723" height="352">
+			</p>
+
+			<p>
+			指定の環境変数の値を削除することができました。なお値が削除されると環境変数そのものが存在しなくなります。
+			</p>
+
+<h2><a id="section6">|や&lt;など特殊な文字を環境変数の値として設定する</a></h2>
+
+			<p>
+			パイプやリダイレクトで使用する一部の文字「|」「&lt;」「&gt;」「&amp;」「^」を環境変数の値として設定する場合には、文字の前に「^」を付けて指定してください。
+			</p>
+
+			<p>
+			例として新しい環境変数に特殊な文字を値を設定してみます。次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<p>
+set unitname=^&lt;Yamada^&amp;Satou^&gt;<br>
+set unitname
+</p>
+</div>
+
+			<p>
+			<img src="img/p4-9.png" tppabs="https://www.javadrive.jp/command/command/img/p4-9.png" alt="|や&lt;など特殊な文字を環境変数の値として設定する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			環境変数に一部の特殊な文字を設定することができました。
+			</p>
+
+<h2><a id="section7">環境変数に式の結果を設定する</a></h2>
+
+			<p>
+			環境変数に値を設定するときに式の結果を設定するには次の書式を使用します。
+			</p>
+
+<div class="titlebox2">
+<p>
+SET /A 式
+</p>
+</div>
+
+			<p>
+			コマンドラインからでも利用できますが、バッチファイル内で利用されることが多いかと思います。バッチファイルの使い方については「<a href="../bat/index.htm" tppabs="https://www.javadrive.jp/command/bat/">バッチファイルの作成</a>」を参照されてください。
+			</p>
+
+			<p>
+			計算式では一部の演算子を利用することができます。利用可能な演算子は次の通りです(上のものほど優先順位が高くなっています)。
+			</p>
+
+<table class="pro">
+<tr><th>記号</th><th>種類</th></tr>
+<tr><td>()</td><td>グループ化</td></tr>
+<tr><td>! ~ -</td><td>単項演算子</td></tr>
+<tr><td>* / %</td><td>算術演算子</td></tr>
+<tr><td>+ -</td><td>算術演算子</td></tr>
+<tr><td>&lt;&lt; &gt;&gt;</td><td>論理シフト</td></tr>
+<tr><td>&amp;</td><td>ビット演算子 AND</td></tr>
+<tr><td>^</td><td>ビット演算子排他的 OR</td></tr>
+<tr><td>|</td><td>ビット演算子 OR</td></tr>
+<tr><td>= *= /= %= += -= &amp;= ^= |= &lt;&lt;= &gt;&gt;=</td><td>代入</td></tr>
+<tr><td>,</td><td>式の区切り記号</td></tr>
+</table>
+
+			<p>
+			数値を環境変数に設定するには次のように記述します。数値は 10 進数ですが、0x を付けると 16 進数、0 を付けると 8 進数になります。簡単なテストを行うために calc.bat ファイルを作成して次のように記述しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set /a num1=16<br>
+set /a num2=0x2b<br>
+echo num1 = %num1%<br>
+echo num2 = %num2%
+</p>
+</div>
+
+			<p>
+			実行すると次のように表示されます。結果は10進数で表示されるようです。
+			</p>
+
+			<p>
+			<img src="img/p4-10.png" tppabs="https://www.javadrive.jp/command/command/img/p4-10.png" alt="環境変数に式の結果を設定する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			加算や減算などの計算結果を設定するには次のように記述します。簡単なテストを行うために calc.bat ファイルに次のように記述しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set /a num1=4+2<br>
+set /a num2=5*8<br>
+echo num1 = %num1%<br>
+echo num2 = %num2%
+</p>
+</div>
+
+			<p>
+			実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-11.png" tppabs="https://www.javadrive.jp/command/command/img/p4-11.png" alt="環境変数に式の結果を設定する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			論理シフトやビット演算子を使う場合はダブルクォーテーションで囲って記述します。簡単なテストを行うために calc.bat ファイルに次のように記述しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set /a num1="4&lt;&lt;2"<br>
+set /a num2="4^2"<br>
+echo num1 = %num1%<br>
+echo num2 = %num2%
+</p>
+</div>
+
+			<p>
+			実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-12.png" tppabs="https://www.javadrive.jp/command/command/img/p4-12.png" alt="環境変数に式の結果を設定する(3)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			式の中で文字列を記述すると、文字列は環境変数として処理されます。存在しない環境変数だった場合は 0、そうでない場合は数値に変換されます。この記述方法を利用して、一般的な変数のような使い方をすることができます。簡単なテストを行うために calc.bat ファイルに次のように記述しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set /a other=2<br>
+set /a sum=4+other<br>
+set /a sum+=5<br>
+echo sum = %sum%
+</p>
+</div>
+
+			<p>
+			SET コマンド内で別の環境変数の値を参照する場合は %環境変数名% のように記述する必要がなく、単に 環境変数名 と記述するだけでいい点に注意してください。
+			</p>
+
+			<p>
+			実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4-13.png" tppabs="https://www.javadrive.jp/command/command/img/p4-13.png" alt="環境変数に式の結果を設定する(4)" width="723" height="352">
+			</p>
+
+<h2><a id="section8">ユーザーからの入力を受け取り環境変数に設定する</a></h2>
+
+			<p>
+			指定したメッセージを画面に表示してユーザーからの入力を待ち、入力された値を環境変数に設定することができます。次の書式を使用します。
+			</p>
+
+<div class="titlebox2">
+<p>
+SET /P 変数=[プロンプト文字列]
+</p>
+</div>
+
+			<p>
+			コマンドラインからでも利用できますが、バッチファイル内で利用されることが多いかと思います。
+			</p>
+
+			<p>
+			簡単なテストを行うために calc.bat ファイルを作成して次のように記述しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set /p num=数値を入力してください：<br>
+set /a mod=num%%2<br>
+if %mod% equ 0 (<br>
+&nbsp;&nbsp;echo 入力された値は偶数です<br>
+) else (<br>
+&nbsp;&nbsp;echo 入力された値は奇数です<br>
+)
+</div>
+
+            <p>
+            ユーザーから入力された値を環境変数へ設定し、2の剰余を取って偶数か奇数かを判定して表示します。実行すると次のように表示されて入力待ちとなります。
+            </p>
+
+			<p>
+			<img src="img/p4-14.png" tppabs="https://www.javadrive.jp/command/command/img/p4-14.png" alt="ユーザーからの入力を受け取り環境変数に設定する(1)" width="723" height="352">
+			</p>
+
+            <p>
+            ユーザーが数値を入力すると偶数か奇数かの判定を行って表示します。
+            </p>
+
+			<p>
+			<img src="img/p4-15.png" tppabs="https://www.javadrive.jp/command/command/img/p4-15.png" alt="ユーザーからの入力を受け取り環境変数に設定する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			SET コマンドを使って環境変数の値を参照したり値を設定する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

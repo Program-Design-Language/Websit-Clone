@@ -1,0 +1,618 @@
+<!Doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta property="qc:admins" content="465267610762567726375" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>14.0 Zookeeper 分布式锁实现原理 | 菜鸟教程</title>
+
+  <link rel='dns-prefetch' href='//s.w.org' />
+<link rel="canonical" href="http://www.runoob.com/w3cnote/zookeeper-locks.html" />
+<meta name="keywords" content="14.0 Zookeeper 分布式锁实现原理">
+<meta name="description" content="分布式锁是控制分布式系统之间同步访问共享资源的一种方式。下面介绍 zookeeper 如何实现分布式锁，讲解排他锁和共享锁两类分布式锁。  排他锁 排他锁（Exclusive Locks），又被称为写锁或独占锁，如果事务T1对数据对象O1加上排他锁，那么整个加锁期间，只允许事务T1对O1进行读取和更新操作，其他任何事务都不能进行读或写。 定义锁： /exclusive_lock/lock 实现方式： 利用 zookeeper 的同级节点..">
+		
+	<link rel="shortcut icon" href="../../static.runoob.com/images/favicon.ico" tppabs="https://static.runoob.com/images/favicon.ico" mce_href="//static.runoob.com/images/favicon.ico" type="image/x-icon" >
+	<link rel="stylesheet" href="../wp-content/themes/runoob/style.css-v=1.157.css" tppabs="https://www.runoob.com/wp-content/themes/runoob/style.css?v=1.157" type="text/css" media="all" />	
+	<link rel="stylesheet" href="../../static.runoob.com/assets/font-awesome/4.7.0/css/font-awesome.min.css" tppabs="https://static.runoob.com/assets/font-awesome/4.7.0/css/font-awesome.min.css" media="all" />	
+  <!--[if gte IE 9]><!-->
+  <script src="../../static.runoob.com/assets/jquery/2.0.3/jquery.min.js" tppabs="https://static.runoob.com/assets/jquery/2.0.3/jquery.min.js"></script>
+  <!--<![endif]-->
+  <!--[if lt IE 9]>
+     <script src="../../cdn.staticfile.org/jquery/1.9.1/jquery.min.js" tppabs="https://cdn.staticfile.org/jquery/1.9.1/jquery.min.js"></script>
+     <script src="../../cdn.staticfile.org/html5shiv/r29/html5.min.js" tppabs="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <![endif]-->
+  <link rel="apple-touch-icon" href="https://static.runoob.com/images/icon/mobile-icon.png"/>
+  <meta name="apple-mobile-web-app-title" content="菜鸟教程">
+</head>
+<body>
+
+<!--  头部 -->
+<div class="container logo-search">
+
+  <div class="col search row-search-mobile">
+    <form action="index.php-s=.htm" tppabs="https://www.runoob.com/w3cnote/index.php?s=">
+      <input class="placeholder" placeholder="搜索……" name="s" autocomplete="off">
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col logo">
+      <h1><a href="../index.htm" tppabs="https://www.runoob.com/">菜鸟教程 -- 学的不仅是技术，更是梦想！</a></h1>
+    </div>
+        <div class="col right-list"> 
+    <button class="btn btn-responsive-nav btn-inverse" data-toggle="collapse" data-target=".nav-main-collapse" id="pull" style=""> <i class="fa fa-navicon"></i> </button>
+    </div>
+        <div class="col search search-desktop last">
+      <form action="../-s=.htm" tppabs="https://www.runoob.com/?s=" target="_blank">
+        <input class="placeholder" id="s" name="s" placeholder="搜索……"  autocomplete="off">
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- 导航栏 -->
+<div class="container navigation">
+	<div class="row">
+		<div class="col nav">
+			
+
+						<ul class="pc-nav" id="note-nav">
+				<li><a href="../index.htm" tppabs="https://www.runoob.com/">首页</a></li>
+				<li><a href="../w3cnote-1.htm" tppabs="https://www.runoob.com/w3cnote">笔记首页</a></li>
+				<li><a href="android-tutorial-intro.html" tppabs="https://www.runoob.com/w3cnote/android-tutorial-intro.html" title="Android 基础入门教程">Android</a></li>
+				<li><a href="es6-tutorial.html" tppabs="https://www.runoob.com/w3cnote/es6-tutorial.html" title="ES6 教程">ES6 教程</a></li>
+				<li><a href="ten-sorting-algorithm.html" tppabs="https://www.runoob.com/w3cnote/ten-sorting-algorithm.html" title="排序算法">排序算法</a></li>
+				<li><a href="verilog-tutorial.html" tppabs="https://www.runoob.com/w3cnote/verilog-tutorial.html" title="Verilog 教程">Verilog</a></li>
+				<li><a href="../linux/linux-cloud-server.html" tppabs="https://www.runoob.com/linux/linux-cloud-server.html" title="程序员人生">云服务器</a></li>
+				<li><a href="../w3cnote_genre/coderlife.htm" tppabs="https://www.runoob.com/w3cnote_genre/coderlife" title="程序员人生">程序员人生</a></li>
+				<li><a href="../w3cnote_genre/code.htm" tppabs="https://www.runoob.com/w3cnote_genre/code" title="编程技术">编程技术</a></li> 
+				<!--<li><a href="javascript:;" class="runoob-pop">登录</a></li>
+				
+				
+						<li>
+				<a style="font-weight:bold;" href="https://www.runoob.com/linux/linux-tutorial.html#yunserver" target="_blank" onclick="_hmt.push(['_trackEvent', 'aliyun', 'click', 'aliyun'])" title="kkb">云服务器</a>
+				</li>
+				<li><a href="http://gk.link/a/104mQ" target="_blank" style="font-weight: bold;"onclick="_hmt.push(['_trackEvent', '极客时间', 'click', 'jike'])" title="我的圈子">极客时间</a></li>
+			
+				
+				<li><a target="_blank" href="/shoppinglist" rel="nofollow">知识店铺</a></li> 
+		-->
+			</ul>
+						
+      		
+			<ul class="mobile-nav">
+				<li><a href="../w3cnote-1.htm" tppabs="https://www.runoob.com/w3cnote">首页</a></li>
+				<li><a href="../w3cnote_genre/android.htm" tppabs="https://www.runoob.com/w3cnote_genre/android" target="_blank" title="Android 基础入门教程">Android</a></li>
+				<li><a href="es6-tutorial.html" tppabs="https://www.runoob.com/w3cnote/es6-tutorial.html" target="_blank" title="ES6 教程">ES6</a></li>
+				<li><a href="../w3cnote_genre/joke.htm" tppabs="https://www.runoob.com/w3cnote_genre/joke" target="_blank" title="程序员笑话">逗乐</a></li>
+				
+				<a href="javascript:void(0)" class="search-reveal">Search</a> 
+			</ul>
+			
+		</div>
+	</div>
+</div>
+
+
+<!--  内容  -->
+<div class="container main">
+	<div class="row">
+
+		<!--  Android 基础入门教程 start  -->
+	<div class="col left-column" style="display:none;">
+		<div class="tab">Zookeeper 教程</div>
+		<div class="sidebar-box gallery-list">
+			<div class="design" id="leftcolumn">  
+			</div> 
+		</div> 
+	</div>
+	<!--  Android 基础入门教程 end  -->
+		<div class="col middle-column big-middle-column">
+	 			<div class="article">
+			<div class="article-heading">
+				<h2>14.0 Zookeeper 分布式锁实现原理</h2>				<h3><em>分类</em> <a href="../w3cnote_genre/zookeeper.htm" tppabs="https://www.runoob.com/w3cnote_genre/zookeeper" title="Zookeeper 教程" >Zookeeper 教程</a> </h3>
+			</div>
+			<div class="article-body note-body">
+				<div class="article-intro">
+					<p>分布式锁是控制分布式系统之间同步访问共享资源的一种方式。</p><p>下面介绍 zookeeper 如何实现分布式锁，讲解排他锁和共享锁两类分布式锁。</p>
+
+<h3>排他锁</h3>
+<p>排他锁（Exclusive Locks），又被称为写锁或独占锁，如果事务T1对数据对象O1加上排他锁，那么整个加锁期间，只允许事务T1对O1进行读取和更新操作，其他任何事务都不能进行读或写。</p>
+<p>定义锁： </p><pre>/exclusive_lock/lock</pre>
+<p><strong>实现方式：</strong></p>
+<p>利用 zookeeper 的同级节点的唯一性特性，在需要获取排他锁时，所有的客户端试图通过调用 create() 接口，在 <strong>/exclusive_lock</strong> 节点下创建临时子节点 <strong>/exclusive_lock/lock</strong>，最终只有一个客户端能创建成功，那么此客户端就获得了分布式锁。同时，所有没有获取到锁的客户端可以在 <strong>/exclusive_lock</strong> 节点上注册一个子节点变更的 watcher 监听事件，以便重新争取获得锁。</p>
+
+
+<h3>共享锁</h3>
+<p>共享锁（Shared Locks），又称读锁。如果事务T1对数据对象O1加上了共享锁，那么当前事务只能对O1进行读取操作，其他事务也只能对这个数据对象加共享锁，直到该数据对象上的所有共享锁都释放。</p>
+<p>定义锁:</p> <pre>/shared_lock/[hostname]-请求类型W/R-序号</pre>
+<p><strong>实现方式：</strong></p><p>
+1、客户端调用 create 方法创建类似定义锁方式的临时顺序节点。</p>
+<p><img src="../wp-content/uploads/2020/09/1337487" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/lock-01.png"></p>
+
+<p>2、客户端调用 getChildren 接口来获取所有已创建的子节点列表。</p>
+<p>3、判断是否获得锁，对于读请求如果所有比自己小的子节点都是读请求或者没有比自己序号小的子节点，表明已经成功获取共享锁，同时开始执行度逻辑。对于写请求，如果自己不是序号最小的子节点，那么就进入等待。</p>
+<p>4、如果没有获取到共享锁，读请求向比自己序号小的最后一个写请求节点注册 watcher 监听，写请求向比自己序号小的最后一个节点注册watcher 监听。</p>
+<p>实际开发过程中，可以 curator 工具包封装的API帮助我们实现分布式锁。</p>
+<div class="example"> <div class="example_code"><div class="hl-main"><span class="hl-brackets">&lt;</span><span class="hl-reserved">dependency</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+  </span><span class="hl-brackets">&lt;</span><span class="hl-reserved">groupId</span><span class="hl-brackets">&gt;</span><span class="hl-code">org.apache.curator</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">groupId</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+  </span><span class="hl-brackets">&lt;</span><span class="hl-reserved">artifactId</span><span class="hl-brackets">&gt;</span><span class="hl-code">curator-recipes</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">artifactId</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+  </span><span class="hl-brackets">&lt;</span><span class="hl-reserved">version</span><span class="hl-brackets">&gt;</span><span class="hl-code">x.x.x</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">version</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">dependency</span><span class="hl-brackets">&gt;</span></div></div></div>
+<p>curator 的几种锁方案 ：</p>
+<ul><li>
+1、<strong>InterProcessMutex</strong>：分布式可重入排它锁</li><li>
+2、<strong>InterProcessSemaphoreMutex</strong>：分布式排它锁</li><li>
+3、<strong>InterProcessReadWriteLock</strong>：分布式读写锁</li></ul>
+<p>下面例子模拟 50 个线程使用重入排它锁 InterProcessMutex 同时争抢锁：</p>
+<div class="example"><h2 class="example">实例</h2> <div class="example_code">
+<span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">class</span> InterprocessLock <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">static</span> <span style="color: #000066; font-weight: bold;">void</span> main<span style="color: #009900;">&#40;</span><span style="color: #003399;">String</span><span style="color: #009900;">&#91;</span><span style="color: #009900;">&#93;</span> args<span style="color: #009900;">&#41;</span> &nbsp;<span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; CuratorFramework zkClient <span style="color: #339933;">=</span> getZkClient<span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #003399;">String</span> lockPath <span style="color: #339933;">=</span> <span style="color: #0000ff;">&quot;/lock&quot;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; InterProcessMutex lock <span style="color: #339933;">=</span> <span style="color: #000000; font-weight: bold;">new</span> InterProcessMutex<span style="color: #009900;">&#40;</span>zkClient, lockPath<span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #666666; font-style: italic;">//模拟50个线程抢锁</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">for</span> <span style="color: #009900;">&#40;</span><span style="color: #000066; font-weight: bold;">int</span> i <span style="color: #339933;">=</span> <span style="color: #cc66cc;">0</span><span style="color: #339933;">;</span> i <span style="color: #339933;">&lt;</span> <span style="color: #cc66cc;">50</span><span style="color: #339933;">;</span> i<span style="color: #339933;">++</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">new</span> <span style="color: #003399;">Thread</span><span style="color: #009900;">&#40;</span><span style="color: #000000; font-weight: bold;">new</span> TestThread<span style="color: #009900;">&#40;</span>i, lock<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span>.<span style="color: #006633;">start</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+&nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+<br />
+<br />
+&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">static</span> <span style="color: #000000; font-weight: bold;">class</span> TestThread <span style="color: #000000; font-weight: bold;">implements</span> <span style="color: #003399;">Runnable</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">private</span> <span style="color: #003399;">Integer</span> threadFlag<span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">private</span> InterProcessMutex lock<span style="color: #339933;">;</span><br />
+<br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> TestThread<span style="color: #009900;">&#40;</span><span style="color: #003399;">Integer</span> threadFlag, InterProcessMutex lock<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">this</span>.<span style="color: #006633;">threadFlag</span> <span style="color: #339933;">=</span> threadFlag<span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">this</span>.<span style="color: #006633;">lock</span> <span style="color: #339933;">=</span> lock<span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+<br />
+&nbsp; &nbsp; &nbsp; &nbsp; @Override<br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000066; font-weight: bold;">void</span> run<span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">try</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; lock.<span style="color: #006633;">acquire</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #003399;">System</span>.<span style="color: #006633;">out</span>.<span style="color: #006633;">println</span><span style="color: #009900;">&#40;</span><span style="color: #0000ff;">&quot;第&quot;</span><span style="color: #339933;">+</span>threadFlag<span style="color: #339933;">+</span><span style="color: #0000ff;">&quot;线程获取到了锁&quot;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #666666; font-style: italic;">//等到1秒后释放锁</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #003399;">Thread</span>.<span style="color: #006633;">sleep</span><span style="color: #009900;">&#40;</span><span style="color: #cc66cc;">1000</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span> <span style="color: #000000; font-weight: bold;">catch</span> <span style="color: #009900;">&#40;</span><span style="color: #003399;">Exception</span> e<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; e.<span style="color: #006633;">printStackTrace</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span><span style="color: #000000; font-weight: bold;">finally</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">try</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; lock.<span style="color: #006633;">release</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span> <span style="color: #000000; font-weight: bold;">catch</span> <span style="color: #009900;">&#40;</span><span style="color: #003399;">Exception</span> e<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; e.<span style="color: #006633;">printStackTrace</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+&nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">private</span> <span style="color: #000000; font-weight: bold;">static</span> CuratorFramework getZkClient<span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #003399;">String</span> zkServerAddress <span style="color: #339933;">=</span> <span style="color: #0000ff;">&quot;192.168.3.39:2181&quot;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; ExponentialBackoffRetry retryPolicy <span style="color: #339933;">=</span> <span style="color: #000000; font-weight: bold;">new</span> ExponentialBackoffRetry<span style="color: #009900;">&#40;</span><span style="color: #cc66cc;">1000</span>, <span style="color: #cc66cc;">3</span>, <span style="color: #cc66cc;">5000</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; CuratorFramework zkClient <span style="color: #339933;">=</span> CuratorFrameworkFactory.<span style="color: #006633;">builder</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .<span style="color: #006633;">connectString</span><span style="color: #009900;">&#40;</span>zkServerAddress<span style="color: #009900;">&#41;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .<span style="color: #006633;">sessionTimeoutMs</span><span style="color: #009900;">&#40;</span><span style="color: #cc66cc;">5000</span><span style="color: #009900;">&#41;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .<span style="color: #006633;">connectionTimeoutMs</span><span style="color: #009900;">&#40;</span><span style="color: #cc66cc;">5000</span><span style="color: #009900;">&#41;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .<span style="color: #006633;">retryPolicy</span><span style="color: #009900;">&#40;</span>retryPolicy<span style="color: #009900;">&#41;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .<span style="color: #006633;">build</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; zkClient.<span style="color: #006633;">start</span><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">return</span> zkClient<span style="color: #339933;">;</span><br />
+&nbsp; &nbsp; <span style="color: #009900;">&#125;</span><br />
+<span style="color: #009900;">&#125;</span><br />
+</div></div>
+<p>控制台每间隔一秒钟输出一条记录：</p><p><img src="../wp-content/uploads/2020/09/html5-new-element.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/lock-02.png"></p>
+<h3>本章源码下载</h3>
+<p>
+<a class="download" href="javascript:if(confirm('https://www.runoob.com/wp-content/uploads/2020/09/html5-canvas.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.runoob.com/wp-content/uploads/2020/09/html5-canvas.html'" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/zookeeper-demo-locks.zip">Download</a></p>				</div>
+			</div>
+			<div class="previous-next-links">
+			<div class="previous-design-link">← <a href="zookeeper-leader-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-leader.html" rel="prev"> 13.0 Zookeeper Leader 选举原理</a> </div>
+			<div class="next-design-link"></div>
+			</div>
+						<style>
+@media screen and (max-width: 768px) {
+	#w3cnote-ad728 {
+		display: none;
+	}
+}
+p.note-author {
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    font-weight: bold;
+    color: #78a15a;
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+}
+</style>
+<script>
+var aid = 22845;
+</script>
+	</div>
+		
+	</div>
+	<div class="listcol last right-column">
+
+	<script type="text/javascript">
+jQuery(document).ready(function ($){
+	var total = $(".membership li").length;
+	var left_list = '';
+	href = window.location.href;
+	
+	$(".membership li").each(function(index, value){
+
+		left_list += $(this).html();
+
+		cur_href = $(this).find("a").attr("href");
+		cur_obj = $(this);
+		
+		if(href.match(cur_href) != null) {
+			if(index==0) {
+				$(".previous-design-link").hide();
+			}
+			if(index==(total-1)) {
+				$(".next-design-link").hide();
+			}
+			prev_href = cur_obj.prev("li").find("a").attr("href");
+			prev_title = cur_obj.prev("li").find("a").attr("title");
+
+			next_href = cur_obj.next("li").find("a").attr("href");
+			next_title = cur_obj.next("li").find("a").attr("title");
+			if(prev_title) {
+				$(".previous-design-link a").attr("href", prev_href);
+				$(".previous-design-link a").attr("title", prev_title);
+				$(".previous-design-link a").text(prev_title);
+			} else {
+				$(".previous-design-link").html("");
+			}
+
+			if(next_title) {
+				$(".next-design-link a").attr("href", next_href);
+				$(".next-design-link a").attr("title", next_title);
+				$(".next-design-link a").text(next_title);
+			} else {
+				$(".next-design-link").html("");
+			}
+		}
+	});
+
+	$("#leftcolumn").html(left_list);
+});
+	</script>
+	<div class="sidebar-box cate-list">
+	<div class="sidebar-box recommend-here list-link">
+	<a href="javascript:void(0);">Zookeeper 教程</a>	</div>
+	
+	<ul class="membership">
+		
+	<li><a target="_top" title="1.0 Zookeeper 教程" href="javascript:if(confirm('http://div.wifi-cloud.jp/redir/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://div.wifi-cloud.jp/redir/'" tppabs="http://www.runoob.com/w3cnote/zookeeper-tutorial.html" >1.0 Zookeeper 教程</a></li>
+		
+	<li><a target="_top" title="2.0 Zookeeper 安装配置" href="zookeeper-setup-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-setup.html" >2.0 Zookeeper 安装配置</a></li>
+		
+	<li><a target="_top" title="3.0 Zookeeper  linux 服务端集群搭建步骤" href="zookeeper-linux-cluster-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-linux-cluster.html" >3.0 Zookeeper  linux 服务端集群搭建步骤</a></li>
+		
+	<li><a target="_top" title="4.0 Zookeeper Java 客户端搭建" href="zookeeper-java-setup-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-java-setup.html" >4.0 Zookeeper Java 客户端搭建</a></li>
+		
+	<li><a target="_top" title="5.0 ZooKeeper 数据模型 znode 结构详解" href="zookeeper-znode-data-model-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-znode-data-model.html" >5.0 ZooKeeper 数据模型 znode 结构详解</a></li>
+		
+	<li><a target="_top" title="6.0 Zookeeper session 基本原理" href="zookeeper-session-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-session.html" >6.0 Zookeeper session 基本原理</a></li>
+		
+	<li><a target="_top" title="7.0 Zookeeper 客户端基础命令使用" href="zookeeper-bs-command-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-bs-command.html" >7.0 Zookeeper 客户端基础命令使用</a></li>
+		
+	<li><a target="_top" title="8.0 Zookeeper 四字命令" href="zookeeper-sc-4lw-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-sc-4lw.html" >8.0 Zookeeper 四字命令</a></li>
+		
+	<li><a target="_top" title="9.0 Zookeeper 节点特性" href="zookeeper-node-feature-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-node-feature.html" >9.0 Zookeeper 节点特性</a></li>
+		
+	<li><a target="_top" title="10.0 Zookeeper 权限控制 ACL" href="zookeeper-acl-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-acl.html" >10.0 Zookeeper 权限控制 ACL</a></li>
+		
+	<li><a target="_top" title="11.0 Zookeeper watcher 事件机制原理剖析" href="zookeeper-watcher-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-watcher.html" >11.0 Zookeeper watcher 事件机制原理剖析</a></li>
+		
+	<li><a target="_top" title="12.0 Zookeeper 数据同步流程" href="zookeeper-data-sync-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-data-sync.html" >12.0 Zookeeper 数据同步流程</a></li>
+		
+	<li><a target="_top" title="13.0 Zookeeper Leader 选举原理" href="zookeeper-leader-1.html" tppabs="http://www.runoob.com/w3cnote/zookeeper-leader.html" >13.0 Zookeeper Leader 选举原理</a></li>
+		<li>
+	14.0 Zookeeper 分布式锁实现原理	</li>
+	
+	</ul></div>	</div>
+</div>
+
+
+<!-- 底部 -->
+
+
+<div id="footer" class="mar-t50">
+   <div class="runoob-block">
+    <div class="runoob cf">
+     <dl>
+      <dt>
+       在线实例
+      </dt>
+      <dd>
+       &middot;<a target="_blank" href="../html/html-examples.html" tppabs="https://www.runoob.com/html/html-examples.html">HTML 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../css/css-examples.html" tppabs="https://www.runoob.com/css/css-examples.html">CSS 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../js/js-examples.html" tppabs="https://www.runoob.com/js/js-examples.html">JavaScript 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../ajax/ajax-examples.html" tppabs="https://www.runoob.com/ajx/ajax-examples.html">Ajax 实例</a>
+      </dd>
+       <dd>
+       &middot;<a target="_blank" href="../jquery/jquery-examples.html" tppabs="https://www.runoob.com/jquery/jquery-examples.html">jQuery 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../xml/xml-examples.html" tppabs="https://www.runoob.com/xml/xml-examples.html">XML 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../java/java-examples.html" tppabs="https://www.runoob.com/java/java-examples.html">Java 实例</a>
+      </dd>
+     
+     </dl>
+     <dl>
+      <dt>
+      字符集&工具
+      </dt>
+      <dd>
+       &middot; <a target="_blank" href="../charsets/html-charsets.html" tppabs="https://www.runoob.com/charsets/html-charsets.html">HTML 字符集设置</a>
+      </dd>
+      <dd>
+       &middot; <a target="_blank" href="../tags/html-ascii.html" tppabs="https://www.runoob.com/tags/html-ascii.html">HTML ASCII 字符集</a>
+      </dd>
+     <dd>
+       &middot; <a target="_blank" href="../tags/ref-entities.html" tppabs="https://www.runoob.com/tags/ref-entities.html">HTML ISO-8859-1</a>
+      </dd> 
+      <dd>
+       &middot; <a target="_blank" href="../tags/html-symbols.html" tppabs="https://www.runoob.com/tags/html-symbols.html">HTML 实体符号</a>
+      </dd>
+      <dd>
+       &middot; <a target="_blank" href="../tags/html-colorpicker.html" tppabs="https://www.runoob.com/tags/html-colorpicker.html">HTML 拾色器</a>
+      </dd>
+      <dd>
+       &middot; <a target="_blank" href="javascript:if(confirm('https://c.runoob.com/front-end/53  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://c.runoob.com/front-end/53'" tppabs="https://c.runoob.com/front-end/53">JSON 格式化工具</a>
+      </dd>
+     </dl>
+     <dl>
+      <dt>
+       最新更新
+      </dt>
+                   <dd>
+       &middot;
+      <a href="../vue3/vue3-watch-1.html" tppabs="http://www.runoob.com/vue3/vue3-watch.html" title="Vue3 监听属性">Vue3 监听属性</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-components-1.html" tppabs="http://www.runoob.com/vue3/vue3-components.html" title="Vue3 组件">Vue3 组件</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vu3-computed-1.html" tppabs="http://www.runoob.com/vue3/vu3-computed.html" title="Vu3 计算属性">Vu3 计算属性</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-v-for-1.html" tppabs="http://www.runoob.com/vue3/vue3-v-for.html" title="Vue3 循环语句">Vue3 循环语句</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-v-if-1.html" tppabs="http://www.runoob.com/vue3/vue3-v-if.html" title="Vue3 条件语句">Vue3 条件语句</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-template-syntax-1.html" tppabs="http://www.runoob.com/vue3/vue3-template-syntax.html" title="Vue3 模板语法">Vue3 模板语法</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-intro-1.html" tppabs="http://www.runoob.com/vue3/vue3-intro.html" title="Vue3 起步">Vue3 起步</a>
+      </dd>
+             </dl>
+     <dl>
+      <dt>
+       站点信息
+      </dt>
+      <dd>
+       &middot;
+       <a target="_blank" href="javascript:if(confirm('https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=ssbDyoOAgfLU3crf09venNHd3w  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=ssbDyoOAgfLU3crf09venNHd3w'" tppabs="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=ssbDyoOAgfLU3crf09venNHd3w" rel="external nofollow">意见反馈</a>
+      </dd>
+        <!--
+      <dd>
+       &middot;
+      <a class="wxpopup" onclick="popFunction()">加入我们
+       <span class="popuptext" id="myPopup">
+       岗位：技术类型自媒体<br>
+工作地点：厦门<br>
+
+具体联系邮箱：<strong>429240967@qq.com</strong></span>
+      </a>
+      </dd> 
+      -->
+      <dd>
+       &middot;
+      <a target="_blank" href="../disclaimer.htm" tppabs="https://www.runoob.com/disclaimer">免责声明</a>
+       </dd>
+       <!--
+       <dd style="display: block;">
+       &middot;
+      <a href="javascript:void(0)" onclick="dashangToggle()" style="font-weight:bold;color:#f00;" title="打赏，支持一下">打赏一下</a>
+       </dd>
+     -->
+      <dd>
+       &middot;
+       <a target="_blank" href="../aboutus.htm" tppabs="https://www.runoob.com/aboutus">关于我们</a>
+       </dd>
+      <dd>
+       &middot;
+      <a target="_blank" href="../archives.htm" tppabs="https://www.runoob.com/archives">文章归档</a>
+      </dd>
+    
+     </dl>
+    
+     <div class="search-share">
+      <div class="app-download">
+        <div>
+         <strong>关注微信</strong>
+        </div>
+      </div>
+      <div class="share">
+            <img width="128" height="128" src="../wp-content/themes/runoob/assets/images/qrcode.png" tppabs="https://www.runoob.com/wp-content/themes/runoob/assets/images/qrcode.png" />
+       </div>
+     </div>
+     
+    </div>
+   </div>
+   <div class="w-1000 copyright">
+     Copyright &copy; 2013-2021    <strong><a href="../index.htm" tppabs="https://www.runoob.com/" target="_blank">菜鸟教程</a></strong>&nbsp;
+    <strong><a href="../index.htm" tppabs="https://www.runoob.com/" target="_blank">runoob.com</a></strong> All Rights Reserved. 备案号：<a target="_blank" rel="nofollow" href="javascript:if(confirm('https://beian.miit.gov.cn/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://beian.miit.gov.cn/'" tppabs="https://beian.miit.gov.cn/">闽ICP备15012807号-1</a>
+   </div>
+  </div>
+  <div class="fixed-btn">
+    <a class="go-top" href="javascript:void(0)" title="返回顶部"> <i class="fa fa-angle-up"></i></a>
+    <a class="qrcode"  href="javascript:void(0)" title="关注我们"><i class="fa fa-qrcode"></i></a>
+    <a class="writer" style="display:none" href="javascript:void(0)"   title="标记/收藏"><i class="fa fa-star" aria-hidden="true"></i></a>
+    <!-- qrcode modal -->
+    <div id="bottom-qrcode" class="modal panel-modal hide fade in">
+      <h4>微信关注</h4>
+      <div class="panel-body"><img alt="微信关注" width="128" height="128" src="../wp-content/themes/runoob/assets/images/qrcode.png" tppabs="https://www.runoob.com/wp-content/themes/runoob/assets/images/qrcode.png"></div> 
+    </div>
+  </div>
+
+  <div class="hide_box"></div>
+    <div class="shang_box">
+      <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="../../static.runoob.com/images/dashang/close.jpg" tppabs="https://static.runoob.com/images/dashang/close.jpg" alt="取消" /></a>
+       
+      <div class="shang_tit">
+        <p>感谢您的支持，我会继续努力的!</p>
+      </div>
+      <div class="shang_payimg">
+        <img src="../../static.runoob.com/images/dashang/weipayimg.png.jpg" tppabs="https://static.runoob.com/images/dashang/weipayimg.png" alt="扫码支持" title="扫一扫" />
+      </div>
+        <div class="pay_explain">扫码打赏，你说多少就多少</div>
+      <div class="shang_payselect">
+        <div class="pay_item  checked" data-id="weipay">
+          <span class="radiobox"></span>
+          <span class="pay_logo"><img src="../../static.runoob.com/images/dashang/wechat.jpg" tppabs="https://static.runoob.com/images/dashang/wechat.jpg" alt="微信" /></span>
+        </div>
+        <div class="pay_item" data-id="alipay">
+          <span class="radiobox"></span>
+          <span class="pay_logo"><img src="../../static.runoob.com/images/dashang/alipay.jpg" tppabs="https://static.runoob.com/images/dashang/alipay.jpg" alt="支付宝" /></span>
+        </div>
+        
+      </div>
+      <div class="shang_info">
+        <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+        <p><a href="javascript:if(confirm('https://c.runoob.com/codedemo/5348  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://c.runoob.com/codedemo/5348'" tppabs="https://c.runoob.com/codedemo/5348" target="_blank"><span style=" font-size: 14px;color: #000;font-weight: bold;">点我查看本站打赏源码！</span></a></p>
+      </div>
+    </div>
+  <div id="testClick"></div>
+ <div style="display:none;">
+ 
+ <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "../../hm.baidu.com/hm.js-3eec0b7da6548cf07db3bc477ea905ee"/*tpa=https://hm.baidu.com/hm.js?3eec0b7da6548cf07db3bc477ea905ee*/;
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="../../www.googletagmanager.com/gtag/js-id=UA-84264393-2" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-84264393-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-84264393-2');
+</script>
+</div>
+<script>
+window.jsui={
+    www: 'https://www.runoob.com',
+    uri: 'https://www.runoob.com/wp-content/themes/runoob'
+};
+</script>
+<style>
+ol,ul{list-style:none}.cd-switcher a{text-decoration:none;outline:0}.cd-switcher a:hover{text-decoration:underline}a:focus{outline:0;-moz-outline:0}.main_nav{width:300px;height:60px;margin:60px auto 10px auto}.main_nav li{float:left;width:60px;margin-right:10px;font-size:16px;padding:.6em 1em;border-radius:3em;background:#2f889a;text-align:center}.main_nav li a{color:#fff}.errtip{background-color:#fceaea;color:#db5353;padding:8px 15px;font-size:14px;border:1px solid #fc9797;border-radius:5px}.cd-user-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(52,54,66,0.9);z-index:3;overflow-y:auto;cursor:pointer;visibility:hidden;opacity:0;-webkit-transition:opacity .3s 0,visibility 0 .3s;-moz-transition:opacity .3s 0,visibility 0 .3s;transition:opacity .3s 0,visibility 0 .3s}.cd-user-modal.is-visible{visibility:visible;opacity:1;-webkit-transition:opacity .3s 0,visibility 0 0;-moz-transition:opacity .3s 0,visibility 0 0;transition:opacity .3s 0,visibility 0 0}.cd-user-modal.is-visible .cd-user-modal-container{-webkit-transform:translateY(0);-moz-transform:translateY(0);-ms-transform:translateY(0);-o-transform:translateY(0);transform:translateY(0)}.cd-user-modal-container{position:relative;width:90%;max-width:500px;background:#FFF;margin:3em auto 4em;cursor:auto;border-radius:.25em;-webkit-transform:translateY(-30px);-moz-transform:translateY(-30px);-ms-transform:translateY(-30px);-o-transform:translateY(-30px);transform:translateY(-30px);-webkit-transition-property:-webkit-transform;-moz-transition-property:-moz-transform;transition-property:transform;-webkit-transition-duration:.3s;-moz-transition-duration:.3s;transition-duration:.3s}.cd-user-modal-container .cd-switcher:after{content:"";display:table;clear:both}.cd-user-modal-container .cd-switcher li{width:50%;float:left;text-align:center}.cd-user-modal-container .cd-switcher li:first-child a{border-radius:.25em 0 0 0}.cd-user-modal-container .cd-switcher li:last-child a{border-radius:0 .25em 0 0}.cd-user-modal-container .cd-switcher a{font-size:1.2em;font-weight:bold;display:block;width:100%;height:50px;line-height:50px;background:#e8f1e2;color:#96b880}.cd-user-modal-container .cd-switcher a.selected{background:#FFF;color:#505260}@media only screen and (min-width:600px){.cd-user-modal-container{margin:4em auto}.cd-user-modal-container .cd-switcher a{height:70px;line-height:70px}}.cd-form{padding:1.4em}.cd-form .fieldset{position:relative;margin:1.4em 0}.cd-form .fieldset:first-child{margin-top:0}.cd-form .fieldset:last-child{margin-bottom:0}.cd-form label{font-size:16px;font-size:.875rem}.cd-form label.image-replace{display:inline-block;position:absolute;left:15px;top:50%;bottom:auto;-webkit-transform:translateY(-50%);-moz-transform:translateY(-50%);-ms-transform:translateY(-50%);-o-transform:translateY(-50%);transform:translateY(-50%);height:20px;width:20px;overflow:hidden;text-indent:100%;white-space:nowrap;color:transparent;text-shadow:none;background-repeat:no-repeat;background-position:50% 0}.cd-form label.cd-username{background-image:url("../wp-content/themes/runoob/assets/img/cd-icon-username.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-username.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-username.svg*/}.cd-form label.cd-email{background-image:url("../wp-content/themes/runoob/assets/img/cd-icon-email.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-email.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-email.svg*/}.cd-form label.cd-password{background-image:url("../wp-content/themes/runoob/assets/img/cd-icon-password.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-password.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-password.svg*/}.cd-form input{margin:0;padding:0;border-radius:.25em}.cd-form input.full-width{width:80%}.cd-form input.full-width2{width:94%}.cd-form input.has-padding{padding:12px 20px 12px 50px}.cd-form input.has-border{border:1px solid #d2d8d8;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none;-o-appearance:none;appearance:none}.cd-form input.has-border:focus{border-color:#98b880;box-shadow:0 0 5px rgba(52,54,66,0.1);outline:0}.cd-form input.has-error{border:1px solid #d76666}.cd-form input[type=password]{padding-right:65px}.cd-form input[type=submit]{padding:16px 0;cursor:pointer;background:#96b97d;color:#FFF;font-weight:bold;border:0;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none;-o-appearance:none;appearance:none;font-size:1.2em;font-weight:bold}.no-touch .cd-form input[type=submit]:hover,.no-touch .cd-form input[type=submit]:focus{background:#3599ae;outline:0}@media only screen and (min-width:600px){.cd-form{padding:2em}.cd-form .fieldset{margin:2em 0}.cd-form .fieldset:first-child{margin-top:0}.cd-form .fieldset:last-child{margin-bottom:0}.cd-form input.has-padding{padding:16px 20px 16px 50px}.cd-form input[type=submit]{padding:16px 0}}.cd-close-form{display:block;position:absolute;width:40px;height:40px;right:0;top:-40px;background:url("../wp-content/themes/runoob/assets/img/cd-icon-close.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-close.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-close.svg*/ no-repeat center center;text-indent:100%;white-space:nowrap;overflow:hidden}@media only screen and (min-width:1170px){}#cd-login,#cd-signup,#cd-reset-password{display:none}#cd-login.is-selected,#cd-signup.is-selected,#cd-reset-password.is-selected{display:block}
+</style>
+<div class="cd-user-modal"> 
+	<div class="cd-user-modal-container">
+		<ul class="cd-switcher">
+			<li><a href="javascript:;">用户登录</a></li>
+			<li><a href="javascript:;">注册新用户</a></li>
+		</ul>
+
+		<div id="cd-login"> <!-- 登录表单 -->
+			<div class="cd-form">
+				<p class="fieldset">
+					<label class="image-replace cd-username" for="signin-username">用户名</label>
+					<input class="full-width has-padding has-border" id="signin-username" name=username type="text" placeholder="输入用户名">
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signin-password">密码</label>
+					<input class="full-width has-padding has-border" id="signin-password" name="password" type="password"  placeholder="输入密码">
+				</p>
+				
+				<p class="fieldset">
+					<input type="checkbox" id="remember-me" checked>
+					<label for="remember-me">记住登录状态</label>
+          <a href="../reset-password.htm" tppabs="https://www.runoob.com/reset-password" style="float: right;padding-right: 20px;" target="_blank">忘记密码？</a>
+				</p>
+ 				<input type="hidden" name="action" value="signin">
+				<p class="fieldset">
+					<input class="full-width2" type="submit" value="登 录">
+				</p>
+        <div class="err-msg"></div>
+			</div>
+		</div>
+
+		<div id="cd-signup"> <!-- 注册表单 -->
+			<div class="cd-form">
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="verifycode">邀请码</label>
+					<input class="full-width has-padding has-border" id="signup-verifycode" name="verifycode" type="text"  placeholder="输入邀请码">
+				</p>
+				<p class="fieldset">
+					<label class="image-replace cd-username" for="signup-username">用户名</label>
+					<input class="full-width has-padding has-border" id="signup-username" name="name" type="text" placeholder="输入用户名">
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-email" for="signup-email">邮箱</label>
+					<input class="full-width has-padding has-border" name="email" id="signup-email" type="email" placeholder="输入mail">
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signup-password">密码</label>
+					<input class="full-width has-padding has-border" id="signup-password" name="password" type="password"  placeholder="输入密码">
+				</p>
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signup-password2">重复输入密码</label>
+					<input class="full-width has-padding has-border" id="signup-password2" name="password2" type="password"  placeholder="重复输入密码">
+				</p>
+				
+				<!-- 
+				<p class="fieldset">
+					<input type="checkbox" id="accept-terms">
+					<label for="accept-terms">我已阅读并同意 <a href="javascript:;">用户协议</a></label>
+				</p>
+				 -->
+				 
+				 <input type="hidden" name="action" value="signup">
+				<p class="fieldset">
+					<input class="full-width2" type="submit" value="注册新用户">
+				</p>
+				<p class="fieldset">
+				  <a href="runoob-user-test-intro.html#invite" tppabs="https://www.runoob.com/w3cnote/runoob-user-test-intro.html#invite" target="_blank">如何获取邀请码？</a>
+				  </p>
+				<div class="err-msg"></div>
+			</div>
+
+		</div>
+
+		<a href="javascript:;" class="cd-close-form">关闭</a>
+	</div>
+</div> 
+<script src="../wp-content/themes/runoob/assets/js/main.min.js-v=1.191" tppabs="https://www.runoob.com/wp-content/themes/runoob/assets/js/main.min.js?v=1.191"></script>
+<script src="../../static.runoob.com/assets/libs/hl/run_prettify.js" tppabs="https://static.runoob.com/assets/libs/hl/run_prettify.js"></script>
+</body>
+</html>

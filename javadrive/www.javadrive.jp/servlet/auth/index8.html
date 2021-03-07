@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>認証された情報の取得 - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="情報の取得,ユーザー認証,サーブレット" />
+<meta name="description" content="認証された情報の取得" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>認証された情報の取得</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			認証が通った後に表示されるサーブレットなどから、認証されたユーザーに関する情報を取得することが出来ます。
+			</p>
+
+			<p>
+			情報を取得するためにHttpServletRequestインターフェースでいくつかのメソッドが定義されています。
+			</p>
+
+			<h3>getRemoteUserメソッド</h3>
+
+			<p>
+			「getRemoteUser」メソッドは認証が行われたユーザー名を取得します。
+			</p>
+
+<pre class="mheader">
+getRemoteUser
+public java.lang.String getRemoteUser()
+</pre>
+<pre class="mexplain">
+Returns the login of the user making this request, if the user has 
+been authenticated, or null if the user has not been authenticated. 
+Whether the user name is sent with each subsequent request depends 
+on the browser and type of authentication. Same as the value of 
+the CGI variable REMOTE_USER. 
+
+Returns:
+  a String specifying the login of the user making this request, or
+    null if the user login is not known
+</pre>
+
+			<p>
+			戻り値として認証に成功したユーザー名が帰ってきます。認証が行われていなければnullが帰ってきます。
+			</p>
+
+			<h3>getAuthTypeメソッド</h3>
+
+			<p>
+			「getAuthType」メソッドは認証がどの方式で行われたのかを取得します。
+			</p>
+
+<pre class="mheader">
+getAuthType
+public java.lang.String getAuthType()
+</pre>
+<pre class="mexplain">
+Returns the name of the authentication scheme used to protect the servlet. 
+All servlet containers support basic, form and client certificate 
+authentication, and may additionally support digest authentication. If 
+the servlet is not authenticated null is returned. 
+
+Same as the value of the CGI variable AUTH_TYPE. 
+
+Returns:
+  one of the static members BASIC_AUTH, FORM_AUTH, CLIENT_CERT_AUTH, 
+    DIGEST_AUTH (suitable for == comparison) or the container-specific 
+    string indicating the authentication scheme, or null if the request
+    was not authenticated.
+</pre>
+
+			<p>
+			戻り値として認証方式を表すBASIC、FORM、CLIENT_CERT、DIGESTのどれか1つの値が帰ってきます。認証が行われていなければnullが帰ってきます。
+			</p>
+
+			<h3>isUserInRoleメソッド</h3>
+
+			<p>
+			「isUserInRole」メソッドは認証されたユーザーが引数に指定したロールに属しているかどうかを判別してくれます。複数のロールに対してアクセスを許可していた場合に、どのロールで許可されたのかを判別して処理を分けたい場合などに便利です。
+			</p>
+
+<pre class="mheader">
+isUserInRole
+public boolean isUserInRole(java.lang.String role)
+</pre>
+<pre class="mexplain">
+Returns a boolean indicating whether the authenticated user is included 
+in the specified logical "role". Roles and role membership can be defined 
+using deployment descriptors. If the user has not been authenticated, the 
+method returns false. 
+
+Parameters:
+  role - a String specifying the name of the role 
+Returns:
+  a boolean indicating whether the user making this request belongs 
+    to a given role; false if the user has not been authenticated
+</pre>
+
+			<p>
+			引数に判別したいロールを文字列で指定します。認証に成功したユーザーがロールに属していれば「true」が帰ってきます。
+			</p>
+
+			<h3>getUserPrincipaメソッド</h3>
+
+			<p>
+			「getUserPrincipa」メソッドは「java.security.Principal」インターフェースを実装したオブジェクトを取得できます。
+			</p>
+
+<pre class="mheader">
+getUserPrincipal
+public java.security.Principal getUserPrincipal()
+</pre>
+<pre class="mexplain">
+Returns a java.security.Principal object containing the name of the 
+current authenticated user. If the user has not been authenticated, 
+the method returns null. 
+
+Returns:
+  a java.security.Principal containing the name of the user making 
+    this request; null if the user has not been authenticated
+</pre>
+
+			<p>
+			このオブジェクトは主体という抽象的な概念を表すようですが、このオブジェクトからさらに「getName」メソッドでユーザー名を取得する事が出来ます。結果的に「getRemoteUser」メソッドと同じ結果が取得できます。
+			</p>
+
+<pre class="mheader">
+getName
+String getName()
+</pre>
+<pre class="mexplain">
+主体の名前を返します。
+
+戻り値:
+  この主体の名前
+</pre>
+
+			<p>
+			「getRemoteUser」メソッドとの使い分けについては良く分かっていません。
+			</p>
+
+			<h2>サンプルプログラムの修正</h2>
+
+			<p>
+			それではユーザー認証の対象となっているサーブレットに対して、認証が通ったユーザーに関する情報を表示するように変更してみます。
+			</p>
+
+			<p>
+			<a href="AuthTest3.java.htm" tppabs="https://www.javadrive.jp/servlet/auth/AuthTest3.java">AuthTest3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class AuthTest3 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;ユーザー認証テスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;User Name : ");
+    out.println(request.getRemoteUser());
+    out.println("&lt;/p&gt;");
+
+    out.println("&lt;p&gt;Principal Name : ");
+    out.println(request.getUserPrincipal().getName());
+    out.println("&lt;/p&gt;");
+
+    out.println("&lt;p&gt;Auth Type : ");
+    out.println(request.getAuthType());
+    out.println("&lt;/p&gt;");
+
+    out.println("&lt;p&gt;Sales Div?  : ");
+    out.println(request.isUserInRole("sales"));
+    out.println("&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			レルムはJDBCRealmレルムを使います。
+			</p>
+
+<pre class="fixcode">
+&lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+       driverName="com.mysql.jdbc.Driver"
+    connectionURL="jdbc:mysql://localhost/auth"
+   connectionName="authtest" connectionPassword="authtest"
+        userTable="user_table" userNameCol="user" userCredCol="pass"
+    userRoleTable="role_table" roleNameCol="role" /&gt;
+</pre>
+
+			<p>
+			MySQLの設定についてはBASIC認証の時と同じ設定を使います。詳しくは『<a href="index5.html" tppabs="https://www.javadrive.jp/servlet/auth/index5.html">BASIC認証(JDBCRealmレルム)</a>』を参照して下さい。
+			</p>
+
+			<p>
+			次にweb.xmlファイルを次の条件で作成します。今回はDIGEST認証を使います。
+			</p>
+
+<pre class="fixcomment">
+リソース名：User Digest Auth
+対象サーブレット：このアプリケーションに含まれる全てのサーブレット
+対象のHTTPメソッド：全て
+許可するロール名：sales
+認証方式：DIGEST認証
+レルム名：User Digest Auth
+</pre>
+
+			<p>
+			作成したweb.xmlファイルは次の通りです。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest3&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest3&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest3&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest3&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;security-constraint&gt;
+    &lt;web-resource-collection&gt;
+      &lt;web-resource-name&gt;User Digest Auth&lt;/web-resource-name&gt;
+      &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/web-resource-collection&gt;
+    &lt;auth-constraint&gt;
+      &lt;role-name&gt;sales&lt;/role-name&gt;
+    &lt;/auth-constraint&gt;
+  &lt;/security-constraint&gt;
+
+  &lt;login-config&gt;
+    &lt;auth-method&gt;DIGEST&lt;/auth-method&gt;
+    &lt;realm-name&gt;User Digest Auth&lt;/realm-name&gt;
+  &lt;/login-config&gt;
+
+  &lt;security-role&gt;
+    &lt;role-name&gt;sales&lt;/role-name&gt;
+  &lt;/security-role&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/AuthTest3」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p26.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p26.png" alt="ユーザー情報の取得" width="500" height="368">
+			</p>
+
+			<p>
+			上記のようにログイン用のページが表示されました。ここでデータベースに登録したユーザー名「itou」パスワード「itou」を入力します。
+			</p>
+
+			<p>
+			<img src="img/p27.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p27.png" alt="ユーザー情報の取得" width="500" height="369">
+			</p>
+
+			<p>
+			「itou」はユーザー認証が通り、所属するロールがアクセス許可に設定してるため、ページを見ることが出来ます。
+			</p>
+
+			<p>
+			<img src="img/p28.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p28.png" alt="ユーザー情報の取得" width="500" height="362">
+			</p>
+
+			<p>
+			ユーザー認証に成功したユーザー名、認証方式、そして認証されたユーザーが「sales」ロールかどうかの判定結果が表示されています。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

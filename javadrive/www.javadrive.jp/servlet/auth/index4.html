@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASIC認証(UserDatabaseRealmレルム) - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="UserDatabaseRealmレルム,ユーザー認証,サーブレット" />
+<meta name="description" content="BASIC認証(UserDatabaseRealmレルム)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>BASIC認証(UserDatabaseRealmレルム)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			次に認証を行うユーザーの管理方法について確認します。ユーザーの管理方法をレルムと言います。
+			</p>
+
+			<p>
+			レルムの指定は「server.xml」ファイルに記述します。このファイルは「(Tomcatがインストールされたディレクトリ)&yen;Tomcat 5.5&yen;conf&yen;」ディレクトリにあります。
+			</p>
+
+			<p>
+			レルムに関する部分だけを抜粋してみます。
+			</p>
+
+<pre class="fixcode">
+&lt;!-- Define the top level container in our container hierarchy --&gt;
+&lt;Engine name="Catalina" defaultHost="localhost"&gt;
+
+  &lt;!-- This Realm uses the UserDatabase configured in the global JNDI
+       resources under the key "UserDatabase".  Any edits
+       that are performed against this UserDatabase are immediately
+       available for use by the Realm.  --&gt;
+  &lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+         resourceName="UserDatabase"/&gt;
+
+  &lt;!-- Comment out the old realm but leave here for now in case we
+       need to go back quickly --&gt;
+  &lt;!--
+  &lt;Realm className="org.apache.catalina.realm.MemoryRealm" /&gt;
+  --&gt;
+
+  &lt;!-- Replace the above Realm with one of the following to get a Realm
+       stored in a database and accessed via JDBC --&gt;
+
+  &lt;!--
+  &lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+         driverName="org.gjt.mm.mysql.Driver"
+      connectionURL="jdbc:mysql://localhost/authority"
+     connectionName="test" connectionPassword="test"
+          userTable="users" userNameCol="user_name" userCredCol="user_pass"
+      userRoleTable="user_roles" roleNameCol="role_name" /&gt;
+  --&gt;
+
+  &lt;!--
+  &lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+         driverName="oracle.jdbc.driver.OracleDriver"
+      connectionURL="jdbc:oracle:thin:@ntserver:1521:ORCL"
+     connectionName="scott" connectionPassword="tiger"
+          userTable="users" userNameCol="user_name" userCredCol="user_pass"
+      userRoleTable="user_roles" roleNameCol="role_name" /&gt;
+  --&gt;
+
+  &lt;!--
+  &lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+         driverName="sun.jdbc.odbc.JdbcOdbcDriver"
+      connectionURL="jdbc:odbc:CATALINA"
+          userTable="users" userNameCol="user_name" userCredCol="user_pass"
+      userRoleTable="user_roles" roleNameCol="role_name" /&gt;
+  --&gt;
+&lt;/Engine&gt;
+</pre>
+
+			<p>
+			いくつかのレルムが記述されていますが、ほとんどはコメントになっており有効になっているレルムは次の1つだけです。
+			</p>
+
+<pre class="fixcode">
+&lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+       resourceName="UserDatabase"/&gt;
+</pre>
+
+			<p>
+			デフォルトで有効になっているレルムは「UserDatabaseRealm」レルムです。
+			</p>
+
+			<p>
+			データベース経由で利用する場合は「JDBCRealm」に関するレルム(MySQL、Oracle、ODBCの3つが参考までに記載されてコメントになっています)の1つを有効にし、「UserDatabaseRealm」レルムに書かれた部分をコメントにします。こちらは別のページで確認します。
+			</p>
+
+			<p>
+			今回はまず「UserDatabaseRealm」レルムの使い方を詳しく見ていきます。
+			</p>
+
+			<h2>UserDatabaseRealmレルム</h2>
+
+			<p>
+			「UserDatabaseRealm」レルムはユーザー情報をファイルで管理する方法でテスト用など一時的に利用する場合に便利な方式です。逆に本格的な利用にはあまり向いていません。
+			</p>
+
+			<p>
+			設定できる属性は次の通りです。
+			</p>
+
+<table class="pro">
+<tr><th>属性</th><th>内容</th></tr>
+<tr><td>className</td><td>Javaクラス名の指定。「org.apache.catalina.realm.UserDatabaseRealm」を指定します。</td></tr>
+<tr><td>resourceName</td><td>ユーザー情報ファイルの所在を記載したJNDIリソース名の指定する。</td></tr>
+<tr><td>debug</td><td>デバッグレベル。省略可能でデフォルトは0、最大は99。数値が大きくなると詳細になる。</td></tr>
+<tr><td>digest</td><td>ダイジェストアルゴリズム。SHA、MD2、MD5を指定する。省略可能でデフォルトはcleartext。</td></tr>
+</table>
+
+			<p>
+			「className」は固定の値ですので、後はリソース名を指定して、細かい設定はリソースの方で記述します。デフォルトでは「UserDatabase」リソースが指定されており、同じ「server.xml」ファイルでリソースの定義がされています。
+			</p>
+
+<pre class="fixcode">
+&lt;GlobalNamingResources&gt;
+
+  &lt;!-- Editable user database that can also be used by
+       UserDatabaseRealm to authenticate users --&gt;
+  &lt;Resource name="UserDatabase" auth="Container"
+            type="org.apache.catalina.UserDatabase"
+     description="User database that can be updated and saved"
+         factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+        pathname="conf/tomcat-users.xml" /&gt;
+
+&lt;/GlobalNamingResources&gt;
+</pre>
+
+			<p>
+			この中でユーザー情報を定義したファイルの場所を指定するのが「pathname」です。デフォルトでは「(Tomcatがインストールされたディレクトリ)&yen;Tomcat 5.5&yen;conf&yen;」ディレクトリに含まれてる「tomcat-users.xml」ファイルです。このファイル内にユーザー名、パスワード、ロールを指定していきます。
+			</p>
+
+			<h2>tomcat-users.xmlファイル</h2>
+
+			<p>
+			「tomcat-users.xml」ファイルはXML形式のテキストファイルです。テキストエディタで開いて見てください。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;tomcat-users&gt;
+  &lt;role rolename="tomcat"/&gt;
+  &lt;role rolename="role1"/&gt;
+  &lt;role rolename="manager"/&gt;
+  &lt;role rolename="admin"/&gt;
+  &lt;user username="tomcat" password="tomcat" roles="tomcat"/&gt;
+  &lt;user username="role1" password="tomcat" roles="role1"/&gt;
+  &lt;user username="both" password="tomcat" roles="tomcat,role1"/&gt;
+  &lt;user username="admin" password="*******" roles="admin,manager"/&gt;
+&lt;/tomcat-users&gt;
+</pre>
+
+			<p>
+			デフォルトでは上記のようになっていると思います。「admin」のアカウントはTomcatをインストールした際に設定した管理者用アカウントとパスワードが設定されているはずです。(上記ではパスワードは伏字にしてありますが実際なそのまま記述されています)。
+			</p>
+
+			<p>
+			設定する属性は「role」と「user」です。
+			</p>
+
+			<h3>属性の設定</h3>
+
+			<p>
+			「role」は認証を与える単位のようなもので、ユーザー認証の際にはロール単位でアクセス許可を与えます。「rolename」を使ってロール名を定義していきます。
+			</p>
+
+			<p>
+			「user」はユーザー認証を行うユーザー名とパスワードを登録していきます。ユーザー名は「username」に、パスワードは「password」に記述します。そしてユーザーが所属するロールを「roles」で指定します。複数のロールに所属する場合はカンマ(,)で区切って記述します。
+			</p>
+
+			<h3>認証の流れ</h3>
+
+			<p>
+			認証の流れとしては、ダイアログが表示されユーザー名とパスワードを入力するとまずユーザーの特定が行われます。そしてそのユーザーが所属するロールが許可するロールに含まれているかどうかを判別してアクセスの許可を与えます。(アクセス許可するロールの指定はweb.xmlファイル内の &lt;auth-constraint&gt;要素の中の&lt;role-name&gt;要素で指定します。詳しくは『<a href="index3.html" tppabs="https://www.javadrive.jp/servlet/auth/index3.html">BASIC認証(web.xmlの編集)</a>』を参照して下さい)。
+			</p>
+
+			<p>
+			見て頂くと分かる通り、ユーザーの管理を1つのファイルで行いしかもユーザーの登録や更新などをプログラム側から行うには多少テクニックが必要となります。その為、簡易的に利用するにはいいのですが、人数が多いユーザー管理を行うにはあまり適してはいません。
+			</p>
+
+			<h2>実際の設定例</h2>
+
+			<p>
+			では実際に試してみます。
+			</p>
+
+			<p>
+			まず「tomcat-users.xml」を編集します。ロールとして「sales」と「staff」を定義します。そして「sales」ロールに所属するユーザーとして「yamada」を、そして「staff」ロールに所属するユーザーとして「katou」を追加します。パスワードはユーザー名と同じにしておきました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;tomcat-users&gt;
+  &lt;role rolename="tomcat"/&gt;
+  &lt;role rolename="role1"/&gt;
+  &lt;role rolename="manager"/&gt;
+  &lt;role rolename="admin"/&gt;
+  <span class="red">&lt;role rolename="sales"/&gt;</span>
+  <span class="red">&lt;role rolename="staff"/&gt;</span>
+  &lt;user username="tomcat" password="tomcat" roles="tomcat"/&gt;
+  &lt;user username="role1" password="tomcat" roles="role1"/&gt;
+  &lt;user username="both" password="tomcat" roles="tomcat,role1"/&gt;
+  &lt;user username="admin" password="*******" roles="admin,manager"/&gt;
+  <span class="red">&lt;user username="yamada" password="yamada" roles="sales"/&gt;</span>
+  <span class="red">&lt;user username="katou" password="katou" roles="staff"/&gt;</span>
+&lt;/tomcat-users&gt;
+</pre>
+
+			<p>
+			次にweb.xmlファイルを次の条件で作成します。
+			</p>
+
+<pre class="fixcomment">
+リソース名：User Basic Auth
+対象サーブレット：このアプリケーションに含まれる全てのサーブレット
+対象のHTTPメソッド：全て
+許可するロール名：<span class="red">sales</span>
+認証方式：BASIC認証
+レルム名：User Basic Auth
+</pre>
+
+			<p>
+			作成したweb.xmlファイルは次の通りです。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;security-constraint&gt;
+    &lt;web-resource-collection&gt;
+      &lt;web-resource-name&gt;User Basic Auth&lt;/web-resource-name&gt;
+      &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/web-resource-collection&gt;
+    &lt;auth-constraint&gt;
+      <span class="red">&lt;role-name&gt;sales&lt;/role-name&gt;</span>
+    &lt;/auth-constraint&gt;
+  &lt;/security-constraint&gt;
+
+  &lt;login-config&gt;
+    &lt;auth-method&gt;BASIC&lt;/auth-method&gt;
+    &lt;realm-name&gt;User Basic Auth&lt;/realm-name&gt;
+  &lt;/login-config&gt;
+
+  &lt;security-role&gt;
+    <span class="red">&lt;role-name&gt;sales&lt;/role-name&gt;</span>
+  &lt;/security-role&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/AuthTest1」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p5.png" alt="BASIC認証" width="500" height="395">
+			</p>
+
+			<p>
+			上記のようにユーザー名とパスワードを入力するダイアログが表示されます。先ほど登録したユーザー名「yamada」パスワード「yamada」を入力します。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p6.png" alt="BASIC認証" width="500" height="395">
+			</p>
+
+			<p>
+			「yamada」はユーザー認証が通り、所属するロールがアクセス許可に設定してるため、ページを見ることが出来ます。
+			</p>
+
+			<p>
+			<img src="img/p7.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p7.png" alt="BASIC認証" width="501" height="335">
+			</p>
+
+			<p>
+			一度ユーザー認証が通れば同じ認証が設定されている他のページにはユーザー認証無しでアクセスが可能です。「テストページ2へ」をクリックしてみて下さい。
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p8.png" alt="BASIC認証" width="501" height="333">
+			</p>
+
+			<p>
+			ではユーザー認証は行えたが所属するロールがアクセス許可されていない場合の挙動を確認しておきます。一度ブラウザを閉じてから再度同じページへアクセスして下さい。ダイアログが表示されますので今度はユーザー名「katou」パスワード「katou」を入力します。
+			</p>
+
+			<p>
+			<img src="img/p9.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p9.png" alt="BASIC認証" width="500" height="392">
+			</p>
+
+			<p>
+			次のように「HTTPステータス 403 - 要求されたリソースへのアクセスが拒否されました」と言うエラーメッセージが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p10.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p10.png" alt="BASIC認証" width="500" height="468">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

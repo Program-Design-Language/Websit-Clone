@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | イベントの伝搬(キャプチャリングとバブリング)</title>
+<meta name="description" content="HTML ページ内の要素で何らかのイベントが発生した場合、その要素だけでイベントが発生するのではなくその要素の親要素へ順にイベントが伝搬していき、親要素でも同じイベントが発生します。ここではイベントが DOM ツリーの中をどのように伝搬していくのかについて解説します。">
+
+<meta property="og:title" content="イベントの伝搬(キャプチャリングとバブリング)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/event/index10.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/event/img/p10-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="HTML ページ内の要素で何らかのイベントが発生した場合、その要素だけでイベントが発生するのではなくその要素の親要素へ順にイベントが伝搬していき、親要素でも同じイベントが発生します。ここではイベントが DOM ツリーの中をどのように伝搬していくのかについて解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "イベント処理",
+    "item": "https://www.javadrive.jp/javascript/event/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/event/">イベント処理</a></li>
+				</ul>
+			</div>
+
+			<h1>イベントの伝搬(キャプチャリングとバブリング)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			HTML ページ内の要素で何らかのイベントが発生した場合、その要素だけでイベントが発生するのではなくその要素の親要素へ順にイベントが伝搬していき、親要素でも同じイベントが発生します。ここではイベントが DOM ツリーの中をどのように伝搬していくのかについて解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">イベントが伝搬していく仕組み</a></li>
+			<li><a href="#section2">キャプチャリングフェーズで発生したイベントでイベントリスナーを呼び出す</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">イベントが伝搬していく仕組み</a></h2>
+
+			<p>
+			例えば次のような HTML ページを例で考えてみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;html&gt;
+&lt;head&gt;&lt;/head&gt;
+&lt;body&gt;
+    &lt;p&gt;Stopwatch&lt;/p&gt;
+    &lt;div&gt;
+        &lt;input type="button" value="start" id="btn1"&gt;
+        &lt;input type="button" value="stop" id="btn2"&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			この HTML ページの中の 'start' ボタンがクリックされたときに、クリックイベントがどのように発生しどのように伝搬していくのかを見ていきます。
+			</p>
+
+	<h3>キャプチャリングフェーズ</h3>
+
+			<p>
+			HTML ページの中の 'start' ボタンがクリックされると、一番最上位のオブジェクトである Window オブジェクトでまず click イベントが発生します。そして Document オブジェクト、 html 要素、 body 要素、 div 要素と DOM ツリーを下へ向かって順番に click イベントが発生していきます。
+			</p>
+
+			<p>
+			この段階を<span class="bold">キャプチャリングフェーズ</span>と呼びます。
+			</p>
+
+			<p>
+			<img src="img/p10-1.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-1.png" alt="イベントが伝搬していく仕組み(1)" width="728" height="462" class="waku">
+			</p>
+
+			<p>
+			ただキャプチャリングフェーズのときに発生したイベントは、ほとんどの場合使用されません。要素の属性や要素のプロパティにイベントハンドラを登録した場合、キャプチャリングフェーズでイベントが発生してもイベントハンドラは呼び出されません。
+			</p>
+
+			<p>
+			addEventListener メソッドでイベントリスナーが登録されるときに、 3 番目の引数に true または {capture: true} を指定した場合にだけキャプチャリングフェーズで発生したイベントによってイベントリスナーが呼び出されます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+button.addEventListener('click', butotnClick, <span class="red">true</span>);
+button.addEventListener('click', butotnClick, <span class="red">{capture: true}</span>);
+</pre>
+</div>
+
+			<p>
+			3 番目の引数は省略可能な引数で、デフォルトの値は false となっています。その為、明示的に指定しない場合は addEventListener メソッドでイベントリスナーを登録していてもキャプチャリングフェーズで発生したイベントではイベントリスナーは呼び出されません。
+			</p>
+
+	<h3>ターゲットフェーズ</h3>
+
+			<p>
+			そしてキャプチャリングフェーズのあと、実際にイベントが発生した要素で click イベントが発生します。この段階を<span class="bold">ターゲットフェーズ</span>と呼びます。
+			</p>
+
+			<p>
+			<img src="img/p10-2.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-2.png" alt="イベントが伝搬していく仕組み(2)" width="728" height="462" class="waku">
+			</p>
+
+			<p>
+			ターゲットフェーズでイベントが発生すると、そのイベントに対して登録されたすべてのイベントハンドラやイベントリスナーが呼び出されます。
+			</p>
+
+	<h3>バブリングフェーズ</h3>
+
+			<p>
+			ターゲットフェーズのあと、今度は逆にイベントが発生した要素の親要素である div 要素から、 body 要素、 html 要素、 Document オブジェクト、 Window オブジェクトまで DOM ツリーを上へ向かって順番に click イベントが発生していきます。この段階を<span class="bold">バブリングフェーズ</span>と呼びます。
+			</p>
+
+<div class="titlebox2">
+<p>
+ただし Window オブジェクトや Document オブジェクトで発生しないイベントの場合はその手前の html 要素までとなる場合もあります。
+</p>
+</div>
+
+			<p>
+			<img src="img/p10-3.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-3.png" alt="イベントが伝搬していく仕組み(3)" width="728" height="462" class="waku">
+			</p>
+
+			<p>
+			バブリングフェーズで発生したイベントも、ごく一部のイベントを除いてそのイベントに対して登録されたイベントハンドラやイベントリスナーが呼び出されます。 focus イベントや blur イベントは Event.bubbles プロパティが false となっているため、バブリングフェーズによるイベントの伝搬を行いません。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			このように例えば HTML ページ内の要素で何らかのイベントが発生した場合、通常はターゲットフェーズで実際に発生した要素でイベントが発生したあと、バブリングフェーズで実際にイベントが発生した要素から Window オブジェクトまで DOM ツリーを親要素に向かってのぼっていき、経路にある要素やオブジェクトで同じイベントが発生します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;style type="text/css"&gt;
+div {
+  background-color:#E5E5E5;
+  border:5px solid #8f8f8f;
+}
+#outer{
+  width:300px;
+}
+#inner{
+  margin:20px;
+  padding:20px;
+  text-align:center;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;div id="outer"&gt;
+  &lt;div id="inner"&gt;
+    &lt;input type="button" value="button" id="btn"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    let outer = document.getElementById('outer');
+    let inner = document.getElementById('inner');
+    let btn = document.getElementById('btn');
+
+    outer.addEventListener('click', function(){
+        console.log('outer');
+    });
+
+    inner.addEventListener('click', function(){
+        console.log('inner');
+    });
+
+    btn.addEventListener('click', function(){
+        console.log('btn');
+    });
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			外側の div 要素の中に内側の div 要素があり、さらに内側に input 要素があります。それぞれの要素には click イベントに対するイベントリスナーが登録されています。今回は addEventListener メソッドの 3 番目の引数を省略しているのでキャプチャリングフェーズのイベントが発生してもイベントリスナーは呼び出されません。
+			</p>
+
+			<p>
+			最初に input 要素をクリックしてみます。すると、 input 要素のイベントリスナーだけでなく、親要素の内側の div 要素、そしてさらに親要素の外側の div 要素のイベントリスナーが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p10-4.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-4.png" alt="イベントが伝搬していく仕組み(4)" width="728" height="500" class="waku">
+			</p>
+
+			<p>
+			次に内側の div 要素をクリックしてみます。すると内側の div 要素のイベントリスナーが呼び出されたあと、親要素の外側の div 要素のイベントリスナーが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p10-5.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-5.png" alt="イベントが伝搬していく仕組み(5)" width="728" height="480" class="waku">
+			</p>
+
+<h2><a id="section2">キャプチャリングフェーズで発生したイベントでイベントリスナーを呼び出す</a></h2>
+
+			<p>
+			キャプチャリングフェーズで発生したイベントをイベントリスナーを呼び出すには、 addEventListener メソッドでイベントリスナーが登録されるときに、 3 番目の引数に true または {capture: true} を指定します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+button.addEventListener('click', butotnClick, <span class="red">true</span>);
+button.addEventListener('click', butotnClick, <span class="red">{capture: true}</span>);
+</pre>
+</div>
+
+			<p>
+			3 番目の引数で単に true または false を指定した場合、キャプチャリングフェーズでのイベントでイベントリスナーを呼び出すかどうかの設定となります。 3 番目の引数を省略した場合のデフォルトの値は false です。他に 3 番目の引数にはオブジェクトの値として {capture: true} のように指定することもできます。
+			</p>
+
+			<p>
+			キャプチャリングフェーズでのイベントでイベントリスナーを呼び出すように設定した場合、バブリングフェーズでのイベントではイベントリスナーが呼び出されなくなります。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;style type="text/css"&gt;
+div {
+  background-color:#E5E5E5;
+  border:5px solid #8f8f8f;
+}
+#outer{
+  width:300px;
+}
+#inner{
+  margin:20px;
+  padding:20px;
+  text-align:center;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;div id="outer"&gt;
+  &lt;div id="inner"&gt;
+    &lt;input type="button" value="button" id="btn"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    let outer = document.getElementById('outer');
+    let inner = document.getElementById('inner');
+    let btn = document.getElementById('btn');
+
+    outer.addEventListener('click', function(){
+        console.log('outer');
+    }, true);
+
+    inner.addEventListener('click', function(){
+        console.log('inner');
+    }, true);
+
+    btn.addEventListener('click', function(){
+        console.log('btn');
+    }, true);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			外側の div 要素の中に内側の div 要素があり、さらに内側に input 要素があります。それぞれの要素には click イベントに対するイベントリスナーが登録されています。今回は addEventListener メソッドの 3 番目の引数に true を設定しているのでキャプチャリングフェーズのイベントが発生したときにイベントリスナーが呼び出されます。
+			</p>
+
+			<p>
+			最初に input 要素をクリックしてみます。すると、まず外側の div 要素、内側の div 要素、最後に実際にイベントが発生した input 要素のイベントリスナーが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p10-6.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-6.png" alt="キャプチャリングフェーズで発生したイベントでイベントリスナーを呼び出す(1)" width="728" height="500" class="waku">
+			</p>
+
+			<p>
+			次に内側の div 要素をクリックしてみます。すると外側の div 要素のイベントリスナーが呼び出されたあと、実際にイベントが発生した内側の div 要素のイベントリスナーが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p10-7.png" tppabs="https://www.javadrive.jp/javascript/event/img/p10-7.png" alt="キャプチャリングフェーズで発生したイベントでイベントリスナーを呼び出す(2)" width="728" height="480" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			イベントが DOM ツリーの中をどのように伝搬していくのかについて解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

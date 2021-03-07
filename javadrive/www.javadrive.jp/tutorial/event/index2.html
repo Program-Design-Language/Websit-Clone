@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ActionEvent - イベントモデル - Swing</title>
+<meta name="keywords" content="ActionEvent,イベントモデル,Swing,Java" />
+<meta name="description" content="ActionEvent" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/event/" itemprop="url"><span itemprop="title">イベントモデル</span></a></li>
+		</ul>
+</div>
+
+			<h1>ActionEvent</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここではActionEventについて見ていきます。
+			</p>
+
+			<p>
+			1.ActionEventを発生させるコンポーネント:
+			</p>
+
+<pre class="fixcomment">
+JButton
+JCheckBox
+JRadioButton
+JToggleButton
+
+JMenuItem
+JCheckBoxMenuItem
+JRadioButtonMenuItem
+
+JTextField
+JPasswordField
+JFormattedTextField
+
+JComboBox
+JFileChooser
+</pre>
+
+			<p>
+			2.イベントが発生するタイミング:
+			</p>
+
+<pre class="fixcomment">
+・ボタン関係はボタンがクリックされた場合
+・メニューアイテム関係はメニューが選択された場合
+・テキストフィールド関係は文字入力をしている場合にEnterキーが押された場合
+・コンボボックスは項目が選択されるか入力エリアでEnterキーが押された場合
+・JFileChooserは中に含まれているボタンが押された場合
+</pre>
+
+			<p>
+			3.対応するリスナーインターフェース:
+			</p>
+
+<pre class="fixcomment">
+java.awt.event.ActionListener
+public interface ActionListener extends EventListener
+</pre>
+
+			<p>
+			4.コンポーネントに対するリスナーの登録メソッド:
+			</p>
+
+<pre class="fixcomment">
+addActionListener
+public void addActionListener(ActionListener l)
+</pre>
+
+			<h2>ActionListenerインターフェース</h2>
+
+			<p>
+			ActionListenerインターフェースはアクションイベントを受け取るためのリスナーインタフェースです。アクションイベントを処理するクラスを用意する場合にはこのインタフェースを実装します。実装に必要なメソッドはactionPerformedつだけで、アクションイベントが発生すると、このactionPerformed メソッドが呼び出されます。
+			</p>
+
+<pre class="mheader">
+actionPerformed
+void actionPerformed(ActionEvent e)
+</pre>
+<pre class="mexplain">
+アクションが発生すると呼び出されます。
+</pre>
+
+			<p>
+			引数には発生したアクションイベントのオブジェクトが渡されてきます。このリスナーインターフェースの実装方法は今までにも記載していますが下記のようになります。
+			</p>
+
+<pre class="fixcode">
+public class myListener implements ActionListener{
+  public void actionPerformed(ActionEvent e){
+    /* 処理したい内容をここに記述する */
+  }
+}
+</pre>
+
+			<p>
+			ではここで一番簡単なサンプルを作成して試してみます。下記では自分自身にActionListenerをインプリメントしています。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+
+public class SwingTest extends JFrame implements ActionListener{
+  JLabel label;
+
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    label = new JLabel("");
+
+    JButton btn = new JButton("Push");
+    btn.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(label);
+    p.add(btn);
+
+    getContentPane().add(p);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    label.setText("Push");
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p2.png" alt="ActionEvent" width="306" height="207">
+			</p>
+
+			<p>
+			ボタンを押すとラベルに文字が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p3.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p3.png" alt="ActionEvent" width="306" height="206">
+			</p>
+
+			<h2>ActionEventクラス</h2>
+
+			<p>
+			ではActionEventクラスについても見ていきます。クラス図を見て下さい。
+			</p>
+
+<div class="classwaku">
+<ul class="classdirectory">
+<li class="top">java.lang.Object</li>
+<li class="row1">java.util.EventObject</li>
+<li class="row2">java.awt.AWTEvent</li>
+<li class="row3">java.awt.event.ActionEvent</li>
+<li class="detail">public class ActionEvent extends AWTEvent</li>
+</ul>
+</div>
+
+			<p>
+			ActionEventクラスのオブジェクトはactionPerformedメソッドの引数として渡されてきます。ActionEventクラスのメソッドとしては下記のようなものが用意されています。
+			</p>
+
+<table class="pro">
+<tr><th>メソッドの概要</th></tr>
+<tr><td><span class="title">String getActionCommand()<br>アクションに関連したコマンド文字列を返します。</td></tr>
+<tr><td><span class="title">int getModifiers()</span><br>アクションイベントの発生中に押された修飾キーを返します。</td></tr>
+<tr><td><span class="title">long getWhen()</span><br>このイベントが発生した時点のタイムスタンプを返します。</td></tr>
+</table>
+
+			<p>
+			1つ1つ見てみましょう。
+			</p>
+
+			<h2>getActionCommandメソッド</h2>
+
+			<p>
+			getActionCommandメソッドは下記の通り定義されています。
+			</p>
+
+<pre class="mheader">
+getActionCommand
+public String getActionCommand()
+</pre>
+<pre class="mexplain">
+アクションに関連したコマンド文字列を返します。この文字列は、「モーダル
+な」コンポーネントがその状態に応じて、いくつかのコマンドのうちから 1 
+つを指定することができます。たとえば、単一のボタンで「詳細表示」と「詳
+細非表示」を切り替えられます。発生元のオブジェクトとイベントはそれぞれ
+の場合について同一ですが、コマンド文字列は意図したアクションを示します。 
+
+null コマンド文字列をこの ActionEvent のコンストラクタに渡した場合、こ
+のメソッドは null を返します。
+
+戻り値:
+  このイベントに対するコマンドを識別する文字列
+</pre>
+
+			<p>
+			getActionCommandメソッドはコンポーネント側で設定した"コマンド文字列"を読み取ります。
+			</p>
+
+			<p>
+			ではコンポーネント側ではどのように"コマンド文字列"を設定するかというと、例えばJButtonクラスでは親クラスのAbstractButtonクラスにおいてsetActionCommandメソッドが用意されています。
+			</p>
+
+<pre class="mheader">
+setActionCommand
+public void setActionCommand(String actionCommand)
+</pre>
+<pre class="mexplain">
+ボタンのアクションのコマンドを設定します。 
+
+パラメータ:
+  actionCommand - このボタンのアクションのコマンド
+</pre>
+
+			<p>
+			"コマンド文字列"と書かれていますが、要はアクションイベント発生時に文字列を渡せると考えて下さい。例えばメソッドの説明に書かれているように、ボタンの現在の状況を設定しておいてもいいですし、単にボタンの名前を登録しておいてもいいかと思います。ボタンの名前を登録しておけば、アクションイベントから"コマンド文字列"を取り出して、どのボタンからこのアクションイベントが発生したかを判別するのにも使えます。
+			</p>
+
+			<p>
+			実際の使い方は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+public class SwingTest extends JFrame implements ActionListener{
+
+  JButton btn = new JButton("Push");
+  btn.addActionListener(this);
+  btn.setActionCommand("btn_push");
+
+  public void actionPerformed(ActionEvent e){
+      String cmd = e.getActionCommand();
+  }
+}
+</pre>
+
+			<p>
+			では簡単なサンプルで試して見ます。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.BorderLayout;
+
+public class SwingTest extends JFrame implements ActionListener{
+  JLabel label;
+
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    label = new JLabel("");
+    label.setHorizontalAlignment(JLabel.CENTER);
+
+    JButton btn1 = new JButton("Button 1");
+    btn1.addActionListener(this);
+    btn1.setActionCommand("Button 1");
+
+    JButton btn2 = new JButton("Button 2");
+    btn2.addActionListener(this);
+    btn2.setActionCommand("Button 2");
+
+    JPanel p = new JPanel();
+    p.add(btn1);
+    p.add(btn2);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+    getContentPane().add(label, BorderLayout.PAGE_END);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String cmd = e.getActionCommand();
+
+    if (cmd.equals("Button 1")){
+      label.setText("ボタン1が押されました");
+    }else if (cmd.equals("Button 2")){
+      label.setText("ボタン2が押されました");
+    }
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p4.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p4.png" alt="ActionEvent" width="308" height="205">
+			</p>
+
+			<p>
+			ボタン1を押すと
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p5.png" alt="ActionEvent" width="306" height="205">
+			</p>
+
+			<p>
+			ボタン2を押すと
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p6.png" alt="ActionEvent" width="307" height="205">
+			</p>
+
+			<p>
+			のようになります。
+			</p>
+
+			<h2>getModifiersメソッド</h2>
+
+			<p>
+			getModifiersメソッドは下記のように定義されています。
+			</p>
+
+<pre class="mheader">
+getModifiers
+public int getModifiers()
+</pre>
+<pre class="mexplain">
+アクションイベントの発生中に押された修飾キーを返します。
+
+戻り値:
+  修飾子の定数のビット単位の論理和
+</pre>
+
+			<p>
+			ボタンを押すなどのアクションイベントが発生した際に、"Shiftキー"や"Ctrlキー"を押していたかどうかを判定するために使います(実際に、そんな利用は想像が付かないのですが)。
+			</p>
+
+			<p>
+			4つの値が定義されています。
+			</p>
+
+<pre class="fixcomment">
+java.awt.event.ActionEvent
+public static final int ALT_MASK 8
+public static final int CTRL_MASK 2
+public static final int META_MASK 4
+public static final int SHIFT_MASK 1
+</pre>
+
+			<p>
+			メソッドからの戻り値と上記の値をビット演算してみることで、それぞれのキーが押されたかどうか判別できます。
+			</p>
+
+			<p>
+			使い方としては下記のような感じです。
+			</p>
+
+<pre class="fixcode">
+public class SwingTest extends JFrame implements ActionListener{
+
+  JButton btn = new JButton("Push");
+  btn.addActionListener(this);
+
+  public void actionPerformed(ActionEvent e){
+    int modifiers = e.getModifiers();
+
+    if ((modifiers & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK){
+      label.setText("ALTが押されています");
+    }
+  }
+}
+</pre>
+
+			<p>
+			では簡単なサンプルで試して見ます。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.BorderLayout;
+
+public class SwingTest extends JFrame implements ActionListener{
+  JLabel label;
+
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    label = new JLabel("");
+    label.setHorizontalAlignment(JLabel.CENTER);
+
+    JButton btn = new JButton("Push!");
+    btn.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(btn);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+    getContentPane().add(label, BorderLayout.PAGE_END);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    int modifiers = e.getModifiers();
+
+    StringBuffer sb = new StringBuffer();
+    sb.append("ボタンクリック ");
+    if ((modifiers & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK){
+      sb.append("ALT ");
+    }
+
+    if ((modifiers & ActionEvent.CTRL_MASK) == ActionEvent.CTRL_MASK){
+      sb.append("CTRL ");
+    }
+
+    if ((modifiers & ActionEvent.META_MASK) == ActionEvent.META_MASK){
+      sb.append("META ");
+    }
+
+    if ((modifiers & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK){
+      sb.append("SHIFT");
+    }
+
+    label.setText(new String(sb));
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。<br>
+			単にクリックすると下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p7.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p7.png" alt="getModifiers" width="306" height="208">
+			</p>
+
+			<p>
+			"SHIFTキー"を押しながらクリックすると
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p8.png" alt="getModifiers" width="307" height="205">
+			</p>
+
+			<p>
+			"ALTキー"と"CTRLキー"を同時に押しながらクリックすると
+			</p>
+
+			<p>
+			<img src="img/p9.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p9.png" alt="getModifiers" width="306" height="208">
+			</p>
+
+			<p>
+			のようになります。
+			</p>
+
+			<h2>getWhenメソッド</h2>
+
+			<p>
+			getWhenメソッドは下記のように定義されています。
+			</p>
+
+<link rel="stylesheet" href="../../css/classconst2.css" tppabs="https://www.javadrive.jp/css/classconst2.css" type="text/css">
+
+<pre class="mheader">
+getWhen
+public long getWhen()
+</pre>
+<pre class="mexplain">
+このイベントが発生した時点のタイムスタンプを返します。ActionEvent が高
+レベルのセマンティックイベントであるため、通常、タイムスタンプは基本と
+なる InputEvent と同じになります。 
+
+戻り値:
+  このイベントのタイムスタンプ
+</pre>
+
+			<p>
+			イベントが発生した時間を時間を取得できます。戻り値はlong型の値なのでDateクラスなどを使って適切な時間に変更してください。
+			</p>
+
+			<p>
+			これもサンプルで試してみます。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.text.DateFormat;
+import java.util.Date;
+
+public class SwingTest extends JFrame implements ActionListener{
+  JLabel label;
+
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    label = new JLabel("");
+    label.setHorizontalAlignment(JLabel.CENTER);
+
+    JButton btn = new JButton("Push!");
+    btn.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(btn);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+    getContentPane().add(label, BorderLayout.PAGE_END);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    long time = e.getWhen();
+
+    DateFormat df = 
+      DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL);
+    String clickTime = df.format(new Date(time));
+
+    label.setText(clickTime);
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p10.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p10.png" alt="getWhen" width="308" height="205">
+			</p>
+
+			<p>
+			クリックすると、クリックした時間をラベルに表示します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

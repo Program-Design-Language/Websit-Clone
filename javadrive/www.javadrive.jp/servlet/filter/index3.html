@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filterインターフェース - フィルタ - サーブレット入門</title>
+<meta name="keywords" content="Filterインターフェース,フィルタ,サーブレット" />
+<meta name="description" content="Filterインターフェース" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/filter/" itemprop="url"><span itemprop="title">フィルタ</span></a></li>
+		</ul>
+</div>
+
+			<h1>Filterインターフェース</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ではフィルタとして呼び出されるサーブレットの作成方法について見ていきます。フィルタを作成するにはFilterインターフェースを実装したクラスを作成します。
+			</p>
+
+			<p>
+			フィルタインターフェースを実装するには次の3つのメソッドを実装する必要があります。
+			</p>
+
+<pre class="mheader">
+init
+public void init(FilterConfig filterConfig) throws ServletException
+</pre>
+<pre class="mexplain">
+Called by the web container to indicate to a filter that it is being 
+placed into service. The servlet container calls the init method exactly 
+once after instantiating the filter. The init method must complete 
+successfully before the filter is asked to do any filtering work. 
+
+The web container cannot place the filter into service if the init 
+method either
+1.Throws a ServletException 
+2.Does not return within a time period defined by the web container 
+
+Throws: 
+  ServletException
+</pre>
+
+			<p>
+			"init"メソッドはフィルタの初期化処理に使います。
+			</p>
+
+<pre class="mheader">
+destroy
+public void destroy()
+</pre>
+<pre class="mexplain">
+Called by the web container to indicate to a filter that it is being taken 
+out of service. This method is only called once all threads within the 
+filter's doFilter method have exited or after a timeout period has passed. 
+After the web container calls this method, it will not call the doFilter 
+method again on this instance of the filter. 
+
+This method gives the filter an opportunity to clean up any resources that 
+are being held (for example, memory, file handles, threads) and make sure 
+that any persistent state is synchronized with the filter's current state 
+in memory.
+</pre>
+
+			<p>
+			"destroy"メソッドはフィルタが破棄される時に呼び出されます。
+			</p>
+
+<pre class="mheader">
+doFilter
+public void doFilter(ServletRequest request,
+                     ServletResponse response,
+                     FilterChain chain)
+              throws java.io.IOException, ServletException
+</pre>
+<pre class="mexplain">
+The doFilter method of the Filter is called by the container each time a 
+request/response pair is passed through the chain due to a client request 
+for a resource at the end of the chain. The FilterChain passed in to this 
+method allows the Filter to pass on the request and response to the next 
+entity in the chain.
+
+Throws: 
+  java.io.IOException 
+  ServletException
+</pre>
+
+			<p>
+			"doFilter"メソッドはFilterインターフェースを実装したフィルタクラスがフィルタとして呼び出された時に実行されるメソッドです。通常のサーブレットのdoGetメソッドやdoPostメソッドに相当します。
+			</p>
+
+			<p>
+			よってフィルタとして使うサーブレットは次のような構成になります。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+
+public class FilterTest implements Filter{
+  public void doFilter(ServletRequest request, ServletResponse response,
+    FilterChain chain){
+
+    try{
+      /* フィルタで行う処理 */
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+
+  public void init(FilterConfig filterConfig){
+  }
+
+  public void destroy(){
+  }
+}
+</pre>
+
+			<p>
+			"doFilte"メソッド内で、フィルタとして行いたい処理を記述します。
+			</p>
+
+			<h2>FilterChainインターフェース</h2>
+
+			<p>
+			先ほどのような構成だと、フィルタが呼び出された後で本来実行されるべきサーブレットに処理を戻していません。1つのフィルタは複数のサーブレットの前処理として共通して利用される場合があり、フィルタがどのサーブレットを実行する途中で呼び出されたのかを知る必要があります。その流れを管理しているのが"doFilter"メソッドの3番目の引数であるFilterChainインターフェースの値です。
+			</p>
+
+			<p>
+			FilterChainインターフェースは、どのサーブレットを呼び出そうとした時にこのフィルタが呼ばれ、このフィルタの次に呼び出すべきサーブレットは何かということを管理しています。フィルタの次に別のフィルタがさらに呼び出される場合もありますし、本来の目的のサーブレットが呼び出される場合もありますが、フィルタではあまり意識することなく、FilterChainインターフェースで定義されている"doFilter"メソッドを呼び出すだけで次のサーブレットへ処理を移してくれます。
+			</p>
+
+<pre class="mheader">
+doFilter
+public void doFilter(ServletRequest request,
+                     ServletResponse response)
+              throws java.io.IOException, ServletException
+</pre>
+<pre class="mexplain">
+Causes the next filter in the chain to be invoked, or if the calling 
+filter is the last filter in the chain, causes the resource at the end 
+of the chain to be invoked. 
+
+Parameters:
+  request - the request to pass along the chain.
+  response - the response to pass along the chain. 
+Throws: 
+  java.io.IOException 
+  ServletException
+</pre>
+
+			<p>
+			※FilterインターフェースとFilterChainインターフェースで同じ名前で定義されている"doFilter"メソッドをそれぞれ使うので注意して下さい。
+			</p>
+
+			<p>
+			よってフィルタでは、フィルタ内の処理が終わった段階で"doFilter"メソッドを呼び出すことでフィルタとしての処理を終了します。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+
+public class FilterTest implements Filter{
+  public void doFilter(ServletRequest request, ServletResponse response,
+    FilterChain chain){
+
+    try{
+      /* フィルタで行う処理 */
+
+      <span class="red">chain.doFilter(request, response);</span>
+
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+
+  public void init(FilterConfig filterConfig) throws ServletException{
+  }
+
+  public void destroy(){
+  }
+}
+</pre>
+
+			<p>
+			FilterChainインターフェースの"doFilter"メソッドを呼び出さずに、他のサーブレットへフォワードやリダイレクトしてフィルタの流れを切る事も可能です。例えばフィルタで認証のチェックを行い認証が行われていなければログインを行うサーブレットへリダイレクトするといった処理です。
+			</p>
+
+<pre class="fixcode">
+public void doFilter(ServletRequest request, ServletResponse response,
+  FilterChain chain){
+    try{
+      if (認証が行われている) then{
+        chain.doFilter(request, response);
+      }else{
+        ((HttpServletResponse)response).sendRedirect("/Login");
+      }
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルプログラムでフィルタを試してみましょう。
+			</p>
+
+			<p>
+			今回作成するWebアプリケーションのパスは「filter」とし、Webアプリケーションの置き場所は「d:&yen;servlet-sample&yen;filter&yen;」としました。コンテキストファイルは下記のようになります。
+			</p>
+
+			<p>
+			<a href="filter.xml.htm" tppabs="https://www.javadrive.jp/servlet/filter/filter.xml">filter.xml</a>
+			</p>
+
+<pre class="fixcomment">
+&lt;Context path="/filter"
+docBase="d:/servlet-sample/filter"/&gt;
+</pre>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;filter&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;filter-class&gt;FilterTest&lt;/filter-class&gt;
+  &lt;/filter&gt;
+
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/helloworld&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;helloworld&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;HelloWorld&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;helloworld&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/helloworld&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。
+			</p>
+
+			<p>
+			<a href="HelloWorld.java.htm" tppabs="https://www.javadrive.jp/servlet/filter/HelloWorld.java">HelloWorld.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class HelloWorld extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    System.out.println("HelloWorld");
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;フィルタテスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;Hello World!&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			<a href="FilterTest.java" tppabs="https://www.javadrive.jp/servlet/filter/FilterTest.java">FilterTest.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+
+public class FilterTest implements Filter{
+  public void doFilter(ServletRequest request, ServletResponse response,
+    FilterChain chain){
+
+    try{
+      System.out.println("フィルタ実行");
+
+      chain.doFilter(request, response);
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+
+  public void init(FilterConfig filterConfig) throws ServletException{
+  }
+
+  public void destroy(){
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;filter&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/filter/helloworld」へアクセスしてみます。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/servlet/filter/img/p1.png" alt="Filterテスト" width="475" height="267">
+			</p>
+
+			<p>
+			まず呼び出したサーブレットは普通に実行されています。次にフィルタとして設定したサーブレットが実行されているか確認します。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/servlet/filter/img/p2.png" alt="Filterテスト" width="420" height="195">
+			</p>
+
+			<p>
+			Tomcatのstdoutログを確認すると、フィルターで記述した標準出力への出力が実行されていることが確認できました。HelloWorldクラスを呼び出すと、HelloWorldクラスが呼び出される前にFilterTestクラスが呼び出されていることになります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

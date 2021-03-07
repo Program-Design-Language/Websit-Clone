@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テキストエリアから取得したテキストを1行毎に分割して処理する | Swingを使ってみよう</title>
+<meta name="description" content="テキストエリアに入力されるテキストは複数行になる場合が多いですが、ここではテキストエリアに入力されたテキストを取得し、 1 行毎に分割して処理する方法について解説します。">
+
+<meta property="og:title" content="テキストエリアから取得したテキストを1行毎に分割して処理する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/tutorial/jlabel/index12.html">
+<meta property="og:image" content="https://www.javadrive.jp/tutorial/jlabel/img/p12-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="テキストエリアに入力されるテキストは複数行になる場合が多いですが、ここではテキストエリアに入力されたテキストを取得し、 1 行毎に分割して処理する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jtextarea/" itemprop="url"><span itemprop="title">テキストエリアの作成(JTextAreaクラス)</span></a></li>
+		</ul>
+</div>
+
+			<h1>テキストエリアから取得したテキストを1行毎に分割して処理する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			テキストエリアに入力されるテキストは複数行になる場合が多いですが、ここではテキストエリアに入力されたテキストを取得し、 1 行毎に分割して処理する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">テキストエリアから取得したテキストを1行ずつ処理する</a></li>
+			<li><a href="#section2">テキストエリアに入力されたテキストの行数を取得する</a></li>
+			<li><a href="#section3">テキストエリアに入力されたテキストの行毎のオフセットを取得する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">テキストエリアから取得したテキストを1行ずつ処理する</a></h2>
+
+			<p>
+			順番に手順を確認していきます。最初にテキストエリアに入力されたテキストを getText メソッドを使って取得します。( getText メソッドの使い方については「<a href="index11.html" tppabs="https://www.javadrive.jp/tutorial/jtextarea/index11.html">テキストエリアに入力されたテキストを取得する</a>」を参照されてください)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea textarea = new JTextArea();
+String str = textarea.getText();
+</pre>
+</div>
+
+			<p>
+			取得したテキストには複数の行が含まれています。テキストエリアでは改行を表す文字は &yen;n となっていますので、区切り文字として &yen;n を指定し取得した値を分割します。
+			</p>
+
+<div class="titlebox2">
+<p>
+テキストエリアへの値の入力のされかたによっては改行文字として &yen;n の代わりに &yen;r&yen;n を入力してしまっている場合があります。その場合は先に &yen;r&yen;n を &yen;n に変換しておいて下さい。
+</p>
+</div>
+
+			<p>
+			テキストを指定した文字で分割して取得するには String クラスで定義されている split メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public String[] split?(String regex)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+この文字列を、指定された正規表現に一致する位置で分割します。<br>
+このメソッドの動作は、2つの引数を取るsplitメソッドを、指定された式および制限引数ゼロを指定して呼び出した場合と同じになります。 つまり、結果として得られる配列には後続の空の文字列は含まれません。<br>
+<br>
+たとえば、次の式が指定された場合の、文字列"boo:and:foo"の結果を示します。<br>
+<br>
+正規表現	結果<br>
+:	{ "boo", "and", "foo" }<br>
+o	{ "b", "", ":and:f" }<br>
+<br>
+パラメータ:<br>
+regex - 正規表現の区切り<br>
+<br>
+戻り値:<br>
+この文字列を指定された正規表現に一致する位置で分割して計算された文字列の配列<br>
+<br>
+例外:<br>
+PatternSyntaxException - 正規表現の構文が無効な場合
+</p>
+</div>
+
+			<p>
+			引数に正規表現を使った区切り文字を指定すると、戻り値として分割された文字列の配列が帰ってきます。
+			</p>
+
+			<p>
+			テキストエリアから取得したテキストを &yen;n を区切り文字として分割するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea textarea = new JTextArea();
+String str = textarea.getText();
+String[] strs = str.split("&yen;n");
+</pre>
+</div>
+
+<div class="titlebox2">
+<p>
+折り返しの設定をしている場合、行に含まれる文字列が長いとテキストエリアの幅で折り返しされている場合があります。この場合、表示上折り返しされているだけで実際には改行されているわけではありません。あくまで改行文字を区切りとして1つの行として扱います。
+</p>
+</div>
+
+			<p>
+			あとは分割された文字列毎に処理を行っていきます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea textarea = new JTextArea();
+String str = textarea.getText();
+String[] strs = str.split("&yen;n");
+for (int i = 0 ; i &lt; strs.length ; i++){
+  /* ... */
+}
+</pre>
+</div>
+
+			<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample12_1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+class JSample12_1 extends JFrame implements ActionListener{
+  JTextArea textarea_left;
+  JTextArea textarea_right;
+
+  public static void main(String args[]){
+    JSample12_1 frame = new JSample12_1("MyTitle");
+    frame.setVisible(true);
+  }
+
+  JSample12_1(String title){
+    setTitle(title);
+    setBounds(100, 100, 600, 400);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    textarea_left = new JTextArea(5, 20);
+    textarea_right = new JTextArea(5, 20);
+    textarea_right.setEditable(false);
+    textarea_right.setBackground(Color.LIGHT_GRAY);
+
+    JButton button = new JButton("Get");
+    button.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(textarea_left);
+    p.add(textarea_right);
+    p.add(button);
+
+    Container contentPane = getContentPane();
+    contentPane.add(p, BorderLayout.CENTER);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String str = textarea_left.getText();
+    String[] strs = str.split("&yen;n");
+
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0 ; i &lt; strs.length ; i++){
+      sb.append((i + 1) + ":" + strs[i] + "&yen;n");
+    }
+
+    textarea_right.setText(new String(sb));
+  }
+}
+</pre>
+</div>
+
+			<p>
+			次のようにコンパイルを行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+javac JSample12_1.java
+</pre>
+</div>
+
+			<p>
+			<img src="img/p12-1.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-1.png" alt="テキストエリアから取得したテキストを1行ずつ処理する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			コンパイルが終わりましたら実行します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+java JSample12_1
+</pre>
+</div>
+
+			<p>
+			テキストエリアを 2 つ、ボタンを を 1 つ追加しています。
+			</p>
+
+			<p>
+			<img src="img/p12-2.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-2.png" alt="テキストエリアから取得したテキストを1行ずつ処理する(2)" width="586" height="393">
+			</p>
+
+			<p>
+			左のテキストエリアにテキストを入力したあとでボタンをクリックすると、入力されたテキストを取得し、 1 行毎に分割して行番号を付けてから右のテキストエリアに表示します。 
+			</p>
+
+			<p>
+			<img src="img/p12-3.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-3.png" alt="テキストエリアから取得したテキストを1行ずつ処理する(3)" width="586" height="393">
+			</p>
+
+			<p>
+			<img src="img/p12-4.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-4.png" alt="テキストエリアから取得したテキストを1行ずつ処理する(4)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアに入力されたテキストを 1 行毎に分割して処理することができました。
+			</p>
+
+<h2><a id="section2">テキストエリアに入力されたテキストの行数を取得する</a></h2>
+
+			<p>
+			テキストエリアに入力されたテキストの行数を取得することができます。 JTextArea クラスで定義されている getLineCount メソッドを使います。 
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public int getLineCount()
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+領域内に収める行数を返します。<br>
+<br>
+戻り値:<br>
+行数&gt; 0
+</p>
+</div>
+
+			<p>
+			メソッドを実行するとテキストエリアに入力されているテキストの行数を int 型の値で返します。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea? textarea = new JTextArea?();
+int linecount = textarea.getLineCount();
+</pre>
+</div>
+
+<h2><a id="section3">テキストエリアに入力されたテキストの行毎のオフセットを取得する</a></h2>
+
+			<p>
+			テキストエリアに入力されたテキストに対して、指定した行のオフセット(先頭文字からの文字数)を取得することができます。オフセットは行の最初の文字の前までのものと、行の最後の文字の後までのオフセットをそれぞれ取得できます。
+			</p>
+
+			<p>
+			指定した行の開始オフセットを取得するには JTextArea クラスで定義されている getLineStartOffset メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public int getLineStartOffset?(int line) throws BadLocationException
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定された行の開始オフセットを返します。<br>
+<br>
+パラメータ:<br>
+line - 変換対象の行番号&gt;= 0<br>
+<br>
+戻り値:<br>
+オフセット&gt;= 0<br>
+<br>
+例外:<br>
+BadLocationException - 行が0より小さい場合、またはドキュメントに含まれる行数(getLineCountから報告される)以上である場合にスローされる。
+</p>
+</div>
+
+			<p>
+			引数にはオフセットを取得する行数を指定します。先頭の行の行数は 0 です。戻り値として指定した行数の最初の文字の前のオフセットを取得します。
+			</p>
+
+			<p>
+			指定した行の終了オフセットを取得するには JTextArea クラスで定義されている getLineEndOffset メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public int getLineEndOffset?(int line) throws BadLocationException
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定された行の終了オフセットを返します。<br>
+<br>
+パラメータ:<br>
+line - 行&gt;= 0<br>
+<br>
+戻り値:<br>
+オフセット&gt;= 0<br>
+<br>
+例外:<br>
+BadLocationException - 行が0より小さい場合、またはドキュメントに含まれる行数(getLineCountから報告される)以上である場合にスローされる。
+</p>
+</div>
+
+			<p>
+			引数にはオフセットを取得する行数を指定します。先頭の行の行数は 0 です。戻り値として指定した行数の最後の文字の後のオフセットを取得します。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JTextArea? textarea = new JTextArea?();
+
+try{
+  int start = textarea.getLineStartOffset(0);
+  int end = textarea.getLineEndOffset(0);
+}catch(BadLocationException e){
+  System.out.println("Bad Location Error!");
+}
+</pre>
+</div>
+
+			<p>
+			上記では先頭行の開始オフセットと終了オフセットを取得しています。行毎のオフセットを取得する場合、行が改行で終わっている場合は改行文字まで含めて 1 つの行となっていますので注意して下さい。
+			</p>
+
+			<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample12_2.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.text.BadLocationException;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+
+class JSample12_2 extends JFrame implements ActionListener{
+  JTextArea textarea_left;
+  JTextArea textarea_right;
+
+  public static void main(String args[]){
+    JSample12_2 frame = new JSample12_2("MyTitle");
+    frame.setVisible(true);
+  }
+
+  JSample12_2(String title){
+    setTitle(title);
+    setBounds(100, 100, 600, 400);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    textarea_left = new JTextArea(5, 20);
+    textarea_right = new JTextArea(5, 20);
+    textarea_right.setEditable(false);
+    textarea_right.setBackground(Color.LIGHT_GRAY);
+
+    JButton button = new JButton("Get");
+    button.addActionListener(this);
+
+    JPanel p = new JPanel();
+    p.add(textarea_left);
+    p.add(textarea_right);
+    p.add(button);
+
+    Container contentPane = getContentPane();
+    contentPane.add(p, BorderLayout.CENTER);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    int linecount = textarea_left.getLineCount();
+
+    try{
+      StringBuilder sb = new StringBuilder();
+
+      for (int i = 0 ; i &lt; linecount ; i++){
+        int start = textarea_left.getLineStartOffset(i);
+        int end = textarea_left.getLineEndOffset(i);
+        sb.append((i + 1) + ":" + textarea_left.getText(start, end - start));
+      }
+
+      textarea_right.setText(new String(sb));
+    }catch(BadLocationException err){
+      System.out.println("Bad Location Error!");
+    }
+
+  }
+}
+</pre>
+</div>
+
+			<p>
+			次のようにコンパイルを行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+javac JSample12_2.java
+</pre>
+</div>
+
+			<p>
+			<img src="img/p12-5.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-5.png" alt="テキストエリアに入力されたテキストの行毎のオフセットを取得する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			コンパイルが終わりましたら実行します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+java JSample12_2
+</pre>
+</div>
+
+			<p>
+			テキストエリアを 2 つ、ボタンを を 1 つ追加しています。
+			</p>
+
+			<p>
+			<img src="img/p12-6.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-6.png" alt="テキストエリアに入力されたテキストの行毎のオフセットを取得する(2)" width="586" height="393">
+			</p>
+
+			<p>
+			左のテキストエリアにテキストを入力したあとでボタンをクリックすると、入力されたテキストを取得し、 1 行毎に分割して行番号を付けてから右のテキストエリアに表示します。 
+			</p>
+
+			<p>
+			<img src="img/p12-7.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-7.png" alt="テキストエリアに入力されたテキストの行毎のオフセットを取得する(3)" width="586" height="393">
+			</p>
+
+			<p>
+			<img src="img/p12-8.png" tppabs="https://www.javadrive.jp/tutorial/jtextarea/img/p12-8.png" alt="テキストエリアに入力されたテキストの行毎のオフセットを取得する(4)" width="586" height="393">
+			</p>
+
+			<p>
+			テキストエリアに入力されたテキストを 1 行毎に分割して処理することができました。一つ前のサンプルと同じことをしていますが、オフセットを使った方法で行っています。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			テキストエリアに入力されたテキストを取得し、 1 行毎に分割して処理する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

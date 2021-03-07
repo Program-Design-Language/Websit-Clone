@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2点間のルート案内(loadメソッド) - ルート案内 - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="2点間のルート案内,GDirections,Google Maps API" />
+<meta name="description" content="2つの地点を指定してルートを取得する方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/route/" itemprop="url"><span itemprop="title">ルート案内(GDirections)</span></a></li>
+		</ul>
+</div>
+
+			<h1>2点間のルート案内</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					2つの地点を指定してルートを取得するにはGDirectionsクラスのloadメソッドを使います。
+					</p>
+
+<pre class="mheader">
+load(query:String, queryOpts?:GDirectionsOptions)
+</pre>
+<pre class="mexplain">
+このメソッドは新しいルート クエリを生成します。query パラメータは、「from: Seattle to: 
+San Francisco」や「from: Toronto to: Ottawa to: New York」などの有効なルート クエリを含む
+文字列です。デフォルトでは、地図が GDirections オブジェクトの構築中に指定されると、クエリ
+はポリライン結果をリクエストします。同様に、テキスト パネルが指定されると、クエリは詳細な
+テキスト結果をリクエストします。指定されない場合、結果には検出された経路の要約情報しか含ま
+れません。
+
+この動作を上書きするために (たとえば、このオブジェクトに地図が添付されていなくてもポリライ
+ン情報をリクエストするなど)、呼び出し元は queryOpts オプション パラメータを使用できます。
+詳細は、GDirectionsOptions のドキュメントを参照してください。
+
+ルート結果を受け取ると、このオブジェクトは古い結果をクリアし、新しい結果に置き換えて地図お
+よび/またはパネルを新しい結果で更新します。ルート結果は、複数の経路で構成されています
+（GRoute タイプのオブジェクト）。クエリで指定された経由地点/住所の連続ペアごとに 1 つです。
+同様に、経路も複数のステップで構成されています (GStep タイプのオブジェクト)。
+
+load() が新しく呼び出されたときに、以前の load() リクエストが完了していない場合、以前のリ
+クエストはキャンセルされます。このため、1 つの GDirections オブジェクトを使用して複数のルー
+ト リクエストを連続的に発行できますが、複数のリクエストを同時に発行するには、複数の 
+GDirections オブジェクトを使用する必要があります。 
+</pre>
+
+					<p>
+					1番目の引数にルートを取得する対象の2つの地点を文字列で指定します。フォーマットは次の通りです。
+					</p>
+
+<pre class="fixcomment">
+from: 起点 to: 終点
+</pre>
+
+					<p>
+					起点や終点には住所や略称などを記述します。
+					</p>
+
+					<p>
+					2番目の引数にはルート案内のオプションを指定します。GDirectionsOptionsクラスで定義されているプロパティを使ってオブジェクトリテラルとして指定します。どのようなオプションがあるのかは別途確認しますが、取り合えずlocaleプロパティにロケールを表す文字列を指定しておいて下さい。
+					</p>
+
+<pre class="fixcomment">
+locale: 'ja_JP'
+</pre>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var directions = new GDirections(map, document.getElementById('route'));
+directions.load('from: 東京駅 to: 渋谷駅', {locale: 'ja_JP'});
+</pre>
+
+					<p>
+					loadメソッドを呼び出すとルートを取得し地図上にルートをポリゴンとして表示すると共にテキストでルートを表示します。
+					</p>
+
+<div class="borderdiv">
+実際には2点間に限らず「from: 起点 to: 経由地 to: 終点」などのように記述することで経由する地点を含めてルート案内を取得することが可能です。ただ経由地などがある場合にはloadメソッドよりもloadFromWaypointsメソッドの方が適しているのではと思います。
+</div>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では実際に試してみます。
+					</p>
+
+					<p>
+					<a href="js/code2_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/route/js/code2_1.js">code2_1.js</a>
+					</p>
+
+<pre class="fixcode">
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    var map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(35.681379,139.765577), 13);
+
+    var directions = new GDirections(map, document.getElementById('route'));
+    directions.load('from: 東京駅 to: 渋谷駅', {locale: 'ja_JP'});
+  }
+}
+</pre>
+
+					<p>
+					<a href="map2_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/route/map2_1.html">map2_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：2点間のルート案内&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code2_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 500px; height: 300px"&gt;&lt;/div&gt;
+    &lt;div id="route" style="width: 500px; height: 200px;overflow: scroll"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/route/img/p2-1.png" alt="p2-1" width="535" height="641">
+					</p>
+
+					<p>
+					地図上に起点と終点にマーカーが表示され、ルートがポリゴンとして表示されています。また起点から終点までのルートがテキストでも表示されていることが分かります。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					今度はフォームを使って起点と終点を入力してルート案内を表示するようにしてみます。
+					</p>
+
+					<p>
+					<a href="js/code2_2.js" tppabs="https://www.javadrive.jp/google-maps-javascript/route/js/code2_2.js">code2_2.js</a>
+					</p>
+
+<pre class="fixcode">
+var map;
+var directions;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(35.681379,139.765577), 13);
+
+    directions = new GDirections(map, document.getElementById('route'));
+  }
+}
+
+function dispRoute() {
+  var from = document.getElementById("from").value;
+  var to = document.getElementById("to").value;
+
+  directions.clear();
+
+  str = 'from: ' + from + ' to: ' + to;
+  directions.load(str, {locale: 'ja_JP'});
+}
+</pre>
+
+					<p>
+					<a href="map2_2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/route/map2_2.html">map2_2.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：2点間のルート案内&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code2_2.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;form&gt;
+    from：&lt;input type="text" id="from" size="20" value="東京駅" /&gt;
+    to：&lt;input type="text" id="to" size="29" value="渋谷駅" /&gt;
+    &lt;input type="button" id="btn" value="ルート案内" onclick="dispRoute()" /&gt;
+    &lt;/form&gt;
+
+    &lt;div id="map_canvas" style="width: 500px; height: 300px"&gt;&lt;/div&gt;
+    &lt;div id="route" style="width: 500px; height: 200px;overflow: scroll"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/route/img/p2-2.png" alt="p2-2" width="535" height="677">
+					</p>
+
+					<p>
+					起点を「東京駅」、終点を「名古屋城」で検索してみると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/route/img/p2-3.png" alt="p2-3" width="535" height="677">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

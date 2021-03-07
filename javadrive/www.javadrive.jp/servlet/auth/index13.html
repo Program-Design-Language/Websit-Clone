@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>セッションを使ったカスタム認証(フィルタ処理) - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="フィルタ処理" />
+<meta name="description" content="セッションを使ったカスタム認証(フィルタ処理)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>セッションを使ったカスタム認証(フィルタ処理)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			認証が通っているかどうかの判別を各サーブレットにて同じ処理を記述していましたが、フィルタを利用して書き換えてみます。
+			</p>
+
+			<p>
+			保護の対象となっている各サーブレットに書かれている次の部分を分離します。
+			</p>
+
+<pre class="fixcode">
+String target = request.getRequestURI();
+
+HttpSession session = request.getSession(false);
+
+if (session == null){
+  /* まだ認証されていない */
+  session = request.getSession(true);
+  session.setAttribute("target", target);
+
+  response.sendRedirect("/auth/Login");
+}else{
+  Object loginCheck = session.getAttribute("login");
+  if (loginCheck == null){
+    /* まだ認証されていない */
+    session.setAttribute("target", target);
+    response.sendRedirect("/auth/Login");
+  }
+}
+</pre>
+
+			<p>
+			認証が通っているかどうかの判別部分をフィルタとして分離し、各サーブレットが呼ばれる前に実行されるように変更します。フィルタを利用することで各サーブレットには認証に関する記述を行う必要がなくなります。
+			</p>
+
+			<p>
+			※フィルタについては『<a href="../filter/index.htm" tppabs="https://www.javadrive.jp/servlet/filter/index.html">フィルタ</a>』を参照して下さい。
+			</p>
+
+			<p>
+			フィルタを使ったクラスは次のようになります。
+			</p>
+
+			<p>
+			<a href="AuthFilter1.java" tppabs="https://www.javadrive.jp/servlet/auth/AuthFilter1.java">AuthFilter1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+
+public class AuthFilter1 implements Filter{
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain){
+    try{
+      String target = ((HttpServletRequest)request).getRequestURI();
+
+      HttpSession session = ((HttpServletRequest)request).getSession();
+
+      if (session == null){
+        /* まだ認証されていない */
+        session = ((HttpServletRequest)request).getSession(true);
+        session.setAttribute("target", target);
+
+        ((HttpServletResponse)response).sendRedirect("/auth/Login");
+      }else{
+        Object loginCheck = session.getAttribute("login");
+        if (loginCheck == null){
+          /* まだ認証されていない */
+          session.setAttribute("target", target);
+          ((HttpServletResponse)response).sendRedirect("/auth/Login");
+        }
+      }
+
+      chain.doFilter(request, response);
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+
+  public void init(FilterConfig filterConfig) throws ServletException{
+  }
+
+  public void destroy(){
+  }
+}
+</pre>
+
+			<p>
+			「doFilter」メソッドの引数は「ServletRequest」インターフェースと「ServletResponse」インターフェースのオブジェクトのため、キャストが必要である点に注意して下さい。
+			</p>
+
+			<p>
+			各サーブレットに書かれていた処理を、フィルタを継承したクラス内に記述しただけです。このフィルタを保護の対象となっているサーブレットに設定することで、各サーブレットは認証のことを意識しなくても自動的に認証の確認が行われることになります。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			認証部分をフィルタに分離したので、保護の対象となるサーブレットは次のように認証に関する部分は無くなります。
+			</p>
+
+			<p>
+			<a href="CustomAuth5.java.htm" tppabs="https://www.javadrive.jp/servlet/auth/CustomAuth5.java">CustomAuth5.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class CustomAuth5 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;ユーザー認証テスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;テストページ1&lt;/p&gt;");
+
+    out.println("&lt;p&gt;&lt;a href=&yen;"/auth/CustomAuth2&yen;"&gt;テストページ2へ&lt;/a&gt;&lt;/p&gt;");
+
+    out.println("&lt;p&gt;&lt;a href=&yen;"/auth/Logout&yen;"&gt;ログアウト&lt;/a&gt;&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			ほぼ同じ内容の「CustomAuth6」サーブレットを次のように作成します。
+			</p>
+
+			<p>
+			<a href="CustomAuth6.java.htm" tppabs="https://www.javadrive.jp/servlet/auth/CustomAuth6.java">CustomAuth6.java</a>
+			</p>
+
+			<p>
+			web.xmlファイルを次のように修正して下さい。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;filter&gt;
+    &lt;filter-name&gt;AuthFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;AuthFilter1&lt;/filter-class&gt;
+  &lt;/filter&gt;
+
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;AuthFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/CustomAuth1&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;AuthFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/CustomAuth2&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;CustomAuth1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;CustomAuth5&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;CustomAuth1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/CustomAuth1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;CustomAuth2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;CustomAuth6&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;CustomAuth2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/CustomAuth2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;Login&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;Login2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;Login&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/Login&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;LoginCheck&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;LoginCheck2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;LoginCheck&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/LoginCheck&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;Logout&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;Logout1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;Logout&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/Logout&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/CustomAuth1」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p45.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p45.png" alt="カスタム認証" width="495" height="366">
+			</p>
+
+			<p>
+			今までと同様にログイン画面へ誘導されます。
+			</p>
+
+			<p>
+			データベースに登録されているユーザー名「itou」とパスワード「itou」と値を入力してから「login」ボタンをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p46.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p46.png" alt="カスタム認証" width="492" height="364">
+			</p>
+
+			<p>
+			リンクがはってある「CustomAuth2」サーブレットにもフィルタは設定されていますが、今度は認証が通っていますのでそのまま表示されます。
+			</p>
+
+			<p>
+			<img src="img/p47.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p47.png" alt="カスタム認証" width="494" height="365">
+			</p>
+
+			<p>
+			これで完成です。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

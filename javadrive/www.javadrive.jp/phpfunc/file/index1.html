@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ファイルのオープンとクローズ(fopen, fclose) - ファイル関数 - PHP関数</title>
+<meta name="keywords" content="fopen,fclose,ファイル関数,関数,PHP" />
+<meta name="description" content="ファイルのオープンとクローズ(fopen, fclose)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/phpfunc/" itemprop="url"><span itemprop="title">PHP関数</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/phpfunc/file/" itemprop="url"><span itemprop="title">ファイル関数</span></a></li>
+		</ul>
+</div>
+
+			<h1>ファイルのオープンとクローズ(fopen, fclose)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ファイルを開く方法と閉じる方法です。ファイルはPHPシステムと同じローカルシステム上にあり、開こうとしているファイルのパーミッションが適切に設定されている必要があります。
+			</p>
+
+			<p>
+			まずファイルをオープンする方法です。
+			</p>
+
+<pre class="mheader">
+fopen
+resource fopen(string filename, string mode)
+</pre>
+<pre class="mexplain">
+引数に指定したファイルを、指定したモードで開きます。
+
+引数：
+  filename  対象のファイル名
+  mode  開くモード(後述)
+返り値：
+  ファイルを表すハンドル
+</pre>
+
+			<p>
+			引数で指定したファイルを、指定したモードで開きます。指定可能なモードは下記の通りです。
+			</p>
+
+<table class="pro">
+<tr><th style="width:70px;">モード</th><th style="width:100px;">読み書き区分</th><th>動作</th></tr>
+<tr><td>r</td><td>読み</td><td>ファイルポインタをファイルの先頭に置きます。</td></tr>
+<tr><td>r+</td><td>読み/書き</td><td>ファイルポインタをファイルの先頭に置きます。</td></tr>
+<tr><td>w</td><td>書き</td><td>ファイルポインタをファイルの先頭に置き、ファイルサイズをゼロにします。ファイルが存在しない場合には、作成を試みます。</td></tr>
+<tr><td>w+</td><td>読み/書き</td><td>ファイルポインタをファイルの先頭に置き、ファイルサイズをゼロにします。ファイルが存在しない場合には、作成を試みます。</td></tr>
+<tr><td>a</td><td>書き</td><td>ファイルポインタをファイルの終端に置きます。ファイルが存在しない場合には、作成を試みます。</td></tr>
+<tr><td>a+</td><td>読み/書き</td><td>ファイルポインタをファイルの終端に置きます。ファイルが存在しない場合には、作成を試みます。</td></tr>
+<tr><td>x</td><td>書き</td><td>ファイルポインタをファイルの先頭に置きます。ファイルが既に存在する場合にはfopen()は失敗し、E_WARNINGレベルのエラーを発行します。ファイルが存在しない場合には新規作成を試みます。</td></tr>
+<tr><td>x+</td><td>読み/書き</td><td>ファイルポインタをファイルの先頭に置きます。ファイルが既に存在する場合にはfopen()は失敗し、E_WARNINGレベルのエラーを発行します。ファイルが存在しない場合には新規作成を試みます。</td></tr>
+</table>
+
+			<p>
+			※Windowsの場合、バイナリモードで開く場合には「b」を追加する必要があります。例えばモードに「w」を指定したい場合で、バイナリモードで開く場合には「wb」となります。
+			</p>
+
+			<p>
+			ファイルを開く目的(読み込むためか、書き込むためか、両方か)と、挙動を考慮してモードを指定します。ファイルポインタとはファイルの中で読み込みや書き込みを行う位置を表します。ファイルポイントが先頭で読み込みを開始すればファイルの先頭から読み込みを行う事になりますし、先頭から書き込みを行うというのは既にファイルに何か書いてあっても既存の内容を破棄してファイルの先頭から書き込みを行うことを意味します。また、ファイルポイントが最後というのは既存の内容の最後に追加として書き込みを行うことを意味しています。
+			</p>
+
+			<p>
+			次にファイルをクローズする方法です。
+			</p>
+
+<pre class="mheader">
+fclose
+bool fclose(resource handle)
+</pre>
+<pre class="mexplain">
+handleが指しているファイルがクローズされます。
+
+引数：
+  handle  対象となるハンドル
+返り値：
+  成功した場合に TRUE を、失敗した場合に FALSE
+</pre>
+
+			<p>
+			実際の流れとしては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$fp = fopen('filename', 'mode');
+
+// ファイルに対する操作を行う
+
+fclose($fp);
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試して見ます。
+			</p>
+
+			<p>
+			<a href="functest40.php.htm" tppabs="https://www.javadrive.jp/phpfunc/file/functest40.php">functest40.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$fp = fopen('sample.txt', 'r');
+
+$flag = fclose($fp);
+
+if ($flag){
+    print('無事クローズしました');
+}else{
+    print('クローズに失敗しました');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記では、まず「sample.txt」を設置せずに上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p1.png" alt="fopenのテスト" width="523" height="350">
+			</p>
+
+			<p>
+			次に、このプログラムと同じディレクトリ内に「sample.txt」という適当なファイルを置いてから実行すると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/phpfunc/file/img/p2.png" alt="fopenのテスト" width="526" height="349">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

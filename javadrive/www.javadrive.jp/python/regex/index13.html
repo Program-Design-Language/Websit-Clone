@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | 直前の文字を指定回数繰り返す文字列にマッチするパターンを記述する</title>
+<meta name="description" content="正規表現では直前の文字が指定した回数繰り返される文字列にマッチするパターンを定義することもできます。回数は 1 回以上や 0 回以上、または繰り返す回数を指定することもできます。繰り返す対象は文字の他に文字クラスなどを使ったパターン出も可能です。ここでは Python の正規表現で文字や他のパターンを指定した回数繰り返す文字列にマッチするパターンを記述する方法について解説します。">
+
+<meta property="og:title" content="直前の文字を指定回数繰り返す文字列にマッチするパターンを記述する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/regex/index13.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/regex/img/p13-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現では直前の文字が指定した回数繰り返される文字列にマッチするパターンを定義することもできます。回数は 1 回以上や 0 回以上、または繰り返す回数を指定することもできます。繰り返す対象は文字の他に文字クラスなどを使ったパターン出も可能です。ここでは Python の正規表現で文字や他のパターンを指定した回数繰り返す文字列にマッチするパターンを記述する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Python正規表現",
+    "item": "https://www.javadrive.jp/python/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/regex/">Python正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>直前の文字を指定回数繰り返す文字列にマッチするパターンを記述する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現では直前の文字が指定した回数繰り返される文字列にマッチするパターンを定義することもできます。回数は 1 回以上や 0 回以上、または繰り返す回数を指定することもできます。繰り返す対象は文字の他に文字クラスなどを使ったパターン出も可能です。ここでは Python の正規表現で文字や他のパターンを指定した回数繰り返す文字列にマッチするパターンを記述する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">直前の文字が0回以上連続する文字にマッチ(*)</a></li>
+			<li><a href="#section2">直前の文字が1回以上連続する文字にマッチする(+)</a></li>
+			<li><a href="#section3">直前の文字が0回または1回現れる文字にマッチする(?)</a></li>
+			<li><a href="#section4">直前の文字をnum回繰り返す文字にマッチする({num})</a></li>
+			<li><a href="#section5">直前の文字をmin回以上max回以下繰り返す文字にマッチする({min,max})</a></li>
+			<li><a href="#section6">直前のパターンを繰り返す</a></li>
+			<li><a href="#section7">グループ化したパターンを繰り返す</a></li>
+			<li><a href="#section8">最大量指定子と最小量指定子</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">直前の文字が0回以上連続する文字にマッチ(*)</a></h2>
+
+			<p>
+			メタ文字のひとつであるアスタリスク(*)は直前の文字が 0 回以上連続する文字列にマッチします( 0 回以上というのは一度もなくてもいいし何回出てもいいという意味です)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+*
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは最初に H 、続いて a の文字が 0 回以上続き、そのあとに n が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'Ha*n'
+</pre>
+</div>
+
+			<p>
+			Han や Haaaan にはマッチします。直前の文字が 0 回以上なので Hn にもマッチします。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">Hn</span>
+〇 <span class="k">Han</span>
+〇 <span class="k">Haaan</span>
+〇 <span class="k">Haaaaaaaan</span>
+&#10005; Hen
+&#10005; Ham
+&#10005; HaaUaan
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Ha*n')
+
+print(bool(pattern.search('Hn')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Han')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Haaaaan')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('HaaUaan')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section2">直前の文字が1回以上連続する文字にマッチする(+)</a></h2>
+
+			<p>
+			メタ文字のひとつであるプラス(+)は直前の文字が 1 回以上連続する文字列にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
++
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは最初に H 、続いて a の文字が 1 回以上続き、そのあとに n が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'Ha+n'
+</pre>
+</div>
+
+			<p>
+			Han や Haaaan にはマッチします。直前の文字が 1 回以上なので Hn にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+&#10005; <span class="k">Hn</span>
+〇 <span class="k">Han</span>
+〇 <span class="k">Haaan</span>
+〇 <span class="k">Haaaaaaaan</span>
+&#10005; Hen
+&#10005; Ham
+&#10005; HaaUaan
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Ha+n')
+
+print(bool(pattern.search('Hn')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('Han')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Haaaaan')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('HaaUaan')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section3">直前の文字が0回または1回現れる文字にマッチする(?)</a></h2>
+
+			<p>
+			メタ文字のひとつであるクエスチョンマーク(?)は直前の文字が 0 回または 1 回現れる文字にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+?
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは最初に H 、続いて a の文字が 0 回か 1 回続き、そのあとに n が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'Ha?n'
+</pre>
+</div>
+
+			<p>
+			Hn や Han にはマッチします。直前の文字が 0 回または 1 回なので Haaan にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇<span class="k">Hn</span>
+〇 <span class="k">Han</span>
+&#10005; Haaan
+&#10005; Hen
+&#10005; Ham
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Ha?n')
+
+print(bool(pattern.search('Hn')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Han')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Haaaaan')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('Ham')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section4">直前の文字をnum回繰り返す文字にマッチする({num})</a></h2>
+
+			<p>
+			メタ文字のひとつである {num} は直前の文字を num 回繰り返す文字列にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+{num}
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは最初に H 、続いて a の文字が 3 回続き、そのあとに n が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'Ha{3}n'
+</pre>
+</div>
+
+			<p>
+			Haaan にマッチします。繰り返される回数が決まっているので Han や Haaaaan にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">Haaan</span>
+&#10005; Han
+&#10005; Haaaaan
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Ha{3}n')
+
+print(bool(pattern.search('Haaan')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Han')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('Haaaaan')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('HaaaO')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section5">直前の文字をmin回以上max回以下繰り返す文字にマッチする({min,max})</a></h2>
+
+			<p>
+			メタ文字のひとつである {min,max} は直前の文字を min 回以上 max 回以下繰り返す文字列にマッチします。どちらかだけを指定することもできます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+{min,}     直前の文字を min 回以上繰り返す
+{,max}     直前の文字を max 回以下繰り返す
+{min,max}  直前の文字を min 回以上 max 回以下繰り返す
+</pre>
+</div>
+
+			<p>
+			※ {2,4} ではなく {2, 4} のように max の値の前に半角スペースを入れるとマッチしなくなりますのでご注意ください。
+			</p>
+
+			<p>
+			例えば次のようなパターンは最初に H 、続いて a の文字が 2 回以上 4 回以下繰り返し、そのあとに n が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'Ha{2,4}n'
+</pre>
+</div>
+
+			<p>
+			Haan や Haaan や Haaaan にマッチします。繰り返される回数が決まっているので Han や Haaaaan にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">Haan</span>
+〇 <span class="k">Haaan</span>
+〇 <span class="k">Haaaan</span>
+&#10005; Han
+&#10005; Haaaaan
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Ha{2,4}n')
+
+print(bool(pattern.search('Haan')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Haaaan')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Haaaaan')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('HaaaO')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section6">直前のパターンを繰り返す</a></h2>
+
+			<p>
+			ここまで解説した繰り返しを行うメタ文字は、繰り返しの対象が直前の文字だけでなく直前の別のパターンを繰り返す文字列にもマッチします。例えば任意の文字を表すドット(.)の直後にアスタリスク(*)を記述すると、任意の文字を 0 回以上繰り返す文字列にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+.*
+</pre>
+</div>
+
+			<p>
+			次のようなパターンは最初に &lt;p&gt; が現れ、そのあとに任意の文字が 0 回以上続き、最後に &lt;/p&gt; が現れる文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'&lt;p&gt;.*&lt;/p&gt;'
+</pre>
+</div>
+
+			<p>
+			また 0 から 9 までのいずれかの文字とマッチする文字クラスの [0-9] の直後に {4} を記述すると、任意の数字が 4 回続く文字列にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+[0-9]{4}
+</pre>
+</div>
+
+			<p>
+			次のようなパターンは最初に任意の数字が 3 回続き、そのあとにハイフン(-)が続き、最後に任意の数字が 4 回続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'[0-9]{3}-[0-9]{4}'
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'&lt;em&gt;.*&lt;/em&gt;')
+msg = '&lt;p&gt;今日は&lt;em&gt;快晴の&lt;/em&gt;一日です&lt;/p&gt;';
+
+result = pattern.search(msg)
+print(result.group(0))
+
+<span class="bold">&gt;&gt; &lt;em&gt;快晴の&lt;/em&gt;</span>
+
+pattern = re.compile(r'[0-9]{3}-[0-9]{4}')
+msg = '郵便番号は 123-4567 です';
+
+result = pattern.search(msg)
+print(result.group(0))
+
+<span class="bold">&gt;&gt; 123-4567</span>
+</pre>
+</div>
+
+<h2><a id="section7">グループ化したパターンを繰り返す</a></h2>
+
+			<p>
+			ここまでは繰り返しの対象が直前の文字やパターンの場合でしたが、複数の文字やパターンを括弧()で囲んでグループ化することで、グループ化した複数の文字やパターンを繰り返す文字列にもマッチさせることができます。
+			</p>
+
+			<p>
+			例えば数値が 1 つから 3 つ続いたあとにドット(.)が続く文字列を 3 回繰り返すパターンを作成してみます。最初に数値が 1 つから 3 つ続いたあとにドット(.)が続く文字列のパターンは次のように記述できます(文字としてのドット(.)を使用するのでバックスラッシュ(\)を使って \. のようにエスケープしています)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'\d{1,3}\.'
+</pre>
+</div>
+
+			<p>
+			このパターン全体を 3 回繰り返すパターンなので、単に {3} を付け加えるのではなく、対象のパターン全体を括弧()で囲んでグループ化したあとで {3} を記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'(\d{1,3}\.){3}'
+</pre>
+</div>
+
+			<p>
+			これで数値が 1 つから 3 つ続いたあとにドット(.)が続く文字列を 3 回繰り返すパターンが完成です。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'(\d{1,3}\.){3}\d{1,3}')
+msg = 'IPアドレスは 192.168.0.18 です';
+
+result = pattern.search(msg)
+print(result.group(0))
+
+<span class="bold">192.168.0.18</span>
+</pre>
+</div>
+
+<h2><a id="section8">最大量指定子と最小量指定子</a></h2>
+
+			<p>
+			+ や * などの量指定子はデフォルトではより多い文字列にマッチしようとします。次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'b.*a')
+msg = 'breakfast is sandwich';
+
+result = pattern.search(msg)
+print(result.group(0))
+
+<span class="bold">breakfast is sa</span>
+</pre>
+</div>
+
+			<p>
+			このパターンでは b で始まり、任意の文字が 0 回以上続いたあとに a が続く文字列とマッチします。対象の文字列の中で b のあとに a が現れるのは次の三か所があります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">brea</span>kfast is sandwich
+<span class="k">breakfas</span>t is sandwich
+<span class="k">breakfast is sa</span>ndwich
+</pre>
+</div>
+
+			<p>
+			先ほどのサンプルで確認できたように実際にマッチするのは一番右側にある a のところです。デフォルトで + や * や {min,max} などの量指定子はより多い文字列にマッチしようとするためです。このような量指定子のことを最大量指定子と呼びます。
+			</p>
+
+			<p>
+			+ や * などの量指定子を使用した時により少ない文字列にマッチさせる場合は最小量指定子を使用します。それぞれの量指定子のあとにクエスチョンマーク(?)を記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+*?
++?
+??
+{min, max}?
+</pre>
+</div>
+
+			<p>
+			では先ほどのサンプルを最小量指定子を使って書き直してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'b.*?a')
+msg = 'breakfast is sandwich';
+
+result = pattern.search(msg)
+print(result.group(0))
+
+<span class="bold">brea</span>
+</pre>
+</div>
+
+			<p>
+			今度のサンプルではマッチする候補の中で一番少ない文字列とマッチしました。
+			</p>
+
+			<p>
+			最大量指定子と最小量指定子が実際にどのように対象の文字列にマッチするのかについて、より詳しくは「<a href="../../regex-basic/writing/index1.html" tppabs="https://www.javadrive.jp/regex-basic/writing/index1.html">正規表現における最大量指定子と最小量指定子の考え方</a>」を参照されてください。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Python の正規表現で文字や他のパターンを指定した回数繰り返す文字列にマッチするパターンを記述する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

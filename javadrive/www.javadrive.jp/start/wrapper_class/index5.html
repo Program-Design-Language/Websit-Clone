@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文字列から数値への変換 - ラッパークラスを使った文字列と数値の変換 - Java入門</title>
+<meta name="keywords" content="文字列から数値への変換,ラッパークラスを使った文字列と数値の変換" />
+<meta name="description" content="文字列から様々な数値へ変換する方法です" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/wrapper_class/" itemprop="url"><span itemprop="title">ラッパークラスを使った文字列と数値の変換</span></a></li>
+		</ul>
+</div>
+
+			<h1>文字列から数値への変換</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					数値形式の文字列を数値そのものに変換する方法を確認します。変換する方法は3つあります。順に確認していきます。
+					</p>
+
+					<h2>parsexxxメソッドを使用する</h2>
+
+					<p>
+					1つ目の方法は各ラッパークラスで用意されているparsexxxメソッドを使う方法です。xxxの部分はラッパークラス毎に異なりそれぞれ次のようなメソッドが用意されています。
+					</p>
+
+<pre class="fixcomment">
+Byteクラス:
+static byte parseByte(String s)
+
+Shortクラス:
+static short parseShort(String s)
+
+Integerクラス:
+static int parseInt(String s)
+
+Longクラス:
+static long parseLong(String s)
+
+Floatクラス:
+static float parseFloat(String s)
+
+Doubleクラス:
+static double parseDouble(String s)
+</pre>
+
+					<p>
+					例えばIntegerクラスで用意されているparseIntメソッドは、引数に指定された文字列を整数の値として解析しint型の値として返します。実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+String str = "124";
+int i = Integer.parseInt(str);
+</pre>
+
+					<p>
+					なお整数でない数値の文字列をparseIntメソッドを使って変換しようとしたり、そもそも数値形式でない文字列を変換しようとすると、コンパイルエラーとはなりませんが実行時に「java.lang.NumberFormatException: For input string」というエラーが発生します。例えば次のような場合です。
+					</p>
+
+<pre class="fixcode">
+String str = "124.567";
+int i = Integer.parseInt(str);
+</pre>
+
+					<p>
+					また範囲を超えた数値の文字列を変換しようとすると、コンパイルエラーとはなりませんが実行時に「java.lang.NumberFormatException: Value out of range」というエラーが発生します。例えば次のような場合です。
+					</p>
+
+<pre class="fixcode">
+String str = "198667234";
+byte b = Byte.parseByte(str);
+</pre>
+
+					<p>
+					いずれの場合もコンパイル時にはエラーとなりませんので注意して下さい。
+					</p>
+
+					<h2>valueOfメソッドを使用する</h2>
+
+					<p>
+					2つ目の方法は各ラッパークラスで用意されているvalueOfメソッドを使用する方法です。各クラス毎に戻り値が異なる次のようなメソッドが用意されています。
+					</p>
+
+<pre class="fixcomment">
+Byteクラス:
+static Byte valueOf(String s)
+
+Shortクラス:
+static Short valueOf(String s)
+
+Integerクラス:
+static Integer valueOf(String s)
+
+Longクラス:
+static Long valueOf(String s)
+
+Floatクラス:
+static Float valueOf(String s)
+
+Doubleクラス:
+static Double valueOf(String s)
+</pre>
+
+					<p>
+					例えばIntegerクラスで用意されているvalueOfメソッドは、引数に指定された文字列が表す整数の値を持つIntegerクラスのオブジェクトを返します。実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+String str = "124";
+Integer oi = Integer.valueOf(str);
+</pre>
+
+					<p>
+					なお基本データ型の値ではなく対応するラッパークラスのオブジェクトを返す点に注意して下さい。
+					</p>
+
+					<p>
+					また数値形式でない文字列を指定したり、範囲を超えた数値形式の文字列を指定した場合には先ほどと同じように実行時エラーが発生します。
+					</p>
+
+					<h2>コンストラクタを使用する</h2>
+
+					<p>
+					3つ目の方法はラッパークラスのコンストラクタの引数に文字列を指定する方法です。
+					</p>
+
+<pre class="fixcomment">
+Byteクラス:
+Byte(String s)
+
+Shortクラス:
+Short(String s)
+
+Integerクラス:
+Integer(String s)
+
+Longクラス:
+Long(String s)
+
+Floatクラス:
+Float(String s)
+
+Doubleクラス:
+Double(String s)
+</pre>
+
+					<p>
+					例えばIntegerクラスのオブジェクトを作成する時に火異数として文字列を指定すると、引数に指定された文字列が表す整数の値を持つIntegerクラスのオブジェクトを作成します。実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+String str = "124";
+Integer oi = new Integer(str);
+</pre>
+
+					<p>
+					数値形式でない文字列を指定したり、範囲を超えた数値形式の文字列を指定した場合には先ほどと同じように実行時エラーが発生します。
+					</p>
+
+					<h2>サンプル</h2>
+
+					<p>
+					では簡単な例で試しておきます。
+					</p>
+
+					<p>
+					<a href="JSample5_1.java" tppabs="https://www.javadrive.jp/start/wrapper_class/JSample5_1.java">JSample5_1.java</a>
+					</p>
+
+<pre class="fixcode">
+class JSample5_1{
+  public static void main(String args[]){
+    String str1 = "124";
+    String str2 = "73";
+    String str3 = "4.987";
+
+    int i = Integer.parseInt(str1);
+    Byte ob = new Byte(str2);
+    Double od = Double.valueOf(str3);
+
+    System.out.println(i);
+    System.out.println(ob.byteValue());
+    System.out.println(od.doubleValue());
+  }
+}
+</pre>
+
+					<p>
+					コンパイル後に実行すると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/start/wrapper_class/img/p5-1.png" alt="p5-1" width="509" height="259" />
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

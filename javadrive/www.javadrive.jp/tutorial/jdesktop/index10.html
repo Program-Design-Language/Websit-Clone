@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>インターナルフレームを選択する - JDesktopPaneクラス - Swing</title>
+<meta name="keywords" content="setSelected,JDesktopPane,JInternalFrame,Swing,Java" />
+<meta name="description" content="インターナルフレームを選択する" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jdesktop/" itemprop="url"><span itemprop="title">JDesktopPaneクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>インターナルフレームを選択する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			デスクトップペインにインターナルフレームを追加する際、追加しただけではどのインターナルフレームも選択状態となっていません。ここでは特定のインターナルフレームを選択状態にする方法を確認します。選択するにはJInternalFrameクラスで用意されている「setSelected」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+setSelected
+public void setSelected(boolean selected)
+                 throws PropertyVetoException
+</pre>
+<pre class="mexplain">
+内部フレームが表示されている場合に、その内部フレームを選択または選択解除
+します。JInternalFrame は通常、選択されている場合はタイトルバーを異なる
+ように描画します。これにより、この内部フレームがフォーカスを持つことが
+ユーザーに示されます。このメソッドによって内部フレームの状態が選択解除か
+ら選択へ変更されると、このメソッドは 
+InternalFrameEvent.INTERNAL_FRAME_ACTIVATED イベントをトリガーします。選
+択から選択解除への変更の場合は、
+InternalFrameEvent.INTERNAL_FRAME_DEACTIVATED イベントがトリガーされます。
+
+パラメータ:
+  selected - boolean 値。true の場合はこの内部フレームが選択された状態に
+    なり (現在アクティブである)、false の場合は選択解除された状態になる 
+例外:
+  PropertyVetoException - プロパティーの設定の試みが JInternalFrame に拒
+    否された場合
+</pre>
+
+			<p>
+			引数には選択状態とするかどうかを表すboolean型の値を設定します。「true」を設定すると選択状態となり「false」を設定すると非選択状態となります。
+			</p>
+			
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+import java.beans.PropertyVetoException;
+
+JInternalFrame iframe = new JInternalFrame("title");
+iframe.setLayer(1);
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルを作成して試してみます。
+			</p>
+
+			<p>
+			<a href="JDesktopPaneTest10.java" tppabs="https://www.javadrive.jp/tutorial/jdesktop/JDesktopPaneTest10.java">JDesktopPaneTest10.java</a>
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.BorderLayout;
+import java.beans.PropertyVetoException;
+import java.awt.event.*;
+
+public class JDesktopPaneTest10 extends JFrame implements ActionListener{
+
+  JDesktopPane desktop;
+  int frameCount;
+
+  public static void main(String[] args){
+    JDesktopPaneTest10 frame = new JDesktopPaneTest10();
+
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setBounds(10, 10, 400, 300);
+    frame.setTitle("タイトル");
+    frame.setVisible(true);
+  }
+
+  JDesktopPaneTest10(){
+    desktop = new JDesktopPane();
+    frameCount = 1;
+
+    JInternalFrame iframe = new JInternalFrame("IFrame" + frameCount);
+    iframe.setSize(250, 120);
+    iframe.setLocation(10 + frameCount * 10, 10 + frameCount * 10);
+    iframe.setVisible(true);
+    frameCount++;
+
+    desktop.add(iframe);
+
+    JButton button = new JButton("add");
+    button.addActionListener(this);
+
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.add(button);
+
+    getContentPane().add(desktop, BorderLayout.CENTER);
+    getContentPane().add(buttonPanel, BorderLayout.PAGE_END);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    JInternalFrame iframe = new JInternalFrame("IFrame" + frameCount);
+    iframe.setSize(250, 120);
+    iframe.setLocation(10 + frameCount * 10, 10 + frameCount * 10);
+    iframe.setVisible(true);
+    frameCount++;
+
+    desktop.add(iframe);
+
+    try{
+      iframe.setSelected(true);
+    }catch(PropertyVetoException ex){
+      System.out.println(ex.getMessage());
+    }
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイルした後で実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p10-1.png" tppabs="https://www.javadrive.jp/tutorial/jdesktop/img/p10-1.png" alt="インターナルフレームを選択する" width="407" height="308">
+			</p>
+
+			<p>
+			画面下部のボタンをクリックすると新しいインターナルフレームが作成され選択状態にします。今回インターナルフレームは全て同じレイヤーとなっているため選択状態にすると最前面に表示されます。
+			</p>
+
+			<p>
+			<img src="img/p10-2.png" tppabs="https://www.javadrive.jp/tutorial/jdesktop/img/p10-2.png" alt="インターナルフレームを選択する" width="406" height="307">
+			</p>
+
+			<p>
+			<img src="img/p10-3.png" tppabs="https://www.javadrive.jp/tutorial/jdesktop/img/p10-3.png" alt="インターナルフレームを選択する" width="405" height="304">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

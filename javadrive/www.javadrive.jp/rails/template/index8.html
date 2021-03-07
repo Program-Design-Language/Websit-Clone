@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>link_toメソッドを使ったリンクの作成 - Ruby on Rails入門</title>
+<meta name="keywords" content="link_toメソッドを使ったリンクの作成" />
+<meta name="description" content="Railsのヘルパーメソッドの1つであるlink_toメソッドを使ったリンクの作成方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/template/" itemprop="url"><span itemprop="title">テンプレート(ビュー)とヘルパーメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>link_toメソッドを使ったリンクの作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			テンプレートで&lt;a&gt;タグを使ったリンクを作成する方法としてlink_toメソッドを使ってリンク用のタグを生成する方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">link_toメソッドの定義</a><br />
+			2.<a href="#section2">URLやパスを指定</a><br />
+			3.<a href="#section3">ルーティングの名前でリンク先を指定</a><br />
+			4.<a href="#section4">リソースベースでルーティングを設定した場合</a><br />
+			5.<a href="#section5">その他のオプション</a><br />
+			</p>
+
+<h2><a id="section1">link_toメソッドの定義</a></h2>
+
+			<p>
+			link_toメソッドはActionView::Helpers::UrlHelperクラスで次のように定義されています。
+			</p>
+
+<pre class="fixcomment">
+link_to(*args, &block)
+</pre>
+
+			<p>
+			メソッドの引数には、リンクを設定する文字列、リンク先のURL、さまざまなオプションを指定します。リンク先のURLの指定方法やオプションは数多くありますので、比較的よく使う方法をいくつかご紹介します。
+			</p>
+
+<h2><a id="section2">URLやパスを指定</a></h2>
+
+			<p>
+			外部のサイトのURLや同じアプリケーション内のパスを指定する場合は次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+link_to 'Search', 'http://www.google.co.jp/'
+link_to 'Index Page', '/books/index'
+</pre>
+
+			<p>
+			1番目の引数にリンクを設定する文字列、2番目の引数にURLを指定してlink_toメソッドを呼び出すことでリンクが作成されます。例えばテンプレートの&lt;%= ～ %&gt;の中で記述されると、次のように出力が行われます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Search', 'http://www.google.co.jp/' %&gt;
+--&gt; &lt;a href="http://www.google.co.jp/"&gt;Search&lt;/a&gt;
+
+&lt;%= link_to 'Index Page', '/books/index' %&gt;
+--&gt; &lt;a href="/books/index"&gt;Index Page&lt;/a&gt;
+</pre>
+
+			<p>
+			「&lt;」などの特別な文字もエスケープされずに出力されます。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「books」コントローラに次のように「show」アクションと「index」アクションを作成します。
+			</p>
+
+<pre class="fixcode">
+class BooksController &lt; ApplicationController
+  def show
+  end
+
+  def index
+  end
+end
+</pre>
+
+			<p>
+			「books」コントロールの「show」アクションから呼び出されるテンプレートとして「app/views/books/show.html.erb」ファイルを作成し、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Search', 'http://www.google.co.jp/' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Index Page', '/books/index' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			同じく「books」コントロールの「index」アクションから呼び出されるテンプレートとして「app/views/books/index.html.erb」ファイルを作成し、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Index Page
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルを次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  get "books/show"
+  get "books/index"
+end
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p8-1.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-1.png" alt="p8-1" width="502" height="308" />
+			</p>
+
+			<p>
+			ソースを確認してみると次のように&lt;a&gt;タグが出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p8-2.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-2.png" alt="p8-2" width="502" height="308" />
+			</p>
+
+			<p>
+			「Index Page」と書かれたリンクをクリックしてみますと「books」コントロールの「index」アクションが呼び出され次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p8-3.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-3.png" alt="p8-3" width="502" height="308" />
+			</p>
+
+			<p>
+			このように外部のURLや同じアプリケーション内のパスを指定してリンクを作成することができました。
+			</p>
+
+<h2><a id="section3">ルーティングの名前でリンク先を指定</a></h2>
+
+			<p>
+			先程は利用者が呼び出す場合と同じようにパスを指定してリンクを作成しましたが、ルーティングに名前が設定されている場合は名前に「_path」を付けたものを使って次のように記述することができます。
+			</p>
+
+<pre class="fixcomment">
+link_to 'Index Page', books_index_path
+</pre>
+
+			<p>
+			ルーティングの名前については「<a href="../routing/index4.html#section5" tppabs="https://www.javadrive.jp/rails/routing/index4.html#section5">asオプションでルーティングに名前を付ける</a>」を参照して下さい。現在のルーティングを確認してみると次のように名前が設定されています。
+			</p>
+
+			<p>
+			<img src="img/p8-4.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-4.png" alt="p8-4" width="517" height="286" />
+			</p>
+
+			<p>
+			「books」コントロールの「index」アクションを呼び出すためのルーティングには「books_index」という名前が付いていますので、このアクションを呼び出すためのリンクを作成する場合にはルーティング名に「_path」を付けた「books_index_path」を指定して下さい。
+			</p>
+
+			<p>
+			例えばテンプレートの&lt;%= ～ %&gt;の中で記述されると、次のように出力が行われます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Index Page', books_index_path %&gt;
+--&gt; &lt;a href="/books/index"&gt;Index Page&lt;/a&gt;
+</pre>
+
+			<p>
+			では実際に試してみます。先程作成した「books」コントロールの「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように修正しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Index Page', books_index_path %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			アクションメソッドやルーティングの設定はそのままです。アプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p8-5.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-5.png" alt="p8-5" width="502" height="308" />
+			</p>
+
+			<p>
+			ソースを確認してみると次のように&lt;a&gt;タグが出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p8-6.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-6.png" alt="p8-6" width="502" height="308" />
+			</p>
+
+			<p>
+			今回は省略しますが、リンクをクリックすると「books」コントロールの「index」アクションが呼び出されます。今回のようにルーティング名でリンク先を設定しておけば、呼び出すURLが変更になった場合でもルーティングの名前が変わっていなければテンプレート側は変更する必要がありません。
+			</p>
+
+<h2><a id="section4">リソースベースでルーティングを設定した場合</a></h2>
+
+			<p>
+			リソースベースのルーティングを行った場合は、いくつか便利な記述方法が使用できます。(リソースベースのルーティングについては「<a href="../routing/index5.html" tppabs="https://www.javadrive.jp/rails/routing/index5.html">リソースベースのルーティング設定</a>」をご参照下さい)。
+			</p>
+
+			<p>
+			実際に試しながら確認するために、新しく「blogs」コントローラを作成し、同時に「index」「show」「new」「edit」「create」「update」「destroy」アクションを作成します。
+			</p>
+
+			<p>
+			<img src="img/p8-7.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-7.png" alt="p8-7" width="517" height="481" />
+			</p>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルをテキストエディタで開き、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  resources :blogs
+end
+</pre>
+
+			<p>
+			では設定されたルーティングを確認するために「rake routes」を実行して下さい。
+			</p>
+
+			<p>
+			<img src="img/p8-8.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-8.png" alt="p8-8" width="517" height="247" />
+			</p>
+
+			<p>
+			いくつかのルーティングには自動的に名前が付いていますので、「ルーティングの名前でリンク先を指定」で解説した通り次のような記述が行えます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Index Page', blogs_path %&gt;
+&lt;%= link_to 'New Page', new_blog_path %&gt;
+</pre>
+
+			<p>
+			「show」アクションや「edit」アクションのように「id」パラメータを指定して呼び出すアクションの場合は、モデルオブジェクト(下記では@blog変数に格納されている)を使って次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Show Page', blog_path(@blog) %&gt;
+&lt;%= link_to 'Edit Page', edit_blog_path(@blog) %&gt;
+</pre>
+
+			<p>
+			では実際に試してみます。事前に「blog」モデルを作成済みでサンプル用データを格納してあります。そして「blog」コントローラを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+class BlogsController &lt; ApplicationController
+  def index
+    @blog = Blog.find(2)
+  end
+
+  def show
+  end
+
+  def new
+  end
+
+  def edit
+  end
+
+  def create
+  end
+
+  def update
+  end
+
+  def destroy
+  end
+end
+</pre>
+
+			<p>
+			「index」アクションが呼び出されると、findメソッドを使って「id」が2のモデルオブジェクトをインスタント変数に格納します。
+			</p>
+
+			<p>
+			次に「blogs」コントロールの「index」アクションから呼び出されるテンプレートの「app/views/blogs/index.html.erb」ファイルを次のように修正しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;%= link_to 'Index Page', blogs_path %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'New Page', new_blog_path %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Show Page', blog_path(@blog) %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Edit Page', edit_blog_path(@blog) %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「blogs」コントロールの「index」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p8-9.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-9.png" alt="p8-9" width="502" height="308" />
+			</p>
+
+			<p>
+			4つのリンクが表示されています。ソースを確認してみると次のように&lt;a&gt;タグが出力されていることが確認できます。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;a href="/blogs"&gt;Index Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/new"&gt;New Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/2"&gt;Show Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/2/edit"&gt;Edit Page&lt;/a&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ルーティングの設定に合わせてリンク先のURLが設定されていることが確認できます。またモデルオブジェクトを指定した場合は、モデルオブジェクトの主キーである「id」カラムの値がパラメータとして指定されています。
+			</p>
+
+<h3>create, update, destroyアクション</h3>
+
+			<p>
+			「create」アクションについては「index」アクションとパスが同じでHTTPメソッドが「POST」となっています。また「update」アクションと「destroy」アクションについては「show」アクションとパスが同じですがHTTPメソッドがそれぞれ「PUT」と「DELETE」となっています。
+			</p>
+
+			<p>
+			<img src="img/p8-10.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-10.png" alt="p8-10" width="517" height="247" />
+			</p>
+
+			<p>
+			これらのアクションについては使用するHTTPメソッドを「method」オプションで指定し次のように記述することができます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Create Page', blogs_path, :method =&gt; :push %&gt;
+&lt;%= link_to 'Update Page', blog_path(@blog), :method =&gt; :put %&gt;
+&lt;%= link_to 'Destroy Page', blog_path(@blog), :method =&gt; :delete %&gt;
+</pre>
+
+			<p>
+			では実際に試してみます。「index」アクションから呼び出されるテンプレートの「app/views/blogs/index.html.erb」ファイルを次のように修正しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;%= link_to 'Create Page', blogs_path, :method =&gt; :push %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Update Page', blog_path(@blog), :method =&gt; :put %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Destroy Page', blog_path(@blog), :method =&gt; :delete %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「blogs」コントロールの「index」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p8-11.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-11.png" alt="p8-11" width="502" height="308" />
+			</p>
+
+			<p>
+			3つのリンクが表示されています。ソースを確認してみると次のように&lt;a&gt;タグが出力されていることが確認できます。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;a href="/blogs" data-method="push" rel="nofollow"&gt;Create Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/2" data-method="put" rel="nofollow"&gt;Update Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/2" data-method="delete" rel="nofollow"&gt;Destroy Page&lt;/a&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			「data-method」属性に使用するHTTPメソッドを表す値が設定されてリンクが作成されています(リンクをクリックした後で、これがどのように処理されるのかは分かっていません)。
+			</p>
+
+<h3>show, update, destroyアクションの場合にオブジェクト名だけで指定</h3>
+
+			<p>
+			「show」「update」「destroy」アクションのように「id」パラメータを指定して呼び出すアクションの場合は、モデルオブジェクト(下記では@blog変数に格納されている)を使って次のように簡略的に記述することができます。(「edit」アクションは除く)。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Show Page', @blog %&gt;
+&lt;%= link_to 'Update Page', @blog, :method =&gt; :put %&gt;
+&lt;%= link_to 'Destroy Page', @blog, :method =&gt; :delete %&gt;
+</pre>
+
+			<p>
+			今まで「blog_path(@blog)」と書いていたものに対しては単に「@blog」と省略できます。
+			</p>
+
+			<p>
+			では実際に試してみます。「index」アクションから呼び出されるテンプレートの「app/views/blogs/index.html.erb」ファイルを次のように修正しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;%= link_to 'Show Page', @blog %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Update Page', @blog, :method =&gt; :put %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Destroy Page', @blog, :method =&gt; :delete %&gt;&lt;/p&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「blogs」コントロールの「index」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p8-12.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-12.png" alt="p8-12" width="502" height="308" />
+			</p>
+
+			<p>
+			3つのリンクが表示されています。ソースを確認してみると次のように&lt;a&gt;タグが出力されていることが確認できます。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;a href="/blogs/2"&gt;Show Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/2" data-method="put" rel="nofollow"&gt;Update Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs/2" data-method="delete" rel="nofollow"&gt;Destroy Page&lt;/a&gt;&lt;/p&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			このように「xxx_path」の部分を省略してもリンク先が設定されていることが確認できます。
+			</p>
+
+<h2><a id="section5">その他のオプション</a></h2>
+
+			<p>
+			リンクを作成する時にスタイルシートを使ってスタイルを設定するためにid属性やclass属性を指定したい場合には、「id」オプションや「class」オプションが指定できます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Index Page', blogs_path, :id =&gt; 'list' %&gt;
+&lt;%= link_to 'Index Page', blogs_path, :class =&gt; 'main' %&gt;
+</pre>
+
+			<p>
+			アンカーリンクを設定したい場合はanchorオプションを使って次のように記述できます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Index Page', blogs_path(:anchor =&gt; 'other') %&gt;
+</pre>
+
+			<p>
+			クエリー文字列を設定したい場合は名前と値をペアで指定し次のように記述できます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Index Page', blogs_path(:name =&gt; 'yamada', :old=&gt; '20') %&gt;
+</pre>
+
+			<p>
+			リンクをクリックした時に確認ダイアログを表示させたい場合はconfirmオプションを使って次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to 'Index Page', blogs_path, :confirm =&gt; "OK?" %&gt;
+</pre>
+
+			<p>
+			では実際に試してみます。「index」アクションから呼び出されるテンプレートの「app/views/blogs/index.html.erb」ファイルを次のように修正しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;%= link_to 'Index Page', blogs_path, :id =&gt; 'list' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Index Page', blogs_path, :class =&gt; 'main' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Index Page', blogs_path(:anchor =&gt; 'other') %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Index Page', blogs_path(:name =&gt; 'yamada', :old=&gt; '20') %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to 'Search Engine', 'http://www.google.co.jp/', :confirm =&gt; "really?" %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「blogs」コントロールの「index」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p8-14.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-14.png" alt="p8-14" width="502" height="308" />
+			</p>
+
+			<p>
+			5つのリンクが表示されています。ソースを確認してみると次のように&lt;a&gt;タグが出力されていることが確認できます。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+&lt;a href="/blogs" id="list"&gt;Index Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs" class="main"&gt;Index Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs#other"&gt;Index Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="/blogs?name=yamada&amp;amp;old=20"&gt;Index Page&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;a href="http://www.google.co.jp/" data-confirm="really?"&gt;Search Engine&lt;/a&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			1番目のリンクには「id」属性、2番目のリンクには「class」属性が設定されています。3番目のリンクにはアンカーテキストが設定されており、4番目のリンクには指定したクエリー文字列が2つ設定されています。
+			</p>
+
+			<p>
+			5番目のリンクには「data-confirm」属性が設定されています。実際に5番目のリンクをクリックすると次のようなダイアログが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p8-15.png" tppabs="https://www.javadrive.jp/rails/template/img/p8-15.png" alt="p8-15" width="509" height="313" />
+			</p>
+
+			<p>
+			「OK」ボタンを押すとリンク先へ移動し、「キャンセル」ボタンを押すと元の画面に戻ります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

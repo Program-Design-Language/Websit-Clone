@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;dispatcher&gt;要素 - フィルタ - サーブレット入門</title>
+<meta name="keywords" content="&lt;dispatcher&gt;要素,フィルタ,サーブレット" />
+<meta name="description" content="&lt;dispatcher&gt;要素" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/filter/" itemprop="url"><span itemprop="title">フィルタ</span></a></li>
+		</ul>
+</div>
+
+			<h1>&lt;dispatcher&gt;要素</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			あるサーブレットに設定されたフィルタがいつ呼び出されるかは、デフォルトでは本来のサーブレットを呼び出すURLがリクエストされた時です。これ以外に、例えばサーブレットから別のサーブレットへフォワードされた時にフィルタが呼び出されるように設定することも可能です。
+			</p>
+
+			<p>
+			&lt;filter-mapping&gt;要素の定義を再度確認します。
+			</p>
+
+<pre class="fixcomment">
+&lt;xsd:complexType name="filter-mappingType"&gt;
+  &lt;xsd:sequence&gt;
+    &lt;xsd:element name="filter-name" type="j2ee:filter-nameType" /&gt; 
+    &lt;xsd:choice&gt;
+      &lt;xsd:element name="url-pattern" type="j2ee:url-patternType" /&gt; 
+      &lt;xsd:element name="servlet-name" type="j2ee:servlet-nameType" /&gt; 
+    &lt;/xsd:choice&gt;
+    &lt;xsd:element name="dispatcher" type="j2ee:dispatcherType" minOccurs="0" maxOccurs="4" /&gt; 
+  &lt;/xsd:sequence&gt;
+&lt;/xsd:complexType&gt;
+</pre>
+
+
+			<p>
+			&lt;filter-mapping&gt;要素の子要素の1つに&lt;dispatcher&gt;要素があります。&lt;dispatcher&gt;要素にどのタイミングでフィルタが実行されるのかを指定することが出来ます。
+			</p>
+
+			<p>
+			指定可能な値は次の通りです。
+			</p>
+
+<table class="pro">
+<tr><th style="width:100px;">値</th><th>フィルタのタイミング</th></tr>
+<tr><td>REQUEST</td><td>URLがリクエストされた時</td></tr>
+<tr><td>FORWARD</td><td>フォワードが行われた時</td></tr>
+<tr><td>INCLUDE</td><td>インクルードが行われた時</td></tr>
+<tr><td>ERROR</td><td>エラーページへ処理が移る時</td></tr>
+</table>
+
+			<p>
+			1つの&lt;filter-mapping&gt;要素内で&lt;dispatcher&gt;要素は0回から4回まで設定出来ますので、4つの全てのタイミングを指定することも可能です。
+			</p>
+
+			<p>
+			記述例としては次のようになります。
+			</p>
+
+<pre class="fixcomment">
+&lt;web-app&gt;
+  &lt;filter&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;filter-class&gt;FilterTest&lt;/filter-class&gt;
+  &lt;/filter&gt;
+
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/hello/*&lt;/url-pattern&gt;
+    &lt;dispatcher&gt;<span class="red">FORWARD</span>&lt;/dispatcher&gt;
+  &lt;/filter-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルプログラムでフィルタを試してみましょう。
+			</p>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;filter&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;filter-class&gt;FilterTest3&lt;/filter-class&gt;
+  &lt;/filter&gt;
+
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;servlet-name&gt;forwardtest&lt;/servlet-name&gt;
+    &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
+  &lt;/filter-mapping&gt;
+
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;filtertest&lt;/filter-name&gt;
+    &lt;servlet-name&gt;helloworld&lt;/servlet-name&gt;
+    &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
+  &lt;/filter-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;helloworld&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;HelloWorld3&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;forwardtest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;ForwardTest3&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;helloworld&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/helloworld&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;forwardtest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/forwardtest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。
+			</p>
+
+			<p>
+			<a href="HelloWorld3.java.htm" tppabs="https://www.javadrive.jp/servlet/filter/HelloWorld3.java">HelloWorld3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class HelloWorld3 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    System.out.println("HelloWorld");
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;フィルタテスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;Hello World!&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			<a href="ForwardTest3.java" tppabs="https://www.javadrive.jp/servlet/filter/ForwardTest3.java">ForwardTest3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ForwardTest3 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    String disp = "/helloworld";
+    RequestDispatcher dispatch = request.getRequestDispatcher(disp);
+
+    System.out.println("フォワードします");
+
+    dispatch.forward(request, response);
+  }
+}
+</pre>
+
+			<p>
+			<a href="FilterTest3.java" tppabs="https://www.javadrive.jp/servlet/filter/FilterTest3.java">FilterTest3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+
+public class FilterTest implements Filter{
+  public void doFilter(ServletRequest request, ServletResponse response,
+    FilterChain chain){
+    try{
+      System.out.println("フィルタ実行");
+
+      chain.doFilter(request, response);
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+
+  public void init(FilterConfig filterConfig) throws ServletException{
+  }
+
+  public void destroy(){
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;filter&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/filter/forwardtest」へアクセスしてみます。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/servlet/filter/img/p5.png" alt="Filterテスト" width="476" height="269">
+			</p>
+
+			<p>
+			「ForwardTest3」クラスは「HelloWorld3」クラスへフォワードしているだけなので、結果としては今までと同じく上記のように画面表示されます。
+			</p>
+
+			<p>
+			次にフィルターの結果を見てみます。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/servlet/filter/img/p6.png" alt="Filterテスト" width="421" height="197">
+			</p>
+
+			<p>
+			「forwardtest」を呼び出したとき、そして「helloworld」へフォワードされた時にフィルタが呼び出されます。フォワードされた時のフィルタの設定の仕方が少し分かりにくいです。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

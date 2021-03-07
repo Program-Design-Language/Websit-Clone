@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>メソッドを使ってメンバ変数を変更する理由 - メンバ変数とメンバメソッド - Java入門</title>
+<meta name="keywords" content="メンバ変数,メンバメソッド,入門,Java" />
+<meta name="description" content="メソッドを使ってメンバ変数を変更する理由" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/member/" itemprop="url"><span itemprop="title">メンバ変数とメンバメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>メソッドを使ってメンバ変数を変更する理由</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					前のページで、メンバ変数に直接値を格納する代わりに、いったんクラスの中で定義しているメソッドを呼び出してメンバ変数に値を格納する方法も記述しました。では何故このようなことをするかと言いますと、例えばメンバ変数に格納できる値の事前チェックをしたり、メンバ変数と他のメンバ変数が連動している場合などの処理を行うことが出来るからです。
+					</p>
+
+					<p>
+					例えばテレビのチャンネルは「1」か「3」しか実際には存在しないとします。その場合にメンバ変数に直接値を格納すると、下記のように実際には存在しない値でも格納することが出来てしまいます。
+					</p>
+
+<pre class="fixcode">
+class ctest{
+  public static void main(String args[]){
+    Television tv1 = new Television();
+
+    <span class="red">tv1.channelNo = 5;</span>
+  }
+}
+
+class Television{
+  int channelNo;
+
+  void dispChannel(){
+    System.out.println("現在のチャンネルは " + channelNo + " です");
+  }
+}
+</pre>
+
+					<p>
+					これを防止する代わりにいったんメソッドを呼び出し、その中で格納できる値かどうかを事前にチェックすることが出来ます。
+					</p>
+
+<pre class="fixcode">
+class ctest{
+  public static void main(String args[]){
+    Television tv1 = new Television();
+
+    <span class="red">tv1.setChanne(5);</span>
+  }
+}
+
+class Television{
+  int channelNo;
+
+  void setChannel(int newChannelNo){
+    <span class="red">if ((newChannelNo == 1) || (newChannel == 3)){
+      channelNo = newChannelNo;
+    }</span>
+  }
+
+  void dispChannel(){
+    System.out.println("現在のチャンネルは " + channelNo + " です");
+  }
+}
+</pre>
+
+					<p>
+					大規模なシステムになってくると、各クラスを別々の人が作成するということもあります。その場合、メンバ変数に直接値を記述できるような形にしていると、クラスを設計した人が予期しない値を直接格納する危険性もあります。その為、いったんメソッドを呼び出し、その中でメンバ変数に値を格納するということはよく行います。
+					</p>
+
+					<p>
+					また別の例として、メンバ変数を変更した時に他のメンバ変数も連動して変更しておきたい場合を考えてみます。
+					</p>
+
+<pre class="fixcode">
+class ctest{
+  public static void main(String args[]){
+    Television tv1 = new Television();
+
+    <span class="red">tv1.setChanne(5);</span>
+  }
+}
+
+class Television{
+  int channelNo;
+  String housouKyoku;
+
+  void setChannel(int newChannelNo){
+    <span class="red">if (newChannelNo == 1){
+      channelNo = 1;
+      housouKyoku = "FujiTV";
+    } else if (newChannelNo == 3){
+      channelNo = 3;
+      housouKyoku = "NHK";
+    }</span>
+  }
+
+  void setHousoukyoku(String newHousouKyoku){
+    <span class="red">if (newHousouKyoku.equals("FujiTV")){
+      channelNo = 1;
+      tvKyoku = "FujiTV";
+    } else if (newHousouKyoku.equals("NHK")){
+      channelNo = 3;
+      tvKyoku = "NHK";
+    }</span>
+  }
+
+  void dispChannel(){
+    System.out.println("現在のチャンネルは " + channelNo + " です");
+  }
+}
+</pre>
+
+					<p>
+					上記の例ですと、チャンネル番号を変更すると、自動的に他のメンバ変数で放送局を表す「housouKyoku」の値も変更されています。また逆に放送局の値を変更するとチャンネル番号も変更されます。このようにメンバ変数の値を変更することで他のメンバ変数の値も同期して変更したい場合などにメソッドを呼び出す形にしていることで可能になります。
+					</p>
+
+					<p>
+					もちろん「tv1.channelNo = 1;」とした後で「tv1.housouKyoku = "FujiTV";」という命令を同時に行っておけば同様のことが行えますが、複雑に連動している場合にはいちいち記述するのも面倒ですし、記述するのを忘れてしまったり、間違えて記述してしまったりといった不具合を未然に防ぐ事も出来ます。
+					</p>
+
+					<p>
+					どんな場合でもこのようにした方がいいわけでは無いので、目的に応じて直接メンバ変数に値を格納できるようにしたり、メソッド経由で行うようにしたりといった判断を行って下さい。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

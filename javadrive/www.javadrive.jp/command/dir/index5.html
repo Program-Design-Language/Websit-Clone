@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマンドプロンプト | カレントディレクトリをスタックに記憶してから別のディレクトリへ変更(PUSHD, POPD)</title>
+<meta name="description" content="カレントディレクトリをスタックに記憶してから別のディレクトリへ変更することができる PUSHD コマンド、そしてスタックに記憶したディレクトリを取り出してカレントディレクトリを変更することができる POPD コマンドの使い方について解説します。">
+
+<meta property="og:title" content="カレントディレクトリをスタックに記憶してから別のディレクトリへ変更(PUSHD, POPD)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/command/dir/index5.html">
+<meta property="og:image" content="https://www.javadrive.jp/command/dir/img/p5-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="カレントディレクトリをスタックに記憶してから別のディレクトリへ変更することができる PUSHD コマンド、そしてスタックに記憶したディレクトリを取り出してカレントディレクトリを変更することができる POPD コマンドの使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "コマンドプロンプトの使い方",
+    "item": "https://www.javadrive.jp/command/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "ドライブとディレクトリに関するコマンド一覧",
+    "item": "https://www.javadrive.jp/command/dir/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/command/">コマンドプロンプトの使い方</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/command/dir/">ドライブとディレクトリに関するコマンド一覧</a></li>
+				</ul>
+			</div>
+
+			<h1>カレントディレクトリをスタックに記憶してから別のディレクトリへ変更(PUSHD, POPD)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			カレントディレクトリをスタックに記憶してから別のディレクトリへ変更することができる PUSHD コマンド、そしてスタックに記憶したディレクトリを取り出してカレントディレクトリを変更することができる POPD コマンドの使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">PUSHDコマンドとPOPDコマンドの使い方</a></li>
+			<li><a href="#section2">現在のディレクトリを記憶して別のディレクトリへ移動する</a></li>
+			<li><a href="#section3">記憶しているディレクトリへカレントディレクトリを変更する</a></li>
+			<li><a href="#section4">複数のディレクトリをスタックに記憶する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">PUSHDコマンドとPOPDコマンドの使い方</a></h2>
+
+			<p>
+			PUSHD コマンドを実行すると現在のディレクトリをスタックに記憶した上でカレントディレクトリを変更することができます。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<p>
+PUSHD [パス | ..]
+</p>
+</div>
+
+			<p>
+			PUSHD コマンドの引数として変更したいパスを指定します。パスは相対パスでも絶対パスでも指定できます。
+			</p>
+
+			<p>
+			スタックには複数のディレクトリを記憶させることができます。引数なしで PUSHD コマンドを実行するとスタックに記憶されてるディレクトリの一覧を表示します。
+			</p>
+
+<div class="titlebox2">
+<p>
+PUSHD
+</p>
+</div>
+
+			<p>
+			POPD コマンドを実行するとスタックに記憶されているディレクトリを取り出しカレントディレクトリを変更することができます。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<p>
+POPD
+</p>
+</div>
+
+			<p>
+			POPD コマンドを実行してスタックからディレクトリを取り出すと、スタックに記憶されていたディレクトリは削除されます。
+			</p>
+
+			<p>
+			PUSHD コマンドを使って別のディレクトリに移動したあと、POPD コマンドを使って元のディレクトリへ戻るといった使い方となります。
+			</p>
+
+<h2><a id="section2">現在のディレクトリを記憶して別のディレクトリへ移動する</a></h2>
+
+			<p>
+			例えばカレントディレクトリが c:\test の時にカレントディレクトリをスタックに記憶しつつ c:\test\doc ディレクトリへ変更するには次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+pushd doc
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-1.png" alt="現在のディレクトリを記憶して別のディレクトリへ移動する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			カレントディレクトリが新しいディレクトリへ変更しつつ、元のディレクトリはスタックに記憶されました。
+			</p>
+
+<h2><a id="section3">記憶しているディレクトリへカレントディレクトリを変更する</a></h2>
+
+			<p>
+			スタックに記憶しているディレクトリへカレントディレクトリを変更するには次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+popd
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-2.png" alt="現在のディレクトリを記憶して別のディレクトリへ移動する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			スタックに記憶されていた変更前のディレクトリにカレントディレクトリが変更されました。
+			</p>
+
+			<p>
+			PUSHD コマンドと POPD コマンドはこのように組み合わせて使用し、現在のディレクトリから一時的に別のディレクトリへ移動して作業したあとに元のディレクトリに戻りたい場合に使用します。
+			</p>
+
+<h2><a id="section4">複数のディレクトリをスタックに記憶する</a></h2>
+
+			<p>
+			PUSHD コマンドを複数回実行すると、実行した時点でのカレントディレクトリを順にスタックに記憶していきます。例えばカレントディレクトリが c:\test の時にカレントディレクトリをスタックに記憶しつつ c:\test\doc\movie ディレクトリへ変更するには次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+pushd doc
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-3.png" alt="複数のディレクトリをスタックに記憶する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			現在スタックに記憶されているディレクトリを確認するには PUSHD コマンドを引数なしで次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+pushd
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-4.png" alt="複数のディレクトリをスタックに記憶する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			現在1つのディレクトリがスタックに記憶されていました。
+			</p>
+
+			<p>
+			ここで再度 PUSHD コマンドを実行し、カレントディレクトリをスタックに記憶しつつ c:\test\report\2019 ディレクトリへ変更してみます。
+			</p>
+
+<div class="titlebox1">
+<p>
+pushd c:\test\report\2019
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-5.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-5.png" alt="複数のディレクトリをスタックに記憶する(3)" width="723" height="352">
+			</p>
+
+			<p>
+			再度スタックに記憶されているディレクトリを確認します。
+			</p>
+
+<div class="titlebox1">
+<p>
+pushd
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-6.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-6.png" alt="複数のディレクトリをスタックに記憶する(4)" width="723" height="352">
+			</p>
+
+			<p>
+			現在2つのディレクトリがスタックに記憶されていました。
+			</p>
+
+			<p>
+			それでは POPD コマンドを使ってスタックからディレクトリを取り出しカレントディレクトリを変更します。スタックに複数のディレクトリが記憶されている場合は、一番新しく記憶されたものから順に取り出します。
+			</p>
+
+<div class="titlebox1">
+<p>
+popd
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-7.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-7.png" alt="複数のディレクトリをスタックに記憶する(5)" width="723" height="352">
+			</p>
+
+			<p>
+			スタックに記憶されていた一番新しいディレクトリへカレントディレクトリが変更されました。
+			</p>
+
+			<p>
+			再度スタックに記憶されているディレクトリを確認します。
+			</p>
+
+<div class="titlebox1">
+<p>
+pushd
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-8.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-8.png" alt="複数のディレクトリをスタックに記憶する(6)" width="723" height="352">
+			</p>
+
+			<p>
+			POPD コマンドによって取り出されたディレクトリは削除されるため、現在スタックに記憶されているディレクトリは1つになりました。
+			</p>
+
+			<p>
+			もう一度 POPD コマンドを使ってスタックからディレクトリを取り出しカレントディレクトリを変更します。
+			</p>
+
+<div class="titlebox1">
+<p>
+popd
+</p>
+</div>
+
+			<p>
+			<img src="img/p5-9.png" tppabs="https://www.javadrive.jp/command/dir/img/p5-9.png" alt="複数のディレクトリをスタックに記憶する(7)" width="723" height="352">
+			</p>
+
+			<p>
+			一番最初のディレクトリに戻ることができました。
+			</p>
+
+			<p>
+			このように PUSHD コマンドを続けて実行することで、複数のディレクトリをスタックに記憶させることができます。POPD コマンドを実行すると新しくスタックに追加されたディレクトリ情報から順に取り出し、一度取り出したディレクトリは自動で削除されます。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			PUSHD コマンドと POPD コマンドを使ってカレントディレクトリを記憶してからディレクトリを移動したり、記憶したディレクトリを取り出してディレクトリを移動する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

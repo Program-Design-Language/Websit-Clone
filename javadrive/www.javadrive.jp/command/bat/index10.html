@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマンドプロンプト | テキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を使う(FOR)</title>
+<meta name="description" content="FOR コマンドを使いバッチファイルの中でテキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を行う方法について解説します。">
+
+<meta property="og:title" content="テキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を使う(FOR)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/command/bat/index10.html">
+<meta property="og:image" content="https://www.javadrive.jp/command/bat/img/p10-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="FOR コマンドを使いバッチファイルの中でテキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "コマンドプロンプトの使い方",
+    "item": "https://www.javadrive.jp/command/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "バッチファイルの作成",
+    "item": "https://www.javadrive.jp/command/bat/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/command/">コマンドプロンプトの使い方</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/command/bat/">バッチファイルの作成</a></li>
+				</ul>
+			</div>
+
+			<h1>テキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を使う(FOR)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			FOR コマンドは数値を変化させたりディレクトリに含まれるファイルを順に取得したりしながら繰り返しを行うことができますが、他にもテキストファイルの内容を読み込み、区切り文字でトークンに分解してから順に読み込んで処理することもできます。ここでは FOR コマンドを使いバッチファイルの中でテキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を行う方法について解説します。
+			</p>
+
+			<p>
+			※ FOR コマンドの基本的な使い方については「<a href="index9.html" tppabs="https://www.javadrive.jp/command/bat/index9.html">バッチファイルで繰り返し処理を使う(FOR)</a>」で解説しています。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">テキストファイルを読み込んで処理する</a></li>
+			<li><a href="#section2">行毎に取得するトークンの位置と数を指定する</a></li>
+			<li><a href="#section3">コメント行として処理される行頭の文字を指定する</a></li>
+			<li><a href="#section4">トークンに分割する区切り文字を変更する</a></li>
+			<li><a href="#section5">ファイルの行頭でスキップする行数を指定する</a></li>
+			<li><a href="#section6">空白が含まれるファイル名を指定する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">テキストファイルを読み込んで処理する</a></h2>
+
+			<p>
+			FOR コマンドにはいくつか書式がありますが、テキストファイルを読み込んで処理する場合は次の書式を使います。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F ["オプション"] %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			オプションなしで FOR コマンドを実行した場合、ファイルセットに記述したファイルを読み込み、最初に行ごとに分割します。そして行ごとにデフォルトの区切り文字である半角スペースとタブでトークンに分割し、最初に見つかったトークンを変数に読み込みながら繰り返し処理が行われます。
+			</p>
+
+			<p>
+			今回読み込むファイルとしてカレントディレクトリに address.txt を用意しました。各行は半角スペースで区切りそれぞれ4つの項目の値が入力されています。
+			</p>
+
+			<p>
+			<img src="img/p10-1.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-1.png" alt="テキストファイルを読み込んで処理する(1)" width="728" height="444">
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f %%t in (address.txt) do (<br>
+&nbsp;&nbsp;echo token = %%t<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、指定したファイルを各行ごとに半角スペースでトークンに区切り、最初のトークンを変数 t に順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p10-2.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-2.png" alt="テキストファイルを読み込んで処理する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			区切り文字や各行ごとに取得するトークンの数はオプションで指定することができます。順に確認していきます。
+			</p>
+
+<h2><a id="section2">行毎に取得するトークンの位置と数を指定する</a></h2>
+
+			<p>
+			デフォルトでは各行毎に最初のトークンを取得して変数に格納していました。オプションを使うことで、行毎に何番目のトークンを取得するのかを指定することができます。
+			</p>
+
+			<p>
+			例えば各行の2番目のトークンだけを取得したい場合はオプションを次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "token=2" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			各行から複数のトークンを取得することもできます。例えば各行の1番目、3番目、4番目のトークンを取得したい場合はオプションを次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "token=1,3,4" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			範囲で指定することもできます。例えば各行の2番目から4番目のトークンを取得したい場合はオプションを次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "token=2-4" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			複数のトークンを取得する場合、変数が自動的に追加されます。例えば FOR コマンドで変数として %%i を指定した場合、3つのトークンを取得することにすると自動的に %%j と %%k が定義されて3つのトークンがそれぞれの変数に格納されます(自動で決まる変数名は、指定した変数名のアルファベット順で次のアルファベットになります。3個以上の場合も同様です)。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f "tokens="1,3,4" %%t in (address.txt) do (<br>
+&nbsp;&nbsp;echo token = %%t, %%u, %%v<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、指定したファイルを各行ごとに半角スペースでトークンに区切り、1番目と3番目と4番目のトークンを変数 t 、変数 u 、変数 v に順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p10-3.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-3.png" alt="行毎に取得するトークンの位置と数を指定する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			取得するトークンを指定する時に最後にアスタリスク(*)を記述すると、最後に取得したトークンよりもあとのテキストがすべて変数に格納されます。例えば次のように記述すると変数が3つ使用されて、最初の変数には1番目のトークン、2番目の変数には2番目のトークン、3番目の変数には2番目のトークンよりあとの行末までのテキストがすべて格納されます。(アスタリスクの前にはカンマなどは不要です)。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "token=1,2*" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f "tokens="1,2*" %%t in (address.txt) do (<br>
+&nbsp;&nbsp;echo token = %%t, %%u, %%v<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、指定したファイルを各行ごとに半角スペースでトークンに区切り、1番目と2番目のトークンを変数 t と変数 u に格納し、それ以降のテキストを変数 v に順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p10-4.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-4.png" alt="行毎に取得するトークンの位置と数を指定する(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section3">コメント行として処理される行頭の文字を指定する</a></h2>
+
+			<p>
+			デフォルトでは行の先頭にセミコロン(;)が記述されている行はコメントとして無視されます。例えば読み込むテキストファイルを次のように変更してみました。
+			</p>
+
+			<p>
+			<img src="img/p10-5.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-5.png" alt="コメント行として処理される行頭の文字を指定する(1)" width="728" height="444">
+			</p>
+
+			<p>
+			このファイルを読み込み4つのトークンを表示するように記述したバッチファイルを実行してみると、行頭にセミコロンが記述された行は無視されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p10-6.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-6.png" alt="コメント行として処理される行頭の文字を指定する(2)" width="723" height="352">
+			</p>
+
+			<p>
+			オプションを使うことで、コメントとして無視される行頭の文字を別の文字に変更することができます。例えば行頭にビックリマーク(!)がある行をコメント行としたい場合には次のように記述します。(指定できる文字は1文字だけです)。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "eol=!" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f "eol=! tokens="1-4" %%t in (address.txt) do (<br>
+&nbsp;&nbsp;echo token = %%t, %%u, %%v, %%w<br>
+)
+</p>
+</div>
+
+<div class="borderdiv">
+複数のオプションを記述する場合は半角スペースで区切って続けて記述します
+</div>
+
+			<p>
+			また読み込むテキストファイルを次のように変更してみました。
+			</p>
+
+			<p>
+			<img src="img/p10-7.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-7.png" alt="コメント行として処理される行頭の文字を指定する(3)" width="728" height="444">
+			</p>
+
+			<p>
+			バッチファイルを実行すると、行の先頭にビックリマークがない行に対して1番目から3番目のトークンを変数に順に格納しながらコマンドを実行します。行頭にセミコロンがある行はコメントとして扱われないのでセミコロンも文字の1つとして扱われています。
+			</p>
+
+			<p>
+			<img src="img/p10-8.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-8.png" alt="行毎に取得するトークンの位置と数を指定する(4)" width="723" height="352">
+			</p>
+
+<h2><a id="section4">トークンに分割する区切り文字を変更する</a></h2>
+
+			<p>
+			トークンに分割する区切り文字はデフォルトでは半角スペースですが別の文字に変更することができます。例えば区切り文字をカンマ(,)にするには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "delims=," %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			区切り文字を複数指定することもできます。例えば区切り文字としてカンマ(,)、半角スペース、セミコロン(;)の3つを指定するには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "delims=, ;" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f "delims=, tokens=1-3" %%t in (address.txt) do (<br>
+&nbsp;&nbsp;echo token = %%t, %%u, %%v<br>
+)
+</p>
+</div>
+
+			<p>
+			また読み込むテキストファイルを次のように変更してみました。
+			</p>
+
+			<p>
+			<img src="img/p10-9.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-9.png" alt="トークンに分割する区切り文字を変更する(1)" width="728" height="444">
+			</p>
+
+			<p>
+			バッチファイルを実行すると、行の先頭にビックリマークがない行に対して1番目から3番目のトークンを変数に順に格納しながらコマンドを実行します。行頭にセミコロンがある行はコメントとして扱われないのでセミコロンも文字の1つとして扱われています。
+			</p>
+
+			<p>
+			<img src="img/p10-10.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-10.png" alt="トークンに分割する区切り文字を変更する(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section5">ファイルの行頭でスキップする行数を指定する</a></h2>
+
+			<p>
+			読み込むファイルの中で最初の数行を処理する必要がない場合はスキップすることができます。例えば最初の2行をスキップするには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "skip=2" %%変数 IN (ファイル セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f "skip=2 tokens=1-3" %%t in (address.txt) do (<br>
+&nbsp;&nbsp;echo token = %%t, %%u, %%v<br>
+)
+</p>
+</div>
+
+			<p>
+			また読み込むテキストファイルを次のように用意しました。
+			</p>
+
+			<p>
+			<img src="img/p10-11.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-11.png" alt="トークンに分割する区切り文字を変更する(1)" width="728" height="444">
+			</p>
+
+			<p>
+			バッチファイルを実行すると、ファイルの最初の2行をスキップして3行目から繰り返し処理が実行されています。
+			</p>
+
+			<p>
+			<img src="img/p10-12.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-12.png" alt="トークンに分割する区切り文字を変更する(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section6">空白が含まれるファイル名を指定する</a></h2>
+
+			<p>
+			読み込むファイル名に空白が含まれる場合、ファイル名をダブルクォーテーションで囲う必要があります。この時オプションとして usebackq を指定して次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /F "usebackq" %%変数 IN ("ファイル名") DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /f "usebackq tokens=1-3" %%t in ("address test.txt") do (<br>
+&nbsp;&nbsp;echo token = %%t, %%u, %%v<br>
+)
+</p>
+</div>
+
+			<p>
+			また読み込むテキストファイルの名前を address test.txt と空白が含まれるファイル名にしました。
+			</p>
+
+			<p>
+			バッチファイルを実行すると、空白が含まれるファイル名であっても問題なく処理することができました。
+			</p>
+
+			<p>
+			<img src="img/p10-13.png" tppabs="https://www.javadrive.jp/command/bat/img/p10-13.png" alt="空白が含まれるファイル名を指定する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			FOR コマンドを使ってテキストファイルの内容を読み込んでトークンに分割し繰り返し処理を行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

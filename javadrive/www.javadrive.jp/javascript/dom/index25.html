@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 複数のノードをまとめて追加(DocumentFragment)</title>
+<meta name="description" content="DocumentFragment オブジェクトを作成すると、一時的に利用する DOM ツリーを作成することができます。たくさんのノードをドキュメントに追加する必要がある場合、一つ一つのノードを順番に追加していくと、その都度画面の位置調整などの計算が発生する可能性があります。 DocumentFragment オブジェクトを作成し、一時的な DOM ツリーに複数のノードを追加したあとでドキュメントには DocumentFragment オブジェクトを追加することで画面の位置調整などの計算を最小限にすることができます。ここでは DocumentFragment オブジェクトの使い方について解説します。">
+
+<meta property="og:title" content="複数のノードをまとめて追加(DocumentFragment)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/dom/index25.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/dom/img/p25-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="DocumentFragment オブジェクトを作成すると、一時的に利用する DOM ツリーを作成することができます。たくさんのノードをドキュメントに追加する必要がある場合、一つ一つのノードを順番に追加していくと、その都度画面の位置調整などの計算が発生する可能性があります。 DocumentFragment オブジェクトを作成し、一時的な DOM ツリーに複数のノードを追加したあとでドキュメントには DocumentFragment オブジェクトを追加することで画面の位置調整などの計算を最小限にすることができます。ここでは DocumentFragment オブジェクトの使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "DOM入門",
+    "item": "https://www.javadrive.jp/javascript/dom/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/dom/">DOM入門</a></li>
+				</ul>
+			</div>
+
+			<h1>複数のノードをまとめて追加(DocumentFragment)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			DocumentFragment オブジェクトを作成すると、一時的に利用する DOM ツリーを作成することができます。たくさんのノードをドキュメントに追加する必要がある場合、一つ一つのノードを順番に追加していくと、その都度画面の位置調整などの計算が発生する可能性があります。 DocumentFragment オブジェクトを作成し、一時的な DOM ツリーに複数のノードを追加したあとでドキュメントには DocumentFragment オブジェクトを追加することで画面の位置調整などの計算を最小限にすることができます。ここでは DocumentFragment オブジェクトの使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">DocumentFragmentオブジェクトを作成する</a></li>
+			<li><a href="#section2">DocumentFragmentオブジェクトにノードを追加する</a></li>
+			<li><a href="#section3">他のノードにDocumentFragmentオブジェクトを追加する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">DocumentFragmentオブジェクトを作成する</a></h2>
+
+			<p>
+			最初に空の DocumentFragment オブジェクトを作成します。 Document オブジェクトの createDocumentFragment メソッドを使います。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+document.createDocumentFragment()
+</pre>
+</div>
+
+			<p>
+			実際には次のように作成します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let fragment = document.createDocumentFragment();
+</pre>
+</div>
+
+			<p>
+			または DocumentFragment オブジェクトのコンストラクタを使用し次のように作成することもできます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let fragment = new DocumentFragment();
+</pre>
+</div>
+
+			<p>
+			どちらの方法でも構いません。
+			</p>
+
+<h2><a id="section2">DocumentFragmentオブジェクトにノードを追加する</a></h2>
+
+			<p>
+			DocumentFragment オブジェクトは Node オブジェクトや ParentNode オブジェクトのメソッドが利用できますので、 append メソッドや prepend メソッドなどを使ってノードを追加することができます。
+			</p>
+
+			<p>
+			例えば DocumentFragment オブジェクトを作成したあとで div タグの要素ノードと p タグの要素ノードを作成しそれぞれの要素ノードを DocumentFragment オブジェクトに追加するには次のように行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let fragment = document.createDocumentFragment();
+
+let child1 = document.createElement('div');
+let child2 = document.createElement('p');
+child2.append(document.createTextNode('Hello'));
+
+fragment.append(child1);
+fragment.append(child2);
+
+console.log(fragment);
+<span class="bold">&gt;&gt; #document-fragment
+&gt;&gt; &nbsp;&nbsp;&lt;div&gt;?&lt;/div&gt;
+?&gt;&gt; &nbsp;&nbsp;&lt;p&gt;?Hello?&lt;/p&gt;</span>
+</pre>
+</div>
+
+			<p>
+			※ ノードを追加する append メソッドなどの使い方については「<a href="index20.html" tppabs="https://www.javadrive.jp/javascript/dom/index20.html">ノードを子ノードの中の先頭または最後に追加(prepend,append,appendChild)</a>」を参照されてください。
+			</p>
+
+<h2><a id="section3">他のノードにDocumentFragmentオブジェクトを追加する</a></h2>
+
+			<p>
+			DocumentFragment オブジェクトもノードのひとつですので、既にドキュメントに追加されているノードの子ノードや同じ階層のノードとして追加することができます。例えば id 属性の値が xxx のノードの子ノードとして DocumentFragment オブジェクトを追加するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let fragment = document.createDocumentFragment();
+
+let child1 = document.createElement('div');
+let child2 = document.createElement('p');
+child2.append(document.createTextNode('Hello'));
+
+fragment.append(child1);
+fragment.append(child2);
+
+let parentnode = document.getElementById('xxx');
+parentnode.append(fragment);
+</pre>
+</div>
+
+			<p>
+			ただ他のノードと違い、 DocumentFragment オブジェクトそのものが追加されるわけではなく DocumentFragment オブジェクトに追加されているノードだけが追加される点に注意してください。
+			</p>
+
+			<p>
+			例えば li タグの要素ノードを 2 つ追加した DocumentFragment オブジェクトを、 ul タグの要素ノードの子ノードとして追加する場合で考えてみます。
+			</p>
+
+			<p>
+			<img src="img/p25-1.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p25-1.png" alt="他のノードにDocumentFragmentオブジェクトを追加する(1)" width="728" height="560">
+			</p>
+
+			<p>
+			この時、 DocumentFragment オブジェクトそのものが子ノードとして追加されるのではなく、 DocumentFragment オブジェクトに追加されていたノードだけが子ノードとして追加されます。
+			</p>
+
+			<p>
+			<img src="img/p25-2.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p25-2.png" alt="他のノードにDocumentFragmentオブジェクトを追加する(2)" width="728" height="454">
+			</p>
+
+			<p>
+			このように DocumentFragment オブジェクトを利用することで、一時的な DOM ツリーを作成し必要なノードを追加したあとで、一時的な DOM ツリーに追加されていたノードだけをまとめて別のノードの子ノードなどに追加することができます。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;ノードを追加&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;最近行った店&lt;/p&gt;
+
+&lt;ul id="shopinfo"&gt;
+  &lt;li id="m01"&gt;リストランテ南青山&lt;/li&gt;
+  &lt;li id="m02"&gt;和食屋青山&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;button onClick="getElement();"&gt;ノードを追加&lt;/button&gt;
+
+&lt;script&gt;
+function getElement(){
+    let fragment = document.createDocumentFragment();
+    let child1 = document.createElement('li');
+    child1.append(document.createTextNode('カレーショップ南青山'));
+    let child2 = document.createElement('li');
+    child2.append(document.createTextNode('Cafe Aoyama'));
+
+    fragment.append(child1);
+    fragment.append(child2);
+
+    let parentnode = document.getElementById('shopinfo');
+    parentnode.append(fragment);
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 DocumentFragment オブジェクトを作成したあと li タグの要素を 2 つ作成し DocumentFragment オブジェクトに追加します。そのあとで追加先ノードとして id 属性が shopinfo の要素ノードを取得し、先に作成した DocumentFragment オブジェクトを追加先ノードの子ノードの最後に追加しています。
+			</p>
+
+			<p>
+			<img src="img/p25-3.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p25-3.png" alt="他のノードにDocumentFragmentオブジェクトを追加する(3)" width="728" height="660" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			DocumentFragment オブジェクトの使い方について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

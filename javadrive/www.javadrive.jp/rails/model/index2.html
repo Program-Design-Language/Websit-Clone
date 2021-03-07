@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MySQL用のデータベース設定ファイル(database.yml) - Ruby on Rails入門</title>
+<meta name="keywords" content="MySQL用のデータベース設定ファイル" />
+<meta name="description" content="RailsアプリケーションでデータベースとしてMySQLを使用する場合のデータベース設定ファイル(database.yml)に見方について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/model/" itemprop="url"><span itemprop="title">モデルとデータベース</span></a></li>
+		</ul>
+</div>
+
+			<h1>MySQL用のデータベース設定ファイル(database.yml)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Railsではデフォルトで設定されるSQLite以外でもMySQLやPostgreSQLといったデータベースを使用することができます。ここでは例としてMySQLを使用する場合に「database.yml」ファイルにどのように設定を記述すればいいのかについて解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">MySQL用の「config/database.yml」ファイル</a><br />
+			2.<a href="#section2">MySQLのユーザー作成</a><br />
+			</p>
+
+<h2><a id="section1">MySQL用の「config/database.yml」ファイル</a></h2>
+
+			<p>
+			Railsのアプリケーションを作成すると自動的に「database.yml」ファイルが作成されデフォルトの設定が記述されます。特に指定しない場合はSQLiteを使う前提で作成されるため、他のデータベースを使用する場合はRailsのアプリケーションを作成する時にオプションでデータベースを指定します。
+			</p>
+
+<pre class="fixcomment">
+rails new アプリケーション名 -d データベース
+rails new アプリケーション名 --database=データベース
+</pre>
+
+			<p>
+			指定可能なデータベースは「mysql / oracle / postgresql / sqlite3 / frontbase / ibm_db / sqlserver / jdbcmysql / jdbcsqlite3 / jdbcpostgresql / jdbc」です。
+			</p>
+
+			<p>
+			では実際に試してみます。次のようにテスト用の「sample_mysql」アプリケーションを作成します。
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/rails/model/img/p2-1.png" alt="p2-1" width="517" height="286" />
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/rails/model/img/p2-2.png" alt="p2-2" width="517" height="286" />
+			</p>
+
+			<p>
+			データベース設定ファイルの「config/database.yml」ファイルも作成されていますのでテキストエディタで開いてみます。
+			</p>
+
+<pre class="fixcode">
+# MySQL.  Versions 4.1 and 5.0 are recommended.
+# 
+# Install the MYSQL driver
+#   gem install mysql2
+#
+# Ensure the MySQL gem is defined in your Gemfile
+#   gem 'mysql2'
+#
+# And be sure to use new-style password hashing:
+#   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sample_mysql_development
+  pool: 5
+  username: root
+  password:
+  host: localhost
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sample_mysql_test
+  pool: 5
+  username: root
+  password:
+  host: localhost
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sample_mysql_production
+  pool: 5
+  username: root
+  password:
+  host: localhost
+</pre>
+
+			<p>
+			オプションで指定したMySQLを利用するためのデフォルトの設定が記載されています。development(開発用)、test(テスト用)、production(本番用)の3つに分かれている点はSQLiteの場合と同じですが設定項目は少し異なります。
+			</p>
+
+<pre class="fixcomment">
+adapter:   使用するデータベース種類
+encoding:  文字コード
+reconnect: 再接続するかどうか
+database:  データベース名
+pool:      コネクションプーリングで使用するコネクションの上限
+username:  ユーザー名
+password:  パスワード
+host:      MySQLが動作しているホスト名
+</pre>
+
+			<p>
+			MySQLの場合は特にホスト名、ユーザー名、パスワードの指定が必要です。ユーザー名はデフォルトで「root」になっていますが、データベース作成の権限があるユーザーをあらかじめMySQLに作成しておき、そのユーザー名とパスワードを指定しても結構です。
+			</p>
+
+<h2><a id="section2">MySQLのユーザー作成</a></h2>
+
+			<p>
+			今回はサンプル用にユーザーを作成しました。MySQLのユーザーを作成する方法の詳細については「<a href="javascript:if(confirm('https://www.dbonline.jp/mysql/user/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.dbonline.jp/mysql/user/'" tppabs="https://www.dbonline.jp/mysql/user/">ユーザーの作成</a>」をご参照下さい。
+			</p>
+
+			<p>
+			まずrootユーザーでMySQLにログインします。
+			</p>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/rails/model/img/p2-3.png" alt="p2-3" width="517" height="299" />
+			</p>
+
+			<p>
+			Railsアプリケーション用のユーザー「railsuser」を作成します(パスワードは「railspass」としました)。
+			</p>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/rails/model/img/p2-4.png" alt="p2-4" width="517" height="299" />
+			</p>
+
+			<p>
+			次に権限を設定します。どのような権限が必要なのかはっきりと分からなかったため、グローバルレベルでALL権限を付与してあります。(この部分がはっきりと分かりましたら修正します)。
+			</p>
+
+			<p>
+			<img src="img/p2-5.png" tppabs="https://www.javadrive.jp/rails/model/img/p2-5.png" alt="p2-5" width="517" height="299" />
+			</p>
+
+			<p>
+			これで準備は完了です。では「config/database.yml」ファイルを次のように修正しておきます。
+			</p>
+
+<pre class="fixcode">
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sample_mysql_development
+  pool: 5
+  <span class="red">username: railsuser
+  password: railspass</span>
+  host: localhost
+
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sample_mysql_test
+  pool: 5
+  <span class="red">username: railsuser
+  password: railspass</span>
+  host: localhost
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: sample_mysql_production
+  pool: 5
+  <span class="red">username: railsuser
+  password: railspass</span>
+  host: localhost
+</pre>
+
+			<p>
+			ご自身の環境に合わせて「host」を変更し、また必要であれば「database」も変更しておいて下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

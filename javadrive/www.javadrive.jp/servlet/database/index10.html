@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>prepareStatementの使用 - データベース接続 - サーブレット入門</title>
+<meta name="keywords" content="prepareStatement,データベース,サーブレット" />
+<meta name="description" content="prepareStatementの使用" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/database/" itemprop="url"><span itemprop="title">データベース接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>prepareStatementの使用</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			「PreparedStatement」は「Statement」と同じくデータベースに対するSQL文を実行するために使われますが、「PreparedStatement」で使うSQLは事前にコンパイルが行われています。その為高速に実行することが出来るようになっています。
+			</p>
+
+			<p>
+			ただ全てを事前にコンパイルしてしまっては同じ問い合わせにしか利用出来ません。そこでSQLの中でも変更が行われる部分を後からパラメータとして指定することが出来るようになっています。
+			</p>
+
+			<p>
+			「PreparedStatement」は例えば大量のINSERTを実行するような場合など基本的に同じSQL文で挿入する値の部分だけが違うようなSQLを実行する場合に便利なステートメントになっています。
+			</p>
+
+			<h2>PreparedStatementの作成</h2>
+
+			<p>
+			プリペアドステートメントは「java.sql.PreparedStatement」インターフェースのオブジェクトですが、作成するにはコネクションから作成します。具体的には「Connection」インターフェースで定義されている"prepareStatement"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+prepareStatement
+PreparedStatement prepareStatement(String sql)
+                                   throws SQLException
+</pre>
+<pre class="mexplain">
+パラメータ付き SQL 文をデータベースに送るための PreparedStatement オブジェ
+クトを作成します。
+
+返される PreparedStatement オブジェクトを使って作成された結果セットは、デ
+フォルトでは、TYPE_FORWARD_ONLY の型で、CONCUR_READ_ONLY の並行処理レベル
+を持ちます。 
+
+パラメータ:
+  sql - 1 つ以上の '?' IN パラメータプレースホルダーを含めることがで
+    きる SQL 文 
+戻り値:
+  プリコンパイルされた SQL 文を含む新しいデフォルトの PreparedStatement
+    オブジェクト 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			パラメータとして後から指定する部分には、実際の値を記述する替わりに「?」を記述したSQL文を作成し、そのSQLを元にプリペアドステートメントを作成します。
+			</p>
+
+<pre class="fixcode">
+String sql = "insert into kabukatable (code, company) values (?, ?)";
+PreparedStatement pstmt = conn.prepareStatement(sql);
+</pre>
+
+			<p>
+			この例では実際に挿入する値を記述箇所に「?」を使っています。2箇所使っていますので、後からパラメータを2つ指定する必要があります。
+			</p>
+
+			<h2>パラメータへ値の設定</h2>
+
+			<p>
+			次にプリペアドステートメントオブジェクトに対して、パラメータに設定する実際の値を指定します。これには「PreparedStatement」インターフェースで用意されている「setInt」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+setInt
+void setInt(int parameterIndex,
+            int x)
+            throws SQLException
+</pre>
+<pre class="mexplain">
+指定されたパラメータを指定された Java の int 値に設定します。データベー
+スに送るときに、ドライバはこれを SQL INTEGER 値に変換します。 
+
+パラメータ:
+  parameterIndex - 最初のパラメータは 1、2 番目のパラメータは 2、...
+   となる
+  x - パラメータ値 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			パラメータの数だけメソッドを実行します。パラメータはSQL文中に記述された「?」を先頭から順番に1，2，3、･･･と順番に番号が割り当てられています。1番目のメソッドにはパラメータの番号を指定し、2番目の引数にパラメータに設定したい値を記述します。
+			</p>
+
+<pre class="fixcode">
+String sql = "insert into kabukatable (code, company) values (?, ?)";
+PreparedStatement pstmt = conn.prepareStatement(sql);
+
+pstmt.setInt(1, 4755);
+pstmt.setString(2, "楽天(株)");
+</pre>
+
+			<p>
+			パラメータに値を設定するには設定する値のデータ型毎に別々のメソッドが用意されています。例えば次のようなメソッドがあります。
+			</p>
+
+<table class="pro">
+<tr><th style="width:350px;">メソッド</th><th>説明</th></tr>
+<tr><td>void setString(int parameterIndex, String x)</td><td>String 値に設定します。</td></tr>
+<tr><td>void setInt(int parameterIndex, int x)</td><td>int 値に設定します。</td></tr>
+<tr><td>void setLong(int parameterIndex, long x)</td><td>long 値に設定します。</td></tr>
+<tr><td>void setByte(int parameterIndex, byte x)</td><td>バイト配列に設定します。</td></tr>
+<tr><td>void setFloat(int parameterIndex, float x)</td><td>float 値に設定します。</td></tr>
+<tr><td>void setDouble(int parameterIndex, double x)</td><td>double 値に設定します。</td></tr>
+<tr><td>void setDate(int parameterIndex, Date x)</td><td>java.sql.Date 値に設定します。</td></tr>
+<tr><td>void setTime(int parameterIndex, Time x)</td><td>java.sql.Time 値に設定します。</td></tr>
+<tr><td>void setBoolean(int parameterIndex, boolean x)</td><td>boolean 値に設定します。</td></tr>
+<tr><td>void setTimestamp(int parameterIndex, Timestamp x)</td><td>java.sql.Timestamp 値に設定します。</td></tr>
+</table>
+
+			<p>
+			設定するデータ型に合わせてメソッドを選択して下さい。
+			</p>
+
+			<p>
+			なお、MySQLの場合に文字列を使う場合は「'楽天(株)'」のようにシングルクオーテーション(')で括って記述していましたが、プリペアドステートメントの「setString」メソッドを使う場合には、自動的にデータベースで必要なエスケープ処理をしてくれます。
+			</p>
+
+			<h2>プリペアドステートメントの実行</h2>
+
+			<p>
+			プリペアドステートメントを作成したら、SQL文を実行します。「PreparedStatement」インターフェースにはSELECTなどのクエリーの結果を取得する場合に使う「executeQuery」メソッドと、INSERTやUPDATEなどの結果が返されない場合に使う「executeUpdate」メソッドがあります。この使い方は「Statement」の場合と同じです。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  String sql = "insert into kabukatable (code, company) values (?, ?)";
+  PreparedStatement pstmt = conn.prepareStatement(sql);
+  pstmt.setInt(1, 4755);
+  pstmt.setString(2, "楽天(株)");
+
+  int num = pstmt.executeUpdate();
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<h2>パラメータのクリア</h2>
+
+			<p>
+			プリペアドステートメントを複数回続けて実行する場合、値が変更されないパラメータについては改めて設定しなくても構いません。
+			</p>
+
+			<p>
+			例えば次の例では1番目のパラメータは変更が無いので、2回目に実行する時には2番目のパラメータだけを設定しています。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+
+try {
+  conn = DriverManager.getConnection(url, user, password);
+
+  String sql = "insert into kabukatable (basho, company) values (?, ?)";
+  PreparedStatement pstmt = conn.prepareStatement(sql);
+
+  pstmt.setInt(1, "東証");
+  pstmt.setString(2, "ドコモ");
+  int num = pstmt.executeUpdate();
+
+  pstmt.setString(2, "KDDI");
+  num = pstmt.executeUpdate();
+}catch (SQLException e){
+  out.println("SQLException:" + e.getMessage());
+}
+</pre>
+
+			<p>
+			それに対して、現在設定されているパラメータを全て一度クリアしたい場合には「PreparedStatement」インターフェースで用意されている「clearParameters」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+clearParameters
+void clearParameters() throws SQLException
+</pre>
+<pre class="mexplain">
+現在のパラメータ値をすぐにクリアします。 
+
+通常、文を繰り返し使用するために、パラメータ値は強制的に残されます。パラ
+メータ値を設定すると、前の値は自動的にクリアされます。しかし、現在のパラ
+メータ値によって使用されたリソースをただちに解放したほうが役に立つ場合が
+あります。これは、メソッド clearParameters を呼び出して実行することがで
+きます。 
+
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			パラメータを残すような利用を行う場合、予期せぬ値が残ってしまうようなケアレスミスなどが発生しやすくなります。明確にクリアしたい場合にはこのメソッドを利用して下さい。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルプログラムで試してみましょう。
+			</p>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;databasetest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;DatabaseTest6&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;databasetest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/databasetest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。
+			</p>
+
+			<p>
+			<a href="DatabaseTest6.java.htm" tppabs="https://www.javadrive.jp/servlet/database/DatabaseTest6.java">DatabaseTest6.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
+
+public class DatabaseTest6 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;データベーステスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    Connection conn = null;
+    String url = "jdbc:mysql://localhost/jdbctestdb";
+    String user = "testuser";
+    String password = "testpass";
+
+    try {
+      Class.forName("com.mysql.jdbc.Driver").newInstance();
+      conn = DriverManager.getConnection(url, user, password);
+
+      String sql = "insert into kabukatable (code, company) values (?, ?)";
+      PreparedStatement pstmt = conn.prepareStatement(sql);
+
+      pstmt.setInt(1, 9437);
+      pstmt.setString(2, "(株)ＮＴＴドコモ");
+      int num = pstmt.executeUpdate();
+
+      pstmt.setInt(1, 9433);
+      pstmt.setString(2, "ＫＤＤＩ(株)");
+      num = pstmt.executeUpdate();
+
+      pstmt.close();
+
+      sql = "select * from kabukatable";
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+
+      while(rs.next()){
+        int code = rs.getInt("code");
+        String company = rs.getString("company");
+        out.println("&lt;p&gt;");
+        out.println("コード:" + code + ", 会社名:" + company);
+        out.println("&lt;/p&gt;");
+      }
+
+      rs.close();
+      stmt.close();
+    }catch (ClassNotFoundException e){
+      out.println("ClassNotFoundException:" + e.getMessage());
+    }catch (SQLException e){
+      out.println("SQLException:" + e.getMessage());
+    }catch (Exception e){
+      out.println("Exception:" + e.getMessage());
+    }finally{
+      try{
+        if (conn != null){
+          conn.close();
+        }
+      }catch (SQLException e){
+        out.println("SQLException:" + e.getMessage());
+      }
+    }
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;database&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/database/databasetest」へアクセスしてみます。
+			</p>
+
+			<p>
+			<img src="img/p22.png" tppabs="https://www.javadrive.jp/servlet/database/img/p22.png" alt="プリペアドステートメント" width="522" height="402">
+			</p>
+
+			<p>
+			今回は2つの行を追加して後で全データを取り出して表示しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

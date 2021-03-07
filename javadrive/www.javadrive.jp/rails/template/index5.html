@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テンプレートの中でRubyコードを使う - Ruby on Rails入門</title>
+<meta name="keywords" content="テンプレートの中でRubyコードを使う" />
+<meta name="description" content="RailsのテンプレートではHTML文を記述するだけではなくRubyのコードを記述することが可能です。ここではどのようにRubyコードを記述するのかを解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/template/" itemprop="url"><span itemprop="title">テンプレート(ビュー)とヘルパーメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>テンプレートの中でRubyコードを使う</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここまでの例ではテンプレートの中でHTML文だけを記述してきましたが、テンプレートの中ではRubyコードを記述することも可能です。複雑な処理はアクションの中で行うのが基本ですが、テンプレートの中でも簡単な計算をしたり繰り返し処理を記述できると便利です。ここではテンプレートの中でRubyコードを記述する方法を解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">&lt;% ～ %&gt;と&lt;%= ～ %&gt;</a><br />
+			2.<a href="#section2">繰り返し処理</a><br />
+			3.<a href="#section3">条件分岐</a><br />
+			4.<a href="#section4">改行を取り除いて出力</a><br />
+			</p>
+
+<h2><a id="section1">&lt;% ～ %&gt;と&lt;%= ～ %&gt;</a></h2>
+
+			<p>
+			今までのサンプルではテンプレートにHTML文だけを記述していました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+本の値段は2,500円です。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			テンプレートの中にRubyコードを記述するには&lt;% ～ %&gt;または&lt;%= ～ %&gt;の中にRubyコードを記述します。次の例を見て下さい。
+			</p>
+
+<pre class="fixcode">
+&lt;% price = 2500 * 1.05 %&gt;
+&lt;p&gt;
+本の値段は&lt;%= price %&gt;円です。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			テンプレートの中で&lt;% ～ %&gt;または&lt;%= ～ %&gt;の中に記述されたものはRubyのコードとして実行されます。その為、「&lt;% price = 2500 * 1.05 %&gt;」は「price = 2500 * 1.05」という文字列が記述されているのではなく、変数priceに2500 * 1.05を計算した結果が格納されます。
+			</p>
+
+			<p>
+			では&lt;% ～ %&gt;または&lt;%= ～ %&gt;の違いは何でしょうか。どちらも中に記述されたRubyコードが実行されるのですが、&lt;%= ～ %&gt;の方は実行された結果を評価し、文字列として出力します。「本の値段は&lt;%= price %&gt;円です。」は「&lt;%= price %&gt;」の部分が変数priceに格納された値が評価されて「2625.0」という文字列になりますので、最終的に「本の値段は2625.0円です。」と出力されることになります。
+			</p>
+
+			<p>
+			このように&lt;% ～ %&gt;の方は結果を出力しない計算や繰り返し処理などのRubyコードを記述するのに使用し、&lt;%= ～ %&gt;の方は文字列を出力するような処理で使用します。
+			</p>
+
+			<p>
+			では実際に試してみます。「books」コントロールの「show」アクションから呼び出されるテンプレートとして「app/views/books/show.html.erb」ファイルを作成し、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;% price = 2500 * 1.05 %&gt;
+&lt;p&gt;
+本の値段は&lt;%= price %&gt;円です。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			「books」コントローラには次のように「show」アクションを作成してあります。
+			</p>
+
+<pre class="fixcode">
+class BooksController &lt; ApplicationController
+  def show
+  end
+end
+</pre>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルに次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  get "books/show"
+end
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/rails/template/img/p5-1.png" alt="p5-1" width="502" height="290" />
+			</p>
+
+			<p>
+			このようにRubyコードによって本の値段の計算が行われ、計算した結果を含む文字列が出力されました。
+			</p>
+
+<h2><a id="section2">繰り返し処理</a></h2>
+
+			<p>
+			データベースから取得したデータの配列をアクションから受け取り、テンプレートの中で配列に含まれる要素の数だけ出力するといった処理はよく出てきます。色々な方法はありますが例えばeachメソッドを使ってRubyで記述すると次のようになります。
+			</p>
+
+<pre class="fixcomment">
+オブジェクト.each do |変数|
+  実行する処理
+end
+</pre>
+
+			<p>
+			テンプレートの中でも同じように繰り返し処理を記述することができます。例えば次のように記述することができます。
+			</p>
+
+<pre class="fixcode">
+&lt;% writers = ['浅田次郎', '道尾秀介', '重松清'] %&gt;
+&lt;p&gt;
+&lt;% writers.each do |writer| %&gt;
+&lt;%= writer %&gt;さん。
+&lt;% end %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			まず配列を作成した上で、配列に含まれる要素を順に出力しています。
+			</p>
+
+			<p>
+			では実際に試してみます。先程作成した「app/views/books/show.html.erb」ファイルに次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+好きな作家の方は
+&lt;/p&gt;
+
+&lt;% writers = ['浅田次郎', '道尾秀介', '重松清'] %&gt;
+&lt;p&gt;
+&lt;% writers.each do |writer| %&gt;
+&lt;%= writer %&gt;さん。
+&lt;% end %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+です。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			アクションやルーティングについては変更していません。ではアプリケーションを起動し、「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/rails/template/img/p5-2.png" alt="p5-2" width="502" height="290" />
+			</p>
+
+			<p>
+			配列に格納された要素の数だけ繰り返しが行われ、順に文字列として出力されていることが確認できます。
+			</p>
+
+<h2><a id="section3">条件分岐</a></h2>
+
+			<p>
+			条件に応じて処理を変更したい場合にif文が使用されます。Rubyで記述すると次のようになります。
+			</p>
+
+<pre class="fixcomment">
+if 条件式 then
+  実行する処理
+else
+  実行する処理
+end
+</pre>
+
+			<p>
+			テンプレートの中でも同じように繰り返し処理を記述することができます。例えば次のように記述することができます。
+			</p>
+
+<pre class="fixcode">
+&lt;% zaiko = 2 %&gt;
+&lt;p&gt;
+&lt;% if zaiko == 0 then %&gt;
+在庫がありません。
+&lt;% else %&gt;
+在庫が&lt;%= zaiko %&gt;個あります。
+&lt;% end %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			変数に格納されている値によって出力する文字列を変えています。
+			</p>
+
+			<p>
+			では実際に試してみます。先程作成した「app/views/books/show.html.erb」ファイルに次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+在庫の確認:
+&lt;/p&gt;
+
+&lt;% zaiko = 2 %&gt;
+&lt;p&gt;
+&lt;% if zaiko == 0 then %&gt;
+在庫がありません。
+&lt;% else %&gt;
+在庫が&lt;%= zaiko %&gt;個あります。
+&lt;% end %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			アクションやルーティングについては変更していません。ではアプリケーションを起動し、「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/rails/template/img/p5-3.png" alt="p5-3" width="502" height="290" />
+			</p>
+
+			<p>
+			在庫が格納された変数の値で条件分岐を行い、在庫がなければ「在庫がありません」と表示し、在庫があれば在庫の個数を表示します。今回は変数に2が格納されていましたので、在庫の数が表示されています。
+			</p>
+
+			<p>
+			今回は繰り返しと条件分岐について1つずつ試してみましたが、他にもwhile文やtimesメソッドなど任意のRubyコードを記述することができます。
+			</p>
+
+<h2><a id="section4">改行を取り除いて出力</a></h2>
+
+			<p>
+			テンプレートの中にRubyコードを記述するには&lt;% ～ %&gt;または&lt;%= ～ %&gt;を使ってきましたが、代わりに&lt;% ～ -%&gt;または&lt;%= ～ -%&gt;のように閉じるタグの方に「-」を付けると、閉じるタグの後で改行を行った場合でも出力される時は改行が取り除かれます。
+			</p>
+
+			<p>
+			次の例を見てください。同じように変数に格納された値を出力していますが、2番目の方は「-%&gt;」の後の改行が取り除かれた状態で出力されます。
+			</p>
+
+<pre class="fixcode">
+&lt;% msg = '山田' %&gt;
+
+&lt;p&gt;
+&lt;%= msg %&gt;
+さん
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= msg %&gt;さん
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= msg -%&gt;
+さん
+&lt;/p&gt;
+</pre>
+
+			<p>
+			このテンプレートを呼び出してみると次のように結果がブラウザに表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/rails/template/img/p5-4.png" alt="p5-4" width="502" height="290" />
+			</p>
+
+			<p>
+			微妙に異なっているのがお分かり頂けますでしょうか。ソースを確認してみると次のように出力されています。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+山田
+さん
+&lt;/p&gt;
+
+&lt;p&gt;
+山田さん
+&lt;/p&gt;
+
+&lt;p&gt;
+山田さん
+&lt;/p&gt;
+</pre>
+
+			<p>
+			このように余計な改行が最後に付かないようにしたい場合には「-%&gt;」のように「-」をつけて下さい。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

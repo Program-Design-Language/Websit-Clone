@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>否定の先読み - 先読みと後読み - Java正規表現の使い方</title>
+<meta name="keywords" content="否定の先読み,先読みと後読み,正規表現,java" />
+<meta name="description" content="否定の先読みの利用方法を確認します" />
+
+<link rel="stylesheet" href="../../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/regex/" itemprop="url"><span itemprop="title">Java正規表現の使い方</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/lookahead/" itemprop="url"><span itemprop="title">先読みと後読み</span></a></li>
+		</ul>
+</div>
+
+			<h1>否定の先読み</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			先読みには否定の先読みも用意されています。否定の先読みを行うパターンは"(?!"から")"の間に記述します。
+			</p>
+
+<pre class="fixcomment">
+"パターン(?!先読みパターン)"
+"(?!先読みパターン)パターン"
+</pre>
+
+			<p>
+			この場合は、先読みパターンに記載したパターンに一致しない場合に"(?!先読みパターン)"の部分がマッチします。
+			</p>
+
+			<p>
+			まず先読みパターンの場合の例を考えてみます。
+			</p>
+
+<pre class="fixcomment">
+ターゲット文字列
+"ColorBlack is #000000"
+"ColorBlue is #0000ff"
+
+パターン
+"Color(?=Black)B"
+</pre>
+
+			<p>
+			通常の先読みパターンであれば、"Color"の後に"B"が続くもので条件として"B"は"Black"と続くものという意味になりますので、"ColorBlack is #000000"にはマッチしますが"ColorBlue is #0000ff"にはマッチしません。
+			</p>
+
+			<p>
+			続いて否定の先読みパターンの場合の例を考えてみます。
+			</p>
+
+<pre class="fixcomment">
+ターゲット文字列
+"ColorBlack is #000000"
+"ColorBlue is #0000ff"
+
+パターン
+"Color(?!Black)B"
+</pre>
+
+			<p>
+			否定の先読みパターンであれば"、"Color"の後に"B"が続くもので条件として"B"は"Black"以外のものという意味になりますので、ColorBlack is #000000"にはマッチしませんが"ColorBlue is #0000ff"にはマッチします。
+			</p>
+
+			<p>
+			例えば次のような使い方ができます。
+			</p>
+
+<pre class="fixcode">
+"(?!0000)\d\d\d\d"
+</pre>
+
+			<p>
+			上記のパターンでは、"0000"ではない4桁の数字にマッチします。
+			</p>
+
+			<p>
+			なお先読みも否定先読みも位置にマッチするものなので、次のように複数の先読みパターンを記述することができます。
+			</p>
+
+<pre class="fixcode">
+"(?!0000)(?!9999)\d\d\d\d"
+</pre>
+
+			<p>
+			上記のパターンでは、"0000"及び"9999"ではない4桁の数字にマッチします。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。 
+			</p>
+
+			<p>
+			<a href="JSample2_1.java" tppabs="https://www.javadrive.jp/start/regex/lookahead/JSample2_1.java">JSample2_1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+class JSample2_1{
+  public static void main(String args[]){
+    String str1 = "No.8710";
+    String str2 = "No.0000";
+
+    String regex1 = "\\d\\d\\d\\d";
+    Pattern p1 = Pattern.compile(regex1);
+
+    String regex2 = "(?!0000)\\d\\d\\d\\d";
+    Pattern p2 = Pattern.compile(regex2);
+
+    System.out.println("パターン : " + regex1);
+
+    check(p1, str1);
+    check(p1, str2);
+
+    System.out.println("パターン : " + regex2);
+
+    check(p2, str1);
+    check(p2, str2);
+  }
+
+  private static void check(Pattern p, String target){
+    Matcher m = p.matcher(target);
+
+    if (m.find()){
+      System.out.println("○ " + target);
+      System.out.println("   " + m.group());
+    }else{
+      System.out.println("× " + target);
+    }
+  }
+}
+</pre>
+
+			<p>
+			ではコンパイルを行った上で実行してみます。 
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/start/regex/lookahead/img/p2-1.png" alt="p2-1" width="509" height="272">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

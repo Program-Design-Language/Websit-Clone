@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指定の文字列に置換(replaceAll,replaceFirstメソッド) - 正規表現を使った置換 - Java正規表現の使い方</title>
+<meta name="keywords" content="指定の文字列に置換,正規表現を使った置換,正規表現,java" />
+<meta name="description" content="指定の文字列に置換する方法を確認します" />
+
+<link rel="stylesheet" href="../../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/regex/" itemprop="url"><span itemprop="title">Java正規表現の使い方</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/replace/" itemprop="url"><span itemprop="title">正規表現を使った置換</span></a></li>
+		</ul>
+</div>
+
+			<h1>指定の文字列に置換</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			パターンにマッチした部分を他の文字列で置換する方法を確認していきます。
+			</p>
+
+			<h2>最初にマッチした部分を置換</h2>
+
+			<p>
+			まずはパターンに最初にマッチした部分を指定の文字列に置換する方法を確認します。Matcherクラスで定義されているreplaceFirstメソッドを使います。
+			</p>
+
+<pre class="mheader">
+replaceFirst
+public String replaceFirst(String replacement)
+</pre>
+<pre class="mexplain">
+パターンとマッチする入力シーケンスの部分シーケンスのうち、最初の部分シーケンスを指定され
+た置換文字列に置き換えます。
+
+このメソッドはまず、この正規表現エンジンをリセットします。次に、入力シーケンスを走査して、
+パターンとマッチする最初の文字列を検索します。パターンとマッチしない文字列は、結果文字列
+に直接追加されます。 パターンとマッチした文字列は、置換文字列に置換されて結果に追加されま
+す。appendReplacement メソッドと同様に、前方参照された部分シーケンスへの参照が置換文字列
+に含まれる場合があります。
+
+置換文字列内でバックスラッシュ (\) とドル記号 ($) を使用すると、それをリテラル置換文字列
+として処理した場合とは結果が異なる場合があります。ドル記号は、先に説明したとおり、前方参
+照された部分シーケンスへの参照として処理される場合があり、バックスラッシュは置換文字列内
+のリテラル文字をエスケープするのに使用されます。
+
+正規表現 dog、入力 "zzzdogzzzdogzzz"、および置換文字列 "cat" を指定した場合、その表現の正
+規表現エンジン上でこのメソッドを呼び出すと、文字列 "zzzcatzzzdogzzz" が生成されます。
+
+このメソッドを呼び出すと、この正規表現エンジンの状態が変わります。この正規表現エンジンを
+後続のマッチ操作で使用する場合は、最初に正規表現エンジンをリセットする必要があります。
+
+パラメータ:
+  replacement - 置換文字列 
+戻り値:
+  最初にマッチした部分シーケンスを置換文字列で置き換え、前方参照された部分シーケンスを必
+    要に応じて置換することによって構築された文字列
+</pre>
+
+			<p>
+			1番目の引数には置換したい文字列を指定して下さい。パターンに最初にマッチした部分を引数に指定した文字列で置換した結果を戻り値として返します。
+			</p>
+
+			<p>
+			次の例を見てください。
+			</p>
+
+<pre class="fixcode">
+String str = "Orange is 100yen, Banana is 180yen.";
+String regex = "yen";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+String result = m.replaceFirst("YEN");
+</pre>
+
+			<p>
+			最初にパターンにマッチした部分をreplaceFirstメソッドの引数である"YEN"に置き換えますので、結果として次の文字列を取得できます。
+			</p>
+
+<pre class="fixcomment">
+Orange is 100<span class="red">YEN</span>, Banana is 180yen.
+</pre>
+
+			<h2>マッチした部分を全て置換</h2>
+
+			<p>
+			続いてパターンにマッチした部分を全て指定の文字列に置換する方法を確認します。Matcherクラスで定義されているreplaceAllメソッドを使います。
+			</p>
+
+<pre class="mheader">
+replaceAll
+public String replaceAll(String replacement)
+</pre>
+<pre class="mexplain">
+パターンとマッチする入力シーケンスの部分シーケンスを、指定された置換文字列に置き換えます。
+
+このメソッドはまず、この正規表現エンジンをリセットします。次に、入力シーケンスを走査して、
+パターンとマッチする文字列を検索します。パターンとマッチしない文字列は、結果文字列に直接追
+加されます。 パターンとマッチした文字列は、置換文字列に置換されて結果に追加されます。
+appendReplacement メソッドと同様に、前方参照された部分シーケンスへの参照が置換文字列に含ま
+れる場合があります。
+
+置換文字列内でバックスラッシュ (\) とドル記号 ($) を使用すると、それをリテラル置換文字列と
+して処理した場合とは結果が異なる場合があります。ドル記号は、先に説明したとおり、前方参照さ
+れた部分シーケンスへの参照として処理される場合があり、バックスラッシュは置換文字列内のリテ
+ラル文字をエスケープするのに使用されます。
+
+正規表現 a*b、入力 "aabfooaabfooabfoob"、および置換文字列 "-" を指定した場合、その表現の正
+規表現エンジン上でこのメソッドを呼び出すと、文字列 "-foo-foo-foo-" が生成されます。
+
+このメソッドを呼び出すと、この正規表現エンジンの状態が変わります。この正規表現エンジンを後
+続のマッチ操作で使用する場合は、最初に正規表現エンジンをリセットする必要があります。
+
+パラメータ:
+  replacement - 置換文字列 
+戻り値:
+  マッチしたすべての部分シーケンスを置換文字列で置き換え、前方参照された部分シーケンスを必
+    要に応じて置換することによって構築された文字列
+</pre>
+
+			<p>
+			1番目の引数には置換したい文字列を指定して下さい。今度のメソッドではパターンにマッチした部分を全て引数に指定した文字列で置換した結果を戻り値として返します。
+			</p>
+
+			<p>
+			次の例を見てください。
+			</p>
+
+<pre class="fixcode">
+String str = "Orange is 100yen, Banana is 180yen.";
+String regex = "yen";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+String result = m.replaceAll("YEN");
+</pre>
+
+			<p>
+			パターンにマッチした部分を全てreplaceAllメソッドの引数である"YEN"に置き換えますので、結果として次の文字列を取得できます。
+			</p>
+
+<pre class="fixcomment">
+Orange is 100<span class="red">YEN</span>, Banana is 180<span class="red">YEN</span>.
+</pre>
+
+			<h2>Stringクラスのメソッド</h2>
+
+			<p>
+			ここで紹介したメソッドはStringクラスで定義されている同名メソッドを使っても同じ結果を得ることができます。
+			</p>
+
+			<p>
+			パターンに最初にマッチした部分を指定の文字列に置換するにはStringクラスで定義されているreplaceFirstメソッドを使います。
+			</p>
+
+<pre class="mheader">
+replaceFirst
+public String replaceFirst(String regex, String replacement)
+</pre>
+<pre class="mexplain">
+指定された正規表現に一致する、この文字列の最初の部分文字列に対し、指定された置換を実行し
+ます。
+
+このフォームのメソッド呼び出し str.replaceFirst(regex, repl) では、次の式と正確に同じ結
+果が得られます。
+
+  Pattern.compile(regex).matcher(str).replaceFirst(repl)
+
+置換文字列内でバックスラッシュ (\) とドル記号 ($) を使用すると、それをリテラル置換文字列
+として処理した場合とは結果が異なる場合があります。Matcher.replaceFirst(java.lang.String)
+を参照してください。必要に応じて、Matcher.quoteReplacement(java.lang.String) を使用して、
+これらの文字に特別な意味を持たせないようにしてください。
+
+パラメータ:
+  regex - この文字列との一致を判定する正規表現
+  replacement - 最初に一致するものに置き換えられる文字列 
+戻り値:
+  結果として得られる String 
+例外:
+  PatternSyntaxException - 正規表現の構文が無効な場合
+</pre>
+
+			<p>
+			1番目の引数には正規表現のパターンの元となる文字列を指定します。そして2番目の引数には置換したい文字列を指定して下さい。パターンに最初にマッチした部分を引数に指定した文字列で置換した結果を戻り値として返します。
+			</p>
+
+			<p>
+			またパターンにマッチした部分を全て指定の文字列に置換するにはStringクラスで定義されているreplaceAllメソッドを使います。
+			</p>
+
+<pre class="mheader">
+replaceAll
+public String replaceAll(String regex, String replacement)
+</pre>
+<pre class="mexplain">
+指定された正規表現に一致する、この文字列の各部分文字列に対し、指定された置換を実行します。
+
+このフォームのメソッド呼び出し str.replaceAll(regex, repl) では、次の式と正確に同じ結果が
+得られます。
+
+  Pattern.compile(regex).matcher(str).replaceAll(repl)
+
+置換文字列内でバックスラッシュ (\) とドル記号 ($) を使用すると、それをリテラル置換文字列と
+して処理した場合とは結果が異なる場合があります。Matcher.replaceAll を参照してください。必
+要に応じて、Matcher.quoteReplacement(java.lang.String) を使用して、これらの文字に特別な意
+味を持たせないようにしてください。
+
+パラメータ:
+  regex - この文字列との一致を判定する正規表現
+  replacement - 一致するものそれぞれに置き換えられる文字列 
+戻り値:
+  結果として得られる String 
+例外:
+  PatternSyntaxException - 正規表現の構文が無効な場合
+</pre>
+
+			<p>
+			1番目の引数には正規表現のパターンの元となる文字列を指定します。そして2番目の引数には置換したい文字列を指定して下さい。パターンにマッチした全ての部分を引数に指定した文字列で置換した結果を戻り値として返します。
+			</p>
+
+			<p>
+			次の例を見てください。
+			</p>
+
+<pre class="fixcode">
+String str = "Orange is 100yen, Banana is 180yen.";
+String regex = "yen";
+
+String result = str.replaceAll(regex, "YEN");
+</pre>
+
+			<p>
+			ターゲット文字列を表すStringクラスのオブジェクトに対してreplaceFirstメソッドまたはreplaceAllメソッドを実行して下さい。結果としてはMatcherクラスのメソッドを使った場合と同じ結果を得ることができます。
+			</p>
+
+<pre class="fixcomment">
+Orange is 100<span class="red">YEN</span>, Banana is 180<span class="red">YEN</span>.
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。 
+			</p>
+
+			<p>
+			<a href="JSample1_1.java" tppabs="https://www.javadrive.jp/start/regex/replace/JSample1_1.java">JSample1_1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+class JSample1_1{
+  public static void main(String args[]){
+    String str = "Orange is 100yen, Banana is 180yen.";
+
+    String regex = "yen";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher(str);
+    String result1 = m.replaceFirst("YEN");
+
+    System.out.println("replaceFirst");
+    System.out.println("before : " + str);
+    System.out.println("after  : " + result1);
+
+    String result2 = m.replaceAll("YEN");
+
+    System.out.println("replaceAll");
+    System.out.println("before : " + str);
+    System.out.println("after  : " + result2);
+
+    String result3 = str.replaceAll(regex, "YEN");
+
+    System.out.println("String.replaceAll");
+    System.out.println("before : " + str);
+    System.out.println("after  : " + result3);
+  }
+}
+</pre>
+
+			<p>
+			ではコンパイルを行った上で実行してみます。 
+			</p>
+
+			<p>
+			<img src="img/p1-1.png" tppabs="https://www.javadrive.jp/start/regex/replace/img/p1-1.png" alt="p1-1" width="509" height="285">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

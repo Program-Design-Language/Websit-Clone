@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>タイルレイヤーの作成 - タイルオーバーレイ(GTileLayer, GTileLayerOverlay) - Google Maps JavaScript API入門</title>
+<meta name="keywords" content=">タイルレイヤーの作成,GTileLayer,GTileLayerOverlay,Google Maps API" />
+<meta name="description" content=">タイルレイヤーの作成方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gtilelayer/" itemprop="url"><span itemprop="title">タイルオーバーレイ(GTileLayer, GTileLayerOverlay)</span></a></li>
+		</ul>
+</div>
+
+			<h1>タイルレイヤーの作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					まずオーバーレイとして追加される独自のタイルレイヤーを作成します。タイルレイヤーはGTileLayerインターフェースを実装したクラスを利用します。
+					</p>
+
+					<p>
+					新しいタイルレイヤーを作成するにはGTileLayerインターフェースを使います。
+					</p>
+
+<pre class="mheader">
+GTileLayer(copyrights:GCopyrightCollection, minResolution:Number, maxResolution:Number, 
+  options?:GTileLayerOptions) 
+</pre>
+<pre class="mexplain">
+プロトタイプとしてインスタンス化すると、コンストラクタ属性は省略できま
+す。サブクラス コンストラクタは、call() を使用してこのコンストラクタを
+呼び出す必要があります。オプションの options パラメータは、一連の 
+GTileLayerOptions を指定します。これは、オブジェクト リテラルとして渡さ
+れる必要があります。
+</pre>
+
+					<p>
+					1番目には著作権に関する表示を行うためのGCopyrightCollectionクラスのオブジェクトを指定します。2番目の引数はタイルレイヤーの最小ズームレベル、3番目の引数はタイルレイヤーの最大ズームレベルを指定します。
+					</p>
+
+<pre class="fixcode">
+var copyrights = new GCopyrightCollection();
+var tilelayer = new GTileLayer(copyrights, 0, 19);
+</pre>
+
+					<p>
+					また作成したオブジェクトには次の3つのメソッドを実装する必要があります。
+					</p>
+
+<pre class="fixcomment">
+getTileUrl
+isPng
+getCopyright
+</pre>
+
+					<p>
+					各プロパティに対して関数リテラルを設定していきます。
+					</p>
+
+					<h2>getTileUrlメソッド</h2>
+
+					<p>
+					getTileUrlメソッドは位置とズームレベルが渡されてきた時に、表示する地図画像のURLを返します。
+					</p>
+
+<pre class="mheader">
+getTileUrl(tile:GPoint, zoom:Number)
+</pre>
+<pre class="mexplain">
+抽象。指定のズーム レベルで GPoint の x と y プロパティで指定されたタイ
+ル インデックスのあるマップ タイルの URL を地図に返します。
+
+戻り値：
+  String
+</pre>
+
+					<p>
+					ここでGPointが表す位置は座標ではなくタイルの位置です。Google Maps APIではズームレベル毎に使用されるタイル数が決まっており2<sup>n</sup>×2<sup>n</sup>のタイルで表されます。例えばズームレベル4の場合、全世界を2<sup>4</sup>×2<sup>4</sup>、つまり16×16のタイルに分割されることになります。getTileUrlメソッドに渡されてくるGPointクラスのオブジェクトの値はこのタイルの位置を表しています。
+					</p>
+
+					<p>
+					あるズームレベルにおいて指定の座標が属するタイルの位置の計算方法は別のページで確認します。
+					</p>
+
+					<p>
+					今回はどのような引数が渡されてきたとしても同じ画像のURLを返すようにようにします。
+					</p>
+
+<pre class="fixcode">
+var copyrights = new GCopyrightCollection();
+var tilelayer = new GTileLayer(copyrights, 0, 19);
+
+tilelayer.getTileUrl = function(tile, zoom) { return "./img/sample.png"; };
+</pre>
+
+					<p>
+					なお1枚のタイルは256ピクセル×256ピクセルで作成して下さい。
+					</p>
+
+					<h2>isPng メソッド</h2>
+
+					<p>
+					isPngメソッドは使用している画像のフォーマットがPNGかどうかを返します。
+					</p>
+
+<pre class="mheader">
+isPng() 
+</pre>
+<pre class="mexplain">
+抽象。タイルが PNG 画像形式であるため、透明にできるかどうかを地図に返し
+ます。それ以外の場合は GIF と見なされます。
+
+戻り値：
+  Boolean
+</pre>
+
+					<p>
+					タイル画像としてPNG画像を使用している場合にはtrueを返すようにして下さい。
+					</p>
+
+<pre class="fixcode">
+var copyrights = new GCopyrightCollection();
+var tilelayer = new GTileLayer(copyrights, 0, 19);
+
+tilelayer.getTileUrl = function(tile, zoom) { return "./img/sample.png"; };
+tilelayer.isPng = function() { return true; };
+</pre>
+
+					<h2>getOpacity メソッド</h2>
+
+					<p>
+					getOpacityメソッドはレイヤーの透明度を返します。
+					</p>
+
+<pre class="mheader">
+getOpacity() 
+</pre>
+<pre class="mexplain">
+抽象。このタイル レイヤーを表示する透明度を地図に返します。1.0 は不透明
+で 0.0 は透明です。
+
+戻り値：
+  Number
+</pre>
+
+					<p>
+					レイヤー全体の透明度を返します。値は0から1までの数値で0に近づくほど透明となり1に近づくほど不透明となります。
+					</p>
+
+<pre class="fixcode">
+var copyrights = new GCopyrightCollection();
+var tilelayer = new GTileLayer(copyrights, 0, 19);
+
+tilelayer.getTileUrl = function(tile, zoom) { return "./img/sample.png"; };
+tilelayer.isPng = function() { return true; };
+tilelayer.getOpacity = function() { return 0.5; };
+</pre>
+
+					<p>
+					以上で独自のタイルレイヤーが作成されました。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

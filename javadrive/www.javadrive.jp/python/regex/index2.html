@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | パターンから正規表現オブジェクトを作成する(Pattern)</title>
+<meta name="description" content="正規表現を使ってどのような文字列とマッチさせるのかを定義したものがパターンです。ここでは文字列としてパターンを定義したあと、パターンから正規表現オブジェクト(Pattern クラスのインスタンス)を取得する方法について解説します。">
+
+<meta property="og:title" content="パターンから正規表現オブジェクトを作成する(Pattern)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/regex/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/regex/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現を使ってどのような文字列とマッチさせるのかを定義したものがパターンです。ここでは文字列としてパターンを定義したあと、パターンから正規表現オブジェクト(Pattern クラスのインスタンス)を取得する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Python正規表現",
+    "item": "https://www.javadrive.jp/python/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/regex/">Python正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>パターンから正規表現オブジェクトを作成する(Pattern)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現を使ってどのような文字列とマッチさせるのかを定義したものがパターンです。ここでは文字列としてパターンを定義したあと、パターンから正規表現オブジェクト(Pattern クラスのインスタンス)を取得する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">パターンを定義する</a></li>
+			<li><a href="#section2">パターンをコンパイルする</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">パターンを定義する</a></h2>
+
+			<p>
+			最初にパターンを文字列として定義します。例えば対象の文章の中に abc という文字列が含まれるかどうかを調べる場合のパターンは 'abc' になります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+pat = 'abc'
+</pre>
+</div>
+
+			<p>
+			また正規表現ではメタ文字と呼ばれる特別な意味を持つ文字を使用してパターンを定義することができます。例えば対象の文字列の末尾が png で終わっているかどうか調べる場合のパターンは 'png$' となります。この '$' は文字列の末尾にマッチするメタ文字です。
+			</p>
+
+<div class="titlebox1">
+<pre>
+pat = 'png$'
+</pre>
+</div>
+
+			<p>
+			パターンを定義するときに使用するメタ文字の中にはバックスラッシュ '\' を使用するものがあります。例えば英数字とアンダーバーを表す '\w' などです。パターンを文字列として記述する場合、文字列の中でバックスラッシュは特別な意味をもつため次のようにエスケープを行う必要があります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+pat = '\\w'
+</pre>
+</div>
+
+			<p>
+			そこでパターンを定義する場合、通常の文字列ではなく raw 文字列を使用すると便利です。 raw 文字列ではバックスラッシュはエスケープせずに記述することができるため、先ほどのパターンは次のように記述することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+pat = r'\w'
+</pre>
+</div>
+
+			<p>
+			※ raw 文字列については「<a href="../string/index4.html" tppabs="https://www.javadrive.jp/python/string/index4.html">raw文字列の利用</a>」を参照されてください。
+			</p>
+
+<h2><a id="section2">パターンをコンパイルする</a></h2>
+
+			<p>
+			Python で正規表現を利用する場合、パターンとして定義した文字列をそのまま利用して re モジュールに含まれる関数を使う方法と、パターンをいったんコンパイルして Pattern クラスのインスタンスを作成したあと、 Pattern クラスのメソッドを使う方法があります。
+			</p>
+
+			<p>
+			パターンを一度しか使用しない場合はコンパイルしなくても構いませんが、同じパターンを繰り返し使用する場合にはコンパイルしておく方がパフォーマンスがよくなります。今後は基本的にコンパイルしてから利用する方法で解説していきます。
+			</p>
+
+			<p>
+			パターンをコンパイルして Pattern クラスのインスタンスを生成するには re モジュールに含まれる compile 関数を使います。
+			</p>
+
+<div class="titlebox2">
+<p>
+re.compile(pat, flags=0)
+</p>
+</div>
+
+			<p>
+			1 番目の引数にはパターンを表す文字列を指定します。 2 番目の省略可能な引数にはフラグを指定します。フラグについては別のページで解説します。
+			</p>
+
+			<p>
+			具体的には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'png$')
+</pre>
+</div>
+
+			<p>
+			Pattern クラスのインスタンスを取得したら、 Pattern で用意されているメソッドを使って対象の文章とパターンがマッチしているかどうかを調べることができます。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+filename = 'apple.png'
+pattern = re.compile(r'png$')
+
+result = pattern.search(filename)
+if result :
+    print('パターンにマッチします')
+else :
+    print('パターンにマッチしません')
+
+<span class="bold">&gt;&gt; パターンにマッチします</span>
+</pre>
+</div>
+
+			<p>
+			対象の文字列がパターンにマッチするかどうかを調べて表示しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			文字列としてパターンを定義し、コンパイルして Pattern クラスのオブジェクトを取得する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文字出力用のストリームの取得(getWriter) - クライアントへの出力 - サーブレット入門</title>
+<meta name="keywords" content="getWriter,HttpServletResponse,サーブレット" />
+<meta name="description" content="文字出力用のストリームの取得" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/response/" itemprop="url"><span itemprop="title">クライアントへの出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>文字出力用のストリームの取得(getWriter)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			コンテンツタイプを設定したら、クライアントに対してデータ本文を送ります。データを送信するには出力用のストリームを取得し、そのストリームに書き出していきます。
+			</p>
+
+			<p>
+			出力ストリームを取得するには「HttpServletResponse」インターフェースの親インターフェースである「ServletResponse」インタフェースで定義されている「getWriter」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getWriter
+public java.io.PrintWriter getWriter()
+                              throws java.io.IOException
+</pre>
+<pre class="mexplain">
+Returns a PrintWriter object that can send character text to the client. 
+The PrintWriter uses the character encoding returned by 
+getCharacterEncoding(). If the response's character encoding has not been 
+specified as described in getCharacterEncoding (i.e., the method just 
+returns the default value ISO-8859-1), getWriter updates it to ISO-8859-1. 
+
+Calling flush() on the PrintWriter commits the response. 
+
+Either this method or getOutputStream() may be called to write the body, 
+not both. 
+
+Returns:
+  a PrintWriter object that can return character data to the client 
+Throws: 
+  UnsupportedEncodingException - if the character encoding returned 
+    by getCharacterEncoding cannot be used 
+  java.lang.IllegalStateException - if the getOutputStream method 
+    has already been called for this response object 
+  java.io.IOException - if an input or output exception occurred
+</pre>
+
+			<p>
+			このメソッドによってクライアントに対して文字を出力するための「PrintWriter」クラスのオブジェクトを取得出来ます。使い方としては次の通りです。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Sample extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+
+    /* ... */
+  }
+}
+</pre>
+
+			<p>
+			「PrintWriter」クラスのオブジェクトは、文字を出力する時にコンテンツタイプに設定されている文字セットを使ってエンコーディングしていきます。そのため「getWriter」メソッドを実行する前に「setContentType」メソッド又は「setCharacterEncoding」メソッドで文字コードを設定しておく必要があります。
+			</p>
+
+			<p>
+			文字コードが設定されていない場合は「ISO-8859-1(Latin1)」が設定されているものとしてエンコードします。
+			</p>
+
+			<p>
+			文字データを出力するためのストリームではなくバイナリデータの出力するためのストリームを取得する場合は「getOutputStream」メソッドを使います。詳しい使い方は別のページで見ていきますが、同じ「HttpServletResponse」インターフェースのオブジェクトに対して「getWriter」メソッドと「getOutputStream」メソッドの両方のメソッドを実行することは出来ません。(例外「IllegalStateException」が発生します)。
+			</p>
+
+			<p>
+			文字コードを設定しなかった場合はデフォルトの値として「ISO-8859-1」いわゆるLatin1が設定されます。日本語を扱うデータの場合デフォルトの文字コードのままでは文字化けしますので注意して下さい。
+			</p>
+
+			<h2>PrintWriterクラス</h2>
+
+			<p>
+			「PrintWriter」クラスについても簡単に見ておきます。クラス定義は下記のようになっています。
+			</p>
+
+<div class="classwaku">
+<ul class="classdirectory">
+<li class="top">java.lang.Object</li>
+<li class="row1">java.io.Writer</li>
+<li class="row2">java.io.PrintWriter</li>
+<li class="detail">public class PrintWriter extends Writer</li>
+</ul>
+</div>
+
+			<p>
+			主なメソッドは「print」メソッドと「println」メソッドです。この2つのメソッドの違いは文字を出力した後に改行するかどうかです。それぞれのメソッドの引数には各データ型に対応したものがそれぞれ用意されていますので、データ型を意識することなく利用できます。
+			</p>
+
+<table class="pro">
+<tr><th>メソッド</th><th>説明</th></tr>
+<tr><td>void println(boolean x)</td><td>boolean 値を出力して、行を終了します。</td></tr>
+<tr><td>void println(char x)</td><td>文字を出力して、行を終了します。</td></tr>
+<tr><td>void println(char[] x)</td><td>文字の配列を出力して、行を終了します。</td></tr>
+<tr><td>void println(double x)</td><td>倍精度の浮動小数点数を出力して、行を改行します。</td></tr>
+<tr><td>void println(float x)</td><td>浮動小数点数を出力して、行を改行します。</td></tr>
+<tr><td>void println(int x)</td><td>整数を出力して、行を終了します。</td></tr>
+<tr><td>void println(long x)</td><td>long 整数を出力して、行を終了します。</td></tr>
+<tr><td>void println(Object x)</td><td> Object を出力して、行を終了します。</td></tr>
+<tr><td>void println(String x)</td><td>String を出力して、行を終了します。</td></tr>
+<tr><td>void println()</td><td>改行文字列を書き込むことによって、現在の行を改行します。</td></tr>
+</table>
+
+			<p>
+			またその他のメソッドとして「close」メソッドや「flush」メソッドなどがあります。
+			</p>
+
+			<p>
+			「close」メソッド:
+			</p>
+
+<pre class="mheader">
+close
+public void close()
+</pre>
+<pre class="mexplain">
+ストリームを閉じます。
+</pre>
+
+			<p>
+			「flush」メソッド:
+			</p>
+
+<pre class="mheader">
+flush
+public void flush()
+</pre>
+<pre class="mexplain">
+ストリームをフラッシュします。
+</pre>
+
+			<p>
+			使い方としては今までのサンプルでも使っていますが次のようになります。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ResponseSample2 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;サンプル&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;Sample Page&lt;/p&gt;");
+    out.println("&lt;p&gt;サンプルページ&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+
+    out.close();
+  }
+}
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

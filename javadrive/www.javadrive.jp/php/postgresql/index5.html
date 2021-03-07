@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データの取得(SELECT) - PostgreSQLへの接続 - PHP入門</title>
+<meta name="keywords" content="SELECT,PostgreSQL,PHP入門" />
+<meta name="description" content="データの取得(SELECT)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/postgresql/" itemprop="url"><span itemprop="title">PostgreSQLへの接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>データの取得(SELECT)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここからはデータベースへクエリーを発行する方法を見ていきます。クエリーを発行するには「pg_query」関数を使います。
+			</p>
+
+<pre class="mheader">
+pg_query
+resource pg_query(resource connection, string query)
+</pre>
+<pre class="mexplain">
+pg_query() 指定したデータベース connection 上で query を実行します。
+
+エラーが発生して FALSE が返された場合、もし接続が正常なら 
+pg_last_error() 関数を使用してエラーの詳細情報が 取得可能です。
+
+引数：
+  connection  PostgreSQL データベース接続リソース。connection が指定され
+    ていない場合はデフォルトの接続が使用されます。 デフォルトの接続は、
+    直近の pg_connect() あるいは pg_pconnect() によって作成されたもので
+    す。
+  query  実行する 1 つまたは複数の SQL 文。複数の文が関数に渡された場合
+    は、明示的に BEGIN/COMMIT コマンドを指定していない限りはそれらの文は
+    ひとつのトランザクションとして実行されます。しかし、1回のコールで複
+    数のトランザクションを実行することは推奨されません。
+返り値：
+  成功した場合にクエリ結果リソース、失敗した場合に FALSE を返します。
+</pre>
+
+			<p>
+			SQLで記述されたクエリーを発行します。SELECTなどの場合、クエリーでは結果としてresource型の値を受け取ります。そのresource型の値から実際に帰ってきたデータを取得していきます。
+			</p>
+
+			<p>
+			実際の使い方としては下記のようになるかと思います。
+			</p>
+
+<pre class="fixcode">
+$conn = "host=localhost dbname=uriage user=pguser password=pguser";
+$link = pg_connect($conn);
+if (!$link) {
+    die('接続失敗です。'.pg_last_error());
+}
+
+print('接続に成功しました。&lt;br&gt;');
+
+$result = pg_query('SELECT * FROM xxxx');
+if (!$result) {
+    die('クエリーが失敗しました。'.pg_last_error());
+}
+
+$close_flag = pg_close($link);
+
+if ($close_flag){
+    print('切断に成功しました。&lt;br&gt;');
+}
+</pre>
+
+			<h2>SELECT文の発行</h2>
+
+			<p>
+			クエリーの実際の例として、まずSELECT文の発行を試してみます。SELECT文はデータベースから条件にあう行に含まれる指定フィールドの値を取り出すものです。よって結果としては複数のフィールドに関する値が複数の行数分だけ帰ってくるはずです。 
+			</p>
+
+			<p>
+			resource型の値から実際のデータを取り出すためには「pg_fetch_array」関数を使います。
+			</p>
+
+<pre class="mheader">
+pg_fetch_array
+array pg_fetch_array (resource result [, int row [, int result_type]])
+</pre>
+<pre class="mexplain">
+pg_fetch_array() は、取得した行（レコード）を 配列で返します。
+
+エラーが発生して FALSE が返された場合、もし接続が正常なら 
+pg_last_error() 関数を使用してエラーの詳細情報が 取得可能です。
+
+引数：
+  result  pg_query(), pg_query_params() あるいは pg_execute() から返され
+    る PostgreSQL のクエリ結果リソース。
+  row  取得する行番号。最初の行は 0 です。指定されなかった場合、次の行が
+    取得されます。
+  result_type  result_type は、返り値の形式を制御する オプションのパラメー
+    タです。result_type は定数であり、次の値のどれかとすることが可能です。 
+    PGSQL_ASSOC、PGSQL_NUM および PGSQL_BOTH。 PGSQL_NUM を使用すると、
+    pg_fetch_array() は数値添字の配列を返します。また、PGSQL_ASSOC を使
+    用すると連想配列形式で返します。PGSQL_BOTH がデフォルト設定で、これ
+    は数値添字の配列と連想配列の両方を返します。
+返り値：
+  0 から始まる数値添字の配列か連想配列（フィールド名をキーとする）、ある
+    いはその両方を返します。配列の各要素の値は文字列です。 データベース
+    の NULL 値は、NULL として返します。row が結果の行数より大きい場合・行
+    が存在しない場合 、そしてそれ以外のエラーが発生した場合は FALSE を返
+    します。
+</pre>
+
+			<p>
+			「result_type」の値で結果をどのような配列として取得するかを指定できます。「PGSQL_NUM」の場合は0から始まる数値のインデックスで配列にアクセスできます。「PGSQL_ASSOC」の場合は項目名による連想配列の形です。
+			</p>
+
+			<p>
+			例として下記のようなSELECTを発行した場合で考えて見ます。
+			</p>
+
+<pre class="fixcode">
+$result = pg_query('SELECT id, name FROM shouhin');
+if (!$result) {
+    die('クエリーが失敗しました。'.pg_last_error());
+}
+</pre>
+
+			<p>
+			「PGSQL_NUM」を指定する場合は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$rows = pg_fetch_array($result, NULL, PGSQL_NUM);
+print($rows[0]);
+print($rows[1]);
+</pre>
+
+			<p>
+			「PGSQL_ASSOC」を指定する場合は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$rows = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+print($rows['id']);
+print($rows['name']);
+</pre>
+
+			<p>
+			取得する行番号は特に指定しなければ最初の行から順番に取得してくれます。その為、行番号の指定が不要であればNULLを指定しておいて下さい。
+			</p>
+
+			<p>
+			次に全ての行を取得する時に、結果としていくつの行が帰ってきたかを確認する方法です。「pg_num_rows」関数を使います。
+			</p>
+
+<pre class="mheader">
+pg_num_rows
+int pg_num_rows (resource result)
+</pre>
+<pre class="mexplain">
+PostgreSQL の結果リソースの 行数を返します。
+
+引数：
+  result  pg_query(), pg_query_params() あるいは pg_execute() から返され
+    る PostgreSQL のクエリ結果リソース。
+返り値：
+  結果の行数を返します。エラー時には -1 を返します。
+</pre>
+
+			<p>
+			以上のことからクエリーの結果に含まれる全ての行のデータを取り出すには、下記のような感じで記述します。
+			</p>
+
+<pre class="fixcode">
+$result = pg_query('SELECT id, name FROM shouhin');
+if (!$result) {
+    die('クエリーが失敗しました。'.pg_last_error());
+}
+
+for ($i = 0 ; $i &lt; pg_num_rows($result) ; $i++){
+    $rows = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+    print($rows['id']);
+    print($rows['name']);
+}
+</pre>
+
+			<p>
+			では実際に試してみます。データベース名「uriage」に含まれる「shouhin」テーブルからデータを取得してみます。
+			</p>
+
+			<p>
+			<a href="pgtest2.php.htm" tppabs="https://www.javadrive.jp/php/postgresql/pgtest2.php">pgtest2.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$conn = "host=localhost dbname=uriage user=pguser password=pguser";
+$link = pg_connect($conn);
+if (!$link) {
+    die('接続失敗です。'.pg_last_error());
+}
+
+print('接続に成功しました。&lt;br&gt;');
+
+pg_set_client_encoding("sjis");
+
+$result = pg_query('SELECT id, name FROM shouhin');
+if (!$result) {
+    die('クエリーが失敗しました。'.pg_last_error());
+}
+
+for ($i = 0 ; $i &lt; pg_num_rows($result) ; $i++){
+    $rows = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+    print('id='.$rows['id']);
+    print(',name='.$rows['name'].'&lt;br&gt;');
+}
+
+$close_flag = pg_close($link);
+
+if ($close_flag){
+    print('切断に成功しました。&lt;br&gt;');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			※今回はPHPのファイルをSJISで記述しているため、「pg_set_client_encoding」関数を使ってクライアントのエンコーディングを「SJIS」に指定しています。ご自分の環境に合わせて変更して下さい。(日本語関係の詳細は別途確認します)。
+			</p>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/php/postgresql/img/p6.png" alt="SELECT文の発行" width="470" height="283">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ブラウザへ出力 - PDFドキュメントの出力 - FPDFを使ったPDF作成</title>
+<meta name="keywords" content="ブラウザへ出力,PDFドキュメントの出力,FPDF,PDF" />
+<meta name="description" content="ブラウザへ出力" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/fpdf/" itemprop="url"><span itemprop="title">FPDFを使ったPDF作成</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/fpdf/output/" itemprop="url"><span itemprop="title">PDFドキュメントの出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>ブラウザへ出力</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					まずは作成したPDFドキュメントをブラウザへ出力する方法です。ドキュメントを出力させるにはFPDFクラスで用意されているOutputメソッドを使います。
+					</p>
+
+<pre class="mheader">
+string Output([string name [, string dest]])
+</pre>
+<pre class="mexplain">
+PDFドキュメントを次の３つの指定先へ送信（表示）します。指定できる送信
+先：文字列、ローカルファイル、ブラウザ ブラウザに送信（表示）する場合、
+（存在するなら）プラグインが利用されます。プラグインが存在しなければ
+「保存する(Save as)」ダイアログが強制的に表示されます。 
+もしドキュメントの終了コマンドが呼び出されていなければ、このメンバ関数
+は Close()メンバ関数を先にコールします。
+
+パラメータ:
+  name  ファイルの名前
+  dest  ドキュメントを送信する送信先
+
+戻り値:
+  ドキュメントの送信先が文字列だった場合に返される文字列
+</pre>
+
+					<p>
+					1番目の引数にはファイルの名前を指定します。ドキュメントの出力先がローカルファイルだった場合はファイル名として使われます。出力先がブラウザだった場合でPDFドキュメントをダウンロードさせる場合にはここで指定した名前を使ってファイル保存ダイアログが開きます。
+					</p>
+
+					<p>
+					2番目の引数にはファイルの出力方法を指定します。指定できる値は「I」「D」「F」「S」の4つです。詳細な使い方は1つ1つ確認していきます。
+					</p>
+
+					<h2>PDFドキュメントをブラウザへ出力</h2>
+
+					<p>
+					作成したPDFドキュメントをブラウザへ出力する場合はOutputメソッドの2番目の引数に「I」を指定します。ブラウザ側でPDFプラグインがインストールされていた場合はブラウザにPDFドキュメントが表示されます。
+					</p>
+
+					<p>
+					ブラウザ側でPDFプラグインがインストールされていない場合にはPDFを保存するかどうかのダイアログなどが表示されます。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require('fpdf/mbfpdf.php');
+
+$pdf = new MBFPDF();
+$pdf-&gt;AddMBFont(GOTHIC ,'SJIS');
+$pdf-&gt;AddPage();
+$pdf-&gt;SetFont(GOTHIC,'',20);
+$pdf-&gt;Write(10,"サンプル文字列");
+
+$pdf-&gt;Output('filename.pdf', 'I');
+?&gt;
+</pre>
+
+					<p>
+					この場合、ブラウザ側でPDFプラグインがインストールされていればそのままPDFドキュメントを表示し、PDFプラグインがインストールされていなければ指定したファイル名で保存するどうかのダイアログが表示されます。
+					</p>
+
+					<p>
+					なおOutputメソッドの引数が省略された場合、ファイル名が「doc.pdf」、ドキュメントの出力先として「I」が指定されたものとして扱われます。よってPDFプラグインがインストールされたブラウザに出力する場合は単に次のように記述できます。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require('fpdf/mbfpdf.php');
+
+$pdf = new MBFPDF();
+$pdf-&gt;AddMBFont(GOTHIC ,'SJIS');
+$pdf-&gt;AddPage();
+$pdf-&gt;SetFont(GOTHIC,'',20);
+$pdf-&gt;Write(10,"サンプル文字列");
+
+$pdf-&gt;Output();
+?&gt;
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なサンプルで試してみます。
+					</p>
+
+					<p>
+					<a href="sample1-1.html" tppabs="https://www.javadrive.jp/fpdf/output/sample1-1.html">sample1-1.php</a>
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require('fpdf/mbfpdf.php');
+
+$pdf=new MBFPDF('P', 'mm', 'A4');
+$pdf-&gt;AddMBFont(GOTHIC ,'SJIS');
+$pdf-&gt;AddPage();
+$pdf-&gt;SetFont(GOTHIC,'',20);
+$pdf-&gt;Write(10,"サンプル文字列");
+$pdf-&gt;Output('test1-1.pdf', 'I');
+?&gt;
+</pre>
+
+					<p>
+					上記のファイルをWWWサーバのドキュメントルート以下に設置しブラウザからアクセスすると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p1-1.png" tppabs="https://www.javadrive.jp/fpdf/output/img/p1-1.png" alt="ブラウザへ出力" width="522" height="398">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

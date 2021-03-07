@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>選択された項目の値の取得 - JListクラス - Swing</title>
+<meta name="keywords" content="isSelectionEmpty,JList,Swing,Java" />
+<meta name="description" content="選択された項目の値の取得" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jlist/" itemprop="url"><span itemprop="title">JListクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>選択された項目の値の取得</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			次に選択されている項目のIndexや実際の値を取得してみます。まずは項目が選択されているかどうかの判定と、選択されている場合の最小のIndexと最大のIndexを調べるメソッドを見てみます。
+			</p>
+
+			<p>
+			項目が選択されているかどうか調べるにはJListクラスで用意されている"isSelectionEmpty"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+isSelectionEmpty
+public boolean isSelectionEmpty()
+</pre>
+<pre class="mexplain">
+何も選択されていない場合は true を返します。selectionModel に委譲する
+簡易メソッドです。
+
+戻り値:
+  何も選択されていない場合は true
+</pre>
+
+			<p>
+			選択されている項目の最小のインデックス番号と最大のインデックス番号を調べるには、JListクラスで用意されている"getMinSelectionIndex"メソッドと"getMaxSelectionIndex"メソッドを使います。
+			</p>
+
+			<p>
+			getMinSelectionIndexメソッド
+			</p>
+
+<pre class="mheader">
+getMinSelectionIndex
+public int getMinSelectionIndex()
+</pre>
+<pre class="mexplain">
+選択されているセルの最小インデックスを返します。selectionModel に委譲
+する簡易メソッドです。 
+
+戻り値:
+  選択されているセルの最小インデックス
+</pre>
+
+			<p>
+			getMaxSelectionIndexメソッド
+			</p>
+
+<pre class="mheader">
+getMaxSelectionIndex
+public int getMaxSelectionIndex()
+</pre>
+<pre class="mexplain">
+選択されているセルの最大インデックスを返します。selectionModel に委譲
+する簡易メソッドです。
+
+戻り値:
+  選択されているセルの最大インデックス
+</pre>
+
+			<p>
+			簡単なサンプルプログラムを試してみます。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.event.*;
+
+public class JListSample extends JFrame implements ActionListener{
+
+  protected JList list;
+  protected JLabel label;
+
+  public static void main(String[] args){
+    JListSample test = new JListSample("JListSample");
+
+    /* 終了処理を変更 */
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    test.setBounds( 10, 10, 250, 180);
+    test.setVisible(true);
+  }
+
+  JListSample(String title){
+    setTitle(title);
+
+    /* JListの初期データ */
+    String[] initData = {"Blue", "Green", "Red", "Whit", "Black"};
+    list = new JList(initData);
+
+    JScrollPane sp = new JScrollPane();
+    sp.getViewport().setView(list);
+    sp.setPreferredSize(new Dimension(200, 80));
+
+    JPanel p = new JPanel();
+    p.add(sp);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+
+    label = new JLabel();
+
+    JButton checkButton = new JButton("Check");
+    checkButton.addActionListener(this);
+    checkButton.setActionCommand("checkButton");
+
+    JPanel p2 = new JPanel();
+    p2.add(label);
+    p2.add(checkButton);
+
+    getContentPane().add(p2, BorderLayout.SOUTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String actionCommand = e.getActionCommand();
+
+    StringBuffer sb = new StringBuffer();
+
+    if (actionCommand.equals("checkButton")){
+      if (list.isSelectionEmpty()){
+        sb.append("Empty");
+      }else{
+        sb.append("Min:");
+        sb.append(list.getMinSelectionIndex());
+        sb.append(",Max:");
+        sb.append(list.getMaxSelectionIndex());
+      }
+    }else{
+      return;
+    }
+
+    label.setText(new String(sb));
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p13.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p13.png" alt="選択された項目の値の取得" width="258" height="191">
+			</p>
+
+			<p>
+			0番目と2番目を選択している場合は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p14.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p14.png" alt="選択された項目の値の取得" width="261" height="188">
+			</p>
+
+			<h2>選択された項目のインデックス番号と内容を取得する</h2>
+
+			<p>
+			次に最初に選択された項目のインデックス番号と項目の内容を取得するメソッドについてです。
+			</p>
+
+			<p>
+			選択された項目のインデックス番号を取得するには"getSelectedIndex"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getSelectedIndex
+public int getSelectedIndex()
+</pre>
+<pre class="mexplain">
+最初に選択されたインデックスを返すか、選択項目がない場合は -1 を返します。
+
+戻り値:
+  getMinSelectionIndex の値
+</pre>
+
+			<p>
+			選択された項目の値を取得するには"getSelectedValue"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getSelectedValue
+public Object getSelectedValue()
+</pre>
+<pre class="mexplain">
+最初に選択されたインデックスを返すか、選択が空の場合は null を返します。
+
+戻り値:
+  最初に選択された値
+</pre>
+
+			<p>
+			では実際に試してみます。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.event.*;
+
+public class JListSample extends JFrame implements ActionListener{
+
+  protected JList list;
+  protected JLabel label;
+
+  public static void main(String[] args){
+    JListSample test = new JListSample("JListSample");
+
+    /* 終了処理を変更 */
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    test.setBounds( 10, 10, 250, 180);
+    test.setVisible(true);
+  }
+
+  JListSample(String title){
+    setTitle(title);
+
+    /* JListの初期データ */
+    String[] initData = {"Blue", "Green", "Red", "Whit", "Black"};
+    list = new JList(initData);
+
+    JScrollPane sp = new JScrollPane();
+    sp.getViewport().setView(list);
+    sp.setPreferredSize(new Dimension(200, 80));
+
+    JPanel p = new JPanel();
+    p.add(sp);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+
+    label = new JLabel();
+
+    JButton indexButton = new JButton("Index");
+    indexButton.addActionListener(this);
+    indexButton.setActionCommand("indexButton");
+
+    JButton valueButton = new JButton("Value");
+    valueButton.addActionListener(this);
+    valueButton.setActionCommand("valueButton");
+
+    JPanel p2 = new JPanel();
+    p2.add(label);
+    p2.add(indexButton);
+    p2.add(valueButton);
+
+    getContentPane().add(p2, BorderLayout.SOUTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String actionCommand = e.getActionCommand();
+
+    StringBuffer sb = new StringBuffer();
+
+    if (actionCommand.equals("indexButton")){
+      int index = list.getSelectedIndex();
+      if (index == -1){
+        sb.append("Empty");
+      }else{
+        sb.append("FirstIndex:");
+        sb.append(index);
+      }
+    }else if (actionCommand.equals("valueButton")){
+      String val = (String)list.getSelectedValue();
+      if (val == null){
+        sb.append("Empty");
+      }else{
+        sb.append("FirstValue:");
+        sb.append(val);
+      }
+    }else{
+      return;
+    }
+
+    label.setText(new String(sb));
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p15.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p15.png" alt="選択された項目の値の取得" width="259" height="189">
+			</p>
+
+			<p>
+			2番目を選択してから0番目を選択した場合は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p16.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p16.png" alt="選択された項目の値の取得" width="259" height="191">
+			</p>
+
+			<p>
+			<img src="img/p17.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p17.png" alt="選択された項目の値の取得" width="260" height="185">
+			</p>
+
+			<p>
+			選択した順を覚えていて、最初に選択した項目の値を返すのかと思っていたのですが、最小のIndex番号の項目を返すだけのようでした。
+			</p>
+
+			<h2>選択項目全部の値を取得する場合</h2>
+
+			<p>
+			では最後に選択されている項目全部の値を取得したい場合です。
+			</p>
+
+			<p>
+			選択されている項目のインデックス番号を全て取得するには、JListクラスで用意されている"getSelectedIndices"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getSelectedIndices
+public int[] getSelectedIndices()
+</pre>
+<pre class="mexplain">
+選択されているすべてのインデックスの昇順配列を返します。
+
+戻り値:
+  選択されているすべてのインデックス (昇順)
+</pre>
+
+			<p>
+			同じように選択されている項目の値を全て取得するには、JListクラスで用意されている"getSelectedValues"メソッドを使います。この場合、取得する値は選択した順番に関係無く、インデックス番号順に昇順に取得されます。
+			</p>
+
+<pre class="mheader">
+getSelectedValues
+public Object[] getSelectedValues()
+</pre>
+<pre class="mexplain">
+選択されたセルの値の配列を返します。値はインデックスの昇順に並べられます。
+
+戻り値:
+  選択された値。何も選択されていない場合は空のリスト
+</pre>
+
+			<p>
+			サンプルプログラムで動作を確認します。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.event.*;
+
+public class JListSample extends JFrame implements ActionListener{
+
+  protected JList list;
+  protected JLabel label;
+
+  public static void main(String[] args){
+    JListSample test = new JListSample("JListSample");
+
+    /* 終了処理を変更 */
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    test.setBounds( 10, 10, 250, 200);
+    test.setVisible(true);
+  }
+
+  JListSample(String title){
+    setTitle(title);
+
+    /* JListの初期データ */
+    String[] initData = {"Blue", "Green", "Red", "Whit", "Black"};
+    list = new JList(initData);
+
+    JScrollPane sp = new JScrollPane();
+    sp.getViewport().setView(list);
+    sp.setPreferredSize(new Dimension(200, 80));
+
+    JPanel p = new JPanel();
+    p.add(sp);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+
+    label = new JLabel("Selected List");
+
+    JButton indexButton = new JButton("Index");
+    indexButton.addActionListener(this);
+    indexButton.setActionCommand("indexButton");
+
+    JButton valueButton = new JButton("Value");
+    valueButton.addActionListener(this);
+    valueButton.setActionCommand("valueButton");
+
+    JPanel p2 = new JPanel();
+    p2.add(label);
+
+    JPanel p3 = new JPanel();
+    p3.add(indexButton);
+    p3.add(valueButton);
+
+    getContentPane().add(p2, BorderLayout.NORTH);
+    getContentPane().add(p3, BorderLayout.SOUTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String actionCommand = e.getActionCommand();
+
+    StringBuffer sb = new StringBuffer();
+
+    if (actionCommand.equals("indexButton")){
+      int[] index = list.getSelectedIndices();
+      if (index.length == 0){
+        sb.append("Empty");
+      }else{
+        sb.append("Index:");
+        for (int i = 0 ; i &lt; index.length ; i++){
+          sb.append(index[i]);
+          sb.append(" ");
+        }
+      }
+    }else if (actionCommand.equals("valueButton")){
+      Object[] val = list.getSelectedValues();
+      if (val.length == 0){
+        sb.append("Empty");
+      }else{
+        sb.append("Value:");
+        for (int i = 0 ; i &lt; val.length ; i++){
+          sb.append(val[i]);
+          sb.append(" ");
+        }
+      }
+    }else{
+      return;
+    }
+
+    label.setText(new String(sb));
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			選択した状態でIndexボタンを押した場合は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p18.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p18.png" alt="選択された項目の値の取得" width="258" height="209">
+			</p>
+
+			<p>
+			選択した状態でValueボタンを押した場合は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p19.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p19.png" alt="選択された項目の値の取得" width="259" height="207">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MySQLへ接続 - MySQLへの接続 - PHP入門</title>
+<meta name="keywords" content="接続,MySQL,PHP入門" />
+<meta name="description" content="MySQLへ接続" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/mysql/" itemprop="url"><span itemprop="title">MySQLへの接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>MySQLへ接続</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			それでは実際にPHPを使ってMySQLへ接続してみます。「mysql_connect」関数を使います。
+			</p>
+
+<pre class="mheader">
+mysql_connect
+resource mysql_connect([string server [, string username
+   [, string password [, bool new_link [, int client_flags]]]]])
+</pre>
+<pre class="mexplain">
+MySQL サーバへの接続をオープンあるいは再利用します。
+
+引数：
+  server  接続先のMySQL サーバ。"hostname:port" のようにポート番号を
+    指定することが可能で、localhost では ":/path/to/socket" のように
+    ソケットへのパスを指定することも可能です。
+    サーバ名に "localhost" や "localhost:port" を指定した場合、MySQL
+    クライアントライブラリはそれをオーバーライドし、ローカルソケット
+   （Windows では名前つきパイプ）に接続しようとします。TCP/IP を用い
+    たい場合は、"localhost" のかわりに "127.0.0.1" を用いてください。
+  username  ユーザー名
+  password  パスワード
+  new_link  同じ引数で 2 回 mysql_connect() をコールした場合、2回目
+    は新規のリンクが確立されるのではなく、代わりにすでにオープンさ
+    れたリンクのリンク ID が返されます。パラメータ new_link はこの
+    動作を変更し、既に mysql_connect() が同じパラメータでコールされ
+    ている場合でも常に新規のリンクがオープンされるようにします。
+  client_flags  圧縮プロトコルやSSL暗号化(Windows版は未対応)などの
+    パラメーターの指定
+返り値：
+  成功した場合に MySQLリンクIDを、失敗した場合にFALSE を返します。
+</pre>
+
+			<p>
+			実際の使い方としては下記のようになるかと思います。
+			</p>
+
+<pre class="fixcode">
+$link = mysql_connect('localhost', 'user', 'pass');
+$link = mysql_connect('example.com:3307', 'user', 'pass');
+$link = mysql_connect('127.0.0.1:3307', 'user', 'pass');
+$link = mysql_connect('/tmp/mysql', 'user', 'pass');
+</pre>
+
+			<h2>MySQLの切断</h2>
+
+			<p>
+			接続後、接続を切断するには「mysql_close」関数を使います。
+			</p>
+
+<pre class="mheader">
+mysql_close
+bool mysql_close([resource link_identifier])
+</pre>
+<pre class="mexplain">
+指定した link_identifier が指す MySQL データベースへの非持続的リンク
+を閉じます。link_identifier が指定されない場合、最後にオープンされた
+リンクが使用されます。
+
+持続的でないリンクはスクリプトの実行終了時に自動的に閉じられるので、
+通常は mysql_close() を使用する必要はありません。
+
+引数：
+  link_identifier  MySQLリンクID
+返り値：
+  成功した場合に TRUE を、失敗した場合に FALSE を返します。
+</pre>
+
+			<p>
+			実際の使い方としては下記のようになるかと思います。
+			</p>
+
+<pre class="fixcode">
+$link = mysql_connect('localhost', 'user', 'pass');
+
+// MySQLに対する処理
+
+mysql_close($link);
+</pre>
+
+			<h2>エラー処理</h2>
+
+			<p>
+			MySQLに対する処理の過程で何かエラーが発生した場合「mysql_error」関数でエラーメッセージを取得することが出来ます。
+			</p>
+
+<pre class="mheader">
+mysql_error
+string mysql_error([resource link_identifier])
+</pre>
+<pre class="mexplain">
+直近のMySQL関数からのエラー文字列を返します。MySQLデータベースバック
+エンドから返ってくるエラーは、警告を発生しません。
+代わりに mysql_error() を用いて エラー文字列を取得してください。
+
+引数：
+  link_identifier  MySQLリンクID
+返り値：
+  直近のMySQL関数からのエラー文字列を返します。エラーが発生していな
+    い場合には、'' (空文字列) を返します。
+</pre>
+
+			<p>
+			例え「mysql_connect」関数利用時にエラーが発生した場合、エラーメッセージを見るには下記のように記述します。
+			</p>
+
+<pre class="fixcode">
+$link = mysql_connect('localhost', 'user', 'pass');
+if (!$link) {
+    print(mysql_error());
+}
+
+// MySQLに対する処理
+
+mysql_close($link);
+</pre>
+
+			<p>
+			実際には接続に失敗した場合、その後のMySQLに対する処理を実行出来ない為、「exit」関数又は「die」関数を用いてスクリプトを終了させます。
+			</p>
+
+<pre class="fixcode">
+$link = mysql_connect('localhost', 'user', 'pass');
+if (!$link) {
+    die('接続失敗です。'.mysql_error());
+}
+
+// MySQLに対する処理
+
+mysql_close($link);
+</pre>
+
+			<p>
+			※「exit」関数及び「die」関数については『<a href="../../phpfunc/other/index1.html" tppabs="https://www.javadrive.jp/phpfunc/other/index1.html">スクリプトを終了する(exit, die)</a>』を参照して下さい。
+			</p>
+
+			<h2>テスト</h2>
+
+			<p>
+			では実際に試してみます。ユーザー名「testuser」、パスワード「testuser」で接続を行います。
+			</p>
+
+			<p>
+			<a href="test1.php.htm" tppabs="https://www.javadrive.jp/php/mysql/test1.php">test1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$link = mysql_connect('localhost', 'testuser', 'testuser');
+if (!$link) {
+    die('接続失敗です。'.mysql_error());
+}
+
+print('&lt;p&gt;接続に成功しました。&lt;/p&gt;');
+
+// MySQLに対する処理
+
+$close_flag = mysql_close($link);
+
+if ($close_flag){
+    print('&lt;p&gt;切断に成功しました。&lt;/p&gt;');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			今回は上記を「test1.php」としてローカル環境で稼動しているApacheのドキュメントルート以下に設置しました。
+			</p>
+
+			<p>
+			<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/php/mysql/img/p3-1.png" alt="p3-1" width="560" height="402" />
+			</p>
+
+			<p>
+			ブラウザから「http://localhost/phptest/test1.php」へアクセスします。
+			</p>
+
+			<p>
+			<img src="img/p3-2.png" tppabs="https://www.javadrive.jp/php/mysql/img/p3-2.png" alt="p3-2" width="563" height="403" />
+			</p>
+
+			<p>
+			上記のように表示されれば、PHP経由でMySQLへの接続と切断が成功しています。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

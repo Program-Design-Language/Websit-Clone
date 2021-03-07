@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | 文字列の先頭からパターンとマッチするか調べる(Matcher.lookingAt)</title>
+<meta name="description" content="Matcher クラスの lookingAt メソッドは、対象の文字列の先頭からパターンとマッチするかどうかを調べます。先頭文字からマッチする必要はありますが、 matches メソッドのように文字列全体とマッチする必要はありません。ここでは Java の正規表現で lookingAt メソッドを使って文字列の先頭からパターンとマッチするか調べる方法について解説します。">
+
+<meta property="og:title" content="文字列の先頭からパターンとマッチするか調べる(Matcher.lookingAt)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/regex/index7.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/regex/img/p7-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Matcher クラスの lookingAt メソッドは、対象の文字列の先頭からパターンとマッチするかどうかを調べます。先頭文字からマッチする必要はありますが、 matches メソッドのように文字列全体とマッチする必要はありません。ここでは Java の正規表現で lookingAt メソッドを使って文字列の先頭からパターンとマッチするか調べる方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "Java正規表現の使い方",
+	"item": "https://www.javadrive.jp/start/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/">Java正規表現の使い方</a></li>
+				</ul>
+			</div>
+
+			<h1>文字列の先頭からパターンとマッチするか調べる(Matcher.lookingAt)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Matcher クラスの lookingAt メソッドは、対象の文字列の先頭からパターンとマッチするかどうかを調べます。先頭文字からマッチする必要はありますが、 matches メソッドのように文字列全体とマッチする必要はありません。ここでは Java の正規表現で lookingAt メソッドを使って文字列の先頭からパターンとマッチするか調べる方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">lookingAtメソッドの使い方</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">lookingAtメソッドの使い方</a></h2>
+
+			<p>
+			Matcher クラスの lookingAt メソッドは対象の文字列の先頭からパターンにマッチするかどうかを調べます。書式は次の通りです。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public boolean lookingAt()</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+戻り値:<br>
+入力シーケンスの接頭辞がこの正規表現エンジンのパターンとマッチした場合にのみtrue
+</p>
+</div>
+
+			<p>
+			Matcher オブジェクトのパターンが対象の文字列の先頭からマッチすれば true 、そうでなければ false が戻り値として返ります。文字列全体とマッチする必要はありませんが、必ず先頭文字からマッチしなければなりません。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+// java.util.regex.*のインポートが必要です
+import java.util.regex.*;
+
+String regex = "港区";
+Pattern p = Pattern.compile(regex);
+
+Matcher m1 = p.matcher​("港区役所");
+System.out.println(m1.lookingAt());  // true
+
+Matcher m2 = p.matcher​("東京都港区");
+System.out.println(m2.lookingAt());  // false
+</pre>
+</div>
+
+			<p>
+			パターン文字列が "港区" で対象の文字列が "港区役所" だった場合、パターンは対象の文字列の先頭からマッチするので true となります。また対象の文字列が "東京都港区" だった場合、パターンは対象の文字列の一部とマッチしますが先頭文字からではないため false となります。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/start/regex/img/p7-1.png" alt="lookingAtメソッドの使い方(1)" width="728" height="278">
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample7-1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1 longtext">
+<pre>
+import java.util.regex.*;
+
+class JSample7_1{
+  public static void main(String[] args){
+    String regex = "[0-9]{2}";
+    Pattern p = Pattern.compile(regex);
+
+    String[] target = {"AAZ02", "75PPT", "ON24KM"};
+    for (int i = 0 ; i &lt; 3 ; i++){
+      Matcher m = p.matcher(target[i]);
+      if (m.lookingAt()){
+        System.out.println(target[i] + "は" + m.group() + "の部分とマッチしました");
+      }else{
+        System.out.println(target[i] + "はマッチしませんでした");
+      }
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample7_1.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample7_1
+</p>
+</div>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/start/regex/img/p7-2.png" alt="lookingAtメソッドの使い方(2)" width="723" height="353">
+			</p>
+
+			<p>
+			パターン文字列 "[0-9]{2}" は任意の数値が 2 つ連続する文字列とマッチします。 lookingAt メソッドを使ってパターンが対象の文字列の先頭からマッチするかどうかを調べて画面に表示しました。マッチした場合はマッチした部分も併せて表示しています。(groupメソッドについては「<a href="index5.html" tppabs="https://www.javadrive.jp/start/regex/index5.html">パターンとマッチした部分文字列の情報を取得する</a>」で解説します)。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java の正規表現で lookingAt メソッドを使って文字列の先頭からパターンとマッチするか調べる方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

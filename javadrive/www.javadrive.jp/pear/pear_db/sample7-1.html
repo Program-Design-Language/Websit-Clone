@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サンプル</title>
+</head>
+<body>
+
+<pre>
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+require_once 'DB.php';
+
+$dsn = 'mysqli://testuser:testuser@localhost/uriage';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+print('接続に成功しました&lt;br&gt;');
+
+$db-&gt;query('SET NAMES sjis');
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$sql = 'select * from shouhin';
+$res =& $db-&gt;query($sql);
+if (PEAR::isError($res)) {
+    die($res-&gt;getMessage());
+}
+
+while ($row =& $res-&gt;fetchRow(DB_FETCHMODE_ASSOC)) {
+    print($row['id']);
+    print($row['name'].'&lt;br&gt;');
+}
+
+$db-&gt;disconnect();
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+
+</body>
+</html>

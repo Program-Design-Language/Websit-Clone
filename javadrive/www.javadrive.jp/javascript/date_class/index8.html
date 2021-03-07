@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | Dateオブジェクトの値から年、月、分、秒などの値を取得する(getFullYear, getUTCFullYear, etc)</title>
+<meta name="description" content="Date オブジェクトのインスタンスメソッドである getFullYear や getUTCFullYear は Date オブジェクトが持つ値からローカルおよびUTCタイムゾーンでの年の値を取得します。同様に月、日、曜日、時、分、秒、ミリ秒の値を Date オブジェクトの値からそれぞれ取得するメソッドが用意されています。ここでは Date オブジェクトの getFullYear メソッドなど Date オブジェクトの値から日付や時間に関する値を取得するメソッドの使い方について解説します。">
+
+<meta property="og:title" content="Dateオブジェクトの値から年、月、分、秒などの値を取得する(getFullYear, getUTCFullYear, etc)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/date_class/index8.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/date_class/img/p8-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Date オブジェクトのインスタンスメソッドである getFullYear や getUTCFullYear は Date オブジェクトが持つ値からローカルおよびUTCタイムゾーンでの年の値を取得します。同様に月、日、曜日、時、分、秒、ミリ秒の値を Date オブジェクトの値からそれぞれ取得するメソッドが用意されています。ここでは Date オブジェクトの getFullYear メソッドなど Date オブジェクトの値から日付や時間に関する値を取得するメソッドの使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Dateオブジェクト",
+    "item": "https://www.javadrive.jp/javascript/date_class/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/date_class/">Dateオブジェクト</a></li>
+				</ul>
+			</div>
+
+			<h1>Dateオブジェクトの値から年、月、分、秒などの値を取得する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Date オブジェクトのインスタンスメソッドである getFullYear は Date オブジェクトが持つ値から年の値を取得します。同様に月、日、曜日、時、分、秒、ミリ秒の値を Date オブジェクトの値からそれぞれ取得するメソッドが用意されています。
+			</p>
+
+			<p>
+			また Date オブジェクトのインスタンスメソッドである getUTCFullYear は Date オブジェクトが持つ値から年の値を UTC タイムゾーンでの値として取得します。同様に UTC タイムゾーンでの月、日、曜日、時、分、秒、ミリ秒の値を Date オブジェクトの値からそれぞれ取得するメソッドが用意されています。
+			</p>
+
+			<p>
+			ここでは Date オブジェクトの getFullYear メソッドなど Date オブジェクトの値から日付や時間に関する値を取得するメソッドの使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">日付と時刻の値を取得するメソッドの一覧</a></li>
+			<li><a href="#section2">年、月、日、曜日の値を取得する</a></li>
+			<li><a href="#section3">時、分、秒、ミリ秒の値を取得する</a></li>
+			<li><a href="#section4">UTCタイムゾーンでの年、月、日、曜日の値を取得する</a></li>
+			<li><a href="#section5">UTCタイムゾーンでの時、分、秒、ミリ秒の値を取得する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">日付と時刻の値を取得するメソッドの一覧</a></h2>
+
+			<p>
+			Date オブジェクトが持つ値から日付と時刻の値をそれぞれ取得するメソッドとして次のものが用意されています。
+			</p>
+
+<table class="pro2">
+<tr><th>メソッド</th><th>動作</th></tr>
+<tr><td>getFullYear</td><td>年の値を取得する</td></tr>
+<tr><td>getMonth</td><td>月の値を取得する</td></tr>
+<tr><td>getDate</td><td>日の値を取得する</td></tr>
+<tr><td>getDay</td><td>曜日の値を取得する</td></tr>
+<tr><td>getHours</td><td>時の値を取得する</td></tr>
+<tr><td>getMinutes</td><td>分の値を取得する</td></tr>
+<tr><td>getSeconds</td><td>秒の値を取得する</td></tr>
+<tr><td>getMilliseconds</td><td>ミリ秒の値を取得する</td></tr>
+</table>
+
+			<p>
+			それぞれのメソッドは Date クラスのオブジェクトが持つ値から年や分の値を個別に取得します。この時、ローカルの環境で設定されているタイムゾーンが使用されます。
+			</p>
+
+			<p>
+			同じように Date オブジェクトが持つ値から日付と時刻の値をそれぞれ取得しますが、 UTC タイムゾーンを使用して表された値を取得するメソッドとして次のものが用意されています。
+			</p>
+
+<table class="pro2">
+<tr><th>メソッド</th><th>動作</th></tr>
+<tr><td>getUTCFullYear</td><td>UTCタイムゾーンでの年の値を取得する</td></tr>
+<tr><td>getUTCMonth</td><td>UTCタイムゾーンでの月の値を取得する</td></tr>
+<tr><td>getUTCDate</td><td>UTCタイムゾーンでの日の値を取得する</td></tr>
+<tr><td>getUTCDay</td><td>UTCタイムゾーンでの曜日の値を取得する</td></tr>
+<tr><td>getUTCHours</td><td>UTCタイムゾーンでの時の値を取得する</td></tr>
+<tr><td>getUTCMinutes</td><td>UTCタイムゾーンでの分の値を取得する</td></tr>
+<tr><td>getUTCSeconds</td><td>UTCタイムゾーンでの秒の値を取得する</td></tr>
+<tr><td>getUTCMilliseconds</td><td>UTCタイムゾーンでのミリ秒の値を取得する</td></tr>
+</table>
+
+			<p>
+			それぞれのメソッドは Date クラスのオブジェクトが持つ値から年や分の値を個別に取得します。この時 UTC タイムゾーンが使用されます。
+			</p>
+
+			<p>
+			それでは順に見ていきます。
+			</p>
+
+<h2><a id="section2">年、月、日、曜日の値を取得する</a></h2>
+
+			<p>
+			Date オブジェクトが持つ値から年、月、日、曜日の値を個別に取得するメソッドについて解説します。
+			</p>
+
+	<h3>年の値を取得する(getFullYear)</h3>
+
+			<p>
+			Date オブジェクトの getFullYear メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「年」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getFullYear()
+</pre>
+</div>
+
+			<p>
+			年の値を 1000 から 9999 までの 4 桁の数値で返します。 1994 年であれば 1994 を、 2020 年であれば 2020 を返します。
+			</p>
+
+	<h3>月の値を取得する(getMonth)</h3>
+
+			<p>
+			Date オブジェクトの getMonth メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「月」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getMonth()
+</pre>
+</div>
+
+			<p>
+			月の値を 0 から 11 の数値で返します。 0 が 1 月、 1 が 2月、 11 が 12 月に相当します。
+			</p>
+
+	<h3>日の値を取得する(getDate)</h3>
+
+			<p>
+			Date オブジェクトの getDate メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「日」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getDate()
+</pre>
+</div>
+
+			<p>
+			日の値を 1 から 31 の数値で返します。 1 が 1 日、 31 が 31 日に相当します。
+			</p>
+
+	<h3>曜日の値を取得する(getDay)</h3>
+
+			<p>
+			Date オブジェクトの getDay メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「曜日」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getDay()
+</pre>
+</div>
+
+			<p>
+			曜日の値を 0 から 6 の数値で返します。 0 が日曜日、 1 が月曜日、 6 が土曜日に相当します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルをみてください。 
+			</p>
+
+<div class="titlebox1">
+<p>
+let d = new Date();<br>
+console.log(d.toString());<br>
+<span class="bold">&gt;&gt; Fri Oct 16 2020 18:13:06 GMT+0900 (日本標準時)</span><br>
+<br>
+let year = d.getFullYear();<br>
+let month = d.getMonth() + 1;<br>
+let day = d.getDate();<br>
+let dayofweek = d.getDay();<br>
+<br>
+const dayname = ['日','月','火','水','木','金','土'];<br>
+<br>
+console.log(year + '年' + month + '月' + day + '日' + '[' + dayname[dayofweek] + ']');<br>
+<span class="bold">&gt;&gt; 2020年10月16日[金]</span>
+</p>
+</div>
+
+			<p>
+			Date オブジェクトが持つ値から年、月、日、曜日の値をそれぞれ取得しました。月については 0 から 開始される点に注意してください。曜日を数値ではなく'月'や'火'などの曜日の文字として表示するために、表示用の配列を用意して曜日を表示しています。
+			</p>
+
+<h2><a id="section3">時、分、秒、ミリ秒の値を取得する</a></h2>
+
+			<p>
+			Date オブジェクトが持つ値から時、分、秒、ミリ秒の値を個別に取得するメソッドについて解説します。
+			</p>
+
+	<h3>時の値を取得する(getHours)</h3>
+
+			<p>
+			Date オブジェクトの getHours メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「時」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getHours()
+</pre>
+</div>
+
+			<p>
+			時の値を 0 から 23 までの数値で返します。
+			</p>
+
+	<h3>分の値を取得する(getMinutes)</h3>
+
+			<p>
+			Date オブジェクトの getMinutes メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「分」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getMinutes()
+</pre>
+</div>
+
+			<p>
+			分の値を 0 から 59 までの数値で返します。
+			</p>
+
+	<h3>秒の値を取得する(getSeconds)</h3>
+
+			<p>
+			Date オブジェクトの getSeconds メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「秒」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getSeconds()
+</pre>
+</div>
+
+			<p>
+			秒の値を 0 から 59 までの数値で返します。
+			</p>
+
+	<h3>ミリ秒の値を取得する(getMilliseconds)</h3>
+
+			<p>
+			Date オブジェクトの getMilliseconds メソッドは、 Date オブジェクトが持つ日付と時刻の値からローカルのタイムゾーンでの「ミリ秒」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getMilliseconds()
+</pre>
+</div>
+
+			<p>
+			Date オブジェクトが持つ値からミリ秒の値を 0 から 999 までの数値で返します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルをみてください。 
+			</p>
+
+<div class="titlebox1">
+<p>
+let d = new Date();<br>
+console.log(d.toString());<br>
+<span class="bold">&gt;&gt; Fri Oct 16 2020 18:15:10 GMT+0900 (日本標準時)</span><br>
+<br>
+let hour = d.getHours();<br>
+let minute = d.getMinutes();<br>
+let second = d.getSeconds();<br>
+let millisecond = d.getMilliseconds();<br>
+<br>
+console.log(hour + '時' + minute + '分' + second + '.' + millisecond + '秒');<br>
+<span class="bold">&gt;&gt; 18時15分10.149秒</span>
+</p>
+</div>
+
+			<p>
+			Date オブジェクトが持つ値から時、分、秒、ミリ秒の値をそれぞれ取得しました。
+			</p>
+
+<h2><a id="section4">UTCタイムゾーンでの年、月、日、曜日の値を取得する</a></h2>
+
+			<p>
+			Date オブジェクトが持つ値からUTCタイムゾーンでの年、月、日、曜日の値を個別に取得するメソッドについて解説します。
+			</p>
+
+	<h3>UTCタイムゾーンでの年の値を取得する(getUTCFullYear)</h3>
+
+			<p>
+			Date オブジェクトの getUTCFullYear メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「年」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCFullYear()
+</pre>
+</div>
+
+			<p>
+			年の値を 1000 から 9999 までの 4 桁の数値で返します。 1994 年であれば 1994 を、 2020 年であれば 2020 を返します。
+			</p>
+
+	<h3>UTCタイムゾーンでの月の値を取得する(getUTCMonth)</h3>
+
+			<p>
+			Date オブジェクトの getUTCMonth メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「月」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCMonth()
+</pre>
+</div>
+
+			<p>
+			月の値を 0 から 11 の数値で返します。 0 が 1 月、 1 が 2月、 11 が 12 月に相当します。
+			</p>
+
+	<h3>UTCタイムゾーンでの日の値を取得する(getUTCDate)</h3>
+
+			<p>
+			Date オブジェクトの getUTCDate メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「日」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCDate()
+</pre>
+</div>
+
+			<p>
+			日の値を 1 から 31 の数値で返します。 1 が 1 日、 31 が 31 日に相当します。
+			</p>
+
+	<h3>UTCタイムゾーンでの曜日の値を取得する(getUTCDay)</h3>
+
+			<p>
+			Date オブジェクトの getUTCDay メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「曜日」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCDay()
+</pre>
+</div>
+
+			<p>
+			曜日の値を 0 から 6 の数値で返します。 0 が日曜日、 1 が月曜日、 6 が土曜日に相当します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルをみてください。 
+			</p>
+
+<div class="titlebox1">
+<p>
+let d = new Date();<br>
+console.log(d.toUTCString());<br>
+<span class="bold">&gt;&gt; Fri, 16 Oct 2020 10:13:23 GMT</span><br>
+<br>
+let year = d.getUTCFullYear();<br>
+let month = d.getUTCMonth() + 1;<br>
+let day = d.getUTCDate();<br>
+let dayofweek = d.getUTCDay();<br>
+<br>
+const dayname = ['日','月','火','水','木','金','土'];<br>
+<br>
+console.log(year + '年' + month + '月' + day + '日' + '[' + dayname[dayofweek] + ']');<br>
+<span class="bold">&gt;&gt; 2020年10月16日[金]</span>
+</p>
+</div>
+
+			<p>
+			Date オブジェクトが持つ値から UTC タイムゾーンでの年、月、日、曜日の値をそれぞれ取得しました。月については 0 から 開始される点に注意してください。曜日を数値ではなく'月'や'火'などの曜日の文字として表示するために、表示用の配列を用意して曜日を表示しています。
+			</p>
+
+<h2><a id="section5">UTCタイムゾーンでの時、分、秒、ミリ秒の値を取得する</a></h2>
+
+			<p>
+			Date オブジェクトが持つ値からUTCタイムゾーンでの時、分、秒、ミリ秒の値を個別に取得するメソッドについて解説します。
+			</p>
+
+	<h3>UTCタイムゾーンでの時の値を取得する(getUTCHours)</h3>
+
+			<p>
+			Date オブジェクトの getUTCHours メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「時」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCHours()
+</pre>
+</div>
+
+			<p>
+			時の値を 0 から 23 までの数値で返します。
+			</p>
+
+	<h3>UTCタイムゾーンでの分の値を取得する(getUTCMinutes)</h3>
+
+			<p>
+			Date オブジェクトの getUTCMinutes メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「分」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCMinutes()
+</pre>
+</div>
+
+			<p>
+			分の値を 0 から 59 までの数値で返します。
+			</p>
+
+	<h3>UTCタイムゾーンでの秒の値を取得する(getUTCSeconds)</h3>
+
+			<p>
+			Date オブジェクトの getUTCSeconds メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「秒」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCSeconds()
+</pre>
+</div>
+
+			<p>
+			秒の値を 0 から 59 までの数値で返します。
+			</p>
+
+	<h3>UTCタイムゾーンでのミリ秒の値を取得する(getUTCMilliseconds)</h3>
+
+			<p>
+			Date オブジェクトの getUTCMilliseconds メソッドは、 Date オブジェクトが持つ日付と時刻の値から UTC タイムゾーンでの「ミリ秒」の値を数値で返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Dateオブジェクト.getUTCMilliseconds()
+</pre>
+</div>
+
+			<p>
+			Date オブジェクトが持つ値からミリ秒の値を 0 から 999 までの数値で返します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルをみてください。 
+			</p>
+
+<div class="titlebox1">
+<p>
+let d = new Date();<br>
+console.log(d.toUTCString());<br>
+<span class="bold">&gt;&gt; Fri Oct 16 2020 18:15:10 GMT+0900 (日本標準時)</span><br>
+<br>
+let hour = d.getUTCHours();<br>
+let minute = d.getUTCMinutes();<br>
+let second = d.getUTCSeconds();<br>
+let millisecond = d.getUTCMilliseconds();<br>
+<br>
+console.log(hour + '時' + minute + '分' + second + '.' + millisecond + '秒');<br>
+<span class="bold">&gt;&gt; 18時15分10.149秒</span>
+</p>
+</div>
+
+			<p>
+			Date オブジェクトが持つ値から UTC タイムゾーンでの時、分、秒、ミリ秒の値をそれぞれ取得しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Date オブジェクトの getFullYear メソッドなど Date オブジェクトの値から日付や時間に関する値を取得するメソッドの使い方について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

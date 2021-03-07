@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本の湖 - 座標データ - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="日本の湖,座標データ,Google Maps API" />
+<meta name="description" content="日本の湖の表示サンプルです" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/data/" itemprop="url"><span itemprop="title">座標データ</span></a></li>
+		</ul>
+</div>
+
+			<h1>日本の湖</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					日本の湖に関するデータです。面積が大きい順にトップ30を選択しました。JSON形式で用意してあります。
+					</p>
+
+					<p>
+					<a href="data/lake-30.json" tppabs="https://www.javadrive.jp/google-maps-javascript/data/data/lake-30.json">湖の座標データ</a>
+					</p>
+
+					<p>
+					ID、湖名、緯度、経度、の4つのデータで1セットとなっています。
+					</p>
+
+<pre class="fixcomment">
+{
+  "marker":[
+    {"id":"01","lakename":"琵琶湖","lat":35.265804,"lng":136.104126},
+    {"id":"02","lakename":"霞ヶ浦","lat":36.03855,"lng":140.403557},
+    {"id":"03","lakename":"サロマ湖","lat":44.137377,"lng":143.797989},
+    {"id":"04","lakename":"猪苗代湖","lat":37.47731,"lng":140.09388},
+
+...(略)
+
+    {"id":"27","lakename":"池田湖","lat":31.235702,"lng":130.56118},
+    {"id":"28","lakename":"桧原湖","lat":37.67825,"lng":140.056458},
+    {"id":"29","lakename":"涸沼","lat":36.276801,"lng":140.507927},
+    {"id":"30","lakename":"濤沸湖","lat":43.935082,"lng":144.394855}
+  ]
+}
+</pre>
+
+					<p>
+					今回のサンプルではGMarkerManagerを使って詳細な地図を表示する時にはマーカーを消すように設定してあります。
+					</p>
+
+					<h2>サンプル</h2>
+
+					<p>
+					では簡単なサンプルで試してみます。
+					</p>
+
+					<p>
+					<a href="js/code5_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/data/js/code5_1.js">code5_1.js</a>
+					</p>
+
+<pre class="fixcode">
+var map;
+var manager;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    map = new GMap2(document.getElementById("map"));
+    map.addControl(new GMapTypeControl());
+    map.addControl(new GLargeMapControl());
+    map.setCenter(new GLatLng(36.13628,138.604202), 5, G_SATELLITE_MAP);
+
+    manager = new GMarkerManager(map);
+
+    GDownloadUrl("./data/lake-30.json", createMap);
+  }
+}
+
+function createMap(jsondata, statusCode){
+  var json = eval("(" + jsondata + ")");
+
+  var selectHtml = "";
+  selectHtml += "&lt;form&gt;";
+  selectHtml += "&lt;select id='lakename' onChange='selectLake()'&gt;";
+  selectHtml += "&lt;option value='0'&gt;選択してください&lt;/option&gt;";
+
+  for (var i = 0; i &lt; json.marker.length; i++) {
+    var id = json.marker[i].id;
+    var lakename = json.marker[i].lakename;
+    var lat = json.marker[i].lat;
+    var lng = json.marker[i].lng;
+
+    var marker = createMarker(id, lakename, lat, lng)
+    manager.addMarker(marker, 0, 10);
+
+    selectHtml += "&lt;option value='" + lat + "," + lng + "'&gt;"
+    selectHtml += lakename;
+    selectHtml += "&lt;/option&gt;";
+  }
+
+  selectHtml += "&lt;/select&gt;";
+  selectHtml += "&lt;/form&gt;";
+  document.getElementById("lake").innerHTML = selectHtml;
+}
+
+function createMarker(id, lakename, lat, lng){
+  var marker = new GMarker(new GLatLng(lat, lng));
+
+  var html = "&lt;p&gt;[" + id + "] " + lakename + "&lt;/p&gt;";
+
+  GEvent.addListener(marker, "click", function(){
+    marker.openInfoWindowHtml(html);
+  });
+
+  return marker;
+}
+
+function selectLake(obj){
+  var val = document.getElementById("lakename").value;
+
+  if (val != "0"){
+    var latlng = val.split(",");
+    var lat = latlng[0];
+    var lng = latlng[1];
+
+    map.setCenter(new GLatLng(lat, lng), 10);
+  }
+}
+</pre>
+
+					<p>
+					<a href="map5_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/data/map5_1.html">map5_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：日本の湖&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code5_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="lake"&gt;&lt;/div&gt;
+    &lt;div id="map" style="width:500px; height:400px;"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					実際に試してみた画面イメージは次の通りです。
+					</p>
+
+					<p>
+					<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/data/img/p5-1.png" alt="p5-1" width="535" height="573">
+					</p>
+
+					<p>
+					選択メニューから湖を選択すると、選択した湖へ移動します。
+					</p>
+
+					<p>
+					<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/data/img/p5-2.png" alt="p5-2" width="535" height="573">
+					</p>
+
+					<p>
+					<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/data/img/p5-3.png" alt="p5-3" width="535" height="573">
+					</p>
+
+					<p>
+					GMarkerManagerを使い、各マーカーが表示される最大縮尺レベルを設定してあるため、湖が表示された状態でズームインを行うとマーカーが非表示となり湖が見やすくなります。
+					</p>
+
+					<p>
+					<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/data/img/p5-4.png" alt="p5-4" width="535" height="573">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

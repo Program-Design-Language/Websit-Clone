@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リダイレクト(redirect) - サーブレット間の連携 - サーブレット入門</title>
+<meta name="keywords" content="redirect,連携,サーブレット" />
+<meta name="description" content="リダイレクト(redirect)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/dispatch/" itemprop="url"><span itemprop="title">サーブレット間の連携</span></a></li>
+		</ul>
+</div>
+
+			<h1>リダイレクト(redirect)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			リダイレクトは他のサーブレットやHTMLファイルに処理を移します。フォワードと似ていますが、フォワードはサーバ内で次のサーブレットなどへ処理を移しますが、リダイレクトの場合はクライアントに対してリダイレクト先のサーブレットなどを見に行くように指示を出すだけです。その為、クライアント側でも処理が別のページ移ったことを認識します。
+			</p>
+
+			<p>
+			またフォワードの場合はクライアントから送られ来たパラメータなどを含むリクエストをそのままフォワード先に移しますが、リダイレクトの場合は次の見るべきサーブレットやHTMLファイルなどをクライアントに指示するだけですのでクライアントから送られてきたリクエストの中身などはリダイレクト先には渡されません。
+			</p>
+
+			<p>
+			例えば何かの処理をしてエラーだった場合にはエラーページへ飛ばすとか、データベースの処理だけをするサーブレットを呼び出した後に処理が終わったらサーブレットでは何も出力を行わずに特定のページへ飛ばすなどに使います。リダイレクトの場合には、別のサーバにあるURLへ飛ばすことも可能です(フォワードの場合は同一サーバ内しか行えません)。
+			</p>
+
+			<p>
+			リダイレクトするには「HttpServletResponse」インターフェースで定義されている"sendRedirect"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+sendRedirect
+public void sendRedirect(java.lang.String location)
+                  throws java.io.IOException
+</pre>
+<pre class="mexplain">
+Sends a temporary redirect response to the client using the specified 
+redirect location URL. This method can accept relative URLs; the servlet 
+container must convert the relative URL to an absolute URL before sending 
+the response to the client. If the location is relative without a leading 
+'/' the container interprets it as relative to the current request URI. 
+If the location is relative with a leading '/' the container interprets 
+it as relative to the servlet container root. 
+
+If the response has already been committed, this method throws an 
+IllegalStateException. After using this method, the response should be 
+considered to be committed and should not be written to. 
+
+Parameters:
+  location - the redirect location URL 
+Throws: 
+  java.io.IOException - If an input or output exception occurs 
+  java.lang.IllegalStateException - If the response was committed or if 
+    a partial URL is given and cannot be converted into a valid URL
+</pre>
+
+			<p>
+			"sendRedirect"メソッドの引数にはリダイレクトしたいURLを指定します。
+			</p>
+
+			<p>
+			利用方法としては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+  throws IOException, ServletException{
+
+  String url = "/dispatch/redirecttest";
+
+  response.sendRedirect(url);
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単に試してみます。
+			</p>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;redirecttest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;RedirectTest3&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;redirecttest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/redirecttest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。今回は呼び出したサーブレットでログだけを記録して、別のHTMLファイルへリダイレクトしています。
+			</p>
+
+			<p>
+			<a href="RedirectTest3.java" tppabs="https://www.javadrive.jp/servlet/dispatch/RedirectTest3.java">RedirectTest3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class RedirectTest3 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    log("アクセスされました");
+
+    String url = "/dispatch/redirect.html";
+    response.sendRedirect(url);
+  }
+}
+</pre>
+
+			<p>
+			次はリダイレクト先のHTMLファイルです。Webアプリケーションのルートに配置してあります。
+			</p>
+
+			<p>
+			<a href="redirect.html" tppabs="https://www.javadrive.jp/servlet/dispatch/redirect.html">redirect.html</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;リダイレクトテスト&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;こんにちは&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;dispatch&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/dispatch/redirecttest」へアクセスしてみます。
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/servlet/dispatch/img/p8.png" alt="リダイレクト" width="504" height="251" border="0">
+			</p>
+
+			<p>
+			直接呼び出したサーブレットはログの記録だけしてすぐにリダイレクトされますので、リダイレクト先のHTMLファイルをクライアントが再度読み出して自動的に表示されます。
+			</p>
+
+			<p>
+			またブラウザのURLの箇所も、リダイレクト先の「redirect.html」にアクセスされたように表示されています。
+			</p>
+
+			<p>
+			<img src="img/p9.png" tppabs="https://www.javadrive.jp/servlet/dispatch/img/p9.png" alt="リダイレクト" width="504" height="251" border="0">
+			</p>
+
+			<p>
+			フォワードの場合は呼び出したサーブレットが、サーバ内部で別のサーブレットなどに処理をそのまま移す為、クライアント側では処理が移ったことを把握できません。リダイレクトの場合にはサーバがクライアントに別のURLを見に行くように指示するだけなので、クライアントはリダイレクト先のURLを自分で見に行ったかのような挙動をするわけです。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

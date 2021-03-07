@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ストリートビューの表示 - ストリートビュー - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="ストリートビューの表示,GStreetviewPanorama,Google Maps API" />
+<meta name="description" content="ストリートビューの表示方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/" itemprop="url"><span itemprop="title">ストリートビュー(GStreetviewPanorama)</span></a></li>
+		</ul>
+</div>
+
+			<h1>ストリートビューの表示</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					ではストリートビューを表示してみます。
+					</p>
+
+					<p>
+					ストリートビューは別途用意したコンテナ内に表示します。今回は地図を表す時と同じくXHTMLファイル内に任意のdiv要素を使ってストリートビューの表示領域を確保します 
+					</p>
+
+<pre class="fixcomment">
+&lt;div id="street" style="width:400px; height:300px"&gt;&lt;/div&gt;
+</pre>
+
+					<p>
+					領域は任意の大きさで利用できますが、少なくとも200ピクセル×200ピクセル必要です。
+					</p>
+
+					<p>
+					次にストリートビューを表すGStreetviewPanoramaクラスのオブジェクトを作成します。コンストラクタ関数は次のように定義されています。
+					</p>
+
+<pre class="mheader">
+GStreetviewPanorama(container:Node, opts?:GStreetviewPanoramaOptions)
+</pre>
+<pre class="mexplain">
+対応する Flash ビューアを含む新しい GStreetviewPanorama オブジェクトを指
+定されたコンテナ内に作成します。オプションの GStreetviewPanoramaOptions 
+の opts オブジェクトで場所が指定されるか、setLocationAndPOV を呼び出すこ
+とにより場所が指定されるまで、ビューアは表示されません。
+</pre>
+
+					<p>
+					1番目の引数にはストリートビューを表示するコンテナを指定します。
+					</p>
+
+					<p>
+					2番目の引数にはGStreetviewPanoramaOptionsクラスのオブジェクトを指定します。このクラスはコンストラクタ関数が用意されていませんのでオブジェクトリテラルを作成します。
+					</p>
+
+<pre class="fixcomment">
+var opts = {プロパティ名:値, プロパティ名:値, ...};
+</pre>
+
+					<p>
+					GStreetviewPanoramaOptionsクラスで定義されているプロパティは2つでlatlngプロパティとpovプロパティです。今回はストリートビューを表示する場所を示すlatlngプロパティに値を指定します。値は座標を表すGLatLngクラスのオブジェクトで指定して下さい。
+					</p>
+
+<pre class="mheader">
+latlngプロパティ
+</pre>
+<pre class="mexplain">
+Flash ビューアを開く latlng。 
+
+値：
+  GLatLng
+</pre>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.172304,136.908306), 15);
+
+var slatlng = new GLatLng(35.658517, 139.745493);
+var option = { latlng:slatlng };
+var scontainer = document.getElementById("street");
+var panorama = new GStreetviewPanorama(scontainer, option);
+</pre>
+
+					<p>
+					GStreetviewPanoramaクラスのオブジェクトを作成した時点で、引数に指定したコンテナ内にストリートビューが表示されます。なおストリートビューが表示されるためには表示しているブラウザがFlashを表示できなければなりません。 
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code2_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/js/code2_1.js">code2_1.js</a>
+					</p>
+
+<pre class="fixcode">
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    var map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(35.659683,139.742956), 16);
+
+    var street = new GStreetviewOverlay();
+    map.addOverlay(street);
+
+    var slatlng = new GLatLng(35.659683,139.742956);
+    var option = { latlng:slatlng };
+    var scontainer = document.getElementById("street");
+    var panorama = new GStreetviewPanorama(scontainer, option);
+  }
+}
+</pre>
+
+					<p>
+					<a href="map2_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/map2_1.html">map2_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：ストリートビューの表示&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code2_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 300px"&gt;&lt;/div&gt;
+    &lt;div id="street" style="width: 400px; height: 200px; margin-top:10px;"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p2-1.png" alt="p2-1" width="441" height="637">
+					</p>
+
+					<p>
+					ストリートビューが指定したコンテナ内に表示されます。
+					</p>
+
+					<p>
+					ストリートビューは、ビュー内で回転させたり上や下を向いたり道路に沿って移動することができます。
+					</p>
+
+					<p>
+					<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p2-2.png" alt="p2-2" width="410" height="212">
+					</p>
+
+					<p>
+					<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p2-3.png" alt="p2-3" width="409" height="210">
+					</p>
+
+					<p>
+					<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p2-4.png" alt="p2-4" width="410" height="211">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>クエリの実行 - データベース接続(PEAR::DB) - PEAR入門</title>
+<meta name="keywords" content="query,PEAR::DB,入門,PEAR" />
+<meta name="description" content="クエリの実行" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_db/" itemprop="url"><span itemprop="title">データベース接続(PEAR::DB)</span></a></li>
+		</ul>
+</div>
+
+			<h1>クエリの実行</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			データベースに接続したら、SQL文を使ってデータベースからデータを取得したり、また新しいデータをデータベースに追加したりします。
+			</p>
+
+			<p>
+			PEAR::DBにおいてデータベースへSQL文を発行するにはDB_commonクラスで用意されている"query"メソッド使います。
+			</p>
+
+<pre class="mheader">
+query
+mixed &query (string $query [, mixed $params = array()])
+</pre>
+<pre class="mexplain">
+引数に指定したクエリを実行します。
+
+パラメータ:
+  string $query  SQLクエリあるいはプリペアドステートメント。
+  mixed $params  プリペアドステートメントに適用する配列・文字列あるいは
+    数値のデータ。 渡す項目数は、文中のプレースホルダの数と一致していな
+    ければなりません。 プレースホルダがひとつだけの場合は配列でない値を
+    指定し、複数存在する場合は個々の値を要素にもつ配列を指定します。
+返り値:
+  結果を返すクエリ (例えば SELECT クエリなど) の場合は新しい DB_result 
+    オブジェクト、 データを操作するクエリ (例えば INSERT クエリなど) の
+    場合は DB_OK、あるいは失敗した場合には DB_Error オブジェクトを返し
+    ます。
+</pre>
+
+			<p>
+			"query"メソッドは、"connect"メソッドが成功した時に取得できるDB オブジェクトに対して実行します。
+			</p>
+
+<pre class="fixcode">
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$res =& $db-&gt;query('SELECT ....');
+</pre>
+
+			<p>
+			"query"メソッド実行後もエラーの有無を確認するのが推奨されています。
+			</p>
+
+<pre class="fixcode">
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$res =& $db-&gt;query('SELECT ....');
+if (PEAR::isError($res)) {
+    die($res-&gt;getMessage());
+}
+</pre>
+
+			<h2>SQL文の記述方法</h2>
+
+			<p>
+			SQL文の指定は単にSQL文を記述する場合と、プレースホルダを使う方法の2通りがあります。
+			</p>
+
+			<p>
+			プログラムを記述する段階でSQL文が決まっているならSQLを表す文字列を"query"メソッドの引数に指定します。
+			</p>
+
+<pre class="fixcode">
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$sql = 'select * from shouhin';
+$res =& $db-&gt;query($sql);
+if (PEAR::isError($res)) {
+    die($res-&gt;getMessage());
+}
+</pre>
+
+			<h2>プレースホルダーを使う</h2>
+
+			<p>
+			SQL文を実行時に動的に作成する場合は、SQLインジェクション対策のためにエスケープ処理してSQL文を作り上げることも可能ですが、このような場合はプレースホルダーを使うと便利です。具体的には実行時に値が決まる部分を「?」に置き換えてSQL文を作成し、「?」に当てはめたい値を配列で指定します。
+			</p>
+
+			<p>
+			例えば「select * from shouhin where id &gt; 1 and id &lt; 4」のようなWHERE句で条件を指定する場合を考えます。この「1」と｢4」の部分を実行時にユーザーからの入力した値を設定したいとした場合に、プレースホルダーを使って記述すると下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$sql = 'select * from shouhin where id &gt; ? and id &lt; ? ';
+$data = array(1, 4);
+
+$res =& $db-&gt;query($sql, $data);
+if (PEAR::isError($res)) {
+    die($res-&gt;getMessage());
+}
+</pre>
+
+			<p>
+			このようにプレースホルダーを使ってSQL文を作成すると自動でエスケープ処理が行われるため、個々の値に対してエスケープ処理を行うよりも簡潔に記述することができます。
+			</p>
+
+			<p>
+			プレースホルダーを使用した場合には、その部分に当てはめたい実際の値を別に用意し、queryメソッドの2番目の引数として指定します。1つのSQL文の中で複数のプレースホルダーがある場合は上記のように配列を使って指定します。1つの場合は単に値を指定します。下記の指定する値が1つの場合の例を記述します。
+			</p>
+
+<pre class="fixcode">
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$sql = 'select * from shouhin where id &gt; ?';
+$data = 1;
+
+$res =& $db-&gt;query($sql, $data);
+if (PEAR::isError($res)) {
+    die($res-&gt;getMessage());
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。下記ではSQL文を発行後、取得したデータを表示する部分がありますが、この部分は次のページ以降で詳細を確認します。
+			</p>
+
+			<p>
+			<a href="sample7-1.html" tppabs="https://www.javadrive.jp/pear/pear_db/sample7-1.html">sample7-1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+require_once 'DB.php';
+
+$dsn = 'mysqli://testuser:testuser@localhost/uriage';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+print('接続に成功しました&lt;br&gt;');
+
+$db-&gt;query('SET NAMES sjis');
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$sql = 'select * from shouhin';
+$res =& $db-&gt;query($sql);
+if (PEAR::isError($res)) {
+    die($res-&gt;getMessage());
+}
+
+while ($row =& $res-&gt;fetchRow(DB_FETCHMODE_ASSOC)) {
+    print($row['id']);
+    print($row['name'].'&lt;br&gt;');
+}
+
+$db-&gt;disconnect();
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記をWWWサーバに設置しブラウザで見てみると下記のようなりました。
+			</p>
+
+			<p>
+			<img src="img/p10.png" tppabs="https://www.javadrive.jp/pear/pear_db/img/p10.png" alt="PEAR::DBのqueryメソッド" width="461" height="300">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

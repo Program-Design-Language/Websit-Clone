@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>必ず実行する処理の記述(try..catch..finally) - 例外処理 - Java入門</title>
+<meta name="keywords" content="必ず実行する処理の記述(try..catch..finally),例外処理" />
+<meta name="description" content="例外が発生してもしなくても必ず実行する処理を記述するfinallyブロックの使い方" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/exception/" itemprop="url"><span itemprop="title">例外処理</span></a></li>
+		</ul>
+</div>
+
+			<h1>必ず実行する処理の記述(try..catch..finally)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					tryブロックの中で例外が発生すると残りの処理は行われずにcatchブロックへ処理が移ります。次の例を見てください。
+					</p>
+
+<pre class="fixcomment">
+try{
+  実行する文1;
+  実行する文2;
+  実行する文3;
+}
+catch (例外クラス 変数名){
+  例外が発生した時に実行する文;
+}
+</pre>
+
+					<p>
+					tryブロックの中で例外が発生しなければ「実行する文1」「実行する文2」「実行する文3」と順に実行しtry文の次へ処理が移ります。それに対して例えば「実行する文1」「実行する文2」と実行してここで例外が発生した場合にひあ「実行する文3」は実行されずにcatchブロックへ処理が移ります。(そして例外の種類がcatchのところに書かれた例外だった場合にはcatchブロック内の処理が実行されます)。
+					</p>
+
+					<p>
+					このようにtryブロックの中の処理は実行されたりされなかったりする可能性があるのですけど、try文を終了する前に必ず実行させたい処理があった場合にはfinallyを使用して記述することが可能です。具体的には次のように記述します。
+					</p>
+
+<pre class="fixcomment">
+try{
+  例外が発生しているかどうか調べる文1;
+  例外が発生しているかどうか調べる文2;
+  ...
+}
+catch (例外クラス1 変数名1){
+  例外クラス1の例外が発生した時に行う文;
+  ...
+}
+catch (例外クラス2 変数名2){
+  例外クラス2の例外が発生した時に行う文;
+  ...
+}
+finally {
+  例外が発生するしないに関わらず実行する文;
+  ...
+}
+</pre>
+
+					<p>
+					finallyの後の「{」から「}」までのブロックに記述された処理は、try文の中で例外が発生してもしなくても必ず実行されます。その為、必ず行っておきたい処理がある場合にはfinallyブロックを用意してブロック内に記述するようにして下さい。
+					</p>
+
+					<p>
+					例えば次のように記述します。
+					</p>
+
+<pre class="fixcode">
+int n[] = {18, 29, 36};
+
+System.out.println("開始します");
+
+try{
+  for (int i = 0; i &lt; 4; i++){
+    System.out.println(n[i]);
+  }
+}
+catch(ArrayIndexOutOfBoundsException e){
+  System.out.println("配列の範囲を超えています");
+}
+finally{
+  System.out.println("配列の出力を終了しました");
+}
+
+System.out.println("終了しました");
+</pre>
+
+					<p>
+					この場合、try文の中で例外が発生してもしなくても必ず「配列の出力を終了しました」は画面に出力されることになります。
+					</p>
+
+					<h2>finallyとtry文の次に記述した場合との違い</h2>
+
+					<p>
+					なお、必ず実行される処理ということであれば次のようにtry文の次に記述しても同じように見えます。
+					</p>
+
+<pre class="fixcode">
+int n[] = {18, 29, 36};
+
+System.out.println("開始します");
+
+try{
+  for (int i = 0; i &lt; 4; i++){
+    System.out.println(n[i]);
+  }
+}
+catch(ArrayIndexOutOfBoundsException e){
+  System.out.println("配列の範囲を超えています");
+}
+
+System.out.println("配列の出力を終了しました");
+
+System.out.println("終了しました");
+</pre>
+
+					<p>
+					このプログラムの場合には同じ結果となりますが、もしもこのプログラムがメソッドの中で記述されていてcatchブロックの中でreturn文などにより処理がメソッドの呼び出し元へ戻ってしまう場合にはtry文の次に記述された処理は実行されません。finallyブロックを使った場合はcatchブロックの中でreturn文などが実行された場合でも必ず実行されます。(ただしSystem.exit(0)によってプログラムが終了した場合を除きます)。
+					</p>
+
+					<p>
+					具体的には次のサンプルを参照して下さい。
+					</p>
+
+					<h2>サンプル</h2>
+
+					<p>
+					では簡単な例で試しておきます。
+					</p>
+
+					<p>
+					<a href="JSample3_1.java" tppabs="https://www.javadrive.jp/start/exception/JSample3_1.java">JSample3_1.java</a>
+					</p>
+
+<pre class="fixcode">
+class JSample3_1{
+  public static void main(String args[]){
+    disp(1);
+    disp(2);
+    disp(3);
+  }
+
+  private static void disp(int no){
+    int n[] = {18, 29, 36};
+
+    try{
+      System.out.println(n[no]);
+    }
+    catch(ArrayIndexOutOfBoundsException e){
+      System.out.println("配列の範囲を超えています");
+      return;
+    }
+    finally{
+     System.out.println("要素の出力を終了します。");
+    }
+  }
+}
+</pre>
+
+					<p>
+					コンパイル後に実行すると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/start/exception/img/p3-1.png" alt="p3-1" width="509" height="259" />
+					</p>
+
+					<p>
+					finallyブロックに記述した処理は例外が発生してもしなくても必ず実行されます。またcatchブロック内でreturn文が実行されて呼び出し元へ処理が移る場合でもfinallyブロック内の処理は実行されています。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

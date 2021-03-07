@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | 最長一致数量子、最短一致数量子、強欲な数量子の違い</title>
+<meta name="description" content="正規表現で繰り返しを表す数量子のメタ文字を使用する場合、対象文字列のどの部分とマッチするのかを考える必要があります。例えば A が 1 文字以上続く文字列とマッチするパターンを考えたとき、対象の文字列が AAA の場合にマッチするのは A なのかそれとも AAA なのかは使用する数量子の種類によって異なります。ここでは Java で数量子のメタ文字を使用する場合に最長一致数量子、最短一致数量子、強欲な数量子の違いについて解説します。">
+
+<meta property="og:title" content="最長一致数量子、最短一致数量子、強欲な数量子の違い">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/regex/index11.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/regex/img/p11-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現で繰り返しを表す数量子のメタ文字を使用する場合、対象文字列のどの部分とマッチするのかを考える必要があります。例えば A が 1 文字以上続く文字列とマッチするパターンを考えたとき、対象の文字列が AAA の場合にマッチするのは A なのかそれとも AAA なのかは使用する数量子の種類によって異なります。ここでは Java で数量子のメタ文字を使用する場合に最長一致数量子、最短一致数量子、強欲な数量子の違いについて解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "Java正規表現の使い方",
+	"item": "https://www.javadrive.jp/start/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/">Java正規表現の使い方</a></li>
+				</ul>
+			</div>
+
+			<h1>最長一致数量子、最短一致数量子、強欲な数量子の違い</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現で繰り返しを表す数量子のメタ文字を使用する場合、対象文字列のどの部分とマッチするのかを考える必要があります。例えば A が 1 文字以上続く文字列とマッチするパターンを考えたとき、対象の文字列が AAA の場合にマッチするのは A なのかそれとも AAA なのかは使用する数量子の種類によって異なります。ここでは Java で数量子のメタ文字を使用する場合に最長一致数量子、最短一致数量子、強欲な数量子の違いについて解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">数量子の種類</a></li>
+			<li><a href="#section2">最長一致数量子とは</a></li>
+			<li><a href="#section3">最短一致数量子とは</a></li>
+			<li><a href="#section4">強欲な数量子(絶対最大指定子)とは</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">数量子の種類</a></h2>
+
+			<p>
+			最初に Java の正規表現で用意されている数量子のメタ文字の一覧をご紹介します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+・最長一致数量子
+?       1または0回
+*       0回以上
++       1回以上
+{n}     n回
+{n,}    n回以上
+{n,m}   n回以上、m回以下
+
+・最短一致数量子
+??      1または0回
+*?      0回以上
++?      1回以上
+{n}?    n回
+{n,}?   n回以上
+{n,m}?  n回以上、m回以下
+
+・強欲な数量子(絶対最大指定子)
+?+      1または0回
+*+      0回以上
+++      1回以上
+{n}+    n回
+{n,}+   n回以上
+{n,m}+  n回以上、m回以下
+</pre>
+</div>
+
+			<p>
+			数量子の種類は 6 種類用意されていますが、それぞれに対して最長一致数量子、最短一致数量子、強欲な数量子の 3 つのタイプが用意されています。(強欲な数量子は絶対最大指定子と呼ばれることもあります)。
+			</p>
+
+			<p>
+			例えば直前の文字の 1 回または 0 回繰り返すことを表す数量子は ? ですが、単に ? と記述した場合は最長一致数量子となります。 ? のあとに ? を記述した ?? が最短一致数量子、 ? のあとに + を記述した ?+ が強欲な数量子です。他に数量子についても同じルールとなっています。
+			</p>
+
+<div class="titlebox2">
+<pre>
+・1または0回を表す数量子
+?   最長一致数量子
+??  最短一致数量子
+?+  強欲な数量子
+</pre>
+</div>
+
+			<p>
+			どのタイプを選ぶのかによって、実際に対象の文字列のどの部分とマッチするのかが変わってきます。このあと、それぞれのタイプを選択した場合に、対象文字列のどの部分にマッチするのかを解説していきます。
+			</p>
+
+<h2><a id="section2">最長一致数量子とは</a></h2>
+
+			<p>
+			最長一致数量子の数量子を使用した場合は、できる限り長い文字列とマッチしようとします。例えば直前の文字が 1 文字以上繰り返されることを意味する + を使用してみます。最初に A 、次に B が 1 回以上続く文字列とマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "AB+";
+</pre>
+</div>
+
+			<p>
+			対象の文字列が ABBBC だった場合、 A のあとに B が 1 回以上続くパターンにマッチする部分は次のいずれかです。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">AB</span>BBC
+<span class="k">ABB</span>BC
+<span class="k">ABBB</span>C
+</pre>
+</div>
+
+			<p>
+			最長一致数量子はできる限り長い文字列とマッチしようとするので、 "AB+" とマッチする部分は "ABBB" となります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">ABBB</span>C
+</pre>
+</div>
+
+			<p>
+			実際にサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample11_1{
+  public static void main(String[] args){
+    String regex = "AB+";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("ABBBC");
+    if (m.find()){
+      System.out.println(m.group());  // ABBB
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンとマッチした部分を画面に出力してみると "ABBB" となりました。
+			</p>
+
+	<h3>パターン全体がマッチするように調整する</h3>
+
+			<p>
+			最長一致数量子はできる限り長い文字列とマッチしようとしますが、一番長い部分とマッチさせるとパターン全体がマッチしない場合があります。次のパターンを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "A.+B";
+</pre>
+</div>
+
+			<p>
+			最初に A 、次に任意の文字が 1 回以上続き、最後に B と続く文字列とマッチします。
+			</p>
+
+			<p>
+			対象の文字列が ACCBEE だった場合で考えてみます。まず A.+ の部分がマッチする部分です。 A のあとに任意の文字が(最長一致で) 1 回以上続くパターンにマッチする部分は次の箇所です。文字列の末尾までとなります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">ACCBEE</span>
+</pre>
+</div>
+
+			<p>
+			ただ今回のパターンの場合、最後に B が続く必要があります。 A.+ の部分だけで文字列の最後までマッチさせてしまうと、パターンの最後の B がマッチせずにパターン全体がマッチしませんので、 A.+ の部分がマッチする分を 3 つ減らして次のところまでにします。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">ACC</span>BEE
+</pre>
+</div>
+
+			<p>
+			これならば最後に B が続くためパターン全体もマッチします。結果としてパターン全体がマッチしたのは ACCB の部分となります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">ACCB</span>EE
+</pre>
+</div>
+
+			<p>
+			このように最長一致数量子の場合はできるだけ長い部分とマッチしようとしますが、パターン全体がマッチしない場合には最長一致数量子がマッチする部分を減らしてパターン全体がマッチするように調整します。
+			</p>
+
+<h2><a id="section3">最短一致数量子とは</a></h2>
+
+			<p>
+			最短一致数量子の数量子を使用した場合は、できる限り短い文字列とマッチしようとします。例えば直前の文字が 1 文字以上繰り返されることを意味する + を使用してみます。最短一致数量子を使用する場合は数量子は +? となります。最初に A 、次に B が 1 回以上続く文字列とマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "AB+?";
+</pre>
+</div>
+
+			<p>
+			対象の文字列が ABBBC だった場合、 A のあとに B が 1 回以上続くパターンにマッチする部分は次のいずれかです。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">AB</span>BBC
+<span class="k">ABB</span>BC
+<span class="k">ABBB</span>C
+</pre>
+</div>
+
+			<p>
+			最短一致数量子はできる限り長い文字列とマッチしようとするので、 "AB+?" とマッチする部分は "AB" となります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">AB</span>BBC
+</pre>
+</div>
+
+			<p>
+			実際にサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample11_2{
+  public static void main(String[] args){
+    String regex = "AB+?";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("ABBBC");
+    if (m.find()){
+      System.out.println(m.group());  // AB
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンとマッチした部分を画面に出力してみると "AB" となりました。
+			</p>
+
+<h2><a id="section4">強欲な数量子(絶対最大指定子)とは</a></h2>
+
+			<p>
+			強欲な数量子(絶対最大指定子)の数量子を使用した場合は、最長一致数量子と同じでできる限り長い文字列とマッチしようとします。例えば直前の文字が 1 文字以上繰り返されることを意味する + を使用してみます。最短一致数量子を使用する場合は数量子は ++ となります。最初に A 、次に B が 1 回以上続く文字列とマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "AB++";
+</pre>
+</div>
+
+			<p>
+			対象の文字列が ABBBC だった場合、 A のあとに B が 1 回以上続くパターンにマッチする部分は次のいずれかです。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">AB</span>BBC
+<span class="k">ABB</span>BC
+<span class="k">ABBB</span>C
+</pre>
+</div>
+
+			<p>
+			強欲な数量子はできる限り長い文字列とマッチしようとするので、 "AB++" とマッチする部分は "ABBB" となります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">ABBB</span>C
+</pre>
+</div>
+
+			<p>
+			実際にサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample11_3{
+  public static void main(String[] args){
+    String regex = "AB++";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m = p.matcher​("ABBBC");
+    if (m.find()){
+      System.out.println(m.group());  // ABBB
+    }
+  }
+}
+</pre>
+</div>
+
+			<p>
+			パターンとマッチした部分を画面に出力してみると "ABBB" となりました。
+			</p>
+
+	<h3>最長一致数量子と強欲な数量子(絶対最大指定子)との違い</h3>
+
+			<p>
+			最長一致数量子と強欲な数量子はどちらもできるだけ長い文字列とマッチしようとする点では同じです。ただ、最長一致数量子の方はパターン全体がマッチすることを優先し、場合によってはマッチする部分を一番長い部分から減らしてパターン全体をマッチしようとしますが、強欲な数量子の方はパターン全体がマッチしなくても必ず一番長い部分とマッチします。
+			</p>
+
+			<p>
+			次のパターンを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "A.++B";
+</pre>
+</div>
+
+			<p>
+			最初に A 、次に任意の文字が 1 回以上続き、最後に B と続く文字列とマッチします。
+			</p>
+
+			<p>
+			対象の文字列が ACCBEE だった場合で考えてみます。まず A.++ の部分がマッチする部分です。 A のあとに任意の文字が(強欲な数量子で) 1 回以上続くパターンにマッチする部分は次の箇所です。文字列の末尾までとなります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+<span class="k">ACCBEE</span>
+</pre>
+</div>
+
+			<p>
+			ただ今回のパターンの場合、最後に B が続く必要があります。 A.++ の部分だけで文字列の最後までマッチさせてしまうと、パターンの最後の B がマッチせずにパターン全体がマッチしませんが、強欲な数量子は必ず一番長い文字列とマッチするため A.++ の部分がマッチする部分は変わりありません。
+			</p>
+
+			<p>
+			結果的にそのあとに B が続きませんので今回のパターンは対象の文字列にマッチしないことになります。
+			</p>
+
+			<p>
+			このように最長一致数量子と強欲な数量子は似ていますが同じではありません。目的に応じて使い分けるようにしてください。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java で数量子のメタ文字を使用する場合に最長一致数量子、最短一致数量子、強欲な数量子の違いについて解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

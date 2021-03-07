@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDOクラスコンストラクタとDSNの記述 - PDOの利用 - PHP入門</title>
+<meta name="keywords" content="コンストラクタ,DSN,PDO,PHP入門" />
+<meta name="description" content="PDOクラスコンストラクタとDSNの記述" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/pdo/" itemprop="url"><span itemprop="title">PDOの利用</span></a></li>
+		</ul>
+</div>
+
+			<h1>PDOクラスコンストラクタとDSNの記述</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			まずPDOを使ってデータベースへ接続してみます。PDOにおいてはデータベースへの接続とは、PDOクラスのオブジェクトを作成することで行います。
+			</p>
+
+			<p>
+			PDOクラスのコンストラクタは下記のようになっています。
+			</p>
+
+<pre class="mheader">
+PDO PDO::__construct ( string dsn 
+                       [, string username 
+                       [, string password 
+                       [, array driver_options]]] )
+</pre>
+<pre class="mexplain">
+指定されたデータベースへの接続を表すPDOインスタンスを生成します。
+
+引数：
+  dsn データソース名(Data Source Name)またはDSN。データベースに接続
+    するために 必要な情報が含まれます。
+  username DSN文字列のユーザ名。このパラメータは、いくつかのPDOドラ
+    イバではオプションです。
+  password  パスワード。DSN文字列で必要とされる場合に指定。
+  driver_options  ドライバ固有の接続オプションを指定するキー=&gt; 値
+    の配列。
+戻り値:
+  成功時にPDOオブジェクトを返します。
+</pre>
+
+			<p>
+			必須の引数であるデータソース名に、どのデータベースのどのホストのどのデータベースへ接続するのかを指定します。
+			</p>
+
+			<h2>MySQLのDSN</h2>
+
+			<p>
+			MySQLのデータソース名の構文は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+mysql:dbname=<span class="red">db_name</span>;host=<span class="red">host_name</span>;port=<span class="red">port_no</span>
+</pre>
+
+			<p>
+			どれが必須なのかは分かりませんがポート番号は省略可能なようです。下記が記述例です。
+			</p>
+
+<pre class="fixcomment">
+mysql:dbname=test;host=localhost
+mysql:dbname=test;host=localhost:port=3306
+</pre>
+
+			<h2>PostgreSQLのDSN</h2>
+
+			<p>
+			PostgreSQLのデータソース名の構文は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+pgsql:dbname=<span class="red">db_name</span>;host=<span class="red">host_name</span>;port=<span class="red">port_no</span>;user=<span class="red">user_name</span>;pass=<span class="red">password</span>
+</pre>
+
+			<p>
+			PostgreSQLのDSNでは、DSNでユーザー名とパスワードが指定できるようです。PDOクラスのコンストラクタの2番目と3番目の引数でも指定できますので、どちらかで指定すればいいようです。(DSNで指定した場合は、コンストラクタの引数でユーザー名とパスワードを指定しても無視されるようです)。
+			</p>
+
+			<p>
+			記述例は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+pgsql:dbname=test;host=localhost;port=5432
+pgsql:dbname=test;host=localhost;port=5432;user=hoge;pass=hoge
+</pre>
+
+			<h2>SQLiteのDSN</h2>
+
+			<p>
+			SQLite(SQLite 3)のデータソース名の構文は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+sqlite:<span class="red">db_name</span>
+</pre>
+
+			<p>
+			SQLiteでディスク上のデータベースに接続するには絶対パスでデータベースの位置を指定します。
+			</p>
+
+<pre class="fixcomment">
+sqlite:d:&yen;&yen;sqlite&yen;&yen;test
+</pre>
+
+			<p>
+			また現在ではSQLite 2についても一部対応しているようです。その場合は下記のように接頭語を"sqlite2"と記述します。
+			</p>
+
+<pre class="fixcomment">
+sqlite2:d:&yen;&yen;sqlite&yen;&yen;test
+</pre>
+
+			<h2>PDOクラスのオブジェクトの作成</h2>
+
+			<p>
+			SQLiteにはユーザーという概念がありませんが、MySQLやPostgreSQLを利用する場合には、ユーザー名とパスワードをコンストラクタの2番目と3番目の引数に指定します。(PostgreSQLはDSN内にも記述可能です)。
+			</p>
+
+			<p>
+			実際にPDOクラスのオブジェクトの作成は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$dsn = 'mysql:dbname=testdb;host=localhost';
+$user = 'dbuser';
+$password = 'dbpass';
+
+$dbh = new PDO($dsn, $user, $password);
+</pre>
+
+			<p>
+			またPDOクラスはオブジェクトの作成時に、データベースへの接続に失敗した場合"PDOException"という例外を投げるようです。その為、try catchを使って例外処理を記述しておきます。
+			</p>
+
+<pre class="fixcode">
+$dsn = 'mysql:dbname=testdb;host=localhost';
+$user = 'dbuser';
+$password = 'dbpass';
+
+try{
+    $dbh = new PDO($dsn, $user, $password);
+}catch (PDOException $e){
+    print('Connection failed:'.$e-&gt;getMessage());
+    die();
+}
+</pre>
+
+			<h2>データベースへの接続を閉じる</h2>
+
+			<p>
+			PHPスクリプトが終了すればデータベースへの接続は閉じられますが、明示的に閉じる場合には作成したPDOクラスのオブジェクトに"NULL"を代入します。
+			</p>
+
+<pre class="fixcode">
+$dsn = 'mysql:dbname=testdb;host=localhost';
+$user = 'dbuser';
+$password = 'dbpass';
+
+try{
+    $dbh = new PDO($dsn, $user, $password);
+}catch (PDOException $e){
+    print('Connection failed:'.$e-&gt;getMessage());
+    die();
+}
+
+<span class="red">$dbh = null;</span>
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>行の新規作成 - 行 - Apache POIでExcelを操作</title>
+<meta name="keywords" content="行の新規作成,POI" />
+<meta name="description" content="行の新規作成方法について確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/poi/" itemprop="url"><span itemprop="title">Apache POIでExcelを操作</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/poi/row/" itemprop="url"><span itemprop="title">行</span></a></li>
+		</ul>
+</div>
+
+			<h1>行の新規作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			シートの中のいずれかのセルに対して値を設定する場合には、そのセルが含まれる行をまず作成する必要があります。行を作成し、さらに行の中にセルを作成してから、そのセルに対して値を設定するという手順を取ります。ここではまず新しく行を作成する方法を確認します。
+			</p>
+
+			<p>
+			Apache POIにおいて行を表すオブジェクトは「HSSFRow」クラス及び「XSSFRow」クラスのオブジェクトとなります。
+			</p>
+
+			<p>
+			HSSFRowクラスのクラス定義は次のようになっています。
+			</p>
+
+<pre class="fixcomment">
+public final class HSSFRow
+extends java.lang.Object implements Row
+</pre>
+
+<pre class="fixcomment">
+java.lang.Object
+ Ｌ org.apache.poi.hssf.usermodel.HSSFRow
+</pre>
+
+			<p>
+			新規にHSSFRowクラスのオブジェクトを作成するにはHSSFSheetクラスで用意されているcreateRowメソッドなどを使って作成します。
+			</p>
+
+<pre class="fixcode">
+HSSFWorkbook wb = new HSSFWorkbook();
+HSSFSheet sheet = wb.createSheet();
+HSSFRow row = sheet.createRow(0);
+</pre>
+
+			<p>
+			続いてXSSFRowクラスです。XSSFRowクラスのクラス定義は次のようになっています。
+			</p>
+
+<pre class="fixcomment">
+public class XSSFRow
+extends java.lang.Object implements Row, java.lang.Comparable&lt;XSSFRow&gt;
+</pre>
+
+<pre class="fixcomment">
+java.lang.Object
+ Ｌ org.apache.poi.xssf.usermodel.XSSFRow
+</pre>
+
+			<p>
+			新規にXSSFRowクラスのオブジェクトを作成するにはXSSFSheetクラスで用意されているcreateRowメソッドなどを使って作成します。
+			</p>
+
+<pre class="fixcode">
+XSSFWorkbook wb = new XSSFWorkbook();
+XSSFSheet sheet = wb.createSheet();
+XSSFRow row = sheet.createRow(0);
+</pre>
+
+			<p>
+			このようにExcel2003までの形式の行と、Excel2007の形式の行を明示的に作成することができます。
+			</p>
+
+			<h2>Rowインターフェース</h2>
+
+			<p>
+			「ss」ユーザーモデルでは、まずWorkbookインターフェースを実装したクラスのオブジェクトを作成し、そこからSheetインターフェースを実装したクラスのオブジェクトを作成しました。同じように行を作成するにはSheetインターフェースで用意されているcreateRowメソッドを使って行オブジェクトを作成します。
+			</p>
+
+<pre class="mheader">
+createRow
+Row createRow(int rownum)
+</pre>
+<pre class="mexplain">
+Create a new row within the sheet and return the high level representation 
+
+Returns:
+  rownum - row number 
+Returns:
+  high level Row object representing a row in the sheet
+</pre>
+
+			<p>
+			このメソッドを使って作成されるオブジェクトはRowインターフェースを実装したクラスのオブジェクトとなります。Rowインターフェースは「HSSFRow」クラス及び「XSSFRow」クラスに共通するスーパーインターフェースです。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+Workbook wb1 = new HSSFWorkbook();
+Sheet sheet1 = wb1.createSheet();
+Row row1 = sheet1.createSheet(0);
+
+Workbook wb2 = new XSSFWorkbook();
+Sheet sheet2 = wb2.createSheet();
+Row row2 = sheet2.createSheet(0);
+</pre>
+
+			<p>
+			どちらのファイルフォーマットの形式のものであっても同じように行を扱うことができます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

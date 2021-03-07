@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>設定ファイルの読み込みと変数の参照 - 設定ファイル - Smarty - PHP</title>
+<meta name="keywords" content="config_load,設定ファイル,Smarty,PHP" />
+<meta name="description" content="設定ファイルの読み込みと変数の参照" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/smarty/" itemprop="url"><span itemprop="title">Smarty</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/smarty/config/" itemprop="url"><span itemprop="title">設定ファイル</span></a></li>
+		</ul>
+</div>
+
+			<h1>設定ファイルの読み込みと変数の参照</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					テンプレートファイルで設定ファイルに記述された変数を参照するには、テンプレートファイル内で設定ファイルを読み込みことが必要です。設定ファイルを読み込むには {config_load} 関数を使います。
+					</p>
+
+<pre class="fixcomment">
+{config_load file="設定ファイル名"}
+</pre>
+
+					<p>
+					「file」属性に読み込むファイル名を指定します。「file」属性は必須となっています。設定ファイル名は「configs」ディレクトリに含まれている必要があります。例えば次のように記述します。
+					</p>
+
+<pre class="fixcomment">
+{config_load file="sample.config"}
+</pre>
+
+					<p>
+					テンプレートファイル内で記述する位置に決まりは無いようですが、設定ファイル内の変数を参照するよりも前に {config_load} 関数を呼び出しておく必要があります。
+					</p>
+
+					<h2>設定ファイルの読み込みと変数の参照</h2>
+
+					<p>
+					設定ファイル内で記述された変数を参照するには2つの方法があります。1つ目の方法は変数名を「#」で囲み、さらにデリミタである「{」と「}」で囲います。書式としては次のようになります。
+					</p>
+
+<pre class="fixcomment">
+{#変数名#}
+</pre>
+
+					<p>
+					2つ目の方法はSmartyの予約変数である {$smarty.config} を使います。次の書式にて設定ファイル内の変数を参照できます。
+					</p>
+
+<pre class="fixcomment">
+{$smarty.config.変数名}
+</pre>
+
+					<p>
+					どちらの方式でも結果は同じになります。変数を参照する前に設定ファイルが読み込まれている必要がある点に注意して下さい。
+					</p>
+
+<pre class="fixcode">
+{config_load file="sample.config"}
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Smarty Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;Site:{#url#}&lt;/p&gt;
+&lt;p&gt;E-Mail:{$smarty.config.mail}&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なサンプルプログラムを作成して試してみます。
+					</p>
+
+					<p>
+					<a href="sample3-1.html" tppabs="https://www.javadrive.jp/smarty/config/sample3-1.html">sample3-1.php</a>
+					</p>
+
+
+<pre class="fixcode">
+&lt;?php
+
+require_once('Smarty.class.php');
+
+$smarty = new Smarty();
+
+$smarty-&gt;template_dir = 'd:/smartysample/config/templates/';
+$smarty-&gt;compile_dir  = 'd:/smartysample/config/templates_c/';
+$smarty-&gt;config_dir   = 'd:/smartysample/config/configs/';
+$smarty-&gt;cache_dir    = 'd:/smartysample/config/cache/';
+
+$smarty-&gt;assign('title', 'Test');
+
+$smarty-&gt;display('sample3-1.tpl');
+
+?&gt;
+</pre>
+
+					<p>
+					上記を「sample3-1.php」の名前で「(Apacheドキュメントルート)&yen;smarty&yen;config」に保存します。
+					</p>
+
+					<p>
+					<a href="sample3-1.tpl.html" tppabs="https://www.javadrive.jp/smarty/config/sample3-1.tpl.html">sample3-1.tpl</a>
+					</p>
+
+<pre class="fixcode">
+{* Smarty config/sample3-1.tpl *}
+
+{config_load file="sample3-1.config"}
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Smarty Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;{$title}&lt;/h1&gt;
+&lt;p&gt;Site : {#url#}&lt;/p&gt;
+&lt;p&gt;E-Mail : {$smarty.config.mail}&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					上記を「sample3-1.tpl」の名前で「D:&yen;smartysample&yen;config&yen;templates」に保存します。
+					</p>
+
+					<p>
+					<a href="sample3-1.config.html" tppabs="https://www.javadrive.jp/smarty/config/sample3-1.config.html">sample3-1.config</a>
+					</p>
+
+<pre class="fixcomment">
+# 設定ファイル
+url = "www.hogehoge.hoge"
+mail = 'hoge@hogehoge.hoge'
+</pre>
+
+					<p>
+					上記を「sample3-1.config」の名前で「D:&yen;smartysample&yen;config&yen;configs」に保存します。
+					</p>
+
+					<p>
+					そしてブラウザから「http://localhost/smarty/config/sample3-1.php」へアクセスして下さい。
+					</p>
+
+					<p>
+					<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/smarty/config/img/p3-1.png" alt="設定ファイルの読み込みと変数の参照" width="431" height="324">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

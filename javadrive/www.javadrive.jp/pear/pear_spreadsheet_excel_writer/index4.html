@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ワークブックをクライアントへ出力 - Excelファイル作成(PEAR::Spreadsheet_Excel_Writer) - PEAR入門</title>
+<meta name="keywords" content="ワークブックをクライアントへ出力,PEAR::Spreadsheet_Excel_Writer,入門,PEAR" />
+<meta name="description" content="ワークブックをクライアントへ出力" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/" itemprop="url"><span itemprop="title">Excelファイル作成(PEAR::Spreadsheet_Excel_Writer)</span></a></li>
+		</ul>
+</div>
+
+			<h1>ワークブックをクライアントへ出力</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					作成したExcelファイルはサーバ側に保存するだけではなく、クライアントであるブラウザに対して出力することも可能です。クライアント側ではExcelファイルに対するリンクをクリックした時と同じようにファイルをExcelで開くかローカルに保存するかの選択ダイアログが表示されます。
+					</p>
+
+					<p>
+					まずSpreadsheet_Excel_Writerクラスのオブジェクトを作成する時に、引数のファイル名を指定せずに作成します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer();
+?&gt;
+</pre>
+
+					<p>
+					次にクライアントのブラウザに対してExcelファイル用のHTTPヘッダを送信します。Spreadsheet_Excel_Writerクラスで用意されているsendメソッドを使います。
+					</p>
+
+<pre class="mheader">
+void send (string $filename)
+</pre>
+<pre class="mexplain">
+HTTP ヘッダに正しい content-type (application/vnd.ms-excel) とキャッシュ
+コントロール、そしてファイル名をつけて送信します。
+
+パラメータ:
+  $filename  HTTP ヘッダで使用するファイル名
+</pre>
+
+					<p>
+					1番目の引数にはワークブックのファイル名を指定して下さい。
+					</p>
+
+					<p>
+					ソースファイルを確認すると、このメソッドを実行することによって次のようなヘッダが送信されます。
+					</p>
+
+<pre class="fixcode">
+header("Content-type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=&yen;"$filename&yen;"");
+header("Expires: 0");
+header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+header("Pragma: public");
+</pre>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer();
+$workbook-&gt;send('sample1-1.xls');
+?&gt;
+</pre>
+
+					<p>
+					最後にワークブックを閉じます。Spreadsheet_Excel_Writer_Workbookクラスで用意されているcloseメソッドを使います。これはサーバ側に保存する場合と同じです。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer();
+$workbook-&gt;send('sample1-1.xls');
+$workbook-&gt;close();
+?&gt;
+</pre>
+
+					<p>
+					このようにすることで、サーバ側でExcelファイルを保存する代わりにクライアントに対して作成したExcelファイルを出力することができます。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なサンプルで試してみます。
+					</p>
+
+					<p>
+					<a href="sample4-1.html" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/sample4-1.html">sample4-1.php</a>
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer();
+$workbook-&gt;send('sample4-1.xls');
+$worksheet =& $workbook-&gt;addWorksheet('サンプル');
+$workbook-&gt;close();
+?&gt;
+</pre>
+
+					<p>
+					上記のファイルをWWWサーバのドキュメントルート以下に設置しブラウザからアクセスすると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p4-1.png" alt="ワークブックをクライアントへ出力" width="506" height="389">
+					</p>
+
+					<p>
+					今回は直接クライアントに対してExcelファイルを出力しているため、クライアントであるブラウザ側ではファイルを保存するかExcelなどのアプリケーションで開くのかを選択することになります(ブラウザによって挙動は違います)。いったんローカルに保存してからExcelで開いてみます。
+					</p>
+
+					<p>
+					<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p4-2.png" alt="ワークブックをクライアントへ出力" width="489" height="342">
+					</p>
+
+					<p>
+					Excelで利用可能なファイルとして出力されていることが確認できます。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

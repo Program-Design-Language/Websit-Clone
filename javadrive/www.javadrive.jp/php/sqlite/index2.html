@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データベースの作成とオープン - SQLiteへの接続 - PHP入門</title>
+<meta name="keywords" content="作成,SQLite,PHP入門" />
+<meta name="description" content="データベースの作成とオープン" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/sqlite/" itemprop="url"><span itemprop="title">SQLiteへの接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>データベースの作成とオープン</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			まずデータベースを作成します。事前にコマンドラインなどからデータベースを作成しておきたかったのですが、PHPにバンドルされているSQLiteをコマンドラインから使う方法が分かりませんでしたのでPHPの関数を使ってデータベースの作成も行います。
+			</p>
+
+			<p>
+			SQLiteのデータベースを作成したり既存のデータベースを開いたりするには「sqlite_open」関数を使います。
+			</p>
+
+<pre class="mheader">
+sqlite_open
+resource sqlite_open(string filename [,int mode [,string &error_message]])
+</pre>
+<pre class="mexplain">
+SQLite データベースをオープン、もしくは存在しない場合データベースを生成
+します。
+
+引数:
+  filename  SQLite データベースのファイル名。もしこのファイルが存在しな
+    い場合、SQLite はファイルを生成しようとします。データを挿入したり、
+    データベーススキーマを変更、もしくはデータベースが存在しない場合にデー
+    タベースを生成する場合、PHP はファイルに対する書き込み権限を持ってい
+    る必要があります。
+  mode  ファイルのモード。読み込み専用モードでデータベースをオープンする
+    ために 使用することを目的としています。現在、このパラメータは SQLite
+    ライブラリに無視されます。このモードのデフォルト値は、8 進数値 0666 
+    で、これは推奨される値です。
+  error_message  参照として渡され、エラーが発生した場合にデータベースが
+    オープンできなかった原因を説明する記述的なエラーメッセージを保持する
+    ために設定されます。
+返り値:
+  成功時にリソース(データベースハンドル)、失敗時に FALSE を返します。
+</pre>
+
+			<p>
+			1番目の引数にデータベース名を指定します。存在するデータベースであればデータベースを開き、もし存在しなければ新規に作成します。
+			</p>
+
+			<p>
+			2番目の引数はファイルパーミッションの指定です。パーミッションは所有者、グループ、他人の3つの対象に対して、読み込み(4)、書き込み(2)、実行(1)のどの権限を与えるかを指定します。読み込みと書き込みを与える場合は4＋2＝6となります。先頭に0を付けて3つの対象に対してどの権限を付与するかを並べて記述するわけです。デフォルトの0666は全ての対象に対して読み込みと書き込みの権限を与える設定となります。
+			</p>
+
+			<p>
+			3番目の引数はエラーが発生した場合のエラーメッセージを格納する変数を指定します。
+			</p>
+
+			<p>
+			データベース名を"test.db"とした場合、下記のような記述となります。
+			</p>
+
+<pre class="fixcode">
+$link = sqlite_open('test.db', 0666, $sqliteerror);
+</pre>
+
+			<h2>データベースからの切断</h2>
+
+			<p>
+			接続後、接続を切断するには「sqlite_close」関数を使います。
+			</p>
+
+<pre class="mheader">
+sqlite_close
+void sqlite_close(resource dbhandle)
+</pre>
+<pre class="mexplain">
+指定したデータベースハンドル database を閉じます。このデータベースに持続
+性がある場合、このデータベースは閉じられ、持続的データベースリストから削
+除されます。
+
+引数:
+  dbhandle  SQLite データベースリソース。
+</pre>
+
+			<p>
+			実際の使い方は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$link = sqlite_open('test.db', 0666, $sqliteerror);
+
+// SQLiteに対する処理
+
+sqlite_close($link);
+</pre>
+
+			<h2>実際のテスト</h2>
+
+			<p>
+			では実際に試してみます。エラー処理まで含めたサンプルは下記のようになります。
+			</p>
+
+			<p>
+			<a href="sqlitetest1.php.htm" tppabs="https://www.javadrive.jp/php/sqlite/sqlitetest1.php">sqlitetest1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$link = sqlite_open('test.db', 0666, $sqliteerror);
+if (!$link) {
+    die('接続失敗です。'.$sqliteerror);
+}
+
+print('接続に成功しました。&lt;br&gt;');
+
+// SQLiteに対する処理
+
+sqlite_close($link);
+
+print('切断しました。&lt;br&gt;');
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p4.png" tppabs="https://www.javadrive.jp/php/sqlite/img/p4.png" alt="データベースの作成" width="474" height="306">
+			</p>
+
+			<p>
+			今回は存在しないデータベースを指定しましたので、データベースが新規に作成されます。作成される位置は今回はファイル名だけ指定しましたので、実行したPHPのプログラムファイルがあるディレクトリと同じ場所に作成されます。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/php/sqlite/img/p5.png" alt="データベースの作成" width="497" height="365">
+			</p>
+
+			<p>
+			例えば違うディレクトリにデータベースを作成したり、データベースを開いたりする場合はPHPのファイルがある位置を基点として相対位置でデータベースファイル名を指定します。
+			</p>
+
+<pre class="fixcode">
+$link = sqlite_open('./db/test.db', 0666, $sqliteerror);
+$link = sqlite_open('../db/test.db', 0666, $sqliteerror);
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

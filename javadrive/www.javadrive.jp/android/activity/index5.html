@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>プログラムの中でビューを定義 - Androidプログラミング入門 | JavaDrive</title>
+<meta name="keywords" content="プログラムの中でビューを定義" />
+<meta name="description" content="アクティビティに配置するビューやビューグループに関してプログラムの中で記述する方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/android/" itemprop="url"><span itemprop="title">Androidプログラミング入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/android/activity/" itemprop="url"><span itemprop="title">アクティビティ(Activity)を使った画面作成とレイアウト</span></a></li>
+		</ul>
+</div>
+
+			<h1>プログラムの中でビューを定義</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前のページでXMLファイルを使ってビューを定義する方法について解説しました。ここではプログラムの中でViewクラスのオブジェクトを作成しアクティビティに追加する方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">アクティビティにビューを配置する</a><br />
+			2.<a href="#section2">レイアウトパラメータ</a><br />
+			3.<a href="#section3">テスト</a><br />
+			</p>
+
+<h2><a id="section1">アクティビティにビューを配置する</a></h2>
+
+			<p>
+			アクティビティにビューを配置するにはsetContentViewメソッドを使いますが、setContentViewメソッドは引数の違いで3種類のメソッドが定義されています。今回使用するのは次のメソッドです。
+			</p>
+
+<pre class="methodtb">
+setContentView
+public void setContentView (View view)
+</pre>
+<pre class="methodcb">
+Set the activity content to an explicit view. This view is placed directly into 
+the activity's view hierarchy. It can itself be a complex view hierarchy. When 
+calling this method, the layout parameters of the specified view are ignored. 
+Both the width and the height of the view are set by default to MATCH_PARENT. 
+To use your own layout parameters, invoke setContentView(android.view.View, 
+android.view.ViewGroup.LayoutParams) instead.
+
+Parameters:
+  view The desired content to display.
+</pre>
+
+			<p>
+			引数にはViewクラス(又はViewクラスのサブクラス)のオブジェクトを指定します。
+			</p>
+
+			<p>
+			例えばボタンを1つだけ配置したい場合には次のように記述します。
+			</p>
+
+<pre class="fixcode">
+import android.app.Activity;
+import android.os.Bundle;
+<span class="red">import android.widget.Button;</span>
+
+public class Sample1Activity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        <span class="red">Button button = new Button(this);
+        button.setText("Push");
+
+        setContentView(button);</span>
+    }
+}
+</pre>
+
+			<p>
+			ViewクラスのサブクラスであるButtonクラスのオブジェクトを作成し、setContentViewメソッドの引数に指定して実行しています。
+			</p>
+
+			<p>
+			XMLファイルを使ってビューとレイアウトを定義した時は、ビューに表示する文字列も属性として設定していました。プログラムの中で行う場合はボタンやテキストビューなどのクラスで用意されているメソッド(上記の場合はButtonクラス(の親クラスであるTextViewクラス)のsetTextメソッド)を使って設定します。
+			</p>
+
+			<p>
+			またビューグループを追加する場合も同じです。
+			</p>
+
+<pre class="fixcode">
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.LinearLayout;
+
+public class Sample1Activity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        setContentView(linearLayout);
+
+        Button button1 = new Button(this);
+        button1.setText("OK");
+        button1.setLayoutParams(new LinearLayout.LayoutParams(
+            LinerLayout.LayoutParams.MATCH_PARENT,
+            LinerLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(button1);
+
+        Button button2 = new Button(this);
+        button2.setText("Cancel");
+        button2.setLayoutParams(new LinearLayout.LayoutParams(
+            LinerLayout.LayoutParams.WRAP_CONTENT,
+            LinerLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(button2);
+    }
+}
+</pre>
+
+			<p>
+			setContentViewメソッドの引数にViewGroupクラスのサブクラスであるLinearLayoutクラスのオブジェクトを指定してアクティビティに追加した上で、LinearLayoutに対してボタンを2つ追加しています。
+			</p>
+
+			<p>
+			ボタンには表示される文字列の他に、幅と高さに関する設定を行っているのですが、この幅と高さに関する設定はレイアウトパラメータと呼ばれるものを使って設定を行います。
+			</p>
+
+<h2><a id="section2">レイアウトパラメータ</a></h2>
+
+			<p>
+			レイアウトパラメータはビューの幅と高さに関する設定を行うもので、XMLファイルを使っていた場合も次のように設定していました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" &gt;
+
+    &lt;TextView
+        <span class="red">android:layout_width="fill_parent"</span>
+        <span class="red">android:layout_height="wrap_content"</span>
+        android:text="@string/hello" /&gt;
+
+&lt;/LinearLayout&gt;
+</pre>
+
+			<p>
+			プログラムの中でレイアウトパラメータに関する設定を行うにはViewクラスで定義されているsetLayoutParamsメソッドを使って指定します。
+			</p>
+
+<pre class="methodtb">
+setLayoutParams
+public void setLayoutParams (ViewGroup.LayoutParams params)
+</pre>
+<pre class="methodcb">
+Set the layout parameters associated with this view. These supply parameters to 
+the parent of this view specifying how it should be arranged. There are many 
+subclasses of ViewGroup.LayoutParams, and these correspond to the different 
+subclasses of ViewGroup that are responsible for arranging their children.
+
+Parameters:
+  params The layout parameters for this view, cannot be null
+</pre>
+
+			<p>
+			引数にはViewGroup.LayoutParamsクラスのオブジェクトを指定します。詳しい説明はここでは省略しますが、ViewGroup.LayoutParamsクラスにはビューグループの種類に対応したサブクラスが用意されており、例えば次のようなものがあります。
+			</p>
+
+<pre class="fixcomment">
+FrameLayout.LayoutParams
+GridLayout.LayoutParams
+LinearLayout.LayoutParams
+RadioGroup.LayoutParams
+RelativeLayout.LayoutParams
+TableLayout.LayoutParams
+</pre>
+
+			<p>
+			例えばビューグループとしてLinearLayoutの中に追加されるビューに対するレイアウトパラメータでは、LinearLayout.LayoutParamsクラスのオブジェクトを使います。
+			</p>
+
+			<p>
+			LinearLayout.LayoutParamsクラスなどViewGroup.LayoutParamsクラスのサブクラスは、コンストラクタで幅と高さに関する2つの値を引数に取ります。設定可能な値は次の2つがViewGroup.LayoutParamsクラス及びサブクラスで定義されています。
+			</p>
+
+<pre class="fixcomment">
+public static final int MATCH_PARENT
+public static final int WRAP_CONTENT
+</pre>
+
+			<p>
+			※ 以前はFILL_PARENTを使っていましたが、API Level 8以降はFILL_PARENTの代わりにMATCH_PARENTを使用することが推奨されています。
+			</p>
+
+			<p>
+			MATCH_PARENTを指定すると、そのビューが追加されるビューグループの中で最大になるようにサイズが設定されます。つまり幅に対してMATCH_PARENTを指定するとビューの横幅は横幅いっぱいになるサイズに設定されます。それに対してWRAP_CONTENTを指定した場合は、ビューを表示するのに必要なサイズに設定されます。
+			</p>
+
+			<p>
+			実際には次のようにレイアウトパラメータをビューに設定します。
+			</p>
+
+<pre class="fixcode">
+Button button = new Button(this);
+button.setLayoutParams(new LinearLayout.LayoutParams(
+  LinerLayout.LayoutParams.WRAP_CONTENT,
+  LinerLayout.LayoutParams.WRAP_CONTENT));
+</pre>
+
+			<p>
+			1番目の引数に幅、2番目の引数に高さに関する値を指定してLinearLayout.LayoutParamsクラスのオブジェクトを作成し、そのオブジェクトsetLayoutParamsメソッドの引数に指定して実行しています。
+			</p>
+
+			<p>
+			※ レイアウトパラメータに関する設定を省略した場合はデフォルトの値が使用されます。
+			</p>
+
+			<p>
+			なお、ビューの定義にXMLファイルを使う場合、ビューグループに追加されるビューだけでなくルート要素であるビューグループにもレイアウトパラメータを設定していました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <span class="red">android:layout_width="fill_parent"</span>
+    <span class="red">android:layout_height="fill_parent"</span>
+    android:orientation="vertical" &gt;
+
+    &lt;TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello" /&gt;
+
+&lt;/LinearLayout&gt;
+</pre>
+
+			<p>
+			プログラムでビューの定義を行う場合、setContentViewメソッドで追加されているビューグループにはレイアウトパラメータが設定されていませんが、特に指定しない場合にはsetContentViewメソッドで追加されるビューには幅も高さもMATCH_PARENTが設定されるようになっています。通常ルートのビューグループにはMATCH_PARENTが設定されることが多いので明示的に指定する必要は通常ありません。
+			</p>
+
+			<p>
+			もしルートのビュー又はビューグループに対して任意のレイアウトパラメータを指定したい場合は、次のsetContentViewメソッドを使用することで指定することができます。
+			</p>
+
+<pre class="methodtb">
+setContentView
+public void setContentView (View view, ViewGroup.LayoutParams params)
+</pre>
+<pre class="methodcb">
+Set the activity content to an explicit view. This view is placed directly into 
+the activity's view hierarchy. It can itself be a complex view hierarchy.
+
+Parameters:
+  view The desired content to display.
+  params Layout parameters for the view.
+</pre>
+
+			<p>
+			2番目の引数にViewGroup.LayoutParamsクラスのオブジェクトを指定することでルート要素に対してレイアウトパラメータを設定することができます。
+			</p>
+
+<h2><a id="section3">テスト</a></h2>
+
+			<p>
+			では実際に試してみます。次にソースコードを次にように修正します。
+			</p>
+
+<pre class="fixcode">
+package jp.javadrive.sample1;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.LinearLayout;
+
+public class Sample1Activity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        setContentView(linearLayout);
+
+        Button button1 = new Button(this);
+        button1.setText("OK");
+        button1.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(button1);
+
+        Button button2 = new Button(this);
+        button2.setText("Cancel");
+        button2.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(button2);
+    }
+}
+</pre>
+
+			<p>
+			実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/android/activity/img/p5-1.png" alt="p5-1" width="481" height="452" class="waku" />
+			</p>
+
+			<p>
+			2つのボタンが表示されています。1つ目のボタンは幅にMATCH_PARENTが設定したので横幅はいっぱいまで広がっています。2つ目のボタンは幅にWRAP_CONTENTが設定されているので表示するのに必要なサイズに設定されています。
+			</p>
+
+			<p>
+			このようにプログラムの中でアクティビティに追加するビューやレイアウトに関する記述を行うことができます。便利な場合もありますが、数多くのビューを定義する場合にはプログラムが見難くなる場合もあります。
+			</p>
+
+			<p>
+			またXMLファイルで定義したビューをプログラムの中で取り出し、そのビューに対する追加の設定を行うといったことも可能です。詳しくは「<a href="../xml_layout/index6.html" tppabs="https://www.javadrive.jp/android/xml_layout/index6.html">ビュー毎に個別のIDを設定</a>」で解説します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

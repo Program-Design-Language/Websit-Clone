@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 文字クラスを使って色々な文字にマッチするパターンを記述する</title>
+<meta name="description" content="JavaScript で使用できる正規表現のメタ文字のひとつである文字クラスの使い方について解説します。文字クラスでは固定の文字列の他に、任意の一文字にマッチするパターンや、複数の候補のいずれか一つの文字にマッチするパターンを記述することができます。">
+
+<meta property="og:title" content="文字クラスを使って色々な文字にマッチするパターンを記述する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/regexp/index9.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/regexp/img/p9-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="JavaScript で使用できる正規表現のメタ文字のひとつである文字クラスの使い方について解説します。文字クラスでは固定の文字列の他に、任意の一文字にマッチするパターンや、複数の候補のいずれか一つの文字にマッチするパターンを記述することができます。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "JavaScript正規表現",
+    "item": "https://www.javadrive.jp/javascript/regexp/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/regexp/">JavaScript正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>文字クラスを使って色々な文字にマッチするパターンを記述する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			JavaScript で使用できる正規表現のメタ文字のひとつである文字クラスの使い方について解説します。文字クラスでは固定の文字列の他に、任意の一文字にマッチするパターンや、複数の候補のいずれか一つの文字にマッチするパターンを記述することができます。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">記述した文字にマッチする</a></li>
+			<li><a href="#section2">任意の一文字(.)</a></li>
+			<li><a href="#section3">角括弧の中の一文字([...])</a></li>
+			<li><a href="#section4">角括弧の否定</a></li>
+			<li><a href="#section5">角括弧の範囲指定</a></li>
+			<li><a href="#section6">文字クラスの略記法</a></li>
+			<li><a href="#section7">改行などの特殊な文字</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">記述した文字にマッチする</a></h2>
+
+			<p>
+			パターンの中に文字を記述した場合は、その文字そのものとマッチします。例えば次のようなパターンは A で始まり、次に B が続き、最後に C が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /ABD/;
+</pre>
+</div>
+
+			<p>
+			ABC や OABC 、 ABCE などにマッチします。 AIBD や AB にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">ABC</span>
+〇 <span class="k">ABC</span>DEF
+〇 P<span class="k">ABC</span>
+&#10005; AIBD
+&#10005; AB
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /Sun/;
+
+console.log(regexp.test('Today is Sunday'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('The Sun rose'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('Ham Sandwich'));
+<span class="bold">&gt;&gt;</span> <span class="redbold">false</span>
+</pre>
+</div>
+
+<h2><a id="section2">任意の一文字(.)</a></h2>
+
+			<p>
+			メタ文字のひとつであるドット(.)は任意の一文字(例外あり)にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+.
+</pre>
+</div>
+
+			<p>
+			※ ただし、次の文字にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+\n
+\r
+\u2028   # Line Separator
+\u2029   # Paragraph Separator
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは A で始まり、任意の一文字が続き、そのあとに B が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /A.B/;
+</pre>
+</div>
+
+			<p>
+			AOB や AED にはマッチします。 ATYB や AB にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">AOB</span>
+〇 <span class="k">A#B</span>
+〇 WW<span class="k">AmB</span>EE
+&#10005; ADDB 
+&#10005; AB
+</pre>
+</div>
+
+			<p>
+			次のようなパターンは A で始まり、任意の二文字が続き、そのあとに B が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /A..B/;
+</pre>
+</div>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">ATTB</span>
+〇 O<span class="k">AmnB</span>W
+&#10005; AVB 
+&#10005; APPPB
+</pre>
+</div>
+
+			<p>
+			次のようなパターンは単語の境界を表すメタ文字である \b と組み合わせたもので、任意の文字の三文字からなる単語にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /\b...\b/;
+</pre>
+</div>
+
+<div class="titlebox3">
+<pre>
+〇 Blue <span class="k">Red</span> Yellow
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /S..d/;
+
+console.log(regexp.test('Today is Sunday'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('The Sun rose'));
+<span class="bold">&gt;&gt;</span> <span class="redbold">false</span>
+console.log(regexp.test('Ham Sandwich'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+</pre>
+</div>
+
+<h2><a id="section3">角括弧の中の一文字([...])</a></h2>
+
+			<p>
+			角括弧([...])は角括弧の中に記述した複数の文字のいずれか一つにマッチさせる場合に使用するメタ文字です。
+			</p>
+
+<div class="titlebox2">
+<pre>
+[...]
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは A で始まり、 [ から ] の間に記述された D 、 E 、 F のいずれかの一文字が続き、そのあとに B が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /A[DEF]B/;
+</pre>
+</div>
+
+			<p>
+			ADB や AEB にはマッチします。 AOB や AdB にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">ADB</span>
+〇 <span class="k">AEB</span>
+〇 w<span class="k">AFB</span>w
+&#10005; AOB 
+&#10005; AdB
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /[sS]un/;
+
+console.log(regexp.test('Today is Sunday'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('The Sun rose'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('Ham Sandwich'));
+<span class="bold">&gt;&gt;</span> <span class="redbold">false</span>
+</pre>
+</div>
+
+<h2><a id="section4">角括弧の否定</a></h2>
+
+			<p>
+			角括弧([...])の先頭に否定を表すキャレット(^)を記述した場合、角括弧の中に記述した複数の文字のいずれにも一致しない場合にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+[^...]
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは A で始まり、 [ から ] の間に記述された D 、 E 、 F のいずれにも一致しない一文字が続き、そのあとに B が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /A[^DEF]B/;
+</pre>
+</div>
+
+			<p>
+			ご注意いただきたいのは ^ のすぐあとの文字だけを否定するのではなく、 [ から ] に記述されたすべての文字を否定します。
+			</p>
+
+			<p>
+			AOB や AdB にはマッチします。 ADB や AEB にはマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">AOB</span>
+〇 <span class="k">AdB</span>
+〇 w<span class="k">A8B</span>w
+&#10005; ADB 
+&#10005; AEB
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /199[^01234]/;
+
+console.log(regexp.test('My birthday is 1998/03/12'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('Graduated in 1994'));
+<span class="bold">&gt;&gt;</span> <span class="redbold">false</span>
+console.log(regexp.test('It opened in 1996'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+</pre>
+</div>
+
+<h2><a id="section5">角括弧の範囲指定</a></h2>
+
+			<p>
+			角括弧([...])の中でハイフン(-)を記述すると、ハイフンの左側から右側までの範囲に含まれる連続するいずれかの文字にマッチします。例えば次のように記述することができます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+[0-9]  0 から 9 までのいずれかの数値
+[a-z]  a から z までのいずれかの文字
+[A-Z]  A から Z までのいずれかの文字
+</pre>
+</div>
+
+			<p>
+			例えば次の二つのパターンは同じ文字にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp1 = /[3-8]/;
+const regexp2 = /[345678]/;
+</pre>
+</div>
+
+			<p>
+			[ から ] の中に複数の範囲を記述したり、通常の文字の指定と組み合わせることもできます。次のパターンは a から e 、 g 、 m 、 x から z までのいずれかの文字にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp1 = /[a-egmx-z]/;
+const regexp2 = /[abcdegmxyz]/;
+</pre>
+</div>
+
+			<p>
+			英数字のいずれかの文字にマッチするパターンとして次のような記述がよく使われます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /[0-9a-zA-Z]/;
+</pre>
+</div>
+
+			<p>
+			このように連続する文字の中のいずれかひとつにマッチさせたい場合にこの書式は便利です。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /199[0-6]/;
+
+console.log(regexp.test('My birthday is 1998/03/12'));
+<span class="bold">&gt;&gt;</span> <span class="redbold">false</span>
+console.log(regexp.test('Graduated in 1994'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+console.log(regexp.test('It opened in 1996'));
+<span class="bold">&gt;&gt;</span> <span class="bluebold">true</span>
+</pre>
+</div>
+
+<h2><a id="section6">文字クラスの略記法</a></h2>
+
+			<p>
+			文字クラスでは [ から ] の中に文字の範囲を記述することで多くの文字の中のいずれかの文字とマッチするパターンを記述することができますが、特によく使用するものについては略記法が用意されています。 JavaScript で利用可能な略記法は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<p>
+\d&nbsp;&nbsp;数字 [0-9]<br>
+\D&nbsp;&nbsp;数字以外 [^\d]<br>
+\w&nbsp;&nbsp;英数字とアンダーバー [0-9a-zA-Z_]<br>
+\W&nbsp;&nbsp;英数字とアンダーバー以外 [^\w]<br>
+\s&nbsp;&nbsp;空白文字 [ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]<br>
+\S&nbsp;&nbsp;空白文字以外 [^\s]
+</p>
+</div>
+
+			<p>
+			\D は \d の否定のように大文字のものは小文字のものの否定になっています。
+			</p>
+
+			<p>
+			空白文字は半角スペース以外に改行(\n)やタブ(\t)など空白に相当する文字にマッチします。
+			</p>
+
+			<p>
+			例えば次の二つのパターンは同じ文字にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp1 = /[0-9]/;
+const regexp2 = /\d/;
+</pre>
+</div>
+
+			<p>
+			記述方法が異なるだけでマッチする文字は同じです。略記法が用意されているものについては略記法を使用することでよりコンパクトにパターンを記述することができます。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let str = '郵便番号は 456-7890 です';
+let regexp = /\d{3}-\d{4}/;
+
+let result = str.match(regexp);
+console.log(result[0]);
+<span class="bold">&gt;&gt; 456-7890</span>
+</pre>
+</div>
+
+<h2><a id="section7">改行などの特殊な文字</a></h2>
+
+			<p>
+			改行やタブなどキーボードから入力できないような特殊な文字にマッチするパターンを記述するため、バックスラッシュ(\)と文字を組み合わせたメタ文字が用意されています。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\0        NULL
+\f        改ページ
+\n        改行
+\r        復帰
+\t        タブ
+\v        垂直タブ
+\cX       Ctrl + x
+\xhh      16進数 hh のASCII文字
+\uhhhh    16進数 hhhh で表されるUTF-16のコードユニット
+</pre>
+</div>
+
+			<p>
+			また u フラグが設定されている場合は、次のメタ文字も使用できます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\u{hhhh}
+\u{hhhhh}  16進数 hhhh または hhhhh で表されるUnicodeコードポイント
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let str = `こんにちは。
+今日も寒いですね。`;
+let regexp = /。\n./;
+
+let result = str.match(regexp);
+console.log(result[0]);
+<span class="bold">&gt;&gt;  。
+&gt;&gt;  今</span>
+</pre>
+</div>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			JavaScript で使用できる正規表現のメタ文字のひとつである文字クラスの使い方について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

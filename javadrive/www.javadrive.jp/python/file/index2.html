@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | テキストファイルを読み込む</title>
+<meta name="description" content="Python を使ってローカルに保存されているテキストファイルを開き、ファイルの内容を読み込む方法について解説します。ファイルの読み込みは全体をまとめて読み込む方法とファイルを1行毎に読み込む方法があります。">
+
+<meta property="og:title" content="テキストファイルを読み込む">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/file/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/file/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Python を使ってローカルに保存されているテキストファイルを開き、ファイルの内容を読み込む方法について解説します。ファイルの読み込みは全体をまとめて読み込む方法とファイルを1行毎に読み込む方法があります。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "ファイルの管理",
+    "item": "https://www.javadrive.jp/python/file/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/file/">ファイルの管理</a></li>
+				</ul>
+			</div>
+
+			<h1>テキストファイルを読み込む</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Python を使ってローカルに保存されているテキストファイルを開き、ファイルの内容を読み込む方法について解説します。ファイルの読み込みは全体をまとめて読み込む方法とファイルを1行毎に読み込む方法があります。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">読み込み用にファイルを開く</a></li>
+			<li><a href="#section2">ファイル全体を読み込む(readメソッド)</a></li>
+			<li><a href="#section3">ファイル全体を行単位で分割してリストとして取得する(readlinesメソッド)</a></li>
+			<li><a href="#section4">ファイルから行単位で読み込む(readlineメソッド)</a></li>
+			<li><a href="#section5">ファイルから行単位で読み込む(for文)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">読み込み用にファイルを開く</a></h2>
+
+			<p>
+			テキストファイルを読み込むためにファイルを開く場合、 open 関数のモードとして "r" を指定して次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+f = open('myfile.txt', 'r')
+</p>
+</div>
+
+			<p>
+			開こうとするファイルの文字エンコーディングが、ご自身の環境のデフォルトエンコーディングと異なる場合には、文字エンコーディングを指定します。
+			</p>
+
+<div class="titlebox1">
+<p>
+f = open('myfile.txt', 'r', encoding='UTF-8')
+</p>
+</div>
+
+			<p>
+			なお開こうとするファイルが存在しなかった場合 FileNotFoundError が発生します。
+			</p>
+
+<div class="titlebox1">
+<p>
+f = open('other.txt', 'r')<br>
+<span class="bold">&gt;&gt; FileNotFoundError: [Errno 2] No such file or directory: 'other.txt'</span>
+</p>
+</div>
+
+<h2><a id="section2">ファイル全体を読み込む(readメソッド)</a></h2>
+
+			<p>
+			ファイルに含まれるテキストをすべて読み込む場合には read メソッドを使用します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+read(size=-1)
+</pre>
+</div>
+
+			<p>
+			引数を指定しない場合、ファイルを EOF ( End Of File 、ファイルの終端)まで読み込み、文字列として返します。引数に最大文字数を指定した場合、指定した文字数分だけ読み込みます。
+			</p>
+
+			<p>
+			具体的には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+data = f.read()
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			なお対象のファイルで使用されている文字エンコーディングと、 open 関数で指定した文字エンコーディングが異なっていると、 read メソッドを実行したときに UnicodeDecodeError が発生します。
+			</p>
+
+<div class="titlebox1">
+<p>
+f = open('myfile.txt', 'r', encoding='UTF-8')<br>
+data = f.read()<br>
+<span class="bold">&gt;&gt; UnicodeDecodeError: 'utf-8' codec can't decode byte 0x96 in position 0: invalid start byte</span>
+</p>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample2-1.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r', encoding='UTF-8')
+
+data = f.read()
+print(data)
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			プログラムがある同じディレクトリに myfile.txt というファイルを作成し、次のようにテキストを入力しておきました。エンコーディングは UTF-8 で保存しました。
+			</p>
+
+<div class="titlebox3">
+<pre>
+明日の天気はどうだろう。
+晴れたらいいな。
+雨じゃなかったら公園に行こう。
+</pre>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample2-1.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/python/file/img/p2-1.png" alt="ファイル全体を読み込む(1)" width="723" height="352">
+			</p>
+
+			<p>
+			ファイル myfile.txt を開き、ファイルの内容をすべて読み込んだ上で画面に出力しています。そのあとでファイルオブジェクトを閉じています。
+			</p>
+
+<h2><a id="section3">ファイル全体を行単位で分割してリストとして取得する(readlinesメソッド)</a></h2>
+
+			<p>
+			先ほどと同じくファイル全体を読み込んだあとで、読み込んだデータを行単位で分割しリストの要素として追加したものを取得することができます。 readlines メソッドを使用します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+readlines(hint=-1)
+</pre>
+</div>
+
+			<p>
+			ファイル全体を読み込み、行単位のデータを要素として追加したリストを返します。引数に最大文字数を指定した場合、指定した文字数分だけ読み込みます。
+			</p>
+
+			<p>
+			具体的には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+datalist = f.readlines()
+print (datalist[0])
+print (datalist[1])
+print (datalist[2])
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			リストとして取得したファイルのデータを順番に出力するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+datalist = f.readlines()
+for data in datalist:
+  print(data)
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			なおそれぞれの行のデータには改行文字が含まれます。 print 関数はデフォルトでは最後に自動で改行を行うようになっているためリストの要素をそのまま print 関数を使って出力すると改行を 2 回出力することになります。そこで print 関数で最後に改行を行わないようにするか、読み込んだデータの末尾から改行を取り除いてください。
+			</p>
+
+			<p>
+			print 関数で最後に改行を行わないようにする方法は「<a href="../function/index1.html#section3" tppabs="https://www.javadrive.jp/python/function/index1.html#section3">print関数を実行した時に改行しないようにする</a>」を参照されてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+datalist = f.readlines()
+print (datalist[0]<span class="red">, end=''</span>)
+</pre>
+</div>
+
+			<p>
+			rstrip メソッドの使い方については「<a href="../string/index19.html#section2" tppabs="https://www.javadrive.jp/python/string/index19.html#section2">指定した文字を文字列の先頭および末尾から取り除く(stripメソッド)</a>」を参照されてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+datalist = f.readlines()
+print (datalist[0]<span class="red">.rstrip('\n')</span>)
+</pre>
+</div>
+
+<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample2-2.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r', encoding='UTF-8')
+
+datalist = f.readlines()
+for data in datalist:
+  print(data, end='')
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			プログラムがある同じディレクトリに myfile.txt というファイルを作成し、次のようにテキストを入力しておきました。エンコーディングは UTF-8 で保存しました。
+			</p>
+
+<div class="titlebox3">
+<pre>
+明日の天気はどうだろう。
+晴れたらいいな。
+雨じゃなかったら公園に行こう。
+</pre>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample2-2.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/python/file/img/p2-2.png" alt="ファイル全体を行単位で分割してリストとして取得する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			ファイル myfile.txt を開き、ファイルの内容をすべて読み込み行単位で分割してリストの要素として追加した上で、今度はリストから順に要素を取得して画面に出力しています。出力するときは改行が重ならないようにしています。そのあとでファイルオブジェクトを閉じています。
+			</p>
+
+<h2><a id="section4">ファイルから行単位で読み込む(readlineメソッド)</a></h2>
+
+			<p>
+			ファイル全体ではなくファイルから 1 行ずつファイルの内容を読み込むには readline メソッドを使用します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+readline(size=-1)
+</pre>
+</div>
+
+			<p>
+			改行または EOF までファイルを読み込み、文字列として返します。引数に最大文字数を指定した場合、指定した文字数分だけ読み込みます。ファイルの最後である EOF まで読み込むと空の文字列を返します。
+			</p>
+
+			<p>
+			具体的には次のように記述します。下記は 1 行分だけファイルを読み込んでいます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+data = f.readline()
+print (data)
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			ファイルの最後まで順番にファイルの内容を読み込んで処理するには、 while 文などを使って次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+while True:
+  data = f.readline()
+  if data == '':
+    break
+  print (data)
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			なお readlines メソッドの場合と同じく、それぞれの行のデータには改行文字が含まれます。 readlines メソッドの場合と同じように print 関数で最後に改行を行わないようにするか、読み込んだデータの末尾から改行を取り除いてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+while True:
+  data = f.readline()
+  if data == '':
+    break
+  print (data<span class="red">.rstrip('\n')</span>)
+</pre>
+</div>
+
+<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample2-3.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r', encoding='UTF-8')
+
+while True:
+  data = f.readline()
+  if data == '':
+    break
+  print (data.rstrip('\n'))
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			プログラムがある同じディレクトリに myfile.txt というファイルを作成し、次のようにテキストを入力しておきました。エンコーディングは UTF-8 で保存しました。
+			</p>
+
+<div class="titlebox3">
+<pre>
+明日の天気はどうだろう。
+晴れたらいいな。
+雨じゃなかったら公園に行こう。
+</pre>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample2-3.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/python/file/img/p2-3.png" alt="ファイルから行単位で読み込む(readlineメソッド)(1)" width="723" height="352">
+			</p>
+
+			<p>
+			ファイル myfile.txt を開き、ファイルの内容を 1 行単位で読み込んで画面に出力しています。出力するときは改行が重ならないようにしています。そのあとでファイルオブジェクトを閉じています。
+			</p>
+
+<h2><a id="section5">ファイルから行単位で読み込む(for文)</a></h2>
+
+			<p>
+			for 文を使用するとファイルから 1 行ずつファイルの内容を読み込むことができます。次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+for data in f:
+  print(data)
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			なお readlines メソッドの場合と同じく、それぞれの行のデータには改行文字が含まれます。 readlines メソッドの場合と同じように print 関数で最後に改行を行わないようにするか、読み込んだデータの末尾から改行を取り除いてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r')
+
+for data in f:
+  print (data<span class="red">.rstrip('\n')</span>)
+</pre>
+</div>
+
+<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample2-4.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+f = open('myfile.txt', 'r', encoding='UTF-8')
+
+for data in f:
+  print (data.rstrip('\n'))
+
+f.close()
+</pre>
+</div>
+
+			<p>
+			プログラムがある同じディレクトリに myfile.txt というファイルを作成し、次のようにテキストを入力しておきました。エンコーディングは UTF-8 で保存しました。
+			</p>
+
+<div class="titlebox3">
+<pre>
+明日の天気はどうだろう。
+晴れたらいいな。
+雨じゃなかったら公園に行こう。
+</pre>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample2-4.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/python/file/img/p2-4.png" alt="ファイルから行単位で読み込む(for文)(1)" width="723" height="352">
+			</p>
+
+			<p>
+			ファイル myfile.txt を開き、ファイルの内容を 1 行単位で読み込んで画面に出力しています。出力するときは改行が重ならないようにしています。そのあとでファイルオブジェクトを閉じています。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Python を使ってローカルに保存されているテキストファイルを開き、ファイルの内容を読み込む方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

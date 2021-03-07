@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地図上でポリゴンの頂点を移動(enableEditingメソッド) - ポリゴン(GPolygon) - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="地図上でポリゴンの頂点を移動,GPolygon,Google Maps API" />
+<meta name="description" content="地図上でポリゴンの頂点を移動する方法について確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/" itemprop="url"><span itemprop="title">ポリゴン(GPolygon)</span></a></li>
+		</ul>
+</div>
+
+			<h1>地図上でポリゴンの頂点を移動</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					地図上に表示されたポリゴンの頂点を地図上で動かしポリゴンの形状を変更する方法を確認します。GPolygonクラスで用意されているenableEditingメソッドを使います。
+					</p>
+
+<pre class="mheader">
+enableEditing(opts?:GPolyEditingOptions)
+</pre>
+<pre class="mexplain">
+既存の GPolygon 境界を変更できるようにします。有効になると、ユーザーは既
+存の頂点を選択したり、ドラッグしたりできます。頂点の現在数より少ない頂点
+の制限が maxVertices 内の GPolyEditingOptions によって指定されない限り、
+ポリゴン セクションの中間点に「ゴースト」ポイントも追加され、ユーザーは
+クリックおよびドラッグして新しい頂点を挿入できます。頂点が追加または移動
+されるたびに、「lineupdated」イベントがトリガされます。 
+</pre>
+
+					<p>
+					enableEditingメソッドが実行されると、対象のポリゴンの頂点を地図上で動かすことができるようになります。頂点をマウスでドラッグして新しい場所へ移動するとそれに合わせて頂点間を結ぶ直線が再描画されます。 
+					</p>
+
+					<p>
+					また各頂点と頂点の間にはゴーストポイントと呼ばれる頂点が自動で追加されます。ゴーストポイントをマウスでドラッグして動かすと新しい頂点として認識され頂点が追加されたように直接が描かれます。次の例を見てください。 
+					</p>
+
+<pre class="fixcomment">
+頂点1 --- (GP)--- 頂点2 ---(GP)--- 頂点3
+</pre>
+
+					<p>
+					頂点と頂点の間にはゴーストポイント(GP)があります。GPを動かすと、GPが新しい頂点となり新しい直線が描かれます。
+					</p>
+
+<pre class="fixcomment">
+頂点1 --(GP)-- 新頂点A --(GP)-- 頂点2 ---(GP)--- 頂点3
+</pre>
+
+					<p>
+					新しくできた頂点と隣接する頂点の間には新しくGPが出きるため、これを繰り返すことでより複雑な多角形が描かれていきます。 
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(34.98655,135.75531), 13);
+
+var points = [
+  new GLatLng(34.991261,135.730076),
+  new GLatLng(34.997976,135.759945),
+  new GLatLng(34.965979,135.772219),
+  new GLatLng(34.991261,135.730076)
+];
+var polygon = new GPolygon(points, "#ff00ff", 4, 0.5, "#ff0000", 0.2);
+map.addOverlay(polygon);
+
+polygon.enableEditing();
+</pre>
+
+					<h2>頂点数の最大数</h2>
+
+					<p>
+					ゴーストポイントをマウスでドラッグしていくと頂点が追加されていきますが、頂点の数の最大数を指定することができます。頂点の最大数を設定するにはenableEditingメソッドの1番目の引数で指定します。 
+					</p>
+
+<pre class="fixcomment">
+enableEditing(opts?:GPolyEditingOptions)
+</pre>
+
+					<p>
+					引数にはGPolyEditingOptionsクラスのオブジェクトリテラルを指定して下さい。使用するプロパティ名はmaxVerticesプロパティです。
+					</p>
+
+<pre class="mheader">
+maxVerticesプロパティ
+</pre>
+<pre class="mexplain">
+このプロパティは、このポリラインで許容される頂点の最大数を指定します。こ
+の数値に達すると、それ以上追加できなくなります。
+
+値：
+  Number
+</pre>
+
+					<p>
+					例えばポリゴンの頂点数の最大値を8に設定したい場合は次のように記述します。 
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(34.98655,135.75531), 13);
+
+var points = [
+  new GLatLng(34.991261,135.730076),
+  new GLatLng(34.997976,135.759945),
+  new GLatLng(34.965979,135.772219),
+  new GLatLng(34.991261,135.730076)
+];
+var polygon = new GPolygon(points, "#ff00ff", 4, 0.5, "#ff0000", 0.2);
+map.addOverlay(polygon);
+
+var opts = {maxVertices:8};
+polygon.enableEditing(opts);
+</pre>
+
+					<h2>頂点を動かすことができる状態を終了する</h2>
+
+					<p>
+					enableEditingメソッドによって頂点を動かすことができるようになりますが、この状態を終了させて頂点を動かせなくようにするにはGPolygonクラスで用意されているdisableEditingメソッドを使います。 
+					</p>
+
+<pre class="fixcomment">
+enableEditing(opts?:GPolyEditingOptions)
+</pre>
+
+					<p>
+					引数にはGPolyEditingOptionsクラスのオブジェクトリテラルを指定して下さい。使用するプロパティ名はmaxVerticesプロパティです。
+					</p>
+
+<pre class="mheader">
+disableEditing() 
+</pre>
+<pre class="mexplain">
+enableEditing の効果を反転させ、線からすべてのコントロール ポイントを削
+除して、ユーザーが編集できないようにレンダリングします。 
+</pre>
+
+					<p>
+					disableEditingメソッドを実行すると、移動可能だった頂点が移動できない形で固定されます
+					</p>
+
+					<p>
+					実際には次のように記述します。 
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(34.98655,135.75531), 13);
+
+var points = [
+  new GLatLng(34.991261,135.730076),
+  new GLatLng(34.997976,135.759945),
+  new GLatLng(34.965979,135.772219),
+  new GLatLng(34.991261,135.730076)
+];
+var polygon = new GPolygon(points, "#ff00ff", 4, 0.5, "#ff0000", 0.2);
+map.addOverlay(polygon);
+
+polygon.enableEditing();
+
+line.disableEditing();
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code3_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/js/code3_1.js">code3_1.js</a>
+					</p>
+
+<pre class="fixcode">
+var polygon;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    var map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(43.555018,142.386932), 8);
+
+    var points = [
+      new GLatLng(44.19599,142.421265),
+      new GLatLng(43.082931,141.459961),
+      new GLatLng(42.910172,143.250732),
+      new GLatLng(44.19599,142.421265)
+    ];
+
+    polygon = new GPolygon(points, "#0000ff", 5, 0.5, "#f0e68c", 0.5);
+    map.addOverlay(polygon);
+  }
+}
+
+function editLine() {
+  polygon.enableEditing();
+}
+
+function finishLine() {
+  polygon.disableEditing();
+}
+</pre>
+
+					<p>
+					<a href="map3_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/map3_1.html">map3_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：色/太さ/透明度の設定&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code3_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 400px"&gt;&lt;/div&gt;
+    &lt;form&gt;
+    &lt;p&gt;
+    &lt;input type="button" id="editbtn" value="編集" onclick="editLine()" /&gt;
+    &lt;input type="button" id="finishbtn" value="確定" onclick="finishLine()" /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-1.png" alt="p3-1" width="441" height="579">
+					</p>
+
+					<p>
+					現在は3つの頂点を順に結んだ三角形が描画されています。では地図下の「編集」ボタンを押して下さい。
+					</p>
+
+					<p>
+					<img src="img/p3-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-2.png" alt="p3-2" width="441" height="579">
+					</p>
+
+					<p>
+					直線の頂点の図形が変わりマウスでドラッグして動かすことが出きるようになります。
+					</p>
+
+					<p>
+					<img src="img/p3-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-3.png" alt="p3-3" width="441" height="579">
+					</p>
+
+					<p>
+					<img src="img/p3-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-4.png" alt="p3-4" width="441" height="579">
+					</p>
+
+					<p>
+					また既存の頂点と頂点の間にゴーストポイントが表示されます。これも同じようにドラッグして動かすことができます。
+					</p>
+
+					<p>
+					<img src="img/p3-5.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-5.png" alt="p3-5" width="441" height="579">
+					</p>
+
+					<p>
+					<img src="img/p3-6.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-6.png" alt="p3-6" width="441" height="579">
+					</p>
+
+					<p>
+					ゴーストポイントは動かす事によって新しい頂点となり、頂点数が増加した多角形が描画されなおされます。また新しい頂点ができると、隣接する頂点との間に新しいゴーストポイントが表示されます。 
+					</p>
+
+					<p>
+					最後に地図下にある「確定」ボタンを押して頂くと、頂点を動かせなくすることができます。(再度編集を押せばまた動かすことができるようになります)。 
+					</p>
+
+					<p>
+					<img src="img/p3-7.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-7.png" alt="p3-7" width="441" height="579">
+					</p>
+
+					<p>
+					<img src="img/p3-8.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p3-8.png" alt="p3-8" width="441" height="579">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指定の方向へ移動(followLinkメソッド) - ストリートビュー - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="指定の方向へ移動,GStreetviewPanorama,Google Maps API" />
+<meta name="description" content="指定の方向へ移動方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/" itemprop="url"><span itemprop="title">ストリートビュー(GStreetviewPanorama)</span></a></li>
+		</ul>
+</div>
+
+			<h1>指定の方向へ移動</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					ストリートビュー上では道路に沿って次の画面へ移動するための仕組みが用意さえています。
+					</p>
+
+					<p>
+					<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-1.png" alt="p5-1" width="410" height="208">
+					</p>
+
+					<p>
+					上記の場合でいえば、中央付近から5つの方向へ向かって黄色い線が引かれ、それぞれ矢印が表示されています。この矢印をクリックすると道路に沿って次の地点へ移動します。
+					</p>
+
+					<p>
+					<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-2.png" alt="p5-2" width="409" height="210">
+					</p>
+
+					<p>
+					<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-3.png" alt="p5-3" width="410" height="208">
+					</p>
+
+					<p>
+					このように道路に沿って移動する仕組みをスクリプト側で行う方法を確認します。指定の方向へ移動を行うにはGStreetviewPanoramaクラスで定義されているfollowLinkメソッドを使います。
+					</p>
+
+<pre class="mheader">
+followLink(yaw:Number)
+</pre>
+<pre class="mexplain">
+現在のパノラマから隣接するパノラマへのリンクに従って移動します。yaw は隣
+接するパノラマの方角 (ヨー) を指定します。隣接するパノラマが複数存在する
+場合は、最も近いものを取ります。
+</pre>
+
+					<p>
+					1番目の引数には方向を示す数値を指定して下さい。数値は0から360の間で指定します。(北は 0 度、東は 90 度、南は 180 度、西は 270 度)。指定した数値の方向へ最も近い移動先を選択して移動します。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.172304,136.908306), 15);
+
+var slatlng = new GLatLng(35.658517, 139.745493);
+var option = { latlng:slatlng };
+var scontainer = document.getElementById("street");
+var panorama = new GStreetviewPanorama(scontainer, option);
+
+panorama.followLink(0);
+</pre>
+
+					<p>
+					上記では真北の方向に最も近い移動先へ移動します。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code5_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/js/code5_1.js">code5_1.js</a>
+					</p>
+
+<pre class="fixcode">
+var map;
+var panorama;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(35.665375,139.729593), 16);
+
+    var street = new GStreetviewOverlay();
+    map.addOverlay(street);
+
+    var slatlng = new GLatLng(35.665375,139.729593);
+    var option = { latlng:slatlng };
+
+    var scontainer = document.getElementById("street");
+    panorama = new GStreetviewPanorama(scontainer, option);
+
+    GEvent.addListener(panorama, "initialized", moveMap);
+  }
+}
+
+function move(){
+  var direc = document.getElementById("direc").value;
+  panorama.followLink(parseInt(direc));
+}
+
+function moveMap(loc){
+  map.panTo(loc.latlng);
+}
+</pre>
+
+					<p>
+					<a href="map5_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/map5_1.html">map5_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：指定の方向へ移動&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code5_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 300px"&gt;&lt;/div&gt;
+    &lt;div id="street" style="width: 400px; height: 200px; margin-top:10px;"&gt;&lt;/div&gt;
+
+    &lt;form&gt;
+    &lt;p&gt;
+    方向：&lt;input type="text" id="direc" size="5" value="10" /&gt;
+    &lt;input type="button" id="btn" value="移動" onclick="move()" /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-4.png" alt="p5-4" width="441" height="679">
+					</p>
+
+					<p>
+					現在の地点からは100度と300度の2方向へ移動可能です。では地図下のテキストボックスに300と入力して「移動」ボタンを押します。
+					</p>
+
+					<p>
+					<img src="img/p5-5.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-5.png" alt="p5-5" width="441" height="679">
+					</p>
+
+					<p>
+					指定の方向へ移動しました。今回のサンプルではストリートビューで場所が移動すると、イベント処理を使って地図の表示位置も合わせて変更するようにしてあります(詳しくは次のページで解説します)。
+					</p>
+
+					<p>
+					何回か進んでいくと次の交差点に出ます。
+					</p>
+
+					<p>
+					<img src="img/p5-6.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-6.png" alt="p5-6" width="441" height="679">
+					</p>
+
+					<p>
+					今度は45度の方角へ移動してみます。
+					</p>
+
+					<p>
+					<img src="img/p5-7.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/img/p5-7.png" alt="p5-7" width="441" height="679">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

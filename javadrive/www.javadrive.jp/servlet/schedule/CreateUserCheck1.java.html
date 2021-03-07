@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CreateUserCheck1.java</title>
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ãƒ­ã‚´" width="24" height="24"><span> Let'sãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">ã‚µãƒ¼ãƒ–ãƒ¬ãƒƒãƒˆ/JSPå…¥é–€</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/schedule/" itemprop="url"><span itemprop="title">ã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ç®¡ç†</span></a></li>
+		</ul>
+</div>
+
+	<div id="pagebody">
+
+		<div id="content">
+
+			<h1>CreateUserCheck1.java</h1>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
+
+public class CreateUserCheck1 extends HttpServlet {
+
+    protected Connection conn = null;
+
+    public void init() throws ServletException{
+        String url = "jdbc:mysql://localhost/servletschedule";
+        String user = "scheduleuser";
+        String password = "schedulepass";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(url, user, password);
+        }catch (ClassNotFoundException e){
+            log("ClassNotFoundException:" + e.getMessage());
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }catch (Exception e){
+            log("Exception:" + e.getMessage());
+        }
+    }
+
+    public void destory(){
+        try{
+            if (conn != null){
+                conn.close();
+            }
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }
+    }
+
+    public void doPost(HttpServletRequest req, HttpServletResponse res)
+        throws IOException, ServletException{
+
+        res.setContentType("text/html; charset=Shift_JIS");
+        PrintWriter out = res.getWriter();
+
+        String user = req.getParameter("user");
+        String pass = req.getParameter("pass");
+        String rollStr = req.getParameter("roll");
+        int roll;
+        if (rollStr == null || rollStr.length() == 0){
+            roll = -1;
+        }else{
+            roll = Integer.parseInt(rollStr);
+        }
+
+        HttpSession session = req.getSession(true);
+
+        boolean check = createUser(user, pass, roll);
+        if (check){
+            session.setAttribute("CreateUserCheck", "Success");
+            res.sendRedirect("/schedule/NewUser");
+        }else{
+            session.setAttribute("CreateUserCheck", "Fail");
+            res.sendRedirect("/schedule/NewUser");
+        }
+    }
+
+    protected boolean createUser(String user, String pass, int roll){
+        if (user == null || user.length() == 0 || pass == null || pass.length() == 0 || roll == -1){
+            return false;
+        }
+
+        try {
+
+            String sql = "insert into usertable (user, pass, roll) values (?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, user);
+            pstmt.setString(2, pass);
+            pstmt.setInt(3, roll);
+            int num = pstmt.executeUpdate();
+
+            return true;
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+            return false;
+        }
+    }
+}
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					è‘—è€… / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n¸ÃÎÄ¼şÎŞ·¨ÓÃ Teleport Ultra ÏÂÔØ, ÒòÎª ËüÊÇÒ»¸öÓò»òÂ·¾¶Íâ²¿±»ÉèÖÃÎªËüµÄÆôÊ¼µØÖ·µÄµØÖ·¡£  \n\nÄãÏëÔÚ·şÎñÆ÷ÉÏ´ò¿ªËü?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					åˆå¿ƒè€…ï½ä¸­ç´šè€…ã®æ–¹ã‚’å¯¾è±¡ã¨ã—ãŸãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°æ–¹æ³•ã‚„é–‹ç™ºç’°å¢ƒã®æ§‹ç¯‰ã®è§£èª¬ã‚’è¡Œã†ã‚µã‚¤ãƒˆã®é‹å–¶ã‚’è¡Œã£ã¦ã„ã¾ã™ã€‚
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚° &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n¸ÃÎÄ¼şÎŞ·¨ÓÃ Teleport Ultra ÏÂÔØ, ÒòÎª ËüÊÇÒ»¸öÓò»òÂ·¾¶Íâ²¿±»ÉèÖÃÎªËüµÄÆôÊ¼µØÖ·µÄµØÖ·¡£  \n\nÄãÏëÔÚ·şÎñÆ÷ÉÏ´ò¿ªËü?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

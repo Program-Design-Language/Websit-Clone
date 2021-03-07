@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Maps JavaScript API入門</title>
+<meta name="description" content="Googleマップはグーグルが提供している地図サービスです。このGoogleマップをカスタマイズして独自のマーカーを表示させたり、指定した区間のルート検索を行ったりすることができるように色々なAPIが提供されています。ここではGoogleマップで提供されているAPIの中でもウェブサイトで利用者が操作可能な地図をカスタマイズして表示することができるGoogle Maps JavaScript APIの使い方の解説します。">
+
+<meta property="og:title" content="Google Maps JavaScript API入門">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/google-maps-javascript/">
+<meta property="og:image" content="https://www.javadrive.jp/google-maps-javascript/p0-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Googleマップはグーグルが提供している地図サービスです。このGoogleマップをカスタマイズして独自のマーカーを表示させたり、指定した区間のルート検索を行ったりすることができるように色々なAPIが提供されています。ここではGoogleマップで提供されているAPIの中でもウェブサイトで利用者が操作可能な地図をカスタマイズして表示することができるGoogle Maps JavaScript APIの使い方の解説します。">
+<meta property="fb:app_id" content="356232588116556">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a></li>
+		</ul>
+</div>
+
+			<h1>Google Maps JavaScript API入門</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Googleマップはグーグルが提供している地図サービスです。このGoogleマップをカスタマイズして独自のマーカーを表示させたり、指定した区間のルート検索を行ったりすることができるように色々なAPIが提供されています。ここではGoogleマップで提供されているAPIの中でもウェブサイトで利用者が操作可能な地図をカスタマイズして表示することができるGoogle Maps JavaScript APIの使い方の解説します。
+			</p>
+
+			<p>
+			※ Googleマップを利用者として使う場合の使い方については「<a href="javascript:if(confirm('https://www.howtonote.jp/google-map/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.howtonote.jp/google-map/'" tppabs="https://www.howtonote.jp/google-map/">Googleマップの使い方</a>」を参照されて下さい。
+			</p>
+
+			<p>
+			なおJavaScriptの基本的な使い方については「<a href="../javascript/index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>」を参照されてください。
+			</p>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<h2>Google Maps APIの基本</h2>
+
+			<p>
+			Google Maps APIを利用する基本的な知識と地図を指定した方法で表示する方法を確認します。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="charset/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/charset/">Google Maps APIの基本</a></li>
+				<li><a href="charset/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/charset/index1.html">APIキーの取得</a></li>
+				<li><a href="charset/index6.html" tppabs="https://www.javadrive.jp/google-maps-javascript/charset/index6.html">Google Maps APIを使ったページの基本構成</a></li>
+				<li><a href="charset/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/charset/index2.html">スクリプトを外部ファイルに分ける</a></li>
+				<li><a href="charset/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/charset/index3.html">APIのバージョン指定</a></li>
+				<li><a href="charset/index5.html" tppabs="https://www.javadrive.jp/google-maps-javascript/charset/index5.html">言語の指定(ローカライズ)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gmap2/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/">地図の表示</a></li>
+				<li><a href="gmap2/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/index1.html">Webページ内で地図が表示される位置と地図のサイズ</a></li>
+				<li><a href="gmap2/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/index2.html">地図を作成する</a></li>
+				<li><a href="gmap2/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/index3.html">地図の中心座標を設定する</a></li>
+				<li><a href="gmap2/index4.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/index4.html">[参考]Googleマップを使って座標(緯度と経度)とズームレベルを取得する</a></li>
+				<li><a href="gmap2/index5.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/index5.html">Google Maps APIを使って地図の中心と表示領域の座標を取得する</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gmaptype/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/">マップタイプ</a></li>
+				<li><a href="gmaptype/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/index2.html">4つの基本マップタイプとマップタイプコントロールの使い方</a></li>
+				<li><a href="gmaptype/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/index3.html">マップタイプを設定する</a></li>
+				<li><a href="gmaptype/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/index1.html">マップタイプコントールの有効/無効の切り替えとコントロールに表示するマップタイプの選択</a></li>
+				<li><a href="gmaptype/index4.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/index4.html">マップタイプコントールのスタイルの設定</a></li>
+				<li><a href="gmaptype/index5.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/index5.html">マップタイプコントールの位置</a></li>
+				<li><a href="gmaptype/index6.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmaptype/index6.html">マップタイプ変更時のイベント処理</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="zoom/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/zoom/">地図のズームレベル</a></li>
+				<li><a href="zoom/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/zoom/index1.html">ナビゲーションコントロールの有効/無効</a></li>
+				<li><a href="zoom/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/zoom/index3.html">ズームレベルの指定</a></li>
+				<li><a href="zoom/index4.html" tppabs="https://www.javadrive.jp/google-maps-javascript/zoom/index4.html">ナビゲーションコントロールの種類</a></li>
+				<li class="more"><a href="zoom/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/zoom/" rel="nofollow">(全<span class="ct">6</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="pan/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/pan/">地図の移動</a></li>
+				<li><a href="pan/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/pan/index1.html">指定の座標へ移動</a></li>
+				<li><a href="pan/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/pan/index3.html">指定したピクセル分を移動</a></li>
+				<li><a href="pan/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/pan/index2.html">指定した矩形領域が表示される位置へ移動</a></li>
+				<li class="more"><a href="pan/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/pan/" rel="nofollow">(全<span class="ct">3</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="setting/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/setting/">地図に対する操作の設定</a></li>
+				<li><a href="setting/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/setting/index1.html">キーボードを使った地図のコントロールの有効/無効</a></li>
+				<li><a href="setting/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/setting/index2.html">地図に対するドラッグ操作の有効/無効</a></li>
+				<li><a href="setting/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/setting/index3.html">ダブルクリックによるズーム操作の有効/無効</a></li>
+				<li class="more"><a href="setting/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/setting/" rel="nofollow">(全<span class="ct">4</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<h2>オーバーレイの配置</h2>
+
+			<p>
+			地図上にマーカーや情報ウィンドウなど様々なオーバーレイを配置する方法を確認します。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="ginfowindow/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/ginfowindow/">情報ウィンドウ</a></li>
+				<li><a href="ginfowindow/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/ginfowindow/index1.html">情報ウィンドウの作成</a></li>
+				<li><a href="ginfowindow/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/ginfowindow/index2.html">情報ウィンドウを開く/閉じる</a></li>
+				<li><a href="ginfowindow/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/ginfowindow/index3.html">情報ウィンドウに表示するコンテンツの設定</a></li>
+				<li class="more"><a href="ginfowindow/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/ginfowindow/" rel="nofollow">(全<span class="ct">7</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gmarker/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/">マーカー</a></li>
+				<li><a href="gmarker/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/index1.html">マーカーの作成</a></li>
+				<li><a href="gmarker/index4.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/index4.html">地図へマーカーを配置/削除</a></li>
+				<li><a href="gmarker/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/index2.html">マーカーのアイコンを指定</a></li>
+				<li class="more"><a href="gmarker/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/" rel="nofollow">(全<span class="ct">5</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gpolyline/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolyline/">ポリライン(GPolyline)</a></li>
+				<li><a href="gpolyline/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolyline/index1.html">ポリラインの表示</a></li>
+				<li><a href="gpolyline/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolyline/index2.html">色/太さ/透明度の設定</a></li>
+				<li><a href="gpolyline/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolyline/index3.html">球面大地表面に沿って線を描く</a></li>
+				<li class="more"><a href="gpolyline/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolyline/" rel="nofollow">(全<span class="ct">6</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gpolygon/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/">ポリゴン(GPolygon)</a></li>
+				<li><a href="gpolygon/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/index1.html">ポリゴンの表示</a></li>
+				<li><a href="gpolygon/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/index2.html">色/太さ/透明度の設定</a></li>
+				<li><a href="gpolygon/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/index3.html">地図上でポリゴンの頂点を移動</a></li>
+				<li class="more"><a href="gpolygon/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/" rel="nofollow">(全<span class="ct">8</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="ggroundoverlay/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/ggroundoverlay/">オーバーレイ画像(GGroundOverlay, GScreenOverlay)</a></li>
+				<li><a href="ggroundoverlay/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/ggroundoverlay/index1.html">グラウンドオーバーレイの表示</a></li>
+				<li><a href="ggroundoverlay/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/ggroundoverlay/index2.html">グラウンドオーバーレイの表示/非表示の切り替え</a></li>
+				<li><a href="ggroundoverlay/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/ggroundoverlay/index3.html">スクリーンオーバーレイの表示</a></li>
+				<li class="more"><a href="ggroundoverlay/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/ggroundoverlay/" rel="nofollow">(全<span class="ct">4</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gtilelayer/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gtilelayer/">タイルオーバーレイ(GTileLayer, GTileLayerOverlay)</a></li>
+				<li><a href="gtilelayer/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gtilelayer/index1.html">タイルレイヤーの作成</a></li>
+				<li><a href="gtilelayer/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gtilelayer/index2.html">タイルオーバーレイの表示</a></li>
+				<li><a href="gtilelayer/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gtilelayer/index3.html">タイル位置とズームレベル毎に個別の画像を指定</a></li>
+				<li class="more"><a href="gtilelayer/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gtilelayer/" rel="nofollow">(全<span class="ct">5</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<h2>イベント処理とデータ管理</h2>
+
+			<p>
+			地図上でのイベント処理やデータの管理方法などについて確認します。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="geocoding/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/">ジオコーディング(GClientGeocoder)</a></li>
+				<li><a href="geocoding/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/index1.html">住所から座標を取得</a></li>
+				<li><a href="geocoding/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/index2.html">候補一覧を取得</a></li>
+				<li><a href="geocoding/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/index3.html">リバースジオコーディング</a></li>
+				<li class="more"><a href="geocoding/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/" rel="nofollow">(全<span class="ct">3</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gevent/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gevent/">イベント処理(GEvent, GEventListener)</a></li>
+				<li><a href="gevent/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gevent/index1.html">イベントリスナーの登録</a></li>
+				<li><a href="gevent/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gevent/index2.html">イベントリスナーの削除</a></li>
+				<li><a href="gevent/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gevent/index3.html">イベントの生成</a></li>
+				<li class="more"><a href="gevent/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gevent/" rel="nofollow">(全<span class="ct">6</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="glog/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/glog/">ログの出力(GLog)</a></li>
+				<li><a href="glog/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/glog/index1.html">ログの出力</a></li>
+				<li><a href="glog/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/glog/index2.html">リンク形式のログの出力</a></li>
+				<li><a href="glog/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/glog/index3.html">HTML形式のログの出力</a></li>
+				<li class="more"><a href="glog/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/glog/" rel="nofollow">(全<span class="ct">3</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gdownloadurl/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gdownloadurl/">外部ファイルの読み込み(GDownloadUrl)</a></li>
+				<li><a href="gdownloadurl/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gdownloadurl/index1.html">ファイルの取得の手順</a></li>
+				<li><a href="gdownloadurl/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gdownloadurl/index2.html">テキストファイルの取得</a></li>
+				<li><a href="gdownloadurl/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gdownloadurl/index3.html">XMLファイルの取得</a></li>
+				<li class="more"><a href="gdownloadurl/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gdownloadurl/" rel="nofollow">(全<span class="ct">4</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<h2>その他の機能とサンプル</h2>
+
+			<p>
+			地図上でのイベント処理やデータの管理方法などについて確認します。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gmarkermanager/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/">マーカーの表示管理(GMarkerManager)</a></li>
+				<li><a href="gmarkermanager/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/index1.html">表示されるズームレベルを指定しマーカーを表示</a></li>
+				<li><a href="gmarkermanager/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/index2.html">マーカーをまとめて追加</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="gstreetviewpanorama/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/">ストリートビュー(GStreetviewPanorama)</a></li>
+				<li><a href="gstreetviewpanorama/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/index1.html">ストリートビューの利用可能地域の表示</a></li>
+				<li><a href="gstreetviewpanorama/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/index2.html">ストリートビューの表示</a></li>
+				<li><a href="gstreetviewpanorama/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/index3.html">カメラ視点の設定</a></li>
+				<li class="more"><a href="gstreetviewpanorama/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gstreetviewpanorama/" rel="nofollow">(全<span class="ct">7</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="route/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/route/">ルート案内(GDirections)</a></li>
+				<li><a href="route/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/route/index1.html">GDirectionsクラスのオブジェクトを作成</a></li>
+				<li><a href="route/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/route/index2.html">2点間のルート案内</a></li>
+				<li><a href="route/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/route/index3.html">ルート案内のクリア</a></li>
+				<li class="more"><a href="route/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/route/" rel="nofollow">(全<span class="ct">18</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="data/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/data/">色々な座標データ</a></li>
+				<li><a href="data/index1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/data/index1.html">都道府県庁所在地</a></li>
+				<li><a href="data/index2.html" tppabs="https://www.javadrive.jp/google-maps-javascript/data/index2.html">東京メトロ</a></li>
+				<li><a href="data/index3.html" tppabs="https://www.javadrive.jp/google-maps-javascript/data/index3.html">都営地下鉄</a></li>
+				<li class="more"><a href="data/index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/data/" rel="nofollow">(全<span class="ct">6</span>記事の一覧へ ...)</a></li>
+				</ul>
+			</div>
+
+			<div class="borderdiv">
+			本ホームページ内の文書中の登録商標は、一般にその所有者のものです。<br />
+			本ホームページは Google, Inc. 及び グーグル株式会社が後援または提携するものではありません。<br />
+			Google Maps は Google Inc. の登録商標です。
+			</div>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

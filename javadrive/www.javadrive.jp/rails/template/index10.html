@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mail_toメソッドを使ったメールリンクの作成 - Ruby on Rails入門</title>
+<meta name="keywords" content="mail_toメソッドを使ったメールリンクの作成" />
+<meta name="description" content="Railsのヘルパーメソッドの1つであるmail_toメソッドを使い、メールリンクを作成する方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/template/" itemprop="url"><span itemprop="title">テンプレート(ビュー)とヘルパーメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>mail_toメソッドを使ったメールリンクの作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			テンプレートで「mailto:」を使った&lt;a&gt;タグを使ったリンクを作成する方法としてmail_toメソッドを使ってメールリンク用のタグを生成する方法について解説します。このリンクをクリックすると、利用者側でメールクライアントが起動し、設定されている宛先の情報が自動的に設定されます(送信はされません)。
+			</p>
+
+			<p>
+			※ 通常のリンクを作成する方法については「<a href="index8.html" tppabs="https://www.javadrive.jp/rails/template/index8.html">link_toメソッドを使ったリンクの作成</a>」をご参照下さい。
+			</p>
+
+			<p>
+			1.<a href="#section1">mail_toメソッドの定義と基本的な使い方</a><br />
+			2.<a href="#section2">アットマーク(＠)とドット(.)を別の文字で置き換える</a><br />
+			3.<a href="#section3">メールアドレスのエンティティ化</a><br />
+			4.<a href="#section4">Ccやメール本文などの設定</a><br />
+			</p>
+
+<h2><a id="section1">link_toメソッドの定義と基本的な使い方</a></h2>
+
+			<p>
+			mail_toメソッドはActionView::Helpers::UrlHelperクラスで次のように定義されています。
+			</p>
+
+<pre class="fixcomment">
+mail_to(email_address, name = nil, html_options = {})
+</pre>
+
+			<p>
+			1番目の引数はメールアドレスを指定します。この引数は必須です。2番目の引数はリンクを設定する文字列です。省略した場合(又はnilを指定した場合)は1番目に指定したメールアドレスが使用されます。
+			</p>
+
+<pre class="fixcomment">
+2番目の引数を省略：
+&lt;%= mail_to 'user@example.com' %&gt;
+--&gt; &lt;a href="mailto:user@example.com"&gt;user@example.com&lt;/a&gt;
+
+2番目の引数を指定：
+&lt;%= mail_to 'user@example.com', '連絡先' %&gt;
+--&gt; &lt;a href="mailto:user@example.com"&gt;連絡先&lt;/a&gt;
+</pre>
+
+			<p>
+			では実際に簡単な例で確認してみます。「books」コントローラに「show」アクションを作成します。
+			</p>
+
+<pre class="fixcode">
+class BooksController &lt; ApplicationController
+  def show
+  end
+end
+</pre>
+
+			<p>
+			次に「books」コントロールの「show」アクションから呼び出されるテンプレートとして「app/views/books/show.html.erb」ファイルを作成し、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', '連絡先' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルを次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  get "books/show"
+end
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p10-1.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-1.png" alt="p10-1" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にように出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p10-2.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-2.png" alt="p10-2" width="475" height="326" />
+			</p>
+
+			<p>
+			では画面に表示されている「連絡先」と書かれたリンクをクリックして下さい。ご利用されている環境によって異なりますが、次のようにメールクライアントが起動し「To」にメールアドレスが設定されています。
+			</p>
+
+			<p>
+			<img src="img/p10-3.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-3.png" alt="p10-3" width="460" height="371" />
+			</p>
+
+			<p>
+			このようにmail_toメソッドを使うことでメールリンクを簡単に出力することができます。
+			</p>
+
+<h2><a id="section2">アットマーク(＠)とドット(.)を別の文字で置き換える</a></h2>
+
+			<p>
+			連絡先のメールアドレスをそのまま掲載していると、残念ながらスパムメールなどが送信されてくる原因となります。その為、メールアドレスの中のアットマーク(＠)やドット(.)を別の文字で置き換えて表示することが行われます。
+			</p>
+
+			<p>
+			「replace_at」オプションと「replace_dot」オプションを使用することでアットマーク(＠)とドット(.)をそれぞれ指定した文字に置き換えることができます。
+			</p>
+
+<pre class="fixcomment">
+アットマーク(＠)を置き換え：
+&lt;%= mail_to 'user@example.com', nil, :replace_at =&gt; '_at_' %&gt;
+--&gt; &lt;a href="mailto:user@example.com"&gt;user_at_example.com&lt;/a&gt;
+
+ドット(.)を置き換え：
+&lt;%= mail_to 'user@example.com', nil, :replace_dot =&gt; '_dot_' %&gt;
+--&gt; &lt;a href="mailto:user@example.com"&gt;user@example_dot_com&lt;/a&gt;
+</pre>
+
+			<p>
+			変更されるのはあくまでリンクの対象として画面に表示されているメールアドレスだけです。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', nil, :replace_at =&gt; '_at_' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', nil, :replace_dot =&gt; '_dot_' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', nil, :replace_at =&gt; '◎', :replace_dot =&gt; '_' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p10-4.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-4.png" alt="p10-4" width="475" height="326" />
+			</p>
+
+			<p>
+			1番目はアットマーク、2番目はドット、3番目はアットマークとドットの両方を別の文字に変更して表示しました。ソースを確認してみると次にように出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p10-5.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-5.png" alt="p10-5" width="475" height="326" />
+			</p>
+
+			<p>
+			このようにリンクの対象として表示されるメールアドレスの中のアットマークやドットを自動的に変更して表示することができます。
+			</p>
+
+<h2><a id="section3">メールアドレスのエンティティ化</a></h2>
+
+			<p>
+			スパムメール対策としてどれだけメールアドレスを隠そうとしても、実際にリンクをクリックすればメールリンクの仕組みを使っている以上はメールアドレスは表示されます。ただ画面に表示されているメールアドレスを変換することで、自動で収集されにくくすることはできます。さらにソースからも自動的に収集されにくくするためにエンティティ化と呼ばれる変換を行う手段が用意されています。
+			</p>
+
+			<p>
+			Railsでは文字を数値に置き換える方法とJavaScriptを使用する方法が用意されています。
+			</p>
+
+<pre class="fixcomment">
+文字を数値に置き換え：
+&lt;%= mail_to 'user@example.com', '連絡先', :encode =&gt; 'hex' %&gt;
+--&gt; &lt;a href="&amp;#109;&amp;#97;&amp;#105;&amp;#108;&amp;#116;&amp;#111;&amp;#58;%75%73%65%72@%65%78%61%6d%70%6c%65.%63%6f%6d"&gt;連絡先&lt;/a&gt;
+
+JavaScriptを使用：
+&lt;%= mail_to 'user@example.com', '連絡先', :encode =&gt; 'javascript' %&gt;
+--&gt; &lt;script type="text/javascript"&gt;eval(decodeURIComponent('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%5c%22%6d%61%69%6c%74%6f%3a%75%73%65%72%40%65%78%61%6d%70%6c%65%2e%63%6f%6d%5c%22%3e%e9%80%a3%e7%b5%a1%e5%85%88%3c%5c%2f%61%3e%27%29%3b'))&lt;/script&gt;
+</pre>
+
+			<p>
+			どちらもmailtoという文字そのものも変換されていますので、リンク先にメールアドレスが設定されていることが分かりにくくなっています。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', '連絡先', :encode =&gt; 'hex' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', '連絡先', :encode =&gt; 'javascript' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p10-6.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-6.png" alt="p10-6" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にように出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p10-7.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-7.png" alt="p10-7" width="475" height="326" />
+			</p>
+
+			<p>
+			リンクをクリックした場合の挙動はエンティティ化する前と変わりません。1番目のリンク及び2番目のリンクをクリックするとどちらも次のようにメールクライアントが起動して「To」にメールアドレスが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p10-8.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-8.png" alt="p10-7" width="460" height="371" />
+			</p>
+
+			<p>
+			ただJavaScriptの方を使用する場合、利用者の方がお使いのブラウザでJavaScriptを有効にしていないとメールを送信することができませんので注意が必要です。
+			</p>
+
+<h2><a id="section4">Ccやメール本文などの設定</a></h2>
+
+			<p>
+			ここまでは送信するメールの情報として、宛先である「To」の指定だけを行ってきましたが、他にも「cc」「bcc」「subject」「body」の指定が可能です。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= mail_to 'user@example.com', nil,
+      :cc =&gt; 'cc@example.com',
+      :bcc =&gt; 'bcc@example.com',
+      :subject =&gt; 'Hello',
+      :body =&gt; 'Dear Sirs'  %&gt;
+
+--&gt; &lt;a href="mailto:user@example.com?cc=cc%40example.com&amp;amp;bcc=bcc%40example.com&amp;amp;body=Dear%20Sirs&amp;amp;subject=Hello"&gt;user@example.com&lt;/a&gt;
+</pre>
+
+			<p>
+			各オプションを設定することで、リンクをクリックした時に自動的にメールに初期値が設定されます。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= mail_to 'user@example.com', nil,
+      :cc =&gt; 'cc@example.com',
+      :bcc =&gt; 'bcc@example.com',
+      :subject =&gt; 'Hello',
+      :body =&gt; 'Dear Sirs'  %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p10-9.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-9.png" alt="p10-9" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にように出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p10-10.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-10.png" alt="p10-10" width="475" height="326" />
+			</p>
+
+			<p>
+			リンクをクリックすると次のようにメールクライアントが起動して「To」の他に「Cc」「件名」「メール本文」に設定した値が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p10-11.png" tppabs="https://www.javadrive.jp/rails/template/img/p10-11.png" alt="p10-11" width="460" height="371" />
+			</p>
+
+			<p>
+			件名やメール本文には日本語であっても問題ないようです。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

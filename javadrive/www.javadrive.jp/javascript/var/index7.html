@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 変数への値の代入が値渡しか参照渡しかについて</title>
+<meta name="description" content="変数に代入される値が数値や文字列といったプリミティブ型の値だった場合には「値渡し」と呼ばれるような処理が行われます。また変数に代入される値が配列や関数などのオブジェクト型だった場合は「参照渡し」と呼ばれるような処理が行われます。ここではプリミティブ型とオブジェクト型の値が変数に代入されるときに実際どのように行われるのかについて解説します。">
+
+<meta property="og:title" content="変数への値の代入が値渡しか参照渡しかについて">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/var/index7.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/var/img/p7-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="変数に代入される値が数値や文字列といったプリミティブ型の値だった場合には「値渡し」と呼ばれるような処理が行われます。また変数に代入される値が配列や関数などのオブジェクト型だった場合は「参照渡し」と呼ばれるような処理が行われます。ここではプリミティブ型とオブジェクト型の値が変数に代入されるときに実際どのように行われるのかについて解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "変数",
+    "item": "https://www.javadrive.jp/javascript/var/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/var/">変数</a></li>
+				</ul>
+			</div>
+
+			<h1>変数への値の代入が値渡しか参照渡しかについて</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			変数に代入される値が数値や文字列といったプリミティブ型の値だった場合には「値渡し」と呼ばれるような処理が行われます。また変数に代入される値が配列や関数などのオブジェクト型だった場合は「参照渡し」と呼ばれるような処理が行われます。ここではプリミティブ型とオブジェクト型の値が変数に代入されるときに実際どのように行われるのかについて解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">プリミティブ型の値を変数に代入する</a></li>
+			<li><a href="#section2">オブジェクト型の値を変数に代入する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">プリミティブ型の値を変数に代入する</a></h2>
+
+			<p>
+			プリミティブ型の値というのは数値( 10 など)、文字列( 'Cup' など)、真偽値( true など)、 undefined 、 null 、シンボルとなります。これらの値を変数に代入した場合で考えてみます。
+			</p>
+
+	<h3>変数に値を代入したあとで別の値を代入する</h3>
+
+			<p>
+			変数 a を宣言し、数値の 10 を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a;
+a = 10;
+</pre>
+</div>
+
+			<p>
+			すると数値の 10 が保管される場所が確保され、その場所の位置が変数 a に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-1.png" alt="プリミティブ型の値を変数に代入する(1)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			先ほどの変数 a に別の値 20 を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a;
+a = 10;
+a = 20;
+</pre>
+</div>
+
+			<p>
+			すると新しく数値 20 が保管される場所が確保され、その場所の位置が変数 a に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-2.png" alt="プリミティブ型の値を変数に代入する(2)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			もともと入っていた値が保管されている場所に新しい値が保管されるのではなく、新しい場所が用意される点に注意してください。
+			</p>
+
+	<h3>複数の変数に同じ値を代入する</h3>
+
+			<p>
+			今度は変数 a に 10 を代入し、変数 b にも 10 を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = 10;
+b = 10;
+</pre>
+</div>
+
+			<p>
+			すると数値の 10 が保管される場所が確保され、その場所の位置が変数 a に保管され、次に数値の 10 が保管される場所がもう一つ確保され、その場所の位置が変数 b に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-3.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-3.png" alt="プリミティブ型の値を変数に代入する(3)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			値が同じであっても、別々に変数に値を代入した場合はそれぞれ別の保管場所が用意されます。
+			</p>
+
+	<h3>変数に別の変数を代入する</h3>
+
+			<p>
+			今度は変数 a に 10 を代入し、変数 b に変数 a を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = 10;
+b = a;
+</pre>
+</div>
+
+			<p>
+			すると数値の 10 が保管される場所が確保され、その場所の位置が変数 a に保管され、次に変数 a が保管している場所の位置が変数 b に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-4.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-4.png" alt="プリミティブ型の値を変数に代入する(4)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			先ほどの変数 b に別の値 20 を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = 10;
+b = a;
+b = 20;
+</pre>
+</div>
+
+			<p>
+			すると新しく数値 20 が保管される場所が確保され、その場所の位置が変数 b に保管されます。変数 a が保管している場所の位置は変わりませんので変数 a が参照している値も変わりません。
+			</p>
+
+			<p>
+			<img src="img/p7-5.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-5.png" alt="プリミティブ型の値を変数に代入する(5)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			プリミティブ型の値を変数に代入する場合、一時的に複数の変数が同じ値を参照することはありますが、変数に対する操作が別の変数が参照している値に影響を与えることはありません。
+			</p>
+
+<h2><a id="section2">オブジェクト型の値を変数に代入する</a></h2>
+
+			<p>
+			オブジェクト型の値というのはプリミティブ型の値以外のもので、例えば配列やオブジェクト、関数、正規表現、などです。これらの値を変数に代入した場合で考えてみます。
+			</p>
+
+	<h3>変数に値を代入したあとで別の値を代入する</h3>
+
+			<p>
+			変数 a を宣言し、配列の [10, 20] を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a;
+a = [10, 20];
+</pre>
+</div>
+
+			<p>
+			すると配列の [10, 20] が保管される場所が確保され、その場所の位置が変数 a に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-6.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-6.png" alt="オブジェクト型の値を変数に代入する(1)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			先ほどの変数 a に別の配列 [30, 40] を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a;
+a = [10, 20];
+a = [30, 40];
+</pre>
+</div>
+
+			<p>
+			すると新しく配列 [30, 40] が保管される場所が確保され、その場所の位置が変数 a に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-7.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-7.png" alt="オブジェクト型の値を変数に代入する(2)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			先ほどの変数 a が参照している配列に対してインデックス 0 の要素の値を 50 に置き換えます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a;
+a = [10, 20];
+a = [30, 40];
+a[0] = 50;
+</pre>
+</div>
+
+			<p>
+			すると配列 [30, 40] の 0 番目の要素の値が 50 に変更されます。変数 a に保管されている場所の位置は変わりません。
+			</p>
+
+			<p>
+			<img src="img/p7-8.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-8.png" alt="オブジェクト型の値を変数に代入する(3)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			もともと入っていた値に別の値を代入すると、新しい場所が用意される点はプリミティブ型と同じですが、オブジェクト型の場合は配列の要素のように格納されている値そのものを別の値に置き換えることができる場合があります。その場合は、変数が保管している場所の位置は同じですが、実際に保管されている値が変更される場合があります。
+			</p>
+
+	<h3>変数に別の変数を代入する</h3>
+
+			<p>
+			今度は変数 a に配列の [10, 20] を代入し、変数 b に変数 a を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = [10, 20];
+b = a;
+</pre>
+</div>
+
+			<p>
+			すると配列の [10, 20] が保管される場所が確保され、その場所の位置が変数 a に保管され、次に変数 a が保管している場所の位置が変数 b に保管されます。
+			</p>
+
+			<p>
+			<img src="img/p7-9.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-9.png" alt="オブジェクト型の値を変数に代入する(4)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			先ほどの変数 a が参照している配列に対してインデックス 0 の要素の値を 50 に置き換えます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = [10, 20];
+b = a;
+b[0] = 50;
+</pre>
+</div>
+
+			<p>
+			すると配列 [10, 20] の 0 番目の要素の値が 50 に変更されます。変数 a および変数 b に保管されている場所の位置は変わりません。変数 b に対する操作の結果、変数 a が参照している値も変更されることとなりました。
+			</p>
+
+			<p>
+			<img src="img/p7-10.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-10.png" alt="プリミティブ型の値を変数に代入する(5)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			実際に下記のコードを実行してみると、変数 b が参照している値だけでなく変数 a が参照している値も書き換わっています。 
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = [10, 20];
+b = a;
+b[0] = 50;
+
+console.log(a);
+<span class="bold">&gt;&gt; [50, 20]</span>
+console.log(b);
+<span class="bold">&gt;&gt; [50, 20]</span>
+</pre>
+</div>
+
+			<p>
+			先ほどの変数 b に別の配列 [30, 40] を代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = [10, 20];
+b = a;
+b[0] = 50;
+b = [30, 40];
+</pre>
+</div>
+
+			<p>
+			すると新しく配列 [30, 40] が保管される場所が確保され、その場所の位置が変数 b に保管されます。変数 a が保管している場所の位置は変わりません。
+			</p>
+
+			<p>
+			<img src="img/p7-11.png" tppabs="https://www.javadrive.jp/javascript/var/img/p7-11.png" alt="オブジェクト型の値を変数に代入する(6)" width="728" height="368" class="waku">
+			</p>
+
+			<p>
+			実際に下記のコードを実行してみると、変数 b だけが別の値を参照していることが確認できます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let a, b;
+a = [10, 20];
+b = a;
+b[0] = 50;
+b = [30, 40];
+
+console.log(a);
+<span class="bold">&gt;&gt; [50, 20]</span>
+console.log(b);
+<span class="bold">&gt;&gt; [30, 40]</span>
+</pre>
+</div>
+
+			<p>
+			オブジェクト型の値を変数に代入する場合、一時的に複数の変数が同じ値を参照することがある点はプリミティブ型の場合と同じですが、その時に例えば変数が参照している配列の要素を置き換えるなどの操作を行うと、変数に対する操作が別の変数が参照している値に影響を与える場合がある点に注意してください。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			プリミティブ型とオブジェクト型の値が変数に代入されるときに実際どのように行われるのかについて解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

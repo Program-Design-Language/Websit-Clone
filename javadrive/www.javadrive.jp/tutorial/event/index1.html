@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>イベントモデルについて - イベントモデル - Swing</title>
+<meta name="keywords" content="event,イベントモデル,Swing,Java" />
+<meta name="description" content="イベントモデルについて" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/event/" itemprop="url"><span itemprop="title">イベントモデル</span></a></li>
+		</ul>
+</div>
+
+			<h1>イベントモデルについて</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			イベント処理の流れを間単に確認しておきます。
+			</p>
+
+			<p>
+			まずボタンやテキストなどのコンポーネントが何のイベントを受け取るのかを指定します。これは例えばボタンについて考えてみると、ボタンが押されたとか、ボタンの上でマウスが動いたなどの様々なイベントが絶えず発生していますが、必要の無いイベントについては処理する必要が無いため、自分で処理したいイベントだけ受け取るようにするためです。
+			</p>
+
+			<p>
+			次に、各コンポーネントなどにイベントが発生した場合の処理の記述ですが、Javaではイベントを処理する専用のクラスを用意し、その中で処理を記述します。その処理を記述するクラスがリスナーと呼ばれるものになります。
+			</p>
+
+			<p>
+			※Sunのホームページでは下記のような図で記述されています。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p1.png" alt="イベントモデル" width="362" height="42">
+			</p>
+
+			<p>
+			例としてActionEventを見てみます。ActionEventはボタンを押すといった動作を行った際に発生するイベントですが、記述方法としては下記のようになります。
+			</p>
+
+			<p>
+			まず対象となるボタンがActionEventを受け取ることができるように、ボタンに対してaddActionListenerメソッドを実行します。
+			</p>
+
+<pre class="fixcode">
+public class MyClass{
+  JButton btn = new JButton("test");
+  btn.<span class="red">addActionListener(new myListener())</span>;
+}
+</pre>
+
+			<p>
+			これでボタンがActionEventを受け取れるようになります。またaddActionListenerメソッドの引数には、このイベントを処理するリスナーのクラスを指定します。
+			</p>
+
+			<p>
+			次にActionEventを処理するリスナーを作成します。ActionEventの場合にはActionListenerをインプリメントしたクラスを作成します。
+			</p>
+
+<pre class="fixcode">
+public class myListener <span class="red">implements ActionListener</span>{
+
+}
+</pre>
+
+			<p>
+			作成したクラスの中でイベントが発生した時に呼び出されるメソッドはあらかじめ決まっており、そのメソッドの中でイベントが発生した時に行いたい処理を記述します。ActionListenetの場合はactionPerformedというメソッドが呼び出されます。
+			</p>
+
+<pre class="fixcode">
+public class myListener implements ActionListener{
+  <span class="red">public void actionPerformed(ActionEvent e){
+    /* 処理したい内容をここに記述する */
+  }</span>
+}
+</pre>
+
+			<p>
+			記述方法としてはこのような感じです。受け取りたいイベントを指定し、リスナーを用意したあとで実行したい処理をリスナーの中のメソッドの中に記述していきます。
+			</p>
+
+			<p>
+			また、上記ではリスナークラスとして別のクラスを用意しましたが、呼び出し元のクラスにActionListenerをインプリメントすることができます。例えば次にように記述します。
+			</p>
+
+<pre class="fixcode">
+public class MyClass <span class="red">implements ActionListener</span>{
+  JButton btn = new JButton("test");
+  btn.<span class="red">addActionListener(this);</span>
+
+  <span class="red">public void actionPerformed(ActionEvent e){
+    /* 処理したい内容をここに記述する */
+  }</span>
+}
+</pre>
+
+			<p>
+			addActionListenerメソッドの引数にはActionEventを処理するリスナークラスを指定していました。今回の場合は自分自身のクラスがリスナークラスも兼ねているので、自分自身を表す"this"を指定しています。
+			</p>
+
+			<p>
+			どちらの記述方法でも構いません。例えば次の例ではボタン毎に別々のリスナークラスを用意しています。
+			</p>
+
+<pre class="fixcode">
+public class MyClass{
+  JButton btn1 = new JButton("test");
+  btn1.addActionListener(new myListener1());
+
+  JButton btn2 = new JButton("test");
+  btn2.addActionListener(new myListener2());
+}
+
+public class myListener1 implements ActionListener{
+  public void actionPerformed(ActionEvent e){
+    /* ボタン1の処理したい内容をここに記述する */
+  }
+}
+
+public class myListener2 implements ActionListener{
+    public void actionPerformed(ActionEvent e){
+        /* ボタン2の処理したい内容をここに記述する */
+    }
+}
+</pre>
+
+			<p>
+			また次の場合のように1つのactionPerformedメソッドの中で、どのボタンでイベントが発生したのかを判別して処理を分けるような記述も可能です。
+			</p>
+
+<pre class="fixcode">
+public class MyClass implements ActionListener{
+  JButton btn1 = new JButton("test");
+  btn1.addActionListener(this);
+
+  JButton btn2 = new JButton("test");
+  btn2.addActionListener(this);
+
+  public void actionPerformed(ActionEvent e){
+    if (ボタン1が押された場合){
+      /* ボタン1の処理したい内容をここに記述する */
+    }else if (ボタン2が押された場合){
+      /* ボタン2の処理したい内容をここに記述する */
+    }
+  }
+}
+</pre>
+
+			<h2>匿名クラスを使った記述方法</h2>
+
+			<p>
+			匿名クラス(又は無名クラス)を使った書き方も見ておきます。匿名クラスとは名前を持たないクラスのことで、通常のクラスを作る場合と比べて制約などもあるようですがイベント処理の場合にはよく使われています。
+			</p>
+
+			<p>
+			リスナーインターフェースを実装したクラスを別途作るのではなく、各コンポーネントにリスナーを登録する際に合わせてクラスも定義してしまいます。言葉でいうとややこしいのですが、下記のような感じです。
+			</p>
+
+<pre class="fixcode">
+public class MyClass{
+  JButton btn = new JButton("test");
+  btn.addActionListener(
+    new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        /* 処理したい内容をここに記述する */
+      }
+    }
+  );
+}
+</pre>
+
+			<p>
+			addActionListenerメソッドの引数にはリスナークラスを今までは指定していましたが、この場合はそこにクラス定義を直接書いてしまいます。このような記述方法にした場合、コンポーネント単位で処理内容を記述することになります。
+			</p>
+
+			<h2>イベントの発生条件</h2>
+
+			<p>
+			どんな時にイベントが発生するのかも一部見ておきます。
+			</p>
+
+			<table class="pro">
+			<tr><th>イベントの発生条件</th><th>対応するリスナータイプ</th></tr>
+			<tr><td>ボタンをクリックする、テキストフィールドで文字入力中にEnterキーを押す、メニューアイテムを選択する</td><td>ActionListener</td></tr>
+			<tr><td>フレームを閉じる</td><td>WindowListener</td></tr>
+			<tr><td>コンポーネントの上にマウスがある時にマウスを押す</td><td>MouseListener</td></tr>
+			<tr><td>コンポーネントの上にマウスがある時にマウスを動かす</td><td>MouseMotionListener</td></tr>
+			<tr><td>コンポーネントがキーボードフォーカスを取得する</td><td>FocusListener</td></tr>
+			<tr><td>テーブル又はリストの選択項目を変更する</td><td>ListSelectionListener</td></tr>
+			</table>
+
+			<p>
+			上記は一部抜粋ですが、このような時にイベントが発生します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POSTかGETかを判別 - 掲示板 - PHPサンプルプログラム</title>
+<meta name="keywords" content="画面表示,掲示板,サンプル,PHP" />
+<meta name="description" content="POSTかGETかを判別" />
+
+<link rel="stylesheet" href="../../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/sample/" itemprop="url"><span itemprop="title">PHPサンプルプログラム</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/sample/keijiban/" itemprop="url"><span itemprop="title">掲示板</span></a></li>
+		</ul>
+</div>
+
+			<h1>POSTかGETかを判別</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前回見たとおり、フォームから投稿された結果表示された場合を除いてファイルには何も書き込まないようにしてみます。
+			</p>
+
+			<p>
+			フォームからの投稿によって表示されたのかどうかの判別の方法はいくつかありますが、フォームからPOSTでリクエストが来ているのか、それてともURLを直接指定して表示されているのかで判別してみます。フォームでGETを指定した時だけではなく単にブラウザでHTMLファイルを要求した時もGETのリクエストが来る事になっています。
+			</p>
+
+			<p>
+			実際には下記のように「$_SERVER["REQUEST_METHOD"]」を調べることでPOSTかGETかどちらで要求が来ているかを調べることができます。
+			</p>
+
+<pre class="fixcode">
+if($_SERVER["REQUEST_METHOD"] != "POST"){
+    // ブラウザからHTMLページを要求された場合
+}else{
+    // フォームからPOSTによって要求された場合
+}
+</pre>
+
+			<p>
+			一度簡単なサンプルで確認してみましょう。
+			</p>
+
+			<p>
+			<a href="keijiban4.html" tppabs="https://www.javadrive.jp/php/sample/keijiban/keijiban4.html">keijiban4.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;POSTとGETのリクエストの識別&lt;/p&gt;
+
+&lt;form method="POST" action="&lt;?php print($_SERVER['PHP_SELF']) ?&gt;"&gt;
+&lt;input type="text" name="personal_name"&gt;&lt;br&gt;&lt;br&gt;
+&lt;input type="submit" name="btn1" value="投稿する"&gt;
+&lt;/form&gt;
+
+&lt;p&gt;
+&lt;a href="&lt;?php print($_SERVER['PHP_SELF']) ?&gt;"&gt;自分自身へのリンク&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;?php
+
+print('&lt;hr&gt;結果表示&lt;br&gt;');
+
+if($_SERVER["REQUEST_METHOD"] != "POST"){
+    print('GETによる要求です');
+}else{
+    print('POSTによる要求です');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記はPOSTかGETかの簡単なテストを行うものです。
+			</p>
+
+			<p>
+			では実際にWWWサーバに設置して試してみます。まずブラウザで直接URLを指定して開いた場合です。
+			</p>
+
+			<p>
+			<img src="img/p11.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p11.png" alt="掲示板" width="515" height="396">
+			</p>
+
+			<p>
+			上記のように直接要求した場合は「GET」となります。次にフォームに適当な値を入れてから投稿ボタンを押してみて下さい。
+			</p>
+
+			<p>
+			<img src="img/p12.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p12.png" alt="掲示板" width="514" height="396">
+			</p>
+
+			<p>
+			<img src="img/p13.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p13.png" alt="掲示板" width="515" height="396">
+			</p>
+
+			<p>
+			上記のようにフォームでは「POST」による通信を指定していますので、結果は「POST」となります。最後に「自分自身へのリンク」と書かれた箇所をクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p14.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p14.png" alt="掲示板" width="515" height="395">
+			</p>
+
+			<p>
+			リンクをクリックされたことによって要求が合った場合も、直接URLを指定して開いた場合と同じですから「GET」になります。
+			</p>
+
+			<h2>掲示板への適用</h2>
+
+			<p>
+			以上のことを利用して、ページが開こうとした時に「POST」による要求であれば何か投稿が行われた結果となりますので、その時はファイルへの書き込みを行い、そうではない時は単にページを開くだけにしてファイルへの書き込みは行わないようにしてみます。
+			</p>
+
+			<p>
+			<a href="keijiban5.html" tppabs="https://www.javadrive.jp/php/sample/keijiban/keijiban5.html">keijiban5.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;掲示板&lt;/p&gt;
+
+&lt;form method="POST" action="&lt;?php print($_SERVER['PHP_SELF']) ?&gt;"&gt;
+&lt;input type="text" name="personal_name"&gt;&lt;br&gt;&lt;br&gt;
+&lt;textarea name="contents" rows="8" cols="40"&gt;
+&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+&lt;input type="submit" name="btn1" value="投稿する"&gt;
+&lt;/form&gt;
+
+&lt;?php
+
+$personal_name = $_POST['personal_name'];
+$contents = $_POST['contents'];
+$contents = nl2br($contents);
+
+print('&lt;p&gt;投稿者:'.$personal_name.'&lt;/p&gt;');
+print('&lt;p&gt;内容:&lt;/p&gt;');
+print('&lt;p&gt;'.$contents.'&lt;/p&gt;');
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			WWWサーバに設置してからまずブラウザで見てみます。(念のため、keijiban.txtは削除しておいて下さい)。
+			</p>
+
+			<p>
+			<img src="img/p15.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p15.png" alt="掲示板" width="514" height="480">
+			</p>
+
+			<p>
+			初回表示の際には「GET」での要求ですので、ファイルに何も書き込みは行われません。またファイル自体が存在しない場合にも、この時点ではファイルの作成も行われていません。
+			</p>
+
+			<p>
+			次に何か適当な値を入れてから、「投稿する」ボタンをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p16.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p16.png" alt="掲示板" width="515" height="478">
+			</p>
+
+			<p>
+			<img src="img/p17.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p17.png" alt="掲示板" width="512" height="478">
+			</p>
+
+			<p>
+			見た目上は変化がありませんが、ファイルが新規に作成され下記のように書き込みが行われています。
+			</p>
+
+			<p>
+			<img src="img/p18.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p18.png" alt="掲示板" width="473" height="261">
+			</p>
+
+			<p>
+			さらに別の投稿を行ってみます。
+			</p>
+
+			<p>
+			<img src="img/p19.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p19.png" alt="掲示板" width="515" height="478">
+			</p>
+
+			<p>
+			追加で投稿された内容がファイルに書き込みされています。
+			</p>
+
+			<p>
+			<img src="img/p20.png" tppabs="https://www.javadrive.jp/php/sample/keijiban/img/p20.png" alt="掲示板" width="504" height="347">
+			</p>
+
+			<p>
+			これで書き込みは終了です。次のページで書き込んだ内容を表示するようにして完成となります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

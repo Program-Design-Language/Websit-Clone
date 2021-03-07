@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リバースジオコーディング - ジオコーディング(GClientGeocoder) - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="リバースジオコーディング,GClientGeocoder,Google Maps API" />
+<meta name="description" content="リバースジオコーディングを行う方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/" itemprop="url"><span itemprop="title">ジオコーディング(GClientGeocoder)</span></a></li>
+		</ul>
+</div>
+
+			<h1>リバースジオコーディング</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					getLocationsメソッドは1番目の引数に住所などの文字列を指定すると、それに一致する地点の候補の情報を返しますが、引数に座標を表すGLatLngクラスのオブジェクトを指定すると、その座標に一致する地点の情報を返します。
+					</p>
+
+					<p>
+					返された情報の中から住所に関する値を取り出すことで座標から住所を取得するリバースジオコーディングを行うことが可能です。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.658517, 139.745493), 15);
+
+var geocoder = new GClientGeocoder();
+var latlng = new GLatLng(35.658517, 139.745493);
+geocoder.getLocations(latlng, markAddress);
+
+function markAddress(obj){
+  if (obj.Status.code == G_GEO_SUCCESS){
+    /* ... */
+  }else{
+    alert("データの取得に失敗しました");
+  }
+}
+</pre>
+
+					<p>
+					前のページで確認したとおり、コールバック関数で呼び出される関数に渡されてくるオブジェクトの中でPlacemarkプロパティの中のaddrssプロパティの値が一致した住所に該当しますのでこの値を取り出すようにして下さい。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code3_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/js/code3_1.js">code3_1.js</a>
+					</p>
+
+<pre class="fixcode">
+var map;
+var geocoder;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(35.169564,136.882782), 16);
+
+    geocoder = new GClientGeocoder();
+    GEvent.addListener(map, "click", clickMap);
+  }
+}
+
+function clickMap(overlay, latlng){
+  geocoder.getLocations(latlng, dispResult);
+}
+
+function dispResult(addresses){
+  if (addresses.Status.code == G_GEO_SUCCESS){
+    var place = addresses.Placemark[0];
+    document.getElementById("address").value = place.address;
+  }else{
+    alert("データを取得できませんでした");
+  }
+}
+</pre>
+
+					<p>
+					<a href="map3_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/map3_1.html">map3_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：リバースジオコーディング&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code3_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 400px"&gt;&lt;/div&gt;
+
+    &lt;form&gt;
+    &lt;p&gt;
+    地名：&lt;input type="text" id="address" size="50" value="" /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p3-1.png" alt="p3-1" width="441" height="570">
+					</p>
+
+					<p>
+					地図上の地点をクリックすると、その位置の座標を取得した上でリバースジオコーディングを行ってその地点の住所情報を地図下のテキストボックスに表示します。今回は複数の候補の中から最初の候補のaddressプロパティの値を取得しています。
+					</p>
+
+					<p>
+					<img src="img/p3-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p3-2.png" alt="p3-2" width="441" height="570">
+					</p>
+
+					<p>
+					赤い丸の中の箇所をクリックしたところ、住所を取得することができました。
+					</p>
+
+					<p>
+					ただ常に住所が帰ってくるわけではなく、クリックする場所によっては道路に関する情報が表示されたり郵便番号だけが表示される場合があります。
+					</p>
+
+					<p>
+					<img src="img/p3-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p3-3.png" alt="p3-3" width="441" height="570">
+					</p>
+
+					<p>
+					<img src="img/p3-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p3-4.png" alt="p3-4" width="441" height="570">
+					</p>
+
+					<p>
+					道路名を返してきた場合でも取得した情報の中の他の候補を見てみれば住所が入っている場合もあります。AddressDetails.Accuracyプロパティの値を見て、より精度の高い候補のaddressプロパティの値を取り出すようにすればよりいいかもしれません。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

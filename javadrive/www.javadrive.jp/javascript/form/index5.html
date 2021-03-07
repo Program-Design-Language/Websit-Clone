@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | ドロップダウンメニューの値をJavaScriptを使って取得・設定する</title>
+<meta name="description" content="フォームで利用可能なラジオボタンに入力された値を JavaScript から取得したり設定したりする方法について解説します。ラジオボタンはチェックボックスと同じようにはオンとオフの 2 つの値を切り替えるためのものですが、複数の選択肢の中から一つを選択する場合に使用されます。その為、同じグループに含まれるラジオボタンの中でオンになるラジオボタンは一つだけです。ラジオボタンを表示するには input 要素で type 属性に radio を指定します。">
+
+<meta property="og:title" content="ドロップダウンメニューの値をJavaScriptを使って取得・設定する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/form/index5.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/form/img/p5-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="フォームで利用可能なラジオボタンに入力された値を JavaScript から取得したり設定したりする方法について解説します。ラジオボタンはチェックボックスと同じようにはオンとオフの 2 つの値を切り替えるためのものですが、複数の選択肢の中から一つを選択する場合に使用されます。その為、同じグループに含まれるラジオボタンの中でオンになるラジオボタンは一つだけです。ラジオボタンを表示するには input 要素で type 属性に radio を指定します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "ファームへのアクセス",
+    "item": "https://www.javadrive.jp/javascript/form/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/form/">ファームへのアクセス</a></li>
+				</ul>
+			</div>
+
+			<h1>ドロップダウンメニューの値をJavaScriptを使って取得・設定する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			フォームで利用可能なドロップダウンメニューで選択された値を JavaScript から取得したり設定したりする方法について解説します。ドロップダウンメニューはクリックすると展開されるメニューで、表示された複数の項目の中から一つまたは複数の項目を選択することができます。ドロップダウンメニューを表示するには seletct 要素の中に option 要素を項目の数だけ追加します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">HTMLでドロップダウンメニューを作成する</a></li>
+			<li><a href="#section2">ドロップダウンメニューの値の取得と設定</a></li>
+			<li><a href="#section3">複数選択可能なセレクトメニューでの値の取得</a></li>
+			<li><a href="#section4">ドロップダウンメニューのイベント処理</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">HTMLでドロップダウンメニューを作成する</a></h2>
+
+			<p>
+			HTML でドロップダウンメニューを表示するには select 要素の中に表示する選択肢の数だけ option 要素を追加します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;select&gt;
+&lt;option&gt;Orange&lt;/option&gt;
+&lt;option&gt;Lemon&lt;/option&gt;
+&lt;option&gt;Strawberry&lt;/option&gt;
+&lt;/select&gt;
+<select>
+<option>Orange</option>
+<option>Lemon</option>
+<option>Strawberry</option>
+</select>
+</pre>
+</div>
+
+			<p>
+			ドロップダウンメニューの前にラベルを表示する場合は label 要素と組み合わせます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+<span class="red">&lt;label for="fruit"&gt;選択してください&lt;/label&gt;</span>
+&lt;select id="fruit"&gt;
+&lt;option&gt;Orange&lt;/option&gt;
+&lt;option&gt;Lemon&lt;/option&gt;
+&lt;option&gt;Strawberry&lt;/option&gt;
+&lt;/select&gt;
+<label for="fruit">選択してください</label>
+<select id="fruit">
+<option>Orange</option>
+<option>Lemon</option>
+<option>Strawberry</option>
+</select>
+</pre>
+</div>
+
+			<p>
+			どの選択肢が選択されたのかをあとで取得するために、それぞれの選択肢の value 属性に異なる値を設定してください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit"&gt;
+&lt;option <span class="red">value="orange"</span>&gt;Orange&lt;/option&gt;
+&lt;option <span class="red">value="lemon"</span>&gt;Lemon&lt;/option&gt;
+&lt;option <span class="red">value="strawberry"</span>&gt;Strawberry&lt;/option&gt;
+&lt;/select&gt;
+<label for="fruit">選択してください</label>
+<select id="fruit">
+<option value="orange">Orange</option>
+<option value="lemon">Lemon</option>
+<option value="strawberry">Strawberry</option>
+</select>
+</pre>
+</div>
+
+			<p>
+			最初に選択されている選択肢を指定するには、対象の選択肢に selected 属性を設定します。
+			</p>
+
+<div class="titlebox1 longtext">
+<pre>
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit"&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon" <span class="red">selected</span>&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;/select&gt;
+<label for="fruit">選択してください</label>
+<select id="fruit">
+<option value="orange">Orange</option>
+<option value="lemon" selected>Lemon</option>
+<option value="strawberry">Strawberry</option>
+</select>
+</pre>
+</div>
+
+			<p>
+			複数の項目を同時に選択できるようにするには、 select 要素に対して multiple 属性を設定してください。
+			</p>
+
+<div class="titlebox1 longtext">
+<pre>
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit" <span class="red">multiple</span>&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon" selected&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;option value="banana"&gt;Banana&lt;/option&gt;
+&lt;option value="apple"&gt;Apple&lt;/option&gt;
+&lt;/select&gt;
+<label for="fruit">選択してください</label>
+<select id="fruit" multiple>
+<option value="orange">Orange</option>
+<option value="lemon" selected>Lemon</option>
+<option value="strawberry">Strawberry</option>
+<option value="banana">Banana</option>
+<option value="apple">Apple</option>
+</select>
+</pre>
+</div>
+
+			<p>
+			なお multiple 属性を設定した場合はドロップダウンメニューではなく、選択肢が最初から表示されているセレクトメニューとなります。
+			</p>
+
+			<p>
+			multiple 属性が設定されている場合、いくつの選択肢を画面に一度に表示するのかを size 属性で指定することができます。
+			</p>
+
+<div class="titlebox1 longtext">
+<pre>
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit" multiple <span class="red">size="3"</span>&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon" selected&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;option value="banana"&gt;Banana&lt;/option&gt;
+&lt;option value="apple"&gt;Apple&lt;/option&gt;
+&lt;/select&gt;
+<label for="fruit">選択してください</label>
+<select id="fruit" multiple size="3">
+<option value="orange">Orange</option>
+<option value="lemon" selected>Lemon</option>
+<option value="strawberry">Strawberry</option>
+<option value="banana">Banana</option>
+<option value="apple">Apple</option>
+</select>
+</pre>
+</div>
+
+<h2><a id="section2">ドロップダウンメニューの値の取得と設定</a></h2>
+
+			<p>
+			ドロップダウンメニューの中で選択されている選択肢の値を取得するには select 要素を表す HTMLSelectElement オブジェクトの value プロパティの値を参照します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+element.value
+</pre>
+</div>
+
+			<p>
+			value プロパティの値は現在選択されている選択肢の value プロパティに設定されている値です。
+			</p>
+
+			<p>
+			実際には次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+let element = document.getElementById('myselect');
+console.log(element.value);
+</pre>
+</div>
+
+			<p>
+			選択肢の中のいずれかを選択するには、 HTMLSelectElement オブジェクトを取得したあと options プロパティを参照して select 要素に含まれる option の一覧を取得します。そのあとでインデックスを指定して selected プロパティに対して true を設定してください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let element = document.getElementById('myselect');
+let options = element.options;
+options[1].selected = true;
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;サンプルページです。&lt;/p&gt;
+
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit"&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon"&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;div&gt;
+&lt;input type="button" value="Check" id="checkButton"&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function butotnClick(){
+  console.log('選択されているのは ' + fruitSelect.value + ' です');
+}
+
+let fruitSelect = document.getElementById('fruit');
+fruitSelect.options[2].selected = true;
+
+let checkButton = document.getElementById('checkButton');
+checkButton.addEventListener('click', butotnClick);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			選択肢が 3 つあるドロップダウンメニューを画面に表示しています。最後の選択肢の selected プロパティに true を設定してデフォルトで選択しています。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/javascript/form/img/p5-1.png" alt="ドロップダウンメニューの値の取得と設定(1)" width="728" height="300" class="waku">
+			</p>
+
+			<p>
+			メニューをクリックして選択肢を表示したあと、いずれかの選択肢を選択したあとでボタンをクリックすると、現在選択しているメニューの値を取得してコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/javascript/form/img/p5-2.png" alt="ドロップダウンメニューの値の取得と設定(2)" width="728" height="300" class="waku">
+			</p>
+
+			<p>
+			<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/javascript/form/img/p5-3.png" alt="ドロップダウンメニューの値の取得と設定(3)" width="728" height="430" class="waku">
+			</p>
+
+<h2><a id="section3">複数選択可能なセレクトメニューでの値の取得</a></h2>
+
+			<p>
+			select 要素に対して multiple 属性を設定すると複数の選択肢を同時に選択することができます。
+			</p>
+
+<div class="titlebox1 longtext">
+<pre>
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit" multiple&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon"&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;option value="banana"&gt;banana&lt;/option&gt;
+&lt;option value="apple"&gt;apple&lt;/option&gt;
+&lt;/select&gt;
+<label for="fruit">選択してください</label>
+<select id="fruit" multiple>
+<option value="orange">Orange</option>
+<option value="lemon" selected>Lemon</option>
+<option value="strawberry">Strawberry</option>
+<option value="banana">banana</option>
+<option value="apple">apple</option>
+</select>
+</pre>
+</div>
+
+			<p>
+			選択されている選択肢の一覧を取得するには HTMLSelectElement オブジェクトを取得したあと selectedOptions プロパティを参照します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+element.selectedOptions
+</pre>
+</div>
+
+			<p>
+			選択されている選択肢の一覧を取得したら、インデックスを指定して順番に option 要素を取得します。そして value プロパティまたは label プロパティを参照して値を取り出します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let element = document.getElementById('myselect');
+let selectOptions = element.selectedOptions;
+for (let i = 0 ; i &gt; selectOptions.length ; i++){
+    console.log(selectOptions[i].value);
+}
+</pre>
+</div>
+
+			<p>
+			value プロパティでは option 要素に設定されている value 属性の値を取得し、 label プロパティでは option 要素で記述されているラベル名(&lt;option&gt;と&lt;/option&gt;の間のテキスト)を取得します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;サンプルページです。&lt;/p&gt;
+
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit" multiple size="5"&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon"&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;option value="banana"&gt;Banana&lt;/option&gt;
+&lt;option value="apple"&gt;Apple&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;div&gt;
+&lt;input type="button" value="Check" id="checkButton"&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function butotnClick(){
+  let selectOptions = fruitSelect.selectedOptions;
+
+  console.log('現在選択している項目は');
+  for (let i = 0 ; i &lt; selectOptions.length ; i++){
+    console.log(selectOptions[i].value);
+  }
+  console.log('です。');
+}
+
+let fruitSelect = document.getElementById('fruit');
+
+let checkButton = document.getElementById('checkButton');
+checkButton.addEventListener('click', butotnClick);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			複数の選択肢を一度に選択可能なセレクトメニューを表示しています。選択肢を選択した上でボタンをクリックすると、選択されているすべての選択肢の値をコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/javascript/form/img/p5-4.png" alt="複数選択可能なセレクトメニューでの値の取得(1)" width="728" height="500" class="waku">
+			</p>
+
+<h2><a id="section4">ドロップダウンメニューのイベント処理</a></h2>
+
+			<p>
+			ドロップダウンメニューでは新しく選択を行うと select 要素で change イベントが発生します。
+			</p>
+
+			<p>
+			change イベントを利用する場合は次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;select id="fruit"&gt;
+・・・
+&lt;/select&gt;
+
+&lt;script&gt;
+function valueChange(){
+    // イベントが発生した時の処理
+}
+
+let element = document.getElementById('fruit');
+element.addEventListener('change', valueChange);
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			change イベントの詳しい使い方については「<a href="../event/index3.html" tppabs="https://www.javadrive.jp/javascript/event/index3.html">changeイベント：フォームや選択メニューが変更されたとき</a>」を参照されてください。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;サンプルページです。&lt;/p&gt;
+
+&lt;label for="fruit"&gt;選択してください&lt;/label&gt;
+&lt;select id="fruit"&gt;
+&lt;option value="orange"&gt;Orange&lt;/option&gt;
+&lt;option value="lemon"&gt;Lemon&lt;/option&gt;
+&lt;option value="strawberry"&gt;Strawberry&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;script&gt;
+function valueChange(){
+  console.log('新しく ' + fruitSelect.value + ' を選択しました');
+}
+
+let fruitSelect = document.getElementById('fruit');
+fruitSelect.options[2].selected = true;
+fruitSelect.addEventListener('change', valueChange);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			新しい選択肢を選択するとコンソールに選択した選択肢の値が出力されます。
+			</p>
+
+			<p>
+			<img src="img/p5-5.png" tppabs="https://www.javadrive.jp/javascript/form/img/p5-5.png" alt="ドロップダウンメニューのイベント処理(1)" width="728" height="680" class="waku">
+			</p>
+
+			<p>
+			なお select 要素に multiple 属性を設定した場合も同じコードでイベント処理を行うことができます。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			フォームで利用可能なドロップダウンメニューの値を JavaScript から取得したり設定したりする方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

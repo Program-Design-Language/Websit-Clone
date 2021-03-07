@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>自分でBorderを作成する - Border - Swing</title>
+<meta name="keywords" content="自分でBorderを作成する,Border,Swing" />
+<meta name="description" content="自分でBorderを作成する" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/border/" itemprop="url"><span itemprop="title">Border</span></a></li>
+		</ul>
+</div>
+
+			<h1>自分でBorderを作成する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			自分でBorderを定義してみましょう。自分で作成するボーダーを定義するためにはBorderインターフェースを使ったクラスを自分で作成します。定義が必要なメソッドは下記の3つとなります。
+			</p>
+
+<pre class="fixcomment">
+paintBorder
+getBorderInsets
+isBorderOpaque
+</pre>
+
+			<p>
+			では順に定義する方法を見ていきましょう。
+			</p>
+
+			<h2>getBorderInsetsメソッド</h2>
+
+			<p>
+			getBorderInsetsメソッドは枠の大きさを返します。戻り値はInsetsクラスのオブジェクトになります。
+			</p>
+
+<pre class="mheader">
+getBorderInsets
+Insets getBorderInsets(Component c)
+</pre>
+<pre class="mexplain">
+ボーダのインセットの値を返します。 
+
+パラメータ:
+  c - このボーダのインセットの値を適用するコンポーネント
+</pre>
+
+			<p>
+			例えば上下左右にそれぞれ5ピクセルの枠を作成する場合は下記のような記述となります。
+			</p>
+
+<pre class="fixcode">
+class UserBorder implements Border {
+  public Insets getBorderInsets(Component c){
+    return new Insets(5, 5, 5, 5);
+  }
+}
+</pre>
+
+			<p>
+			ちなみにInsetsクラスのコンストラクタは下記のように記述されています。
+			</p>
+
+<pre class="mheader">
+Insets
+public Insets(int top, int left, int bottom, int right)
+</pre>
+<pre class="mexplain">
+新しい Insets オブジェクトを、指定された top、left、bottom、right イ
+ンセットで作成して初期化します。 
+
+パラメータ:
+  top - 上部からのインセット
+  left - 左側からのインセット
+  bottom - 下部からのインセット
+  right - 右側からのインセット
+</pre>
+
+			<p>
+			よって指定方法としては、上/左/下/右の順で枠の大きさを指定します。
+			</p>
+
+			<h2>isBorderOpaqueメソッド</h2>
+
+			<p>
+			isBorderOpaqueメソッドは枠が透明かどうかを返します。透明の場合は"true"、非透明の場合は"false"を返すだけです。
+			</p>
+
+<pre class="mheader">
+isBorderOpaque
+boolean isBorderOpaque()
+</pre>
+<pre class="mexplain">
+ボーダが不透明かどうかを返します。ボーダが不透明である場合、ボーダのバ
+ックグラウンドはペイント時にボーダ自身によって塗りつぶされます。
+</pre>
+
+			<p>
+			実際に記述する場合は下記のような感じです。
+			</p>
+
+<pre class="fixcode">
+class UserBorder implements Border {
+  public boolean isBorderOpaque(){
+    /* 非透明の場合 */
+    return false;
+  }
+}
+</pre>
+
+			<h2>paintBorderメソッド</h2>
+
+			<p>
+			paintBorderメソッドの部分で実際にどのような枠にするかを具体的に記述します。
+			</p>
+
+<pre class="mheader">
+paintBorder
+void paintBorder(Component c, Graphics g,
+                 int x, int y,
+                 int width, int height)
+</pre>
+<pre class="mexplain">
+指定されたコンポーネントのボーダを、指定された位置およびサイズでペイ
+ントします。 
+
+パラメータ:
+  c - このボーダがペイントされるコンポーネント
+  g - ペイントのグラフィックス
+  x - ペイントされたボーダの x 座標
+  y - ペイントされたボーダの y 座標
+  width - ペイントされたボーダの幅
+  height - ペイントされたボーダの高さ
+</pre>
+
+			<p>
+			引数として渡されてきたGraphicsオブジェクトに対して線などを記述します。
+			</p>
+
+			<p>
+			座標に関しては、枠を描いた後のコンポーネントのサイズとなります。よって、左上座標が(x, y)、右下座標が(x + width, y + height)となります。枠自体の大きさはgetBorderInsetsメソッド内で自分で定義している値となります。
+			</p>
+
+			<p>
+			Graphicsクラスには色々なメソッドがありますが、例えば下記のようなものを使います。
+			</p>
+
+			<p>
+			drawLineメソッド
+			</p>
+
+<pre class="mheader">
+drawLine
+public abstract void drawLine(int x1, int y1, int x2, int y2)
+</pre>
+<pre class="mexplain">
+このグラフィックスコンテキストの座標系の点 (x1, y1) と点 (x2, y2) との
+間に現在の色を使って線を描きます。 
+
+パラメータ:
+  x1 - 最初の点の x 座標
+  y1 - 最初の点の y 座標
+  x2 - 2 番目の点の x 座標
+  y2 - 2 番目の点の y 座標
+</pre>
+
+			<p>
+			fillRectメソッド
+			</p>
+
+<pre class="mheader">
+fillRect
+public abstract void fillRect(int x, int y, int width, int height)
+</pre>
+<pre class="mexplain">
+指定された矩形を塗りつぶします。矩形の左端と右端はそれぞれ x と x + width - 1 
+で、上端と下端はそれぞれ y と y + height - 1 です。これで指定される矩
+形は、幅 width ピクセル、高さ height ピクセルの領域です。矩形は、グラ
+フィックスコンテキストの現在の色を使って塗りつぶされます。 
+
+パラメータ:
+  x - 塗りつぶされる矩形の x 座標
+  y - 塗りつぶされる矩形の y 座標
+  width - 塗りつぶされる矩形の幅
+  height - 塗りつぶされる矩形の高さ
+</pre>
+
+			<p>
+			setColorメソッド
+			</p>
+
+<pre class="mheader">
+setColor
+public abstract void setColor(Color c)
+</pre>
+<pre class="mexplain">
+このグラフィックスコンテキストの現在の色を、指定された色に設定します。
+このグラフィックスコンテキストを使うこれ以降のグラフィック関連操作は、
+ここで指定された色を使用します。 
+
+パラメータ:
+  c - 新しい描画色
+</pre>
+
+			<p>
+			実際に記述するには下記のようになります。
+			</p>
+
+<pre class="fixcode">
+class UserBorder implements Border {
+  public void paintBorder (Component c, Graphics g, int x, int y, 
+    int width, int height){
+
+    Insets insets = getBorderInsets(c);
+
+    g.setColor(Color.gray);
+    g.fillRect(x, y, insets.left, height);
+    g.fillRect(x, y, width, insets.top);
+
+    g.setColor(Color.darkGray);
+    g.fillRect(x + width - insets.right, y, insets.right, height);
+    g.fillRect(x, y + height - insets.bottom, width, insets.bottom);
+  }
+}
+</pre>
+
+			<h2>サンプル</h2>
+
+			<p>
+			では実際に1つボーダーを作成してコンポーネントに定義してみましょう。サンプルプログラムは下記のようになります。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Insets;
+import java.awt.Graphics;
+import java.awt.Component;
+import javax.swing.border.*;
+import java.awt.Dimension;
+
+public class SwingTest extends JFrame{
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    JPanel p = new JPanel();
+
+    JButton btn1 = new JButton("Tennis");
+    btn1.setPreferredSize(new Dimension(100,100));
+
+    JButton btn2 = new JButton("Golf");
+    btn2.setPreferredSize(new Dimension(100,100));
+    btn2.setBorder(new MyBorder());
+
+    p.add(btn1);
+    p.add(btn2);
+
+    getContentPane().add(p);
+  }
+
+  /* 自分のBorderクラスを作成 */
+  class MyBorder implements Border {
+    public Insets getBorderInsets(Component c){
+      return new Insets(5, 5, 5, 5);
+    }
+
+    public boolean isBorderOpaque(){
+      return false;
+    }
+
+    public void paintBorder (Component c, Graphics g, 
+      int x, int y, int width, int height){
+
+      Insets insets = getBorderInsets(c);
+
+      g.setColor(Color.blue);
+      g.fillRect(x, y, insets.left, height);
+      g.fillRect(x, y, width, insets.top);
+
+      g.setColor(Color.blue.darker());
+      g.fillRect(x + width - insets.right, y, insets.right, height);
+      g.fillRect(x, y + height - insets.bottom, width, insets.bottom);
+    }
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/tutorial/border/img/p1.png" alt="自作のBorder" width="304" height="205">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | CSSセレクタ形式の条件に一致する要素ノードを取得(querySelector, querySelectorAll)</title>
+<meta name="description" content="Document オブジェクトの querySelector メソッドおよび querySelectorAll メソッドは、 CSS のセレクタ形式で条件を指定して一致する要素ノードを取得します。 id 要素の指定といった簡単なものから条件を組み合わせた複雑なものまで指定することができます。ここでは querySelector メソッドおよび querySelectorAll メソッドの使い方について解説します。">
+
+<meta property="og:title" content="CSSセレクタ形式の条件に一致する要素ノードを取得(querySelector, querySelectorAll)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/dom/index8.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/dom/img/p8-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Document オブジェクトの querySelector メソッドおよび querySelectorAll メソッドは、 CSS のセレクタ形式で条件を指定して一致する要素ノードを取得します。 id 要素の指定といった簡単なものから条件を組み合わせた複雑なものまで指定することができます。ここでは querySelector メソッドおよび querySelectorAll メソッドの使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "DOM入門",
+    "item": "https://www.javadrive.jp/javascript/dom/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/dom/">DOM入門</a></li>
+				</ul>
+			</div>
+
+			<h1>CSSセレクタ形式の条件に一致する要素ノードを取得(querySelector, querySelectorAll)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Document オブジェクトの querySelector メソッドおよび querySelectorAll メソッドは、 CSS のセレクタ形式で条件を指定して一致する要素ノードを取得します。 id 要素の指定といった簡単なものから条件を組み合わせた複雑なものまで指定することができます。ここでは querySelector メソッドおよび querySelectorAll メソッドの使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">querySelectorおよびquerySelectorAllの書式と使い方</a></li>
+			<li><a href="#section2">CSSセレクタの種類と指定方法</a>
+				<ol class="next">
+				<li><a href="#section2_1">すべての要素を対象とする(*)</a></li>
+				<li><a href="#section2_2">タグ名を指定</a></li>
+				<li><a href="#section2_3">id属性の値を指定(#id)</a></li>
+				<li><a href="#section2_4">class属性の値を指定(.class)</a></li>
+				<li><a href="#section2_5">複数のセレクタのいずれかに一致する(A B C)</a></li>
+				<li><a href="#section2_6">Aのセレクタに一致する要素の子孫要素の中でBのセレクタに一致する</a></li>
+				<li><a href="#section2_7">Aのセレクタに一致する要素の子要素の中でBのセレクタに一致する(A &gt; B)</a></li>
+				<li><a href="#section2_8">Aのセレクタに一致する要素の中で属性値Bを持つ要素に一致する(A[B])</a></li>
+				<li><a href="#section2_9">Aのセレクタに一致する要素の中で属性値Bの値がCの要素に一致する(A[B="C"])</a></li>
+				</ol>
+			</li>
+			<li><a href="#section3">querySelectorのサンプル</a></li>
+			<li><a href="#section4">querySelectorAllのサンプル</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">querySelectorおよびquerySelectorAllの書式と使い方</a></h2>
+
+			<p>
+			Document オブジェクトの querySelector メソッドは CSS セレクタ形式で条件を指定して要素ノードを取得します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+document.querySelector(selectors)
+</pre>
+</div>
+
+			<p>
+			引数には CSS セレクタ形式の値を DOMString オブジェクトで指定します。( CSS セレクタについては後述します)。戻り値は Element オブジェクトです。 querySelector メソッドは単一の要素ノードを返しますので、複数の要素が条件に一致した場合は最初の要素ノードを返します。見つからなかった場合は null が返されます。 
+			</p>
+
+			<p>
+			Document オブジェクトの querySelectorAll メソッドは CSS セレクタ形式で条件を指定して要素ノードを取得します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+document.querySelectorAll(selectors)
+</pre>
+</div>
+
+			<p>
+			引数には CSS セレクタ形式の値を DOMString オブジェクトで指定します。( CSS セレクタについては後述します)。戻り値は Element が 1 つまたは複数含まれる NodeList オブジェクトが返されます。条件に一致したすべてのノードを返します。見つからなかった場合は length が 0 の NodeList オブジェクトを返します。
+			</p>
+
+			<p>
+			Element オブジェクトは単独の要素ノードを表すのに対して NodeList オブジェクトは複数の要素ノードの集合です。 NodeList オブジェクトでは length プロパティと item メソッドが用意されており、次のように取得したノードの数を取得したり、取得したノードを取り出すことができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('.box');
+
+// 取得した要素の数を取得
+let len = elements.length;
+
+// インデックスを指定して要素を取得
+let element = elements.item(0);
+
+// 次の形式でもインデックスを指定して要素を取得
+let element = elements[0];
+</pre>
+</div>
+
+			<p>
+			同じ CSS セレクタに一致する要素ノードは、 HTML ページの中で記述された順番にインデックスが割り当てられています。インデックスは最初が 0 で 1, 2, 3... と続いていきます。
+			</p>
+
+<h2><a id="section2">CSSセレクタの種類と指定方法</a></h2>
+
+			<p>
+			CSS(Cascading Style Sheet) セレクタというのは、 HTML ページに対してスタイルをどの要素に設定するのかを指定する時に使用する書式です。 querySelector メソッドおよび querySelectorAll メソッドでは同じ書式を使って HTML ファイルの中の要素を取得するための条件を記述します。
+			</p>
+
+			<p>
+			それでは主な CSS セレクタの指定方法についてみていきます。
+			</p>
+
+	<h3><a id="section2_1">すべての要素を対象とする(*)</a></h3>
+
+			<p>
+			すべての要素ノードを対象とする場合は * と記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('*');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+<span class="red">&lt;div&gt;
+  &lt;p&gt;こんにちは&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div&gt;
+  &lt;p&gt;さようなら&lt;/p&gt;
+&lt;/div&gt;</span>
+</pre>
+</div>
+
+	<h3><a id="section2_2">タグ名を指定</a></h3>
+
+			<p>
+			p や div, h1 などのタグ名を指定する場合は、タグ名をそのまま記述します。記述したタグの要素ノードを取得します。下記はタグが div の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('div');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+<span class="red">&lt;div&gt;</span>
+  &lt;p&gt;こんにちは&lt;/p&gt;
+<span class="red">&lt;/div&gt;</span>
+
+<span class="red">&lt;div&gt;</span>
+  &lt;p&gt;さようなら&lt;/p&gt;
+<span class="red">&lt;/div&gt;</span>
+</pre>
+</div>
+
+	<h3><a id="section2_3">id属性の値を指定(#id)</a></h3>
+
+			<p>
+			要素に設定された id 属性の値を指定する場合は、 #値 と記述します。指定した id 属性の値が設定された要素ノードを取得します。下記は id 属性の値が main の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('main');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+<span class="red">&lt;div id="main"&gt;</span>
+  &lt;p&gt;こんにちは&lt;/p&gt;
+<span class="red">&lt;/div&gt;</span>
+
+&lt;div&gt;
+  &lt;p&gt;さようなら&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+</div>
+
+	<h3><a id="section2_4">class属性の値を指定(.class)</a></h3>
+
+			<p>
+			要素に設定された class 属性の値を指定する場合は、 .値 と記述します。指定した class 属性の値が設定された要素ノードを取得します。下記は class 属性の値が box の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('box');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+<span class="red">&lt;div class="box"&gt;</span>
+  &lt;p&gt;こんにちは&lt;/p&gt;
+<span class="red">&lt;/div&gt;</span>
+
+&lt;div&gt;
+  <span class="red">&lt;p class="box"&gt;</span>さようなら<span class="red">&lt;/p&gt;</span>
+&lt;/div&gt;
+</pre>
+</div>
+
+			<p>
+			特定のタグの要素に設定された class 属性の値を指定する場合は、 タグ名.値 と記述します。下記はタグが div の要素ノードの中で class 属性の値が box の要素ノードを取得します。 
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('p.box');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+&lt;div class="box"&gt;
+  &lt;p&gt;こんにちは&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div&gt;
+  <span class="red">&lt;p class="box"&gt;</span>さようなら<span class="red">&lt;/p&gt;</span>
+&lt;/div&gt;
+</pre>
+</div>
+
+	<h3><a id="section2_5">複数のセレクタのいずれかに一致する(A B C)</a></h3>
+
+			<p>
+			セレクタをカンマ(,)で区切って記述することで、複数のセレクタの少なくともいずれか一つに一致する要素ノードを取得します。下記は id 属性の値が main か、または class 属性の値が box の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('#main,.box');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+<span class="red">&lt;div id="main"&gt;</span>
+  &lt;p&gt;こんにちは&lt;/p&gt;
+<span class="red">&lt;/div&gt;</span>
+
+&lt;div&gt;
+  <span class="red">&lt;p class="box"&gt;</span>さようなら<span class="red">&lt;/p&gt;</span>
+&lt;/div&gt;
+</pre>
+</div>
+
+	<h3><a id="section2_6">Aのセレクタに一致する要素の子孫要素の中でBのセレクタに一致する(A B)</a></h3>
+
+			<p>
+			セレクタを空白で区切って記述することで、最初のセレクタに一致する要素の子孫要素の中で、次のセレクタに一致する要素ノードを取得します。セレクタが 3 つ以上ある場合は同じように子孫要素を探していきます。下記は id 属性の値が main の要素の子または孫要素の中で、タグが p の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('#main p');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+&lt;div id="main"&gt;
+  <span class="red">&lt;p class="box"&gt;</span>こんにちは<span class="red">&lt;/p&gt;</span>
+  &lt;div&gt;
+    <span class="red">&lt;p class="box"&gt;</span>いい天気ですね<span class="red">&lt;/p&gt;</span>
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="sub"&gt;
+  &lt;p class="box"&gt;さようなら&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+</div>
+
+	<h3><a id="section2_7">Aのセレクタに一致する要素の子要素の中でBのセレクタに一致する(A &gt; B)</a></h3>
+
+			<p>
+			セレクタを &gt; で区切って記述することで、最初のセレクタに一致する要素の子要素の中で、次に記述したセレクタに一致する要素ノードを取得します。空白で区切った場合は子および孫要素が対象でしたが &gt; で区切った場合は子要素だけが対象となります。下記は id 属性の値が main の要素の子要素の中で、タグが p の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('#main &gt; p');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+&lt;div id="main"&gt;
+  <span class="red">&lt;p class="box"&gt;</span>こんにちは<span class="red">&lt;/p&gt;</span>
+  &lt;div&gt;
+    &lt;p class="box"&gt;いい天気ですね&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="sub"&gt;
+  &lt;p class="box"&gt;さようなら&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+</div>
+
+	<h3><a id="section2_8">Aのセレクタに一致する要素の中で属性値Bを持つ要素に一致する(A[B])</a></h3>
+
+			<p>
+			セレクタに一致する要素ノードの中で指定した属性を持つ要素ノードを取得します。下記はタグが p の要素ノードの中で style 属性の値を持つ要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('p[style]');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+&lt;div"&gt;
+  <span class="red">&lt;p style="font-size:10px;"&gt;</span>こんにちは<span class="red">&lt;/p&gt;</span>
+&lt;/div&gt;
+
+&lt;div"&gt;
+  <span class="red">&lt;p style="color:#fff;"&gt;</span>さようなら<span class="red">&lt;/p&gt;</span>
+&lt;/div&gt;
+</pre>
+</div>
+
+	<h3><a id="section2_9">Aのセレクタに一致する要素の中で属性値Bの値がCの要素に一致する(A[B="C"])</a></h3>
+
+			<p>
+			セレクタに一致する要素ノードの中で指定した属性に指定の値が設定された要素ノードを取得します。下記はタグが p の要素ノードの中で style 属性の値が 'color:#fff;' の要素ノードを取得します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let elements = document.querySelectorAll('p[style="color:#fff;"]');
+</pre>
+</div>
+
+<div class="titlebox1">
+<pre>
+&lt;div"&gt;
+  &lt;p style="font-size:10px;"&gt;こんにちは&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div"&gt;
+  <span class="red">&lt;p style="color:#fff;"&gt;</span>さようなら<span class="red">&lt;/p&gt;</span>
+&lt;/div&gt;
+</pre>
+</div>
+
+<h2><a id="section3">querySelectorのサンプル</a></h2>
+
+			<p>
+			querySelector メソッドを使ったサンプルを試してみます。 querySelector メソッドは条件に一致する一つの要素ノードまたは最初の要素ノードを取得します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;querySelectorのサンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ランチを食べにいきました。&lt;/p&gt;
+
+&lt;div class="shop"&gt;
+&lt;p id="place"&gt;港区南青山&lt;/p&gt;
+&lt;p id="shopname"&gt;リストランテ南青山&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p&gt;美味しかったです。&lt;/p&gt;
+
+&lt;button onClick="getElement();"&gt;要素を取得&lt;/button&gt;
+
+&lt;script&gt;
+function getElement(){
+    element = document.querySelector('#shopname');
+    console.log('Text: ' + element.textContent);
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 HTML ページに含まれる id 属性が指定した値の要素ノードを取得し、要素ノードに含まれるテキストをコンソールに出力しています。
+			</p>
+
+			<p>
+			<img src="img/p8-1.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p8-1.png" alt="querySelectorのサンプル(1)" width="728" height="500" class="waku">
+			</p>
+
+<h2><a id="section4">querySelectorAllのサンプル</a></h2>
+
+			<p>
+			querySelectorAll メソッドを使ったサンプルを試してみます。 querySelectorAll メソッドは条件に一致するすべての要素ノードを取得します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;querySelectorAllのサンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ランチを食べにいきました。&lt;/p&gt;
+
+&lt;div class="shop"&gt;
+&lt;p&gt;港区南青山&lt;/p&gt;
+&lt;p&gt;リストランテ南青山&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p&gt;美味しかったです。&lt;/p&gt;
+
+&lt;button onClick="getElement();"&gt;要素を取得&lt;/button&gt;
+
+&lt;script&gt;
+function getElement(){
+    elements = document.querySelectorAll('.shop p');
+
+    let len = elements.length;
+    for (let i = 0; i &lt; len; i++){
+        console.log('Text: ' + elements.item(i).textContent);
+    }
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 HTML ページに含まれる class 属性が指定した値の要素の子孫要素の中で、タグが p の要素ノードを取得し、要素のテキストをコンソールに出力しています。
+			</p>
+
+			<p>
+			<img src="img/p8-2.png" tppabs="https://www.javadrive.jp/javascript/dom/img/p8-2.png" alt="querySelectorAllのサンプル(1)" width="728" height="500" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			querySelector メソッドおよび querySelectorAll メソッドの使い方について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

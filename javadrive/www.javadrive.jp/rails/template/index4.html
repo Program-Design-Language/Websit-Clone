@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>部分テンプレート - Ruby on Rails入門</title>
+<meta name="keywords" content="部分テンプレート" />
+<meta name="description" content="レイアウトではページのヘッダやフッタ部分を共通化しましたが、部分テンプレートを使用することでメインコンテンツの中の一部分についても共通化することができます。ここでは部分テンプレートの使い方について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/template/" itemprop="url"><span itemprop="title">テンプレート(ビュー)とヘルパーメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>部分テンプレート</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			レイアウトテンプレートを使うことでページのヘッダやフッタ部分を共通化することができましたが、サイドバーやメニューなどメインコンテンツの中にも複数のテンプレートで共通して利用したい部分がある場合があります。このような場合は部分テンプレートと呼ばれるものを使用します。ここでは部分テンプレートの使い方について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">部分テンプレートのファイル名と保存場所</a><br />
+			2.<a href="#section2">部分テンプレートの埋め込み</a><br />
+			3.<a href="#section3">動作確認</a><br />
+			</p>
+
+<h2><a id="section1">部分テンプレートのファイル名と保存場所</a></h2>
+
+			<p>
+			部分テンプレートは複数のページ内で共通して記述されるものであれば特に何でも構いません。著者情報の部分であるとか、サイドバー全体を部分テンプレートにしても結構です。
+			</p>
+
+			<p>
+			例えば「app/views/books/show.html.erb」ファイルと「app/views/musics/show.html.erb」ファイルという二つのテンプレートが用意されていたとします。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+BooksコントロールのShowアクションが呼び出されました。
+&lt;/p&gt;
+
+&lt;p&gt;
+Written by buzzword
+&lt;/p&gt;
+</pre>
+
+<pre class="fixcode">
+&lt;p&gt;
+MusicsコントロールのShowアクションが呼び出されました。
+&lt;/p&gt;
+
+&lt;p&gt;
+Written by buzzword
+&lt;/p&gt;
+</pre>
+
+			<p>
+			「Written by buzzword」の部分は多くのテンプレートで共通して記述される部分なので、今回この箇所を部分テンプレートとして作成してみます。部分テンプレートといっても特別なものではないので、他のテンプレートと同様の記述方法で作成します。今回は次のようになりました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Written by buzzword
+&lt;/p&gt;
+</pre>
+
+			<p>
+			テンプレートのファイル名は自由に設定して構いませんが、ファイル名の先頭は必ずアンダーバー「_」を付ける必要があります。今回は「_author.html.erb」としました。テンプレートファイルの保存場所は「app/views/」以下であればどこでも構いません。同じコントロール内のテンプレートからのみ使用されるのであれば「app/views/コントロール名/」ディレクトリに配置し、複数のコントロールで使用されるテンプレートから共通して使用されるのであれば「app/views/shared/」ディレクトリを作成してその中に設置する場合が多いようです。
+			</p>
+
+			<p>
+			今回は「app/views/shared/_author.html.erb」として部分テンプレートを保存しました。
+			</p>
+
+			<p>
+			<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/rails/template/img/p4-1.png" alt="p4-1" width="576" height="422" />
+			</p>
+
+<h2><a id="section2">部分テンプレートの埋め込み</a></h2>
+
+			<p>
+			次に作成した部分テンプレートをテンプレートに埋め込みます。部分テンプレートを埋め込むには、テンプレート内の埋め込みたい場所にrenderメソッドを使って次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= render 'ディレクトリ名/部分テンプレート名' %&gt;
+</pre>
+
+			<p>
+			この時部分テンプレート名は先頭のアンダーバー(_)を除いた名前を指定して下さい。部分テンプレートのファイル名が「app/views/shared/_author.html.erb」であれば次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= render 'shared/author' %&gt;
+</pre>
+
+			<p>
+			では「app/views/books/show.html.erb」ファイルと「app/views/musics/show.html.erb」ファイルという二つのテンプレートに対して次のように部分テンプレートを埋め込みました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+BooksコントロールのShowアクションが呼び出されました。
+&lt;/p&gt;
+
+&lt;%= render 'shared/author' %&gt;
+</pre>
+
+<pre class="fixcode">
+&lt;p&gt;
+MusicsコントロールのShowアクションが呼び出されました。
+&lt;/p&gt;
+
+&lt;%= render 'shared/author' %&gt;
+</pre>
+
+			<p>
+			このテンプレート呼び出されると、自動的に別途用意した部分テンプレートが埋め込まれた上で使用されます。
+			</p>
+
+<h2><a id="section3">動作確認</a></h2>
+
+			<p>
+			では実際に試してみます。「books」コントローラと「musics」コントローラでそれぞれ「show」アクションが作成しました。
+			</p>
+
+<pre class="fixcode">
+class BooksController &lt; ApplicationController
+  def show
+  end
+end
+</pre>
+
+<pre class="fixcode">
+class MusicsController &lt; ApplicationController
+  def show
+  end
+end
+</pre>
+
+			<p>
+			各アクションから呼び出されるテンプレート及び、テンプレートに埋め込まれた部分テンプレートは先程作成したものをそのまま使います。
+			</p>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルを次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  get "books/show"
+  get "musics/show"
+end
+</pre>
+
+			<p>
+			ではアプリケーションを起動し、まずは「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/rails/template/img/p4-2.png" alt="p4-2" width="500" height="338" />
+			</p>
+
+			<p>
+			テンプレートの中に部分テンプレートが埋め込まれた状態で表示がされています。
+			</p>
+
+			<p>
+			続いて「musics」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p4-3.png" tppabs="https://www.javadrive.jp/rails/template/img/p4-3.png" alt="p4-3" width="500" height="338" />
+			</p>
+
+			<p>
+			先程と同じくテンプレートの中に埋め込んだ部分テンプレートも含めて表示がされています。
+			</p>
+
+			<p>
+			それでは表示されたWebページのソース(bodyタグの中だけ)を確認してみます。
+			</p>
+
+<pre class="fixcode">
+&lt;body&gt;
+
+&lt;p&gt;
+MusicsコントロールのShowアクションが呼び出されました。
+&lt;/p&gt;
+
+&lt;p&gt;
+Written by buzzword
+&lt;/p&gt;
+
+&lt;/body&gt;
+</pre>
+
+			<p>
+			このように部分テンプレートを埋め込む為にrenderメソッドを記述した箇所が、部分テンプレートファイルの中に記述したものに置き換わっていることが分かります。
+			</p>
+
+			<p>
+			今回はテンプレートの中に部分テンプレートを埋め込みましたが、レイアウトテンプレートの中や別の部分テンプレートの中に部分テンプレートを埋め込むことも可能です。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

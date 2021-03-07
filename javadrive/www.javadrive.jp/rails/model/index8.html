@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マイグレーションのロールバック - Ruby on Rails入門</title>
+<meta name="keywords" content="マイグレーションのロールバック" />
+<meta name="description" content="Railsでマイグレーションを使ってテーブルの作成や変更を行っている場合、ロールバックすることで変更を加える前の状態に戻すことができます。ここではロールバックの方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/model/" itemprop="url"><span itemprop="title">モデルとデータベース</span></a></li>
+		</ul>
+</div>
+
+			<h1>マイグレーションのロールバック</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			マイグレーションを使ってテーブルに変更などを行なった場合、いつでも任意のバージョンへ戻すことができます。ここではマイグレーションのロールバックを行なう方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">ロールバックの実行</a><br />
+			2.<a href="#section2">ステップ数の指定</a><br />
+			</p>
+
+<h2><a id="section1">ロールバックの実行</a></h2>
+
+			<p>
+			マイグレーションスクリプトにはupメソッドとdownメソッドがあり、マイグレーションスクリプトを実行することでupメソッドが呼び出されますが、ロールバックを実行することで現在のバージョンのマイグレーションスクリプトに記述されたdownメソッドが呼び出されて1つ前のバージョンの状態に戻すことができます。
+			</p>
+
+			<p>
+			現在、サンプルアプリケーションには3つのマイグレーションスクリプトがあり、全て実行済みで現在のバージョンは一番新しいものになっています。
+			</p>
+
+<pre class="fixcomment">
+20120415162250_create_titles.rb
+テーブルの作成
+
+20120416072618_add_details_to_titles.rb
+priceカラムとauthorカラムの追加
+
+20120416074444_remove_author_from_titles.rb  &lt;-- 現在のバージョン
+authorカラムの削除
+</pre>
+
+			<p>
+			それではロールバックを行ないます。次のように実行します。
+			</p>
+
+<pre class="fixcode">
+rake db:rollback
+</pre>
+
+			<p>
+			では実際に実行してみます。
+			</p>
+
+			<p>
+			<img src="img/p8-1.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-1.png" alt="p8-1" width="517" height="286" />
+			</p>
+
+			<p>
+			ロールバックを実行すると1つだけロールバックされます。現在のバージョンのdownメソッドが呼び出され、authorカラムが追加されました。
+			</p>
+
+<pre class="fixcomment">
+20120415162250_create_titles.rb
+テーブルの作成
+
+20120416072618_add_details_to_titles.rb  &lt;-- 現在のバージョン
+priceカラムとauthorカラムの追加
+
+20120416074444_remove_author_from_titles.rb
+authorカラムの削除
+</pre>
+
+			<p>
+			念の為、バージョンを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p8-2.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-2.png" alt="p8-2" width="517" height="286" />
+			</p>
+
+			<p>
+			バージョンが「20120416072618」に戻っています。またMySQLに接続してテーブルに作成されているカラムを確認します。
+			</p>
+
+			<p>
+			<img src="img/p8-3.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-3.png" alt="p8-3" width="517" height="286" />
+			</p>
+
+			<p>
+			「author」カラムが追加されて1つ前の状態になっています。このようにロールバックを使えばいつでも1つ前の状態に戻すことができます。
+			</p>
+
+			<p>
+			ロールバックした後で改めてマイグレーションスクリプトを実行して変更を行なうことももちろん可能です。実際に次のように実行しました。
+			</p>
+
+			<p>
+			<img src="img/p8-4.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-4.png" alt="p8-4" width="517" height="286" />
+			</p>
+
+			<p>
+			コマンド実行前のバージョンよりあとのマイグレーションスクリプトが実行され、結果的に「author」カラムが削除されました。
+			</p>
+
+			<p>
+			念の為、MySQLに接続してテーブルに作成されているカラムを確認します。
+			</p>
+
+			<p>
+			<img src="img/p8-5.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-5.png" alt="p8-5" width="517" height="286" />
+			</p>
+
+			<p>
+			「author」カラムが削除されています。
+			</p>
+
+<h2><a id="section2">ステップ数の指定</a></h2>
+
+			<p>
+			ロールバックを行なうと1つだけ前のバージョンに戻りますが、ステップパラメータを使用することで指定した回数分ロールバックを行なうことができます。
+			</p>
+
+			<p>
+			ステップパラメータを使用する場合の書式は次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+rake db:rollback STEP=ステップ数
+</pre>
+
+			<p>
+			例えばステップ数に2を指定すれば2つ前の状態に戻ります。
+			</p>
+
+			<p>
+			では実際に実行してみます。現在のバージョンは次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+20120415162250_create_titles.rb
+テーブルの作成
+
+20120416072618_add_details_to_titles.rb
+priceカラムとauthorカラムの追加
+
+20120416074444_remove_author_from_titles.rb  &lt;-- 現在のバージョン
+authorカラムの削除
+</pre>
+
+			<p>
+			ロールバックのステップ数に2を指定して2つ前の状態に戻します。次のように実行して下さい。
+			</p>
+
+<pre class="fixcode">
+rake db:rollback STEP=2
+</pre>
+
+			<p>
+			<img src="img/p8-6.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-6.png" alt="p8-6" width="517" height="286" />
+			</p>
+
+			<p>
+			まず現在のバージョンのロールバックが行なわれ「author」カラムが追加されています。続けて1つ前のバージョンのロールバックが行なわれ、「price」カラムと「author」カラムが削除されています。現在のバージョンは次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+20120415162250_create_titles.rb  &lt;-- 現在のバージョン
+テーブルの作成
+
+20120416072618_add_details_to_titles.rb
+priceカラムとauthorカラムの追加
+
+20120416074444_remove_author_from_titles.rb
+authorカラムの削除
+</pre>
+
+			<p>
+			念の為、バージョンを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p8-7.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-7.png" alt="p8-7" width="517" height="286" />
+			</p>
+
+			<p>
+			バージョンが「20120415162250」に戻っています。またMySQLに接続してテーブルに作成されているカラムを確認します。
+			</p>
+
+			<p>
+			<img src="img/p8-8.png" tppabs="https://www.javadrive.jp/rails/model/img/p8-8.png" alt="p8-8" width="517" height="286" />
+			</p>
+
+			<p>
+			「price」カラムと「author」カラムが削除あれてテーブルを作成した直後の状態になっています。このようにステップ数を指定することで、指定した数だけ順にロールバックを実行することができます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

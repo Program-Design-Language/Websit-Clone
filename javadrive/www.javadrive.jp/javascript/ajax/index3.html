@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | XMLHttpRequestオブジェクトを使った同期通信を行う</title>
+<meta name="description" content="XMLHttpRequest オブジェクトを使用することで非同期だけではなく同期通信をを行うことができます。ここでは XMLHttpRequest オブジェクトを用いた同期通信を行う場合の手順について解説します。">
+
+<meta property="og:title" content="XMLHttpRequestオブジェクトを使った同期通信を行う">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/ajax/index3.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/ajax/img/p3-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Ajax とは Asynchronous JavaScript + XML の略で、 Web サーバーとブラウザとの間で非同期通信を行う方法です。 Ajax の方法を利用することで、ページを切り替えることなくページの内容を書き換えることができるようになります。 JavaScript では Aax を用いた非同期通信には XMLHttpRequest オブジェクトを使用します。ここでは Ajax を使った非同期通信を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Ajaxを使った非同期通信",
+    "item": "https://www.javadrive.jp/javascript/ajax/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/ajax/">Ajaxを使った非同期通信</a></li>
+				</ul>
+			</div>
+
+			<h1>XMLHttpRequestオブジェクトを使った同期通信を行う</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			XMLHttpRequest オブジェクトを使用することで非同期だけではなく同期通信をを行うことができます。ここでは XMLHttpRequest オブジェクトを用いた同期通信を行う場合の手順について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">同期通信を行う手順</a></li>
+			<li><a href="#section2">コンソールを使ったテスト</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">同期通信を行う手順</a></h2>
+
+			<p>
+			同期通信の場合も XMLHttpRequest オブジェクトの作成から開始します。作成にはコンストラクタを使い次のように行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = XMLHttpRequest();
+</pre>
+</div>
+
+			<p>
+			続いて XMLHttpRequest オブジェクトの open メソッドを使って HTTP リクエストの初期化を行います。(なお open メソッドをはじめ使用しているメソッドは非同期通信の場合と同じです。各メソッドやプロパティに関する書式について詳細は「<a href="index2.html" tppabs="https://www.javadrive.jp/javascript/ajax/index2.html">XMLHttpRequestオブジェクトを使った非同期通信を行う</a>」をご参照ください)。
+			</p>
+
+			<p>
+			今回はサンプルとして指定した URL にあるテキストファイルを GET メソッドを使って同期でサーバから取得してみます。次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+request.open('GET', 'https://www.example.com/data.txt', <span class="red">false</span>);
+</pre>
+</div>
+
+			<p>
+			同期通信を行う場合には、 open メソッドの 3 番目の引数に false を指定する点に注意してください。
+			</p>
+
+			<p>
+			続いて XMLHttpRequest オブジェクトの send メソッドを使ってサーバにリクエストを送信します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+request.open('GET', 'https://www.example.com/data.txt', false);
+request.send(null);
+</pre>
+</div>
+
+			<p>
+			非同期通信の場合と異なり、同期通信の場合は send メソッドを実行したあと、サーバからのレスポンスが全て帰ってくるまで処理が止まります。すべてのレスポンスを受信したら次の処理に移りますので  HTTP ステータスコードを確認したあとで受信したデータを取り出します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+request.open('GET', 'https://www.example.com/data.txt', false);
+request.send(null);
+
+if (request.status == 200){
+  let data = request.responseText;
+  console.log(data);
+}
+</pre>
+</div>
+
+			<p>
+			これで同期通信は完成です。非道的通信との違いは、データを取得する処理を記述する位置を send メソッドのあとに記述している点と、イベントハンドラを利用していない点です。その分シンプルになっていますが、同期通信の場合はレスポンスを受信し終わるまで他の処理が止まってしまいます。
+			</p>
+
+<h2><a id="section2">コンソールを使ったテスト</a></h2>
+
+			<p>
+			それでは同期通信で実際にデータを取得してみます。サーバのルートディレクトリに次のような テキストを入力した data.txt というファイルを作成しアップロードしておきます。
+			</p>
+
+<div class="titlebox3">
+<pre>
+Hello Suzuki.
+How are you?
+</pre>
+</div>
+
+			<p>
+			次にブラウザでリクエストを送信する URL と同じ URL のいずれかのページにアクセスしたあとで、コンソールを開き次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+request.open('GET', 'https://www.example.com/data.txt', false);
+request.send(null);
+
+if (request.status == 200){
+  let data = request.responseText;
+  console.log(data);
+}
+
+<span class="bold">&gt;&gt; Hello Suzuki.
+&gt;&gt; How are you?</span>
+</pre>
+</div>
+
+			<p>
+			<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/javascript/ajax/img/p3-1.png" alt="コンソールを使ったテスト(1)" width="728" height="400" class="waku">
+			</p>
+
+			<p>
+			open メソッドの引数に指定した URL が示すファイルに記述された内容をテキストデータとして取得し、コンソールに出力しました。
+			</p>
+
+			<p>
+			なお次のような警告が表示されています。
+			</p>
+
+<div class="titlebox2">
+<p>
+[Deprecation] Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.<br>
+<br>
+(訳)メインスレッドでの XMLHttpRequest を使った同期通信は、エンドユーザーエクスペリエンスに悪影響を与えるため、非推奨になりました。 詳細については https://xhr.spec.whatwg.org/ を確認してください。
+</p>
+</div>
+
+			<p>
+			同期通信は受信が完了するまで処理が止まってしまうため、非推奨になっているようです。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			XMLHttpRequest オブジェクトを用いた同期通信を行う場合の手順について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

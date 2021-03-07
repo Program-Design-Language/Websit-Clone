@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ビューの作成とデータの受け渡し - Ruby on Rails入門</title>
+<meta name="keywords" content="ビューの作成とデータの受け渡し" />
+<meta name="description" content="Railsアプリケーションでビューを使って結果を利用者に返す方法について確認してみます。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/ini/" itemprop="url"><span itemprop="title">アプリケーション作成から実行までの手順</span></a></li>
+		</ul>
+</div>
+
+			<h1>ビューの作成とデータの受け渡し</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前回のサンプルでは利用者から呼び出されたアクションの中で直接利用者に結果を返していましたが、通常Railsサプリケーションの場合、アクションによって処理された結果を返す場合はビューを使います。ここではビューがどのような役割を持つものか簡単に解説し、実際に簡単なサンプルを作成してみます。
+			</p>
+
+			<p>
+			1.<a href="#section1">ビューの役割</a><br />
+			2.<a href="#section2">テンプレートの作成</a><br />
+			3.<a href="#section3">アクションからのテンプレートの呼び出し</a><br />
+			4.<a href="#section4">動作確認</a><br />
+			5.<a href="#section5">変数を使ったデータの受け渡し</a><br />
+			</p>
+
+			<p>
+			※ ビューとテンプレートに関する詳細は「<a href="../template/index.htm" tppabs="https://www.javadrive.jp/rails/template/">テンプレート(ビュー)とヘルパーメソッド</a>」をご参照下さい。
+			</p>
+
+<h2><a id="section1">ビューの役割</a></h2>
+
+			<p>
+			まずビューの役割を確認しておきます。アプリケーションに対して利用者からリクエストがあった場合、何らかの結果を返します。例えば「2011年に購入した本の一覧を教えて欲しい」というリクエストの場合、次のような結果が利用者に返されるのではないでしょうか。
+			</p>
+
+<pre class="fixcomment">
+&lt;h1&gt;お問い合わせ結果&lt;/h1&gt;
+&lt;p&gt;
+2011年に購入した本は次のとおりです。
+&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;2月13日 宇宙に行った日&lt;/li&gt;
+&lt;li&gt;4月17日 数学者の生涯&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+以上です。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			結果の出力をアクションの中で記述することも可能ですが、レイアウトや文面を変更する場合にアクションに記述されたプログラムを変更しなければなりません。
+			</p>
+
+			<p>
+			そこであらかじめ結果として返される文面をテンプレートとして作成しておき、アクションが処理したデータをテンプレートに埋め込み結果を返すようにします。このテンプレートの部分がビューとなります。今回の例ではアクションはデータベースなどから2011年に購入された本の日付と本のタイトルを調べ、その結果をテンプレートへ渡します。テンプレートではアクションから渡されたデータを使ってHTMLページを作成し、利用者へ返します。
+			</p>
+
+			<p>
+			アクションの部分はプログラマの方が作成しているけれど、画面出力の部分はデザイナーの方が作成されている場合も多いと思います。テンプレートを使用することで出力結果のレイアウトを変更したい場合などにテンプレートの変更だけで対応が可能となります。またプログラムの中でHTMLタグを出力するよりも、テンプレートとして作成した方が直感的に分かりやすくメンテナンスも楽です。
+			</p>
+
+<h2><a id="section2">テンプレートの作成</a></h2>
+
+			<p>
+			ビューの役割を分かって頂いたところでビューの役割を行うテンプレートを作成してみます。コントローラを作成した時にアクションを同時に作成しなかった場合は手動でテンプレートを作成する必要があります。
+			</p>
+
+			<p>
+			テンプレートを作成する場所は決まっています。今回は「booklist」コントローラで作成したアクションに対するテンプレートですので、「app\views\booklist\」ディレクトリに作成します。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/rails/ini/img/p5-1.png" alt="p5-1" width="489" height="377" />
+			</p>
+
+			<p>
+			テンプレートファイル名は「(アクション名).html.erb」とします。今回は前のページで作成した「hello」アクションと「bye」アクションのうち、「hello」アクションに対するテンプレートを作成します。ファイル名は「hello.html.erb」となります。
+			</p>
+
+<div class="borderdiv">
+この名前の付け方で作成したテンプレートはアクションからデフォルトで呼び出されるテンプレートとなります。別の名前でテンプレートを作成しておきアクションから明示的に名前を指定してテンプレートを呼び出すこともできますが、特に理由が無ければそのようなことせずに名前付けの規則に従ったテンプレートを作成することをお勧めします。
+</div>
+
+			<p>
+			テンプレートファイルは通常のWebページと同じようにHTML文を使って記述していきます。今回は次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;p&gt;
+こんにちは。お元気ですか。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			テンプレートファイルに記述された内容は利用者に返されブラウザ上で表示されることになるのですが、テンプレートファイルに記述するのはHTML文書の中の &lt;body&gt; から &lt;/body&gt; の間に記述する部分だけで結構です。別のページで詳しく確認しますが、それ以外の部分は自動的に付与されます。
+			</p>
+
+			<p>
+			また保存する時の文字コードは <span class="red">UTF-8(BOM無)</span> で保存して下さい。
+			</p>
+
+			<p>
+			実際にテンプレートファイルを作成し保存しました。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/rails/ini/img/p5-2.png" alt="p5-2" width="489" height="377" />
+			</p>
+
+<h2><a id="section3">アクションからのテンプレートの呼び出し</a></h2>
+
+			<p>
+			テンプレートが作成できましたのでアクションから呼び出してみます。前のページのサンプルで「hello」アクションを次のように定義していました。
+			</p>
+
+<pre class="fixcode">
+class BooklistController &lt; ApplicationController
+
+  def hello
+    render :text =&gt; 'Hello!'
+  end
+
+end
+</pre>
+
+			<p>
+			通常利用者へ結果を返すのは全ての処理が終わってからとなりますので、helloメソッドの最後に次のように記述してビューを呼び出します。(今回は事前の処理が無いので呼び出しだけとなっています)。
+			</p>
+
+<pre class="fixcode">
+class BooklistController &lt; ApplicationController
+
+  def hello
+    render "booklist/hello"
+  end
+
+end
+</pre>
+
+			<p>
+			このように記述した場合はテンプレートとして「app\views\booklist\hello.html.erb」ファイルが呼び出されます。ただし、呼び出すビューが「app\views\コントローラ名\アクション名.html.erb」で作成されたファイルの場合は render メソッドを省略できます。その為、単に次のように記述することができます。
+			</p>
+
+<pre class="fixcode">
+class BooklistController &lt; ApplicationController
+
+  def hello
+  end
+
+end
+</pre>
+
+			<p>
+			この場合、アクションが呼び出されるとメソッド内の処理が順に行われた後で、最後にアクションに対応するテンプレートが呼び出されます。
+			</p>
+
+<div class="borderdiv">
+利用者のブラウザに結果を表示するための処理をレンダリングと呼びます。前のページではアクションから直接テキストを利用者へ返していましたがこれもレンダリングですし、ビューを呼び出してHTML文書を利用者へ返すのもレンダリングです。Railsではアクションが呼び出された時にレンダリングは1回しか行なえない規則となっています。その為、前のページで記載した「render :text =&gt; 'Hello!'」がアクションメソッド内で記述されている場合はテンプレートは呼び出されません。
+</div>
+
+			<p>
+			では「app\controllers\booklist_controller.rb」ファイルの中身を上記のように書き換えました。
+			</p>
+
+<h2><a id="section4">動作確認</a></h2>
+
+			<p>
+			それではRailsアプリケーションを起動してここまでの動作を確認してみます。コマンドプロンプトを起動し、起動させたいアプリケーションのルートディレクトリに移動して下さい。そして「rails server」と実行して下さい。
+			</p>
+
+			<p>
+			<img src="img/p5-3.png" tppabs="https://www.javadrive.jp/rails/ini/img/p5-3.png" alt="p5-3" width="517" height="299" />
+			</p>
+
+			<p>
+			ブラウザから次のURLへアクセスして下さい。
+			</p>
+
+<pre class="fixcode">
+http://localhost:3000/hello
+</pre>
+
+			<p>
+			設定されたルーティングに従い、「booklist」コントローラの「hello」アクションが呼び出され、最終的に対応するテンプレートが呼び出されて画面に次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5-4.png" tppabs="https://www.javadrive.jp/rails/ini/img/p5-4.png" alt="p5-4" width="480" height="308" />
+			</p>
+
+			<p>
+			このようにテンプレートを利用して作成したHTML文書を利用者へ返しブラウザ上に表示させることができました。
+			</p>
+
+<h2><a id="section5">変数を使ったデータの受け渡し</a></h2>
+
+			<p>
+			先程のサンプルではテンプレートに記載した内容がそのまま利用者へ返されていましたが、アプリケーションでは通常利用者からのリクエストに応じた結果を返すのが普通です。そのため、アクションで処理したデータをビューに受け渡し、ビュー側ではそのデータを利用して結果を出力する仕組みが用意されています。
+			</p>
+
+			<p>
+			データを受け渡しするには、まずアクションメソッドの中でインスタンス変数に対して値を格納します。すると呼び出されたビュー側でこのインスタンス変数を参照して値を利用することができます。
+			</p>
+
+			<p>
+			実際に試してみるため「hello」アクションメソッドを次のように書き換えます。
+			</p>
+
+<pre class="fixcode">
+# coding: utf-8
+
+class BooklistController &lt; ApplicationController
+
+  def hello
+    @msg = 'こんにちは。お久しぶりです。';
+  end
+
+end
+</pre>
+
+			<p>
+			※ Rubyのプログラムの中で日本語を使用する場合には、1行目に「# coding: utf-8」を記述した上で文字コードを UTF-8(BOM無) で保存して下さい。
+			</p>
+
+			<p>
+			インスタンス変数「msg」に値が設定されました。ではアクションに対応するテンプレートの「app\views\booklist\hello.html.erb」ファイルを次のように書き換えます。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;p&gt;
+<span class="red">&lt;%= @msg %&gt;</span>
+&lt;/p&gt;
+</pre>
+
+			<p>
+			テンプレートでは &lt;%=と %&gt; または &lt;%= と %&gt;で囲まれた部分にはRuby言語を使ったプログラムを記述することができます。特に &lt;%= と %&gt; の間に変数などの式を記述するとその式が評価された値に置き換えられます。今回の場合であれば「&lt;%= @msg %&gt;」の部分が変数「msg」に格納されている「こんにちは。お久しぶりです。」に置き換えられて利用者には次のように返されます。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;p&gt;
+<span class="red">こんにちは。お久しぶりです。</span>
+&lt;/p&gt;
+</pre>
+
+			<p>
+			このようにアクションからテンプレートに対しインスタント変数を介してデータを受け渡すことができます。
+			</p>
+
+			<p>
+			では実際にアクションとテンプレートを書き換えた上でブラウザから次のURLへアクセスして下さい。
+			</p>
+
+<pre class="fixcode">
+http://localhost:3000/hello
+</pre>
+
+			<p>
+			画面に次のように表示され、アクションからテンプレートへデータが渡されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p5-5.png" tppabs="https://www.javadrive.jp/rails/ini/img/p5-5.png" alt="p5-5" width="480" height="308" />
+			</p>
+
+			<p>
+			今回は利用者へ結果を返す際にテンプレートを利用する方法を試しました。次はモデルを使ってデータベースを利用する方法を確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

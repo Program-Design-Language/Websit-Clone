@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cellメソッドによるセル出力 - 表の出力 - FPDFを使ったPDF作成</title>
+<meta name="keywords" content="Cellメソッドによるセル出力,表の出力,FPDF,PDF" />
+<meta name="description" content="Cellメソッドによるセル出力" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/fpdf/" itemprop="url"><span itemprop="title">FPDFを使ったPDF作成</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/fpdf/cell/" itemprop="url"><span itemprop="title">表の出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>Cellメソッドによるセル出力</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					PDFドキュメントへ表を出力する方法を確認します。表そのものを出力するメソッドが用意されているわけではなく、表の1つ1つの要素となるセルを出力することで結果的に表形式で出力が可能です。
+					</p>
+
+					<p>
+					セルを出力するにはFPDFクラスで用意されているCellメソッドを使います。
+					</p>
+
+<pre class="mheader">
+Cell(float w [, float h [, string txt [, mixed border [, int ln 
+ [, string align [, int fill [, mixed link]]]]]]])
+</pre>
+<pre class="mexplain">
+表（セル(長方形)）を表示します。オプションで境界線(ボーダー)、背景色、
+文字を指定できます。カレントの位置は、表（セル）の左上の角になります。
+表示するテキストの位置を指定できます。(左右alignまたはcenter) このメン
+バ関数がコールされた後、カレントの位置は右、または次の行へ移動します。
+テキストにリンクを張ることも可能です。
+
+パラメータ:
+  w  セルの幅
+  h  セルの高さ
+  txt  表示する文字列
+  border  境界線
+  ln  メソッド実行後のカレント位置
+  align  テキストの位置
+  fill  背景色をセットするかどうか
+  link  URLかAddLink()メンバ関数によって返された識別子
+</pre>
+
+					<p>
+					1番目の引数にセルの幅を指定します。単位はMBFPDFクラスのコンストラクタで指定した寸法の種類です。0を指定すると幅は画面の右端まで広がります。2番目の引数にセルの高さを指定します。単位は幅の場合と同じです。
+					</p>
+
+					<p>
+					3番目の引数にセル内に表示する文字列を指定します。デフォルトの値は空文字です。
+					</p>
+
+					<p>
+					4番目の引数には境界線を表示するかどうかを指定します。指定できる値は次の通りです。
+					</p>
+
+<pre class="fixcomment">
+0: 境界線なし 
+1: 境界線あり
+</pre>
+
+					<p>
+					数値の「1」を指定するとセルの上下左右に線を引きます。デフォルトの値は「0」です。また線を引く箇所を個別に引く場合は次の文字列を組み合わせて指定します。
+					</p>
+
+<pre class="fixcomment">
+L: left     左
+T: top      上
+R: right    右
+B: bottom   下
+</pre>
+
+					<p>
+					例えば左と上だけ線を引く場合は「LT」を指定します。
+					</p>
+
+					<p>
+					5番目以降の引数については次のページ以降で説明します。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require('fpdf/mbfpdf.php');
+
+$pdf = new MBFPDF();
+$pdf-&gt;AddMBFont(GOTHIC ,'SJIS');
+$pdf-&gt;AddPage();
+$pdf-&gt;SetFont(GOTHIC,'',20);
+
+$pdf-&gt;Cell(0, 20, 'サンプル文字列', 1);
+$pdf-&gt;Ln();
+$pdf-&gt;Cell(60, 20, 'サンプル文字列', 'LT');
+
+$pdf-&gt;Output();
+?&gt;
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なサンプルで試してみます。
+					</p>
+
+					<p>
+					<a href="sample1-1.html" tppabs="https://www.javadrive.jp/fpdf/cell/sample1-1.html">sample1-1.php</a>
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require('fpdf/mbfpdf.php');
+
+$pdf=new MBFPDF('P', 'mm', 'A4');
+$pdf-&gt;AddMBFont(GOTHIC ,'SJIS');
+$pdf-&gt;AddPage();
+$pdf-&gt;SetFont(GOTHIC,'',20);
+
+$x = $pdf-&gt;GetX();
+
+$pdf-&gt;Cell(60, 30, '境界線は上と左、横幅指定', 'LT');
+$pdf-&gt;SetXY($x, 60);
+$pdf-&gt;Cell(0, 20, '境界線を上下左右、横幅は右端まで', 1);
+
+$pdf-&gt;Output();
+?&gt;
+</pre>
+
+					<p>
+					上記のファイルをWWWサーバのドキュメントルート以下に設置しブラウザからアクセスすると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p1-1.png" tppabs="https://www.javadrive.jp/fpdf/cell/img/p1-1.png" alt="Cellメソッドによるセル出力" width="522" height="400">
+					</p>
+
+					<p>
+					Cellメソッドで指定した幅に、表示する文字列が入りきらなくても自動的に改行はされず幅に関係無く表示されます。また文字列の縦位置はセル内の中央となるようです。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

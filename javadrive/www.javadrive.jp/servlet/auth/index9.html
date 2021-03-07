@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>セッションを使ったカスタム認証 - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="カスタム認証,セッション,ユーザー認証,サーブレット" />
+<meta name="description" content="セッションを使ったカスタム認証" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>セッションを使ったカスタム認証</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここまではTomcatで標準で用意されている認証の方法を確認して来ましたが、標準で用意されている方式は簡易に利用できる反面、カスタマイズするにも限界があります。例えばログアウト処理なども行うことが出来ません。
+			</p>
+
+			<p>
+			そこでここからは認証を方式を自分で一から構築する方法を試して行きます。今回は次のようにしてみます。
+			</p>
+
+<pre class="fixcomment">
+ユーザー名とパスワードはHTMLページ上のフォームを使う
+ユーザー管理はデータベースを利用する
+送られてきたユーザー名とパスワードでデータベースを検索して認証する
+認証が通った場合はセッションに記録する
+保護されているページではセッションの有無をチェックする
+ログアウト機能を付ける
+</pre>
+
+			<p>
+			少し長くなるので細かく分けて作成してみます。
+			</p>
+
+			<h2>認証の対象となるサーブレットの作成</h2>
+
+			<p>
+			まず保護する対象となるサーブレットを作成します。これらのサーブレットにアクセスがあった場合にはユーザー認証が行われているかどうかをチェックし、認証済みならば内容を表示し、認証されていなければログイン画面へ移動します。
+			</p>
+
+			<p>
+			認証が行われているかどうかはセッションを使います。セッションの「login」データがあるかどうかをチェックします。
+			</p>
+
+<pre class="fixcode">
+HttpSession session = request.getSession(false);
+
+if (session == null){
+  /* まだ認証されていない */
+  session = request.getSession(true);
+
+  response.sendRedirect("/auth/Login");
+}else{
+  Object loginCheck = session.getAttribute("login");
+  if (loginCheck == null){
+    /* まだ認証されていない */
+    response.sendRedirect("/auth/Login");
+  }
+}
+</pre>
+
+			<p>
+			セッションの有無を確認し、セッションが開始されていなかったりセッション開始されていても「login」に関するデータが無い場合はログイン画面へ移動します。セッションが開始されていない場合もこの画面でセッションを開始します。
+			</p>
+
+			<p>
+			またログイン画面に一度飛ばした後で、本来アクセスしたかったURLへ移動してあげる必要がありますので、どのサーブレットに対してアクセスしようとしていたのかを保存しておきます。
+			</p>
+
+			<p>
+			リクエストがあったURLを取得するには「HttpServletRequest」インターフェースで定義されている「getRequestURI」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getRequestURI
+public java.lang.String getRequestURI()
+</pre>
+<pre class="mexplain">
+Returns the part of this request's URL from the protocol name up to the 
+query string in the first line of the HTTP request. The web container 
+does not decode this String. For example:
+
+  First line of HTTP request          Returned Value
+  -----------------------------------------------------
+  POST /some/path.html HTTP/1.1       /some/path.html 
+  GET http://foo.bar/a.html HTTP/1.0  /a.html 
+  HEAD /xyz?a=b HTTP/1.1              /xyz 
+
+To reconstruct an URL with a scheme and host, use 
+HttpUtils.getRequestURL(javax.servlet.http.HttpServletRequest). 
+
+Returns:
+  a String containing the part of the URL from the protocol name up
+    to the query string
+</pre>
+
+			<p>
+			本来アクセスしようとしたURLを取得したらセッションの「target」に保存しておきます。
+			</p>
+
+<pre class="fixcode">
+String target = request.getRequestURL();
+session.setAttribute("target", target);
+</pre>
+
+			<p>
+			結果的に次のようなサーブレットになります。
+			</p>
+
+			<p>
+			<a href="CustomAuth1.java" tppabs="https://www.javadrive.jp/servlet/auth/CustomAuth1.java">CustomAuth1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class CustomAuth1 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    String target = request.getRequestURI();
+
+    HttpSession session = request.getSession(false);
+
+    if (session == null){
+      /* まだ認証されていない */
+      session = request.getSession(true);
+      session.setAttribute("target", target);
+
+      response.sendRedirect("/auth/Login");
+    }else{
+      Object loginCheck = session.getAttribute("login");
+      if (loginCheck == null){
+        /* まだ認証されていない */
+        session.setAttribute("target", target);
+        response.sendRedirect("/auth/Login");
+      }
+    }
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;ユーザー認証テスト&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;テストページ1&lt;/p&gt;");
+
+    out.println("&lt;p&gt;&lt;a href=&yen;"/auth/CustomAuth2&yen;"&gt;テストページ2へ&lt;/a&gt;&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			またほぼ同じ内容のサーブレットをもう1つ作っておきます。この2つのサーブレットはお互いにリンクが張ってあります。
+			</p>
+
+			<p>
+			<a href="CustomAuth2.java" tppabs="https://www.javadrive.jp/servlet/auth/CustomAuth2.java">CustomAuth2.java</a>
+			</p>
+
+			<h2>実際に試してみる</h2>
+
+			<p>
+			ではこの時点でのテストを行っておきます。まだユーザー認証用の「Login」サーブレットがありませんので、暫定的に次のサーブレットを用意します。
+			</p>
+
+			<p>
+			本来であればユーザー名とパスワードを入力してもらいユーザー認証を行いますが、取りあえず認証を全て通して本来アクセスするはずのURLへのリンクを設定するだけにしてあります。
+			</p>
+
+			<p>
+			<a href="Login1.java.htm" tppabs="https://www.javadrive.jp/servlet/auth/Login1.java">Login1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Login1 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;ログインページ&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;h1&gt;ログイン画面&lt;/h1&gt;");
+
+    out.println("&lt;p&gt;本来はここでログインするためのフォームが表示されます&lt;/p&gt;");
+
+    HttpSession session = request.getSession(false);
+
+    if (session == null){
+      /* セッションが開始されずにここへ来た場合は無条件でエラー表示 */
+      out.println("&lt;p&gt;不正なアクセスです&lt;/p&gt;");
+    }else{
+      /* 今回は無条件で認証を許可する */
+      out.println("&lt;p&gt;認証が行われました&lt;/p&gt;");
+
+      /* 認証済みにセット */
+      session.setAttribute("login", "OK");
+
+      /* 本来のアクセス先へのリンクを設定 */
+      String target = (String)session.getAttribute("target");
+      out.println("&lt;a href=&yen;"" + target + "&yen;"&gt;ページを表示する&lt;/a&gt;");
+    }
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			web.xmlファイルは次の通りです。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;CustomAuth1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;CustomAuth1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;CustomAuth1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/CustomAuth1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;CustomAuth2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;CustomAuth2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;CustomAuth2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/CustomAuth2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;Login&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;Login1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;Login&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/Login&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/CustomAuth1」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p29.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p29.png" alt="カスタム認証" width="497" height="348">
+			</p>
+
+			<p>
+			「CustomAuth1」サーブレットへアクセスしてもセッションに必要な情報が保存されていませんので「Login」サーブレットへリダイレクトされます。今回はテスト用なのでこの時点で認証が行われていますので、「ページを表示する 」をクリックすれば本来アクセスするはずの「CustomAuth1」サーブレットへアクセスします。
+			</p>
+
+			<p>
+			<img src="img/p30.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p30.png" alt="カスタム認証" width="499" height="352">
+			</p>
+
+			<p>
+			今度はセッションが既に開始されていて、必要な情報がセッションに登録されているので「CustomAuth1」サーブレットの中身が表示されます。
+			</p>
+
+			<p>
+			また「CustomAuth1」サーブレットからリンクが張ってある「CustomAuth2」サーブレットにも認証のチェックが入っていますが、既に認証済みですのでリンクをクリックすれば普通に表示されます。
+			</p>
+
+			<p>
+			<img src="img/p31.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p31.png" alt="カスタム認証" width="497" height="352">
+			</p>
+
+			<p>
+			それでは次のページでログイン画面の部分を作成します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

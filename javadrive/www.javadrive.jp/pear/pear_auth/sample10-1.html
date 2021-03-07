@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サンプル</title>
+</head>
+<body>
+
+<pre>
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;PHP認証テスト&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;?php
+
+require_once "Auth/Auth.php";
+require_once 'DB.php';
+
+function loginFunction($username, $status){
+    if ($status == AUTH_WRONG_LOGIN){
+        print("ユーザー名又はパスワードが間違っています&lt;br&gt;");
+    }
+
+    print("&lt;form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\"&gt;");
+    print("&lt;table&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;ユーザー名&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=\"text\" name=\"username\"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;パスワード&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=\"password\" name=\"password\"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td colspan=\"2\"&gt;&lt;input type=\"submit\"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;/table&gt;");
+    print("&lt;/form&gt;");
+}
+
+$dsn = 'mysqli://authuser:authpass@localhost/authdb';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$db-&gt;query('SET NAMES sjis');
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+$params = array(
+    "dsn" =&gt; $db,
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password",
+    "db_fields" =&gt; "*"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+
+$authobj-&gt;start();
+
+if ($authobj-&gt;getAuth()){
+    $name = $authobj-&gt;getAuthData("name");
+    $post = $authobj-&gt;getAuthData("post");
+
+    print("こんにちは&lt;br&gt;");
+    print("名前 : ".$name."&lt;br&gt;");
+    print("部署 : ".$post);
+}
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+
+</body>
+</html>

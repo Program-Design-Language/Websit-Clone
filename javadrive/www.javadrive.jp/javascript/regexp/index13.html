@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | キャプチャグループを設定してパターンの一部にマッチした文字列を取得する</title>
+<meta name="description" content="正規表現のパターンの中にキャプチャグループを設定することで、パターン全体にマッチした文字列とは別に、パターンの中の一部分にマッチした文字列を取得することができます。ここでは JavaScript の正規表現でキャプチャグループを利用する方法について解説します。">
+
+<meta property="og:title" content="キャプチャグループを設定してパターンの一部にマッチした文字列を取得する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/regexp/index13.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/regexp/img/p13-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現のパターンの中にキャプチャグループを設定することで、パターン全体にマッチした文字列とは別に、パターンの中の一部分にマッチした文字列を取得することができます。ここでは JavaScript の正規表現でキャプチャグループを利用する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "JavaScript正規表現",
+    "item": "https://www.javadrive.jp/javascript/regexp/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/regexp/">JavaScript正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>キャプチャグループを設定してパターンの一部にマッチした文字列を取得する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現のパターンの中にキャプチャグループを設定することで、パターン全体にマッチした文字列とは別に、パターンの中の一部分にマッチした文字列を取得することができます。ここでは JavaScript の正規表現でキャプチャグループを利用する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">キャプチャグループの設定とキャプチャの取得</a></li>
+			<li><a href="#section2">キャプチャを行わないキャプチャグループを設定する</a></li>
+			<li><a href="#section3">名前付きキャプチャグループを使用する</a></li>
+			<li><a href="#section4">キャプチャした値と同じ値にマッチするパターン</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">キャプチャグループの設定とキャプチャの取得</a></h2>
+
+			<p>
+			正規表現のパターンの中でキャプチャグループを設定するには、設定したい部分を括弧()で囲んでください。
+			</p>
+
+<div class="titlebox2">
+<pre>
+/abc(def)ghi/
+</pre>
+</div>
+
+			<p>
+			ここで使用する括弧はグループ化の時に指定した括弧と同じものです。グループ化のためにパターンの一部を括弧で囲うと、キャプチャグループもあわせて設定されます。
+			</p>
+
+			<p>
+			例えば次のパターンを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /\d{3}-\d{4}/;
+</pre>
+</div>
+
+			<p>
+			文字列 '郵便番号は 123-4567 です' はこのパターンにマッチし、パターン全体がマッチする文字列は 123-4567 です。この時、パターンの中の \d{4} の部分にマッチした部分だけを取得するにはキャプチャグループを設定します。キャプチャグループを設定するには、パターンの中の設定したい部分を括弧で囲います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /\d{3}-(\d{4})/;
+</pre>
+</div>
+
+			<p>
+			これで文字列がパターンにマッチした時、パターン全体に対してマッチした文字列 123-4567 とは別に、キャプチャグループの部分にマッチした 4567 を取得することができます。キャプチャグループにマッチした文字列をキャプチャと呼びます。
+			</p>
+
+			<p>
+			キャプチャグループは 1 つのパターンの中に複数設定することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /(\d{3})-(\d{4})/;
+</pre>
+</div>
+
+			<p>
+			複数のキャプチャグループを設定した場合は、前から順番にキャプチャグループ 1 、キャプチャグループ 2 のように設定され、あとからキャプチャグループのインデックスを指定してキャプチャされた文字列を参照します。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /(\d{3})-(\d{4})/;
+
+let result = regexp.exec('郵便番号は 123-4567 です。');
+console.log(result[0]);
+<span class="bold">&gt;&gt; 123-4567</span>
+console.log(result[1]);
+<span class="bold">&gt;&gt; 123</span>
+console.log(result[2]);
+<span class="bold">&gt;&gt; 4567</span>
+</pre>
+</div>
+
+<h2><a id="section2">キャプチャを行わないキャプチャグループを設定する</a></h2>
+
+			<p>
+			グループ化のための括弧であってもパターンの中で括弧()で囲われるとキャプチャグループが設定されます。キャプチャを利用する予定がない場合で、明示的にキャプチャを行いたくない場合には括弧()ではなく次のように記述することでキャプチャを行わないキャプチャグループを設定できます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?:パターン)
+</pre>
+</div>
+
+			<p>
+			「(」と「)」で囲う代わりに「(?:」と「)」で囲います。この書式で囲んだ場合はグループ化としての機能は同じですがキャプチャは行われません。キャプチャグループの値を繰り返し処理などで順に取得したい場合などに、キャプチャが目的ではないグループに対して使用すると便利です。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /製品(?:Code|コード):([A-Z]{2})-(\d{2})/;
+
+let result = regexp.exec('製品コード:AZ-07');
+console.log(result[1]);
+<span class="bold">&gt;&gt; AZ</span>
+console.log(result[2]);
+<span class="bold">&gt;&gt; 07</span>
+</pre>
+</div>
+
+			<p>
+			今回の場合、 3 つのキャプチャグループが設定されていますが、最初のキャプチャグループはキャプチャを行わないように設定したため、キャプチャを順に取得すると 2 つ目のキャプチャグループと 3 つ目のキャプチャグループのキャプチャを取得しました。
+			</p>
+
+<h2><a id="section3">名前付きキャプチャグループを使用する</a></h2>
+
+			<p>
+			JavaScript では ECMAScript 2018 (ES 9) から名前付きキャプチャグループが利用可能となりました。キャプチャグループ毎に名前を設定し、インデックスではなく名前を使ってキャプチャした値を参照することができます。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?&lt;グループ名&gt;パターン)
+</pre>
+</div>
+
+			<p>
+			通常のキャプチャグループでは、 String オブジェクトの match メソッドの戻り値として取得する配列に対してインデックスを指定して要素の値を参照することでキャプチャグループのキャプチャした値を参照してきました。名前付きキャプチャグループの場合は、 match メソッドの戻り値として取得する配列に対して次のように名前を指定してキャプチャした値を参照できます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+配列.groups.グループ名
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regexp = /製品コード:(?&lt;section&gt;[A-Z]{2})-(?&lt;code&gt;\d{2})/;
+
+let result = regexp.exec('製品コード:JP-82');
+console.log(result.groups.section);
+<span class="bold">&gt;&gt; JP</span>
+console.log(result.groups.code);
+<span class="bold">&gt;&gt; 82</span>
+</pre>
+</div>
+
+<h2><a id="section4">キャプチャした値と同じ値にマッチするパターン</a></h2>
+
+			<p>
+			パターンの中でキャプチャグループを設定した場合、キャプチャグループでマッチした値を同じパターン内から参照し、既にキャプチャした値と同じ値にマッチするようにパターンに記述することができます。
+			</p>
+
+			<p>
+			参照する場合は、キャプチャ1の値を参照するには \1 、キャプチャ2の値を参照するには \2 のようにパターン内に記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\キャプチャ番号
+</pre>
+</div>
+
+			<p>
+			次のパターンでは 1 番目のキャプチャグループでキャプチャした値を後から参照しています。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regexp = /(ABC).*\1/;
+</pre>
+</div>
+
+			<p>
+			この場合、 ABC から始まり、任意の文字が 0 回以上続いたあと、 1 番目のキャプチャグループでキャプチャした値と同じ値が続くパターンとなります。 1 番目のキャプチャグループでキャプチャした値は ABC なので /ABC.*ABC/ というパターンと同じです。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regex = /&lt;(.+)&gt;.*&lt;\/\1&gt;/;
+
+let result = regex.exec('AAA &lt;div&gt;BBB&lt;span&gt;CCC&lt;/span&gt;DDD&lt;/div&gt;EEE');
+console.log(result[0]);
+<span class="bold">&gt;&gt; &lt;div&gt;BBB&lt;span&gt;CCC&lt;/span&gt;DDD&lt;/div&gt;</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは最初に見つかったタグ(今回の場合は &lt;div&gt; )と同じ名前の閉じタグ(今回の場合は &lt;/div&gt; )で囲まれた文字列にマッチしています。同じ名前の閉じタグを探すためにキャプチャした値を後から参照しています。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			JavaScript の正規表現でキャプチャグループを利用する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>括弧()の位置による取得文字列の違い - マッチした部分の取得 - Perlにおける正規表現</title>
+<meta name="description" content="括弧()の位置による取得文字列の違い" />
+
+<link rel="stylesheet" href="../../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/perl/" itemprop="url"><span itemprop="title">Perl入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/perl/regex/" itemprop="url"><span itemprop="title">Perlにおける正規表現</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/perl/regex/ref/" itemprop="url"><span itemprop="title">マッチした部分の取得</span></a></li>
+		</ul>
+</div>
+
+			<h1>括弧()の位置による取得文字列の違い</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					パターン内で括弧を使用してマッチする部分文字列を取得する場合、繰り返しを表すメタ文字と組み合わせて使用する際に括弧の位置によって結果が異なる場合があります。
+					</p>
+
+					<h2>メタ文字「+」</h2>
+
+					<p>
+					まずはメタ文字の「+」を使用する場合です。
+					</p>
+
+<pre class="fixcode">
+/(&yen;d+)yen/
+</pre>
+
+					<p>
+					「&yen;d+」は数字が1回以上繰り返された場合にマッチします。そして「&yen;d+」全体が括弧()で括られていますので、このパターンがマッチした場合、変数「$1」には「&yen;d+」にマッチした全体が格納されます。
+					</p>
+
+<pre class="fixcode">
+my $str = "book is 2391yen, cake is 800yen";
+
+if ($str =~ /(&yen;d+)yen/){
+  print "$1&yen;n";
+}
+</pre>
+
+					<p>
+					上記の場合ですと、変数「$1」には「2391」が格納されます。
+					</p>
+
+					<p>
+					今度は次のようにパターンを記述してみます。
+					</p>
+
+<pre class="fixcode">
+/(&yen;d)+yen/
+</pre>
+
+					<p>
+					今度の場合、「(&yen;d)+」全体としては数字が1回以上繰り返された場合にマッチすることに代わりはありませんが、括弧は「&yen;d」だけを括っています。この場合は「&yen;d」にマッチした文字が都度変数「$1」に格納されます。メタ文字(+)によって「&yen;d」とマッチするかどうかが1回以上繰り返され、最後に「&yen;d」にマッチした文字が変数「$1」に最後に格納されます。
+					</p>
+
+<pre class="fixcode">
+my $str = "book is 2391yen, cake is 800yen";
+
+if ($str =~ /(&yen;d)+yen/){
+  print "$1&yen;n";
+}
+</pre>
+
+					<p>
+					上記の場合ですと、変数「$1」には「1」が格納されます。これは「2」「3」「9」「1」と順に変数「$1」に格納されていき、最後に格納された「1」が残っているためです。
+					</p>
+
+					<h2>メタ文字「?」とメタ文字「*」</h2>
+
+					<p>
+					次にメタ文字の「?」と「*」の場合です。基本的にはメタ文字の「+」の場合と同じですが異なるのは0回マッチも許されている点です。
+					</p>
+
+					<p>
+					まず繰り返しを表すメタ文字が括弧の中にある場合です。
+					</p>
+
+<pre class="fixcode">
+/(&yen;d*)yen/
+</pre>
+
+					<p>
+					この場合、変数「$1」には括弧で括られた「&yen;d*」にマッチした文字列が格納されます。1回以上マッチした場合はメタ文字(+)の場合と同じですが、0回マッチした場合には「&yen;d*」は空文字にマッチしたことになるため変数「$1」には空文字が格納されます。
+					</p>
+
+					<p>
+					次に繰り返しを表すメタ文字が括弧の外にある場合です。
+					</p>
+
+<pre class="fixcode">
+/(&yen;d)*yen/
+</pre>
+
+					<p>
+					この場合、変数「$1」には「&yen;d」にマッチした文字格納されますが、「&yen;d」に一度もマッチしまなかった場合は変数「$1」には値が一度も格納されず未定義値(undef)となります。ただし「(&yen;d)」に対してメタ文字(*)が設定されていますのでパターン全体としてマッチするかどうかに影響ありません。
+					</p>
+
+					<p>
+					このようにメタ文字の「*」や「?」を使用する場合に一度もマッチしない場合の挙動が若干異なります。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なプログラムで確認して見ます。
+					</p>
+
+					<p>
+					<a href="test4-1.pl" tppabs="https://www.javadrive.jp/perl/regex/ref/test4-1.pl">test4-1.pl</a>
+					</p>
+
+<pre class="fixcode">
+use strict;
+use warnings;
+use utf8;
+binmode STDIN, ':encoding(cp932)';
+binmode STDOUT, ':encoding(cp932)';
+binmode STDERR, ':encoding(cp932)';
+
+print "パターン: /(&yen;&yen;d+)yen/&yen;n";
+&check1("book is 2391yen, cake is 800yen");
+
+print "&yen;n";
+
+print "パターン: /(&yen;&yen;d)+yen/&yen;n";
+&check2("book is 2391yen, cake is 800yen");
+
+sub check1{
+  my ($str) = @_;
+
+  if ($str =~ /(&yen;d+)yen/){
+    print "対象: $str&yen;n";
+    print "&yen;$1: $1&yen;n";
+  }
+}
+
+sub check2{
+  my ($str) = @_;
+
+  if ($str =~ /(&yen;d)+yen/){
+    print "対象: $str&yen;n";
+    print "&yen;$1: $1&yen;n";
+  }
+}
+</pre>
+
+					<p>
+					上記を「test4-1.pl」の名前で保存します(文字コードはUTF-8です)。そしてコマンドプロンプトを起動し、プログラムを保存したディレクトリに移動してから次のように実行して下さい。
+					</p>
+
+					<p>
+					<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/perl/regex/ref/img/p4-1.png" alt="括弧()の位置による取得文字列の違い" width="509" height="246">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

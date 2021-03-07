@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | pathlibモジュールを使ったファイルの読み書き</title>
+<meta name="description" content="Python 3.4 から pathlib モジュールが利用できるようになりました。パスに対する Path クラスのインスタンスを作成し、用意されたメソッドを使ってファイルの操作を行います。ここでは pathlib モジュールを使ったファイルの読み書きを行う方法について解説します。">
+
+<meta property="og:title" content="pathlibモジュールを使ったファイルの読み書き">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/file/index12.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/file/img/p12-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Python 3.4 から pathlib モジュールが利用できるようになりました。パスに対する Path クラスのインスタンスを作成し、用意されたメソッドを使ってファイルの操作を行います。ここでは pathlib モジュールを使ったファイルの読み書きを行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "ファイルの管理",
+    "item": "https://www.javadrive.jp/python/file/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/file/">ファイルの管理</a></li>
+				</ul>
+			</div>
+
+			<h1>pathlibモジュールを使ったファイルの読み書き</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Python 3.4 から pathlib モジュールが利用できるようになりました。パスに対する Path クラスのインスタンスを作成し、用意されたメソッドを使ってファイルの操作を行います。ここでは pathlib モジュールを使ったファイルの読み書きを行う方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">Pathクラスのインスタンスを作成する</a></li>
+			<li><a href="#section2">ファイルオブジェクトを取得してファイルを開く</a></li>
+			<li><a href="#section3">ファイルを閉じる</a></li>
+			<li><a href="#section4">テキストファイルを読み込む</a></li>
+			<li><a href="#section5">テキストファイルを書き込む</a></li>
+			<li><a href="#section6">バイナリファイルの読み書き</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">Pathクラスのインスタンスを作成する</a></h2>
+
+			<p>
+			Path クラスのインスタンスを作成するには次のコンストラクタを使用します。
+			</p>
+
+<div class="titlebox2">
+<p>
+class pathlib.Path(*pathsegments)
+</p>
+</div>
+
+			<p>
+			引数にパスを指定して Path クラスのインスタンスを作成します。
+			</p>
+
+			<p>
+			例えば次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+path = './test/movie'
+p = pathlib.Path(path)
+</pre>
+</div>
+
+			<p>
+			実際には Path クラスのインスタンスを作成すると、利用している環境( Windows か非 Windowsか)に応じて Path クラスのサブクラスである pathlib.WindowsPath クラスか pathlib.PosixPath クラスのインスタンスが作成されます。私の環境は Windows なので pathlib.WindowsPath クラスのインスタンスが作成されました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+path = './test/movie'
+p = pathlib.Path(path)
+
+type(p)
+<span class="bold">&gt;&gt; &lt;class 'pathlib.WindowsPath'&gt;</span>
+</pre>
+</div>
+
+			<p>
+			なお pathlib.WindowsPath クラス、および pathlib.PosixPath クラスのコンストラクタも用意されており、明示的にインスタンスを作成することもできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+class pathlib.PosixPath(*pathsegments)
+</p>
+</div>
+
+<div class="titlebox2">
+<p>
+class pathlib.WindowsPath(*pathsegments)
+</p>
+</div>
+
+			<p>
+			ただし、 Windows 環境であれば pathlib.WindowsPath クラスのインスタンスは作成できますが、 pathlib.PosixPath クラスのインスタンスは作成できません( NotImplementedError が発生します)。
+			</p>
+
+<div class="titlebox1">
+<p>
+import pathlib<br>
+<br>
+path = './test/movie'<br>
+wp = pathlib.WindowsPath(path)<br>
+pp = pathlib.PosixPath(path)<br>
+<span class="bold">&gt;&gt; NotImplementedError: cannot instantiate 'PosixPath' on your system</span>
+</p>
+</div>
+
+<h2><a id="section2">ファイルオブジェクトを取得してファイルを開く</a></h2>
+
+			<p>
+			従来の方法では open 関数を使ってファイルオブジェクトを取得し、ファイルオブジェクトを使ってファイルの読み書きを行いました。 pathlib モジュールを使用する場合は Path クラスのインスタンスを作成したあとで、 open メソッドを使ってファイルオブジェクトを取得します。
+			</p>
+
+<div class="titlebox2">
+<p>
+Path.open(mode='r', buffering=-1, encoding=None, errors=None, newline=None)
+</p>
+</div>
+
+			<p>
+			1 番目の引数の mode にはファイルを開くモードを指定します。次の値が指定できます。 3 番目の引数の encoding には使用する文字エンコーディング名を指定します。テキストモードでのみ利用します。それぞれどのような値が指定できるのかは open 関数の場合とまったく同じです。「<a href="index1.html#section1" tppabs="https://www.javadrive.jp/python/file/index1.html#section1">ファイルを開く</a>」を参照されてください。
+			</p>
+
+			<p>
+			具体的には次のように記述します。 
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+
+f1 = p.open('r')
+f2 = p.open('w+')
+f3 = p.open('r', encoding='UTF-8')
+f4 = p.open('rb') 
+</pre>
+</div>
+
+			<p>
+			Path クラスではファイルをオブジェクトを使用せずにファイルの読み書きを行えるメソッドが用意されていますが、一部できない機能があります。そのような場合にはファイルをオブジェクトを取得した上で処理を行ってください。
+			</p>
+
+<h2><a id="section3">ファイルを閉じる</a></h2>
+
+			<p>
+			ファイルの利用が終わりましたら close メソッドを使ってファイルオブジェクトを閉じます。これは従来の方法と同じです。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+f = p.open('r')
+...
+...
+f.close()
+</pre>
+</div>
+
+			<p>
+			ほかの記述方法として with 文を使用するとファイルを開いたあと、利用が終わったら自動的にファイルを閉じることができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+with p.open('r') as f:
+  ...
+  ...
+</pre>
+</div>
+
+<h2><a id="section4">テキストファイルを読み込む</a></h2>
+
+			<p>
+			テキストファイルのすべてを一度に読み込む場合には Path クラスで用意されている read_text メソッドを使用することができます。
+			</p>
+
+<div class="titlebox2">
+<p>
+Path.read_text(encoding=None, errors=None)
+</p>
+</div>
+
+			<p>
+			パスが示すファイルの内容をテキストとして取得します。省略可能な 1 番目の引数には文字エンコーディングを指定します。
+			</p>
+
+			<p>
+			このメソッドを使用する場合は、ファイルオブジェクトを取得する必要がなく次のように記述することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+print(p.read_text())
+
+<span class="bold">&gt;&gt; Yamada
+&gt;&gt; Andou
+&gt;&gt; Kuroki</span>
+</pre>
+</div>
+
+			<p>
+			なおテキストファイルを行単位で読み込む場合などは従来の方法と同じくファイルオブジェクトに対して readline メソッドなどを使用します。(詳しくは「<a href="index2.html" tppabs="https://www.javadrive.jp/python/file/index2.html">テキストファイルを読み込む</a>」を参照されてください)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+f = p.open('r')
+
+while True:
+  data = f.readline()
+  if data == '':
+    break
+  print (data.rstrip('\n'))
+
+<span class="bold">&gt;&gt; Yamada
+&gt;&gt; Andou
+&gt;&gt; Kuroki</span>
+</pre>
+</div>
+
+<h2><a id="section5">テキストファイルを書き込む</a></h2>
+
+			<p>
+			テキストファイルへテキストを書き込む場合には Path クラスで用意されている write_text メソッドを使用することができます。
+			</p>
+
+<div class="titlebox2">
+<p>
+Path.write_text(data, encoding=None, errors=None)
+</p>
+</div>
+
+			<p>
+			1 番目の引数で指定したテキストを、パスが示すファイルへ書き込みます。省略可能な 2 番目の引数には文字エンコーディングを指定します。
+			</p>
+
+			<p>
+			このメソッドを使用する場合は、ファイルオブジェクトを取得する必要がなく次のように記述することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+p.write_text('Suzuki\nHonda\n')
+
+print(p.read_text())
+<span class="bold">&gt;&gt; Suzuki
+&gt;&gt; Honda</span>
+</pre>
+</div>
+
+			<p>
+			なおファイルの書き込みは上書きで行われます。またファイルが存在しなかった場合は新しく作成した上でテキストの書き込みが行われます。既存の内容に追加で書き込みたい場合には、従来の方法と同じくファイルオブジェクトに対して write メソッドなどを使用します。(詳しくは「<a href="index3.html" tppabs="https://www.javadrive.jp/python/file/index3.html">テキストファイルへ書き込む</a>」を参照されてください)。
+			</p>
+
+<h2><a id="section6">バイナリファイルの読み書き</a></h2>
+
+			<p>
+			バイナリファイルからバイトデータを読み込んだり、バイナリファイルへバイトデータを書き込んだりテキストを書き込む場合には Path クラスで用意されている read_bytes メソッドおよび write_bytes メソッドを使用することができます。
+			</p>
+
+<div class="titlebox2">
+<p>
+Path.read_bytes()
+</p>
+</div>
+
+			<p>
+			パスが示すファイルの内容を bytes オブジェクトで取得します。
+			</p>
+
+<div class="titlebox2">
+<p>
+Path.write_bytes(data)
+</p>
+</div>
+
+			<p>
+			パスが示すファイルへ引数で指定した bytes オブジェクトをお書き込みます。
+			</p>
+
+			<p>
+			次のように記述することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+p.write_bytes(b'ABCDEFG')
+
+data = p.read_bytes()
+print(data)
+<span class="bold">&gt;&gt; b'ABCDEFG'</span>
+</pre>
+</div>
+
+			<p>
+			一度に読み込むデータのバイト数を指定したい場合には、従来の方法と同じくファイルオブジェクトに対して read メソッドなどを使用します。(詳しくは「<a href="index4.html" tppabs="https://www.javadrive.jp/python/file/index4.html">バイナリファイルの読み込みと書き込み</a>」を参照されてください)。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 sample12-1.py という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import pathlib
+
+p = pathlib.Path('./test/name.txt')
+data = p.read_text()
+
+print(data.split('\n'))
+</pre>
+</div>
+
+			<p>
+			プログラムと同じディレクトリの中に test という名前のディレクトリがあり、 test ディレクトリの中に name.txt ファイルが含まれています。
+			</p>
+
+			<p>
+			<img src="img/p12-1.png" tppabs="https://www.javadrive.jp/python/file/img/p12-1.png" alt="pathlibモジュールを使ったファイルの読み書き(1)" width="728" height="380">
+			</p>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+python sample12-1.py
+</p>
+</div>
+
+			<p>
+			<img src="img/p12-2.png" tppabs="https://www.javadrive.jp/python/file/img/p12-2.png" alt="pathlibモジュールを使ったファイルの読み書き(2)" width="723" height="352">
+			</p>
+
+			<p>
+			指定したファイルの内容を読み取り、改行文字を区切りとして行ごとに要素として追加したリストを作成しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			pathlib モジュールを使ったファイルの読み書きを行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

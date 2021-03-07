@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | イベントハンドラを登録するコードの記述位置に関する注意と対処方法</title>
+<meta name="description" content="要素のプロパティに対してイベントハンドラを登録したり、 addEventListener メソッドを使ってイベントリスナーを登録するための JavaScript のコードが、 HTML ページの中で対象の要素が記述されている位置よりも前にある場合にはエラーが発生する可能性があります。その為、ヘッダー部分で JavaScript のコードを読みこむ場合には注意が必要です。ここではイベントハンドラを登録するコードの記述位置に関する注意と対象方法について解説します。">
+
+<meta property="og:title" content="イベントハンドラを登録するコードの記述位置に関する注意と対処方法">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/event/index7.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/event/img/p7-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="要素のプロパティに対してイベントハンドラを登録したり、 addEventListener メソッドを使ってイベントリスナーを登録するための JavaScript のコードが、 HTML ページの中で対象の要素が記述されている位置よりも前にある場合にはエラーが発生する可能性があります。その為、ヘッダー部分で JavaScript のコードを読みこむ場合には注意が必要です。ここではイベントハンドラを登録するコードの記述位置に関する注意と対象方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "イベント処理",
+    "item": "https://www.javadrive.jp/javascript/event/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/event/">イベント処理</a></li>
+				</ul>
+			</div>
+
+			<h1>イベントハンドラを登録するコードの記述位置に関する注意と対処方法</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			要素のプロパティに対してイベントハンドラを登録したり、 addEventListener メソッドを使ってイベントリスナーを登録するための JavaScript のコードが、 HTML ページの中で対象の要素が記述されている位置よりも前にある場合にはエラーが発生する可能性があります。その為、ヘッダー部分で JavaScript のコードを読みこむ場合には注意が必要です。ここではイベントハンドラを登録するコードの記述位置に関する注意と対象方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">コードの記述する位置によってエラーが発生する理由</a></li>
+			<li><a href="#section2">JavaScriptのコードをHTMLページの末尾に記述する</a></li>
+			<li><a href="#section3">DOMContentLoadedイベントを利用する</a></li>
+			<li><a href="#section4">loadイベントを利用する</a></li>
+			<li><a href="#section5">scriptタグでdefer属性を設定する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">コードの記述する位置によってエラーが発生する理由</a></h2>
+
+			<p>
+			ここでは例として addEventListener を使ってイベントリスナーを登録する場合で解説していきます。プロパティを使ってイベントハンドラを登録する場合も同じです。
+			</p>
+
+			<p>
+			これまでは addEventListener メソッドを使って click イベントのイベントリスナーを登録するには次のように記述していました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', function(){
+        console.log('Hello');
+    });
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			では input タグと script タグの順序を入れ替えるとどうなるでしょうか。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;script&gt;
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', function(){
+        console.log('Hello');
+    });
+&lt;/script&gt;
+
+&lt;input type="button" value="button" id="xxx"&gt;
+</pre>
+</div>
+
+			<p>
+			すると HTML ページへアクセスした時点で次のようなエラーが表示されます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+<span class="bold">&gt;&gt;</span> <span class="redbold">TypeError: Cannot read property 'addEventListener' of null</span>
+</pre>
+</div>
+
+			<p>
+			エラーとなる理由は次のとおりです。
+			</p>
+
+			<p>
+			HTML ページはファイルのダウンロードが終わったあと、 HTML ページに記述されている内容をページの先頭から順にパース(解析)して DOM ツリーを構築します。そして HTML ページの中に &lt;script&gt; タグがあると、パースをいったん停止して &lt;script&gt; タグの中の JavaScript のコードが実行されます。(詳しくは「<a href="../before/index7.html" tppabs="https://www.javadrive.jp/javascript/before/index7.html">JavaScriptのコードをHTMLファイルのどこに記述するべきなのか</a>」を参照されてください)。
+			</p>
+
+			<p>
+			&lt;script&gt; タグの中では最初に getElementById メソッドを使って id 属性が 'xxx' の要素ノードを取得しようとしますが、この要素は &lt;script&gt; よりも後に記述されているため、まだパースが行われておらず見つけることができません。その結果、変数 button には null が格納されます。
+			</p>
+
+			<p>
+			そして次の文で addEventListener メソッドを実行しようとしますが、ターゲットである変数 button には null が格納されているため先ほどのエラーが発生します。
+			</p>
+
+			<p>
+			これは外部のファイルに JavaScript のコードを記述し、そのファイルを読み込んでいる場合でも同じです。 &lt;script&gt; タグでファイルの読み込みを行っている場合もパースをいったん停止してファイルの読み込みを行い、読み込みが完了したあとで JavaScript のコードが実行されるため、まだパースが行われていない input タグを見つけられずにターゲットが null になってしまいます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;script src="./main.js"&gt;&lt;/script&gt;
+
+&lt;input type="button" value="button" id="xxx"&gt;
+</pre>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<pre>
+main.js
+</pre>
+</div>
+
+<div class="titlebox1 titlebox-bottom">
+<pre>
+let button = document.getElementById('xxx');
+button.addEventListener('click', function(){
+    console.log('Hello');
+});
+</pre>
+</div>
+
+			<p>
+			このように JavaScript のコードを記述する位置によってはエラーが発生してしまいます。このエラーを回避する 3 つの方法をこのあと解説します。
+			</p>
+
+<h2><a id="section2">JavaScriptのコードをHTMLページの末尾に記述する</a></h2>
+
+			<p>
+			一つ目の方法はこれまでのサンプルでも行ってきたようにターゲットとなる要素を HTML ページで先に記述し、それよりもあとで &lt;script&gt; を記述することです。
+			</p>
+
+			<p>
+			先ほども解説したように HTML ページのパースはページの先頭から順に行っていきます。要素の記述はページ内の表示される位置に記述する必要がありますので、 JavaScript のコードを要素よりもあとへ、例えば HTML ページの末尾である &lt;/body&gt; の直前に記述すれば先ほどのようなエラーは起こりません。
+			</p>
+
+			<p>
+			JavaScript のコードの記述位置に特に制限がなければ一番簡単な方法です。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;p&gt;ログに文字列が出力されます。&lt;/p&gt;
+
+&lt;!-- JavaScriptのコードは末尾に記述する --&gt;
+&lt;script src="./main.js"&gt;&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<pre>
+main.js
+</pre>
+</div>
+
+<div class="titlebox1 titlebox-bottom">
+<pre>
+let button = document.getElementById('xxx');
+button.addEventListener('click', function(){
+    console.log('Hello');
+});
+</pre>
+</div>
+
+			<p>
+			ボタンをクリックすると 'Hello' をコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/javascript/event/img/p7-1.png" alt="JavaScriptのコードをHTMLページの末尾に記述する(1)" width="728" height="460" class="waku">
+			</p>
+
+<h2><a id="section3">DOMContentLoadedイベントを利用する</a></h2>
+
+			<p>
+			ここからはターゲットなる要素よりも前に &lt;script&gt; タグを記述したい場合の方法です。例えば &lt;head&gt; タグ内に &lt;script&gt; タグを記述したい場合に利用できます。
+			</p>
+
+			<p>
+			エラーが発生する理由がターゲットの要素がまだパースされていない状態で参照しようするためなので、 JavaScript のコードは先に記述してあっても実行するのをターゲットの要素のパースが終わって DOM ツリーが完成したあとまで伸ばすことでエラーが発生されないようにすることができます。
+			</p>
+
+			<p>
+			HTML ページのパースが完了し DOM ツリーが完成すると document.DOMContentLoaded というイベントが発生します。このイベントのイベントリスナーとして HTML ページ内の要素に対するイベント処理を行う JavaScript のコードを記述することで、 JavaScript のコードの実行を DOM ツリーが完成したあとまで延期することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;head&gt;
+&lt;script&gt;
+    <span class="red">document.addEventListener('DOMContentLoaded', function(){</span>
+        let button = document.getElementById('xxx');
+        button.addEventListener('click', function(){
+            console.log('Thank you');
+        });
+    <span class="red">});</span>
+&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;input type="button" value="button" id="xxx"&gt;
+&lt;/body&gt;
+</pre>
+</div>
+
+			<p>
+			DOMContentLoaded イベントが発生すると、イベントリスナーとして登録したコードが実行され、ターゲットの要素の取得と click イベントへのイベントリスナーの登録が実行されます。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+
+&lt;script src="./main.js"&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;p&gt;ログに文字列が出力されます。&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<pre>
+main.js
+</pre>
+</div>
+
+<div class="titlebox1 titlebox-bottom">
+<pre>
+document.addEventListener('DOMContentLoaded', function(){
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', function(){
+        console.log('Thank you');
+    });
+});
+</pre>
+</div>
+
+			<p>
+			ボタンをクリックすると 'Thank you' をコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/javascript/event/img/p7-2.png" alt="DOMContentLoadedイベントを利用する(1)" width="728" height="460" class="waku">
+			</p>
+
+<h2><a id="section4">loadイベントを利用する</a></h2>
+
+			<p>
+			DOMContentLoaded イベントは document オブジェクトで発生します。 document オブジェクトには ondomcontentloaded プロパティが存在しないため、プロパティを使ったイベントハンドラの設定を行う方法は使用できません。 addEventListener メソッドが使用できない場合には、代わりに window オブジェクトで発生する load イベントを使用してください。
+			</p>
+
+			<p>
+			DOM ツリーの構築が完了すると DOMContentLoaded イベントが発生しますが、そのあとで画像やスタイルシートなどすべてのリソースの読み込みが完了すると load イベントが発生します。順番としては先に DOMContentLoaded イベントが発生し、そのあとで load イベントが発生します。 load イベントが発生した時点では DOM
+			 ツリーはすでに完成していますので、どの要素も参照することができます。
+			</p>
+
+			<p>
+			window オブジェクトの onload プロパティに対するイベントハンドラとして HTML ページ内の要素に対するイベント処理を行う JavaScript のコードを記述することで、 JavaScript のコードの実行を load イベントが発生したあとまで延期することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;head&gt;
+&lt;script&gt;
+    <span class="red">window.onload = function(){</span>
+        let button = document.getElementById('xxx');
+        button.onclick = function(){
+            console.log('How are you?');
+        };
+    <span class="red">};</span>
+&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;input type="button" value="button" id="xxx"&gt;
+&lt;/body&gt;
+</pre>
+</div>
+
+			<p>
+			load イベントが発生すると、イベントハンドラとして登録したコードが実行され、ターゲットの要素の取得と click イベントへのイベントハンドラの登録が実行されます。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+
+&lt;script src="./main.js"&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;p&gt;ログに文字列が出力されます。&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<pre>
+main.js
+</pre>
+</div>
+
+<div class="titlebox1 titlebox-bottom">
+<pre>
+window.onload = function(){
+    let button = document.getElementById('xxx');
+    button.onclick = function(){
+        console.log('How are you?');
+    };
+};
+</pre>
+</div>
+
+			<p>
+			ボタンをクリックすると 'How are you?' をコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p7-3.png" tppabs="https://www.javadrive.jp/javascript/event/img/p7-3.png" alt="loadイベントを利用する(1)" width="728" height="460" class="waku">
+			</p>
+
+<h2><a id="section5">scriptタグでdefer属性を設定する</a></h2>
+
+			<p>
+			最後の方法は script タグで defer 属性を設定する方法です。この方法は JavaScript のコードを記述した外部のファイルを読み込む場合にだけ利用できます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;head&gt;
+&lt;script <span class="red">defer</span> src="./main.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;input type="button" value="button" id="xxx"&gt;
+&lt;/body&gt;
+</pre>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<pre>
+main.js
+</pre>
+</div>
+
+<div class="titlebox1 titlebox-bottom">
+<pre>
+let button = document.getElementById('xxx');
+button.addEventListener('click', function(){
+    console.log('Bye');
+});
+</pre>
+</div>
+
+			<p>
+			defer 属性を設定された script タグで読み込まれた外部の JavaScript のファイルに記述されたコードは、すぐに実行されるのではなく DOM ツリーの構築が完了し DOMContentLoaded イベントが発生する直前に実行されます。
+			</p>
+
+			<p>
+			コードが実行されるときには DOM ツリーが完成しておりどの要素も参照できますので、特別なコードを追加することなくイベントリスナーやイベントハンドラの登録を行うこととができます。
+			</p>
+
+			<p>
+			※ defer 属性について詳しくは「<a href="../before/index8.html" tppabs="https://www.javadrive.jp/javascript/before/index8.html">JavaScriptの外部ファイルを非同期で読み込む(async属性,defer属性)</a>」を参照されてください。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+
+&lt;script defer src="./main.js"&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;p&gt;ログに文字列が出力されます。&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<pre>
+main.js
+</pre>
+</div>
+
+<div class="titlebox1 titlebox-bottom">
+<pre>
+let button = document.getElementById('xxx');
+button.addEventListener('click', function(){
+    console.log('Bye');
+});
+</pre>
+</div>
+
+			<p>
+			ボタンをクリックすると 'Bye' をコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p7-4.png" tppabs="https://www.javadrive.jp/javascript/event/img/p7-4.png" alt="scriptタグでdefer属性を設定する(1)" width="728" height="460" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			イベントハンドラを登録するコードの記述位置に関する注意と対象方法について解説します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

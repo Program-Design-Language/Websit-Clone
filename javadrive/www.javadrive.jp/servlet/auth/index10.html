@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>セッションを使ったカスタム認証(ログイン画面) - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="ログイン画面,カスタム認証,ユーザー認証,サーブレット" />
+<meta name="description" content="セッションを使ったカスタム認証(ログイン画面)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>セッションを使ったカスタム認証(ログイン画面)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前回中身を省略したログイン画面を作成してみます。
+			</p>
+
+			<p>
+			基本的にはFORM認証の時に作成したログイン用のHTMLページとほぼ同じ内容のものです。フォームの送信先が自分で作成したサーブレットである点と、HTMLページではなくサーブレットで行っている点が違うくらいです。
+			</p>
+
+			<p>
+			またログインに失敗した場合も同じサーブレットを再度呼び出します。その時、エラーメッセージを表示出来るようにしておきましょう。これもセッションを使います。
+			</p>
+
+			<p>
+			<a href="Login2.java.htm" tppabs="https://www.javadrive.jp/servlet/auth/Login2.java">Login2.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Login2 extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;ログインページ&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;h1&gt;ログイン画面&lt;/h1&gt;");
+
+    HttpSession session = request.getSession(true);
+
+    /* 認証失敗から呼び出されたのかどうか */
+    Object status = session.getAttribute("status");
+
+    if (status != null){
+      out.println("&lt;p&gt;認証に失敗しました&lt;/p&gt;");
+      out.println("&lt;p&gt;再度ユーザー名とパスワードを入力して下さい&lt;/p&gt;");
+
+      session.setAttribute("status", null);
+    }
+
+    out.println("&lt;form method=&yen;"POST&yen;" action=&yen;"/auth/LoginCheck&yen;" name=&yen;"loginform&yen;"&gt;");
+    out.println("&lt;table&gt;");
+    out.println("&lt;tr&gt;");
+    out.println("&lt;td&gt;ユーザー名&lt;/td&gt;");
+    out.println("&lt;td&gt;&lt;input type=&yen;"text&yen;" name=&yen;"user&yen;" size=&yen;"32&yen;"&gt;&lt;/td&gt;");
+    out.println("&lt;/tr&gt;");
+    out.println("&lt;tr&gt;");
+    out.println("&lt;td&gt;パスワード&lt;/td&gt;");
+    out.println("&lt;td&gt;&lt;input type=&yen;"password&yen;" name=&yen;"pass&yen;" size=&yen;"32&yen;"&gt;&lt;/td&gt;");
+    out.println("&lt;/tr&gt;");
+    out.println("&lt;tr&gt;");
+    out.println("&lt;td&gt;&lt;input type=&yen;"submit&yen;" value=&yen;"login&yen;"&gt;&lt;/td&gt;");
+    out.println("&lt;td&gt;&lt;input type=&yen;"reset&yen;" value=&yen;"reset&yen;"&gt;&lt;/td&gt;");
+    out.println("&lt;/tr&gt;");
+    out.println("&lt;/table&gt;");
+    out.println("&lt;/form&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			フォームを表示する前に、セッションに含まれる「status」の値を調べます。「status」に何か入っていた場合は一度認証に失敗し再度表示されて場合ですので、エラーメッセージを表示するようにします。
+			</p>
+
+			<h2>認証チェックサーブレット</h2>
+
+			<p>
+			先ほどのフォームからPOSTの送信先が「LoginCheck」サーブレットです。本来は入力されたユーザー名とパスワードを元にデータベースを検索し、ユーザーが存在するかどうかを確認するのですが、今回は暫定のためユーザー名とパスワードの両方に値が入力されていれば認証OKとします。
+			</p>
+
+			<p>
+			認証OKであれば、セッションの「login」に値を設定して、本来アクセスするはずだったURLへリダイレクトします。認証に失敗した場合はセッションの「status」に値を設定して「Login」サーブレットを再度読み出します。
+			</p>
+
+			<p>
+			<a href="LoginCheck1.java" tppabs="https://www.javadrive.jp/servlet/auth/LoginCheck1.java">LoginCheck1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class LoginCheck1 extends HttpServlet {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    String user = request.getParameter("user");
+    String pass = request.getParameter("pass");
+
+    HttpSession session = request.getSession(true);
+
+    boolean check = authUser(user, pass);
+    if (check){
+      /* 認証済みにセット */
+      session.setAttribute("login", "OK");
+
+      /* 本来のアクセス先へ飛ばす */
+      String target = (String)session.getAttribute("target");
+      response.sendRedirect(target);
+    }else{
+      /* 認証に失敗したら、ログイン画面に戻す */
+      session.setAttribute("status", "Not Auth");
+      response.sendRedirect("/auth/Login");
+    }
+  }
+
+  protected boolean authUser(String user, String pass){
+    /* 取りあえずユーザー名とパスワードが入力されていれば認証する */
+    if (user == null || user.length() == 0 || pass == null || pass.length() == 0){
+      return false;
+    }
+
+    return true;
+  }
+}
+</pre>
+
+			<h2>実際に試してみる</h2>
+
+			<p>
+			ではこの時点でのテストを行っておきます。
+			</p>
+
+			<p>
+			web.xmlファイルを次のように修正して下さい。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;CustomAuth1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;CustomAuth1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;CustomAuth1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/CustomAuth1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;CustomAuth2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;CustomAuth2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;CustomAuth2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/CustomAuth2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;Login&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;Login2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;Login&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/Login&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;LoginCheck&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;LoginCheck1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;LoginCheck&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/LoginCheck&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/CustomAuth1」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p32.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p32.png" alt="カスタム認証" width="498" height="402">
+			</p>
+
+			<p>
+			「CustomAuth1」サーブレットへアクセスしてもセッションに必要な情報が保存されていませんので「Login」サーブレットへリダイレクトされます。今回はログインフォームが表示されます。
+			</p>
+
+			<p>
+			では先に認証失敗する方を試してみます。ユーザー名だけに値を入力してパスワードは空欄のままで「login」ボタンをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p33.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p33.png" alt="カスタム認証" width="499" height="399">
+			</p>
+
+			<p>
+			すると「LoginCheck」サーブレットが呼ばれますが、認証に失敗するので再度ログイン画面が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p34.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p34.png" alt="カスタム認証" width="498" height="399">
+			</p>
+
+			<p>
+			一度認証に失敗しているのでエラーメッセージも画面に表示されています。
+			</p>
+
+			<p>
+			では今度はユーザー名とパスワードに値を入力してから「login」ボタンをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p35.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p35.png" alt="カスタム認証" width="497" height="401">
+			</p>
+
+			<p>
+			「LoginCheck」サーブレットが呼ばれ、認証に通りますのでセッションに値を設定したあと本来呼び出したサーブレットへリダイレクトされます。今度はセッションに適切な値が設定してあるため、表示が行われます。
+			</p>
+
+			<p>
+			<img src="img/p36.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p36.png" alt="カスタム認証" width="495" height="399">
+			</p>
+
+			<p>
+			それでは次のページでデータベースを使ってユーザーの認証を行ってみます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

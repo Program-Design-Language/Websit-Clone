@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマンドプロンプト | バッチファイルで繰り返し処理を使う(FOR)</title>
+<meta name="description" content="バッチファイルでは FOR コマンドを使用して繰り返しコマンドを実行させることができます。ディレクトリ内にあるファイルの数だけ繰り返したり、指定した範囲で数値を変化させながら繰り返したりすることができます。ここでは FOR コマンドを使いバッチファイルの中で繰り返し処理を行う方法について解説します。">
+
+<meta property="og:title" content="バッチファイルで繰り返し処理を使う(FOR)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/command/bat/index9.html">
+<meta property="og:image" content="https://www.javadrive.jp/command/bat/img/p9-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="バッチファイルでは FOR コマンドを使用して繰り返しコマンドを実行させることができます。ディレクトリ内にあるファイルの数だけ繰り返したり、指定した範囲で数値を変化させながら繰り返したりすることができます。ここでは FOR コマンドを使いバッチファイルの中で繰り返し処理を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "コマンドプロンプトの使い方",
+    "item": "https://www.javadrive.jp/command/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "バッチファイルの作成",
+    "item": "https://www.javadrive.jp/command/bat/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/command/">コマンドプロンプトの使い方</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/command/bat/">バッチファイルの作成</a></li>
+				</ul>
+			</div>
+
+			<h1>バッチファイルで繰り返し処理を使う(FOR)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			バッチファイルでは FOR コマンドを使用して繰り返しコマンドを実行させることができます。ディレクトリ内にあるファイルの数だけ繰り返したり、指定した範囲で数値を変化させながら繰り返したりすることができます。ここでは FOR コマンドを使いバッチファイルの中で繰り返し処理を行う方法について解説します。
+			</p>
+
+			<p>
+			※ FOR コマンドを使ってテキストファイルの内容を読み込み、トークンに分割して繰り返し処理を行う方法については「<a href="index10.html" tppabs="https://www.javadrive.jp/command/bat/index10.html">テキストファイルの内容を区切り文字でトークンに分解し繰り返し処理を使う(FOR)</a>」で解説しています。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">FORコマンドの使い方</a></li>
+			<li><a href="#section2">数値を変化させて繰り返す</a></li>
+			<li><a href="#section3">指定した複数のファイル名の分だけ繰り返す</a></li>
+			<li><a href="#section4">カレントディレクトリにあるファイルの分だけ繰り返す</a></li>
+			<li><a href="#section5">カレントディレクトリにあるディレクトリの分だけ繰り返す</a></li>
+			<li><a href="#section6">サブディレクトリに含まれるファイルも含めて繰り返す</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">FORコマンドの使い方</a></h2>
+
+			<p>
+			FOR コマンドにはいくつか書式がありますが、基本となる記述方法は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR (オプション) %%変数 IN (セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			繰り返し処理の流れは次の通りです。セットにはファイルの一覧や数値の範囲を指定します。ここから1つ値を取り出し、変数に設定してからコマンドを一回実行します。そして次の値をセットから取り出し同じように変数に設定してコマンドを実行していきます。セットから値を取り出し終われば繰り返し処理は終了です。
+			</p>
+
+			<p>
+			FOR コマンドの中で使用する変数は、コマンドラインで使用する場合は %変数 と記述し、バッチファイルの中で使用する場合は %%変数 と記述してください。変数名は任意のものではなく1文字のアルファベット(例えば n とか i など)を使います。大文字と小文字は区別されます。
+			</p>
+
+			<p>
+			実行するコマンドについては括弧()をつけて複数行に分けて記述することもできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR (オプション) %%変数 IN (セット) DO (<br>
+&nbsp;&nbsp;コマンド1<br>
+&nbsp;&nbsp;コマンド2<br>
+)
+</p>
+</div>
+
+			<p>
+			それでは繰り返し処理の記述の仕方をみていきます。
+			</p>
+
+<h2><a id="section2">数値を変化させて繰り返す</a></h2>
+
+			<p>
+			最初に数値を開始から終了まで変化させて繰り返しを行う方法です。次の書式を使います。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /L %%変数 IN (開始,ステップ,終了) DO コマンド
+</p>
+</div>
+
+			<p>
+			セットには開始する数値、終了する数値、そして変化させる数値を指定します。例えば1から初めて10まで1つずつ変化させる場合は (1,1,10) となります。
+			</p>
+
+<div class="titlebox2">
+<p>
+(1,1,10) の場合<br>
+1,2,3,4,5,6,7,8,9,10
+</p>
+</div>
+
+			<p>
+			また8から初めて20まで2つずつ変化させる場合は (8,2,20) となります。
+			</p>
+
+<div class="titlebox2">
+<p>
+(8,2,20) の場合<br>
+8,10,12,14,16,18,20
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /l %%n in (1,1,10) do (<br>
+&nbsp;&nbsp;echo n = %%n<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると変数 n に1から10までの数値を順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p9-1.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-1.png" alt="数値を変化させて繰り返す(1)" width="723" height="352">
+			</p>
+
+<h2><a id="section3">指定した複数のファイル名の分だけ繰り返す</a></h2>
+
+			<p>
+			指定した複数のファイル名を順に変数に格納しながら繰り返しを行います。オプション無しの次の書式を使います。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR %%変数 IN (セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			セットには複数のファイルを記述します。区切り文字としては半角スペース、カンマ(,)、セミコロン(;)、等号(=)が使用できます。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for %%f in (note.txt memo.txt report.doc) do (<br>
+&nbsp;&nbsp;echo filename = %%f<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると変数 f に指定したファイル名を順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p9-2.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-2.png" alt="指定した複数のファイル名の分だけ繰り返す(1)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			ワイルドカードを使用せずにファイル名を指定した場合は、セットに指定した文字列を順に変数に格納しながら繰り返しを行っているだけなので、セットに記述するものはファイル名ではなく単なる文字列でも構いません。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+set answer=<br>
+set /p answer=曜日を1つ答えてください<br>
+<br>
+for %%f in (Sun Mon Tue Wed Thu Fri Sat) do (<br>
+&nbsp;&nbsp;if %answer%==%%f (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo 正解です！<br>
+&nbsp;&nbsp;&nbsp;&nbsp;goto end<br>
+&nbsp;&nbsp;)<br>
+)<br>
+echo 不正解でした<br>
+<br>
+:end
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると質問が表示されてユーザーからの回答待ちになります。
+			</p>
+
+			<p>
+			<img src="img/p9-3.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-3.png" alt="指定した複数のファイル名の分だけ繰り返す(2)" width="723" height="352">
+			</p>
+
+			<p>
+			繰り返し処理のなかで、IF コマンドを使って入力された値とセットに指定した文字列と順に比較します。一致するものがあればメッセージを表示して終了します。最後まで一致しなかった場合は別のメッセージを表示して終了します。
+			</p>
+
+			<p>
+			<img src="img/p9-4.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-4.png" alt="指定した複数のファイル名の分だけ繰り返す(3)" width="723" height="352">
+			</p>
+
+			<p>
+			IF コマンドの使い方については「<a href="index8.html" tppabs="https://www.javadrive.jp/command/bat/index8.html">バッチファイルで条件分岐を使う(IF)</a>」を参照されてください。
+			</p>
+
+<h2><a id="section4">カレントディレクトリにあるファイルの分だけ繰り返す</a></h2>
+
+			<p>
+			先程は複数のファイルを列挙して指定しましたが、カレントディレクトリにあるワイルドカードを使って指定したファイルを順に取り出して繰り返し処理を行うこともできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR %%変数 IN (セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			例えばカレントディレクトリにある拡張子が .txt のファイルを順に取り出して繰り返しを行うには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR %%変数 IN (*.txt) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for %%f in (*.txt) do (<br>
+&nbsp;&nbsp;echo filename = %%f<br>
+&nbsp;&nbsp;copy %%f c:\test\backup &gt; nul<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、カレントディレクトリにある拡張子が .txt のファイルを変数 f に順に格納しながらコマンドを実行します。今回はファイル名を画面に出力し、その後で指定したディレクトリにファイルをコピーしています。
+			</p>
+
+			<p>
+			<img src="img/p9-5.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-5.png" alt="カレントディレクトリにあるファイルの分だけ繰り返す(1)" width="723" height="352">
+			</p>
+
+<h2><a id="section5">カレントディレクトリにあるディレクトリの分だけ繰り返す</a></h2>
+
+			<p>
+			カレントディレクトリにあるワイルドカードを使って指定したディレクトリを順に取り出して繰り返し処理を行うこともできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /D %%変数 IN (セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			例えばカレントディレクトリにある d から始まるサブディレクトリを順に取り出して繰り返しを行うには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /D %%変数 IN (d*) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /d %%d in (*) do (<br>
+&nbsp;&nbsp;echo dirname = %%d<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、カレントディレクトリに全てのサブディレクトリをを変数 d に順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p9-6.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-6.png" alt="カレントディレクトリにあるディレクトリの分だけ繰り返す(1)" width="723" height="352">
+			</p>
+
+<h2><a id="section6">サブディレクトリに含まれるファイルも含めて繰り返す</a></h2>
+
+			<p>
+			指定したディレクトリに含まれるファイルに加えてサブディレクトリに含まれるファイルを含めてワイルドカードを使って指定したファイルを順に取り出して繰り返し処理を行うこともできます。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /R [[ドライブ:]パス] %%変数 IN (セット) DO コマンド
+</p>
+</div>
+
+			<p>
+			パスを指定した場合はカレントディレクトリが対象となります。例えば D:\test ディレクトリにある拡張子が .txt のファイルを順に取り出して繰り返しを行うには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+FOR /R D:\test %%変数 IN (*.txt) DO コマンド
+</p>
+</div>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /r d:\test %%f in (*.txt) do (<br>
+&nbsp;&nbsp;echo filename = %%f<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、指定したディレクトリおよびサブディレクトリにある拡張子が .txt のファイルを変数 f に順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p9-7.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-7.png" alt="サブディレクトリに含まれるファイルも含めて繰り返す(1)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			この書式を使う場合、セットにピリオド(.)だけを指定すると、対象のディレクトリを起点としたディレクトリツリーの情報が変数に格納されながら繰り返しが行われます。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル for.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+<br>
+for /r d:\test %%d in (.) do (<br>
+&nbsp;&nbsp;echo dirname = %%d<br>
+)
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、指定したディレクトリおよびサブディレクトリのディレクトリ名を変数 d に順に格納しながらコマンドを実行します。
+			</p>
+
+			<p>
+			<img src="img/p9-8.png" tppabs="https://www.javadrive.jp/command/bat/img/p9-8.png" alt="サブディレクトリに含まれるファイルも含めて繰り返す(2)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			FOR コマンドを使ってバッチファイルの中で繰り返し処理を行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

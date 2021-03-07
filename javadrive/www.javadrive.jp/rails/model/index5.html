@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マイグレーション機能とは - Ruby on Rails入門</title>
+<meta name="keywords" content="マイグレーション機能とは" />
+<meta name="description" content="Railsにおけるマイグレーションとは何なのかについて解説を行い、使用可能なメソッドの一覧をご紹介します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/model/" itemprop="url"><span itemprop="title">モデルとデータベース</span></a></li>
+		</ul>
+</div>
+
+			<h1>マイグレーション機能とは</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Railsではマイグレーションと呼ばれる機能を使いテーブルを新規に作成したりカラムやインデックスの追加といった変更を行ないます。ここではまずマイグレーションとはどういうものなのかについて解説し、使用可能なメソッドの一覧をご紹介します。
+			</p>
+
+			<p>
+			1.<a href="#section1">Railsにおけるマイグレーションとは</a><br />
+			2.<a href="#section2">up、down、changeメソッド</a><br />
+			3.<a href="#section3">マイグレーション用メソッド</a><br />
+			</p>
+
+<h2><a id="section1">Railsにおけるマイグレーションとは</a></h2>
+
+			<p>
+			まずはマイグレーションとは何なのかについて簡単にご説明します。
+			</p>
+
+			<p>
+			通常テーブルを新規に作成するには必要なSQL文を直接実行して作成します。カラムを追加したりする場合も同じです。それに対してマイグレーションを使う場合はテーブルを新規に作成するためのマイグレーションスクリプトと呼ばれるスクリプトファイルを作成し実行します。後からカラムを追加したい場合には、カラムを追加するための別のスクリプトファイルを作成し実行します。
+			</p>
+
+			<p>
+			スクリプトファイルはRailsで決められた文法で記述するのですが、使用しているデータベースがMySQLであってもSQLiteであっても同じ記述が対応できます。またスクリプトファイルは作成された順に残っていますので、最初のものから順に実行することでまったく同じテーブルを簡単に作成できます。
+			</p>
+
+			<p>
+			SQL文を使う場合(MySQL)：
+			</p>
+
+<pre class="fixcode">
+create table sampledb.personal(name varchar(20));
+</pre>
+
+			<p>
+			マイグレーションスクリプトの場合：
+			</p>
+
+<pre class="fixcode">
+class CreatePersonals &lt; ActiveRecord::Migration
+  def change
+    create_table :titles do |t|
+      t.string :name
+    end
+  end
+end
+</pre>
+
+			<p>
+			さらにスクリプトファイルには、そのスクリプトで実行する処理と逆の処理を行なうスクリプトを合わせて記述しておくことになっています。その為、そのスクリプトによって変更された処理はあとから同じスクリプトファイルを使って元に戻すことができます。
+			</p>
+
+			<p>
+			<img src="img/p5-1.png" tppabs="https://www.javadrive.jp/rails/model/img/p5-1.png" alt="p5-1" width="417" height="307" />
+			</p>
+
+			<p>
+			マイグレーションという機能は一見すると面倒に見えますが、この機能を使うことで特定のデータベースの文法に依存せずにテーブルへ行なう操作を記述でき、変更を実施したり元に戻すといった作業が簡単に行なえるようになります。
+			</p>
+
+<h2><a id="section2">up、down、changeメソッド</a></h2>
+
+			<p>
+			それではマイグレーション機能を使ってテーブルを作成してみたいと思います。マイグレーションスクリプトは変更があるたびに新規に作成できるのですが、最初の1個であるテーブルの作成に関するものについては「<a href="index4.html" tppabs="https://www.javadrive.jp/rails/model/index4.html">モデルの作成とRailsで指定可能なデータ型</a>」でご紹介した通りモデルを作成する時に自動的に作成されます。
+			</p>
+
+			<p>
+			作成されたファイルは「db/migrate」ディレクトリ内に保存されます。
+			</p>
+
+			<p>
+			<img src="img/p5-2.png" tppabs="https://www.javadrive.jp/rails/model/img/p5-2.png" alt="p5-2" width="542" height="378" />
+			</p>
+
+			<p>
+			マイグレーションスクリプトのファイル名は「20120414110430_create_titles.rb」のように作成された時の「年月日時分秒日付」が頭に付いたファイル名となっています。複数のマイグレーションスクリプトを作成した場合も、ファイル名を見ればどのような順序で実行されたのか簡単に確認できます。
+			</p>
+
+			<p>
+			では改めてマイグレーションスクリプトファイルの中身を見てみます(SQLite用のサンプルで作った方です)。
+			</p>
+
+<pre class="fixcode">
+class CreateTitles &lt; ActiveRecord::Migration
+  def change
+    create_table :titles do |t|
+
+      t.timestamps
+    end
+  end
+end
+</pre>
+
+			<p>
+			ActiveRecord::Migrationを継承したクラスが定義されています。クラス名は「CreateTitles」となっていますが、クラス名の付け方はまたあとでご説明します。
+			</p>
+
+			<p>
+			クラスに含まれるメソッドは通常次のどちらかとなります。まず1つ目の構成です。
+			</p>
+
+<pre class="fixcomment">
+class クラス名 &lt; ActiveRecord::Migration
+  def up
+     ...
+  end
+
+  def down
+     ...
+  end
+end
+</pre>
+
+			<p>
+			このページの最初のほうで記載したとおり、マイグレーションスクリプトにはカラムを追加する記述を行なった場合は、その反対となる記述も合わせて行います。そこでupメソッドの方にカラムを追加するメソッドを呼び出したら、downメソッドの方でカラムを削除するメソッドを呼び出します。
+			</p>
+
+<pre class="fixcode">
+class AddNameToTitles &lt; ActiveRecord::Migration
+  def up
+     add_column :title, :name, :string
+  end
+
+  def down
+     remove_column :title, :name
+  end
+end
+</pre>
+
+			<p>
+			もう一つは次のような構成です。
+			</p>
+
+<pre class="fixcomment">
+class クラス名 &lt; ActiveRecord::Migration
+  def change
+     ...
+  end
+end
+</pre>
+
+			<p>
+			先程の例のように、upメソッドで「add_xxx」文を実行しdownメソッドで「remove_xxx」文を実行しているような場合は、まとめてchangeメソッドを使って次のように記述できます。
+			</p>
+
+<pre class="fixcode">
+class AddNameToTitles &lt; ActiveRecord::Migration
+  def change
+     add_column :title, :name, :string
+  end
+end
+</pre>
+
+			<p>
+			テーブルを作成するための「create_table」を使う場合もchangeメソッドを使って記述します。自動で作成されたマイグレーションスクリプトはこの構成となっています。
+			</p>
+
+<pre class="fixcode">
+class CreateTitles &lt; ActiveRecord::Migration
+  def change
+    create_table :titles do |t|
+
+      t.timestamps
+    end
+  end
+end
+</pre>
+
+<h2><a id="section3">マイグレーション用メソッド</a></h2>
+
+			<p>
+			テーブルに変更を加えるにはupメソッドやdownメソッドの中でマイグレーション用に用意されたメソッドを呼び出します。例えばカラムを追加したい場合は add_column メソッドを使います。ここではどのようなマイグレーションメソッドがあるのか一覧でご紹介します。
+			</p>
+
+<pre class="fixcomment">
+add_column(table_name, column_name, type, options = {})
+add_index(table_name, column_name, options = {})
+add_timestamps(table_name)
+change_column(table_name, column_name, type, options = {})
+change_column_default(table_name, column_name, default)
+change_table(table_name, options = {})
+create_table(table_name, options = {})
+drop_table(table_name, options = {})
+remove_column(table_name, *column_names)
+remove_index(table_name, options = {})
+remove_timestamps(table_name)
+rename_column(table_name, column_name, new_column_name)
+rename_index(table_name, old_name, new_name)
+rename_table(table_name, new_name)
+</pre>
+
+			<p>
+			大きくわけて「add_xxx」「change_xxx」「remove_xxx」「rename_xxx」の4つに分かれています。(create_tableとdrop_tableは別です)。今までに記述したサンプルでも次のようにマイグレーション用メソッドを呼び出していました。
+			</p>
+
+<pre class="fixcode">
+class AddNameToTitles &lt; ActiveRecord::Migration
+  def up
+     add_column :title, :name, :string
+  end
+
+  def down
+     remove_column :title, :name
+  end
+end
+</pre>
+
+			<p>
+			addd_columnメソッドの場合はテーブル名、追加するカラム名、カラムのデータ型の3つの引数を指定して呼び出しています。remove_columnメソッドの場合はテーブル名と削除するカラム名の2つの引数を指定して呼び出しています。
+			</p>
+
+			<p>
+			マイグレーションスクリプトに関する解説は以上となります。次のページではマイグレーションスクリプトを使って実際にテーブルを作成してみます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

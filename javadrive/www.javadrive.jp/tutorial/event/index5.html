@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChangeEvent - イベントモデル - Swing</title>
+<meta name="keywords" content="ChangeEvent,イベントモデル,Swing,Java" />
+<meta name="description" content="ChangeEvent" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/event/" itemprop="url"><span itemprop="title">イベントモデル</span></a></li>
+		</ul>
+</div>
+
+			<h1>ChangeEvent</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここではChangeEventについて見ていきます。
+			</p>
+
+			<p>
+			1.ChangeEventを発生させるコンポーネント:
+			</p>
+
+<pre class="fixcomment">
+JButton
+JCheckBox
+JRadioButton
+JMenuItem
+
+JSlider
+JSpinner
+
+JTabbedPane
+</pre>
+
+			<p>
+			2.イベントが発生するタイミング:
+			</p>
+
+<pre class="fixcomment">
+状態が変更になった場合
+</pre>
+
+			<p>
+			3.対応するリスナーインターフェース:
+			</p>
+
+<pre class="fixcomment">
+javax.swing.event.ChangeListener
+public interface MouseListener extends EventListener
+</pre>
+
+			<p>
+			4.コンポーネントに対するリスナーの登録メソッド:
+			</p>
+
+<pre class="fixcomment">
+addChangeListener
+public void addChangeListener(ChangeListener l)
+</pre>
+
+			<h2>ChangeListenerインターフェース</h2>
+
+			<p>
+			ChangeListenerインターフェースは、設定するコンポーネントなどにもよりますが状態が変更になった場合に発生するイベントを受け取るためのリスナーインタフェースです。JTabbedPaneの場合であればタブが切り替わった時、JSliderであればスライダーの位置が変わった時、などです。実装に必要なメソッドは1つあります。
+			</p>
+
+<pre class="mheader">
+stateChanged
+void stateChanged(ChangeEvent e)
+</pre>
+<pre class="mexplain">
+リスナーの対象の状態が変更されたときに呼び出されます。 
+
+パラメータ:
+  e - ChangeEvent オブジェクト
+</pre>
+
+			<p>
+			このリスナーインターフェースの実装方法は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+public class myListener implements ChangeListener{
+  public stateChanged(ChangeEvent e){
+    /* 処理したい内容をここに記述する */
+  }
+}
+</pre>
+
+			<p>
+			ではここで簡単なサンプルを作成して試してみます。下記では自分自身にChangeListenerをインプリメントしています。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.event.*;
+import java.awt.BorderLayout;
+
+public class SwingTest extends JFrame implements ChangeListener{
+
+  JLabel label = new JLabel("スライダーの値");
+
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+    slider.addChangeListener(this);
+
+    JPanel p = new JPanel();
+    p.add(slider);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+    getContentPane().add(label, BorderLayout.PAGE_END);
+  }
+
+  public void stateChanged(ChangeEvent e) {
+    JSlider source = (JSlider)e.getSource();
+
+    int fps = (int)source.getValue();
+    label.setText("値：" + fps);
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p27.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p27.png" alt="ChangeEvent" width="308" height="205">
+			</p>
+
+			<p>
+			スライダーを動かすとChangeEventが発生し、ラベルにスライダーの値が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p28.png" tppabs="https://www.javadrive.jp/tutorial/event/img/p28.png" alt="ChangeEvent" width="307" height="205">
+			</p>
+
+			<h2>ChangeEventクラス</h2>
+
+			<p>
+			ではChangeEventクラスについても見ていきます。クラス図を見て下さい。
+			</p>
+
+<div class="classwaku">
+<ul class="classdirectory">
+<li class="top">java.lang.Object</li>
+<li class="row1">java.util.EventObject</li>
+<li class="row2">javax.swing.event.ChangeEvent</li>
+<li class="detail">public class ChangeEvent extends EventObject</li>
+</ul>
+</div>
+
+			<p>
+			ChangeEventクラスのメソッドとしては特に用意はされていませんが、親クラスのEventObjectクラスのgetSourceメソッドが使えます。
+			</p>
+
+<pre class="mheader">
+getSource
+public Object getSource()
+</pre>
+<pre class="mexplain">
+Event が最初に発生したオブジェクトです。
+
+戻り値:
+  Event が最初に発生したオブジェクト
+</pre>
+
+			<p>
+			このメソッドを使ってChangeEventが発生した元のオブジェクトを調べることができます。
+			</p>
+
+			<p>
+			様々なコンポーネントによって使われ方が異なるので、ChangeEventでは変更があったことを通知するのみで、後はそれぞれのコンポーネントのメソッドを使って変更された状態を調べるような使われ方になるのではと思います。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

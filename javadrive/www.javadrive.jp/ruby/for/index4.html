@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>範囲オブジェクト - 繰り返し - Ruby入門</title>
+<meta name="keywords" content="範囲オブジェクト,繰り返し,ruby" />
+<meta name="description" content="範囲オブジェクト" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/ruby/" itemprop="url"><span itemprop="title">Ruby入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/ruby/for/" itemprop="url"><span itemprop="title">繰り返し</span></a></li>
+		</ul>
+</div>
+
+			<h1>範囲オブジェクト</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					範囲オブジェクトは指定した最初の値と最後の値の範囲を表すオブジェクトです。範囲オブジェクトは繰り返し処理と一緒に使用して順に値を取得したり、ある値が範囲内に含まれているかどうかを調べるために使われます。ここでは特に繰り返し処理を一緒に使用する場合に限定して確認します。
+					</p>
+
+					<p>
+					範囲オブジェクトを作成するには「..」演算子を使用します。
+					</p>
+
+<pre class="fixcomment">
+first..last
+</pre>
+
+					<p>
+					「..」演算子の左辺に最初の値を指定し右辺に最後の値を指定します。最初と最後の値には数値や文字列などのオブジェクトが指定できます。
+					</p>
+
+					<p>
+					具体的には次のように使用します。
+					</p>
+
+<pre class="fixcode">
+range1 = 5..10
+range2 = "d".."g"
+</pre>
+
+					<p>
+					変数「range1」には「5」から「10」の範囲を持つ範囲オブジェクトが代入されます。また変数「range2」には"d"から"g"の範囲を持つ範囲オブジェクトが代入されます。
+					</p>
+
+					<p>
+					最初と最後の値には任意のオブジェクトが指定できますが、最初と最後の値は大きいか小さいか等しいかなどの比較が出来るものでなければなりません。数値と数値、文字列と文字列などが一般的には利用されることが多いです。
+					</p>
+
+					<p>
+					なおよく似た演算子として「...」演算子が用意されています。
+					</p>
+
+<pre class="fixcomment">
+first...last
+</pre>
+
+					<p>
+					この場合、範囲オブジェクトが持つ範囲に最後の値は含まれません。
+					</p>
+
+					<h2>Rangeクラス</h2>
+
+					<p>
+					範囲オブジェクトは実際にはRangeクラスのオブジェクトです。「..」演算子や「...」演算子によって範囲オブジェクトを作成できますが、Rangeクラスのクラスメソッドである「new」メソッドでも作成できます。
+					</p>
+
+<pre class="fixcomment">
+Range.new(first,last[, exclude_end])
+</pre>
+
+					<p>
+					「first」には最初の値を、「last」には最後の値を指定します。また「exclude_end」は最後の値を要素として含めるかどうかを指定します。真の値を指定した場合は最後の値を含めません。省略された場合は最後の値を含めます。
+					</p>
+
+					<p>
+					具体的には次のように使用します。
+					</p>
+
+<pre class="fixcode">
+range1 = Range.new(5, 10)
+range2 = Range.new(5, 10, true)
+</pre>
+
+					<p>
+					作成される範囲オブジェクトは「..」演算子と「...」演算子を使用した場合と同じです。
+					</p>
+
+					<h2>範囲オブジェクトを繰り返し処理で使用する場合の注意点</h2>
+
+					<p>
+					範囲オブジェクトを「for」文の中で使用した場合、最初の値から最後の値まで(「..」演算子の場合)順に値を取り出し要素として返します。取り出す方法は最初と最後に指定したオブジェクトの元になっているクラスで定義されている「succ」メソッドを使われます。
+					</p>
+
+					<p>
+					「succ」メソッドがどのような値を返すのかはクラスによって異なります。ここでは数値オブジェクトと文字列オブジェクトを指定した場合を確認しておきます。
+					</p>
+
+					<p>
+					数値オブジェクトが最初と最後に指定されている場合は、最初の値から最後の値まで1ずつ加算した値を要素として返します。
+					</p>
+
+<pre class="fixcomment">
+1.succ   -&gt;  2
+99.succ  -&gt;  100
+-5.succ  -&gt;  -4
+</pre>
+					<p>
+					実際には次のように使います。
+					</p>
+
+<pre class="fixcode">
+for num in 3..5 do
+  print(num, "&yen;n")
+end
+</pre>
+
+					<p>
+					上記の場合は「3」「4」「5」と順に出力されます。
+					</p>
+
+					<p>
+					文字列オブジェクトが最初と最後に指定されている場合は、アルファベットについてはを(アルファベットだけの)26進数として扱い、数値は10進数として扱って次の値を要素として返します。
+					</p>
+
+<pre class="fixcomment">
+"a".succ  -&gt;  "b"
+"z".succ  -&gt;  "aa"
+"Ad".succ -&gt;  "Ae"
+"Az".succ -&gt;  "Ba"
+"zz".succ -&gt;  "aaa"
+"4".succ  -&gt;  "5"
+"9".succ  -&gt;  "10"
+"a9".succ -&gt;  "b0"
+"9z".succ -&gt;  "10a"
+</pre>
+
+					<p>
+					文字列にアルファベットや数値が含まれる時にその他の文字も含まれる場合はその他の文字はそのまま変わりません。
+					</p>
+
+<pre class="fixcomment">
+"4:5:9".succ  -&gt;  "4:6:0"
+"-5".succ     -&gt;  "-6"
+</pre>
+
+					<p>
+					実際には次のように使います。
+					</p>
+
+<pre class="fixcode">
+for num in "a".."d" do
+  print(num, "&yen;n")
+end
+</pre>
+
+					<p>
+					上記の場合は「a」「b」「c」「d」と順に出力されます。
+					</p>
+
+					<p>
+					なお、「succ」メソッドが定義されていないクラスのオブジェクトは最初と最後の値として指定できません。(範囲オブジェクトとしては作成出来ますが、「for」文などに使うとエラーとなります)。浮動小数点数を表すFloatクラスでは「succ」メソッドが定義されていませんので浮動小数点数で指定された範囲オブジェクトは繰り返し処理の中で指定できません。
+					</p>
+
+					<p>
+					また最初の値が最後の値よりも大きい範囲オブジェクトも作成できますが、「for」文の中で指定しても要素を1つも返しません(最初の値も返しません)。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なプログラムで確認して見ます。
+					</p>
+
+					<p>
+					<a href="javascript:if(confirm('http://div.wifi-cloud.jp/redir/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://div.wifi-cloud.jp/redir/'" tppabs="https://www.javadrive.jp/ruby/for/test4-1.rb">test4-1.rb</a>
+					</p>
+
+<pre class="fixcode">
+#! ruby -Ku
+
+print("18..20 is &yen;n")
+for num in 18..20 do
+  print("num = ", num, "&yen;n")
+end
+
+print("18...20 is &yen;n")
+for num in 18...20 do
+  print("num = ", num, "&yen;n")
+end
+
+print("&yen;"Ax&yen;"..&yen;"Bc&yen;" is &yen;n")
+for str in "Ax".."Bb" do
+  print("str = " + str + "&yen;n")
+end
+</pre>
+
+					<p>
+					上記のプログラムを「test4-1.rb」として保存します。文字コードはUTF-8です。そして下記のように実行して下さい。
+					</p>
+
+					<p>
+					<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/ruby/for/img/p4-1.png" alt="範囲オブジェクト" width="509" height="259">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

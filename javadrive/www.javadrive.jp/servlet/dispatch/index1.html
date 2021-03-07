@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>インクルード(include) - サーブレット間の連携 - サーブレット入門</title>
+<meta name="keywords" content="include,連携,サーブレット" />
+<meta name="description" content="インクルード(include)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/dispatch/" itemprop="url"><span itemprop="title">サーブレット間の連携</span></a></li>
+		</ul>
+</div>
+
+			<h1>インクルード(include)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここからは複数のサーブレット間で強調して処理を行う方法を確認していきます。
+			</p>
+
+			<p>
+			まずはサーブレット内に他のサーブレットの処理をインクルードする方法です。
+			</p>
+
+			<p>
+			例えば、サーブレットAが呼ばれ、レスポンスに対して出力をしている途中でサーブレットBをインクルードしたとします。そうするといったんサーブレットBへ処理が移った後でサーブレットBの処理が終わったら呼び出し元のサーブレットAへ処理が戻り、残りの処理を行うと言った感じです。
+			</p>
+
+			<p>
+			インクルードを行うには、まず"RequestDispatcher"インターフェースのオブジェクトを作成する必要があります。このオブジェクトはクライアントからのリクエストをディスパッチ(他へ委譲する)ためのものです。
+			</p>
+
+			<p>
+			オブジェクトを作成するには、"HttpServletRequest"インターフェースの親インターフェースである"ServletRequest"インターフェースで定義されている"getRequestDispatcher"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getRequestDispatcher
+public RequestDispatcher getRequestDispatcher(java.lang.String path)
+</pre>
+<pre class="mexplain">
+Returns a RequestDispatcher object that acts as a wrapper for the resource 
+located at the given path. A RequestDispatcher object can be used to 
+forward a request to the resource or to include the resource in a response. 
+The resource can be dynamic or static. 
+
+The pathname specified may be relative, although it cannot extend outside 
+the current servlet context. If the path begins with a "/" it is 
+interpreted as relative to the current context root. This method returns 
+null if the servlet container cannot return a RequestDispatcher. 
+
+The difference between this method and 
+ServletContext.getRequestDispatcher(java.lang.String) is that this method 
+can take a relative path. 
+
+Parameters:
+  path - a String specifying the pathname to the resource. If it is 
+    relative, it must be relative against the current servlet. 
+Returns:
+  a RequestDispatcher object that acts as a wrapper for the resource 
+    at the specified path, or null if the servlet container cannot 
+    return a RequestDispatcher
+</pre>
+
+			<p>
+			引数には委譲先のファイルやサーブレットのパスを指定します。例えばこのWebアプリケーションのパスが「/dispatch」でインクルードしたいサーブレットが「/dispatch/includetest」だった場合は次のようになります。
+			</p>
+
+<pre class="fixcode">
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+  throws IOException, ServletException{
+
+  String disp = "/includetest";
+  RequestDispatcher dispatch = request.getRequestDispatcher(disp);
+}
+</pre>
+
+			<p>
+			ディスパッチャーが作成できましたら、「RequestDispatcher」インターフェースで定義されている"include"メソッドを使って外部へ処理を委譲します。
+			</p>
+
+<pre class="mheader">
+include
+public void include(ServletRequest request, ServletResponse response)
+             throws ServletException, java.io.IOException
+</pre>
+<pre class="mexplain">
+Includes the content of a resource (servlet, JSP page, HTML file) in
+the response. In essence, this method enables programmatic 
+server-side includes. 
+
+The ServletResponse object has its path elements and parameters remain
+unchanged from the caller's. The included servlet cannot change the 
+response status code or set headers; any attempt to make a change is 
+ignored. 
+
+The request and response parameters must be either the same objects as
+were passed to the calling servlet's service method or be subclasses of
+the ServletRequestWrapper or ServletResponseWrapper classes that wrap 
+them. 
+
+Parameters:
+  request - a ServletRequest object that contains the client's request
+  response - a ServletResponse object that contains the servlet's 
+    response 
+Throws: 
+  ServletException - if the included resource throws this exception 
+  java.io.IOException - if the included resource throws this exception
+</pre>
+
+			<p>
+			"include"メソッドの引数には、呼び出し元のサーブレットの"doGet"メソッドや"doPost"メソッドが呼び出された時に引数に指定されている値をそのまま渡します。
+			</p>
+
+			<p>
+			利用方法としては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+  throws IOException, ServletException{
+
+  String disp = "/includetest";
+  RequestDispatcher dispatch = request.getRequestDispatcher(disp);
+
+  dispatch.include(request, response);
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単に試してみます。
+			</p>
+
+			<p>
+			今回作成するWebアプリケーションのパスは「dispatch」とし、Webアプリケーションの置き場所は「d:&yen;servlet-sample&yen;dispatch&yen;」としました。コンテキストファイルは下記のようになります。
+			</p>
+
+			<p>
+			<a href="dispatch.xml.htm" tppabs="https://www.javadrive.jp/servlet/dispatch/dispatch.xml">dispatch.xml</a>
+			</p>
+
+<pre class="fixcomment">
+&lt;Context path="/dispatch"
+docBase="d:/servlet-sample/dispatch"/&gt;
+</pre>
+
+			<p>
+			web.xmlファイルは下記のようにしました。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;dispatchtest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;DispatchTest&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;includetest&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;IncludeTest&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;dispatchtest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/dispatchtest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;includetest&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/includetest&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			プログラムは下記の通りです。
+			</p>
+
+			<p>
+			<a href="DispatchTest.java.htm" tppabs="https://www.javadrive.jp/servlet/dispatch/DispatchTest.java">DispatchTest.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class DispatchTest extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;title&gt;ディスパッチ&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    out.println("&lt;p&gt;この下の部分がインクルードで処理されています&lt;/p&gt;");
+
+    String disp = "/includetest";
+    RequestDispatcher dispatch = request.getRequestDispatcher(disp);
+
+    dispatch.include(request, response);
+
+    out.println("&lt;p&gt;この上の部分がインクルードで処理されています&lt;/p&gt;");
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			<a href="IncludeTest.java.htm" tppabs="https://www.javadrive.jp/servlet/dispatch/IncludeTest.java">IncludeTest.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class IncludeTest extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    out.println("&lt;p style=&yen;"background:#ff0000&yen;"&gt;");
+    out.println("インクルードファイル内で処理されています");
+    out.println("&lt;/p&gt;");
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイル後に「d:&yen;servlet-sample&yen;dispatch&yen;WEB-INF&yen;classes&yen;」ディレクトリにクラスファイルを移動した後で、ブラウザで「http://localhost:8080/dispatch/dispatchtest」へアクセスしてみます。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/servlet/dispatch/img/p1.png" alt="include" width="501" height="346">
+			</p>
+
+			<p>
+			分かりやすいようにインクルードされたサーブレットで処理された部分は背景を赤くしてあります。
+			</p>
+
+			<p>
+			このようにインクルードとはサーブレットの処理中に別のサーブレットへ処理を移し、そして元の処理に戻ってくることになります。あたかもサーブレット内に別のサーブレットを挿入して処理しているようになります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

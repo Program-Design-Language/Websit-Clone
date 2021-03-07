@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ユーザー定義関数の引数の利用 - ユーザー認証(PEAR::Auth) - PEAR入門</title>
+<meta name="keywords" content="ユーザー定義関数,PEAR::Auth,入門,PEAR" />
+<meta name="description" content="ユーザー定義関数の引数の利用" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_auth/" itemprop="url"><span itemprop="title">ユーザー認証(PEAR::Auth)</span></a></li>
+		</ul>
+</div>
+
+			<h1>ユーザー定義関数の引数の利用</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ログインフォームを表示するためのユーザー定義関数には2つの引数が渡されてきます。1つ目は現在の認証済みのユーザー名が、2つ目は認証を行った結果を表すステータスコードが渡されてきます。
+			</p>
+
+			<p>
+			ここでスタータスコードについて見てみます。ステータスコードは何か認証時に問題があった場合に設定されます。その為、初回表示の際には認証コードには何も入っていません。
+			</p>
+
+			<p>
+			認証ステータスが取り得る値は下記の通りです。
+			</p>
+
+<table class="pro">
+<tr><th>PHPで定義済の定数</th><th>実際の値</th><th>状態</th></tr>
+<tr><td>AUTH_IDLED</td><td>-1</td><td>アイドル時間による認証切れ</td></tr>
+<tr><td>AUTH_EXPIRED</td><td>-2</td><td>有効期限切れによる認証切れ</td></tr>
+<tr><td>AUTH_WRONG_LOGIN</td><td>-3</td><td>認証エラー(ユーザー名又はパスワードが異なっている)</td></tr>
+</table>
+
+			<p>
+			ステータスコードを調べることで、認証が必要になった理由、又は認証が行わなかった理由を調べることができます。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。下記ではユーザー認証に失敗した場合のメッセージを表示するようにしています。(またフォームの送信先について、自分自身のページを表す $_SERVER['PHP_SELF'] を使って今後変更しなくていいようにしています)。
+			</p>
+
+			<p>
+			<a href="sample7-1.html" tppabs="https://www.javadrive.jp/pear/pear_auth/sample7-1.html">sample7-1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;PHP認証テスト&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;?php
+
+require_once "Auth/Auth.php";
+
+function loginFunction($username, $status){
+    if ($status == AUTH_WRONG_LOGIN){
+        print("ユーザー名又はパスワードが間違っています&lt;br&gt;");
+    }
+
+    print("&lt;form method=&yen;"post&yen;" action=&yen;"".$_SERVER['PHP_SELF']."&yen;"&gt;");
+    print("&lt;table&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;ユーザー名&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=&yen;"text&yen;" name=&yen;"username&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td&gt;パスワード&lt;/td&gt;");
+    print("&lt;td&gt;&lt;input type=&yen;"password&yen;" name=&yen;"password&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;tr&gt;");
+    print("&lt;td colspan=&yen;"2&yen;"&gt;&lt;input type=&yen;"submit&yen;"&gt;&lt;/td&gt;");
+    print("&lt;/tr&gt;");
+    print("&lt;/table&gt;");
+    print("&lt;/form&gt;");
+}
+
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+
+$authobj-&gt;start();
+
+if ($authobj-&gt;getAuth()){
+    print("認証済みです");
+}
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記をWWWサーバに設置しブラウザで見てみると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p13.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p13.png" alt="PEAR::AUTHでのユーザー定義関数" width="489" height="298">
+			</p>
+
+			<p>
+			ここでデータベースに登録されていないユーザー名とパスワードを入れてみます。
+			</p>
+
+			<p>
+			<img src="img/p14.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p14.png" alt="PEAR::AUTHでのユーザー定義関数" width="490" height="297">
+			</p>
+
+			<p>
+			「クエリ送信」ボタンを押すと下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p15.png" tppabs="https://www.javadrive.jp/pear/pear_auth/img/p15.png" alt="PEAR::AUTHでのユーザー定義関数" width="490" height="295">
+			</p>
+
+			<p>
+			ユーザー名又はパスワードが間違っていたことを区別してメッセージを表示することが出来ました。
+			</p>
+
+			<p>
+			ここでは認証失敗の場合だけを試しましたが、アイドルタイムによる再認証要求や有効期限切れによる再認証要求についても別のページで確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

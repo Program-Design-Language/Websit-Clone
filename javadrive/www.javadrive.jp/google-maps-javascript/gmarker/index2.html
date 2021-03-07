@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マーカーのアイコンを指定(iconプロパティ, GIconクラス) - マーカー - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="マーカーのアイコンを指定,GMarker,Google Maps API" />
+<meta name="description" content="マーカーで表示されるアイコンを指定する方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/" itemprop="url"><span itemprop="title">マーカー</span></a></li>
+		</ul>
+</div>
+
+			<h1>マーカーのアイコンを指定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					地図上に表示されるマーカーに自分で作成したアイコンを指定する方法を確認します。
+					</p>
+
+					<p>
+					アイコンはGIconクラスのオブジェクトとして作成されます。コンストラクタ関数は次のように定義されています。
+					</p>
+
+<pre class="mheader">
+GIcon(copy?:GIcon, image?:String)
+</pre>
+<pre class="mexplain">
+新しいアイコン オブジェクトを作成します。別のアイコンがオプションの copy 
+引数に指定されると、そのプロパティがコピーされます。指定されない場合は空
+のままです。省略可能な引数 image は image プロパティの値を設定します。
+</pre>
+
+					<p>
+					GIconクラスのオブジェクトを作成しマーカーに設定します。なおマーカーのデフォルトで使用されるアイコンはG_DEFAULT_ICONという定数を使って表すことができます。
+					</p>
+
+					<p>
+					引数は2つ用意されていますがどちらも省略可能で既にあるアイコンのコピーを作成する場合に使用します。1番目の引数にはコピーしたいGIconクラスのオブジェクトを指定し、2番目の引数にはアイコン画像のURLを指定します。
+					</p>
+
+<pre class="fixcomment">
+var icon = new GIcon(other_icon, "./img/image.png");
+</pre>
+
+					<p>
+					この場合、別のアイコンをコピーし、画像だけを差し替えたアイコンを作成します。
+					</p>
+
+					<p>
+					新規にアイコンを作成する場合は次のように引数無しでまずGIconクラスのオブジェクトを作成します。
+					</p>
+
+<pre class="fixcomment">
+var icon = new GIcon();
+</pre>
+
+					<p>
+					続いてGIconクラスの各プロパティに値を設定していきます。プロパティは数多くありますのでここではその一部を紹介します。
+					</p>
+
+<table class="pro">
+<tr><th>プロパティ</th><th>タイプ</th><th>説明</th></tr>
+<tr><td>image</td><td>String</td><td>アイコン画像のURL</td></tr>
+<tr><td>shadow</td><td>String</td><td>影の画像のURL</td></tr>
+<tr><td>iconSize</td><td>GSize</td><td>アイコンのサイズ</td></tr>
+<tr><td>shadowSize</td><td>GSize</td><td>影のサイズ</td></tr>
+<tr><td>iconAnchor</td><td>GPoint</td><td>アイコン画像左上隅を基準とした時のアイコンが示す座標</td></tr>
+</table>
+
+					<p>
+					では順に確認していきます。
+					</p>
+
+					<p>
+					今回使用するアイコンの画像として下記のものを用意しました。
+					</p>
+
+					<p>
+					<img src="img/icon.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/img/icon.png" alt="アイコン" width="42" height="56" style="border:1px dotted #cccccc;"> <img src="img/shadow.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/img/shadow.png" alt="影" width="70" height="56" style="border:1px dotted #cccccc;">
+					</p>
+
+					<p>
+					アイコンと影の画像のサイズは異なっていても構いません。表示される時には2つの画像を左上で合わせて表示されます。
+					</p>
+
+					<p>
+					<img src="img/iconshadow.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/img/iconshadow.png" alt="アイコン＋影" width="70" height="56" style="border:1px dotted #cccccc;">
+					</p>
+
+					<p>
+					アイコンと影の画像ファイルをimageプロパティとshadowプロパティの値に指定します。
+					</p>
+
+<pre class="fixcode">
+var markerIcon = new GIcon();
+markerIcon.image = "./img/marker.png";
+markerIcon.shadow = "./img/shadow.png";
+</pre>
+
+					<p>
+					またアイコンと影の画像のサイズをiconSizeプロパティとshadowSizeプロパティの値に指定します。サイズの指定はGSizeクラスのオブジェクトで指定します。GSizeクラスはwidthプロパティとheightプロパティの2つの値を保持するクラスで次のように指定します。
+					</p>
+
+<pre class="fixcode">
+var markerIcon = new GIcon();
+markerIcon.image = "./img/marker.png";
+markerIcon.shadow = "./img/shadow.png";
+markerIcon.iconSize = new GSize(42, 56);
+markerIcon.shadowSize = new GSize(70, 56);
+</pre>
+
+					<p>
+					GMarkerクラスのオブジェクトを作成する時にマーカーを表示する座標を指定しますが、指定した座標がマーカーのアイコンのどの位置に表示するのかを指定します。例えばマーカーが矢印のような形状をしていた場合、矢印の先端が指定した座標に表示されるようにマーカーを表示すると分かりやすくなります。
+					</p>
+
+					<p>
+					位置の指定はGPointクラスのオブジェクトで指定します。GPointクラスはxプロパティとyプロパティの2つの値を保持するクラスで、アイコン画像の左上隅からの位置で指定して下さい。
+					</p>
+
+<pre class="fixcode">
+var markerIcon = new GIcon();
+markerIcon.image = "./img/marker.png";
+markerIcon.shadow = "./img/shadow.png";
+markerIcon.iconSize = new GSize(42, 56);
+markerIcon.shadowSize = new GSize(70, 56);
+markerIcon.iconAnchor = new GPoint(21, 56);
+</pre>
+
+					<p>
+					これでアイコンの作成は完了です。
+					</p>
+
+					<p>
+					※なお影は必要なければ省略しても構いません。
+					</p>
+
+					<h2>アイコンを指定したマーカーの作成</h2>
+
+					<p>
+					アイコンの指定してマーカーを作成するにはGMarkerクラスのコンストラクタ関数の2番目の引数で指定します。
+					</p>
+
+<pre class="fixcomment">
+GMarker(latlng:GLatLng, opts?:GMarkerOptions)
+</pre>
+
+					<p>
+					2番目の引数はGMarkerOptionsクラスのオブジェクトを指定します、このクラスはコンストラクタ関数が用意されていませんのでオブジェクトリテラルを作成します。 
+					</p>
+
+<pre class="fixcomment">
+var opts = {プロパティ名:値, プロパティ名:値, ...};
+</pre>
+
+					<p>
+					GMarkerOptionsクラスで定義されているプロパティはいくつかありますが、アイコンを指定する場合にはiconプロパティを使います。 
+					</p>
+
+<pre class="mheader">
+iconプロパティ
+</pre>
+<pre class="mexplain">
+このクラスにアイコンを選択します。指定されない場合は、G_DEFAULT_ICON が
+使用されます。
+
+値：
+  GIcon
+</pre>
+
+					<p>
+					引数には事前に作成したGIconクラスのオブジェクトを指定して下さい。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.172304,136.908306), 15);
+
+var point = new GLatLng(35.680481,139.767036);
+
+var markerIcon = new GIcon();
+markerIcon.image = "./img/marker.png";
+markerIcon.shadow = "./img/shadow.png";
+markerIcon.iconSize = new GSize(42, 56);
+markerIcon.shadowSize = new GSize(70, 56);
+markerIcon.iconAnchor = new GPoint(21, 56);
+var opts = {icon:markerIc};
+
+var marker = new GMarker(point, opts);
+map.addOverlay(marker);
+</pre>
+
+					<p>
+					上記のようにすることで自作のアイコンを使ってマーカーを表示することができます。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code2_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/js/code2_1.js">code2_1.js</a>
+					</p>
+
+<pre class="fixcode">
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    var map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(41.7724,140.72628), 12);
+
+    var markerIcon1 = new GIcon();
+    markerIcon1.image = "./img/icon.png";
+    markerIcon1.shadow = "./img/shadow.png";
+    markerIcon1.iconSize = new GSize(42, 56);
+    markerIcon1.shadowSize = new GSize(70, 56);
+    markerIcon1.iconAnchor = new GPoint(21, 56);
+
+    var markerIcon2 = new GIcon(markerIcon1, "./img/icon2.png");
+    var markerIcon3 = new GIcon(markerIcon1, "./img/icon3.png");
+
+    var opt1 = {icon:markerIcon1};
+    var opt2 = {icon:markerIcon2};
+    var opt3 = {icon:markerIcon3};
+
+    var marker1 = new GMarker(new GLatLng(41.75886,140.703535), opt1);
+    var marker2 = new GMarker(new GLatLng(41.79672,140.757179), opt2);
+    var marker3 = new GMarker(new GLatLng(41.772644,140.725315), opt3);
+
+    map.addOverlay(marker1);
+    map.addOverlay(marker2);
+    map.addOverlay(marker3);
+  }
+}
+</pre>
+
+					<p>
+					<a href="map2_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/map2_1.html">map2_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：マーカーのアイコンを指定&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code2_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 400px"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarker/img/p2-1.png" alt="p2-1" width="441" height="529">
+					</p>
+
+					<p>
+					今回は新規のアイコンを作成し、そのアイコンをコピーして画像を入れ替えたアイコンを2つ作成しました。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

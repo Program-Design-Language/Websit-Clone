@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>「+&gt;&gt;」モード(読み書き) - ファイル操作 - Perl入門</title>
+<meta name="keywords" content="「+&gt;&gt;」モード(読み書き),ファイル操作,入門,Perl" />
+<meta name="description" content="「+&gt;&gt;」モード(読み書き)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/perl/" itemprop="url"><span itemprop="title">Perl入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/perl/file/" itemprop="url"><span itemprop="title">ファイル操作</span></a></li>
+		</ul>
+</div>
+
+			<h1>「+&gt;&gt;」モード(読み書き)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					次は「+&gt;&gt;」モード(読み書き)です。このモードの場合は読み込みと書き込みの両方が利用できる状態でファイルを開きます。書式は次のどちらかを使用します。
+					</p>
+
+<pre class="fixcomment">
+open(ファイルハンドル, "+&gt;&gt; ファイル名");
+open(ファイルハンドル, "+&gt;&gt;", "ファイル名");
+</pre>
+
+					<p>
+					引数を2つ使う場合にはファイル名の前に「+&gt;&gt; 」を付けます。引数を3つ使う場合には2番目の引数に「+&gt;&gt;」指定し、3番目の引数にファイル名を指定します。
+					</p>
+
+					<p>
+					「+&gt;&gt;」モードの場合は次の通りです。
+					</p>
+
+<pre class="fixcomment">
+・読み込み、書き込みの両方とも可
+・ファイルが存在していた場合、ファイルを開いた時にファイルの内容を変更しない
+・ファイルが存在してなかった場合、新規にファイルを作成
+・ファイルポインタは最後
+</pre>
+
+					<p>
+					指定したファイルが存在していた場合はファイルの内容を変更せずにファイルの最後に書き込みを行いますので、追加書き込みということになります。また指定したファイルが存在していなかった場合でもエラーとならず、新規にファイルが作成されます。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+open(DATAFILE, "+&gt;&gt;", "data.txt") or die("error :$!");
+</pre>
+
+					<p>
+					この場合、「data.txt」と言うファイルを読み書き両用で開きます。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なプログラムで確認して見ます。
+					</p>
+
+					<p>
+					<a href="test11-1.pl.htm" tppabs="https://www.javadrive.jp/perl/file/test11-1.pl">test11-1.pl</a>
+					</p>
+
+<pre class="fixcode">
+use strict;
+use warnings;
+use utf8;
+use open ":utf8";
+binmode STDIN, ':encoding(cp932)';
+binmode STDOUT, ':encoding(cp932)';
+binmode STDERR, ':encoding(cp932)';
+
+open(DATAFILE, "+&gt;gt;", "data11-1.txt") or die("Error:$!");
+
+print "追加前:&yen;n";
+
+while(my $line = &lt;DATAFILE&gt;){
+  chomp($line);
+  print "$line&yen;n";
+}
+
+print DATAFILE "加藤 花子&yen;n";
+print DATAFILE "東京都新宿区&yen;n";
+print DATAFILE "女性";
+
+close(DATAFILE);
+
+open(DATAFILE, "+&gt;&gt;", "data11-1.txt") or die("Error:$!");
+
+print "追加後:&yen;n";
+
+while(my $line = &lt;DATAFILE&gt;){
+  chomp($line);
+  print "$line&yen;n";
+}
+
+close(DATAFILE);
+
+open(DATAFILE, "+&gt;&gt;", "data11-2.txt") or die("Error:$!");
+
+print DATAFILE "山崎 一郎&yen;n";
+print DATAFILE "大阪府吹田市&yen;n";
+print DATAFILE "男性";
+
+close(DATAFILE);
+</pre>
+
+					<p>
+					上記を「test11-1.pl」の名前で保存します。保存する時の文字コードは「UTF-8」として下さい。
+					</p>
+
+					<p>
+					今回はカレントディレクトリに「data11-1.txt」と言うファイルを用意します。ファイル内には次のように記述を行います。ファイルの文字コードはUTF-8(BOM無し)に設定してあります。
+					</p>
+
+					<p>
+					<img src="img/p11-1.png" tppabs="https://www.javadrive.jp/perl/file/img/p11-1.png" alt="「+&gt;&gt;」モード(読み書き)" width="515" height="209">
+					</p>
+
+					<p>
+					コマンドプロンプトを起動し、プログラムを保存したディレクトリに移動してから次のように実行して下さい。
+					</p>
+
+					<p>
+					<img src="img/p11-2.png" tppabs="https://www.javadrive.jp/perl/file/img/p11-2.png" alt="「+&gt;&gt;」モード(読み書き)" width="509" height="246">
+					</p>
+
+					<p>
+					まず存在していた「data11-1.txt」ファイルを開きます。。そして内容を一度読み込んで画面に出力した後で、追加で書き込みを行っています。その後同じファイルを再度開き追加で書き込みが行われているか確認するために再度読み込みを行って画面に出力しています。
+					</p>
+
+					<p>
+					今回読み込みを行っていますが何も表示されていません。これは「+&gt;&gt;」モードで開いた場合、ファイルポインタが最後に置かれるためです。ファイルポインタとはファイルの中で読み込みや書き込みを行う位置のことです。ファイルポイントが最後にあるので、そこから読み込みを始めても何も読むことが出来ません。追加で書き込みを行った後に再度開いた場合も同じです。ただし、「data11-1.txt」ファイルには追加で書き込みは行われていますので実際にファイルを確認してみると次のようになっています。
+					</p>
+
+					<p>
+					<img src="img/p11-3.png" tppabs="https://www.javadrive.jp/perl/file/img/p11-3.png" alt="「+&gt;&gt;」モード(読み書き)" width="515" height="209">
+					</p>
+
+					<p>
+					次に存在していなかった「data11-2.txt」ファイルを指定してファイルを開いています。「+&gt;&gt;」モードの場合はファイルが存在しなかった場合には新規に作成しますので、「data11-2.txt」ファイルが作成され書き込みが行われます。結果的に「data11-2.txt」ファイルは次のようになります。
+					</p>
+
+					<p>
+					<img src="img/p11-4.png" tppabs="https://www.javadrive.jp/perl/file/img/p11-4.png" alt="「+&gt;&gt;」モード(読み書き)" width="515" height="209">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

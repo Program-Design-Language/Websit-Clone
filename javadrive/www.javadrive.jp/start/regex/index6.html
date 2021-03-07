@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | 正規表現パターンにおけるエスケープ処理</title>
+<meta name="description" content="Java で正規表現パターンを文字列で記述するとき、正規表現において特別な意味を持つ「.」や「*」などの文字があります。このような文字を特別な意味を持つ文字ではなく、一つの文字として扱う場合にはバックスラッシュ(\)を使ったエスケープ処理が必要となります。ここでは Java の正規表現でパターンを記述する場合のエスケープ処理について解説します。">
+
+<meta property="og:title" content="正規表現パターンにおけるエスケープ処理">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/regex/index6.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/regex/img/p6-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Java で正規表現パターンを文字列で記述するとき、正規表現において特別な意味を持つ「.」や「*」などの文字があります。このような文字を特別な意味を持つ文字ではなく、一つの文字として扱う場合にはバックスラッシュ(\)を使ったエスケープ処理が必要となります。ここでは Java の正規表現でパターンを記述する場合のエスケープ処理について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "Java正規表現の使い方",
+	"item": "https://www.javadrive.jp/start/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/">Java正規表現の使い方</a></li>
+				</ul>
+			</div>
+
+			<h1>正規表現パターンにおけるエスケープ処理</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Java で正規表現パターンを文字列で記述するとき、正規表現において特別な意味を持つ「.」や「*」などの文字があります。このような文字を特別な意味を持つ文字ではなく、一つの文字として扱う場合にはバックスラッシュ(\)を使ったエスケープ処理が必要となります。ここでは Java の正規表現でパターンを記述する場合のエスケープ処理について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">特別な意味を持つ文字をエスケープする</a></li>
+			<li><a href="#section2">文字列の中で正規表現のメタ文字を記述する場合</a></li>
+			<li><a href="#section3">パターンの中をまとめてエスケープする(Pattern.quote)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">特別な意味を持つ文字をエスケープする</a></h2>
+
+			<p>
+			正規表現のパターンで使われる文字の中にはドット(.)やプラス(+)などのように特別な意味を持つ文字があります。これらはメタ文字と呼ばれます。例えば次のような正規表現リテラルで見てみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "a.b";
+</pre>
+</div>
+
+			<p>
+			文字のまま解釈すると、このパターンは「a」「.」「b」の 3 つの文字が連続している文字列にマッチするように見えます。ただパターンの中でドット(.)は任意の 1 文字とマッチするメタ文字のため、この "a.b" というパターンは "a" で始まり "b" で終わる 3 文字の文字列とマッチします。そのため、 "a.b" だけでなく "axb" や "a8b" などの文字列ともマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+String regex = "a.b";
+Pattern p = Pattern.compile(regex);
+
+Matcher m1 = p.matcher​("a.b");
+System.out.println(m1.matches());  // true
+
+Matcher m2 = p.matcher​("axb");
+System.out.println(m2.matches());  // true
+</pre>
+</div>
+
+			<p>
+			このように正規表現ではパターンの中で使用した場合に特別な意味を持つ文字がいくつか存在します。このような文字に対して特別な意味を持つ文字ではなく、単なる文字としてマッチさせたい場合には、文字の前にバックスラッシュ(\)を記述してエスケープを行います。( Windows 環境は場合はバックスラッシュではなく円記号を使います)。
+			</p>
+
+			<p>
+			先ほどのパターンであれば "a.b" ではなく "a\.b" と記述することで「a」「.」「b」の 3 つの文字が連続している文字列だけにマッチするようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "a\.b";
+</pre>
+</div>
+
+			<p>
+			先ほどのサンプルを次のように変更してみました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+String regex = "<span class="red">a\.b</span>";
+Pattern p = Pattern.compile(regex);
+
+Matcher m1 = p.matcher​("a.b");
+System.out.println(m1.matches());
+
+Matcher m2 = p.matcher​("axb");
+System.out.println(m2.matches());
+</pre>
+</div>
+
+			<p>
+			すると今度はコンパイル時に「エラー: エスケープ文字が不正です」というエラーが発生しました。
+			</p>
+
+			<p>
+			これは Java の文字列リテラルの中でバックスラッシュ(\)は特別な意味を持つためで、文字列の中でバックスラッシュを記述する場合は、バックスラッシュを使って \\ のようにエスケープして記述する必要がありります。
+			</p>
+
+<div class="titlebox2">
+<p>
+少しややこしいですが、正規表現として特別な意味を持つ文字をエスケープするためにバックスラッシュを記述しますが、バックスラッシュは文字列の中で特別な意味を持つため、文字列の中でバックスラッシュを単なる文字として扱うようにバックスラッシュをバックスラッシュを使って使ってエスケープします。
+</p>
+</div>
+
+			<p>
+			そこで先ほどのパターンを文字列の中で記述するときには "a\.b" ではなく "a\\.b" と記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "a\\.b";
+</pre>
+</div>
+
+			<p>
+			先ほどのサンプルを次のように変更してみました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+String regex = "<span class="red">a\\.b</span>";
+Pattern p = Pattern.compile(regex);
+
+Matcher m1 = p.matcher​("a.b");  // true
+System.out.println(m1.matches());
+
+Matcher m2 = p.matcher​("axb");  // false
+System.out.println(m2.matches());
+</pre>
+</div>
+
+			<p>
+			今度はドット(.)が任意の 1 文字という意味ではなく文字としてのドット(.)として扱われるので "a.b" にはマッチしますが "axb" にはマッチしなくなります。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample6-1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample6_1{
+  public static void main(String[] args){
+    String regex = "a\\.b";
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m1 = p.matcher​("a.b");
+    System.out.println(m1.matches());
+
+    Matcher m2 = p.matcher​("axb");
+    System.out.println(m2.matches());
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample6_1.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample6_1
+</p>
+</div>
+
+			<p>
+			<img src="img/p6-1.png" tppabs="https://www.javadrive.jp/start/regex/img/p6-1.png" alt="特別な意味を持つ文字をエスケープする(1)" width="723" height="353">
+			</p>
+
+			<p>
+			パターンの中でドット(.)は任意の 1 文字とマッチする特別な文字ですが、バックスラッシュを使ってエスケープを行ったので特別な意味を持たないドット(.)として扱われるようになりました。
+			</p>
+
+<h2><a id="section2">文字列の中で正規表現のメタ文字を記述する場合</a></h2>
+
+			<p>
+			正規表現のパターンの中でドット(.)やアスタリスク(*)は特別な意味を持ちますが、バックスラッシュと 1 文字の組み合わせで特別な意味を持つ定義済みの文字クラスと呼ばれるものがあります。例えば \d は 0 から 9 までの数値とマッチしますし、 \s はタブや改行などの空白文字とマッチします。
+			</p>
+
+			<p>
+			これらの定義済み文字クラスを使ったパターンを Java の文字列に記述する場合も先ほどと同じ注意が必要です。例えば "a" で始まり、 1 文字の数値が続き、最後に "b" で終わるパターンは "a\db" と記述することができますが、次のように記述してしまうとコンパイル時に「エラー: エスケープ文字が不正です」というエラーになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "a\db";
+</pre>
+</div>
+
+			<p>
+			これは Java の文字列リテラルの中でバックスラッシュ(\)は特別な意味を持つためで、文字列の中でバックスラッシュを記述する場合は、バックスラッシュを使って \\ のようにエスケープして記述する必要がありります。実際には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "a\\db";
+</pre>
+</div>
+
+			<p>
+			このようにメタ文字をエスケープするために記述したバックスラッシュだけでなく、定義済みメタ文字のようにバックスラッシュ＋1文字のようなものも、実際に文字列の中で記述するときはバックスラッシュでエスケープする必要がある点に注意してください。
+			</p>
+
+<h2><a id="section3">パターンの中をまとめてエスケープする(Pattern.quote)</a></h2>
+
+			<p>
+			パターンの中で特別な意味を持つ文字をエスケープするにはバックスラッシュを直前に記述すればいいのですが、パターンの中にエスケープを行いたい特別な文字が多数含まれる場合、一つ一つエスケープしていくとパターンが分かりにくくなっていきます。
+			</p>
+
+			<p>
+			例えばドット(.)や [ や ] のようにパターンの中で特別な意味を持つ文字が複数含まれている [2017.10.04] のような文字列そのものとマッチするパターンを記述する場合、 \[2017\.10\.04\] のように一つ一つエスケープする必要があります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "\\[2017\\.10\\.04\\]";
+</pre>
+</div>
+
+			<p>
+			このようにパターンの中にエスケープする文字が複数含まれている場合には、 \Ｑ と \E を使うと便利です。 \Q と \E で囲まれた文字列の中の含まれる文字はエスケープしなくても特別な意味を持たなくなります。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\Ｑパターン文字列\E 
+</pre>
+</div>
+
+			<p>
+			先ほどのパターンであれば \Q[2017.10.04]\E のように記述することで、一つ一つエスケープする必要がなくなります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = "\\Q[2017.10.04]\\E";
+</pre>
+</div>
+
+			<p>
+			または Pattern クラスで用意されているクラスメソッドの quote メソッドを使用することもできます。 quote メソッドは引数に指定したパターン文字列を特別な意味を持たない単なる文字列になるように変換して戻してくれます。書式は次のとおりです。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public static String quote​(String s)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+s - リテラル化する文字列<br>
+<br>
+戻り値:<br>
+リテラル文字列置換
+</p>
+</div>
+
+			<p>
+			1 番目の引数に特別な意味を持つ文字が含まれるパターン文字列を指定すると、文字列を \Q と \E で囲んでバックスラッシュをエスケープした文字列を戻り値として返します。
+			</p>
+
+			<p>
+			例えば先ほどのパターンであれば Pattern.quote​ メソッドを使って次のように記述できます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+String regex = Pattern.quote​("[2017.10.04]");
+</pre>
+</div>
+
+			<p>
+			\Q と \E で囲んでも、 Pattern.quote​ メソッドを利用してもまったく同じですので、使いやすいよう方を利用してください。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample6-2.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.regex.*;
+
+class JSample6_2{
+  public static void main(String[] args){
+    String regex = Pattern.quote​("A.B.C.D");
+    Pattern p = Pattern.compile(regex);
+
+    Matcher m1 = p.matcher​("A.B.C.D");
+    System.out.println(m1.matches());
+
+    Matcher m2 = p.matcher​("AABBCCDD");
+    System.out.println(m2.matches());
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample6_2.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample6_2
+</p>
+</div>
+
+			<p>
+			<img src="img/p6-2.png" tppabs="https://www.javadrive.jp/start/regex/img/p6-2.png" alt="パターンの中をまとめてエスケープする(Pattern.quote)(1)" width="723" height="353">
+			</p>
+
+			<p>
+			パターンの中でドット(.)は任意の 1 文字とマッチする特別な文字ですが、 Pattern.quote​ メソッドを使って特別な意味を持たないようにエスケープを行ったので文字としてのドット(.)として扱われるようになりました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java の正規表現でパターンを記述する場合のエスケープ処理について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

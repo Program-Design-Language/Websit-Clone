@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>子オブジェクトを取得する - カレンダー(PEAR::Calendar) - PEAR入門</title>
+<meta name="keywords" content="build,PEAR::Calendar,入門,PEAR" />
+<meta name="description" content="子オブジェクトを取得する" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_calendar/" itemprop="url"><span itemprop="title">カレンダー(PEAR::Calendar)</span></a></li>
+		</ul>
+</div>
+
+			<h1>子オブジェクトを取得する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Calendarクラスのサブクラスのオブジェクトから子オブジェクトを取得することができます。例えば月を表すオブジェクトをを作成した場合、その月に含まれる日を表す子オブジェクトの一覧を取得できますし、日を表すオブジェクトからはその日に含まれる時を表す子オブジェクトの一覧を取得できます。
+			</p>
+
+			<p>
+			子オブジェクトを作成するにはCalendarクラスで用意されている「build」メソッドを使います。「build」メソッドは各サブクラス毎にオーバーライドされていますがここでは表形式のクラスである「Calendar_Month_Weekdays」クラスの「build」メソッドについて見ていきます。
+			</p>
+
+<pre class="mheader">
+Calendar_Month_Weekdays::build()
+boolean Calendar_Month_Weekdays::build ([array $sDates = array()])
+</pre>
+<pre class="mexplain">
+引数：
+  $sDates  (省略可能) 選択された日付を表す Calendar_Day オブジェクト
+</pre>
+
+			<p>
+			「Calendar_Month_Weekdays」クラスのオブジェクトに対して「build」メソッドを実行すると「Calendar_Day」クラスのオブジェクトをの一覧を取得できます。
+			</p>
+
+			<p>
+			例えば2007年6月の表す「Calendar_Month_Weekdays」クラスのオブジェクトに対して「build」メソッドを実行すると2007年6月に含まれる2007年6月1日から2007年6月30日までの日付を表す「Calendar_Day」クラスのオブジェクトに加えて、表形式ですので月の初めと終わりの部分も取得することができます。
+			</p>
+
+<pre class="fixcomment">
+ _  _  _  _  _  1  2
+ 3  4  5  6  7  8  9
+10 11 12 13 14 15 16
+17 18 19 20 21 22 23
+24 25 26 27 28 29 30
+</pre>
+
+			<p>
+			2007年6月の場合で開始曜日を日曜日に設定した場合は上記のようになります。最初の5日分は実際には日付はありませんが表形式の場合はこの日付が無い部分も取得することができます。その為、取得した「Calendar_Day」クラスのオブジェクトを順に表示していくことで自動的にカレンダーのように表示することが出来ます。(2007年6月の場合は30日が丁度土曜日ですのでピッタリはまっていますが他の曜日で終わる月の場合は、月の最後にも日付が実際にはない「Calendar_Day」クラスのオブジェクトが含まれます)。
+			</p>
+
+			<p>
+			実際には次のように記述します。
+			</p>
+
+<pre class="fixcode">
+$month = new Calendar_Month_Weekdays(2007, 6, 0);
+$month -&gt; build();
+</pre>
+
+			<p>
+			「build」メソッドで子オブジェクトを作成して取得するのではなく、「build」メソッドを実行することで次で説明する「fetch」メソッドを使って子オブジェクトを取得することが出来るようになります。
+			</p>
+
+			<h2>子オブジェクトの取得</h2>
+
+			<p>
+			「build」メソッドを使うと対象のオブジェクトから子オブジェクトを順に取り出せるようになります。子オブジェクトを取得するにはCalendarクラスで用意されている「fetch」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+Calendar::fetch()
+mixed Calendar::fetch ()
+</pre>
+<pre class="mexplain">
+戻り値：
+  Calendar のサブクラスのオブジェクト、あるいは false を返します。
+</pre>
+
+			<p>
+			「fetch」メソッドを使うと対象のオブジェクトから子オブジェクトを順に取り出す事が出来ます。取り出すオブジェクトがなくなった場合は「false」を返します。
+			</p>
+
+			<p>
+			次のように記述することで含まれる子オブジェクトを最初から最後まで順に取得することができます。
+			</p>
+
+<pre class="fixcode">
+$month = new Calendar_Month_Weekdays(2007, 6, 0);
+$month -&gt; build();
+
+while ($day = $month -&gt; fetch()){
+  ....
+}
+</pre>
+
+			<p>
+			取得したCalendar_Dayクラスのオブジェクトから週の最初の日付なのか週の最後の日付なのかや、日付が設定されていないダミーのCalendar_Dayクラスのオブジェクトなのかを調べることが出来ます。これらについては次のページで確認していきます。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで実際に試してみます。 
+			</p>
+
+			<p>
+			<a href="sample9-1.html" tppabs="https://www.javadrive.jp/pear/pear_calendar/sample9-1.html">sample9-1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;表形式で日付を取得&lt;/p&gt;
+
+&lt;?php
+require_once("Calendar/Month/Weekdays.php");
+
+$month = new Calendar_Month_Weekdays(2007, 6, 0);
+$month -&gt; build();
+
+print("&lt;p&gt;");
+while ($day = $month -&gt; fetch()){
+    print($day-&gt;thisDay().",");
+}
+print("&lt;/p&gt;");
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記をWWWサーバに設置しブラウザで見てみると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p9-1.png" tppabs="https://www.javadrive.jp/pear/pear_calendar/img/p9-1.png" alt="子オブジェクトを取得する" width="504" height="322">
+			</p>
+
+			<p>
+			2007年6月に含まれる日付を日曜日を最初の曜日として順に取得して表示します。今回の場合は特に判別を行っていないので月の初めには前月の分の日付が含まれています。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

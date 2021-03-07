@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | formatメソッドを使った文字列の書式設定</title>
+<meta name="description" content="Python 2.6 から文字列型に format メソッドが追加され、書式化演算子 % を使用するよりもより高機能な書式設定が行えるようになりました。ここでは文字列型の format メソッドを使って文字列の書式設定を行う方法について解説します。">
+
+<meta property="og:title" content="formatメソッドを使った文字列の書式設定">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/string/index24.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/string/img/p24-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Python 2.6 から文字列型に format メソッドが追加され、書式化演算子 % を使用するよりもより高機能な書式設定が行えるようになりました。ここでは文字列型の format メソッドを使って文字列の書式設定を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "文字列",
+    "item": "https://www.javadrive.jp/python/string/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/string/">文字列</a></li>
+				</ul>
+			</div>
+
+			<h1>formatメソッドを使った文字列の書式設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Python 2.6 から文字列型に format メソッドが追加され、書式化演算子 % を使用するよりもより高機能な書式設定が行えるようになりました。ここでは文字列型の format メソッドを使って文字列の書式設定を行う方法について解説します。
+			</p>
+
+			<p>
+			※ 書式の指定方法は同じでより簡潔に記述することができるフォーマット済み文字列リテラルが Python 3.6 より使用可能となっています。詳しくは「<a href="index25.html" tppabs="https://www.javadrive.jp/python/string/index25.html">フォーマット済み文字列リテラル(f文字列)を使った文字列の書式設定</a>」を参照されてください。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">formatメソッドの使い方</a></li>
+			<li><a href="#section2">どの置換フィールドにどの値が対応するのかを指定する</a></li>
+			<li><a href="#section3">書式指定子の指定方法</a>
+				<ol class="next">
+				<li><a href="#section3-1">type(値の表現型)</a></li>
+				<li><a href="#section3-2">width(最小フィールド幅)</a></li>
+				<li><a href="#section3-3">fill(埋める文字)とalign(配置方法)</a></li>
+				<li><a href="#section3-4">sign(符号)</a></li>
+				<li><a href="#section3-5">grouping_option(数値の区切り文字)</a></li>
+				<li><a href="#section3-6">.precision(小数部分の精度)</a></li>
+				<li><a href="#section3-7">#(別形式)</a></li>
+				</ol>
+			</li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">formatメソッドの使い方</a></h2>
+
+			<p>
+			文字列型の format メソッドを使って書式設定を行う場合は、次のような形式となります。
+			</p>
+
+<div class="titlebox2">
+<p>
+置換フィールドを含む文字列.format(値1, 値2, ...)
+</p>
+</div>
+
+			<p>
+			「<a href="index23.html" tppabs="https://www.javadrive.jp/python/string/index23.html">前のページ</a>」で解説した書式化演算子の % を使って文字列に書式設定を行う場合は次のように記述していました。
+			</p>
+
+<div class="titlebox2">
+<p>
+変換指定子を含む文字列 % (値1, 値2, ...)
+</p>
+</div>
+
+			<p>
+			変換指定子ではなく置換フィールドに代わり、また値の指定方法がタプルによる値の指定ではなく format メソッドの引数という形に代わります。
+			</p>
+
+			<p>
+			詳しい使い方を確認する前に、どのように使用するのかについて簡単に確認しておきます。まず置換フィールドを含む文字列についてです。例えば次のような文字列を例に考えてみます。
+			</p>
+
+<div class="titlebox3">
+<p>
+"名前はxxです。年齢はyy歳です。"
+</p>
+</div>
+
+			<p>
+			この文字列の名前の部分(xx)と年齢の部分(yy)に書式化を行った値を挿入した新しい文字列を作成したい場合、この xx と yy の部分にどのように値を書式化するのかを表す置換フィールドを指定します。今回は次のように {:&lt;8s} と {:&gt;3d} をそれぞれ指定しました。
+			</p>
+
+<div class="titlebox3">
+<p>
+"名前は<span class="red">{:&lt;8s}</span>です。年齢は<span class="red">{:&gt;3d}</span>歳です。"
+</p>
+</div>
+
+			<p>
+			次に書式化を行う値を指定します。今回置換フィールドを文字列の中に 2 つ記述しましたので、変換する値も 2 つ記述する必要があります。値は format メソッドの引数として指定します。引数には置換フィールがが記述された順番と同じ順番で値を指定します。
+			</p>
+
+<div class="titlebox3">
+<p>
+"名前は<span class="red">{:&lt;8s}</span>です。年齢は<span class="red">{:&gt;3d}</span>歳です。".format("Suzuki", 18)
+</p>
+</div>
+
+			<p>
+			これで最初の値 "Suzuki" が置換フィールド {:&lt;8s} によって変換されて文字列の中に挿入され、次の値 10 が置換フィールド {:&gt;3d} によって変換された文字列の中に挿入されます。実際にどのように変換されるのかは次をみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+name = "Suzuki"
+old = 18
+print("名前は<span class="red">{:&lt;8s}</span>です。年齢は<span class="red">{:&gt;3d}</span>歳です。".format(name, old))
+
+<span class="bold">&gt;&gt; 名前はSuzuki  です。年齢は 18歳です。</span>
+</pre>
+</div>
+
+			<p>
+			では次にどの置換フィールドとどの値が対応するのかを指定する方法について詳しくみていきます。
+			</p>
+
+<h2><a id="section2">どの置換フィールドにどの値が対応するのかを指定する</a></h2>
+
+			<p>
+			文字列中に記述する置換フィールドは波括弧 {} の中に書式指定文字列を記述していきます。書式指定文字列の詳細はこの後解説しますが、その前にどの置換フィールドに format メソッドの引数に記述したどの値が対応するのかを指定する方法ついて解説します。
+			</p>
+
+<h3>置換フィールドに数値を指定する</h3>
+
+			<p>
+			文字列中に複数の置換フィールドがある場合、それぞれの置換フィールドには区別するために数値かキーワードを指定します。数値を使用する場合は、 0 , 1 , 2 , ... と順番に数値を指定していきます。
+			</p>
+
+<div class="titlebox2">
+<p>
+"名前<span class="red">{0}</span>です。<span class="red">{1}</span>歳。住所は<span class="red">{2}</span>です。"
+</p>
+</div>
+
+			<p>
+			数値は 0 , 1 , 2, ... と 0 から順番に割り当てる必要がありますが、どの置換フィールドにどの数値を割り当てるのかは自由です。
+			</p>
+
+<div class="titlebox3">
+<p>
+"名前<span class="red">{2}</span>です。<span class="red">{0}</span>歳。住所は<span class="red">{1}</span>です。"
+</p>
+</div>
+
+			<p>
+			そして format メソッドの引数に置換フィールド 0 から順に値を指定していきます。 3 つの置換フィールドがある場合は format メソッドの引数に 3 つの値を指定してください。最初の引数が置換フィールド 0 に渡す値、次の引数が置換フィールド 1 に渡す値、最後の引数が置換フィールド 2 に渡す値です。
+			</p>
+
+<div class="titlebox2">
+<p>
+"名前<span class="red">{0}</span>です。<span class="red">{1}</span>歳。住所は<span class="red">{2}</span>です。".format("Yamada", 18, "Tokyo")<br>
+"名前<span class="red">{2}</span>です。<span class="red">{0}</span>歳。住所は<span class="red">{1}</span>です。".format(18, "Tokyo", "Yamada")
+</p>
+</div>
+
+			<p>
+			文字列中の置換フィールドに先頭から順番に 0 , 1 , 2, ... と割り当てる場合には数値を省略することができます。その為、次の 2 つは同じです。
+			</p>
+
+<div class="titlebox3">
+<p>
+"名前<span class="red">{0}</span>です。<span class="red">{1}</span>歳。住所は<span class="red">{2}</span>です。".format("Yamada", 18, "Tokyo")<br>
+"名前<span class="red">{}</span>です。<span class="red">{}</span>歳。住所は<span class="red">{}</span>です。".format("Yamada", 18, "Tokyo")
+</p>
+</div>
+
+<h3>置換フィールドにキーワードを指定する</h3>
+
+			<p>
+			次にキーワードを指定する方法です。キーワードは置換フィールドの名前のようなもので、置換フィールドごとに記述していきます。
+			</p>
+
+<div class="titlebox2">
+<p>
+"名前<span class="red">{myname}</span>です。<span class="red">{myold}</span>歳です。"
+</p>
+</div>
+
+			<p>
+			そして format メソッドの引数に キーワード名=値 の形式で指定していきます。順番は自由に決めることができます。
+			</p>
+
+<div class="titlebox2">
+<p>
+"名前<span class="red">{myname}</span>です。<span class="red">{myold}</span>歳です。".format(myname="Yamada", myold=18)
+</p>
+</div>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			数値を使用する方法とキーワードを指定する方法はどちらの方法でも構いません。特に理由がなければ、数値を省略した上で format メソッドの引数に順番に値を指定していく形式が簡潔に記述できるかと思います。
+			</p>
+
+			<p>
+			置換フィールドには数値またはキーワードを指定したあと、コロン(:)を記述してから変換する書式指定子を記述します。例えば数値を省略した場合は {:8s} 。数値を指定した場合は {0:8s} 。キーワードで指定した場合は {name:8s} のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("名前<span class="red">{:8s}</span>です。<span class="red">{:4d}</span>歳。".format("Yamada", 18))
+
+<span class="bold">&gt;&gt; 名前Yamada  です。  18歳。</span>
+
+print("名前<span class="red">{0:8s}</span>です。<span class="red">{1:4d}</span>歳。".format("Honda", 32))
+
+<span class="bold">&gt;&gt; 名前Honda   です。  32歳。</span>
+
+print("名前<span class="red">{name:8s}</span>です。<span class="red">{old:4d}</span>歳。".format(name="Tanaka", old=24))
+
+<span class="bold">&gt;&gt; 名前Tanaka  です。  24歳。</span>
+</pre>
+</div>
+
+			<p>
+			それでは書式指定子の記述方法について詳しく確認していきます。
+			</p>
+
+<h2><a id="section3">書式指定子の指定方法</a></h2>
+
+			<p>
+			書式指定子は次のような省略可能なオプションを組み合わせて記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+[[fill(埋める文字)]align(配置方法)]
+[sign(符号)]
+[#(別形式)]
+[0(ゼロパディング)]
+[width(最小フィールド幅)]
+[grouping_option(数値の区切り文字)]
+[.precision(小数部分の精度)]
+[type(値の表現型)]
+</pre>
+</div>
+
+			<p>
+			書式指定子は置換フィールドの {位置を表す数値またはキーワード:書式指定子} のコロン(:)の右側に記述します。ではそれぞれのオプションについて確認していきます。
+			</p>
+
+<h3><a id="section3-1">type(値の表現型)</a></h3>
+
+			<p>
+			それでは最初に一番最後の値の表現型から。表現型は値をどのように表現するのかを指定するもので、文字列に対するもの、整数に対するもの、浮動小数点数に対するものがそれぞれ用意されています。
+			</p>
+
+			<p>
+			文字列向けの表現型：
+			</p>
+
+<div class="titlebox2">
+<p>
+"s"  文字列<br>
+None "s" と同じ
+</p>
+</div>
+
+			<p>
+			例えば文字列の値の書式を設定するには :s と記述します。ただ文字列向けの表現型を省略した場合 :s を指定した場合と同じなので省略しても結果は同じです。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("文字列=<span class="red">{:s}</span>, 文字列=<span class="red">{}</span>".format("Lemon", "Apple"))
+
+<span class="bold">&gt;&gt; 文字列=Lemon, 文字列=Apple</span>
+</pre>
+</div>
+
+			<p>
+			整数向けの表現型：
+			</p>
+
+<div class="titlebox2">
+<p>
+"b"  2進数<br>
+"c"  文字。数値を対応する Unicode 文字に変換<br>
+"d"  10進数<br>
+"o"  8進数<br>
+"x"  16進数。a～fは小文字<br>
+"X"  16進数。A～Fは大文字<br>
+"n"  数値。現在のロケールに従い、区切り文字を挿入することを除けば "d" と同じ<br>
+None "d" と同じ
+</p>
+</div>
+
+			<p>
+			例えば数値の値を 10 進数に変換するには :d と記述し 16 進数に変換するには :x と記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("数値1=<span class="red">{:d}</span>, 数値2=<span class="red">{:x}</span>".format(20, 31))
+
+<span class="bold">&gt;&gt; 数値1=20, 数値2=1f</span>
+</pre>
+</div>
+
+			<p>
+			浮動小数点数と10進数向けの表現型：
+			</p>
+
+<div class="titlebox2">
+<p>
+"e"  指数表記。 'e' を使用<br>
+"E"  指数表記。 'E' を使用<br>
+"f"  固定小数点数表記<br>
+"F"  固定小数点数表記。nan を NAN 、inf を INF に変換<br>
+"g"  指定した精度に合わせて丸めたうえで桁に応じて固定小数点か指数表記で表示<br>
+"G"  数値が大きくなったとき "E" に切り替わることを除き "g" と同じ<br>
+"n"  ロケールに合わせて、数値分割文字が挿入されることを除き "g" と同じ<br>
+"%"  数値を 100 倍し固定小数点数表記("f")でパーセントを付けて表示<br>
+None "g" と同様だが固定小数点表記の時に小数点の後に少なくとも 1 つの数字がある
+</p>
+</div>
+
+			<p>
+			例えば小数点を含む数値の値を指数表記に変換するには :e と記述し、固定小数点に変換するには :f と記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("指数表記=<span class="red">{:e}</span>".format(0.0752))
+
+<span class="bold">&gt;&gt; 指数表記=7.520000e-02</span>
+
+print("固定小数点表記=<span class="red">{:f}</span>".format(0.0752))
+
+<span class="bold">&gt;&gt; 固定小数点表記=0.075200</span>
+</pre>
+</div>
+
+			<p>
+			パーセンテージ表示を行うには :% と記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("パーセンテージで表示=<span class="red">{:%}</span>".format(0.348))
+
+<span class="bold">&gt;&gt; パーセンテージで表示=34.800000%</span>
+</pre>
+</div>
+
+<h3><a id="section3-2">width(最小フィールド幅)</a></h3>
+
+			<p>
+			次に width (最小フィールド幅)です。少なくとも確保される桁数を指定します。例えば数値や文字列が 3 桁で、最小フィールド幅が 5 だった場合には、 5 桁の場所に 3 桁の数値や文字列を表示します。文字列はデフォルトで左詰め、数値はデフォルトで右詰めで表示されます。
+			</p>
+
+			<p>
+			次の例では文字列と数値に最小フィールド幅を設定しています。(分かりやすいように [] で囲んで表示しています)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("文字列=[<span class="red">{:10s}</span>]".format("Lemon"))
+
+<span class="bold">&gt;&gt; 文字列=[Lemon     ]</span>
+
+print("数値=[<span class="red">{:5d}</span>]".format(123))
+
+<span class="bold">&gt;&gt; 数値=[  123]</span>
+</pre>
+</div>
+
+			<p>
+			文字列は左詰め、数値は右詰めで表示されました。
+			</p>
+
+<h3><a id="section3-3">fill(埋める文字)とalign(配置方法)</a></h3>
+
+			<p>
+			次に align (配置方法)と fill (埋める文字)です。配置方法は値の桁数が最小フィールド幅よりも少ない場合に、どのように配置するのかを指定します。
+			</p>
+
+<div class="titlebox2">
+<p>
+"&lt;"  左詰めで表示<br>
+"&gt;"  右詰めで表示<br>
+"^"  中央揃えで表示<br>
+"="  符号と値の間を埋める文字で埋めて表示
+</p>
+</div>
+
+			<p>
+			次の例では数値をそれぞれ左寄せ、中央揃え、右寄せで表示しています。(分かりやすいように [] で囲んで表示しています)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("数値=[<span class="red">{:&lt;7d}</span>]".format(123))
+
+<span class="bold">&gt;&gt; 数値=[123    ]</span>
+
+print("数値=[<span class="red">{:^7d}</span>]".format(123))
+
+<span class="bold">&gt;&gt; 数値=[  123  ]</span>
+
+print("数値=[<span class="red">{:&gt;7d}</span>]".format(123))
+
+<span class="bold">&gt;&gt; 数値=[    123]</span>
+</pre>
+</div>
+
+			<p>
+			最小フィールド幅を設定していない場合は、値の桁数と表示される桁数は同じになるので配置方法の設定は意味がなくなります。
+			</p>
+
+			<p>
+			デフォルトでは空白で埋められますが、配置方法の前に埋める文字を指定することで指定した文字で埋めることができます。例えば左詰めにした上で 0 で空いた部分を埋める場合は :0&lt; と指定します。
+			</p>
+
+			<p>
+			次の例では * と - を使って空いている部分を埋めています。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("数値=<span class="red">{:*&lt;7d}</span>".format(123))
+
+<span class="bold">&gt;&gt; 数値=123****</span>
+
+print("数値=<span class="red">{:-^7d}</span>".format(123))
+
+<span class="bold">&gt;&gt; 数値=--123--</span>
+</pre>
+</div>
+
+<h3><a id="section3-4">sign(符号)</a></h3>
+
+			<p>
+			次に sign (符号)です。数値に対してのみ有効な設定で、符号の付け方について指定します。
+			</p>
+
+<div class="titlebox2">
+<p>
+"+"  正の数、負の数ともに符号をつける<br>
+"-"  負の数だけに符号をつける(デフォルト)<br>
+" "  正の数では数値の前に空白をつける
+</p>
+</div>
+
+			<p>
+			次の例では数値に対してそれぞれのオプションを設定した場合で表示しています。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("正の数=<span class="red">{:+d}</span>, 負の数=<span class="red">{:+d}</span>".format(72, -72))
+
+<span class="bold">&gt;&gt; 正の数=+72, 負の数=-72</span>
+
+print("正の数=<span class="red">{:-d}</span>, 負の数=<span class="red">{:-d}</span>".format(72, -72))
+
+<span class="bold">&gt;&gt; 正の数=72, 負の数=-72</span>
+
+print("正の数=<span class="red">{: d}</span>, 負の数=<span class="red">{: d}</span>".format(72, -72))
+
+<span class="bold">&gt;&gt; 正の数= 72, 負の数=-72</span>
+</pre>
+</div>
+
+			<p>
+			負の数の場合はいずれも同じですが、 "+" を付けた場合は正の数でも符号が付き、 " " を付けた場合は正の数の場合に数値の前に空白が 1 文字表示されます。
+			</p>
+
+<h3><a id="section3-5">grouping_option(数値の区切り文字)</a></h3>
+
+			<p>
+			次に grouping_option (数値の区切り文字)です。カンマ "," またはアンダーバー "_" を指定します。数値の値に対して千の位ごとにカンマ(,)またはアンダーバー(_)を挿入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("数値=<span class="red">{:,d}</span>".format(1234567))
+
+<span class="bold">&gt;&gt; 数値=1,234,567</span>
+
+print("数値=<span class="red">{:,f}</span>".format(12345.6789))
+
+<span class="bold">&gt;&gt; 数値=12,345.678900</span>
+
+print("数値=<span class="red">{:_d}</span>".format(1234567))
+
+<span class="bold">&gt;&gt; 数値=1_234_567</span>
+</pre>
+</div>
+
+			<p>
+			数値に対して区切り文字を自動で挿入することができました。
+			</p>
+
+<h3><a id="section3-6">.precision(小数部分の精度)</a></h3>
+
+			<p>
+			次に .precision (小数部分の精度)です。小数部分の精度(桁数)を指定します。デフォルトでは 6 桁となっています。指定する場合はドット(.)のあとに桁数を指定してください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("数値=<span class="red">{:f}</span>".format(1.2345))
+
+<span class="bold">&gt;&gt; 数値=1.234500</span>
+
+print("数値=<span class="red">{:.1f}</span>".format(1.2345))
+
+<span class="bold">&gt;&gt; 数値=1.2</span>
+
+print("数値=<span class="red">{:.3f}</span>".format(1.2345))
+
+<span class="bold">&gt;&gt; 数値=1.234</span>
+</pre>
+</div>
+
+			<p>
+			小数部分の精度を省略した場合、そして指定した場合でそれぞれ試してみました。
+			</p>
+
+<h3><a id="section3-7">#(別形式)</a></h3>
+
+			<p>
+			次に # (別形式)です。別形式オプションを記述すると例えば整数で 2 進数、 8進素、 16 進数の値を表示するときに先頭に "0b", "0o", "0x" がそれぞれ付きます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+print("数値=<span class="red">{:b}</span>, 数値=<span class="red">{:#b}</span>".format(10, 10))
+
+<span class="bold">&gt;&gt; 数値=1010, 数値=0b1010</span>
+
+print("数値=<span class="red">{:o}</span>, 数値=<span class="red">{:#o}</span>".format(20, 20))
+
+<span class="bold">&gt;&gt; 数値=24, 数値=0o24</span>
+
+print("数値=<span class="red">{:x}</span>, 数値=<span class="red">{:#x}</span>".format(35, 35))
+
+<span class="bold">&gt;&gt; 数値=23, 数値=0x23</span>
+</pre>
+</div>
+
+			<p>
+			別形式オプションを付けた場合にそれぞれ異なる形式で表示されています。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			文字列型の format メソッドを使って文字列の書式設定を行う方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サンプル</title>
+</head>
+<body>
+
+<pre>
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+require_once 'DB.php';
+
+print('MySQLへの接続：&lt;br&gt;');
+
+$dsn = 'mysqli://testuser:testuser@localhost/uriage';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+hantei($db);
+
+$db-&gt;disconnect();
+
+print('&lt;br&gt;PostgreSQLへの接続：&lt;br&gt;');
+
+$dsn = 'pgsql://pguser:pguser@localhost/uriage';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+hantei($db);
+
+$db-&gt;disconnect();
+
+print('&lt;br&gt;SQLiteへの接続：&lt;br&gt;');
+
+$dsn = array(
+    'phptype'  =&gt; 'sqlite',
+    'database' =&gt; 'D:\Apache Group\Apache2\htdocs\sqlite\test.db',
+);
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+
+hantei($db);
+
+$db-&gt;disconnect();
+
+
+function hantei($db){
+    if ($db-&gt;provides('prepare')) {
+        print('プリペアドステートメント：利用可能&lt;br&gt;');
+    }else{
+        print('プリペアドステートメント：不可&lt;br&gt;');
+    }
+
+    if ($db-&gt;provides('pconnect')) {
+        print('持続的接続：利用可能&lt;br&gt;');
+    }else{
+        print('持続的接続：不可&lt;br&gt;');
+    }
+
+    if ($db-&gt;provides('transactions')) {
+        print('トランザクション：利用可能&lt;br&gt;');
+    }else{
+        print('トランザクション：不可&lt;br&gt;');
+    }
+
+    if ($db-&gt;provides('limit')) {
+        print('LIMIT：利用可能&lt;br&gt;');
+    }else{
+        print('LIMIT：不可&lt;br&gt;');
+    }
+}
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+
+</body>
+</html>

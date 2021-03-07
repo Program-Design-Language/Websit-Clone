@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | キャスト演算子と型変換ルール</title>
+<meta name="description" content="Java は変数に格納できる型が決まっていますが、数値型の場合には異なる型であっても代入できる場合があります。またそのまま代入できない場合にもキャスト演算子と呼ばれる型を変換する演算子を使用することで代入できる場合っがあります。ここでは Java における型変換が行われるルールと、キャスト演算子の使い方について解説します。">
+
+<meta property="og:title" content="キャスト演算子と型変換ルール">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/var/index11.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/var/img/p11-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Java は変数に格納できる型が決まっていますが、数値型の場合には異なる型であっても代入できる場合があります。またそのまま代入できない場合にもキャスト演算子と呼ばれる型を変換する演算子を使用することで代入できる場合っがあります。ここでは Java における型変換が行われるルールと、キャスト演算子の使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "変数とデータ型",
+	"item": "https://www.javadrive.jp/start/var/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/var/">変数とデータ型</a></li>
+				</ul>
+			</div>
+
+			<h1>キャスト演算子と型変換ルール</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Java は変数に格納できる型が決まっていますが、数値型の場合には異なる型であっても代入できる場合があります。またそのまま代入できない場合にもキャスト演算子と呼ばれる型を変換する演算子を使用することで代入できる場合っがあります。ここでは Java における型変換が行われるルールと、キャスト演算子の使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">型変換のルール</a></li>
+			<li><a href="#section2">自動的な型変換(拡大変換)</a></li>
+			<li><a href="#section3">intやlongからfloatやdoubleへ変換するときの注意点</a></li>
+			<li><a href="#section4">キャスト演算子を使った縮小変換</a></li>
+			<li><a href="#section5">longからintやdoubleからintへ変換するときの注意点</a></li>
+			<li><a href="#section6">数値リテラルを代入する場合の自動変換</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">型変換のルール</a></h2>
+
+			<p>
+			Java は変数を定義するときに型を指定するプログラミング言語です。その為、宣言したときと異なるデータ型の値を代入することはできません。例えば int 型の変数に対して String 型の文字列を代入する場合、コンパイルを行うと「エラー: 不適合な型: Stringをintに変換できませんというエラーになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int i;
+i = "Hello";  // コンパイルエラー
+</pre>
+</div>
+
+			<p>
+			ただ int や double などの数値のデータ型に対して、扱う範囲が広いデータ型に対して扱う範囲が狭いデータ型の値を代入する場合はエラーとはなりません。例えば double 型の変数に対して int 型の値を代入する場合はコンパイルもエラーとはなりません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+double d;
+d = 100;
+</pre>
+</div>
+
+			<p>
+			このとき int 型の値が double 型に自動的に型変換が行われています。
+			</p>
+
+			<p>
+			逆に int 型の変数に対して double 型の値を代入する場合、コンパイルを行うと「エラー: 不適合な型: 精度が失われる可能性があるdoubleからintへの変換」というエラーになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int i;
+i = 100.0;  // コンパイルエラー
+</pre>
+</div>
+
+			<p>
+			もし int 型の値に long 型や double 型の値を代入しようとする場合は、明示的に型変換を行うための キャスト演算子を使用しなければなりません。
+			</p>
+
+			<p>
+			このあと、どのような場合に自動的に型変換が行われるのか、そして明示的に型変換を行う場合の手順と注意点について解説していきます。
+			</p>
+
+<h2><a id="section2">自動的な型変換(拡大変換)</a></h2>
+
+			<p>
+			扱う範囲が広いデータ型に対して扱う範囲が狭いデータ型の値を代入する場合に自動的な型変換が起こります。自動的な型変換のことを拡大変換とも言います。
+			</p>
+
+			<p>
+			どのデータ型からどのデータ型へ代入したときに自動的な型変換が起こるのかは次の一覧をみてください。
+			</p>
+
+<table class="pro2">
+<tr><th>変更元</th><th>変更先</th></tr>
+<tr><td>byte</td><td>short,int,long,float,double</td></tr>
+<tr><td>short</td><td>int,long.float,double</td></tr>
+<tr><td>int</td><td>long,float,double</td></tr>
+<tr><td>long></td><td>float,double</td></tr>
+<tr><td>float</td><td>double</td></tr>
+<tr><td>double</td><td>--</td></tr>
+<tr><td>char</td><td>int,long,float,double</td></tr>
+</table>
+
+			<p>
+			扱える数値の範囲の大きさでいうと、 double &gt; float &gt; long &gt; int &gt; short &gt; bye なので、より扱う範囲が広いデータ型へ代入を行ったときは自動的な型変換が行われます。
+			</p>
+
+			<p>
+			なお char 型が扱える数値が 0～65535 で byte 型が扱える数値が -128～128 です。負の値を char 型が扱えないため byte 型から char 型への自動的な変換が行われません。また char 型の正の最大値が byte 型の正の最大値を超えるため、 char 型から byte 型への自動変換も行われません。
+			</p>
+
+			<p>
+			また short 型が扱える数値が -32768～32767 です。先ほどと同じ理由で負の値を char 型が扱えないため short 型から char 型への自動的な変換が行われません。また char 型の正の最大値が short 型の正の最大値を超えるため、 char 型から short 型への自動変換も行われません。
+			</p>
+
+			<p>
+			基本データ型の boolean についてはいずれのデータ型に対しても自動的な型変換は行われません。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample11-1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+class JSample11_1{
+  public static void main(String[] args){
+    float f = 10;
+    double d = 1234L;
+
+    System.out.println("f=：" + f);
+    System.out.println("d=：" + d);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample11_1.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample11_1
+</p>
+</div>
+
+			<p>
+			<img src="img/p11-1.png" tppabs="https://www.javadrive.jp/start/var/img/p11-1.png" alt="自動的な型変換(拡大変換)(1)" width="723" height="352">
+			</p>
+
+			<p>
+			float 型の変数に int 型の値を代入し、 double 型の変数に long 型の値を代入しましたがコンパイルも問題なくプログラムの実行も正常に行うことができました。
+			</p>
+
+<h2><a id="section3">intやlongからfloatやdoubleへ変換するときの注意点</a></h2>
+
+			<p>
+			自動変換によって int 型の値は float 型や double型の変数に代入できますし、 long 型の値は double 型の変数に代入することができますが、代入する数値によっては注意が必要です。
+			</p>
+
+			<p>
+			例えば float 型の値は負の値は -3.4028235E+38 ～ -1.401298E-45、正の値は 1.401298E-45 ～ 3.4028235E+38 の範囲の値を表現できます。ただ float 型や double 型には有効桁数というものがあり、 float 型ではおよそ 10 進数で 7 桁( 2 進数で 24 桁)、 double 型では 10 進数でおよそ 16 桁( 2 進数で 53 桁)となっています。
+			</p>
+
+			<p>
+			有効桁数とは表示された数値の中で信頼できる値が何桁あるのかということであり、もしも有効桁数が 3 桁であれば 12.345 という数値で信頼できるのは 12.3 まででそれ以降の数値には誤差が含まれている可能性があります。また 1.2345 という数値であれば信頼できるのは 1.23 まででそれ以降の数値には誤差が含まれている可能性があります。
+			</p>
+
+			<p>
+			このため、 long 型の値で7桁より大きい数値を float 型の値に変換すると変換は行われますが 7 桁以降の数には誤差が含まれる可能性があります。同じように 15 桁以上の大きい数値を double 型の値に変換した場合も誤差が含まれる可能性があります。同じように int 型の値を float 型に代入した場合も 7 桁以降は誤差が含まれる可能性があります。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+class JSample11_2{
+  public static void main(String[] args){
+    int i1 = 123456789;
+    float f1 = i1;
+    System.out.println("i1=：" + i1);
+    System.out.println("f1=：" + f1);
+
+    long l2 = 1234567890123456789L;
+    float f2 = l2;
+    double d2 = l2;
+
+    System.out.println("l2=：" + l2);
+    System.out.println("f2=：" + f2);
+    System.out.println("d2=：" + d2);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行ったあとで実行してみると次のような実行結果となります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+&gt;java JSample11_2
+i1=：123456789
+f1=：1.23456792E8
+l2=：1234567890123456789
+f2=：1.23456794E18
+d2=：1.23456789012345677E18
+
+&gt;
+</pre>
+</div>
+
+			<p>
+			最初は int 型の値を float 型の変数に代入した場合です。自動変換は行われて代入は行われますが誤差が発生しています。また long 型の値を floata 型と double 型の変数に代入した場合も、自動変換された代入された値には誤差が含まれています。
+			</p>
+
+			<p>
+			このように自動変換が行われる場合でも、桁数が大きい値を代入する場合には注意が必要です。
+			</p>
+
+<h2><a id="section4">キャスト演算子を使った縮小変換</a></h2>
+
+			<p>
+			扱う範囲が狭いデータ型に対して扱う範囲が広いデータ型の値を代入すると、コンパイル時にエラーが発生します。ただ絶対に代入できないわけではありません。明示的に型変換を行うことを記述することで、例えば double 型のデータを int 型の変数に代入することもできます。
+			</p>
+
+			<p>
+			明示的な型変換を行うときに使用するのかキャスト演算子です。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(データ型)変数
+</pre>
+</div>
+
+			<p>
+			変数を型変換するデータ型を ( と ) の間に記述します。
+			</p>
+
+			<p>
+			例えば double 型の値を int 型の変数に代入するには次のようにキャスト演算子を使って int 型に明示的に型変換してから代入します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+double d = 100.0;
+int i = (int)d;
+</pre>
+</div>
+
+			<p>
+			どのデータ型からどのデータ型へ代入するときにキャスト演算子を使った明示的な型変換が必要なのかは次の一覧をみてください。
+			</p>
+
+<table class="pro2">
+<tr><th>変更元</th><th>変更先</th></tr>
+<tr><td>byte</td><td>char</td></tr>
+<tr><td>short</td><td>char,byte</td></tr>
+<tr><td>int</td><td>char,byte,short</td></tr>
+<tr><td>long></td><td>char,byte,short,int</td></tr>
+<tr><td>float</td><td>char,byte,chort,int,long</td></tr>
+<tr><td>double</td><td>char,byte,chort,int,long,float</td></tr>
+<tr><td>char</td><td>byte,short</td></tr>
+</table>
+
+			<p>
+			自動的な型変換が起こるケースとちょうど逆になります。
+			</p>
+
+			<p>
+			なお式の中で演算の優先順位を変更する場合にも ( と ) を使いますが、括弧の中がデータ型だった場合はキャスト演算子となります。キャスト演算子の優先順位は比較的高いので記述する場合はどの部分にキャスト演算子が影響するのか注意して下さい。(演算子の優先順位については「<a href="../ope/index4.html" tppabs="https://www.javadrive.jp/start/ope/index4.html">演算子の優先順位と結合規則</a>」を参照下さい)。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample11-1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+class JSample11_3{
+  public static void main(String[] args){
+    double d = 123.0;
+    int i = (int)d;
+    float f = (float)d;
+
+    System.out.println("d=：" + d);
+    System.out.println("i=：" + i);
+    System.out.println("f=：" + f);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行います。
+			</p>
+
+<div class="titlebox3">
+<p>
+javac -encoding UTF-8 JSample11_3.java
+</p>
+</div>
+
+			<p>
+			その後で、次のように実行してください。
+			</p>
+
+<div class="titlebox3">
+<p>
+java JSample11_3
+</p>
+</div>
+
+			<p>
+			<img src="img/p11-2.png" tppabs="https://www.javadrive.jp/start/var/img/p11-2.png" alt="キャスト演算子を使った縮小変換(1)" width="723" height="352">
+			</p>
+
+			<p>
+			long 型の変数と double 型の変数にキャスト演算子を使って int 型の値を代入しましたがコンパイルも問題なくプログラムの実行も正常に行うことができました。
+			</p>
+
+<h2><a id="section5">longからintやdoubleからintへ変換するときの注意点</a></h2>
+
+			<p>
+			キャスト演算子を使って扱う範囲が狭いデータ型に対して扱う範囲が広いデータ型の値を代入するとき、場合によっては入りきらない値を代入してしまう可能性があります。例えば int 型の変数に int 型では扱えない大きな long 型の値を代入したときや、小数点を扱えない int 型の変数に float 型の値を代入した場合です。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+class JSample11_4{
+  public static void main(String[] args){
+    long l1 = 1234567890123456789L;
+    int i1 = (int)l1;
+    float f2 = 123.45f;
+    int i2 = (int)f2;
+
+    System.out.println("l1=：" + l1);
+    System.out.println("i1=：" + i1);
+    System.out.println("f2=：" + f2);
+    System.out.println("i2=：" + i2);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			コンパイルを行ったあとで実行してみると次のような実行結果となります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+&gt;java JSample11_4
+l1=：1234567890123456789
+i1=：2112454933
+f2=：123.45
+i2=：123
+
+&gt;
+</pre>
+</div>
+
+			<p>
+			いずれもエラーとなることはありませんが、 int 型の範囲を超えた long 型の値を代入した場合にどのような結果になるのかは分かりません。小数点がある値を int 型の変数に代入した場合は小数点以下が切り捨てられて代入されるようです。
+			</p>
+
+			<p>
+			このようにキャスト演算子を使って代入を行う場合には、代入される値が代入する変数のデータ型の範囲を超えてしまう場合、予期せぬ結果になりますのでご注意ください。
+			</p>
+
+<h2><a id="section6">数値リテラルを代入する場合の自動変換</a></h2>
+
+			<p>
+			例えば int 型の値を short 型や byte 型の変数に代入する場合はキャスト演算子を使った明示的な変換が必要ですが、数値リテラルを代入する場合に限って自動的な変換になる場合があります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+short s = 10;
+byte b = 10;
+char c = 10;
+</pre>
+</div>
+
+			<p>
+			数値リテラルで整数を記述した場合は int 型の値となります。 int 型の値を short 型や byte 型の変数に代入する場合であっても、数値リテラルを直接代入する場合はキャスト演算子を使わなくてもそのまま代入することができます。
+			</p>
+
+			<p>
+			自動変換されるのは数値リテラルを直接代入した場合だけです。いったん変数に格納した値を代入することはできません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int i = 10;
+byte b = i;  // エラー
+</pre>
+</div>
+
+			<p>
+			また数値リテラルを直接代入する場合であっても、代入先の扱える範囲を超えた大きな数値を代入することはできません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+byte b = 1000;  // エラー
+</pre>
+</div>
+
+			<p>
+			どちらもコンパイルの時に「エラー: 不適合な型: 精度が失われる可能性があるintからbyteへの変換」というエラーが発生します。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java における型変換が行われるルールと、キャスト演算子の使い方について解説します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

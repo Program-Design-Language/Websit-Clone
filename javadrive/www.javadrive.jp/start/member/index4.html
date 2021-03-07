@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>publicとprivate - メンバ変数とメンバメソッド - Java入門</title>
+<meta name="keywords" content="public,private,メンバ変数,メンバメソッド,入門,Java" />
+<meta name="description" content="publicとprivate" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/member/" itemprop="url"><span itemprop="title">メンバ変数とメンバメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>publicとprivate</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					前のページでメンバ変数に値を格納する場合にメソッドを呼び出して行う方法について記述しましたが、今のままではメンバ変数を変更するためのメソッドを用意したとしても、直接メンバ変数に値を格納しようと思えば出来てしまいます。
+					</p>
+
+<pre class="fixcode">
+class ctest{
+  public static void main(String args[]){
+    Television tv1 = new Television();
+
+    <span class="red">tv1.setChanne(5);</span>
+  }
+}
+
+class Television{
+  int channelNo;
+
+  void setChannel(int newChannelNo){
+    if ((newChannelNo == 1) || (newChannel == 3)){
+      channelNo = newChannelNo;
+    }
+  }
+
+  void dispChannel(){
+    System.out.println("現在のチャンネルは " + channelNo + " です");
+  }
+}
+</pre>
+
+					<p>
+					では、メンバ変数に直接値を格納するのを禁止し、必ずメソッド経由でしかメンバ変数の値を格納したり参照したり出来ないようにするにはどうすればいいでしょうか。そういった場合はメンバ変数の定義をする時に先頭に「private」を付けるようにします。
+					</p>
+
+<pre class="fixcode">
+class Television{
+  <span class="red">private</span> int channelNo;
+
+  void setChannel(int newChannelNo){
+    if ((newChannelNo == 1) || (newChannel == 3)){
+      channelNo = newChannelNo;
+    }
+  }
+
+  void dispChannel(){
+    System.out.println("現在のチャンネルは " + channelNo + " です");
+  }
+}
+</pre>
+
+					<p>
+					「private」を頭に付けたメンバ変数は、メンバ変数が定義されているクラスの中でしか値を格納したり取り出したりということが出来なくなります。その為、他のクラスの中でオブジェクトを作成し「オブジェクト名.メンバ変数名 = 値」のように直接メンバ変数に値を格納することを防止できます。
+					</p>
+
+					<p>
+					「private」を付けた場合でも、同じクラス内のメソッドからは値を格納したり取り出したりを行えますので、他のクラスの中でオブジェクトを作成した場合でも、オブジェクトからはメソッドを呼び出し、メンバ変数の値の変更はそのメソッド内で行うように記述すれば、メソッドを呼び出すことで間接的にメンバ変数の格納や変更を行えます。つまりメンバ変数の直接の変更は禁止し、メソッド経由でのみメンバ変数の変更を許可出来るというわけです。
+					</p>
+
+<pre class="fixcomment">
+定義時にprivateを頭に付けたメンバ変数は、メンバ変数を定義したクラス内でし
+かメンバ変数の値を変更したり参照したりする事は出来ない。
+
+private 変数の型 メンバ変数名;
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					実際に一度試してみましょう。「private」を付けたメンバ変数を直接変更してみます。
+					</p>
+
+					<p>
+					<a href="ctest2.java" tppabs="https://www.javadrive.jp/start/member/ctest2.java">ctest2.java</a>
+					</p>
+
+<pre class="fixcode">
+class ctest2{
+  public static void main(String args[]){
+    Television tv1 = new Television();
+
+    tv1.channelNo = 1;
+  }
+}
+
+class Television{
+  private int channelNo;
+
+  void setChannel(int newChannelNo){
+    channelNo = newChannelNo;
+    System.out.println("新しいChannelNo=" + channelNo);
+  }
+}
+</pre>
+
+					<p>
+					上記を実行しようとすると、コンパイルの段階でエラーとなります。
+					</p>
+
+					<p>
+					<img src="img/p1.png" tppabs="https://www.javadrive.jp/start/member/img/p1.png" alt="p1" width="514" height="188">
+					</p>
+
+					<p>
+					これに対してメソッド経由で変更しようとした場合は、メソッドはメンバ変数と同じクラス内なので問題なく変更することが出来ます。
+					</p>
+
+					<p>
+					<a href="ctest2.java" tppabs="https://www.javadrive.jp/start/member/ctest2.java">ctest2.java</a>
+					</p>
+
+<pre class="fixcode">
+class ctest3{
+  public static void main(String args[]){
+    Television tv1 = new Television();
+
+    tv1.setChannel(1);
+  }
+}
+
+class Television{
+  private int channelNo;
+
+  void setChannel(int newChannelNo){
+    channelNo = newChannelNo;
+    System.out.println("新しいChannelNo=" + channelNo);
+  }
+}
+</pre>
+
+					<p>
+					実行した結果は下記のようになります。
+					</p>
+
+					<p>
+					<img src="img/p2.png" tppabs="https://www.javadrive.jp/start/member/img/p2.png" alt="p2" width="513" height="187">
+					</p>
+
+					<p>
+					では、「private」を付けていないメンバ変数はどういう扱いになっているかと言うと、何も付いていない場合は「public」が付いているのと同等になります。つまり今までは「public」と書くのを省略してわけです。
+					</p>
+
+					<p>
+					「public」が付いている場合は、同じクラス内はもちろん、クラスの外部からでもメンバ変数に値を格納したり参照したりと言ったことが可能です。
+					</p>
+
+<pre class="fixcomment">
+定義時にpublicを頭に付けたメンバ変数は、メンバ変数を定義したクラス外か
+らでもメンバ変数の値を変更したり参照したりする事が出来る。
+
+public 変数の型 メンバ変数名;
+
+なお、publicは省略することが出来るので、単に下記のように記述も出来る。
+
+変数の型 メンバ変数名;
+</pre>
+
+					<p>
+					publicは書いても書かなくてもいいのですが、後でプログラムを見て分かりやすいように、そして「private」を書き忘れたわけではなく「public」にしたかったのだと明示的に分かるようにするために、publicは書いておいたほうがいいかと思います。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

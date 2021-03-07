@@ -1,0 +1,842 @@
+<!Doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta property="qc:admins" content="465267610762567726375" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>6.4 Verilog 竞争与冒险 | 菜鸟教程</title>
+
+  <link rel='dns-prefetch' href='//s.w.org' />
+<link rel="canonical" href="http://www.runoob.com/w3cnote/verilog-competition-hazard.html" />
+<meta name="keywords" content="6.4 Verilog 竞争与冒险">
+<meta name="description" content="关键字：竞争，冒险，书写规范 产生原因 数字电路中，信号传输与状态变换时都会有一定的延时。 在组合逻辑电路中，不同路径的输入信号变化传输到同一点门级电路时，在时间上有先有后，这种先后所形成的时间差称为竞争（Competition）。 由于竞争的存在，输出信号需要经过一段时间才能达到期望状态，过渡时间内可能产生瞬间的错误输出，例如尖峰脉冲。这种现象被称为冒险（Hazard）。 竞争不一定有冒险，但冒险一定会有竞争。= 1000)  $fi..">
+		
+	<link rel="shortcut icon" href="../../static.runoob.com/images/favicon.ico" tppabs="https://static.runoob.com/images/favicon.ico" mce_href="//static.runoob.com/images/favicon.ico" type="image/x-icon" >
+	<link rel="stylesheet" href="../wp-content/themes/runoob/style.css-v=1.157.css" tppabs="https://www.runoob.com/wp-content/themes/runoob/style.css?v=1.157" type="text/css" media="all" />	
+	<link rel="stylesheet" href="../../static.runoob.com/assets/font-awesome/4.7.0/css/font-awesome.min.css" tppabs="https://static.runoob.com/assets/font-awesome/4.7.0/css/font-awesome.min.css" media="all" />	
+  <!--[if gte IE 9]><!-->
+  <script src="../../static.runoob.com/assets/jquery/2.0.3/jquery.min.js" tppabs="https://static.runoob.com/assets/jquery/2.0.3/jquery.min.js"></script>
+  <!--<![endif]-->
+  <!--[if lt IE 9]>
+     <script src="../../cdn.staticfile.org/jquery/1.9.1/jquery.min.js" tppabs="https://cdn.staticfile.org/jquery/1.9.1/jquery.min.js"></script>
+     <script src="../../cdn.staticfile.org/html5shiv/r29/html5.min.js" tppabs="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <![endif]-->
+  <link rel="apple-touch-icon" href="https://static.runoob.com/images/icon/mobile-icon.png"/>
+  <meta name="apple-mobile-web-app-title" content="菜鸟教程">
+</head>
+<body>
+
+<!--  头部 -->
+<div class="container logo-search">
+
+  <div class="col search row-search-mobile">
+    <form action="index.php-s=.htm" tppabs="https://www.runoob.com/w3cnote/index.php?s=">
+      <input class="placeholder" placeholder="搜索……" name="s" autocomplete="off">
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col logo">
+      <h1><a href="../index.htm" tppabs="https://www.runoob.com/">菜鸟教程 -- 学的不仅是技术，更是梦想！</a></h1>
+    </div>
+        <div class="col right-list"> 
+    <button class="btn btn-responsive-nav btn-inverse" data-toggle="collapse" data-target=".nav-main-collapse" id="pull" style=""> <i class="fa fa-navicon"></i> </button>
+    </div>
+        <div class="col search search-desktop last">
+      <form action="../-s=.htm" tppabs="https://www.runoob.com/?s=" target="_blank">
+        <input class="placeholder" id="s" name="s" placeholder="搜索……"  autocomplete="off">
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- 导航栏 -->
+<div class="container navigation">
+	<div class="row">
+		<div class="col nav">
+			
+
+						<ul class="pc-nav" id="note-nav">
+				<li><a href="../index.htm" tppabs="https://www.runoob.com/">首页</a></li>
+				<li><a href="../w3cnote-1.htm" tppabs="https://www.runoob.com/w3cnote">笔记首页</a></li>
+				<li><a href="android-tutorial-intro.html" tppabs="https://www.runoob.com/w3cnote/android-tutorial-intro.html" title="Android 基础入门教程">Android</a></li>
+				<li><a href="es6-tutorial.html" tppabs="https://www.runoob.com/w3cnote/es6-tutorial.html" title="ES6 教程">ES6 教程</a></li>
+				<li><a href="ten-sorting-algorithm.html" tppabs="https://www.runoob.com/w3cnote/ten-sorting-algorithm.html" title="排序算法">排序算法</a></li>
+				<li><a href="verilog-tutorial.html" tppabs="https://www.runoob.com/w3cnote/verilog-tutorial.html" title="Verilog 教程">Verilog</a></li>
+				<li><a href="../linux/linux-cloud-server.html" tppabs="https://www.runoob.com/linux/linux-cloud-server.html" title="程序员人生">云服务器</a></li>
+				<li><a href="../w3cnote_genre/coderlife.htm" tppabs="https://www.runoob.com/w3cnote_genre/coderlife" title="程序员人生">程序员人生</a></li>
+				<li><a href="../w3cnote_genre/code.htm" tppabs="https://www.runoob.com/w3cnote_genre/code" title="编程技术">编程技术</a></li> 
+				<!--<li><a href="javascript:;" class="runoob-pop">登录</a></li>
+				
+				
+						<li>
+				<a style="font-weight:bold;" href="https://www.runoob.com/linux/linux-tutorial.html#yunserver" target="_blank" onclick="_hmt.push(['_trackEvent', 'aliyun', 'click', 'aliyun'])" title="kkb">云服务器</a>
+				</li>
+				<li><a href="http://gk.link/a/104mQ" target="_blank" style="font-weight: bold;"onclick="_hmt.push(['_trackEvent', '极客时间', 'click', 'jike'])" title="我的圈子">极客时间</a></li>
+			
+				
+				<li><a target="_blank" href="/shoppinglist" rel="nofollow">知识店铺</a></li> 
+		-->
+			</ul>
+						
+      		
+			<ul class="mobile-nav">
+				<li><a href="../w3cnote-1.htm" tppabs="https://www.runoob.com/w3cnote">首页</a></li>
+				<li><a href="../w3cnote_genre/android.htm" tppabs="https://www.runoob.com/w3cnote_genre/android" target="_blank" title="Android 基础入门教程">Android</a></li>
+				<li><a href="es6-tutorial.html" tppabs="https://www.runoob.com/w3cnote/es6-tutorial.html" target="_blank" title="ES6 教程">ES6</a></li>
+				<li><a href="../w3cnote_genre/joke.htm" tppabs="https://www.runoob.com/w3cnote_genre/joke" target="_blank" title="程序员笑话">逗乐</a></li>
+				
+				<a href="javascript:void(0)" class="search-reveal">Search</a> 
+			</ul>
+			
+		</div>
+	</div>
+</div>
+
+
+<!--  内容  -->
+<div class="container main">
+	<div class="row">
+
+		<!--  Android 基础入门教程 start  -->
+	<div class="col left-column" style="display:none;">
+		<div class="tab">Verilog 教程</div>
+		<div class="sidebar-box gallery-list">
+			<div class="design" id="leftcolumn">  
+			</div> 
+		</div> 
+	</div>
+	<!--  Android 基础入门教程 end  -->
+		<div class="col middle-column big-middle-column">
+	 			<div class="article">
+			<div class="article-heading">
+				<h2>6.4 Verilog 竞争与冒险</h2>				<h3><em>分类</em> <a href="../w3cnote_genre/verilog.htm" tppabs="https://www.runoob.com/w3cnote_genre/verilog" title="Verilog 教程" >Verilog 教程</a> </h3>
+			</div>
+			<div class="article-body note-body">
+				<div class="article-intro">
+					<h3>关键字：竞争，冒险，书写规范</h3>
+<h3>产生原因</h3>
+<p>数字电路中，信号传输与状态变换时都会有一定的延时。</p>
+<ul><li>在组合逻辑电路中，不同路径的输入信号变化传输到同一点门级电路时，在时间上有先有后，这种先后所形成的时间差称为竞争（Competition）。
+</li><li>由于竞争的存在，输出信号需要经过一段时间才能达到期望状态，过渡时间内可能产生瞬间的错误输出，例如尖峰脉冲。这种现象被称为冒险（Hazard）。
+</li><li>竞争不一定有冒险，但冒险一定会有竞争。</li></ul<p>
+
+例如，对于给定逻辑 <span class="marked">F = A & A'</span>，电路如左下图所示。</p>
+<p>由于反相器电路的存在，信号 <span class="marked">A'</span> 传递到与门输入端的时间相对于信号 <span class="marked">A</span> 会滞后，这就可能导致与门最后的输出结果 <span class="marked">F</span> 会出现干扰脉冲。如右下图所示。</p>
+<p><img src="../wp-content/uploads/2020/09/css-mediatypes.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/UIYHpuq1MQk1qSRJ.png"></p>
+<p>
+<img src="../wp-content/uploads/2020/09/css-attribute-selectors.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/1ENpirJR5XTPq4Jt.png" >      </p>
+<p>
+其实实际硬件电路中，只要门电路各个输入端延时不同，就有可能产生竞争与冒险。</p><p>
+例如一个简单的与门，输入信号源不一定是同一个信号变换所来，由于硬件工艺、其他延迟电路的存在，也可能产生竞争与冒险，如下图所示。</p>
+<p><img src="../wp-content/uploads/2020/09/css-form.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/52NhfykVOdwPDphm.png"></p>
+<h3>判断方法</h3>
+<p><strong>代数法</strong></p><p>
+在逻辑表达式，保持一个变量固定不动，将剩余其他变量用 0 或 1 代替，如果最后逻辑表达式能化简成</p>
+<pre>Y = A + A'</pre> 
+<p>或 </p>
+<pre>Y = A &middot; A'</pre><p>
+的形式，则可判定此逻辑存在竞争与冒险。</p>
+<p>例如逻辑表达式 <span class="marked">Y = AB + A'C</span>，在 <span class="marked">B=C=1</span> 的情况下，可化简为 <span class="marked">Y = A + A'</span>。显然，<span class="marked">A</span> 状态的改变，势必会造成电路存在竞争冒险。</p>
+<p>
+<strong>卡诺图法</strong></p><p>
+有两个相切的卡诺圈，并且相切处没有其他卡诺圈包围，可能会出现竞争与冒险现象。</p><p>
+例如左下图所存在竞争与冒险，右下图则没有。</p><p><img src="../wp-content/uploads/2020/09/css-counters.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/riZgKcXReVPbPn0Q.png" >    </p>       
+<p>其实，卡诺图本质上还是对逻辑表达式的一个分析，只是可以进行直观的判断。</p><p>
+例如，左上图逻辑表达式可以简化为 <span class="marked">Y = A'B' + AC</span>，当 <span class="marked">B=0</span> 且 <span class="marked">C=1</span> 时，此逻辑表达式又可以表示为 <span class="marked">Y = A' + A</span>。所以肯定会存在竞争与冒险。</p>
+<p>右上图逻辑表达式可以简化为 <span class="marked">Y = A'B' + AB</span>，显然 <strong>B</strong> 无论等于 <strong>1</strong> 还是 <strong>0</strong>，此式都不会化简成 <span class="marked">Y = A' + A</span>。所以此逻辑不存在竞争与冒险。</p>
+
+<p>需要注意的是，卡诺图是首尾相临的。如下图所示，虽然看起来两个卡诺圈并没有相切，但实际上，m6 与 m4 也是相邻的，所以下面卡诺图所代表的数字逻辑也会产生竞争与冒险。</p>
+<p><img src="../wp-content/uploads/2020/09/css-website-layout.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/jUY4EoeWZhAm5lbT.png"></p>
+<p><strong>
+其他较为复杂的情况，可能需要采用 "计算机辅助分析 + 实验" 的方法。</strong></p>
+<h2>
+消除方法</h2><p>
+对数字电路来说，常见的避免竞争与冒险的方法主要有 4 种。</p>
+
+<h3>1）增加滤波电容，滤除窄脉冲</h3><p>
+此种方法需要在输出端并联一个小电容，将尖峰脉冲的幅度削弱至门电路阈值以下。</p><p>
+此方法虽然简单，但是会增加输出电压的翻转时间，易破坏波形。</p>
+<h3>
+2）修改逻辑，增加冗余项</h3><p>
+利用卡诺图，在两个相切的圆之间，增加一个卡诺圈，并加在逻辑表达式之中。</p><p>
+如下图所示，对数字逻辑 <span class="marked">Y = A'B' + AC</span> 增加冗余项 <span class="marked">B'C</span>，则此电路逻辑可以表示为 <span class="marked">Y = A'B' + AC + B'C</span>。此时电路就不会再存在竞争与冒险。</p>
+<p><img src="../wp-content/uploads/2020/09/css-summary.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/Me1Nfse1Cmcjinur.png"></p>
+<h3>
+3）使用时钟同步电路，利用触发器进行打拍延迟</h3><p>
+同步电路信号的变化都发生在时钟边沿。对于触发器的 D 输入端，只要毛刺不出现在时钟的上升沿并且不满足数据的建立和保持时间，就不会对系统造成危害，因此可认为 D 触发器的 D 输入端对毛刺不敏感。
+利用此特性，在时钟边沿驱动下，对一个组合逻辑信号进行延迟打拍，可消除竞争冒险。</p><p>
+延迟一拍时钟时，会一定概率的减少竞争冒险的出现。实验表明，最安全的打拍延迟周期是 3 拍，可有效减少竞争冒险的出现。</p>
+<p>当然，最终还是需要根据自己的设计需求，对信号进行合理的打拍延迟。</p>
+<p><strong>为说明对信号进行打拍延迟可以消除竞争冒险，我们建立下面的代码模型。</strong></p>
+<div class="example"><h2 class="example">实例</h2> <div class="example_code">
+<span style="color: #A52A2A; font-weight: bold;">module</span> competition_hazard<br />
+&nbsp; &nbsp; <span style="color: #9F79EE;">&#40;</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; clk <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rstn <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; en <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; din_rvs <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">output</span> <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp;flag<br />
+&nbsp; &nbsp; <span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">;</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">wire</span> &nbsp; &nbsp;condition <span style="color: #5D478B;">=</span> din_rvs <span style="color: #5D478B;">&amp;</span> en <span style="color: #5D478B;">;</span> &nbsp;<span style="color: #00008B; font-style: italic;">//combination logic</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">always</span> <span style="color: #5D478B;">@</span><span style="color: #9F79EE;">&#40;</span><span style="color: #A52A2A; font-weight: bold;">posedge</span> clk <span style="color: #A52A2A; font-weight: bold;">or</span> <span style="color: #A52A2A; font-weight: bold;">negedge</span> <span style="color: #5D478B;">!</span>rstn<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">if</span> <span style="color: #9F79EE;">&#40;</span><span style="color: #5D478B;">!</span>rstn<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; flag &nbsp; <span style="color: #5D478B;">&lt;=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">else</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; flag &nbsp; <span style="color: #5D478B;">&lt;=</span> condition <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span> <br />
+<br />
+<span style="color: #A52A2A; font-weight: bold;">endmodule</span><br />
+</div></div>
+<p><strong>testbench 描述如下：</strong></p>
+<div class="example"><h2 class="example">实例</h2> <div class="example_code">
+<span style="color: #008800;">`timescale</span> <span style="color: #ff0055;">1ns</span><span style="color: #5D478B;">/</span><span style="color: #ff0055;">1ns</span><br />
+<br />
+<span style="color: #A52A2A; font-weight: bold;">module</span> test <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;clk<span style="color: #5D478B;">,</span> rstn <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;en <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;din_rvs <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">wire</span> &nbsp; &nbsp; &nbsp; &nbsp; flag_safe<span style="color: #5D478B;">,</span> flag_dgs <span style="color: #5D478B;">;</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #00008B; font-style: italic;">//clock and rstn generating </span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">initial</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; rstn &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; clk &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">#</span><span style="color: #ff0055;">5</span> rstn &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b1</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">forever</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">#</span><span style="color: #ff0055;">5</span> clk <span style="color: #5D478B;">=</span> <span style="color: #5D478B;">~</span>clk <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">initial</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; en &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; din_rvs &nbsp; <span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b1</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">#</span><span style="color: #ff0055;">19</span> <span style="color: #5D478B;">;</span> &nbsp; &nbsp; &nbsp;en &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b1</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">#</span><span style="color: #ff0055;">1</span> <span style="color: #5D478B;">;</span> &nbsp; &nbsp; &nbsp; din_rvs &nbsp; <span style="color: #5D478B;">=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+<br />
+&nbsp; &nbsp; competition_hazard &nbsp; &nbsp; &nbsp; &nbsp; u_dgs<br />
+&nbsp; &nbsp; &nbsp;<span style="color: #9F79EE;">&#40;</span><br />
+&nbsp; &nbsp; &nbsp; .clk &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #9F79EE;">&#40;</span>clk &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; .rstn &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #9F79EE;">&#40;</span>rstn &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; .en &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #9F79EE;">&#40;</span>en &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; .din_rvs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #9F79EE;">&#40;</span>din_rvs &nbsp; &nbsp; &nbsp; <span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; .flag &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #9F79EE;">&#40;</span>flag_dgs &nbsp; &nbsp; &nbsp;<span style="color: #9F79EE;">&#41;</span><span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">;</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">initial</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">forever</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">#</span><span style="color: #ff0055;">100</span><span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">if</span> <span style="color: #9F79EE;">&#40;</span><span style="color: #9932CC;">$time</span> <span style="color: #5D478B;">&gt;=</span> <span style="color: #ff0055;">1000</span><span style="color: #9F79EE;">&#41;</span> &nbsp;<span style="color: #9932CC;">$finish</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+<br />
+<span style="color: #A52A2A; font-weight: bold;">endmodule</span> <span style="color: #00008B; font-style: italic;">// test</span><br />
+</div></div>
+<p><strong>仿真结果如下:</strong></p>
+<p>由图可知，信号 condition 出现了一个尖峰脉冲，这是由于信号 din_rvs 与信号 en 相对于模块内部时钟都是异步的，所以到达内部门电路时的延时是不同的，就有可能造成竞争冒险。
+</p>
+<p>虽然最后的仿真结果 flag 一直为 0，似乎是我们想要的结果。但是实际电路中，这个尖峰脉冲在时间上非常靠近时钟边沿，就有可能被时钟采集到而产生错误结果。</p>
+<p><img src="../wp-content/uploads/2020/09/css3-intro.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/N6KSCoLSRxjCf9TB.png"></p>
+<p>
+下面我们对模型进行改进，增加打拍延时的逻辑，如下：</p>
+<div class="example"><h2 class="example">实例</h2> <div class="example_code">
+<span style="color: #A52A2A; font-weight: bold;">module</span> clap_delay<br />
+&nbsp; &nbsp; <span style="color: #9F79EE;">&#40;</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; clk <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rstn <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; en <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">input</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; din_rvs <span style="color: #5D478B;">,</span><br />
+&nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">output</span> <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp;flag<br />
+&nbsp; &nbsp; <span style="color: #9F79EE;">&#41;</span><span style="color: #5D478B;">;</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;din_rvs_r <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">reg</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;en_r <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">always</span> <span style="color: #5D478B;">@</span><span style="color: #9F79EE;">&#40;</span><span style="color: #A52A2A; font-weight: bold;">posedge</span> clk <span style="color: #A52A2A; font-weight: bold;">or</span> <span style="color: #5D478B;">!</span>rstn<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">if</span> <span style="color: #9F79EE;">&#40;</span><span style="color: #5D478B;">!</span>rstn<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; din_rvs_r &nbsp; &nbsp; &nbsp;<span style="color: #5D478B;">&lt;=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; en_r &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">&lt;=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">else</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; din_rvs_r &nbsp; &nbsp; &nbsp;<span style="color: #5D478B;">&lt;=</span> din_rvs <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; en_r &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #5D478B;">&lt;=</span> en <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+<br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">wire</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; condition <span style="color: #5D478B;">=</span> din_rvs_r <span style="color: #5D478B;">&amp;</span> en_r <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">always</span> <span style="color: #5D478B;">@</span><span style="color: #9F79EE;">&#40;</span><span style="color: #A52A2A; font-weight: bold;">posedge</span> clk <span style="color: #A52A2A; font-weight: bold;">or</span> <span style="color: #A52A2A; font-weight: bold;">negedge</span> <span style="color: #5D478B;">!</span>rstn<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">if</span> <span style="color: #9F79EE;">&#40;</span><span style="color: #5D478B;">!</span>rstn<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; flag &nbsp; <span style="color: #5D478B;">&lt;=</span> <span style="color: #ff0055;">1'b0</span> <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">else</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; flag &nbsp; <span style="color: #5D478B;">&lt;=</span> condition <span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span> <span style="color: #00008B; font-style: italic;">// always @ (posedge clk or negedge !rstn)</span><br />
+<br />
+<span style="color: #A52A2A; font-weight: bold;">endmodule</span><br />
+</div></div>
+<p><strong>将此模块例化到上述 testbench 中，得到如下仿真结果。</strong></p><p>
+由图可知，信号 condition 没有尖峰脉冲的干扰了，仿真结果中 flag 为 0 也如预期。</p>
+<p>其实，输入信号与时钟边沿非常接近的情况下，时钟对输入信号的采样也存在不确定性，但是不会出现尖峰脉冲的现象。对输入信号多打 2 拍，是更好的处理方式，对竞争与冒险有更好的抑制作用。</p>
+<p><img src="../wp-content/uploads/2020/09/css3-borders.html" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/R3sSRc0sMKZuLFVQ.png" ></p>
+<h3>
+4）采用格雷码计数器</h3><p>
+递加的多 bit 位计数器，计数值有时候会发生多个 bit 位的跳变。</p><p>
+例如计数器变量 counter 从 5 计数到 6 时， 对应二进制数字为 4'b101 到 4'b110 的转换。因为各 bit 数据位的延时，counter 的变换过程可能是： <span class="marked">4'b101 -&gt; 4'b111 -&gt; 4'b110</span>。如果有以下逻辑描述，则信号 cout 可能出现短暂的尖峰脉冲，这显然是与设计相悖的。</p>
+<pre>cout = counter[3:0] == 4'd7 ; </pre>
+<p>而格雷码计数器，计数时相邻的数之间只有一个数据 bit 发生了变化，所以能有效的避免竞争冒险。</p><p>
+好在 Verilog 设计时，计数器大多都是同步设计。即便计数时存在多个 bit 同时翻转的可能性，但在时钟驱动的触发器作用下，只要信号间满足时序要求，就能消除掉 100% 的竞争与冒险。
+</p>
+
+<p><strong>小结</strong></p><p>
+一般来说，为消除竞争冒险，增加滤波电容和逻辑冗余，都不是 Verilog 设计所考虑的。</p><p>
+计数采用格雷码计数器，大多数也是应用在高速时钟下减少信号翻转率来降低功耗的场合。</p><p>
+利用触发器在时钟同步电路下对异步信号进行打拍延时，是 Verilog 设计中经常用到的方法。</p><p>
+除此之外，为消除竞争冒险，Verilog 编码时还需要注意一些问题，详见下一小节。</p>
+<hr>
+<h2>
+Verilog 书写规范</h2>
+<p>在编程时多注意以下几点，也可以避免大多数的竞争与冒险问题。</p>
+<ul><li><li>
+1）时序电路建模时，用非阻塞赋值。</li><li>
+2）组合逻辑建模时，用阻塞赋值。</li><li>
+3）在同一个 always 块中建立时序和组合逻辑模型时，用非阻塞赋值。</li><li>
+4）在同一个 always 块中不要既使用阻塞赋值又使用非阻塞赋值。</li><li>
+5）不要在多个 always 块中为同一个变量赋值。</li><li>
+6）避免 latch 产生。</li></ul>
+<p>
+下面，对以上注意事项逐条分析。</p>
+<h3>1）时序电路建模时，用非阻塞赋值</h3><p>
+前面讲述非阻塞赋值时就陈述过，时序电路中非阻塞赋值可以消除竞争冒险。</p><p>
+例如下面代码描述，由于无法确定 a 与 b 阻塞赋值的操作顺序，就有可能带来竞争冒险。</p>
+<pre>always @(posedge clk) begin
+    a = b ;
+    b = a ;
+end</pre>
+<p>而使用非阻塞赋值时，赋值操作是同时进行的，所以就不会带来竞争冒险，如以下代码描述。</p>
+<pre>always @(posedge clk) begin
+    a &lt;= b ;
+    b &lt;= a ;
+end</pre><p>
+<h3>2）组合逻辑建模时，用阻塞赋值</h3>
+例如，我们想实现 C = A&B, F=C&D 的组合逻辑功能，用非阻塞赋值语句如下。</p><p>
+两条赋值语句同时赋值，F <= C & D 中使用的是信号 C 的旧值，所以导致此时的逻辑是错误的，F 的逻辑值不等于 A&B&D。</p><p>
+而且，此时要求信号 C 具有存储功能，但不是时钟驱动，所以 C 可能会被综合成锁存器（latch），导致竞争冒险。</p>
+<pre>always @(*) begin
+    C &lt;= A &amp; B ;
+    F &lt;= C &amp; D ;
+end</pre>
+<p>对代码进行如下修改，F = C & D 的操作一定是在 C = A & B 之后，此时 F 的逻辑值等于 A&B&D，符合设计。</p>
+<pre>always @(*) begin
+    C = A &amp; B ;
+    F = C &amp; D ;
+end</pre>
+<h3>3）在同一个 always 块中建立时序和组合逻辑模型时，用非阻塞赋值</h3><p>
+虽然时序电路中可能涉及组合逻辑，但是如果赋值操作使用非阻塞赋值，仍然会导致如规范 1 中所涉及的类似问题。</p>
+<p>例如在时钟驱动下完成一个与门的逻辑功能，代码参考如下。</p>
+<div class="example"><h2 class="example">实例</h2> <div class="example_code">
+<span style="color: #A52A2A; font-weight: bold;">always</span> <span style="color: #5D478B;">@</span><span style="color: #9F79EE;">&#40;</span><span style="color: #A52A2A; font-weight: bold;">posedge</span> clk <span style="color: #A52A2A; font-weight: bold;">or</span> <span style="color: #A52A2A; font-weight: bold;">negedge</span> rst_n<span style="color: #9F79EE;">&#41;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">if</span> <span style="color: #9F79EE;">&#40;</span><span style="color: #5D478B;">!</span>rst_n<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; q <span style="color: #5D478B;">&lt;=</span> <span style="color: #ff0055;">1'b0</span><span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">else</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; q <span style="color: #5D478B;">&lt;=</span> a <span style="color: #5D478B;">&amp;</span> b<span style="color: #5D478B;">;</span> &nbsp;<span style="color: #00008B; font-style: italic;">//即便有组合逻辑，也不要写成：q = a &amp; b </span><br />
+&nbsp; &nbsp; &nbsp;<span style="color: #A52A2A; font-weight: bold;">end</span><br />
+<span style="color: #A52A2A; font-weight: bold;">end</span><br />
+</div></div><h3>
+ 4）在同一个 always 块中不要既使用阻塞赋值又使用非阻塞赋值</h3><p>
+always 涉及的组合逻辑中，既有阻塞赋值又有非阻塞赋值时，会导致意外的结果，例如下面代码描述。</p><p>
+此时信号 C 阻塞赋值完毕以后，信号 F 才会被非阻塞赋值，仿真结果可能正确。</p><p>
+但如果 F 信号有其他的负载，F 的最新值并不能马上传递出去，数据有效时间还是在下一个触发时刻。此时要求 F 具有存储功能，可能会被综合成 latch，导致竞争冒险。</p>
+<pre>always @(*) begin
+    C = A &amp; B ;
+    F &lt;= C &amp; D ;
+end</pre>
+<p>如下代码描述，仿真角度看，信号 C 被非阻塞赋值，下一个触发时刻才会有效。而 F = C & D 虽然是阻塞赋值，但是信号 C 不是阻塞赋值，所以 F 逻辑中使用的还是 C 的旧值。</p>
+<pre>always @(*) begin
+    C &lt;= A &amp; B ;
+    F = C &amp; D ;
+end</pre><p>
+下面分析假如在时序电路里既有阻塞赋值，又有非阻塞赋值会怎样，代码如下。</p><p>
+假如复位端与时钟同步，那么由于复位导致的信号 q 为 0，是在下一个时钟周期才有效。</p><p>
+而如果是信号 a 或 b 导致的 q 为 0，则在当期时钟周期内有效。</p><p>
+如果 q 还有其他负载，就会导致 q 的时序特别混乱，显然不符合设计需求。</p>
+<div class="example"><h2 class="example">实例</h2> <div class="example_code">
+<span style="color: #A52A2A; font-weight: bold;">always</span> <span style="color: #5D478B;">@</span><span style="color: #9F79EE;">&#40;</span><span style="color: #A52A2A; font-weight: bold;">posedge</span> clk <span style="color: #A52A2A; font-weight: bold;">or</span> <span style="color: #A52A2A; font-weight: bold;">negedge</span> rst_n<span style="color: #9F79EE;">&#41;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">if</span> <span style="color: #9F79EE;">&#40;</span><span style="color: #5D478B;">!</span>rst_n<span style="color: #9F79EE;">&#41;</span> <span style="color: #A52A2A; font-weight: bold;">begin</span> &nbsp;<span style="color: #00008B; font-style: italic;">//假设复位与时钟同步</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; q <span style="color: #5D478B;">&lt;=</span> <span style="color: #ff0055;">1'b0</span><span style="color: #5D478B;">;</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">else</span> <span style="color: #A52A2A; font-weight: bold;">begin</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; q <span style="color: #5D478B;">=</span> a <span style="color: #5D478B;">&amp;</span> b<span style="color: #5D478B;">;</span> &nbsp; <br />
+&nbsp; &nbsp; <span style="color: #A52A2A; font-weight: bold;">end</span><br />
+<span style="color: #A52A2A; font-weight: bold;">end</span><br />
+</div></div>
+<p>需要说明的是，很多编译器都支持这么写，上述的分析也都是建立在仿真角度上。实际中如果阻塞赋值和非阻塞赋值混合编写，综合后的电路时序将是错乱的，不利于分析调试。
+</p>
+<h3>5）不要在多个 always 块中为同一个变量赋值</h3>
+<p>与 C 语言有所不同，Verilog 中不允许在多个 always 块中为同一个变量赋值。此时信号拥有多驱动端（Multiple Driver），是禁止的。当然，也不允许 assign 语句为同一个变量进行多次连线赋值。
+从信号角度来讲，多驱动时，同一个信号变量在很短的时间内进行多次不同的赋值结果，就有可能产生竞争冒险。</p>
+<p>从语法来讲，很多编译器检测到多驱动时，也会报 Error。</p>
+<h3>6）避免 latch 产生</h3>
+<p>具体分析见下一章：<a href="verilog-latch-1.html" tppabs="https://www.runoob.com/w3cnote/verilog-latch.html" rel="noopener noreferrer" target="_blank">《避免 Latch》</a>。</p>
+<h3>源码下载</h3>
+<p><a href="javascript:if(confirm('https://www.runoob.com/wp-content/uploads/2020/09/css3-border-radius.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.runoob.com/wp-content/uploads/2020/09/css3-border-radius.html'" tppabs="https://www.runoob.com/wp-content/uploads/2020/09/6.4competition_hazard.zip" download class="download">Download</a></p>				</div>
+			</div>
+			<div class="previous-next-links">
+			<div class="previous-design-link">← <a href="verilog-fsm-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-fsm.html" rel="prev"> 6.3 Verilog 状态机</a> </div>
+			<div class="next-design-link"><a href="verilog-latch-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-latch.html" rel="next"> 6.5 Verilog 避免 Latch</a> →</div>
+			</div>
+						<style>
+@media screen and (max-width: 768px) {
+	#w3cnote-ad728 {
+		display: none;
+	}
+}
+p.note-author {
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    font-weight: bold;
+    color: #78a15a;
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+}
+</style>
+<script>
+var aid = 22999;
+</script>
+	</div>
+		
+	</div>
+	<div class="listcol last right-column">
+
+	<script type="text/javascript">
+jQuery(document).ready(function ($){
+	var total = $(".membership li").length;
+	var left_list = '';
+	href = window.location.href;
+	
+	$(".membership li").each(function(index, value){
+
+		left_list += $(this).html();
+
+		cur_href = $(this).find("a").attr("href");
+		cur_obj = $(this);
+		
+		if(href.match(cur_href) != null) {
+			if(index==0) {
+				$(".previous-design-link").hide();
+			}
+			if(index==(total-1)) {
+				$(".next-design-link").hide();
+			}
+			prev_href = cur_obj.prev("li").find("a").attr("href");
+			prev_title = cur_obj.prev("li").find("a").attr("title");
+
+			next_href = cur_obj.next("li").find("a").attr("href");
+			next_title = cur_obj.next("li").find("a").attr("title");
+			if(prev_title) {
+				$(".previous-design-link a").attr("href", prev_href);
+				$(".previous-design-link a").attr("title", prev_title);
+				$(".previous-design-link a").text(prev_title);
+			} else {
+				$(".previous-design-link").html("");
+			}
+
+			if(next_title) {
+				$(".next-design-link a").attr("href", next_href);
+				$(".next-design-link a").attr("title", next_title);
+				$(".next-design-link a").text(next_title);
+			} else {
+				$(".next-design-link").html("");
+			}
+		}
+	});
+
+	$("#leftcolumn").html(left_list);
+});
+	</script>
+	<div class="sidebar-box cate-list">
+	<div class="sidebar-box recommend-here list-link">
+	<a href="javascript:void(0);">Verilog 教程</a>	</div>
+	
+	<ul class="membership">
+		
+	<li><a target="_top" title="1.1 Verilog 教程" href="javascript:if(confirm('http://div.wifi-cloud.jp/redir/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://div.wifi-cloud.jp/redir/'" tppabs="http://www.runoob.com/w3cnote/verilog-tutorial.html" >1.1 Verilog 教程</a></li>
+		
+	<li><a target="_top" title="1.2 Verilog 简介" href="verilog-intro-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-intro.html" >1.2 Verilog 简介</a></li>
+		
+	<li><a target="_top" title="1.3 Verilog 环境搭建" href="verilog-install-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-install.html" >1.3 Verilog 环境搭建</a></li>
+		
+	<li><a target="_top" title="1.4 Verilog 设计方法" href="verilog-design-method-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-design-method.html" >1.4 Verilog 设计方法</a></li>
+		
+	<li><a target="_top" title="2.1 Verilog 基础语法" href="verilog-basic-syntax-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-basic-syntax.html" >2.1 Verilog 基础语法</a></li>
+		
+	<li><a target="_top" title="2.2 Verilog 数值表示" href="verilog-number-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-number.html" >2.2 Verilog 数值表示</a></li>
+		
+	<li><a target="_top" title="2.3 Verilog 数据类型" href="verilog-data-type-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-data-type.html" >2.3 Verilog 数据类型</a></li>
+		
+	<li><a target="_top" title="2.4 Verilog 表达式" href="verilog-expression-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-expression.html" >2.4 Verilog 表达式</a></li>
+		
+	<li><a target="_top" title="2.5 Verilog 编译指令" href="verilog-compile-instruction-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-compile-instruction.html" >2.5 Verilog 编译指令</a></li>
+		
+	<li><a target="_top" title="3.1 Verilog 连续赋值" href="verilog-assign-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-assign.html" >3.1 Verilog 连续赋值</a></li>
+		
+	<li><a target="_top" title="3.2 Verilog 时延" href="verilog-time-delay-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-time-delay.html" >3.2 Verilog 时延</a></li>
+		
+	<li><a target="_top" title="4.1 Verilog 过程结构" href="verilog-process-structure-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-process-structure.html" >4.1 Verilog 过程结构</a></li>
+		
+	<li><a target="_top" title="4.2 Verilog 过程赋值" href="verilog-process-assign-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-process-assign.html" >4.2 Verilog 过程赋值</a></li>
+		
+	<li><a target="_top" title="4.3 Verilog 时序控制" href="verilog-timing-control-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-timing-control.html" >4.3 Verilog 时序控制</a></li>
+		
+	<li><a target="_top" title="4.4 Verilog 语句块" href="verilog-statements-block-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-statements-block.html" >4.4 Verilog 语句块</a></li>
+		
+	<li><a target="_top" title="4.5 Verilog 条件语句" href="verilog-condition-statement-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-condition-statement.html" >4.5 Verilog 条件语句</a></li>
+		
+	<li><a target="_top" title="4.6 Verilog 多路分支语句" href="verilog-case-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-case.html" >4.6 Verilog 多路分支语句</a></li>
+		
+	<li><a target="_top" title="4.7 Verilog 循环语句" href="verilog-loop-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-loop.html" >4.7 Verilog 循环语句</a></li>
+		
+	<li><a target="_top" title="4.8 Verilog 过程连续赋值" href="verilog-deassign-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-deassign.html" >4.8 Verilog 过程连续赋值</a></li>
+		
+	<li><a target="_top" title="5.1 Verilog 模块与端口" href="verilog-module-port-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-module-port.html" >5.1 Verilog 模块与端口</a></li>
+		
+	<li><a target="_top" title="5.2 Verilog 模块例化" href="verilog-generate-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-generate.html" >5.2 Verilog 模块例化</a></li>
+		
+	<li><a target="_top" title="5.3 Verilog 带参数例化" href="verilog-defparam-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-defparam.html" >5.3 Verilog 带参数例化</a></li>
+		
+	<li><a target="_top" title="6.1 Verilog 函数" href="verilog-function-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-function.html" >6.1 Verilog 函数</a></li>
+		
+	<li><a target="_top" title="6.2 Verilog 任务" href="verilog-task-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-task.html" >6.2 Verilog 任务</a></li>
+		
+	<li><a target="_top" title="6.3 Verilog 状态机" href="verilog-fsm-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-fsm.html" >6.3 Verilog 状态机</a></li>
+		<li>
+	6.4 Verilog 竞争与冒险	</li>
+	
+		
+	<li><a target="_top" title="6.5 Verilog 避免 Latch" href="verilog-latch-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-latch.html" >6.5 Verilog 避免 Latch</a></li>
+		
+	<li><a target="_top" title="6.6 Verilog 仿真激励" href="verilog-testbench-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-testbench.html" >6.6 Verilog 仿真激励</a></li>
+		
+	<li><a target="_top" title="6.7 Verilog 流水线" href="verilog-pipeline-design-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-pipeline-design.html" >6.7 Verilog 流水线</a></li>
+		
+	<li><a target="_top" title="7.1 Verilog 除法器设计" href="verilog-dividend-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-dividend.html" >7.1 Verilog 除法器设计</a></li>
+		
+	<li><a target="_top" title="7.2 Verilog 并行 FIR 滤波器设计" href="verilog-fir-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-fir.html" >7.2 Verilog 并行 FIR 滤波器设计</a></li>
+		
+	<li><a target="_top" title="7.3 Verilog 串行 FIR 滤波器设计" href="verilog-serial-fir-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-serial-fir.html" >7.3 Verilog 串行 FIR 滤波器设计</a></li>
+		
+	<li><a target="_top" title="7.4 Verilog CIC 滤波器设计" href="verilog-cic-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-cic.html" >7.4 Verilog CIC 滤波器设计</a></li>
+		
+	<li><a target="_top" title="7.5 Verilog FFT 设计" href="verilog-fft-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-fft.html" >7.5 Verilog FFT 设计</a></li>
+		
+	<li><a target="_top" title="7.6 Verilog DDS 设计" href="verilog-dds-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-dds.html" >7.6 Verilog DDS 设计</a></li>
+		
+	<li><a target="_top" title="8.1 Verilog 数值转换" href="verilog-numerical-conversion-1.html" tppabs="http://www.runoob.com/w3cnote/verilog-numerical-conversion.html" >8.1 Verilog 数值转换</a></li>
+	</ul></div>	</div>
+</div>
+
+
+<!-- 底部 -->
+
+
+<div id="footer" class="mar-t50">
+   <div class="runoob-block">
+    <div class="runoob cf">
+     <dl>
+      <dt>
+       在线实例
+      </dt>
+      <dd>
+       &middot;<a target="_blank" href="../html/html-examples.html" tppabs="https://www.runoob.com/html/html-examples.html">HTML 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../css/css-examples.html" tppabs="https://www.runoob.com/css/css-examples.html">CSS 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../js/js-examples.html" tppabs="https://www.runoob.com/js/js-examples.html">JavaScript 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../ajax/ajax-examples.html" tppabs="https://www.runoob.com/ajx/ajax-examples.html">Ajax 实例</a>
+      </dd>
+       <dd>
+       &middot;<a target="_blank" href="../jquery/jquery-examples.html" tppabs="https://www.runoob.com/jquery/jquery-examples.html">jQuery 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../xml/xml-examples.html" tppabs="https://www.runoob.com/xml/xml-examples.html">XML 实例</a>
+      </dd>
+      <dd>
+       &middot;<a target="_blank" href="../java/java-examples.html" tppabs="https://www.runoob.com/java/java-examples.html">Java 实例</a>
+      </dd>
+     
+     </dl>
+     <dl>
+      <dt>
+      字符集&工具
+      </dt>
+      <dd>
+       &middot; <a target="_blank" href="../charsets/html-charsets.html" tppabs="https://www.runoob.com/charsets/html-charsets.html">HTML 字符集设置</a>
+      </dd>
+      <dd>
+       &middot; <a target="_blank" href="../tags/html-ascii.html" tppabs="https://www.runoob.com/tags/html-ascii.html">HTML ASCII 字符集</a>
+      </dd>
+     <dd>
+       &middot; <a target="_blank" href="../tags/ref-entities.html" tppabs="https://www.runoob.com/tags/ref-entities.html">HTML ISO-8859-1</a>
+      </dd> 
+      <dd>
+       &middot; <a target="_blank" href="../tags/html-symbols.html" tppabs="https://www.runoob.com/tags/html-symbols.html">HTML 实体符号</a>
+      </dd>
+      <dd>
+       &middot; <a target="_blank" href="../tags/html-colorpicker.html" tppabs="https://www.runoob.com/tags/html-colorpicker.html">HTML 拾色器</a>
+      </dd>
+      <dd>
+       &middot; <a target="_blank" href="javascript:if(confirm('https://c.runoob.com/front-end/53  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://c.runoob.com/front-end/53'" tppabs="https://c.runoob.com/front-end/53">JSON 格式化工具</a>
+      </dd>
+     </dl>
+     <dl>
+      <dt>
+       最新更新
+      </dt>
+                   <dd>
+       &middot;
+      <a href="../vue3/vue3-watch-1.html" tppabs="http://www.runoob.com/vue3/vue3-watch.html" title="Vue3 监听属性">Vue3 监听属性</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-components-1.html" tppabs="http://www.runoob.com/vue3/vue3-components.html" title="Vue3 组件">Vue3 组件</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vu3-computed-1.html" tppabs="http://www.runoob.com/vue3/vu3-computed.html" title="Vu3 计算属性">Vu3 计算属性</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-v-for-1.html" tppabs="http://www.runoob.com/vue3/vue3-v-for.html" title="Vue3 循环语句">Vue3 循环语句</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-v-if-1.html" tppabs="http://www.runoob.com/vue3/vue3-v-if.html" title="Vue3 条件语句">Vue3 条件语句</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-template-syntax-1.html" tppabs="http://www.runoob.com/vue3/vue3-template-syntax.html" title="Vue3 模板语法">Vue3 模板语法</a>
+      </dd>
+              <dd>
+       &middot;
+      <a href="../vue3/vue3-intro-1.html" tppabs="http://www.runoob.com/vue3/vue3-intro.html" title="Vue3 起步">Vue3 起步</a>
+      </dd>
+             </dl>
+     <dl>
+      <dt>
+       站点信息
+      </dt>
+      <dd>
+       &middot;
+       <a target="_blank" href="javascript:if(confirm('https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=ssbDyoOAgfLU3crf09venNHd3w  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=ssbDyoOAgfLU3crf09venNHd3w'" tppabs="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=ssbDyoOAgfLU3crf09venNHd3w" rel="external nofollow">意见反馈</a>
+      </dd>
+        <!--
+      <dd>
+       &middot;
+      <a class="wxpopup" onclick="popFunction()">加入我们
+       <span class="popuptext" id="myPopup">
+       岗位：技术类型自媒体<br>
+工作地点：厦门<br>
+
+具体联系邮箱：<strong>429240967@qq.com</strong></span>
+      </a>
+      </dd> 
+      -->
+      <dd>
+       &middot;
+      <a target="_blank" href="../disclaimer.htm" tppabs="https://www.runoob.com/disclaimer">免责声明</a>
+       </dd>
+       <!--
+       <dd style="display: block;">
+       &middot;
+      <a href="javascript:void(0)" onclick="dashangToggle()" style="font-weight:bold;color:#f00;" title="打赏，支持一下">打赏一下</a>
+       </dd>
+     -->
+      <dd>
+       &middot;
+       <a target="_blank" href="../aboutus.htm" tppabs="https://www.runoob.com/aboutus">关于我们</a>
+       </dd>
+      <dd>
+       &middot;
+      <a target="_blank" href="../archives.htm" tppabs="https://www.runoob.com/archives">文章归档</a>
+      </dd>
+    
+     </dl>
+    
+     <div class="search-share">
+      <div class="app-download">
+        <div>
+         <strong>关注微信</strong>
+        </div>
+      </div>
+      <div class="share">
+            <img width="128" height="128" src="../wp-content/themes/runoob/assets/images/qrcode.png" tppabs="https://www.runoob.com/wp-content/themes/runoob/assets/images/qrcode.png" />
+       </div>
+     </div>
+     
+    </div>
+   </div>
+   <div class="w-1000 copyright">
+     Copyright &copy; 2013-2021    <strong><a href="../index.htm" tppabs="https://www.runoob.com/" target="_blank">菜鸟教程</a></strong>&nbsp;
+    <strong><a href="../index.htm" tppabs="https://www.runoob.com/" target="_blank">runoob.com</a></strong> All Rights Reserved. 备案号：<a target="_blank" rel="nofollow" href="javascript:if(confirm('https://beian.miit.gov.cn/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://beian.miit.gov.cn/'" tppabs="https://beian.miit.gov.cn/">闽ICP备15012807号-1</a>
+   </div>
+  </div>
+  <div class="fixed-btn">
+    <a class="go-top" href="javascript:void(0)" title="返回顶部"> <i class="fa fa-angle-up"></i></a>
+    <a class="qrcode"  href="javascript:void(0)" title="关注我们"><i class="fa fa-qrcode"></i></a>
+    <a class="writer" style="display:none" href="javascript:void(0)"   title="标记/收藏"><i class="fa fa-star" aria-hidden="true"></i></a>
+    <!-- qrcode modal -->
+    <div id="bottom-qrcode" class="modal panel-modal hide fade in">
+      <h4>微信关注</h4>
+      <div class="panel-body"><img alt="微信关注" width="128" height="128" src="../wp-content/themes/runoob/assets/images/qrcode.png" tppabs="https://www.runoob.com/wp-content/themes/runoob/assets/images/qrcode.png"></div> 
+    </div>
+  </div>
+
+  <div class="hide_box"></div>
+    <div class="shang_box">
+      <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="../../static.runoob.com/images/dashang/close.jpg" tppabs="https://static.runoob.com/images/dashang/close.jpg" alt="取消" /></a>
+       
+      <div class="shang_tit">
+        <p>感谢您的支持，我会继续努力的!</p>
+      </div>
+      <div class="shang_payimg">
+        <img src="../../static.runoob.com/images/dashang/weipayimg.png.jpg" tppabs="https://static.runoob.com/images/dashang/weipayimg.png" alt="扫码支持" title="扫一扫" />
+      </div>
+        <div class="pay_explain">扫码打赏，你说多少就多少</div>
+      <div class="shang_payselect">
+        <div class="pay_item  checked" data-id="weipay">
+          <span class="radiobox"></span>
+          <span class="pay_logo"><img src="../../static.runoob.com/images/dashang/wechat.jpg" tppabs="https://static.runoob.com/images/dashang/wechat.jpg" alt="微信" /></span>
+        </div>
+        <div class="pay_item" data-id="alipay">
+          <span class="radiobox"></span>
+          <span class="pay_logo"><img src="../../static.runoob.com/images/dashang/alipay.jpg" tppabs="https://static.runoob.com/images/dashang/alipay.jpg" alt="支付宝" /></span>
+        </div>
+        
+      </div>
+      <div class="shang_info">
+        <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+        <p><a href="javascript:if(confirm('https://c.runoob.com/codedemo/5348  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://c.runoob.com/codedemo/5348'" tppabs="https://c.runoob.com/codedemo/5348" target="_blank"><span style=" font-size: 14px;color: #000;font-weight: bold;">点我查看本站打赏源码！</span></a></p>
+      </div>
+    </div>
+  <div id="testClick"></div>
+ <div style="display:none;">
+ 
+ <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "../../hm.baidu.com/hm.js-3eec0b7da6548cf07db3bc477ea905ee"/*tpa=https://hm.baidu.com/hm.js?3eec0b7da6548cf07db3bc477ea905ee*/;
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script async src="../../www.googletagmanager.com/gtag/js-id=UA-84264393-2" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-84264393-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-84264393-2');
+</script>
+</div>
+<script>
+window.jsui={
+    www: 'https://www.runoob.com',
+    uri: 'https://www.runoob.com/wp-content/themes/runoob'
+};
+</script>
+<style>
+ol,ul{list-style:none}.cd-switcher a{text-decoration:none;outline:0}.cd-switcher a:hover{text-decoration:underline}a:focus{outline:0;-moz-outline:0}.main_nav{width:300px;height:60px;margin:60px auto 10px auto}.main_nav li{float:left;width:60px;margin-right:10px;font-size:16px;padding:.6em 1em;border-radius:3em;background:#2f889a;text-align:center}.main_nav li a{color:#fff}.errtip{background-color:#fceaea;color:#db5353;padding:8px 15px;font-size:14px;border:1px solid #fc9797;border-radius:5px}.cd-user-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(52,54,66,0.9);z-index:3;overflow-y:auto;cursor:pointer;visibility:hidden;opacity:0;-webkit-transition:opacity .3s 0,visibility 0 .3s;-moz-transition:opacity .3s 0,visibility 0 .3s;transition:opacity .3s 0,visibility 0 .3s}.cd-user-modal.is-visible{visibility:visible;opacity:1;-webkit-transition:opacity .3s 0,visibility 0 0;-moz-transition:opacity .3s 0,visibility 0 0;transition:opacity .3s 0,visibility 0 0}.cd-user-modal.is-visible .cd-user-modal-container{-webkit-transform:translateY(0);-moz-transform:translateY(0);-ms-transform:translateY(0);-o-transform:translateY(0);transform:translateY(0)}.cd-user-modal-container{position:relative;width:90%;max-width:500px;background:#FFF;margin:3em auto 4em;cursor:auto;border-radius:.25em;-webkit-transform:translateY(-30px);-moz-transform:translateY(-30px);-ms-transform:translateY(-30px);-o-transform:translateY(-30px);transform:translateY(-30px);-webkit-transition-property:-webkit-transform;-moz-transition-property:-moz-transform;transition-property:transform;-webkit-transition-duration:.3s;-moz-transition-duration:.3s;transition-duration:.3s}.cd-user-modal-container .cd-switcher:after{content:"";display:table;clear:both}.cd-user-modal-container .cd-switcher li{width:50%;float:left;text-align:center}.cd-user-modal-container .cd-switcher li:first-child a{border-radius:.25em 0 0 0}.cd-user-modal-container .cd-switcher li:last-child a{border-radius:0 .25em 0 0}.cd-user-modal-container .cd-switcher a{font-size:1.2em;font-weight:bold;display:block;width:100%;height:50px;line-height:50px;background:#e8f1e2;color:#96b880}.cd-user-modal-container .cd-switcher a.selected{background:#FFF;color:#505260}@media only screen and (min-width:600px){.cd-user-modal-container{margin:4em auto}.cd-user-modal-container .cd-switcher a{height:70px;line-height:70px}}.cd-form{padding:1.4em}.cd-form .fieldset{position:relative;margin:1.4em 0}.cd-form .fieldset:first-child{margin-top:0}.cd-form .fieldset:last-child{margin-bottom:0}.cd-form label{font-size:16px;font-size:.875rem}.cd-form label.image-replace{display:inline-block;position:absolute;left:15px;top:50%;bottom:auto;-webkit-transform:translateY(-50%);-moz-transform:translateY(-50%);-ms-transform:translateY(-50%);-o-transform:translateY(-50%);transform:translateY(-50%);height:20px;width:20px;overflow:hidden;text-indent:100%;white-space:nowrap;color:transparent;text-shadow:none;background-repeat:no-repeat;background-position:50% 0}.cd-form label.cd-username{background-image:url("../wp-content/themes/runoob/assets/img/cd-icon-username.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-username.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-username.svg*/}.cd-form label.cd-email{background-image:url("../wp-content/themes/runoob/assets/img/cd-icon-email.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-email.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-email.svg*/}.cd-form label.cd-password{background-image:url("../wp-content/themes/runoob/assets/img/cd-icon-password.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-password.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-password.svg*/}.cd-form input{margin:0;padding:0;border-radius:.25em}.cd-form input.full-width{width:80%}.cd-form input.full-width2{width:94%}.cd-form input.has-padding{padding:12px 20px 12px 50px}.cd-form input.has-border{border:1px solid #d2d8d8;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none;-o-appearance:none;appearance:none}.cd-form input.has-border:focus{border-color:#98b880;box-shadow:0 0 5px rgba(52,54,66,0.1);outline:0}.cd-form input.has-error{border:1px solid #d76666}.cd-form input[type=password]{padding-right:65px}.cd-form input[type=submit]{padding:16px 0;cursor:pointer;background:#96b97d;color:#FFF;font-weight:bold;border:0;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none;-o-appearance:none;appearance:none;font-size:1.2em;font-weight:bold}.no-touch .cd-form input[type=submit]:hover,.no-touch .cd-form input[type=submit]:focus{background:#3599ae;outline:0}@media only screen and (min-width:600px){.cd-form{padding:2em}.cd-form .fieldset{margin:2em 0}.cd-form .fieldset:first-child{margin-top:0}.cd-form .fieldset:last-child{margin-bottom:0}.cd-form input.has-padding{padding:16px 20px 16px 50px}.cd-form input[type=submit]{padding:16px 0}}.cd-close-form{display:block;position:absolute;width:40px;height:40px;right:0;top:-40px;background:url("../wp-content/themes/runoob/assets/img/cd-icon-close.svg")/*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-close.svg*//*tpa=https://www.runoob.com/wp-content/themes/runoob/assets/img/cd-icon-close.svg*/ no-repeat center center;text-indent:100%;white-space:nowrap;overflow:hidden}@media only screen and (min-width:1170px){}#cd-login,#cd-signup,#cd-reset-password{display:none}#cd-login.is-selected,#cd-signup.is-selected,#cd-reset-password.is-selected{display:block}
+</style>
+<div class="cd-user-modal"> 
+	<div class="cd-user-modal-container">
+		<ul class="cd-switcher">
+			<li><a href="javascript:;">用户登录</a></li>
+			<li><a href="javascript:;">注册新用户</a></li>
+		</ul>
+
+		<div id="cd-login"> <!-- 登录表单 -->
+			<div class="cd-form">
+				<p class="fieldset">
+					<label class="image-replace cd-username" for="signin-username">用户名</label>
+					<input class="full-width has-padding has-border" id="signin-username" name=username type="text" placeholder="输入用户名">
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signin-password">密码</label>
+					<input class="full-width has-padding has-border" id="signin-password" name="password" type="password"  placeholder="输入密码">
+				</p>
+				
+				<p class="fieldset">
+					<input type="checkbox" id="remember-me" checked>
+					<label for="remember-me">记住登录状态</label>
+          <a href="../reset-password.htm" tppabs="https://www.runoob.com/reset-password" style="float: right;padding-right: 20px;" target="_blank">忘记密码？</a>
+				</p>
+ 				<input type="hidden" name="action" value="signin">
+				<p class="fieldset">
+					<input class="full-width2" type="submit" value="登 录">
+				</p>
+        <div class="err-msg"></div>
+			</div>
+		</div>
+
+		<div id="cd-signup"> <!-- 注册表单 -->
+			<div class="cd-form">
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="verifycode">邀请码</label>
+					<input class="full-width has-padding has-border" id="signup-verifycode" name="verifycode" type="text"  placeholder="输入邀请码">
+				</p>
+				<p class="fieldset">
+					<label class="image-replace cd-username" for="signup-username">用户名</label>
+					<input class="full-width has-padding has-border" id="signup-username" name="name" type="text" placeholder="输入用户名">
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-email" for="signup-email">邮箱</label>
+					<input class="full-width has-padding has-border" name="email" id="signup-email" type="email" placeholder="输入mail">
+				</p>
+
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signup-password">密码</label>
+					<input class="full-width has-padding has-border" id="signup-password" name="password" type="password"  placeholder="输入密码">
+				</p>
+				<p class="fieldset">
+					<label class="image-replace cd-password" for="signup-password2">重复输入密码</label>
+					<input class="full-width has-padding has-border" id="signup-password2" name="password2" type="password"  placeholder="重复输入密码">
+				</p>
+				
+				<!-- 
+				<p class="fieldset">
+					<input type="checkbox" id="accept-terms">
+					<label for="accept-terms">我已阅读并同意 <a href="javascript:;">用户协议</a></label>
+				</p>
+				 -->
+				 
+				 <input type="hidden" name="action" value="signup">
+				<p class="fieldset">
+					<input class="full-width2" type="submit" value="注册新用户">
+				</p>
+				<p class="fieldset">
+				  <a href="runoob-user-test-intro.html#invite" tppabs="https://www.runoob.com/w3cnote/runoob-user-test-intro.html#invite" target="_blank">如何获取邀请码？</a>
+				  </p>
+				<div class="err-msg"></div>
+			</div>
+
+		</div>
+
+		<a href="javascript:;" class="cd-close-form">关闭</a>
+	</div>
+</div> 
+<script src="../wp-content/themes/runoob/assets/js/main.min.js-v=1.191" tppabs="https://www.runoob.com/wp-content/themes/runoob/assets/js/main.min.js?v=1.191"></script>
+<script src="../../static.runoob.com/assets/libs/hl/run_prettify.js" tppabs="https://static.runoob.com/assets/libs/hl/run_prettify.js"></script>
+</body>
+</html>

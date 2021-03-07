@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | 正規表現にマッチした文字列を新しい文字列に置換する(Pattern.sub, Pattern.subn)</title>
+<meta name="description" content="Pattern クラスの sub メソッドは、対象の文字列の中で正規表現パターンにマッチした文字列を新しい文字列に置換します。 sub メソッドは置換後の新しい文字列を返しますが、 subn メソッドはタプルとして返します。ここでは Python の正規表現で sub メソッドおよび subn メソッドを使って正規表現にマッチした文字列を新しい文字列に置換する方法について解説します。">
+
+<meta property="og:title" content="正規表現にマッチした文字列を新しい文字列に置換する(Pattern.sub, Pattern.subn)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/regex/index10.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/regex/img/p10-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Pattern クラスの sub メソッドは、対象の文字列の中で正規表現パターンにマッチした文字列を新しい文字列に置換します。 sub メソッドは置換後の新しい文字列を返しますが、 subn メソッドはタプルとして返します。ここでは Python の正規表現で sub メソッドおよび subn メソッドを使って正規表現にマッチした文字列を新しい文字列に置換する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Python正規表現",
+    "item": "https://www.javadrive.jp/python/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/regex/">Python正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>正規表現にマッチした文字列を新しい文字列に置換する(Pattern.sub, Pattern.subn)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Pattern クラスの sub メソッドは、対象の文字列の中で正規表現パターンにマッチした文字列を新しい文字列に置換します。 sub メソッドは置換後の新しい文字列を返しますが、 subn メソッドはタプルとして返します。ここでは Python の正規表現で sub メソッドおよび subn メソッドを使って正規表現にマッチした文字列を新しい文字列に置換する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">subメソッドの書式と使い方</a></li>
+			<li><a href="#section2">置換回数を指定する</a></li>
+			<li><a href="#section3">キャプチャグループにマッチした文字列を参照する</a></li>
+			<li><a href="#section4">置換する新しい文字列として関数を指定する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">subメソッドの書式と使い方</a></h2>
+
+			<p>
+			Pattern クラスの sub メソッドは、対象の文字列の中で正規表現パターンにマッチした部分文字列を新しい文字列に置換し、置換後の文字列を返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Pattern.sub(repl, string, count=0)
+</pre>
+</div>
+
+			<p>
+			Pattern クラスの subn メソッドは、 sub メソッドと同じ動作をしますが、置換後に文字列を返すのではなく新しい文字列と置換した回数の 2 つの要素が含まれるタプルを返します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Pattern.subn(repl, string, count=0)
+</pre>
+</div>
+
+			<p>
+			どちらのメソッドも 1 番目の引数に置き換える新しい文字列を指定し、 2 番目の引数に対象の文字列を指定します。省略可能な 3 番目の引数には最大置換回数を指定します。デフォルトの値は 0 で、この場合は置換回数に制限がありません。
+			</p>
+
+			<p>
+			最初に sub メソッドについてです。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = 'Border is Red, Box is red, Line is RED'
+pattern = re.compile(r'Red|RED')
+
+result = pattern.sub('red', msg)
+print(result)
+
+<span class="bold">&gt;&gt; Border is red, Box is red, Line is red</span>
+</pre>
+</div>
+
+			<p>
+			正規表現パターンとして「Red」か「RED」のどちらかにマッチするパターンを指定し、このパターンにマッチする文字列を「red」に置換しました。戻り値として置換が終わったあとの新しい文字列を取得しています。
+			</p>
+
+			<p>
+			次に subn メソッドについてです。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = 'Border is Red, Box is red, Line is RED'
+pattern = re.compile(r'Red|RED')
+
+result = pattern.subn('red', msg)
+print(result)
+
+<span class="bold">&gt;&gt; ('Border is red, Box is red, Line is red', 2)</span>
+</pre>
+</div>
+
+			<p>
+			正規表現パターンとして「Red」か「RED」のどちらかにマッチするパターンを指定し、このパターンにマッチする文字列を「red」に置換しました。戻り値として置換が終わったあとの新しい文字列と置換が行われた回数の 2 がそれぞれ要素として格納されたタプルを取得しています。
+			</p>
+
+<h2><a id="section2">置換回数を指定する</a></h2>
+
+			<p>
+			sub メソッド(および subn メソッド)の 2 番目の引数に最大置換回数を指定することができます。例えば 2 を指定した場合は対象の文字列を最大で 2 回置換します。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = 'Red Blue Yellow Pink Green White'
+pattern = re.compile(r'\b[a-zA-Z]+?\b')
+
+result = pattern.sub('***', msg)
+print(result)
+
+<span class="bold">&gt;&gt; *** *** *** *** *** ***</span>
+</pre>
+</div>
+
+			<p>
+			このサンプルでは単語をすべて *** に置換しています。置換回数を制限していないのですべての単語が置換されました。
+			</p>
+
+			<p>
+			次に先ほどのサンプルで最大置換回数に 2 を設定してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = 'Red Blue Yellow Pink Green White'
+pattern = re.compile(r'\b[a-zA-Z]+?\b')
+
+result = pattern.sub('***', msg, 2)
+print(result)
+
+<span class="bold">&gt;&gt; *** *** Yellow Pink Green White</span>
+</pre>
+</div>
+
+			<p>
+			今回は置換する回数が最大で 2 となっているため、最初の 2 つの単語だけ置換されて残りの単語はそのままとなっています。このように最大置換回数を設定することで、置換する最大数を制限することができます。
+			</p>
+
+<h2><a id="section3">キャプチャグループにマッチした文字列を参照する</a></h2>
+
+			<p>
+			sub メソッド(および sub2 メソッド)では正規表現の中でキャプチャグループが含まれている場合は、置換する文字列の中で \1, \2, ... を使用することでキャプチャグループでキャプチャされた文字列を参照することができます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\1, \2, ...  キャプチャグループでキャプチャされた文字列
+</pre>
+</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = '次の会議は 2020-12-03 です'
+pattern = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
+
+result = pattern.sub(r'\1年\2月\3日', msg)
+print(result)
+
+<span class="bold">&gt;&gt; 次の会議は 2020年12月03日 です</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは正規表現パターンに 3 つのキャプチャグループが含まれます。新しい文字列の中で \1 \2 \3 を使ってキャプチャグループでキャプチャした文字列を参照し置換する新しい文字列を指定しています。
+			</p>
+
+			<p>
+			また名前付きキャプチャグループを使用している場合は、 \1 や \2 ではなく \g&lt;name&gt; の形式で参照することもできます。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = 'Product is AE-42'
+pattern = re.compile(r'(<span class="red">?P&lt;cate&gt;</span>[A-Z]{2})-(<span class="red">?P&lt;code&gt;</span>[0-9]{2})')
+
+result = pattern.sub(r'Category=<span class="red">\g&lt;cate&gt;</span>/Code=<span class="red">\g&lt;code&gt;</span>', msg)
+print(result)
+
+<span class="bold">&gt;&gt; Product is Category=AE/Code=42</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは正規表現パターンに 2 つの名前付きキャプチャグループが含まれます。新しい文字列の中で \cate と \code を使ってキャプチャグループでキャプチャした文字列を参照し置換する新しい文字列を指定しています。
+			</p>
+
+<h2><a id="section4">置換する新しい文字列として関数を指定する</a></h2>
+
+			<p>
+			sub メソッド(および sub2 メソッド)では置換する新しい文字列の代わりに関数を指定することができます。置換が行われるたびに関数が呼び出され、関数からの戻り値が新しい値として置換されます。関数は呼び出されるときにマッチオブジェクトを引数として渡します。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+msg = 'Border is Red, Box is Green, Line is BLUE'
+pattern = re.compile(r'\b[a-zA-Z]+?\b')
+
+def <span class="red">replaceStr</span>(m):
+    s = m.group(0)
+    return s.lower()
+
+result = pattern.sub(<span class="red">replaceStr</span>, msg)
+print(result)
+
+<span class="bold">&gt;&gt; border is red, box is green, line is blue</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルではアルファベットで構成された単語にマッチする文字列を置換します。パターンにマッチすると関数が呼び出されて、関数内でマッチした文字列を取得し、文字列をすべて小文字に変換してから戻り値として返します。戻り値として取得した値を新しい値として置換を行います。結果的に、文字列の中のアルファベットで構成されたすべての単語が小文字に変換されました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Python の正規表現で sub メソッドおよび subn メソッドを使って正規表現にマッチした文字列を新しい文字列に置換する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

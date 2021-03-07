@@ -1,0 +1,76 @@
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
+
+public class DatabaseTest6 extends HttpServlet {
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException{
+
+        response.setContentType("text/html; charset=Shift_JIS");
+        PrintWriter out = response.getWriter();
+
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<title>データベーステスト</title>");
+        out.println("</head>");
+        out.println("<body>");
+
+        Connection conn = null;
+        String url = "jdbc:mysql://localhost/jdbctestdb";
+        String user = "testuser";
+        String password = "testpass";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(url, user, password);
+
+            String sql = "insert into kabukatable (code, company) values (?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setInt(1, 9437);
+            pstmt.setString(2, "(株)ＮＴＴドコモ");
+            int num = pstmt.executeUpdate();
+
+            pstmt.setInt(1, 9433);
+            pstmt.setString(2, "ＫＤＤＩ(株)");
+            num = pstmt.executeUpdate();
+
+            pstmt.close();
+
+            sql = "select * from kabukatable";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while(rs.next()){
+                int code = rs.getInt("code");
+                String company = rs.getString("company");
+                out.println("<p>");
+                out.println("コード:" + code + ", 会社名:" + company);
+                out.println("</p>");
+            }
+
+            rs.close();
+            stmt.close();
+
+        }catch (ClassNotFoundException e){
+            out.println("ClassNotFoundException:" + e.getMessage());
+        }catch (SQLException e){
+            out.println("SQLException:" + e.getMessage());
+        }catch (Exception e){
+            out.println("Exception:" + e.getMessage());
+        }finally{
+            try{
+                if (conn != null){
+                    conn.close();
+                }
+            }catch (SQLException e){
+                out.println("SQLException:" + e.getMessage());
+            }
+        }
+
+        out.println("</body>");
+        out.println("</html>");
+    }
+}

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | addEventListenerメソッドを使ってイベントリスナーを登録する</title>
+<meta name="description" content="イベントハンドラを登録する方法として、 DOM で取得したノードの addEventListener メソッドを使ってイベントハンドラを登録する方法について解説します。 addEventListener メソッドを使用してイベントに対して登録した関数のことを特にイベントリスナーと呼びます(厳密にイベントハンドラと区別があるわけではありません)。">
+
+<meta property="og:title" content="addEventListenerメソッドを使ってイベントリスナーを登録する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/event/index6.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/event/img/p6-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="イベントハンドラを登録する方法として、 DOM で取得したノードの addEventListener メソッドを使ってイベントハンドラを登録する方法について解説します。 addEventListener メソッドを使用してイベントに対して登録した関数のことを特にイベントリスナーと呼びます(厳密にイベントハンドラと区別があるわけではありません)。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "イベント処理",
+    "item": "https://www.javadrive.jp/javascript/event/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/event/">イベント処理</a></li>
+				</ul>
+			</div>
+
+			<h1>addEventListenerメソッドを使ってイベントリスナーを登録する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			イベントハンドラを登録する方法として、 DOM で取得したノードの addEventListener メソッドを使ってイベントハンドラを登録する方法について解説します。 addEventListener メソッドを使用してイベントに対して登録した関数のことを特にイベントリスナーと呼びます(厳密にイベントハンドラと区別があるわけではありません)。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">addEventListenerメソッドを使ってイベントリスナーを登録する</a></li>
+			<li><a href="#section2">同じターゲットの同じイベントに対して複数のイベントリスナーを登録する</a></li>
+			<li><a href="#section3">イベントリスナーを解除する</a></li>
+			<li><a href="#section4">コールバック関数が呼び出される時にイベントの情報を受け取る</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">addEventListenerメソッドを使ってイベントリスナーを登録する</a></h2>
+
+			<p>
+			EventTarget オブジェクトの addEventListener メソッドは指定のイベントが発生したときに実行されるイベントリスナーを登録します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+target.addEventListener(type, callback [, options])
+</pre>
+</div>
+
+			<p>
+			1 番目の引数にはイベントの種類を表す文字列を指定します。(例えば 'click' など)。 2 番目の引数にはイベントハンドラとしてコールバック関数を指定します。 3 番目の省略可能なオプションについては別のページで解説します。
+			</p>
+
+			<p>
+			例えば id 属性の値が xxx の input タグに対して addEventListener メソッドを使って click イベントのイベントリスナーを登録するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    function butotnClick(){
+        console.log('Hello');
+    }
+
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', butotnClick);
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			click イベントが発生すると、コールバック関数である butotnClick 関数が呼び出されます。
+			</p>
+
+			<p>
+			イベントリスナーを無名関数を使って登録するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', function(){
+        let d = new Date();
+        console.log(d.toString());
+    });
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			同じようにアロー関数式を使う場合には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    let button = document.getElementById("xxx");
+    button.addEventListener('click', () =&gt; {
+        console.log('Hello');
+    });
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			いずれの方法でも基本的には同じ結果となります。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="mybutton"&gt;
+
+&lt;script&gt;
+    function butotnClick(){
+        let d = new Date();
+        console.log(d.toString());
+    }
+
+    let button = document.getElementById('mybutton');
+    button.addEventListener('click', butotnClick);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			ボタンをクリックすると現在の日時を取得してコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p6-1.png" tppabs="https://www.javadrive.jp/javascript/event/img/p6-1.png" alt="addEventListenerメソッドを使ってイベントハンドラを登録する(1)" width="728" height="440" class="waku">
+			</p>
+
+<h2><a id="section2">同じターゲットの同じイベントに対して複数のイベントリスナーを登録する</a></h2>
+
+			<p>
+			HTML の属性値や DOM で取得した要素のプロパティに対してイベントハンドラを登録した場合、属性値やプロパティは一つの値しか保管できませんので同じイベントに対するイベントハンドラは一つしか登録することができません。
+			</p>
+
+			<p>
+			それに対して addEventListener メソッドを使ってイベントリスナーを登録する場合には、同じターゲットの同じイベントに対して複数のイベントリスナーを登録することができます。この場合、イベントが発生すると登録されている順番に複数のイベントリスナーが呼び出されます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    function dispHello(){
+        console.log('Hello');
+    }
+
+    function dispBye(){
+        console.log('Bye');
+    }
+
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', dispHello);
+    button.addEventListener('click', dispBye);
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			イベントが発生すると登録されている順に呼び出されるので最初に dispHello 関数、次に dispBye 関数が呼び出されます。
+			</p>
+
+			<p>
+			なお同じイベントリスナーを複数回登録してもエラーとはなりませんが、呼び出されるのは最初に登録された一回だけです。(ただし 3 つの目引数であるオプションが異なる場合は別のイベントリスナーとして扱われます)。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="mybutton"&gt;
+
+&lt;script&gt;
+    function dispHello(){
+        console.log('Hello');
+    }
+
+    function dispThankyou(){
+        console.log('Thank you');
+    }
+
+    function dispBye(){
+        console.log('Bye');
+    }
+
+    let button = document.getElementById('mybutton');
+    button.addEventListener('click', dispHello);
+    button.addEventListener('click', dispThankyou);
+    button.addEventListener('click', dispBye);
+    button.addEventListener('click', dispHello);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、登録されている 3 つのイベントリスナーが順に呼び出されてそれぞれコンソールに出力します。なお dispHello 関数については 2 回イベントリスナーとして登録していますが、イベントが発生した時に呼び出されるのは一回だけです。
+			</p>
+
+			<p>
+			<img src="img/p6-2.png" tppabs="https://www.javadrive.jp/javascript/event/img/p6-2.png" alt="同じターゲットの同じイベントに対して複数のイベントリスナーを登録する(1)" width="728" height="460" class="waku">
+			</p>
+
+<h2><a id="section3">イベントリスナーを解除する</a></h2>
+
+			<p>
+			EventTarget オブジェクトの removeEventListener メソッドは指定のイベントが発生したときに実行されるイベントリスナーを登録します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+target.removeEventListener(type, callback [, options])
+</pre>
+</div>
+
+			<p>
+			削除するイベントリスナーを登録したときと同じ引数を 1 番目と 2 番目( 3 番目も指定している場合は 3 番目も)に指定してください。一致するイベントリスナーを削除します。
+			</p>
+
+			<p>
+			例えばイベントリスナーの中で removeEventListener メソッドを使って自分自身のイベントリスナーを解除するには次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    function butotnClick(){
+        console.log('Hello');
+        this.removeEventListener('click', butotnClick);
+    }
+
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', butotnClick);
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			一度イベントリスナーが呼び出されると、その関数内でイベントリスナーが解除されます。
+			</p>
+
+	<h3>無名関数を使用している場合のremoveEventListenerメソッド</h3>
+
+			<p>
+			イベントリスナーとして無名関数を設定している場合、 removeEventListener メソッドを使ってイベントリスナーを削除するには少し工夫が必要となります。 removeEventListener メソッドの 2 番目の引数にイベントリスナーの関数名を指定する必要がありますが無名関数の場合は名前がありません。そこで現在実行している関数を参照することができる arguments.callee を代わりに指定します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;input type="button" value="button" id="xxx"&gt;
+
+&lt;script&gt;
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', function(){
+        console.log('Hello');
+        this.removeEventListener('click', <span class="red">arguments.callee</span>);
+    });
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			ただし arguments.callee は現在非推奨となっており strict モードでは使用できません。 removeEventListener メソッドを使用する場合は、無名関数ではなく関数を別途定義してイベントリスナーとして登録されることをおすすめします。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="mybutton"&gt;
+
+&lt;script&gt;
+    function butotnClick(){
+        let num = Math.floor(Math.random() * 6) + 1;
+        console.log('サイコロの値は' + num + 'です');
+
+        this.removeEventListener('click', butotnClick);
+    }
+
+    let button = document.getElementById('mybutton');
+    button.addEventListener('click', butotnClick);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、 1 から 6 までのランダムな値を取得してコンソールに出力します。そして click イベントに登録されていたイベントリスナーを解除します。(イベントリスナー内で this を参照すると、イベントが発生した要素オブジェクトを参照します)。
+			</p>
+
+			<p>
+			<img src="img/p6-3.png" tppabs="https://www.javadrive.jp/javascript/event/img/p6-3.png" alt="イベントリスナーを解除する(1)" width="728" height="420" class="waku">
+			</p>
+
+			<p>
+			一度ボタンをクリックしたあとはボタンをクリックしても何も起こりません。
+			</p>
+
+<h2><a id="section4">コールバック関数が呼び出される時にイベントの情報を受け取る</a></h2>
+
+			<p>
+			イベントリスナーとしてコールバック関数を登録した場合(無名関数やアロー関数式でも同じです)、イベントが発生してコールバック関数が呼ばれるときに発生したイベントに関する情報が格納された Event オブジェクトが引数として渡されてきます。イベントに関する情報を関数内で利用する場合は、コールバック関数で引数を記述してください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;script&gt;
+    function butotnClick(<span class="red">event</span>){
+        console.log('Hello');
+    }
+
+    let button = document.getElementById('xxx');
+    button.addEventListener('click', butotnClick);
+&lt;/script&gt;
+</pre>
+</div>
+
+			<p>
+			引数として受け取った Event オブジェクトにはイベントの種類によっても含まれる情報が異なりますが、マウスがクリックされた位置や押されたキーボードの種類などの情報が含まれています。詳しくは「<a href="index8.html" tppabs="https://www.javadrive.jp/javascript/event/index8.html">発生したイベントの情報を取得する(Event)</a>」や個別のイベントの処理に関するページを参照してください。
+			</p>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;input type="button" value="button" id="mybutton"&gt;
+
+&lt;script&gt;
+    function butotnClick(event){
+        console.log('event.type:' + event.type);
+        console.log('event.target:' + event.target);
+    }
+
+    let button = document.getElementById('mybutton');
+    button.addEventListener('click', butotnClick);
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			表示されたボタンをクリックすると、発生したイベントの種類とイベントが発生した要素の情報をコンソールに出力します。
+			</p>
+
+			<p>
+			<img src="img/p6-4.png" tppabs="https://www.javadrive.jp/javascript/event/img/p6-4.png" alt="コールバック関数が呼び出される時にイベントの情報を受け取る(1)" width="728" height="460" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			イベントハンドラを登録する方法として、 DOM で取得したノードの addEventListener メソッドを使ってイベントハンドラを登録する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

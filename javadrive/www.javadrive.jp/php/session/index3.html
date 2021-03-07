@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>セッション変数の削除とセッションIDの削除 - セッション管理 - PHP入門</title>
+<meta name="keywords" content="unset,セッション,入門,PHP" />
+<meta name="description" content="セッション変数の削除とセッションIDの削除" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/session/" itemprop="url"><span itemprop="title">セッション管理</span></a></li>
+		</ul>
+</div>
+
+			<h1>セッション変数の削除とセッションIDの削除</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			保存されたセッション変数を削除することも出来ます。「unset」関数を使います。
+			</p>
+
+<pre class="mheader">
+unset
+void unset ( mixed var [, mixed var [, mixed ...]] )
+</pre>
+<pre class="mexplain">
+unset()は指定した変数を破棄します。
+
+パラメータ:
+  var  削除したい変数
+</pre>
+
+			<p>
+			具体的には下記のように記述します。
+			</p>
+
+<pre class="fixcode">
+unset($_SESSION("visited"));
+</pre>
+
+			<p>
+			また全てのセッション変数を削除するためには下記のように空の配列を「$_SESSION」変数に格納します。
+			</p>
+
+<pre class="fixcode">
+$_SESSION = array();
+</pre>
+
+			<p>
+			※「$_SESSION」変数そのものを削除しないようにして下さい。
+			</p>
+
+			<p>
+			次に、例えばログアウトの処理などをしてセッションそのものを破棄したい場合です。この場合はクライアント側に保存されているセッションIDを削除した後で、セッションを破棄します。
+			</p>
+
+			<p>
+			クライアント側にはクッキーで保存されていますのでクッキーを削除します。(クッキーの削除については『<a href="../cookie/index4.html" tppabs="https://www.javadrive.jp/php/cookie/index4.html">クッキーを削除する</a>』を参照して下さい)。
+			</p>
+
+<pre class="fixcode">
+if (isset($_COOKIE["PHPSESSID"])) {
+    setcookie("PHPSESSID", '', time() - 1800, '/');
+}
+</pre>
+
+			<p>
+			最後にセッションに登録されたデータを全て破棄します。「session_destroy」関数を使います。
+			</p>
+
+<pre class="mheader">
+session_destroy
+bool session_destroy(void)
+</pre>
+<pre class="mexplain">
+session_destroy()は、現在のセッションに 関連づけられた全てのデータを破棄
+します。この関数は、セッションに関するグローバル変数を破棄しません。また、
+セッションクッキーを破棄しません。
+
+戻り値:
+  成功した場合に TRUE を、失敗した場合に FALSE を返します。
+</pre>
+
+			<p>
+			次のように使います。
+			</p>
+
+<pre class="fixcode">
+session_destroy();
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。
+			</p>
+
+			<p>
+			<a href="sessiontest3_1.php.htm" tppabs="https://www.javadrive.jp/php/session/sessiontest3_1.php">sessiontest3_1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+    session_start();
+?&gt;
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+    if (!isset($_SESSION["visited"])){
+        print('初回の訪問です。セッションを開始します。');
+
+        $_SESSION["visited"] = 1;
+        $_SESSION["date"] = date('c');
+    }else{
+        $visited = $_SESSION["visited"];
+        $visited++;
+
+        print('訪問回数は'.$_SESSION["visited"].'です。&lt;br&gt;');
+
+        $_SESSION["visited"] = $visited;
+
+        if (isset($_SESSION["date"])){
+            print('前回の訪問日時は'.$_SESSION["date"].'です。&lt;br&gt;');
+        }
+
+        $_SESSION["date"] = date('c');
+    }
+
+?&gt;
+
+&lt;p&gt;
+&lt;a href="./sessiontest3_2.php"&gt;ログアウトする&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			<a href="sessiontest3_2.php.htm" tppabs="https://www.javadrive.jp/php/session/sessiontest3_2.php">sessiontest3_2.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+    session_start();
+?&gt;
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+    print('セッション変数の一覧を表示します。&lt;br&gt;');
+    print_r($_SESSION);
+    print('&lt;br&gt;');
+
+    print('セッションIDを表示します。&lt;br&gt;');
+    print($_COOKIE["PHPSESSID"].'&lt;br&gt;');
+
+    print('&lt;p&gt;ログアウトします&lt;/p&gt;');
+
+    $_SESSION = array();
+
+    if (isset($_COOKIE["PHPSESSID"])) {
+        setcookie("PHPSESSID", '', time() - 1800, '/');
+    }
+
+    session_destroy();
+?&gt;
+
+&lt;p&gt;
+&lt;a href="./sessiontest3_3.php"&gt;ログアウトの確認&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			<a href="sessiontest3_3.php.htm" tppabs="https://www.javadrive.jp/php/session/sessiontest3_3.php">sessiontest3_3.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+    session_start();
+?&gt;
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+    print('セッション変数の確認をします。&lt;br&gt;');
+    if (!isset($_SESSION["visited"])){
+        print('セッション変数visitedは登録されていません。&lt;br&gt;');
+    }else{
+        print($_SESSION["visited"].'&lt;br&gt;');
+    }
+
+    print('セッションIDの確認をします。&lt;br&gt;');
+    if (!isset($_COOKIE["PHPSESSID"])){
+        print('セッションは登録されていません。&lt;br&gt;');
+    }else{
+        print($_COOKIE["PHPSESSID"].'&lt;br&gt;');
+    }
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。(適当に数度再読み込みしたものです)。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/php/session/img/p6.png" alt="セッションの削除" width="461" height="414">
+			</p>
+
+			<p>
+			ログアウトへのリンクをクリックします。
+			</p>
+
+			<p>
+			<img src="img/p7.png" tppabs="https://www.javadrive.jp/php/session/img/p7.png" alt="セッションの削除" width="465" height="414">
+			</p>
+
+			<p>
+			このページでログアウトの処理をしています。クッキーの値は削除した後で再度クライアントからアクセスしてもらわないと削除されたかどうか確認できないため、ログアウトを確認するためのページをもう一つ用意してあります。
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/php/session/img/p8.png" alt="セッションの削除" width="461" height="414">
+			</p>
+
+			<p>
+			上記のようにセッション変数も、クライアント側に保存されていたセッションIDも削除されたことが確認できます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コンストラクタ - ユーザー認証(PEAR::Auth) - PEAR入門</title>
+<meta name="keywords" content="コンストラクタ,PEAR::Auth,入門,PEAR" />
+<meta name="description" content="コンストラクタ" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_auth/" itemprop="url"><span itemprop="title">ユーザー認証(PEAR::Auth)</span></a></li>
+		</ul>
+</div>
+
+			<h1>コンストラクタ</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ではまずAuthクラスのコンストラクタから確認していきます。
+			</p>
+
+<pre class="mheader">
+Auth
+Auth::Auth (mixed $storageDriver = "DB", 
+            mixed $options = "", 
+            string $loginFunction = ""
+           [, boolean $showLogin = TRUE])
+</pre>
+<pre class="mexplain">
+認証システムのコンストラクタ
+
+パラメータ:
+  string $storageDriver  使用すべきストレージドライバーの名前、もし
+    くは独自の Auth_Container オブジェクト
+  mixed $options  ストレージコンテナに渡されるオプション
+  string $loginFunction  ログイン画面を表示するユーザ定義関数の名前
+  boolean $showLogin  ログインがオプションかどうかの定義
+</pre>
+
+			<p>
+			では引数について確認していきます。
+			</p>
+
+			<h3>ストレージドライバ</h3>
+
+			<p>
+			まず最初の引数で、認証を行う時にユーザー情報などがどこにあるかを指定します。例えばデータベースやファイルなどです。ストレージドライバの一覧は下記の通りです。
+			</p>
+
+<table class="pro">
+<tr><th>ストレージの種類</th><th>ストレージドライバ名</th></tr>
+<tr><td>データベース</td><td>DB</td></tr>
+<tr><td>ファイル</td><td>File</td></tr>
+<tr><td>SMBPasswd</td><td>SMBPasswd</td></tr>
+<tr><td>IMAP</td><td>IMAP</td></tr>
+<tr><td>LDAP</td><td>LDAP</td></tr>
+<tr><td>POP3</td><td>POP3</td></tr>
+<tr><td>RADIUS</td><td>RADIUS</td></tr>
+<tr><td>SOAP</td><td>SOAP</td></tr>
+<tr><td>vpopmail</td><td>vpopmail</td></tr>
+</table>
+
+			<p>
+			例えばデータベースを使って認証を行う場合には"DB"を最初の引数に指定します。(今後のサンプルはデータベースを使っていきます。)
+			</p>
+
+			<h3>オプション</h3>
+
+			<p>
+			2番目の引数ではオプションを指定します。オプションはストレージドライバ毎に異なっています。例えばデータベースを使う場合にはデータベースのテーブル名などですし、ファイルの場合はファイル名を指定します。
+			</p>
+
+			<p>
+			ここではデータベースを使う場合のオプションを見てみます。
+			</p>
+
+<table class="pro">
+<tr><th>キー</th><th>説明</th><th>デフォルト値</th></tr>
+<tr><td>"dsn"</td><td>有効で整形式の DSN</td><td>""</td></tr>
+<tr><td>"table"</td><td>認証データが保持されるデータベースのテーブル名</td><td>"auth"</td></tr>
+<tr><td>"usernamecol"</td><td>ユーザ名が保持されるカラム名</td><td>"username"</td></tr>
+<tr><td>"passwordcol"</td><td>MD5 暗号化されたパスワードが保持されるカラム名。 32 文字以上を保持可能か確認してください。</td><td>"password"</td></tr>
+</table>
+
+			<p>
+			複数の値を指定する必要がありますので、上記で記述したキーを使った連想配列を作成し、その配列をコンストラクタの引数に指定します。
+			</p>
+
+			<p>
+			PEAR::AUTHでデータベースを使う場合にあ、PEAR::DBを利用してデータベースに接続します。その為、オプションで指定するDSNはPEAR::DBで利用するDSNの形式で指定します。(PEAR::DBのDSN形式については『<a href="../pear_db/index2.html" tppabs="https://www.javadrive.jp/pear/pear_db/index2.html">データベースへ接続</a>』を参照して下さい)。
+			</p>
+
+			<p>
+			例としてMySQLを使う場合で、ローカルホスト内にあるMySQLデータベースの「authdb」データベースに対し、ユーザー名「authuser」パスワード「authpass」で接続する場合のDSNは下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+mysqli://authuser:authpass@localhost/authdb
+</pre>
+
+			<p>
+			次にデータベース内で認証情報が格納されているテーブル名と、テーブル内のユーザー名とパスワードが格納されているカラムを指定します。
+			</p>
+
+			<p>
+			例として、先ほどのデータベース内に「authtable」を作成し、「username」と「password」というカラムを作成した場合のオプションは下記のようになります。(パスワードを格納するカラムは32文字以上格納できるカラムにしておく必要があります)。
+			</p>
+
+<pre class="fixcode">
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password"
+);
+</pre>
+
+			<h3>ログイン画面を表示するユーザ定義関数</h3>
+
+			<p>
+			次に実際にユーザーがログインを行う時に表示されるログインフォームを作成するための自分で作成した関数の関数名を指定します。
+			</p>
+
+			<p>
+			簡単な例としては下記のような関数を作成します。これはHTMLでフォームを記述するのと同じものです。
+			</p>
+
+<pre class="fixcode">
+function loginFunction($username, $status){
+    print("&lt;form method=&yen;"post&yen;" action=&yen;"test.php&yen;"&gt;");
+    print("&lt;input type=&yen;"text&yen;" name=&yen;"username&yen;"&gt;";
+    print("&lt;input type=&yen;"password&yen;" name=&yen;"password&yen;"&gt;";
+    print("&lt;input type=&yen;"submit&yen;"&gt;";
+    print("&lt;/form&gt;";
+}
+</pre>
+
+			<p>
+			関数名は自由に決めて下さい。この関数は引数としてユーザー名とスタータス情報が渡されてきます。引数の使い方は後で詳しくみます。
+			</p>
+
+			<p>
+			ログインフォームについてはレイアウトなどは自由に決めることが出来ますが規則もあります。1つ目の規則はフォームの送信先は自分自身であること、2つ目はユーザー名とパスワードのフォームの名前はそれぞれ「username」と「password」にすることです。上記の例では、このPHPプログラムが記述されているファイル名が「test.php」の場合です。
+			</p>
+
+			<h2>コンストラクタを使ってAuthクラスのオブジェクトを作成する</h2>
+
+			<p>
+			では以上を踏まえてAuthクラスのオブジェクトを作成してみましょう。
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+
+require_once "Auth/Auth.php";
+
+function loginFunction($username, $status){
+    print("&lt;form method=&yen;"post&yen;" action=&yen;"test.php&yen;"&gt;");
+    print("&lt;input type=&yen;"text&yen;" name=&yen;"username&yen;"&gt;");
+    print("&lt;input type=&yen;"password&yen;" name=&yen;"password&yen;"&gt;");
+    print("&lt;input type=&yen;"submit&yen;"&gt;");
+    print("&lt;/form&gt;");
+}
+
+$params = array(
+    "dsn" =&gt; "mysqli://authuser:authpass@localhost/authdb",
+    "table" =&gt; "authtable",
+    "usernamecol" =&gt; "username",
+    "passwordcol" =&gt; "password"
+);
+
+$authobj = new Auth("DB", $params, "loginFunction");
+
+?&gt;
+</pre>
+
+			<p>
+			次のページでは実際に認証を開始する方法を見ていきます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

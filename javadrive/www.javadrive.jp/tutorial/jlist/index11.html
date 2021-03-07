@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リストの項目を追加する - JListクラス - Swing</title>
+<meta name="keywords" content="addElement,JList,Swing,Java" />
+<meta name="description" content="リストの項目を追加する" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jlist/" itemprop="url"><span itemprop="title">JListクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>リストの項目を追加する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			まずはリストの一番最後に項目を追加してみます。DefaultListModelクラスの"addElement"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+addElement
+public void addElement(Object obj)
+</pre>
+<pre class="mexplain">
+指定されたコンポーネントをリストの末尾に追加します。
+
+パラメータ:
+  obj - 追加されるコンポーネント
+</pre>
+
+			<p>
+			引数にリストに追加したい値を指定します。使い方としては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+DefaultListModel model = new DefaultListModel();
+
+model.addElement("項目1");
+model.addElement("項目2");
+</pre>
+
+			<p>
+			次に指定の位置に項目を挿入する場合です。DefaultListModelクラスの"add"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+add
+public void add(int index, Object element)
+</pre>
+<pre class="mexplain">
+リスト内の指定された位置に指定された要素を挿入します。 
+
+インデックスが範囲 (index &lt; 0 || index &gt;= size()) 外の場合は
+ArrayIndexOutOfBoundsException をスローします。 
+
+パラメータ:
+  index - 指定の要素が挿入される位置のインデックス
+  element - 挿入される要素
+</pre>
+
+			<p>
+			引数にリストに挿入したい値と、挿入する位置を表すインデックス番号を指定します。使い方としては下記のようになります。
+			</p>
+
+<pre class="fixcode">
+DefaultListModel model = new DefaultListModel();
+
+model.addElement("項目1");
+model.addElement("項目2");
+
+model.add(1, "項目1.5");
+</pre>
+
+			<p>
+			では実際に試してみます。下記のサンプルではDefaultListModelクラスのオブジェクトを用意し、初期データを与えてJListを作成した後、動的に項目を追加したり挿入したりしています。単に項目を追加するだけではなく、追加された項目が見えない位置にある場合はスクロールするようにしています。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
+import java.awt.event.*;
+import javax.swing.event.*;
+
+public class JListSample extends JFrame implements ActionListener{
+
+  protected JList list;
+  protected JTextField text;
+  protected DefaultListModel model;
+
+  public static void main(String[] args){
+    JListSample test = new JListSample("JListSample");
+
+    /* 終了処理を変更 */
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    test.setBounds( 10, 10, 250, 180);
+    test.setVisible(true);
+  }
+
+  JListSample(String title){
+    setTitle(title);
+
+    model = new DefaultListModel();
+
+    /* 初期データをモデルに追加する */
+    StringBuffer sb;
+    for (int i = 0 ; i &lt; 15 ; i++){
+      sb = new StringBuffer();
+      sb.append("項目");
+      sb.append(i);
+      model.addElement(new String(sb));
+    }
+
+    list = new JList(model);
+
+    JScrollPane sp = new JScrollPane();
+    sp.getViewport().setView(list);
+    sp.setPreferredSize(new Dimension(200, 80));
+
+    JPanel p = new JPanel();
+    p.add(sp);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+
+    JButton addButton = new JButton("AddElement");
+    addButton.addActionListener(this);
+    addButton.setActionCommand("addButton");
+
+    JButton insertButton = new JButton("Add");
+    insertButton.addActionListener(this);
+    insertButton.setActionCommand("insertButton");
+
+    JPanel p2 = new JPanel();
+    p2.add(addButton);
+    p2.add(insertButton);
+
+    getContentPane().add(p2, BorderLayout.SOUTH);
+
+    text = new JTextField(10);
+    JPanel p3 = new JPanel();
+    p3.add(text);
+
+    getContentPane().add(p3, BorderLayout.NORTH);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    String actionCommand = e.getActionCommand();
+
+    if (actionCommand.equals("addButton")){
+      model.addElement(text.getText());
+
+      list.ensureIndexIsVisible(model.getSize() - 1);
+    }else if (actionCommand.equals("insertButton")){
+      /* 現在リストで選択されている項目のIndexを調べる */
+      int index = list.getSelectedIndex();
+      if (index == -1){
+        model.add(0, text.getText());
+      }else{
+        model.add(index + 1, text.getText());
+      }
+
+      list.ensureIndexIsVisible(index + 1);
+    }else{
+      return;
+    }
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p29.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p29.png" alt="リストの項目を追加する" width="260" height="188">
+			</p>
+
+			<p>
+            項目をテキストフィールドに入力してAddElementボタンを押すと下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p30.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p30.png" alt="リストの項目を追加する" width="260" height="190">
+			</p>
+
+			<p>
+            項目を1つ選択しAddボタンを押すと下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p31.png" tppabs="https://www.javadrive.jp/tutorial/jlist/img/p31.png" alt="リストの項目を追加する" width="262" height="188">
+			</p>
+
+			<p>
+			上記のサンプルでは、モデルに現在登録されている項目数を調べるために、DefaultListModelクラスで用意されている"getSize"メソッドを使っています。
+			</p>
+
+<pre class="mheader">
+getSize
+public int getSize()
+</pre>
+<pre class="mexplain">
+リスト内のコンポーネント数を返します。
+
+このメソッドは、1.2 の Collections Framework で定義された List インタ
+フェースを実装する size と同じです。このメソッドは setSize との組み合
+わせで存在するので、size は JavaBean プロパティとして識別できます。
+
+戻り値:
+  リスト内のコンポーネント数
+</pre>
+
+			<p>
+			このメソッドを使うと、現在の項目数を調べることができます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

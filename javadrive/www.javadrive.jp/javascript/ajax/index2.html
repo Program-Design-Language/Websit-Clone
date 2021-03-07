@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | XMLHttpRequestオブジェクトを使った非同期通信を行う</title>
+<meta name="description" content="XMLHttpRequest オブジェクトを使用することで Ajax を使った非同期通信を行うことができます。ここでは Ajax による非同期通信を行うために XMLHttpRequest オブジェクトの作成し、サーバへリクエストを送信したあと、サーバからレスポンスを受信するまでの方法について解説します。">
+
+<meta property="og:title" content="XMLHttpRequestオブジェクトを使った非同期通信を行う">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/ajax/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/ajax/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Ajax とは Asynchronous JavaScript + XML の略で、 Web サーバーとブラウザとの間で非同期通信を行う方法です。 Ajax の方法を利用することで、ページを切り替えることなくページの内容を書き換えることができるようになります。 JavaScript では Aax を用いた非同期通信には XMLHttpRequest オブジェクトを使用します。ここでは Ajax を使った非同期通信を行う方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Ajaxを使った非同期通信",
+    "item": "https://www.javadrive.jp/javascript/ajax/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/ajax/">Ajaxを使った非同期通信</a></li>
+				</ul>
+			</div>
+
+			<h1>XMLHttpRequestオブジェクトを使った非同期通信を行う</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			XMLHttpRequest オブジェクトを使用することで Ajax を使った非同期通信を行うことができます。ここでは Ajax による非同期通信を行うために XMLHttpRequest オブジェクトの作成し、サーバへリクエストを送信したあと、サーバからレスポンスを受信するまでの方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">XMLHttpRequestオブジェクトを作成する</a></li>
+			<li><a href="#section2">HTTPリクエストを初期化する(open)</a></li>
+			<li><a href="#section3">サーバからのレスポンスの受信が完了した時にコールバック関数を呼びだす</a></li>
+			<li><a href="#section4">サーバとの通信が正常に行われたかどうかを確認する</a></li>
+			<li><a href="#section5">受信したデータを取り出す</a></li>
+			<li><a href="#section6">HTTPリクエストをサーバーに送信する(send)</a></li>
+			<li><a href="#section7">サーバから受信したテキストをHTMLページ内に表示する</a></li>
+			<li><a href="#section8">コンソールを使ったテスト</a></li>
+			<li><a href="#section9">Webページを使ったテスト</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">XMLHttpRequestオブジェクトを作成する</a></h2>
+
+			<p>
+			最初に XMLHttpRequest オブジェクトの作成から開始します。作成にはコンストラクタを使い次のように行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = XMLHttpRequest();
+</pre>
+</div>
+
+			<p>
+			XMLHttpRequest オブジェクトが作成できました。
+			</p>
+
+<h2><a id="section2">HTTPリクエストを初期化する(open)</a></h2>
+
+			<p>
+			続いて XMLHttpRequest オブジェクトの open メソッドを使って HTTP リクエストの初期化を行います。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+open(メソッド, URL[, 非同期[, ユーザー名[, パスワード]]])
+</pre>
+</div>
+
+			<p>
+			最初の引数には HTTP リクエストメソッドを指定します。 'GET' 、 'POST' 、 'HEAD' 、 'DELETE' などの値を文字列で指定します。主に使用されるのは 'GET' と 'POST' で、サーバから指定した URL でデータを取得する場合は 'GET' 、サーバの指定した URL に対して何らかの処理(例えばサーバへファイルをアップロードしたり、データベースを更新したりします)を行う場合は 'POST' を使います。
+			</p>
+
+			<p>
+			2 番目の引数にはリクエストの送信先となる URL を文字列で指定します。
+			</p>
+
+			<p>
+			3 番目の非同期通信を行うか同期通信を行うのかを論理値で指定します。非同期通信の場合は true 、同期通信の場合は false です。デフォルトの値は true のため引数を省略した場合は非同期通信となります。
+			</p>
+
+			<p>
+			4 番目と 5 番目の引数には認証が必要となる場合のユーザー名とパスワードを文字列で指定します。
+			</p>
+
+			<p>
+			今回はサンプルとして指定した URL にあるテキストファイルを GET メソッドを使って非同期でサーバから取得してみます。次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+request.open('GET', 'https://www.example.com/data.txt', true);
+</pre>
+</div>
+
+			<p>
+			※ 3 番目の引数の true は省略しても同じです。
+			</p>
+
+<h2><a id="section3">サーバからのレスポンスの受信が完了した時にコールバック関数を呼びだす</a></h2>
+
+			<p>
+			同期通信の場合であればサーバに対してリクエストを送信すると、サーバからのレスポンスが返ってくるのを待って次の処理へ移りますが、非同期通信の場合はサーバへリクエストを送信するとすぐに次の処理へ移ります。
+			</p>
+
+			<p>
+			そこで非同期通信の場合には、サーバからのレスポンスの受信が完了した時に発生するイベントに対するイベントハンドラを利用します。イベントハンドラとは指定したイベントが発生した時にコールバック関数を呼びだして実行します。
+			</p>
+
+			<p>
+			XMLHttpRequest.readyState プロパティは XMLHttpRequest オブジェクトの状態を表すプロパティで、次の値をとります。
+			</p>
+
+<div class="titlebox3">
+<pre>
+0 未初期化(openメソッドが呼ばれていない)
+1 ロード中(openメソッドは済み、sendメソッドが未)
+2 ロード済(sendメソッドは済みでレスポンス待ち)
+3 受信中(レスポンス受信中)
+4 完了(レスポンスの受信完了)
+</pre>
+</div>
+
+			<p>
+			例えば XMLHttpRequest オブジェクトを作成したあと open メソッドが呼ばれていない場合 readyState プロパティには 0 が設定されています。そして open メソッドが呼ばれると readyState プロパティは 1 に変わります。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+console.log(request.readyState);
+
+request.open('GET', 'https://www.example.com/data.txt', true);
+console.log(request.readyState);
+
+<span class="bold">&gt;&gt; 0
+&gt;&gt; 1</span>
+</pre>
+</div>
+
+			<p>
+			※ 実際に試す場合は URL の部分を正規の URL に書き換えて試しています。以下のサンプルも同様です。
+			</p>
+
+			<p>
+			XMLHttpRequest オブジェクトを作成直後には readyState プロパティは 0 となっており、 open メソッドを実行すると readyState プロパティは 1 となっています。
+			</p>
+
+			<p>
+			サーバにリクエストを送信し、サーバからのレスポンスの受信が完了すると readyState プロパティは 4 となります。そこで readyState プロパティの値が変更された時に、 readyState プロパティの値を確認し 4 となっているかどうか確認すればいいのですが、この時使用されるのが XMLHttpRequest.onreadystatechange プロパティです。 onreadystatechange プロパティはイベントハンドラで、あらかじめ登録しておいたコールバック関数が readyState プロパティの値が変更した時に呼び出されます。
+			</p>
+
+			<p>
+			onreadystatechange プロパティに対するコールバック関数の設定は次の書式に従って記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+XMLHttpRequest.onreadystatechange = コールバック関数
+</pre>
+</div>
+
+			<p>
+			それでは先ほどのサンプルをイベントハンドラを使った方法で書き換えてみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+
+request.onreadystatechange = function(){
+  console.log(request.readyState);
+}
+
+request.open('GET', 'https://www.javadrive.jp/data.txt', true);
+
+<span class="bold">&gt;&gt; 1</span>
+</pre>
+</div>
+
+			<p>
+			open メソッドを実行されると readyState プロパティが 0 から 1 に変更されます。この変更に伴って発生したイベントによって、 onreadystatechange プロパティにあらかじめて設定したおいたコールバック関数が呼び出されて readyState プロパティの値がコンソールに出力されます。
+			</p>
+
+			<p>
+			今回はサーバからのレスポンスの受信を完了した時に処理を行いたいので、 readyState プロパティの値が変更されてコールバック関数が呼び出されたときに、 readyState プロパティの値を調べて 4 だった場合に受信したデータの処理を記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+
+request.onreadystatechange = function(){
+  if (request.readyState == 4){
+    // 受信したデータの処理を記述する
+  }
+}
+
+request.open('GET', 'https://www.example.com/data.txt', true);
+</pre>
+</div>
+
+<h2><a id="section4">サーバとの通信が正常に行われたかどうかを確認する</a></h2>
+
+			<p>
+			サーバからのレスポンスの受信が完了した場合でも、それはサーバから目的とするデータをレスポンスとして受信したのか、それともサーバが見つからなかったり別の理由でエラーを受信したのかは分かりません。その為、サーバとの通信が正常に行われたのかどうか HTTP ステータスコードを確認します。
+			</p>
+
+			<p>
+			XMLHttpRequest.status プロパティには HTTP ステータスコードの値が整数の値として格納されています。主な HTTP ステータスコードは次のとおりです。
+			</p>
+
+<div class="titlebox3">
+<pre>
+200 OK
+403 Forbidden
+404 Not Found
+500 Internarl Server Error
+503 Service Unavailable
+</pre>
+</div>
+
+			<p>
+			※ その他のステータスコードの一覧については「<a href="javascript:if(confirm('https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml'" tppabs="https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml">Hypertext Transfer Protocol (HTTP) Status Code Registry</a>をご参照ください。
+			</p>
+
+			<p>
+			正常に通信が行われた場合は 200 が返ります。それ以外の場合は何らかのエラーが発生しています。(なお send メソッドが送信される前は 0 が格納されています)。
+			</p>
+
+			<p>
+			サーバからのレスポンスの受信が完了したあとで、 status プロパティの値を調べて 200 だった場合に受信したデータの処理を記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+
+request.onreadystatechange = function(){
+  if (request.readyState == 4){
+    if (request.status == 200){
+      // 受信したデータの処理を記述する
+    }
+  }
+}
+
+request.open('GET', 'https://www.example.com/data.txt', true);
+</pre>
+</div>
+
+<h2><a id="section5">受信したデータを取り出す</a></h2>
+
+			<p>
+			今回のサンプルでは GET メソッドを使ったサーバからデータを受信しますので、受信したデータを利用できるように変数などに格納します。受信したデータを取り出すには、データの種類に応じて次の 3 つのプロパティを参照します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+XMLHttpRequest.responseText
+XMLHttpRequest.responseXML
+XMLHttpRequest.response
+</pre>
+</div>
+
+			<p>
+			responseText プロパティは受信するデータがテキストの場合に使用します。 responseXML プロパティは受信するデータが XML または HTML をあらわす Document オブジェクトの場合に使用します。 response プロパティは XMLHttpRequest.responseType プロパティで指定した形式のデータとして受信したデータを扱います。
+			</p>
+
+			<p>
+			今回はテキストデータを取得するために responseText プロパティを参照して取得したデータを変数に取り出します。( responseXML プロパティや response プロパティの使い方は別のページで解説予定です)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+
+request.onreadystatechange = function(){
+  if (request.readyState == 4){
+    if (request.status == 200){
+      let data = request.responseText;
+      console.log(data);
+    }
+  }
+}
+
+request.open('GET', 'https://www.example.com/data.txt', true);
+</pre>
+</div>
+
+<h2><a id="section6">HTTPリクエストをサーバーに送信する(send)</a></h2>
+
+			<p>
+			受信するデータの処理について記述が終わりましたので、 XMLHttpRequest オブジェクトの send メソッドを使ってサーバにリクエストを送信します。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+send(データ)
+</pre>
+</div>
+
+			<p>
+			引数にはリクエストを送信するときにサーバに送るデータを指定します。 GET メソッドを使用する場合は通常データはサーバに送信しないので null を指定します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+
+request.onreadystatechange = function(){
+  if (request.readyState == 4){
+    if (request.status == 200){
+      let data = request.responseText;
+      console.log(data);
+    }
+  }
+}
+
+request.open('GET', 'https://www.example.com/data.txt', true);
+request.send(null);
+</pre>
+</div>
+
+			<p>
+			これで GET メソッドを使ってサーバからテキストデータを取得するための Ajax を使った非同期通信のコードが完成です。
+			</p>
+
+<h2><a id="section7">サーバから受信したテキストをHTMLページ内に表示する</a></h2>
+
+			<p>
+			サーバからテキストデータを受信したあと、 HTML ページ内にあらかじめ用意しておいた div 要素や p 要素の値としてテキストデータを表示するには次のように行います。
+			</p>
+
+			<p>
+			まず表示するテキストを表示する要素を HTML ページ内に記述します。要素の内容は空でも初期値を表示しておいても構いません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;
+ボタンをクリックするとデータを取得します。
+&lt;/p&gt;
+
+<span class="red">&lt;div id="result"&gt;&lt;/div&gt;</span>
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			「&lt;div id="result"&gt;&lt;/div&gt;」の箇所が受信したテキストを表示する場所です。あとでノードを取得するための識別子として&lt;div&gt;要素には id="result" が設定されています。
+			</p>
+
+			<p>
+			書き換える方法は DOM を用いて対象となるノードを取得し、 innerHTML プロパティで値を書き換えます。(詳しくは「<a href="../dom/index5.html" tppabs="https://www.javadrive.jp/javascript/dom/index5.html">IDを指定してノードへアクセス</a>」を参照して下さい)。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let node = document.getElementById("result");
+node.innerHTML = request.responseText;
+</pre>
+</div>
+
+			<p>
+			このコードを受信したデータの処理を記述するところに記述します。実際のサンプルはこのあとの「Webページを使ったテスト」を参照されてください。
+			</p>
+
+<h2><a id="section8">コンソールを使ったテスト</a></h2>
+
+			<p>
+			それでは Ajax を使った非同期通信で実際にデータを取得してみます。サーバのルートディレクトリに次のような テキストを入力した data.txt というファイルを作成しアップロードしておきます。
+			</p>
+
+<div class="titlebox3">
+<pre>
+Hello Yamada.
+Good bye.
+</pre>
+</div>
+
+			<p>
+			次にブラウザでリクエストを送信する URL と同じ URL のいずれかのページにアクセスしたあとで、コンソールを開き次のように実行してください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let request = new XMLHttpRequest();
+
+request.onreadystatechange = function(){
+  if (request.readyState == 4){
+    if (request.status == 200){
+      let data = request.responseText;
+      console.log(data);
+    }
+  }
+}
+
+request.open('GET', 'https://www.example.com/data.txt', true);
+request.send(null);
+
+<span class="bold">&gt;&gt; Hello Yamada.
+&gt;&gt; Good bye.</span>
+</pre>
+</div>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/javascript/ajax/img/p2-1.png" alt="コンソールを使ったテスト(1)" width="728" height="400" class="waku">
+			</p>
+
+			<p>
+			open メソッドの引数に指定した URL が示すファイルに記述された内容をテキストデータとして取得し、コンソールに出力しました。
+			</p>
+
+<h2><a id="section9">Webページを使ったテスト</a></h2>
+
+			<p>
+			次に Web ページ上のボタンをクリックしたら、サーバからデータを取得し Web ページ上に表示するサンプルを試してみます。次のような HTML ページを作成し、取得するデータと同じドメイン上にアップロードしました。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;JavaScript サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;
+ボタンをクリックするとデータを取得します。
+&lt;/p&gt;
+
+&lt;form&gt;
+&lt;input type="button" value="データの取得" onClick="getData()"&gt;
+&lt;/form&gt;
+
+&lt;div id="result"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+function getData(){
+  let request = new XMLHttpRequest();
+
+  request.onreadystatechange = function(){
+    if (request.readyState == 4){
+      if (request.status == 200){
+        let node = document.getElementById("result");
+        node.innerHTML = request.responseText;
+      }
+    }
+  }
+
+  request.open('GET', 'https://www.example.co/data.txt', true);
+  request.send(null);
+}
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			ブラウザから先ほどの HTML ページをアップロードした Web ページにアクセスし、ページに表示されたボタンをクリックしてください。
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/javascript/ajax/img/p2-2.png" alt="Webページを使ったテスト(1)" width="728" height="400" class="waku">
+			</p>
+
+			<p>
+			open メソッドの引数に指定した URL が示すファイルに記述された内容をテキストデータとして取得し、画面上に表示しました。
+			</p>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/javascript/ajax/img/p2-3.png" alt="Webページを使ったテスト(2)" width="728" height="400" class="waku">
+			</p>
+
+			<p>
+			新しい画面に切り替わることなく、もともと表示していた Web ページにサーバから受信したデータを表示することができました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			XMLHttpRequest オブジェクトの作成し、サーバへリクエストを送信したあと、サーバからレスポンスを受信するまでの方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

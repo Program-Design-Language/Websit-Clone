@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>メニューアイテムのキーボードアクセラレーターの設定 | Swingを使ってみよう</title>
+<meta name="description" content="メニューアイテムのキーボードアクセラレーターの設定方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jmenu/" itemprop="url"><span itemprop="title">メニューの作成(JMenuBar,JMenu,JMenuItemクラス)</span></a></li>
+		</ul>
+</div>
+
+			<h1>メニューアイテムのキーボードアクセラレーターの設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					メニューアイテムにキーボードニーモニックを設定して使う場合、まずそのメニューアイテムを表示されている状態にしてから対応するキーを押す必要があります。これに対してキーボードアクセラレーターとはメニューアイテムが表示されていない状態でも特定のキーを押すことでメニューアイテムをクリックしたのと同じ動作をさせることが可能です。(その為、1つのアプリケーションで同じキーボードアクセラレーターは1つのメニューアイテムやその他のコンポーネントにしか設定できません)。
+					</p>
+
+					<p>
+					メニューアイテムにキーボードアクセラレーターを設定するにはJMenuItemクラスで定義されているsetAcceleratorメソッドを使います。 
+					</p>
+
+<pre class="mheader">
+setAccelerator
+public void setAccelerator(KeyStroke keyStroke)
+</pre>
+<pre class="mexplain">
+メニュー階層を移動することなくメニュー項目のアクションリスナーを呼び出すキーの組み合わせを
+設定します。適切なアクションをインストールするのは UI の役割です。キーボードアクセラレータ
+が入力されると、メニューが現在表示されているかどうかを処理します。
+
+パラメータ:
+  keyStroke - アクセラレータとして機能する KeyStroke
+</pre>
+
+					<p>
+					引数にはメニューアイテムに設定したいキーを表す値をKeyStrokeクラスのオブジェクトで指定します。
+					</p>
+
+					<p>
+					javax.swing.KeyStrokeクラスには複数のstaticメソッドが用意されており、メソッドを使ってKeyStrokeクラスのオブジェクトを作成します。ここではその一つであるgetKeyStrokeメソッドを確認してみます。
+					</p>
+
+<pre class="mheader">
+getKeyStroke
+public static KeyStroke getKeyStroke(int keyCode, int modifiers)
+</pre>
+<pre class="mexplain">
+数値キーコードおよび修飾子のセットが指定されると、KeyStroke の共有インスタンスを返します。
+返される KeyStroke は、キーを押す動作に対応します。
+
+java.awt.event.KeyEvent で定義される「仮想キー」定数は、キーコードを指定するために使用でき
+ます。例を示します。
+
+    * java.awt.event.KeyEvent.VK_ENTER
+    * java.awt.event.KeyEvent.VK_TAB
+    * java.awt.event.KeyEvent.VK_SPACE 
+
+修飾子は、次の組み合わせで構成されます。
+
+    * java.awt.event.InputEvent.SHIFT_DOWN_MASK
+    * java.awt.event.InputEvent.CTRL_DOWN_MASK
+    * java.awt.event.InputEvent.META_DOWN_MASK
+    * java.awt.event.InputEvent.ALT_DOWN_MASK
+    * java.awt.event.InputEvent.ALT_GRAPH_DOWN_MASK 
+
+以前使われていた修飾子を次に挙げます。
+
+    * java.awt.event.InputEvent.SHIFT_MASK
+    * java.awt.event.InputEvent.CTRL_MASK
+    * java.awt.event.InputEvent.META_MASK
+    * java.awt.event.InputEvent.ALT_MASK
+    * java.awt.event.InputEvent.ALT_GRAPH_MASK 
+
+これらも使用できますが、これらは _DOWN_ 修飾子にマッピングされます。 これらの数字はすべて
+異なる 2 の累乗であるため、それらの組み合わせは各ビットが別々の修飾キーを表す整数です。修
+飾子を指定しない場合は、0 を使います。 
+
+パラメータ:
+  keyCode - キーボードのキーの数値コードを指定する int 値
+  modifiers - 修飾子のビット単位の論理和
+戻り値:
+  そのキーの KeyStroke オブジェクト
+</pre>
+
+					<p>
+					2つの引数を指定します。1つ目にはキーを表すint型の値を指定します。指定できる値はキーボードニーモニックの時と同じく指定できる値は java.awt.event.KeyEventクラスで定義されています。
+					</p>
+
+<pre class="fixcomment">
+数値：
+KeyEvent.VK_0 から KeyEvent.VK_9
+
+アルファベット：
+KeyEvent.VK_A から KeyEvent.VK_Z
+</pre>
+
+					<p>
+					2つ目には修飾子を指定します。修飾子とは「ALT」や「SHIFT」などキーと一緒に押すキーのことです。指定できる値はjava.awt.event.InputEventクラスで定義されており例えば次のような値です。 
+					</p>
+
+<pre class="fixcomment">
+InputEvent.SHIFT_DOWN_MASK
+InputEvent.CTRL_DOWN_MASK
+InputEvent.META_DOWN_MASK
+InputEvent.ALT_DOWN_MASK
+InputEvent.ALT_GRAPH_DOWN_MASK
+</pre>
+
+					<p>
+					※キーボードニーモニックの場合は「ALT」キーとの組み合わせで決まっていましたが、キーボードアクセラレータの場合は修飾子も同時に指定します。 
+					</p>
+
+					<p>
+					実際の使い方は次のようになります。
+					</p>
+
+<pre class="fixcode">
+JMenu menu = new JMenu("File");
+
+ImageIcon icon = new ImageIcon("./img/sample.png");
+
+JMenuItem menuitem = new JMenuItem("Open", icon);
+menuitem.setMnemonic(KeyEvent.VK_O);
+menuitem.setAccelerator(KeyStroke.getKeyStroke(
+  KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+
+menu.add(menuitem);
+</pre>
+
+					<p>
+					上記ではキーボードニーモニックとしてALT＋「O」を設定し、さらにキーボードアクセラレーターとしてCTRL＋「O」を設定しました。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では実際に試してみます。 
+					</p>
+
+					<p>
+					<a href="SSample17_1.java" tppabs="https://www.javadrive.jp/tutorial/jmenu/SSample17_1.java">SSample17_1.java</a>
+					</p>
+
+<pre class="fixcode">
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+
+class SSample17_1 extends JFrame implements ActionListener{
+  JLabel label;
+
+  public static void main(String args[]){
+    SSample17_1 frame = new SSample17_1("タイトル");
+    frame.setVisible(true);
+  }
+
+  SSample17_1(String title){
+    setTitle(title);
+    setBounds(100, 100, 300, 250);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    JMenuBar menubar = new JMenuBar();
+    JMenu menu1 = new JMenu("File");
+    JMenu menu2 = new JMenu("Edit");
+    JMenu menu3 = new JMenu("Tool");
+    JMenu menu4 = new JMenu("Help");
+
+    menubar.add(menu1);
+    menubar.add(menu2);
+    menubar.add(menu3);
+    menubar.add(menu4);
+
+    JMenuItem menuitem1_1 = new JMenuItem("New");
+    menuitem1_1.setMnemonic(KeyEvent.VK_N);
+    menuitem1_1.setAccelerator(
+      KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+    menuitem1_1.setActionCommand("New");
+    menuitem1_1.addActionListener(this);
+
+    JMenuItem menuitem1_2 = new JMenuItem("Open");
+    menuitem1_2.setMnemonic(KeyEvent.VK_O);
+    menuitem1_2.setAccelerator(
+      KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+    menuitem1_2.setActionCommand("Open");
+    menuitem1_2.addActionListener(this);
+
+    JMenuItem menuitem1_3 = new JMenuItem("Save");
+    menuitem1_3.setMnemonic(KeyEvent.VK_S);
+    JMenuItem menuitem1_4 = new JMenuItem("Close(X)");
+    menuitem1_4.setMnemonic(KeyEvent.VK_X);
+
+    menu1.add(menuitem1_1);
+    menu1.add(menuitem1_2);
+    menu1.add(menuitem1_3);
+    menu1.add(menuitem1_4);
+
+    setJMenuBar(menubar);
+
+    JPanel p = new JPanel();
+
+    label = new JLabel();
+    p.add(label);
+
+    Container contentPane = getContentPane();
+    contentPane.add(p, BorderLayout.CENTER);
+  }
+
+  public void actionPerformed(ActionEvent e){
+    label.setText(e.getActionCommand());
+  }
+}
+</pre>
+
+					<p>
+					ではコンパイルを行った上で実行してみます。 
+					</p>
+
+					<p>
+					<img src="img/p17-1.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p17-1.png" alt="メニューアイテムのキーボードアクセラレーターの設定" width="300" height="250">
+					</p>
+
+					<p>
+					では「File」メニューをクリックして下さい。 
+					</p>
+
+					<p>
+					<img src="img/p17-2.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p17-2.png" alt="メニューアイテムのキーボードアクセラレーターの設定" width="300" height="250">
+					</p>
+
+					<p>
+					1つ目と2つ目のメニューアイテムにキーボードアクセラレーターを設定してあります。キーボードアクセラレーターが設定されているメニューアイテムには、メニューアイテムの右側に設定されているキーが表示されています。
+					</p>
+
+					<p>
+					<img src="img/p17-3.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p17-3.png" alt="メニューアイテムのキーボードアクセラレーターの設定" width="300" height="250">
+					</p>
+
+					<p>
+					ではいったんメニューを閉じます。
+					</p>
+
+					<p>
+					<img src="img/p17-4.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p17-4.png" alt="メニューアイテムのキーボードアクセラレーターの設定" width="300" height="250">
+					</p>
+
+					<p>
+					キーボードアクセラレータが設定されているメニューアイテムは、表示されていなくても対応するキーを押す事でメニューアイテムをクリックしたのと同じ扱いをされます。ではCTRL＋「O」を押して下さい。
+					</p>
+
+					<p>
+					<img src="img/p17-5.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p17-5.png" alt="メニューアイテムのキーボードアクセラレーターの設定" width="300" height="250">
+					</p>
+
+					<p>
+					「Open」メニューアイテムに設定されている動作が実行されました。(今回はメニューアイテムがクリックされたら画面上のラベルにメニューアイテムの文字列を表示しています)。今度はCTRL＋「N」を押すと次のように「New」メニューアイテムがクリックされたのと同じ動作をします。
+					</p>
+
+					<p>
+					<img src="img/p17-6.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p17-6.png" alt="メニューアイテムのキーボードアクセラレーターの設定" width="300" height="250">
+					</p>
+
+					<p>
+					キーボードアクセラレーターは便利な機能ですが、一般的に使われているコピーを表すCTRL＋「C」やCTRL＋「V」などを割り当てしまうと利用者が混乱するので注意して下さい。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

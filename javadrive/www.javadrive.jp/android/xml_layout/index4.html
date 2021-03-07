@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リソースの参照 - リソース管理 - Androidプログラミング入門 | JavaDrive</title>
+<meta name="keywords" content="リソースの参照,Android" />
+<meta name="description" content="リソースの参照方法について確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/android/" itemprop="url"><span itemprop="title">Androidプログラミング入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/android/xml_layout/" itemprop="url"><span itemprop="title">リソース管理</span></a></li>
+		</ul>
+</div>
+
+			<h1>リソースの参照</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			リソースとして登録されたものはプログラムの中から参照されるだけではなく、他のリソースから参照されることもあります。ここではリソースをどのように参照するのかを確認していきます。
+			</p>
+
+			<h2>プログラムから参照</h2>
+
+			<p>
+			リソースとして登録されたものはR.javaファイルの中でリソースIDが割り当てられます。このリソースIDをプログラムなどから参照することでリソースをプログラムの中で使用することができます。
+			</p>
+
+			<p>
+			では改めてR.javaファイルの中身を確認してみます。
+			</p>
+
+<pre class="fixcode">
+package jp.javadrive.resource;
+
+public final class R {
+    public static final class attr {
+    }
+    public static final class drawable {
+        public static final int icon=0x7f020000;
+    }
+    public static final class layout {
+        public static final int main=0x7f030000;
+    }
+    public static final class string {
+        public static final int app_name=0x7f040001;
+        public static final int hello=0x7f040000;
+    }
+}
+</pre>
+
+			<p>
+			リソースIDは「static final int」型の値して定義されています。プログラムなどからこの値を参照する場合には次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+R.リソース種類.リソース名
+</pre>
+
+			<p>
+			例えばLayoutタイプのmainリソースのIDは次のようにプログラムから参照することができます。
+			</p>
+
+<pre class="fixcode">
+R.layout.main
+</pre>
+
+			<p>
+			では自動で作成されたアクティビティクラスのソースコードを見てください。
+			</p>
+
+<pre class="fixcode">
+package jp.javadrive.resource;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class ResourceActivity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        <span class="red">setContentView(R.layout.main);</span>
+    }
+}
+</pre>
+
+			<p>
+			アクティビティに画面レイアウトを設定するために「setContentView」メソッドを使っています。この引数に画面レイアウトのリソースを表すリソースIDとして「R.layout.main」を指定していることが確認できます。
+			</p>
+
+			<p>
+			レイアウトの場合はこのように使用します。他のリソースをプログラムの中で使う方法については別のページで確認します。
+			</p>
+
+			<h2>XMLファイルから参照</h2>
+
+			<p>
+			リソースはプログラムの中からだけではなく他のリソースが定義されたXMLファイルから参照されることがあります。例えばレイアウト用XMLファイルの中で、ビューに表示される文字列の指定に文字列リソースを参照するといったことが行われます。
+			</p>
+
+			<p>
+			リソースが定義されたXMLファイルからリソースIDを参照する場合には次のように記述します。
+			</p>
+
+<pre class="fixcomment">
+@リソース種類/リソース名
+</pre>
+
+			<p>
+			例えばStringタイプのhelloリソースのIDは次のようにプログラムから参照することができます。
+			</p>
+
+<pre class="fixcode">
+@string/hello
+</pre>
+
+			<p>
+			では自動で作成されたレイアウト用XMLファイルのmain.xmlの記述内容を見て下さい。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    &gt;
+&lt;TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    <span class="red">android:text="@string/hello"</span>
+    /&gt;
+&lt;/LinearLayout&gt;
+</pre>
+
+			<p>
+			「TextView」ビューに表示される文字列としてStringタイプで名前が「hello」のリソースが参照されています。このリソースは「res/values」ディレクトリの中の「strings.xml」ファイルで定義されています。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;resources&gt;
+    <span class="red">&lt;string name="hello"&gt;Hello World, ResourceActivity!&lt;/string&gt;</span>
+    &lt;string name="app_name"&gt;Sampleプログラム&lt;/string&gt;
+&lt;/resources&gt;
+</pre>
+
+			<p>
+			「hello」には"Hello World, ResourceActivity!"という文字列が記述されています。
+			</p>
+
+			<p>
+			先ほどのmain.xmlファイルではこのリソースを参照していましたので、リソースを参照する代わりに直接文字列を次のように記述したものと同じになります。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    &gt;
+&lt;TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    <span class="red">android:text="Hello World, ResourceActivity!"</span>
+    /&gt;
+&lt;/LinearLayout&gt;
+</pre>
+
+			<p>
+			このように他のリソースのXMLファイルの中から別のリソースを参照することが可能です。
+			</p>
+
+			<p>
+			リソースの種類によっては他のパッケージのリソースを参照することができるものもあります。細かい点は個々のリソースを詳細のページで確認していきます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

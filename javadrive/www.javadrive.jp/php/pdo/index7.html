@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>queryメソッド - PDOの利用 - PHP入門</title>
+<meta name="keywords" content="query,PDO,PHP入門" />
+<meta name="description" content="queryメソッド" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/pdo/" itemprop="url"><span itemprop="title">PDOの利用</span></a></li>
+		</ul>
+</div>
+
+			<h1>queryメソッド</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			データベースに接続した後で、実際にSQL文をデータベースに発行して様々な処理を行います。
+			</p>
+
+			<p>
+			1回だけ使用するようなSQL文をデータベースへ送信するにはPDOクラスで用意されている"query"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+PDO::query
+PDOStatement PDO::query ( string statement )
+</pre>
+<pre class="mexplain">
+PDO::query() は、一回の関数コールの中で SQL ステートメントを実行し、この
+ステートメントにより返された 結果セット (ある場合) を PDOStatement オブ
+ジェクトとして返します。
+
+PDO::query() を次にコールする前に 結果セット内の全てのデータを取得しない
+場合、そのコールは失敗します。 PDOStatement::closeCursor() をコールし、
+次に PDO::query() をコールする前に PDOStatement オブジェクトに関連付けら
+れたリソースを解放してください。
+
+引数：
+  statement  準備、発行する SQL ステートメント。
+返り値：
+  PDOStatementオブジェクトを返します。
+</pre>
+
+			<p>
+			引数に指定したSQL文をデータベースに対して発行してくれます。その結果としてSQL文を発行した結果が含まれているPDOStatementクラスのオブジェクトを返してくれます。
+			</p>
+
+			<p>
+			例えば下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin';
+$stmt = $dbh-&gt;query($sql);
+</pre>
+
+			<h2>データの取得</h2>
+
+			<p>
+			PDOStatementクラスのオブジェクトから実際の値を取り出すにはPDOStatementクラスで用意されている"fetch"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+PDOStatement::fetch
+mixed PDOStatement::fetch ([int fetch_style 
+                [, int cursor_orientation [, int cursor_offset]]])
+</pre>
+<pre class="mexplain">
+PDOStatementオブジェクトに関連付けられた結果セットから1行取得します。
+fetch_style パラメータは、PDO がその行をどの様に返すかを決定します。
+
+引数：
+  fetch_style  次のレコードを呼び出し元に返す方法を制御します。 この値は、
+    PDO::FETCH_* 定数のどれかで、 PDO::FETCH_BOTHがデフォルトです。
+  cursor_orientation  スクロール可能なカーソルを表す PDOStatement オブ
+    ジェクトの場合、 この値により呼び出し側に返される行を定義します。こ
+    の値は、PDO::FETCH_ORI_* 定数のどれかと する必要があり、
+    PDO::FETCH_ORI_NEXT がデフォルトとなっています。
+  offset
+    スクロール可能なカーソルを表すPDOStatementオブジェクトの場合で、
+    cursor_orientationパラメータが PDO::FETCH_ORI_ABSに設定された場合、
+    この値により 取得される結果セットの行の絶対位置が指定されます。
+返り値：
+  配列やオブジェクトなどが返されます
+</pre>
+
+			<p>
+			次の1行の値を取得します。このメソッド実行後は次の行へ自動的に移動しますので、連続してこのメソッドを実行することで最初から最後までの行を順番に取得することが可能です。
+			</p>
+
+			<p>
+			スクロール可能なカーソルの利用については取りあえずやめておきますので、1番目の引数だけを見ておきます。これは結果セットからどのように対象の行を取り出すのかを指定するもので、PDO::FETCH_NUMを指定した場合には0から始まるカラム番号を添字とする配列を返します。また、PDO::FETCH_ASSOCを指定した場合にはカラム名で添字を付けた配列を返します。デフォルトのPDO::FETCH_BOTHの場合には、どちらの形でもアクセス可能な配列を返してくれます。
+			</p>
+
+			<p>
+			例として下記のようなSELECTを発行した場合で考えて見ます。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin';
+$stmt = $dbh-&gt;query($sql);
+</pre>
+
+			<p>
+			PDO::FETCH_NUMを指定した場合は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin';
+$stmt = $dbh-&gt;query($sql);
+
+$result = $stmt-&gt;fetch(PDO::FETCH_ASSOC);
+print($result[0]);
+print($result[1]);
+</pre>
+
+			<p>
+			PDO::FETCH_ASSOCを指定した場合は下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$sql = 'select id, name from shouhin';
+$stmt = $dbh-&gt;query($sql);
+
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+print($result['id']);
+print($result['name']);
+</pre>
+
+			<p>
+			PDO::FETCH_BOTHを指定した場合(又は引数を省略した場合)は、どちらの形式でも利用が可能です。
+			</p>
+
+			<p>
+			では実際に試してみます。
+			</p>
+
+			<p>
+			<a href="pdotest5.php.htm" tppabs="https://www.javadrive.jp/php/pdo/pdotest5.php">pdotest5.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$dsn = 'mysql:dbname=uriage;host=localhost';
+$user = 'testuser';
+$password = 'testuser';
+
+try{
+    $dbh = new PDO($dsn, $user, $password);
+
+    print('&lt;br&gt;');
+
+    if ($dbh == null){
+        print('接続に失敗しました。&lt;br&gt;');
+    }else{
+        print('接続に成功しました。&lt;br&gt;');
+    }
+
+    $dbh-&gt;query('SET NAMES sjis');
+
+    $sql = 'select id, name from shouhin';
+    $stmt = $dbh-&gt;query($sql);
+
+    while($result = $stmt-&gt;fetch(PDO::FETCH_ASSOC)){
+        print($result['id']);
+        print($result['name'].'&lt;br&gt;');
+    }
+}catch (PDOException $e){
+    print('Error:'.$e-&gt;getMessage());
+    die();
+}
+
+$dbh = null;
+
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p14.png" tppabs="https://www.javadrive.jp/php/pdo/img/p14.png" alt="queryとfetch" width="477" height="332">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

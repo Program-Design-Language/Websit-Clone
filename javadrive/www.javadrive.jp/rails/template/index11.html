@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>image_tagメソッドを使ったイメージタグの作成 - Ruby on Rails入門</title>
+<meta name="keywords" content="image_tagメソッドを使ったイメージタグの作成" />
+<meta name="description" content="Railsのヘルパーメソッドの1つであるimage_tagメソッドを使い、画像用のイメージタグを作成する方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/template/" itemprop="url"><span itemprop="title">テンプレート(ビュー)とヘルパーメソッド</span></a></li>
+		</ul>
+</div>
+
+			<h1>image_tagメソッドを使ったイメージタグの作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			テンプレートで画像を表示するための&lt;img&gt;タグを作成する方法として、image_tagメソッド使用する方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">image_tagメソッドの定義</a><br />
+			2.<a href="#section2">画像の設置場所とパスの指定方法</a><br />
+			3.<a href="#section3">画像サイズの指定</a><br />
+			4.<a href="#section4">マウスオーバー時の画像を指定</a><br />
+			5.<a href="#section5">画像に対してリンクを設定</a><br />
+			</p>
+
+<h2><a id="section1">image_tagメソッドの定義</a></h2>
+
+			<p>
+			image_tagメソッドはActionView::Helpers::AssetTagHelperクラスで次のように定義されています。
+			</p>
+
+<pre class="fixcomment">
+image_tag(source, options = {})
+</pre>
+
+			<p>
+			メソッドの引数には、必須の引数として画像ファイルを指定します。またオプションとしてalt属性や画像のサイズ、そしてマウスオーバーの時の画像を指定することができます。
+			</p>
+
+<h2><a id="section2">画像の設置場所とパスの指定方法</a></h2>
+
+			<p>
+			アプリケーションの中で使用される画像ファイルの設置場所として、現在は2つの場所が使われているようです。1つ目は「app/assets/images」ディレクトリです。(デフォルトで画像ファイルが1つ設置されています)。
+			</p>
+
+			<p>
+			<img src="img/p11-1.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-1.png" alt="p11-1" width="576" height="422" />
+			</p>
+
+			<p>
+			image_tagメソッドの1番目の引数に単に画像ファイル名を指定した場合は、このディレクトリに設置されたものとしてタグが出力されます。(「app/assets/images」ディレクトリに配置した画像ファイルは「/assets/画像ファイル名」で参照できるようになります)。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= image_tag 'flower.png' %&gt;
+--&gt; &lt;img alt="Flower" src="/assets/flower.png" /&gt;
+</pre>
+
+			<p>
+			この時、alt属性を明示的に指定していなかった場合は、画像ファイル名の先頭を大文字にして拡張子の部分を取り除いたものがalt属性の値として自動的に設定されます。
+			</p>
+
+			<p>
+			もう1つは公開用のHTMLページなどを設置する「public」ディレクトリ内です。下記は「public」ディレクトリ内に画像ファイルを設置するための「images」ディレクトリを後から作成しました。「public」ディレクトリ直下でも構いませんし、別のディレクトリを作成されても結構です。
+			</p>
+
+			<p>
+			<img src="img/p11-2.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-2.png" alt="p11-2" width="576" height="422" />
+			</p>
+
+			<p>
+			「public」ディレクトリ以下に画像ファイルを設置した場合は、image_tagメソッドの1番目の引数に「/flower.png」や「/images/flower.png」のようにルートディレクトリからのパス付きでファイル名を指定して下さい。
+			</p>
+
+<pre class="fixcomment">
+「public」ディレクトリ直下に画像ファイルを設置した場合:
+&lt;%= image_tag '/flower.png' %&gt;
+--&gt; &lt;img alt="Flower" src="/flower.png" /&gt;
+
+「public/images」ディレクトリに画像ファイルを設置した場合:
+&lt;%= image_tag '/images/flower.png' %&gt;
+--&gt; &lt;img alt="Flower" src="/images/flower.png" /&gt;
+</pre>
+
+			<p>
+			alt属性については先程と同じです。
+			</p>
+
+			<p>
+			「alt」オプションを使うことで明示的にalt属性に値を設定することもできます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= image_tag 'flower.png' %&gt;, :alt =&gt; 'Flower Photo'
+--&gt; &lt;img alt="Flower Photo" src="/assets/flower.png" /&gt;
+</pre>
+
+			<p>
+			では実際に簡単な例で確認してみます。「books」コントローラに「show」アクションを作成します。
+			</p>
+
+<pre class="fixcode">
+class BooksController &lt; ApplicationController
+  def show
+  end
+end
+</pre>
+
+			<p>
+			次に「books」コントロールの「show」アクションから呼び出されるテンプレートとして「app/views/books/show.html.erb」ファイルを作成し、次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= image_tag 'circle_btn.png', :alt =&gt; '登録ボタン' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= image_tag '/images/box_btn.png' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルを次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  get "books/show"
+end
+</pre>
+
+			<p>
+			画像ファイル「circle_btn.png」を「app/assets/images/」ディレクトリに配置し、画像ファイル「box_bnt.png」を「public/images」ディレクトリに配置しました。
+			</p>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p11-3.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-3.png" alt="p11-3" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にように出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p11-4.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-4.png" alt="p11-4" width="475" height="326" />
+			</p>
+
+			<p>
+			このようにimage_tagメソッドを使うことで画像タグを簡単に出力することができます。
+			</p>
+
+<h2><a id="section3">画像サイズの指定</a></h2>
+
+			<p>
+			「size」オプション又は「width」オプションと「height」オプションを使用することでwidth属性とheight属性に値を設定することができます。
+			</p>
+
+<pre class="fixcomment">
+幅と高さをまとめて指定:
+&lt;%= image_tag 'flower.png', :size =&gt; '30x20' %&gt;
+--&gt; &lt;img alt="Flower" height="20" src="/assets/circle_btn.png" width="30" /&gt;
+
+幅と高さを別々に指定:
+&lt;%= image_tag 'flower.png', :width =&gt; '40', :height =&gt; '10' %&gt;
+--&gt; &lt;img alt="Flower" height="10" src="/assets/circle_btn.png" width="40" /&gt;
+</pre>
+
+			<p>
+			幅と高さをまとめて指定する場合は「幅x高さ」の形式で値を指定して下さい。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= image_tag 'btn.png', :size =&gt; '69x37' %&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= image_tag 'btn.png', :width =&gt; '138', :height =&gt; '37' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p11-5.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-5.png" alt="p11-5" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にように幅と高さが指定されて出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p11-6.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-6.png" alt="p11-6" width="475" height="326" />
+			</p>
+
+<h2><a id="section4">マウスオーバー時の画像を指定</a></h2>
+
+			<p>
+			メニューなどで画像にマウスを載せたときに表示される画像を変更することがよく行われていますが、「mouseover」オプションを使うことで簡単に実現することが可能です。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= image_tag 'btn.png', :mouseover =&gt; 'btn_over.png' %&gt;
+--&gt; &lt;img alt="Btn" onmouseout="this.src='/assets/btn.png'"
+         onmouseover="this.src='/assets/btn_over.png'" src="/assets/btn.png" /&gt;
+</pre>
+
+			<p>
+			画像がマウスに乗った時の画像ファイルを「mousuover」オプションで指定すると、onmouseout属性とonmouseout属性が設定されて出力されます。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= image_tag 'btn.png', :mouseover =&gt; 'btn_over.png' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p11-7.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-7.png" alt="p11-7" width="475" height="326" />
+			</p>
+
+			<p>
+			画像にマウスを合わせて頂くと、次のように違う画像が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p11-8.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-8.png" alt="p11-8" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にように出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p11-9.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-9.png" alt="p11-9" width="475" height="326" />
+			</p>
+
+			<p>
+			このように簡単にマウスオーバー時の画像を指定することが可能です。
+			</p>
+
+<h2><a id="section5">画像に対してリンクを設定</a></h2>
+
+			<p>
+			「<a href="index8.html" tppabs="https://www.javadrive.jp/rails/template/index8.html">link_toメソッド</a>」を使うことでリンクを出力することができますが、リンクを設定する文字列を指定する場所にimage_tagメソッドを記述することで画像に対してリンクを設定することができます。
+			</p>
+
+<pre class="fixcomment">
+&lt;%= link_to image_tag('btn.png'), '/books/index' %&gt;
+--&gt; &lt;a href="/books/index"&gt;&lt;img alt="Btn" src="/assets/btn.png" /&gt;&lt;/a&gt;
+</pre>
+
+			<p>
+			image_tagメソッドで出力されたものはエスケープは行われませんので、そのまま記述してもらうだけで画像に対するリンクを設定することができます。
+			</p>
+
+			<p>
+			では実際に簡単な例で確認してみます。「show」アクションから呼び出されるテンプレートの「app/views/books/show.html.erb」ファイルを次のように変更しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Show Page
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;%= link_to image_tag('btn.png'), '/books/index' %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			またリンク先である「index」アクションから呼び出されるテンプレートの「app/views/books/index.html.erb」ファイルを次のように作成しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+Welcome to Index Page
+&lt;/p&gt;
+</pre>
+
+			<p>
+			ルーティングの設定として「config/routes.rb」ファイルに「index」アクション用のルーティングを追加しました。
+			</p>
+
+<pre class="fixcode">
+SampleView::Application.routes.draw do
+  get "books/show"
+  get "books/index"
+end
+</pre>
+
+			<p>
+			ではアプリケーションを起動し「books」コントロールの「show」アクションを呼び出してみます。すると次のように結果がブラウザに表示されました。
+			</p>
+
+			<p>
+			<img src="img/p11-10.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-10.png" alt="p11-10" width="475" height="326" />
+			</p>
+
+			<p>
+			ソースを確認してみると次にようにイメージタグに対してリンクが設定されて出力されていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p11-11.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-11.png" alt="p11-11" width="475" height="326" />
+			</p>
+
+			<p>
+			また画像をクリックすると「index」アクションが呼び出されて次のようにブラウザに表示されます。
+			</p>
+
+			<p>
+			<img src="img/p11-12.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-12.png" alt="p11-12" width="475" height="326" />
+			</p>
+
+			<p>
+			<img src="img/p11-13.png" tppabs="https://www.javadrive.jp/rails/template/img/p11-13.png" alt="p11-13" width="475" height="326" />
+			</p>
+
+			<p>
+			このようにlink_toメソッドとimage_tagメソッドを組み合わせることで、簡単に画像に対してリンクを設定することができます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

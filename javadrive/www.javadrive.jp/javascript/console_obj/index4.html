@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | タイマーを使って処理時間を計測する(console.time, console.timeLog, console.timeEnd)</title>
+<meta name="description" content="Console オブジェクトの console.time メソッドを呼び出してから console.timeEnd メソッドを次に呼び出すまでの経過ミリ秒を計測することができます。この機能を利用することで、 2 つのメソッドを呼び出す間に行った処理にかかった時間を計測することができます。ここでは Console オブジェクトのタイマー機能を使って処理時間を計測する方法について解説します。">
+
+<meta property="og:title" content="タイマーを使って処理時間を計測する(console.time, console.timeLog, console.timeEnd)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/console_obj/index4.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/console_obj/img/p4-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Console オブジェクトの console.time メソッドを呼び出してから console.timeEnd メソッドを次に呼び出すまでの経過ミリ秒を計測することができます。この機能を利用することで、 2 つのメソッドを呼び出す間に行った処理にかかった時間を計測することができます。ここでは Console オブジェクトのタイマー機能を使って処理時間を計測する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Consoleオブジェクト",
+    "item": "https://www.javadrive.jp/javascript/console_obje/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/console_obj/">Consoleオブジェクト</a></li>
+				</ul>
+			</div>
+
+			<h1>タイマーを使って処理時間を計測する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Console オブジェクトの console.time メソッドを呼び出してから console.timeEnd メソッドを次に呼び出すまでの経過ミリ秒を計測することができます。この機能を利用することで、 2 つのメソッドを呼び出す間に行った処理にかかった時間を計測することができます。ここでは Console オブジェクトのタイマー機能を使って処理時間を計測する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">タイマーを使って処理時間を計測</a></li>
+			<li><a href="#section2">任意のタイミングで途中の経過時間をログに出力する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">タイマーを使って処理時間を計測</a></h2>
+
+			<p>
+			Console オブジェクトで用意されている console.time メソッドをおよび console.timeEnd メソッドを使って、処理を行った時間をミリ秒単位で計測することができます。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+console.time(ラベル)
+console.timeEnd(ラベル)
+</pre>
+</div>
+
+			<p>
+			console.time メソッドを呼び出すと時間の計測が開始されます。そして console.timeEnd メソッドが呼び出されると、計測が終了し開始から終了までの経過時間をコンソールに出力します。ラベルを指定することで、複数のタイマーを同時に動かして計測することができます。計測が完了すると 'ラベル: xxxx ms' という形式でコンソールに出力が行われます。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+console.time('for');
+for (let i = 0 ; i &lt; 10000 ; i++){
+  let str = 'A';
+}
+console.timeEnd('for');
+
+console.time('while');
+let num = 0;
+while (num &lt; 10000){
+  let str = 'A';
+  num += 1;
+}
+console.timeEnd('while');
+</pre>
+</div>
+
+			<p>
+			<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/javascript/console_obj/img/p4-1.png" alt="タイマーを使って処理時間を計測(1)" width="728" height="400" class="waku">
+			</p>
+
+			<p>
+			このサンプルでは最初に for 文を使って 1 万回変数に文字列を代入する処理を行う時間を計測し、次に while 文を使って同じ内容の処理を行う時間を計測しました。今回の場合は次のように計測時間が出力されています。
+			</p>
+
+<div class="titlebox3">
+<pre>
+for: 0.1708984375 ms
+while: 0.382080078125 ms
+</pre>
+</div>
+
+<h2><a id="section2">任意のタイミングで途中の経過時間をログに出力する</a></h2>
+
+			<p>
+			Console オブジェクトで用意されている console.timeLog メソッドを使用すると、計測中の任意の地点でこのメソッドを呼び出した時点までの計測時間をミリ秒単位で計測することができます。書式は次の通りです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+console.timeLog(ラベル)
+</pre>
+</div>
+
+			<p>
+			console.time メソッドを呼び出し時間の計測を開始してから console.timeEnd メソッドが呼び出されて計測が終了するまでの間で console.timeLog メソッドを呼び出すことで、途中の時点での計測時間をログに出力することができます。途中までの計測時間は、最後に出力されるのと同じ 'ラベル: xxxx ms' という形式でコンソールに出力が行われます。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+console.time('Report');
+for (let i = 0 ; i &lt; 10000 ; i++){
+  let str = 'A';
+}
+
+console.timeLog('Report');
+
+for (let i = 0 ; i &lt; 10000 ; i++){
+  let num = 1;
+}
+
+console.timeLog('Report');
+
+for (let i = 0 ; i &lt; 10000 ; i++){
+  let bool = true;
+}
+console.timeEnd('Report');
+</pre>
+</div>
+
+			<p>
+			<img src="img/p4-2.png" tppabs="https://www.javadrive.jp/javascript/console_obj/img/p4-2.png" alt="任意のタイミングで途中の経過時間をログに出力する(1)" width="728" height="500" class="waku">
+			</p>
+
+			<p>
+			このサンプルでは最初に for 文を使った処理を 3 回行っています。計測の途中で console.timeLog メソッドを使い、途中までの計測時間もコンソールに出力しています。
+			</p>
+
+<div class="titlebox3">
+<pre>
+Report: 0.134033203125 ms
+Report: 0.615966796875 ms
+Report: 0.969970703125 ms
+</pre>
+</div>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Console オブジェクトのタイマー機能を使って処理時間を計測する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

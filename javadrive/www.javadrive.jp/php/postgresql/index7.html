@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パラメータをエスケープする - PostgreSQLへの接続 - PHP入門</title>
+<meta name="keywords" content="パラメータ エスケープ,PostgreSQL,PHP入門" />
+<meta name="description" content="パラメータをエスケープする" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/postgresql/" itemprop="url"><span itemprop="title">PostgreSQLへの接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>パラメータをエスケープする</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			今までの例でSELECTやINSERTを実行する時に、SQL文中で使われている値が固定の値として記述している場合は問題無いですが、例えばフォームなどから条件を入力してもらってSQL文を作成する時に、SQLインジェクション攻撃などを防ぐ為にパラメータをエスケープしておく必要があります。
+			</p>
+
+			<p>
+			PostgreSQLの場合には「pg_escape_string」関数を使います。
+			</p>
+
+<pre class="mheader">
+pg_escape_string
+string pg_escape_string(string data)
+</pre>
+<pre class="mexplain">
+pg_escape_string() は、データベースに挿入するための 文字列をエスケープし
+ます。PostgreSQL フォーマットにエスケープされた 文字列を返します。
+addslashes() の代わりにこの関数を 使用することを推奨します。カラム型が 
+bytea の場合は、代わりに pg_escape_bytea() を使用しなければなりません。
+
+引数：
+  data  エスケープするテキスト文字列。
+返り値：
+  エスケープされたデータを文字列で返します。
+</pre>
+
+			<p>
+			具体的には例えばINSERTする値にシングルクォーテーション(')などが含まれていた場合SQL文がおかしくなってしまいますが、この関数を通すことでSQL文の中で直接記述できないような値に対してエスケープ処理を行ってくれます。例えばシングルクオート(')はダブルクオート(")へ、「&yen;」は「&yen;&yen;」へ変換を行ってくれます。
+			</p>
+
+			<p>
+			<a href="pgtest4.php.htm" tppabs="https://www.javadrive.jp/php/postgresql/pgtest4.php">pgtest4.php</a>
+			</p>
+
+<pre class="fixcode">
+$test = "bo&yen;ok's";
+print($test.'&lt;br&gt;');
+
+$quote = pg_escape_string($test);
+print($quote.'&lt;br&gt;');
+</pre>
+
+			<p>
+			上記のようなサンプルを実際にブラウザで表示させてみると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/php/postgresql/img/p8.png" alt="エスケープ処理" width="473" height="250">
+			</p>
+
+			<p>
+			では前のページで使ったINSERTのサンプルを書き直してみます。
+			</p>
+
+			<p>
+			<a href="pgtest5.php.htm" tppabs="https://www.javadrive.jp/php/postgresql/pgtest5.php">pgtest5.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$conn = "host=localhost dbname=uriage user=pguser password=pguser";
+$link = pg_connect($conn);
+if (!$link) {
+    die('接続失敗です。'.pg_last_error());
+}
+
+print('接続に成功しました。&lt;br&gt;');
+
+pg_set_client_encoding("sjis");
+
+$result = pg_query('SELECT id, name FROM shouhin');
+if (!$result) {
+    die('クエリーが失敗しました。'.pg_last_error());
+}
+
+for ($i = 0 ; $i &lt; pg_num_rows($result) ; $i++){
+    $rows = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+    print('id='.$rows['id']);
+    print(',name='.$rows['name'].'&lt;br&gt;');
+}
+
+print('&lt;br&gt;データを追加します。&lt;br&gt;&lt;br&gt;');
+
+$id = 6;
+$name = 'デジカメ';
+
+$sql = sprintf("INSERT INTO shouhin (id, name) VALUES (%s, '%s')"
+         , $id, pg_escape_string($name));
+
+$result_flag = pg_query($sql);
+
+if (!$result_flag) {
+    die('INSERTクエリーが失敗しました。'.pg_last_error());
+}
+
+print('&lt;br&gt;追加後のデータを取得します。&lt;br&gt;&lt;br&gt;');
+
+$result = pg_query('SELECT id, name FROM shouhin');
+if (!$result) {
+    die('クエリーが失敗しました。'.pg_last_error());
+}
+
+for ($i = 0 ; $i &lt; pg_num_rows($result) ; $i++){
+    $rows = pg_fetch_array($result, NULL, PGSQL_ASSOC);
+    print('id='.$rows['id']);
+    print(',name='.$rows['name'].'&lt;br&gt;');
+}
+
+$close_flag = pg_close($link);
+
+if ($close_flag){
+    print('切断に成功しました。&lt;br&gt;');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p9.png" tppabs="https://www.javadrive.jp/php/postgresql/img/p9.png" alt="エスケープ処理" width="471" height="508">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

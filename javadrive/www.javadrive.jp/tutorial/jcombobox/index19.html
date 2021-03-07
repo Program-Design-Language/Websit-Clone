@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>getListCellRendererComponentメソッド - JComboBoxクラス - Swing</title>
+<meta name="keywords" content="getListCellRendererComponent,JComboBox,Swing,Java" />
+<meta name="description" content="getListCellRendererComponentメソッド" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jcombobox/" itemprop="url"><span itemprop="title">JComboBoxクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>getListCellRendererComponentメソッド</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ListCellRendererインターフェースを実装するにに必要なメソッドである「getListCellRendererComponent」メソッドについて確認していきます。
+			</p>
+
+<pre class="mheader">
+getListCellRendererComponent
+Component getListCellRendererComponent(JList list,
+                                       Object value,
+                                       int index,
+                                       boolean isSelected,
+                                       boolean cellHasFocus)
+</pre>
+<pre class="mexplain">
+指定された値を表示するように設定されたコンポーネントを返します。次に、そ
+のコンポーネントの paint メソッドが呼び出されて、セルを「描画」します。
+リストセルのサイズが固定されていないため、リストの寸法を計算する必要があ
+る場合には、このメソッドが呼び出されて、getPreferredSize を呼び出せるコ
+ンポーネントを生成します。
+
+パラメータ:
+  list - ペイントしている JList
+  value - list.getModel().getElementAt(index) によって返される値
+  index - セルのインデックス
+  isSelected - 指定されたセルが選択された場合は true
+  cellHasFocus - 指定されたセルにフォーカスがある場合は true 
+戻り値:
+  指定された値を描画する paint() メソッドがあるコンポーネント
+</pre>
+
+			<p>
+			コンボボックスでは1つ1つの項目が表示されようとする時に、実際に表示するコンポーネントを取得するためにこのメソッドを呼び出します。レンダラクラスの中では、このメソッド内で必要なコンポーネントを作成し戻り値を呼び出し元に返す必要があります。
+			</p>
+
+			<p>
+			コンボボックスで各項目を単に文字列として表示するのであればJLabelクラスのオブジェクトを作成して戻り値として設定するのが一般的です。
+			</p>
+
+			<p>
+			そこでよく使われる記述方法が、getListCellRendererComponentメソッドを定義するクラスをコンポーネントのサブクラスとして定義し、getListCellRendererComponentメソッドも戻り値は自分自身である「this」を記述する方法です。
+			</p>
+
+<pre class="fixcode">
+class MyCellRenderer extends JLabel implements ListCellRenderer {
+  public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus){
+
+    return this;
+  }
+}
+</pre>
+
+			<p>
+			この場合は「getListCellRendererComponent」メソッドはJLabelクラスのオブジェクトを返すことになります。コンボボックス側では1つ1つの項目を表示する時に「getListCellRendererComponent」メソッドから返されたJLabelクラスのオブジェクトをコンボボックスに表示します。
+			</p>
+
+			<h2>呼び出し元のオブジェクトの判別</h2>
+
+			<p>
+			上記ではラベルに表示される文字列などを何も設定していません。その為、コンボボックスのどの項目の表示の時にメソッドが呼び出されても何も文字列が設定されていないJLabelクラスのオブジェクトが帰ってくることになります。そこでコンボボックスのどの項目を表示しようとしている時にこのメソッドが呼び出されたのかを取得し、項目毎に適切な設定してから呼び出し元にオブジェクトを返す必要があります。
+			</p>
+
+			<p>
+			2番目の引数で渡されてくるObject型の値は、コンボボックスで表示をしようとしている項目のオブジェクトが渡されてきます。そこで次のように記述することで適切な文字列が設定されたJLabelクラスのオブジェクトを返すことが出来るようになります。
+			</p>
+
+<pre class="fixcode">
+class MyCellRenderer extends JLabel implements ListCellRenderer {
+  public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus){
+
+    setText(value.toString());
+
+    return this;
+  }
+}
+</pre>
+
+			<p>
+			コンボボックスに登録されているデータがString型の値ばかりと分かっていれば、単にString型にキャストしてラベルに表示される文字列に設定しても構いません。
+			</p>
+
+			<p>
+			例えば次のように記述するとコンボボックスに登録されている各項目の値を全て大文字に変換して表示することが出来ます。
+			</p>
+
+<pre class="fixcode">
+class MyCellRenderer extends JLabel implements ListCellRenderer {
+  public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus){
+
+    String data = value.toString();
+    setText(data.toUpperCase());
+
+    return this;
+  }
+}
+</pre>
+
+			<h2>選択項目かどうかの判別</h2>
+
+			<p>
+			コンボボックスのドロップダウンリストが表示された時に、どの項目にマウスが乗っているのかを判別し区別が付くように表示方法を変更する必要があります。
+			</p>
+
+			<p>
+			4番目の引数で渡されてくるboolean型の値は、コンボボックスで表示をしようとしている項目が現在選択状態なのかどうかを表すboolean型の値が渡されてきます。選択状態と非選択状態にあるのが区別が付くように選択状態の項目の場合には前景色や背景色を変更して設定するようにします。
+			</p>
+
+<pre class="fixcode">
+class MyCellRenderer extends JLabel implements ListCellRenderer {
+  public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus){
+
+    String data = value.toString();
+    setText(data.toUpperCase());
+
+    setOpaque(true);
+
+    if (isSelected){
+      setForeground(Color.white);
+      setBackground(Color.black);
+    }else{
+      setForeground(Color.black);
+      setBackground(Color.white);
+    }
+
+    return this;
+  }
+}
+</pre>
+
+			<p>
+			上記の場合、選択されていない項目は背景色が白で前景色が黒、選択されている項目は背景色が黒で前景色が白として設定されます。
+			</p>
+			
+			<p>
+			注意点としては「isSelected」の値を使って設定を変更する時は「true」の場合と「false」の場合の両方の処理を必ず記述して下さい。なぜならば呼び出し元に戻されるJLabelのオブジェクトは1つのオブジェクトを共有しているため、設定が行われない場合には前に行った設定の結果がそのまま残っているからです。例えば「true」の場合だけの処理を記述していると、一度「true」の処理が行われるとその後で呼び出された場合には「true」の時に行った設定が残ってしまっています。その為、必ず「false」の場合の処理も合わせて記述するようにして下さい。
+			</p>
+
+			<p>
+			なお「setOpaque(true)」のような処理は一度行っておけばいいので、このような処理はコンストラクタに記述します。
+			</p>
+
+<pre class="fixcode">
+class MyCellRenderer extends JLabel implements ListCellRenderer {
+  MyCellRenderer(){
+    setOpaque(true);
+  }
+
+  public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus){
+
+    String data = value.toString();
+    setText(data.toUpperCase());
+
+    if (isSelected){
+      setForeground(Color.white);
+      setBackground(Color.black);
+    }else{
+      setForeground(Color.black);
+      setBackground(Color.white);
+    }
+
+    return this;
+  }
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルを作成して試してみます。
+			</p>
+
+			<p>
+			<a href="JComboBoxTest17.java" tppabs="https://www.javadrive.jp/tutorial/jcombobox/JComboBoxTest17.java">JComboBoxTest17.java</a>
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.Component;
+
+public class JComboBoxTest17 extends JFrame{
+
+  public static void main(String[] args){
+    JComboBoxTest17 frame = new JComboBoxTest17();
+
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setBounds(10, 10, 300, 200);
+    frame.setTitle("タイトル");
+    frame.setVisible(true);
+  }
+
+  JComboBoxTest17(){
+    String[] combodata = {"Swing", "Java2D", "Java3D", "JavaMail"};
+    DefaultComboBoxModel model = new DefaultComboBoxModel(combodata);
+
+    JComboBox combo = new JComboBox(model);
+    combo.setPreferredSize(new Dimension(140, 30));
+
+    MyCellRenderer renderer = new MyCellRenderer();
+    combo.setRenderer(renderer);
+
+    JPanel p = new JPanel();
+    p.add(combo);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+  }
+
+  class MyCellRenderer extends JLabel implements ListCellRenderer{
+    MyCellRenderer(){
+      setOpaque(true);
+    }
+
+    public Component getListCellRendererComponent(
+            JList list,
+            Object value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus){
+
+      String data = value.toString();
+      setText(data.toUpperCase());
+
+      if (isSelected){
+        setForeground(Color.white);
+        setBackground(Color.black);
+      }else{
+        setForeground(Color.black);
+        setBackground(Color.white);
+      }
+
+      return this;
+    }
+  }
+}
+</pre>
+
+			<p>
+			上記をコンパイルした後で実行すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p19-1.png" tppabs="https://www.javadrive.jp/tutorial/jcombobox/img/p19-1.png" alt="JComboBoxでレンダラ定義して設定する" width="307" height="206">
+			</p>
+
+			<p>
+			ドロップダウンリストを表示すると、各項目が全て大文字となっており、マウスで選択されている項目とされていない項目によって表示方法が変わっていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p19-2.png" tppabs="https://www.javadrive.jp/tutorial/jcombobox/img/p19-2.png" alt="JComboBoxでレンダラ定義して設定する" width="307" height="208">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bundlerを使ったGemパッケージの管理 - Ruby on Rails入門</title>
+<meta name="keywords" content="Bundlerを使ったGemパッケージの管理" />
+<meta name="description" content="Rails3系から導入されたBundlerを使って、Railsアプリケーションに必要なGemパッケージの管理とインストールを行なう方法を解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/ini/" itemprop="url"><span itemprop="title">アプリケーション作成から実行までの手順</span></a></li>
+		</ul>
+</div>
+
+			<h1>Bundlerを使ったGemパッケージの管理</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Rails3系からアプリケーションで必要となるGemパッケージの管理にBundlerを使うようになりました。ここではBundlerとはどういったもので、実際にどうやって使うのかについて解説します。
+			</p>
+
+<h2>Gemパッケージとは</h2>
+
+			<p>
+			まずはGemパッケージの簡単な解説です。
+			</p>
+
+			<p>
+			Rubyで使われるライブラリやアプリケーションはGemと呼ばれる形式のパッケージにすることができます。多くのライブラリがGem形式でパッケージされ公開されており、これらはRubyGemsと呼ばれるパッケージ管理ツールを使ってダウンロードを行なったりインストールすることができます。これらのパッケージのことを単にGemとかGemパッケージなどと呼んだりします。
+			</p>
+
+			<p>
+			RailsもGem形式でパッケージになったもので、Railsをインストールした時も「gem install rails」とRubyGemsを使ってインストールを行いました。
+			</p>
+
+			<p>
+			Railsで作成したアプリケーションは通常Railsだけでなく他の多くのGemパッケージも使います。例えばSQLiteをRailsから利用するために必要な"sqlite3"パッケージもその一つです。
+			</p>
+
+<h2>Bundlerとは</h2>
+
+			<p>
+			Railsのアプリケーション開発を複数のPCで行なおうとした場合を考えてみます。プログラムファイルはもちろんですが、全てのPCで対象のアプリケーションで使用しているGemパッケージをインストールしておかなければなりません。またGemパッケージのバージョンも揃える必要があります。
+			</p>
+
+			<p>
+			そこで使われるのがBundlerです。BundlerはRailsアプリケーションに必要となるGemパッケージの種類やバージョンを管理し、複数のPCで必要なGemパッケージをインストールする仕組みを提供してくれます。
+			</p>
+
+<h2>Bundlerを使ったGemパッケージのインストール</h2>
+
+			<p>
+			それでは実際にBundlerを使い方を確認していきます。「rails new アプリケーション名」を使ってRailsアプリケーションを作成すると、必要なファイルを作成した後で「bundle install」が自動的に実行されていました。
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-1.png" alt="p2-1" width="517" height="260" />
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-2.png" alt="p2-2" width="517" height="260" />
+			</p>
+
+			<p>
+			この「bundle install」がBundlerを使って必要なGemパッケージをインストールしている部分となります。
+			</p>
+
+			<p>
+			このようにRailsアプリケーションを新規に作成した時、(1)必要なファイルの作成、(2)必要なGemパッケージが記載されたGemfileの作成、(3)Gemfileに基づいたGemパッケージのインストール、(4)他の環境で使用するためのGemfile.lockの作成、といったことが行われています。
+			</p>
+
+			<p>
+			では動作を確認するために「bundle install」を手動で行なってみます。Railsアプリケーションを作成する時、「--skip-bundle」を付けて実行すると「bundle install」を自動的に実行しません。今回テストとして次のようにアプリケーションを作成しました。
+			</p>
+
+<pre class="fixcode">
+rails new bundletest --skip-bundle
+</pre>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-3.png" alt="p2-3" width="517" height="260" />
+			</p>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-4.png" alt="p2-4" width="517" height="260" />
+			</p>
+
+			<p>
+			必要なファイルの作成までが行なわれており「bundle install」は実行されていません。
+			</p>
+
+			<p>
+			では作成されたディレクトリのルートを見て下さい。次のように「Gemfile」というファイルが作成されています。
+			</p>
+
+			<p>
+			<img src="img/p2-5.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-5.png" alt="p2-5" width="553" height="424" />
+			</p>
+
+			<p>
+			「Gemfile」をテキストエディタで開いてみます。
+			</p>
+
+<pre class="fixcode">
+source 'https://rubygems.org'
+
+gem 'rails', '3.2.2'
+
+# Bundle edge Rails instead:
+# gem 'rails', :git =&gt; 'git://github.com/rails/rails.git'
+
+gem 'sqlite3'
+
+
+# Gems used only for assets and not required
+# in production environments by default.
+group :assets do
+  gem 'sass-rails',   '~&gt; 3.2.3'
+  gem 'coffee-rails', '~&gt; 3.2.1'
+
+  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
+  # gem 'therubyracer'
+
+  gem 'uglifier', '&gt;= 1.0.3'
+end
+
+gem 'jquery-rails'
+
+# To use ActiveModel has_secure_password
+# gem 'bcrypt-ruby', '~&gt; 3.0.0'
+
+# To use Jbuilder templates for JSON
+# gem 'jbuilder'
+
+# Use unicorn as the app server
+# gem 'unicorn'
+
+# Deploy with Capistrano
+# gem 'capistrano'
+
+# To use debugger
+# gem 'ruby-debug19', :require =&gt; 'ruby-debug'
+</pre>
+
+			<p>
+			文頭に"#"があるものはコメントです。細かい記述の仕方はここでは省略させて頂きますが、例えば次のようなことが書かれています。
+			</p>
+
+<pre class="fixcode">
+gem 'rails', '3.2.2'    # バージョン3.2.2の Rails
+gem 'sqlite3'           # 任意のバージョンの sqlite3
+gem 'jquery-rails'      # 任意のバージョンの jquery-rails
+</pre>
+
+			<p>
+			次に「bundle install」を行ないます。この時先程の自動で作成された Gemfile を元にGemパッケージがインストールされます。Gemfile ファイルに書かれたGemパッケージと、それらのGemパッケージが依存する(必要とする)他のGemパッケージも自動的にインストールされます。
+			</p>
+
+			<p>
+			まず対象のアプリケーションディレクトリに移動し、その後で「bundle install」と実行して下さい。
+			</p>
+
+<pre class="fixcode">
+bundle install
+</pre>
+
+			<p>
+			<img src="img/p2-6.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-6.png" alt="p2-6" width="517" height="260" />
+			</p>
+
+			<p>
+			<img src="img/p2-7.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-7.png" alt="p2-7" width="517" height="260" />
+			</p>
+
+			<p>
+			これで必要なGemパッケージがインストールされました。
+			</p>
+
+			<p>
+			また「Gemfile.lock」というファイルが新たに作成されています。
+			</p>
+
+			<p>
+			<img src="img/p2-8.png" tppabs="https://www.javadrive.jp/rails/ini/img/p2-8.png" alt="p2-8" width="553" height="439" />
+			</p>
+
+			<p>
+			先に記載したように「bundle install」を行なうと、「Gemfile」に書かれたGemパッケージと、そのGemパッケージが依存しているGemパッケージを自動的に調べて全てインストールしてくれます。「Gemfile.lock」はインストールされたGemパッケージの名前とバージョンが記録されたものです。
+			</p>
+
+			<p>
+			では「Gemfile.lock」をテキストエディタで開いてみます。
+			</p>
+
+<pre class="fixcode">
+GEM
+  remote: https://rubygems.org/
+  specs:
+    actionmailer (3.2.2)
+      actionpack (= 3.2.2)
+      mail (~&gt; 2.4.0)
+    actionpack (3.2.2)
+      activemodel (= 3.2.2)
+      activesupport (= 3.2.2)
+      builder (~&gt; 3.0.0)
+      erubis (~&gt; 2.7.0)
+      journey (~&gt; 1.0.1)
+      rack (~&gt; 1.4.0)
+      rack-cache (~&gt; 1.1)
+      rack-test (~&gt; 0.6.1)
+      sprockets (~&gt; 2.1.2)
+    activemodel (3.2.2)
+      activesupport (= 3.2.2)
+      builder (~&gt; 3.0.0)
+    activerecord (3.2.2)
+      activemodel (= 3.2.2)
+      activesupport (= 3.2.2)
+      arel (~&gt; 3.0.2)
+      tzinfo (~&gt; 0.3.29)
+    activeresource (3.2.2)
+      activemodel (= 3.2.2)
+      activesupport (= 3.2.2)
+    activesupport (3.2.2)
+      i18n (~&gt; 0.6)
+      multi_json (~&gt; 1.0)
+    arel (3.0.2)
+    builder (3.0.0)
+    coffee-rails (3.2.2)
+      coffee-script (&gt;= 2.2.0)
+      railties (~&gt; 3.2.0)
+    coffee-script (2.2.0)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.2.0)
+    erubis (2.7.0)
+    execjs (1.3.0)
+      multi_json (~&gt; 1.0)
+    hike (1.2.1)
+    i18n (0.6.0)
+    journey (1.0.3)
+    jquery-rails (2.0.1)
+      railties (&gt;= 3.2.0, &lt; 5.0)
+      thor (~&gt; 0.14)
+    json (1.6.5)
+    mail (2.4.3)
+      i18n (&gt;= 0.4.0)
+      mime-types (~&gt; 1.16)
+      treetop (~&gt; 1.4.8)
+    mime-types (1.17.2)
+    multi_json (1.1.0)
+    polyglot (0.3.3)
+    rack (1.4.1)
+    rack-cache (1.2)
+      rack (&gt;= 0.4)
+    rack-ssl (1.3.2)
+      rack
+    rack-test (0.6.1)
+      rack (&gt;= 1.0)
+    rails (3.2.2)
+      actionmailer (= 3.2.2)
+      actionpack (= 3.2.2)
+      activerecord (= 3.2.2)
+      activeresource (= 3.2.2)
+      activesupport (= 3.2.2)
+      bundler (~&gt; 1.0)
+      railties (= 3.2.2)
+    railties (3.2.2)
+      actionpack (= 3.2.2)
+      activesupport (= 3.2.2)
+      rack-ssl (~&gt; 1.3.2)
+      rake (&gt;= 0.8.7)
+      rdoc (~&gt; 3.4)
+      thor (~&gt; 0.14.6)
+    rake (0.9.2.2)
+    rdoc (3.12)
+      json (~&gt; 1.4)
+    sass (3.1.15)
+    sass-rails (3.2.4)
+      railties (~&gt; 3.2.0)
+      sass (&gt;= 3.1.10)
+      tilt (~&gt; 1.3)
+    sprockets (2.1.2)
+      hike (~&gt; 1.2)
+      rack (~&gt; 1.0)
+      tilt (~&gt; 1.1, != 1.3.0)
+    sqlite3 (1.3.5-x86-mingw32)
+    thor (0.14.6)
+    tilt (1.3.3)
+    treetop (1.4.10)
+      polyglot
+      polyglot (&gt;= 0.3.1)
+    tzinfo (0.3.32)
+    uglifier (1.2.3)
+      execjs (&gt;= 0.3.0)
+      multi_json (&gt;= 1.0.2)
+
+PLATFORMS
+  x86-mingw32
+
+DEPENDENCIES
+  coffee-rails (~&gt; 3.2.1)
+  jquery-rails
+  rails (= 3.2.2)
+  sass-rails (~&gt; 3.2.3)
+  sqlite3
+  uglifier (&gt;= 1.0.3)
+</pre>
+
+			<p>
+			重複している部分もありますが、これらがインストールされたGemパッケージとなります。
+			</p>
+
+			<p>
+			他の環境で同じアプリケーションの開発を行なう場合は、プログラムファイルに加えてこの「Gemfile.lock」ファイルを配布します。そして他の環境で「bundle install」を実行すると、今度は「Gemfile.lock」ファイルが参照され、指定されたバージョンのGemパッケージがインストールされます。
+			</p>
+
+			<p>
+			このようにBundlerを使うことで、必要なGemパッケージを管理し、同じ開発環境を簡単に構築することができます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

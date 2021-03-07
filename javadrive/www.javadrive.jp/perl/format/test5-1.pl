@@ -1,0 +1,20 @@
+﻿use strict;
+use warnings;
+use utf8;
+binmode STDIN, ':encoding(cp932)';
+binmode STDOUT, ':encoding(cp932)';
+binmode STDERR, ':encoding(cp932)';
+
+printf("[%d]\n", 30);
+printf("[%5d]\n", 30);
+printf("[%5d]\n", -30);
+printf("[%-5d]\n", -30);
+printf("[%#o]\n", 30);
+printf("[%#5o]\n", 30);
+printf("[%#x]\n", 30);
+printf("[%#5x]\n", 30);
+printf("[%#b]\n", 2);
+printf("[%#5b]\n", 2);
+printf("[%15e]\n", 12.3);
+printf("[%15f]\n", 12.3);
+printf("[%3d]\n", 760128);

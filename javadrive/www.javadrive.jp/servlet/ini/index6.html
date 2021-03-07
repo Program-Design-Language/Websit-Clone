@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>initメソッドとdestroyメソッド - サーブレットの基本 - サーブレット入門</title>
+<meta name="keywords" content="init,destroy,基本,サーブレット" />
+<meta name="description" content="initメソッドとdestroyメソッド" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/ini/" itemprop="url"><span itemprop="title">サーブレットの基本</span></a></li>
+		</ul>
+</div>
+
+			<h1>initメソッドとdestroyメソッド</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前のページでサーブレットのライフサイクルに関して見ていきましたが、サーブレットのインスタンスが作成された後、そして破棄される前にそれぞれ特定のメソッドを呼びだすことが出来ます。
+			</p>
+
+			<h2>initメソッド</h2>
+
+			<p>
+			インスタンスが作成された後で実際の処理が行われる前に呼び出されるのが「init」メソッドです。最初のリクエストに対してスレッドが作成され実際の処理が行われる前に呼び出されることが保証されています。その為、インスタンス自体に対して初期化するような処理を記述するのに利用されます。(「init」メソッド内にローカルの初期化処理を記述してもインスタンスの初回作成時にしか実行されませんので注意して下さい)。
+			</p>
+
+			<p>
+			「init」メソッドは「HttpServlet」クラスの親クラスである「GenericServlet」クラスで定義されています。
+			</p>
+
+<pre class="mheader">
+init
+public void init() throws ServletException
+</pre>
+<pre class="mexplain">
+A convenience method which can be overridden so that there's no need
+to call super.init(config). 
+
+Instead of overriding init(ServletConfig), simply override this method
+and it will be called by GenericServlet.init(ServletConfig config). 
+The ServletConfig object can still be retrieved via getServletConfig(). 
+
+Throws: 
+  ServletException - if an exception occurs that interrupts the 
+    servlet's normal operation
+</pre>
+
+			<p>
+			「init」メソッドには引数の異なる「init(ServletConfig config)」と言うメソッドがありますがあまり意識しなくても結構です。通常は引数無しの「init」メソッドをオーバーライドして使います。
+			</p>
+
+			<p>
+			実際の使い方としては次のような感じとなります。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Sample extends HttpServlet {
+  public void init() throws ServletException{
+    /* 初期化処理 */
+  }
+
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    /* ... */
+
+  }
+}
+</pre>
+
+			<p>
+			「init」メソッドはインスタンス作成後に一度だけ呼ばれるメソッドですので、インスタンス変数の初期化などに利用します。
+			</p>
+
+			<h2>destroyメソッド</h2>
+
+			<p>
+			サーブレットが破棄される前に呼び出されるのが「destroy」メソッドです。インスタンス変数の値をファイルに書き出したり、インスタンスで共有していたデータベース接続の切断処理を行ったりといった処理を行うのに使います。
+			</p>
+
+			<p>
+			「destroy」メソッドは「HttpServlet」クラスの親クラスである「GenericServlet」クラスで定義されています。
+			</p>
+
+<pre class="mheader">
+destroy
+public void destroy()
+</pre>
+<pre class="mexplain">
+Called by the servlet container to indicate to a servlet that the 
+servlet is being taken out of service. See Servlet.destroy().
+</pre>
+
+			<p>
+			実際に使う場合には「destroy」メソッドをオーバーライドして処理したい内容を記述します。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Sample extends HttpServlet {
+  public void init() throws ServletException{
+    /* 初期化処理 */
+  }
+
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    /* ... */
+
+  }
+
+  public void destroy(){
+    /* 終了処理 */
+  }
+}
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで試して見ます。
+			</p>
+
+			<p>
+			<a href="Sample3.java.htm" tppabs="https://www.javadrive.jp/servlet/ini/Sample3.java">Sample3.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class Sample3 extends HttpServlet {
+
+  int count;
+
+  public void init() throws ServletException{
+    count = 100;
+    log("カウント開始します");
+  }
+
+  public void destroy(){
+    log("カウントの最終値は" + count + "でした");
+  }
+
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    StringBuffer sb = new StringBuffer();
+
+    sb.append("&lt;html&gt;");
+    sb.append("&lt;head&gt;");
+    sb.append("&lt;title&gt;サンプル&lt;/title&gt;");
+    sb.append("&lt;/head&gt;");
+    sb.append("&lt;body&gt;");
+
+    count++;
+    sb.append("&lt;p&gt;訪問人数:");
+    sb.append(count);
+    sb.append("&lt;/p&gt;");
+
+    sb.append("&lt;/body&gt;");
+    sb.append("&lt;/html&gt;");
+
+    out.println(new String(sb));
+
+    out.close();
+  }
+}
+</pre>
+
+			<p>
+			「init」メソッドでカウンターの初期値を設定し、「destroy」メソッドでサーブレットが破棄される時のカウンターの最終値をログに記録します。
+			</p>
+
+			<p>
+			サンプルプログラムをコンパイルして作成した「Sample3.class」ファイルと別途作成した「web.xml」ファイルを次のように配置します。
+			</p>
+
+<pre class="fixcomment">
+D:&yen; -- servlet-sample
+        |
+        +-- WEB-INF
+             |
+             +-- (web.xml)
+             |
+             +-- classes
+                  |
+                  +-- (Sample3.class)
+</pre>
+
+			<p>
+			web.xmlファイルは次のようになります。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;Sample3&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;Sample3&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;Sample3&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/Sample3&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			コンテキストファイルを作成し「(Tomcatをインストールしたディレクトリ)&yen;Tomcat 5.5&yen;conf&yen;Catalina&yen;localhost&yen;」ディレクトリに「sample.xml」ファイルとして保存します。内容は以下の通りです。
+			</p>
+
+
+<pre class="fixcomment">
+&lt;Context path="/sample"
+docBase="d:/servlet-sample/sample"&gt;
+&lt;/Context&gt;
+</pre>
+
+			<p>
+			準備は以上です。ではTomcatを再起動してから「http://localhost:8080/sample/Sample3」へブラウザでアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/servlet/ini/img/p5.png" alt="initメソッドとdestroyメソッド" width="493" height="298">
+			</p>
+
+			<p>
+			このようにカウンターの初期値が設定されています。ではカウンターが増えるようにリロードなどを行って下さい。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/servlet/ini/img/p6.png" alt="initメソッドとdestroyメソッド" width="492" height="296">
+			</p>
+
+			<p>
+			ここでTomcatを停止します。コンテナであるTomcatが停止すればサーブレットも破棄されますのでログにカウンターの値が記録されます。実際にログを確認してみると次のように記録されていました。
+			</p>
+
+<pre class="fixcomment">
+2006/11/15 20:41:52 org.apache.catalina.core.ApplicationContext log
+情報: Sample3: カウント開始します
+2006/11/15 20:42:10 org.apache.catalina.core.ApplicationContext log
+情報: Sample3: カウントの最終値は112でした
+</pre>
+
+			<p>
+			※ログは「(Tomcatをインストールしたディレクトリ)&yen;Tomcat 5.5&yen;logs」ディレクトリの中にあります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

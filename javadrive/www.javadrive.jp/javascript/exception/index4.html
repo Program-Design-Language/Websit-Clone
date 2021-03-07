@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 例外をキャッチした時に例外の種類に応じて処理を分ける</title>
+<meta name="description" content="例外がスローされる原因となるエラーにはいくつかの種類があります。 try...catch 文を使った例外処理で複数の種類の例外が発生する可能性がある場合は、スローされた例外の種類ごとに複数の catch を記述して実行する処理を分けることが可能です。ここでは try...catch 文で例外をキャッチした時に例外の種類に応じて処理を分ける方法について解説します。">
+
+<meta property="og:title" content="例外をキャッチした時に例外の種類に応じて処理を分ける">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/exception/index4.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/exception/img/p4-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="例外がスローされる原因となるエラーにはいくつかの種類があります。 try...catch 文を使った例外処理で複数の種類の例外が発生する可能性がある場合は、スローされた例外の種類ごとに複数の catch を記述して実行する処理を分けることが可能です。ここでは try...catch 文で例外をキャッチした時に例外の種類に応じて処理を分ける方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "例外処理",
+    "item": "https://www.javadrive.jp/javascript/exception/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/exception/">例外処理</a></li>
+				</ul>
+			</div>
+
+			<h1>例外をキャッチした時に例外の種類に応じて処理を分ける</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			例外がスローされる原因となるエラーにはいくつかの種類があります。 try...catch 文を使った例外処理で複数の種類の例外が発生する可能性がある場合は、スローされた例外の種類ごとに複数の catch を記述して実行する処理を分けることが可能です。ここでは try...catch 文で例外をキャッチした時に例外の種類に応じて処理を分ける方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">例外が発生するエラーの種類</a></li>
+			<li><a href="#section2">例外の種類に応じて実行する処理を分ける</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">例外が発生するエラーの種類</a></h2>
+
+			<p>
+			例外が発生するエラーの種類として次の 8 種類がグローバルオブジェクトとして定義されています。
+			</p>
+
+<div class="titlebox2">
+<pre>
+Error           一般的なエラー
+EvalError       eval 関数に関するエラー
+InternalError   JavaScriptの内部エラー
+RangeError      数値が有効範囲を超えた場合のエラー
+ReferenceError  不正な参照を行った場合のエラー
+SyntaxError     JavaScriptの構文エラー
+TypeError       変数や引数の型が適切ではない場合のエラー
+URIError        encodeURIまたはdecodeURIに関するエラー
+</pre>
+</div>
+
+			<p>
+			※ ただし SyntaxError は実行時にエラーとなるのではなく実行前の時点でエラーとなるため、明示的に SyntaxError オブジェクトを作成してスローしない限りは、構文ミスが理由で実行時に例外をスローすることはないと思います。
+			</p>
+
+			<p>
+			例えば Number オブジェクトの toString メソッドでは、引数に 2 から 36 までの範囲の値しか指定できませんが、それを超える値を指定すると RangeError が発生します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let num = 10;
+console.log(num.toString(100));
+<span class="bold">&gt;&gt;</span> <span class="redbold">RangeError: toString() radix argument must be between 2 and 36</span>
+</pre>
+</div>
+
+			<p>
+			また同じ処理であっても複数の種類のエラーが発生することがあります。 Number オブジェクトの toFixed メソッドでは、引数に 0 から 100 までの範囲の値しか指定できませんが、それを超える値を指定すると RangeError が発生します。また数値以外の値に対してこのメソッドを呼び出すと TypeError が発生します。また整数の数値リテラルに括弧をつけずにこのメソッドを呼び出すと SyntaxError が発生します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let num = 3.14;
+console.log(num.toFixed(1000));
+<span class="bold">&gt;&gt;</span> <span class="redbold">RangeError: toFixed() digits argument must be between 0 and 100</span>
+
+let str = '3.14';
+console.log(str.toFixed());
+<span class="bold">&gt;&gt;</span> <span class="redbold">TypeError: str.toFixed is not a function</span>
+
+console.log(24.toFixed());
+<span class="bold">&gt;&gt;</span> <span class="redbold">SyntaxError: Invalid or unexpected token</span>
+</pre>
+</div>
+
+			<p>
+			try...catch 文ではどのような種類の例外であってもスローされた例外をキャッチすることができますが、キャッチした例外の種類毎に異なる処理を行うこともできます。
+			</p>
+
+<h2><a id="section2">例外の種類に応じて実行する処理を分ける</a></h2>
+
+			<p>
+			例外の種類が何であっても同じ処理を行いたい場合は次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function returnFixed(num, digits){
+  try{
+    return num.toFixed(digits)
+  } catch(e) {
+    console.error(e);
+    return null;
+  }
+}
+
+console.log('Start');
+
+console.log(returnFixed(3.87654, 3));
+console.log(returnFixed(3.87654, 1000));
+console.log(returnFixed('3.87654', 1000));
+
+console.log('End');
+
+<span class="bold">&gt;&gt; Start</span>
+<span class="bold">&gt;&gt; 3.877</span>
+<span class="bold">&gt;&gt;</span> <span class="redbold">RangeError: toFixed() digits argument must be between 0 and 100</span>
+<span class="bold">&gt;&gt; null</span>
+<span class="bold">&gt;&gt;</span> <span class="redbold">TypeError: num.toFixed is not a function</span>
+<span class="bold">&gt;&gt; null</span>
+<span class="bold">&gt;&gt; End</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは try...catch 文が記述された外部の関数を 3 回呼び出しています。 1 回目は正常に結果が返ってきますが、 2 回目と 3 回目はそれぞれ例外が発生しています。 2 回目と 3 回目では発生した例外の種類が異なりますが同じ catch ブロック内で同じ処理を行っています。
+			</p>
+
+			<p>
+			発生した例外の種類毎に実行する処理を分けたい場合、 catch のあとの括弧の中に記述した変数 e に格納されている値を調べて条件分岐を行います。
+			</p>
+
+<div class="titlebox2">
+<pre>
+try{
+  例外が発生する可能性がある文を記述
+  ・・・
+} catch(e) {
+  if (e instanceof RangeError){
+    // RangeError が発生した場合に実行される処理
+    ・・・
+  } else if (e instanceof TypeError){
+    // TypeError が発生した場合に実行される処理
+    ・・・
+  } else {
+    // 上記以外の例外が発生した場合に実行される処理
+    ・・・
+  }
+}
+</pre>
+</div>
+
+			<p>
+			catch のあとの変数には例外がスローされたときに設定された値が格納されます。この値を instanceof 演算子を使って RangeError オブジェクトや TypeError オブジェクトと比較することで例外の種類を特定することができます。
+			</p>
+
+			<p>
+			それでは先ほどのサンプルを例外の種類毎に異なる処理をするように変更してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+function returnFixed(num, digits){
+  try{
+    return num.toFixed(digits)
+  } catch(e) {
+    if (e instanceof RangeError){
+      console.error('RangeError');
+      return null;
+    } else if (e instanceof TypeError){
+      console.error('TypeError');
+      return null;
+    } else {
+      console.error(e);
+      return null;
+    }
+  }
+}
+
+console.log('Start');
+
+console.log(returnFixed(3.87654, 3));
+console.log(returnFixed(3.87654, 1000));
+console.log(returnFixed('3.87654', 1000));
+
+console.log('End');
+
+<span class="bold">&gt;&gt; Start</span>
+<span class="bold">&gt;&gt; 3.877</span>
+<span class="bold">&gt;&gt;</span> <span class="redbold">RangeError</span>
+<span class="bold">&gt;&gt; null</span>
+<span class="bold">&gt;&gt;</span> <span class="redbold">TypeError</span>
+<span class="bold">&gt;&gt; null</span>
+<span class="bold">&gt;&gt; End</span>
+</pre>
+</div>
+
+			<p>
+			発生した例外の種類に応じて異なる処理を実行するように変更しました。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			try...catch 文で例外をキャッチした時に例外の種類に応じて処理を分ける方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rake db:seedを使った初期データの投入 - Ruby on Rails入門</title>
+<meta name="keywords" content="rake db:seedを使った初期データの投入" />
+<meta name="description" content="Railsでテーブルを作成した後にrake db:seedを使って初期データを投入する方法をご紹介します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/model/" itemprop="url"><span itemprop="title">モデルとデータベース</span></a></li>
+		</ul>
+</div>
+
+			<h1>rake db:seedを使った初期データの投入</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Railsアプリケーションでテーブルやモデルなどの準備が出来たあと、初期データをテーブルに追加する方法を解説します。テストを行なうためのサンプルデータを追加したり、顧客データなどの既に用意されているデータを事前に追加しておく場合などに使います。
+			</p>
+
+			<p>
+			1.<a href="#section1">個別データの追加</a><br />
+			2.<a href="#section2">大量のサンプルデータの追加</a><br />
+			3.<a href="#section3">CSVを読み込んでデータを追加</a><br />
+			</p>
+
+<h2><a id="section1">個別データの追加</a></h2>
+
+			<p>
+			初期データを追加する方法は直接データベースにアクセスして追加することもできますが、今回はRailsで用意されている仕組みを使います。では「db/seeds.rb」ファイルを見て下さい。
+			</p>
+
+			<p>
+			<img src="img/p10-1.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-1.png" alt="p10-1" width="542" height="378" />
+			</p>
+
+			<p>
+			このファイルはRubyを使って記述されたスクリプトファイルです。このファイルの中にデータを追加するためのスクリプトを記述し実行することでデータを追加します。
+			</p>
+
+			<p>
+			ではファイルをテキストエディタで開いて下さい。
+			</p>
+
+<pre class="fixcode">
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+#
+# Examples:
+#
+#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
+#   Mayor.create(name: 'Emanuel', city: cities.first)
+</pre>
+
+			<p>
+			現在はコメントだけ記載されています。ではスクリプトを記述していきます。
+			</p>
+
+			<p>
+			今回データを追加するテーブルに対応したモデルのクラスであるTitleクラスで、クラスで用意されているクラスメソッドであるcreateメソッドを使ってデータを追加していきます。
+			</p>
+
+<pre class="fixcomment">
+モデルクラス名.create(:カラム名1 =&gt; 値1, :カラム名2 =&gt; 値2, ...)
+</pre>
+
+			<p>
+			今回は次のように「db/seeds.rb」ファイルに次のように記述しました。
+			</p>
+
+<pre class="fixcode">
+# coding: utf-8
+
+Title.create(:name =&gt; '観察日記', :sales_date =&gt; '2011-11-14', :price =&gt; 1000)
+Title.create(:name =&gt; 'Simple Life', :sales_date =&gt; '2012-02-08', :price =&gt; 2300)
+Title.create(:name =&gt; 'メガネ入門', :sales_date =&gt; '2011-10-25', :price =&gt; 800)
+</pre>
+
+			<p>
+			※ 日本語を使用する場合はファイルの先頭に「# coding: utf-8」を忘れないようにして下さい。
+			</p>
+
+			<p>
+			スクリプトファイルを作成したら、次のコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcode">
+rake db:seed
+</pre>
+
+			<p>
+			これで先程記述したスクリプトが実行され、テーブルに初期データが追加されます。では実際に行なってみます。
+			</p>
+
+			<p>
+			<img src="img/p10-2.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-2.png" alt="p10-2" width="517" height="286" />
+			</p>
+
+			<p>
+			スクリプトが実行され3つのデータが追加されました。ではMySQLに接続してテーブルのデータを参照してみます。
+			</p>
+
+			<p>
+			<img src="img/p10-3.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-3.png" alt="p10-3" width="517" height="286" />
+			</p>
+
+			<p>
+			スクリプトに記述したデータがテーブルに追加されちることが確認できます。
+			</p>
+
+<h2><a id="section2">大量のサンプルデータの追加</a></h2>
+
+			<p>
+			先程は追加するデータを1つ1つ追加しましたが、テスト用にサンプルデータをとにかく多く追加したい場合もあります。そのような場合、「db/seeds.rb」ファイルはRubyで記述されたスクリプトですので任意のスクリプトを記述してデータを追加することができます。
+			</p>
+
+			<p>
+			今回は例として「db/seeds.rb」ファイルを次のように書き換えました。
+			</p>
+
+<pre class="fixcode">
+# coding: utf-8
+
+5.times do |no|
+  Title.create(:name =&gt; "タイトル #{no}")
+end
+</pre>
+
+			<p>
+			ダブルクオーテーションで囲まれた文字列の中で #{変数} と記述すると変数の値が文字列の中で展開されます。
+			</p>
+
+			<p>
+			では先程と同じく次のコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcode">
+rake db:seed
+</pre>
+
+			<p>
+			<img src="img/p10-4.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-4.png" alt="p10-4" width="517" height="286" />
+			</p>
+
+			<p>
+			スクリプトが実行されデータが追加されました。ではMySQLに接続してテーブルのデータを参照してみます。
+			</p>
+
+			<p>
+			<img src="img/p10-5.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-5.png" alt="p10-5" width="517" height="286" />
+			</p>
+
+			<p>
+			新しいデータが5つ追加されていることが確認できます。
+			</p>
+
+<h2><a id="section3">CSVを読み込んでデータを追加</a></h2>
+
+			<p>
+			自動で作成されるデータではなく、顧客一覧のような作成済みのデータや郵便番号一覧などの参照用データなどあらかじめ用意されたデータを読み込みたい場合もあります。例としてCSVで用意されているデータを読み込んでテーブルに追加する場合も試してみます。
+			</p>
+
+			<p>
+			RubyでCSVデータを読み込むには次のような記述を行ないます。
+			</p>
+
+<pre class="fixcode">
+require "csv"
+
+CSV.foreach('db/sample.csv') do |row|
+  Title.create(:name =&gt; row[0], :sales_date =&gt; row[1], :price =&gt; row[2])
+end
+</pre>
+
+			<p>
+			上記内容を「db/seeds.rb」ファイルに記述しました。CSVファイルへのパスは、アプリケーションのルートからの相対リンクで記述して下さい。
+			</p>
+
+			<p>
+			また読み込むデータとして次のようなファイルを用意します。
+			</p>
+
+<pre class="fixcode">
+火星探検, 2009-12-01, 1100
+Map Fun, 2011-02-24, 700
+</pre>
+
+			<p>
+			CSVファイルは「db/sample.csv」として保存しました。
+			</p>
+
+			<p>
+			<img src="img/p10-6.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-6.png" alt="p10-6" width="542" height="378" />
+			</p>
+
+			<p>
+			では今までと同じく次のコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcode">
+rake db:seed
+</pre>
+
+			<p>
+			<img src="img/p10-7.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-7.png" alt="p10-7" width="517" height="286" />
+			</p>
+
+			<p>
+			スクリプトが実行されデータが追加されました。ではMySQLに接続してテーブルのデータを参照してみます。
+			</p>
+
+			<p>
+			<img src="img/p10-8.png" tppabs="https://www.javadrive.jp/rails/model/img/p10-8.png" alt="p10-8" width="517" height="286" />
+			</p>
+
+			<p>
+			CSVに記載された2つのデータが読み込まれテーブルに追加されていることが確認できます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アクションの作成と呼び出し - Ruby on Rails入門</title>
+<meta name="keywords" content="アクションの作成" />
+<meta name="description" content="Railsアプリケーションにてコントローラの作成した後で、アクションを作成する方法及び利用者からブラウザを通してアクションを呼び出す方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/controller/" itemprop="url"><span itemprop="title">コントローラとアクション</span></a></li>
+		</ul>
+</div>
+
+			<h1>アクションの作成と呼び出し</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前のページでコントローラの作成方法について確認しましたが、利用者から実際に呼び出されるのがコントローラに作成されたアクションです。コントローラはクラスとして定義されましたが、アクションはクラスの中のメソッドとして定義します。このページではアクションの作成方法について確認し、その後で作成したアクションを実際にブラウザから呼び出してみます。
+			</p>
+
+			<p>
+			1.<a href="#section1">アクションの作成</a><br />
+			2.<a href="#section2">文字コード</a><br />
+			3.<a href="#section3">コントローラの作成時にアクションも同時に作成</a><br />
+			4.<a href="#section4">アクションの呼び出し</a><br />
+			</p>
+
+<h2><a id="section1">アクションの作成</a></h2>
+
+			<p>
+			ではアクションを作成してみます。今回は「sample」アプリケーションの中に「memos」コントローラを作成しアクションを追加してみます。次のようにアプリケーションとコントローラを作成しました。
+			</p>
+
+<pre class="fixcode">
+rails new sample
+</pre>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-1.png" alt="p2-1" width="517" height="299" />
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-2.png" alt="p2-2" width="517" height="299" />
+			</p>
+
+<pre class="fixcode">
+rails generate controller memos
+</pre>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-3.png" alt="p2-3" width="517" height="299" />
+			</p>
+
+			<p>
+			自動的に作成されたファイルの中で「app/controllers/memos_controller.rb」がコントローラに関して記述されたファイルとなります。テキストエディタで開いてみると次のように記述されています。
+			</p>
+
+<pre class="fixcode">
+class MemosController &lt; ApplicationController
+end
+</pre>
+
+			<p>
+			ではアクション用のメソッドを定義してみます。アクションは利用者から呼び出されるメソッドですのでpublicのメソッドとして定義します。今回は「new」アクションと「show」アクションを定義してみます。
+			</p>
+
+<pre class="fixcode">
+class MemosController &lt; ApplicationController
+
+  def new
+  end
+
+  def show
+  end
+
+end
+</pre>
+
+			<p>
+			あとはメソッドの中に呼び出されたときに実行する内容を記述していきます。
+			</p>
+
+<h2><a id="section2">文字コード</a></h2>
+
+			<p>
+			アクション用のメソッドを記述した場合、編集したファイルの文字コードを UTF-8 で保存して下さい。これはRailsのほうの決まりごとです。またメソッド内で日本語を使用する場合にはクラスの先頭に次の1行を付け加えて下さい。
+			</p>
+
+<pre class="fixcode">
+<span class="red"># coding: utf-8</span>
+
+class MemosController &lt; ApplicationController
+
+  def new
+  end
+
+  def show
+  end
+
+end
+</pre>
+
+			<p>
+			この1行はマジックコメントと呼ばれるもので、Rubyがスクリプトファイルを実行するときにファイル内で使われている文字コードを判別するのに使われます。ファイルは UTF-8 で保存しますので、マジックコメントで指定する文字コードも UTF-8 となります。記述されていない場合はASCIIとして処理されてしまいエラーなどの原因となりますのでご注意下さい。
+			</p>
+
+<h2><a id="section3">コントローラの作成時にアクションも同時に作成</a></h2>
+
+			<p>
+			コントローラを作成する時に同時にアクションを作成することも可能です。次の書式を使います。
+			</p>
+
+<pre class="fixcomment">
+rails generate controller コントローラ名 アクション名1 アクション名2 ...
+</pre>
+
+			<p>
+			では実際に試してみます。先程作成した「sample」アプリケーションの中に「friends」コントローラを作成し、同時に「new」アクションと「show」アクションを作成してみます。
+			</p>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-4.png" alt="p2-4" width="517" height="338" />
+			</p>
+
+			<p>
+			まずコントローラとして「app/controllers/friends_controller.rb」ファイルが作成されています。テキストエディタでファイルを開いてみると次のように記述されています。
+			</p>
+
+<pre class="fixcode">
+class FriendsController &lt; ApplicationController
+  def new
+  end
+
+  def show
+  end
+end
+</pre>
+
+			<p>
+			コントローラクラスだけでなく「new」アクションメソッドと「show」アクションメソッドが記述されています。このようにコントローラ作成と同時にアクションメソッドを定義しておくことが可能です。
+			</p>
+
+			<p>
+			またコントローラ作成時にアクションを同時に作成した場合、ビューも合わせて作成されています。先程のコマンドプロンプトの結果を見て下さい。
+			</p>
+
+			<p>
+			<img src="img/p2-5.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-5.png" alt="p2-5" width="517" height="338" />
+			</p>
+
+			<p>
+			「app/views/friends/new.html.erb」と「app/views/friends/show.html.erb」というファイルが作成されています。それぞれ「new」アクションと「show」アクションのデフォルトのビューファイルです。
+			</p>
+
+			<p>
+			では「app/views/friends/new.html.erb」ファイルをテキストエディタで開いてみると次のように記述されています。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Friends#new&lt;/h1&gt;
+&lt;p&gt;Find me in app/views/friends/new.html.erb&lt;/p&gt;
+</pre>
+
+			<p>
+			デフォルトで2行ほどHTML文が記述されています。ビューを使用する場合はファイルの中身を編集して下さい。
+			</p>
+
+			<p>
+			またルーティングについても自動的に追加されています。
+			</p>
+
+			<p>
+			<img src="img/p2-6.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-6.png" alt="p2-6" width="517" height="338" />
+			</p>
+
+			<p>
+			アプリケーションのルーティングに関する記述は「app/config/routes.rb」ファイルに行ないますが、テキストエディタでこのファイルを開いてみると次の2行が追加されていることが分かります。(コメント行は省略しています)。
+			</p>
+
+<pre class="fixcode">
+Sample::Application.routes.draw do
+  get "friends/new"
+
+  get "friends/show"
+end
+</pre>
+
+			<p>
+			ルーティングに関する解説はここでは行ないませんが、ブラウザから「http://localhost:3000/friends/new」へアクセスすると、「friends」コントローラの「new」アクションが呼び出されるように記述されています。
+			</p>
+
+			<p>
+			以上のようにコントローラを作成時にアクションも同時に作成することで、アクションに対するデフォルトのビューを作成し、簡単なルーティングも自動的にルーティングファイルに追加することができます。
+			</p>
+
+<h2><a id="section4">アクションの呼び出し</a></h2>
+
+			<p>
+			アクションを利用者がどのように呼び出すのかはルーティングの設定次第ですが、先程作成した「friends」コントローラは既にルーティングまで設定されていますので、アプリケーションを起動し実際にアクションを呼び出してみます。
+			</p>
+
+			<p>
+			それではコマンドプロンプトで起動するアプリケーションのルートに移動し「rails server」と実行してアプリケーションを起動して下さい。
+			</p>
+
+			<p>
+			<img src="img/p2-7.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-7.png" alt="p2-7" width="517" height="286" />
+			</p>
+
+			<p>
+			次にブラウザから「http://localhost:3000/friends/new」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p2-8.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-8.png" alt="p2-8" width="516" height="330" />
+			</p>
+
+			<p>
+			ルーティングファイルに記述された内容に従い「friends」クラスの「new」メソッドが呼び出されます。今回「new」メソッドには何も記述していませんので、デフォルトのビューが自動的に呼び出され「app/views/friends/new.html.erb」ファイルに記述された内容が利用者のブラウザへ返されて上記のように表示されました。
+			</p>
+
+			<p>
+			同じようにブラウザから「http://localhost:3000/friends/show」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p2-9.png" tppabs="https://www.javadrive.jp/rails/controller/img/p2-9.png" alt="p2-9" width="516" height="330" />
+			</p>
+
+			<p>
+			今度は「friends」クラスの「show」メソッドが呼び出され、デフォルトのビューである「app/views/friends/show.html.erb」ファイルに記述された内容が利用者のブラウザへ返されて上記のように表示されました。
+			</p>
+
+			<p>
+			実際のアプリケーションでは、アクションメソッドの中でモデルを介してデータベースのデータを取得したあとで変数を介してビューへ渡し、ビューでデータを加工してブラウザへ結果を返すといったことを行なっていくことになります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データベースへの接続と切断 - データベース接続 - サーブレット入門</title>
+<meta name="keywords" content="接続,切断,データベース,サーブレット" />
+<meta name="description" content="データベースへの接続と切断" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/database/" itemprop="url"><span itemprop="title">データベース接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>データベースへの接続と切断</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			JDBCドライバをロードすると、java.sql.DriverManagerクラスに利用可能なドライバとして登録されます。そしてデータベースへ接続するにはDriverManagerに接続しようとするデータベースの情報を指定し接続を行います。
+			</p>
+
+			<p>
+			まず下記のクラス図を見てください。
+			</p>
+
+<div class="classwaku">
+<ul class="classdirectory">
+<li class="top">java.lang.Object</li>
+<li class="row1">java.sql.DriverManager</li>
+<li class="detail">public class DriverManager extends Object</li>
+</ul>
+</div>
+
+			<p>
+			データベースへの接続を確立するには「DriverManager」クラスで用意されている"getConnection"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getConnection
+public static Connection getConnection(String url,
+                                       String user,
+                                       String password)
+                                throws SQLException
+</pre>
+<pre class="mexplain">
+指定されたデータベースの URL への接続を試みます。DriverManager は、登録
+された JDBC ドライバの集合から適切なドライバを選択しようとします。
+
+パラメータ:
+  url - jdbc:subprotocol:subname 形式のデータベース URL
+  user - その代理として接続が行われるデータベースユーザ
+  password - ユーザのパスワード 
+戻り値:
+  URL への接続 
+例外: 
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			引数には接続するデータベースを表すURLと接続用のユーザー名とパスワードを指定します。
+			</p>
+
+			<p>
+			MySQLの場合、URLの形式は次のようになります。
+			</p>
+
+<pre class="fixcomment">
+jdbc:mysql://(サーバ名)/(データベース名)
+</pre>
+
+			<p>
+			例えばローカルホストにある「jdbctestdb」というデータベースに接続する場合は次のようになります。
+			</p>
+
+<pre class="fixcode">
+jdbc:mysql://localhost/jdbctestdb
+</pre>
+
+			<p>
+			実際には下記のように利用します。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+String url = "jdbc:mysql://localhost/jdbctestdb";
+String user = "testuser";
+String password = "testpass";
+
+try{
+  conn = DriverManager.getConnection(url, user, password);
+
+  // データベースに対する処理
+
+}catch (SQLException e){
+}
+</pre>
+
+			<h2>データベースの切断</h2>
+
+			<p>
+			実際に接続のテストを行う前にデータベースの切断も見ておきます。"getConnection"メソッドの戻り値として取得できるConnectionインターフェースのオブジェクトは特定のデータベースとの接続 (セッション) を表します。
+			</p>
+
+			<p>
+			いったん接続した後に切断する場合には、接続の際に取得したConnectionインターフェースのオブジェクトに対して、"close"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+close
+void close() throws SQLException
+</pre>
+<pre class="mexplain">
+自動的な解除を待たずに、ただちにこの Connection オブジェクトのデータベー
+スと JDBC リソースを解除します。
+
+すでにクローズされた Connection オブジェクトで close メソッドを呼び出す
+と、操作は行われません。
+
+注: Connection オブジェクトは、ガベージコレクトされるときに自動的にクロー
+ズされます。特定の致命的エラーの場合も、Connection オブジェクトはクローズ
+されます。
+
+例外:
+  SQLException - データベースアクセスエラーが発生した場合
+</pre>
+
+			<p>
+			"close"メソッドを呼び出さなくても最終的にはデータベースへの接続はガーベージコレクタによって切断されますが、利用しなくなったデータベースへの接続は速やかに切断するようにします。
+			</p>
+
+			<p>
+			"close"メソッドは何か問題が発生した際に忘れずに行うためにも、次のように"finally"節を使って記述します。
+			</p>
+
+<pre class="fixcode">
+Connection conn = null;
+String url = "jdbc:mysql://localhost/jdbctestdb";
+String user = "testuser";
+String password = "testpass";
+
+try{
+  conn = DriverManager.getConnection(url, user, password);
+
+  // データベースに対する処理
+
+}catch (SQLException e){
+  // 例外処理
+}finally{
+  try{
+    if (conn != null){
+      conn.close();
+    }
+  }catch (SQLException e){
+    // 例外処理
+  }
+}
+</pre>
+
+			<p>
+			では次のページでテスト用のデータベースの準備を行います。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

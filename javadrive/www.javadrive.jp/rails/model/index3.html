@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データベースの作成 - Ruby on Rails入門</title>
+<meta name="keywords" content="データベースの作成" />
+<meta name="description" content="事前にデータベースを作成しておいてもいいのですがrakeコマンドを使ってデータベースの種類に関係無くデータベースを作成することができます。ここではデータベースの作成方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/model/" itemprop="url"><span itemprop="title">モデルとデータベース</span></a></li>
+		</ul>
+</div>
+
+			<h1>データベースの作成</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			rakeコマンドを使うことでデータベースの種類に関係なくデータベースを作成することができます。ここではSQLiteとMySQLを使用する場合でそれぞれデータベースを作成してみます。
+			</p>
+
+			<p>
+			1.<a href="#section1">SQLiteを使うアプリケーションでデータベース作成</a><br />
+			2.<a href="#section2">MySQL Connector/C version 6.0.2 のダウンロード</a><br />
+			3.<a href="#section3">MySQLを使うアプリケーションでデータベース作成</a><br />
+			</p>
+
+<h2><a id="section1">SQLiteを使うアプリケーションでデータベース作成</a></h2>
+
+			<p>
+			まずSQLiteを使用するRailsアプリケーションでデータベースを作成してみます。コマンドプロンプトを起動後、アプリケーションのルートに移動し次のようにコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rake db:create
+</pre>
+
+			<p>
+			<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-1.png" alt="p3-1" width="517" height="286" />
+			</p>
+
+			<p>
+			SQLiteではデータベース毎に1つのファイルが作成されます。データベース設定ファイルの「config/database.yml」ファイルで設定したデータベースファイルが作成されています。
+			</p>
+
+<pre class="fixcode">
+development:
+  adapter: sqlite3
+  <span class="red">database: db/development.sqlite3</span>
+  pool: 5
+  timeout: 5000
+</pre>
+
+			<p>
+			データベースファイル名として「db/development.sqlite3」が設定してありますので、実際に確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p3-2.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-2.png" alt="p3-2" width="542" height="422" />
+			</p>
+
+			<p>
+			このようにデータベースファイルを作成することができました。(実際には開発用の他にテスト用のデータベースも合わせて作成されています)。
+			</p>
+
+<h2><a id="section2">MySQL Connector/C version 6.0.2 のダウンロード</a></h2>
+
+			<p>
+			次にMySQLを使用するRailsアプリケーションでデータベースを作成してみます。先程と同じようにコマンドプロンプトを起動後、アプリケーションのルートに移動し次のようにコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rake db:create
+</pre>
+
+			<p>
+			するとまず次のようなエラーが発生しました。
+			</p>
+
+			<p>
+			<img src="img/p3-3.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-3.png" alt="p3-3" width="487" height="148" />
+			</p>
+
+			<p>
+			ダイアログには「コンピュータに LIBMYSQL.dll がないため、プログラムを開始できません。この問題を解決するには、プログラムを再インストールしてみて下さい。」と表示されています。
+			</p>
+
+			<p>
+			そこでMySQLをインストールしたディレクトリを確認してみると「lib」ディレクトの中に「libmysql.dll」が入っていました。
+			</p>
+
+			<p>
+			<img src="img/p3-4.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-4.png" alt="p3-4" width="542" height="354" />
+			</p>
+
+			<p>
+			「libmysql.dll」ファイルをコピーし、Rubyをインストールしたディレクトリの「bin」ディレクトリに置きました。
+			</p>
+
+			<p>
+			<img src="img/p3-5.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-5.png" alt="p3-5" width="542" height="374" />
+			</p>
+
+			<p>
+			改めてrakeコマンドを実行してみます。すると今度は次のようなエラーが発生しました。
+			</p>
+
+			<p>
+			<img src="img/p3-6.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-6.png" alt="p3-6" width="517" height="286" />
+			</p>
+
+			<p>
+			エラーメッセージには「rake aborted! Incorrect MySQL client library version! This gem was compiled for 6.0.0 but the client library is 5.5.9.」と表示されています。
+			</p>
+
+			<p>
+			そこでMySQLを利用するために以前に<a href="javascript:if(confirm('https://www.javadrive.jp/railsinstall/other/index2.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������������ļ�δ�ҵ���  \n\n�����ڷ������ϴ���?'))window.location='https://www.javadrive.jp/railsinstall/other/index2.html'" tppabs="https://www.javadrive.jp/railsinstall/other/index2.html">MySQL2パッケージをインストール</a>した時に表示されたメッセージを見てみます。
+			</p>
+
+			<p>
+			<img src="img/p3-7.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-7.png" alt="p3-7" width="517" height="442" />
+			</p>
+
+			<p>
+			ここには次のように記載されています。
+			</p>
+
+<pre class="fixcomment">
+You've installed the binary version of mysql2. 
+It was built using MySQL Connector/C version 6.0.2. 
+It's recommended to use the exact same version to avoid potential issues.
+
+At the time of building this gem, the necessary DLL files where available
+in the following download:
+
+http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-noinstall-6.0.2-win32.zip/from/pick
+
+And put lib\libmysql.dll file in your Ruby bin directory, for example
+C:\Ruby\bin
+</pre>
+
+			<p>
+			「MySQL Connector/C version 6.0.2」が必要なようです。そこで上記に記載されているURLへアクセスします。
+			</p>
+
+			<ul class="linktext">
+			<li class="title"><a href="javascript:if(confirm('http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-noinstall-6.0.2-win32.zip/from/pick  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-noinstall-6.0.2-win32.zip/from/pick'" tppabs="http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-noinstall-6.0.2-win32.zip/from/pick">MySQL ::  Select a Mirror</a></li>
+			</ul>
+
+			<p>
+			<img src="img/p3-8.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-8.png" alt="p3-8" width="579" height="358" />
+			</p>
+
+			<p>
+			今回はユーザー登録などは省略させて頂き、少し下へスクロールしたところにある「No thanks, just take me to the downloads!」と書かれたリンクをクリックします。
+			</p>
+
+			<p>
+			<img src="img/p3-9.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-9.png" alt="p3-9" width="579" height="358" />
+			</p>
+
+			<p>
+			ダウンロードを行なうためのミラーサイト一覧が表示されますので、最寄のサイトをクリックして下さい。
+			</p>
+
+			<p>
+			<img src="img/p3-10.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-10.png" alt="p3-10" width="579" height="358" />
+			</p>
+
+			<p>
+			「mysql-connector-c-noinstall-6.0.2-win32.zip」というファイルがダウンロードされますので任意の場所に保存して下さい。ダウンロードしたファイルは圧縮されていますので解凍して下さい。
+			</p>
+
+			<p>
+			<img src="img/p3-11.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-11.png" alt="p3-11" width="542" height="374" />
+			</p>
+
+			<p>
+			「lib/libmysql.dll」ファイルをコピーし、Rubyをインストールしたディレクトリの「bin」ディレクトリに置きました。これで準備は完了です。
+			</p>
+
+<h2><a id="section3">MySQLを使うアプリケーションでデータベース作成</a></h2>
+
+			<p>
+			では再度次のようにコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rake db:create
+</pre>
+
+			<p>
+			<img src="img/p3-12.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-12.png" alt="p3-12" width="517" height="286" />
+			</p>
+
+			<p>
+			今度は無事完了しました。MySQLの場合はデータベース設定ファイルの「config/database.yml」ファイルで設定したホスト名で動作しているMySQLで指定した名前のデータベースが作成されています。
+			</p>
+
+<pre class="fixcode">
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  <span class="red">database: sample_mysql_development</span>
+  pool: 5
+  username: railsuser
+  password: railspass
+  host: localhost
+</pre>
+
+			<p>
+			MySQLにログインし、データベースが作成されているか確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p3-13.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-13.png" alt="p3-13" width="517" height="299" />
+			</p>
+
+			<p>
+			開発用の「sample_mysql_development」データベースが作成されています。(SQLiteの場合と同じくテスト用のデータベースも同時に作成されています)。
+			</p>
+
+			<p>
+			どのように作成されたのかも確認しておきます。
+			</p>
+
+			<p>
+			<img src="img/p3-14.png" tppabs="https://www.javadrive.jp/rails/model/img/p3-14.png" alt="p3-14" width="517" height="299" />
+			</p>
+
+<pre class="fixcomment">
+CREATE DATABASE `sample_mysql_development`
+ /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */
+</pre>
+
+			<p>
+			文字コードも設定した設定ファイルで指定したUTF-8になっています。これでデータベースの作成は完了です。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

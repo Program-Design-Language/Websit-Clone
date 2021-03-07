@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用するアクションへのルーティングだけを設定 - Ruby on Rails入門</title>
+<meta name="keywords" content="使用するアクションへのルーティングだけを設定" />
+<meta name="description" content="リソースベースのルーティングの場合7つのアクションが自動で設定されますが、7つの中で使用するアクションへのルーティング設定だけを行なう方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/routing/" itemprop="url"><span itemprop="title">ルーティングの設定</span></a></li>
+		</ul>
+</div>
+
+			<h1>使用するアクションへのルーティングだけを設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			リソースベースのルーティングを使ってroutes.rbファイルに設定を記述すると自動で7つのアクションを呼び出すためのルーティングが設定されますが、常に7つのアクションが必要なわけではありません。ここでは必要なアクションへのルーティングだけを設定するような記述方法について確認します。
+			</p>
+
+			<p>
+			1.<a href="#section1">必要なアクションを指定</a><br />
+			2.<a href="#section2">不要なアクションを指定</a><br />
+			</p>
+
+<h2><a id="section1">必要なアクションを指定</a></h2>
+
+			<p>
+			まず最初に必要なアクションを指定する方法です。書式は次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+resources :リソース名 :only =&gt; :アクション名
+resources :リソース名 :only =&gt; [:アクション名, :アクション名, ...]
+</pre>
+
+			<p>
+			例えば7つの基本アクションの中で「index」アクションだけを使いたい場合は次のように記述します。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  resources :blogs, :only =&gt; :index
+
+end
+</pre>
+
+			<p>
+			では実際に「config/routes.rb」ファイルに記述した後で「rake routes」を実行して設定されたルーティングを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/rails/routing/img/p7-1.png" alt="p7-1" width="517" height="286" />
+			</p>
+
+			<p>
+			「index」アクションへのルーティングだけが設定されていることが分かります。
+			</p>
+
+			<p>
+			また「index」アクションと「show」アクションというように複数のアクションを指定したい場合は次のように記述します。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  resources :blogs, :only =&gt; [:index, :show]
+
+end
+</pre>
+
+			<p>
+			こちらも実際に「config/routes.rb」ファイルに記述した後で「rake routes」を実行して設定されたルーティングを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/rails/routing/img/p7-2.png" alt="p7-2" width="517" height="286" />
+			</p>
+
+			<p>
+			「index」及び「show」アクションへのルーティングだけが設定されていることが分かります。
+			</p>
+
+			<p>
+			このように指定したアクションへのルーティングだけを設定することが可能です。
+			</p>
+
+<h2><a id="section2">不要するアクションを指定</a></h2>
+
+			<p>
+			今度は7つの基本アクションの中で不要なアクションを指定する方法です。書式は次のとおりです。
+			</p>
+
+<pre class="fixcomment">
+resources :リソース名 :except =&gt; :アクション名
+resources :リソース名 :except =&gt; [:アクション名, :アクション名, ...]
+</pre>
+
+			<p>
+			例えば7つの基本アクションの中で「destroy」アクションだけが不要な場合はは次のように記述します。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  resources :blogs, :except =&gt; :destroy
+
+end
+</pre>
+
+			<p>
+			では実際に「config/routes.rb」ファイルに記述した後で「rake routes」を実行して設定されたルーティングを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p7-3.png" tppabs="https://www.javadrive.jp/rails/routing/img/p7-3.png" alt="p7-3" width="517" height="286" />
+			</p>
+
+			<p>
+			7つの基本アクションの中で「destroy」以外のアクションへのルーティングが設定されていることが分かります。
+			</p>
+
+			<p>
+			また「destroy」アクションと「update」アクションというように複数のアクションを指定したい場合は次のように記述します。
+			</p>
+
+<pre class="fixcode">
+Sample2::Application.routes.draw do
+
+  resources :blogs, :except =&gt; [:destroy, :update]
+
+end
+</pre>
+
+			<p>
+			こちらも実際に「config/routes.rb」ファイルに記述した後で「rake routes」を実行して設定されたルーティングを確認してみます。
+			</p>
+
+			<p>
+			<img src="img/p7-4.png" tppabs="https://www.javadrive.jp/rails/routing/img/p7-4.png" alt="p7-4" width="517" height="286" />
+			</p>
+
+			<p>
+			7つの基本アクションの中で「destroy」と「updat」以外のアクションへのルーティングが設定されていることが分かります。
+			</p>
+
+			<p>
+			このように7つの基本アクションの中で指定したアクションを除いたルーティングを設定することが可能です。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

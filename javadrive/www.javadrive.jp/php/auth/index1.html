@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>認証ダイアログの表示 - ユーザー認証 - PHP入門</title>
+<meta name="keywords" content="認証ダイアログ,ユーザー認証,入門,PHP" />
+<meta name="description" content="認証ダイアログの表示" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>認証ダイアログの表示</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			PHPかどうかは関係無く、HTTPベースでのやりとりにおいてベーシック認証を行わせる場合の手順は下記の通りです。
+			</p>
+
+			<p>
+			まずユーザー認証が必要なページを作成したとします。そのページを見ようとする要求がクライアントからあった場合、「Authorization」ヘッダの有無を確認します。クライアントから初めてアクセスがあった場合には通常はありません。
+			</p>
+
+			<p>
+			PHPでこの確認を行う場合は、定義済みの変数である「$_SERVER」の値をチェックします。$_SERVER は、ヘッダ、パス、スクリプトの位置の ような情報を有する配列です。この配列の中の「PHP_AUTH_USER」に対応する値の有無で確認します。
+			</p>
+
+<pre class="fixcode">
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+
+}
+</pre>
+
+			<p>
+			上記で使っている"isset"関数は変数がセットされているかどうかを検査する関数です。
+			</p>
+
+<pre class="mheader">
+isset
+bool isset ( mixed var [, mixed var [, ...]] )
+</pre>
+<pre class="mexplain">
+変数がセットされているかどうかを検査する
+
+パラメータ:
+  var  検査対象の変数
+返り値:
+  varが存在すればTRUE、そうでなければFALSEを返します。
+</pre>
+
+
+			<p>
+			「Authorization」ヘッダが無かった場合、認証ダイアログをブラウザで表示するようにサーバ側からクライアントへ指示を出します。これには"header"関数を使って下記のように記述します。
+			</p>
+
+<pre class="fixcode">
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+}
+</pre>
+
+			<p>
+			"header"関数は生のHTTPヘッダをクライアントへ送信するための関数です。詳しい説明は省かせて頂きますが、上記のようにクライアントへ送信するとクライアントのブラウザ上で認証画面が表示されます。
+			</p>
+
+			<p>
+			認証画面上でキャンセルを押した場合、プログラムの処理は下記の位置にきます。
+			</p>
+
+<pre class="fixcode">
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+
+    /* キャンセルを押した場合の処理 */
+}
+</pre>
+
+			<p>
+			キャンセルを押された場合は、エラー表示をしてプログラムを終了させておきます。
+			</p>
+
+<pre class="fixcode">
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+
+    die('このページを見るにはログインが必要です');
+}
+</pre>
+
+			<p>
+			認証ダイアログ上で、ユーザー名やパスワードなどが入力された上で「O.K.」ボタンを押された場合、「Authorization」ヘッダに入力されたユーザー名とパスワードの情報を付加した状態で再度サーバへリクエストがくるようです。
+			</p>
+
+			<p>
+			その為、改めて $_SERVER['PHP_AUTH_USER'] に値が設定されているかどうかがチェックされます。認証ダイアログで仮にユーザー名の部分に何も入力されていなかったとしても、この値にはNULLが設定されるようですのでいずれの場合でも認証ダイアログで「O.K.」ボタンを押した場合はこの変数の値がセットされていることになります。よって次の位置へ処理が移ります。
+			</p>
+
+<pre class="fixcode">
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+
+    die('このページを見るにはログインが必要です');
+}else{
+    /* 認証ダイアログでO.K.を押した時はここへ処理が移る */
+}
+</pre>
+
+			<p>
+			今度はユーザー名とパスワードが正しいのかの判別が必要となります。実際にはデータベースなどに事前に登録したユーザー名とパスワードを参照して確認することになると思いますが、ここでは固定のユーザー名とパスワードでチェックしてみます。
+			</p>
+
+<pre class="fixcode">
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+
+    die('このページを見るにはログインが必要です');
+}else{
+
+    if ($_SERVER['PHP_AUTH_USER'] != $user 
+        || $_SERVER['PHP_AUTH_PW'] != $password){
+
+        header('WWW-Authenticate: Basic realm="Private Page"');
+        header('HTTP/1.0 401 Unauthorized');
+
+        die('このページを見るにはログインが必要です');
+    }
+}
+</pre>
+
+			<p>
+			認証ダイアログで入力されたユーザー名は$_SERVER['PHP_AUTH_USER']で、パスワードは$_SERVER['PHP_AUTH_PW']で取得する事が出来ます。例えばユーザー名は「admin」、パスワードは「pass」と入力された場合だけ認証を通す場合には下記のようになります。
+			</p>
+
+<pre class="fixcode">
+$user = 'admin';
+$password = 'pass';
+
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+
+    die('このページを見るにはログインが必要です');
+}else{
+
+    if ($_SERVER['PHP_AUTH_USER'] != $user
+        || $_SERVER['PHP_AUTH_PW'] != $password){
+
+        header('WWW-Authenticate: Basic realm="Private Page"');
+        header('HTTP/1.0 401 Unauthorized');
+
+        die('このページを見るにはログインが必要です');
+    }
+}
+
+/* 認証に成功すればここに処理が来る */
+</pre>
+
+			<p>
+			以上が認証の簡単な流れとなります。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで試して見ます。
+			</p>
+
+			<p>
+			<a href="javascript:if(confirm('https://www.javadrive.jp/php/auth/authtest1.php  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ��������������Ҫ������ܷ��ʸ��ļ���  \n\n�����ڷ������ϴ���?'))window.location='https://www.javadrive.jp/php/auth/authtest1.php'" tppabs="https://www.javadrive.jp/php/auth/authtest1.php">authtest1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;?php
+$user = 'admin';
+$password = 'pass';
+
+if (!isset($_SERVER['PHP_AUTH_USER'])){
+    header('WWW-Authenticate: Basic realm="Private Page"');
+    header('HTTP/1.0 401 Unauthorized');
+
+    die('このページを見るにはログインが必要です');
+}else{
+    if ($_SERVER['PHP_AUTH_USER'] != $user
+        || $_SERVER['PHP_AUTH_PW'] != $password){
+
+        header('WWW-Authenticate: Basic realm="Private Page"');
+        header('HTTP/1.0 401 Unauthorized');
+        die('このページを見るにはログインが必要です');
+    }
+}
+
+?&gt;
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ようこそ、会員向けページへ&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			まず最初にアクセスした時には認証画面が表示されます。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/php/auth/img/p1.png" alt="PHPでユーザー認証" width="534" height="413">
+			</p>
+
+			<p>
+			キャンセルを押すとエラーメッセージが表示されて終了します。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/php/auth/img/p2.png" alt="PHPでユーザー認証" width="529" height="413">
+			</p>
+
+			<p>
+			今度は間違ったユーザー名とパスワードを入力してみます。
+			</p>
+
+			<p>
+			<img src="img/p3.png" tppabs="https://www.javadrive.jp/php/auth/img/p3.png" alt="PHPでユーザー認証" width="533" height="412">
+			</p>
+
+			<p>
+			すると再度認証ダイアログが表示されます。(IEではパスワードがクリアされて再表示されました)。
+			</p>
+
+			<p>
+			<img src="img/p4.png" tppabs="https://www.javadrive.jp/php/auth/img/p4.png" alt="PHPでユーザー認証" width="529" height="411">
+			</p>
+
+			<p>
+			最後に正しいユーザー名とパスワードを入力してみます。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/php/auth/img/p5.png" alt="PHPでユーザー認証" width="532" height="411">
+			</p>
+
+			<p>
+			無事認証が通りホームページが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/php/auth/img/p6.png" alt="PHPでユーザー認証" width="529" height="412">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

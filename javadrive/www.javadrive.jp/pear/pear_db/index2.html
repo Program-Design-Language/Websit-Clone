@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>データベースへ接続 - データベース接続(PEAR::DB) - PEAR入門</title>
+<meta name="keywords" content="connect,PEAR::DB,入門,PEAR" />
+<meta name="description" content="データベースへ接続" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_db/" itemprop="url"><span itemprop="title">データベース接続(PEAR::DB)</span></a></li>
+		</ul>
+</div>
+
+			<h1>データベースへ接続</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			まずデータベースへの接続方法です。DBクラスで用意されているconnectメソッドを使います。
+			</p>
+
+<pre class="mheader">
+connect
+object connect (mixed $dsn [, array $options = array()])
+</pre>
+<pre class="mexplain">
+新しい DB 接続オブジェクトを作成し、指定したデータベースに接続します。
+
+パラメータ
+  string あるいは array $dsn  データソース名。
+  array $options  オプションの引数に、このパッケージのための実行時設
+    定項目を 含めることができます。
+返り値
+  object - 新しい DB オブジェクト、 あるいは失敗時には DB_Error オブ
+    ジェクトを返します。
+</pre>
+
+			<p>
+			データベースへ接続するための情報をDSN(データソース名)の形で指定します。指定は文字列でまとめて指定するか、配列の形で指定します。
+			</p>
+
+			<h2>DSNの形式</h2>
+
+			<p>
+			DSNのフォーマットは下記の通りです。
+			</p>
+
+<pre class="fixcode">
+phptype(dbsyntax)://username:password@protocol+hostspec/database?option=value
+</pre>
+
+			<p>
+			各項目の意味は下記の通りです。
+			</p>
+
+<pre class="fixcomment">
+phptype   : PHP で使用されるデータベースバックエンドです (すなわち 
+            mysql や odbc 等)。
+dbsyntax  : SQL 構文等のデータベース関連構文です。 phptype として 
+            ODBC を使用する場合、ODBC ドライバが接続している DBMS
+            タイプにこれをセットしてください。 
+            例: access・ db2・mssql・ navision・solid・その他 
+protocol  : 使用する通信プロトコルです (すなわち、tcp・unix 等)。
+hostspec  : ホストの指定です (hostname[:port])。
+database  : DBMS サーバ上のデータベース使用方法です。
+username  : ログイン用ユーザ名です。
+password  : ログイン用のパスワードです。
+proto_opts: protocol で使用されるオプションです。
+</pre>
+
+			<h3>phptype</h3>
+
+			<p>
+			phptypeには接続するデータベースを表す文字列を指定します。現在サポートされているのは下記の通りです。
+			</p>
+
+<pre class="fixcomment">
+dbase  -&gt; dBase
+fbsql  -&gt; FrontBase (DB 1.7.0 以降)
+ibase  -&gt; InterBase (DB 1.7.0 以降)
+ifx    -&gt; Informix
+msql   -&gt; Mini SQL (DB 1.7.0 以降)
+mssql  -&gt; Microsoft SQL Server
+mysql  -&gt; MySQL (MySQL &lt;= 4.0 用)
+mysqli -&gt; MySQL (MySQL &gt;= 4.1 用) (PHP 5 以降) (DB 1.6.3 以降)
+oci8   -&gt; Oracle 7/8/9
+odbc   -&gt; ODBC (Open Database Connectivity)
+pgsql  -&gt; PostgreSQL
+sqlite -&gt; SQLite
+sybase -&gt; Sybase
+</pre>
+
+			<p>
+			例えばMySQLやPostgreSQL、SQLiteに接続する場合は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+mysqli://username:password@protocol+hostspec/database
+pgsql://username:password@protocol+hostspec/database
+</pre>
+
+			<p>
+			※「mysqli」とする場合はMySQL4.1以降でPHP5以降の場合です。そうでない場合は「mysql」として下さい。
+			</p>
+
+			<h3>username & password</h3>
+
+			<p>
+			次に接続するユーザー名とパスワードです。例えばユーザー名が「testuser」、パスワードが「pass」だった場合には下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+mysqli://testuser:pass@protocol+hostspec/database
+pgsql://testuser:pass@protocol+hostspec/database
+</pre>
+
+			<p>
+			SQLiteのようにユーザー名が無い場合は省略して構いません。
+			</p>
+
+<pre class="fixcomment">
+sqlite://@protocol+hostspec/database
+</pre>
+
+			<h3>protocol & hostspec</h3>
+
+			<p>
+			プロトコルは使用する通信プロトコルです。TCPやUNIX接続などになります。hostspecはホスト名です。プロトコルはWindows環境でサービスとして動かしているデータベースに接続するのであれば省略しても構わないと思います。ホスト名はホスト名とポート番号（省略可能）で指定します。
+			</p>
+
+<pre class="fixcomment">
+mysqli://testuser:pass@localhost/database
+pgsql://testuser:pass@localhost:5432/database
+</pre>
+
+			<h3>database</h3>
+
+			<p>
+			databaseにはデータベース名を指定します。データベース名を「testdb」とした場合は下記のような感じです。
+			</p>
+
+<pre class="fixcomment">
+mysqli://testuser:pass@localhost/testdb
+pgsql://testuser:pass@localhost:5432/testdb
+</pre>
+
+			<p>
+			またSQLiteなどの場合にはデータベースの位置まで含めて指定します。
+			</p>
+
+<pre class="fixcomment">
+sqlite:///d:&yen;sqlite&yen;testdb
+</pre>
+
+			<p>
+			このようにして作成したDSNを表す文字列をconnectメソッドの引数に指定して接続します。
+			</p>
+
+<pre class="fixcomment">
+$dsn = 'mysqli://testuser:pass@localhost/testdb';
+
+$db = DB::connect($dsn);
+</pre>
+
+			<p>
+			なお、ユーザー名とパスワードにDSNを記述する上で区切り文字として使われている文字(/や@など)が含まれている場合はURI エンコーディング方式でエスケープする必要があります。
+			</p>
+
+<pre class="fixcomment">
+: = %3a
+/ = %2f
+@ = %40
++ = %2b
+( = %28
+) = %29
+? = %3f
+= = %3d
+& = %26
+</pre>
+
+			<h2>配列で指定</h2>
+
+			<p>
+			先ほどはパラメータを1つの文字列にまとめていましたが、各パラメータの値を配列の形で設定し、その配列の値をconnectメソッドの引数として指定することも可能です。プログラムは長くなりますけど、1つ1つのパラメータの値を個別に指定できますので間違いが少ないかもしれません。
+			</p>
+
+			<p>
+			ベースになる配列は下記を使います。
+			</p>
+
+<pre class="fixcode">
+$dsn = array(
+    'phptype'  =&gt; false,
+    'dbsyntax' =&gt; false,
+    'username' =&gt; false,
+    'password' =&gt; false,
+    'protocol' =&gt; false,
+    'hostspec' =&gt; false,
+    'port'     =&gt; false,
+    'socket'   =&gt; false,
+    'database' =&gt; false
+);
+</pre>
+
+			<p>
+			例えばMySQLへ接続する場合は下記のような感じです。
+			</p>
+
+<pre class="fixcode">
+$dsn = array(
+    'phptype'  =&gt; 'mysqli',
+    'username' =&gt; 'testuser',
+    'password' =&gt; 'pass',
+    'hostspec' =&gt; 'localhost',
+    'database' =&gt; 'testdb'
+);
+
+$db = DB::connect($dsn);
+</pre>
+
+			<h2>接続のエラー確認</h2>
+
+			<p>
+			connectメソッドを実行した結果、成功した場合には返り値にDBオブジェクトを返してくれますが、失敗した場合にはDB_Errorオブジェクトを返してきます。
+			</p>
+
+			<p>
+			その為、connectメソッド実行直後に、connectメソッドからの返り値がDB_Errorオブジェクトかどうかを調べることで接続に成功したか失敗したかを判別できます。このDB_Errorオブジェクトかどうかを調べるためにDBクラスでisErrorメソッドが用意されています。ただそのメソッドの解説にはDBクラスのisErrorメソッドではなく、PEARクラスで用意されているisErrorメソッドを使うことを推奨されたました。
+			</p>
+
+<pre class="mheader">
+isError
+boolean PEAR::isError (mixed $data [, mixed $msgcode])
+</pre>
+<pre class="mexplain">
+isError() は、ある変数が PEAR_Error オブジェクトかどうかを調べます。
+オプションで、特定のエラーメッセージ またはエラーコードが含まれて
+いるかどうかを調べます。
+
+パラメータ
+  mixed $datan  チェックする変数
+  mixed $msgcode  チェックするエラーメッセージまたはエラーコード（オ
+    プション）。
+返り値
+  変数が、PEAR_Error の場合に TRUEを返します。 第2引数が設定された場
+    合は、さらに 所与された $msgcode を含む場合のみ TRUEを返します。
+</pre>
+
+			<p>
+			is_Errorメソッドで判別した結果、PEAR_Errorオブジェクトだった場合、このオブジェクトからエラーメッセージを取り出すことができます。PEAR_Errorクラスで用意されているgetMessageメソッドを使います。
+			</p>
+
+<pre class="mheader">
+getMessage
+string PEAR_Error::getMessage ()
+</pre>
+<pre class="mexplain">
+エラーオブジェクトが保持するエラーメッセージを返します。
+
+返り値
+  エラーメッセージ
+</pre>
+
+			<p>
+			こららを使ってデータベースへの接続は下記のように記述します。
+			</p>
+
+<pre class="fixcode">
+$dsn = 'mysqli://testuser:pass@localhost/testdb';
+
+$db = DB::connect($dsn);
+if (PEAR::isError($db)) {
+    die($db-&gt;getMessage());
+}
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>引数に配列やクラスオブジェクトを渡す - メソッドの利用 - Java入門</title>
+<meta name="keywords" content="引数に配列やクラスオブジェクトを渡す,メソッドの利用" />
+<meta name="description" content="引数に配列やクラスオブジェクトなどの参照型のデータを渡す方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/method/" itemprop="url"><span itemprop="title">メソッドの利用</span></a></li>
+		</ul>
+</div>
+
+			<h1>引数に配列やクラスオブジェクトを渡す</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					メソッドに渡す値が基本データ型であった場合には、値がコピーされて値そのものが引数に代入されます。考え方としては基本データ型の値を他の変数に代入する場合と同じです。
+					</p>
+
+<pre class="fixcode">
+public static void main(String args[]){
+  test(10);
+}
+
+private static void test(int num){
+  System.out.println(num);
+}
+</pre>
+
+					<p>
+					基本データ型だけではなくクラスから作成したオブジェクトや配列もメソッドに渡すことができます。
+					</p>
+
+					<p>
+					「<a href="../array/index2.html" tppabs="https://www.javadrive.jp/start/array/index3.html">参照型の変数の考え方</a>」などでも記載したとおり、配列などは実際の値などが格納する場所の位置だけを管理しています。その為、メソッドを呼び出す時に配列を指定した場合には、引数には配列が確保している場所の位置が代入されることになります。つまりメソッドの呼び出し側の配列とメソッド側で引数に代入された配列はまったく同じ場所の位置を管理していることになります。
+					</p>
+
+<pre class="fixcode">
+public static void main(String args[]){
+  int num[] = {10, 4};
+  test(num);
+}
+
+private static void test(int num[]){
+  System.out.println(num[0]);
+  System.out.println(num[1]);
+}
+</pre>
+
+					<p>
+					よってメソッド側で配列の要素に格納されている値を変更すると、メソッド呼び出し側の配列の同じ要素に格納されている値を変更されることになります。
+					</p>
+
+<pre class="fixcode">
+public static void main(String args[]){
+  int num = 8;
+  int array[] = {10, 4};
+
+  System.out.println(num);
+  System.out.println(array[0]);
+
+  test(num, array);
+
+  System.out.println(num);
+  System.out.println(array[0]);
+}
+
+private static void test(int num, int array[]){
+  num = 5;
+  array[0] = 12;
+}
+</pre>
+
+					<p>
+					上記の場合、基本データ型の変数である「num」は値がコピーされて引数に代入されるだけなので、メソッド側で変数の値を変更しても呼び出し元の変数の値には何も影響しません。それに対して配列変数の「array」は配列の場所の位置が引数に代入されるので、メソッド側で配列の要素の値を変更すると呼び出し元の配列の要素の値も変更されます。(実際の結果は後のサンプルでご確認下さい)。
+					</p>
+
+					<h2>Stringクラスのオブジェクトの場合</h2>
+
+					<p>
+					文字列を引数に渡す場合、文字列はStringクラスのオブジェクトですので配列と同じようにオブジェクトの位置だけが渡されますが、あまり意識することなく基本データ型のように扱うことができます。次の例を見てください。
+					</p>
+
+<pre class="fixcode">
+public static void main(String args[]){
+  String str = "abc";
+  test(str);
+}
+
+private static void test(String str){
+  str = "def";
+}
+</pre>
+
+					<p>
+					Stringクラスのオブジェクトをメソッドに渡した場合、メソッド側の引数には同じオブジェクトの位置が渡されるのは配列と同じですが、文字列変数に新しい文字列を代入するとまったく別の場所にオブジェクトが新しく作成され、その新しい場所の位置がメソッド内の変数に代入されます。その為、元の場所には元の文字列が格納されたままなのでメソッド呼び出し元の文字列には何も影響を与えません。
+					</p>
+
+					<h2>サンプル</h2>
+
+					<p>
+					では簡単な例で試しておきます。
+					</p>
+
+					<p>
+					<a href="JSample4_1.java" tppabs="https://www.javadrive.jp/start/method/JSample4_1.java">JSample4_1.java</a>
+					</p>
+
+<pre class="fixcode">
+class JSample4_1{
+  public static void main(String args[]){
+    int num = 8;
+    int array[] = {10, 4};
+
+    System.out.println("num = " + num);
+    System.out.println("array[0] = " + array[0]);
+
+    henkou(num, array);
+
+    System.out.println("num = " + num);
+    System.out.println("array[0] = " + array[0]);
+  }
+
+  private static void henkou(int num, int array[]){
+    num = 5;
+    array[0] = 12;
+  }
+}
+</pre>
+
+					<p>
+					コンパイル後に実行すると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p4-1.png" tppabs="https://www.javadrive.jp/start/method/img/p4-1.png" alt="p4-1" width="509" height="259" />
+					</p>
+
+					<p>
+					メソッド側で配列の要素を変更すると、呼び出し元の配列にも影響が出ていることが確認できます。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

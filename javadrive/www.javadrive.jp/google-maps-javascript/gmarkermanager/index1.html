@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表示されるズームレベルを指定しマーカーを表示(addMarkerメソッド) - マーカーの表示管理 - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="表示されるズームレベルを指定しマーカーを表示,GMarkerManager,Google Maps API" />
+<meta name="description" content="表示されるズームレベルを指定しマーカーを表示方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/" itemprop="url"><span itemprop="title">マーカーの表示管理(GMarkerManager)</span></a></li>
+		</ul>
+</div>
+
+			<h1>表示されるズームレベルを指定しマーカーを表示</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					GMarkerManagerを利用するためには、まずGMarkerManagerクラスのオブジェクトを作成します。コンストラクタ関数は次のように定義されています。
+					</p>
+
+<pre class="mheader">
+GMarkerManager(map:GMap, opts?:GMarkerManagerOptions)
+</pre>
+<pre class="mexplain">
+指定された地図のマーカーの表示を制御する新しいマーカー マネージャを作成
+します。
+</pre>
+
+					<p>
+					引数には対象となるGMap2クラスのオブジェクトを指定します。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.172304,136.908306), 15);
+
+var manager = new GMarkerManager(map);
+</pre>
+
+					<p>
+					次にGMarkerManagerクラスのオブジェクトを使いマーカーを追加していきます。通常はaddOverlayメソッドを使ってマーカーを追加していましたが、代わりにGMarkerManagerクラスで用意されているaddMarkerメソッドを使ってマーカーを追加します。
+					</p>
+
+<pre class="mheader">
+addMarker(marker:GMarker, minZoom:Number, maxZoom?:Number)
+</pre>
+<pre class="mexplain">
+このマネージャによって制御されるマーカーのコレクションにマーカーを 1 つ
+追加します。マーカーの場所が地図の現在のビューポート内で、地図のズーム 
+レベルが指定されたズーム レベル範囲内であれば、マーカーは直ちに地図に追
+加されます。addMarkers メソッドと同様に、minZoom およびオプションの 
+maxZoom パラメータはマーカーが表示されるズーム レベルの範囲を指定します。
+</pre>
+
+					<p>
+					1番目の引数にGMarkerクラスのオブジェクトを指定します。そして2番目の引数に指定したズームレベルと同じかそれよりも大きい場合にマーカーは表示されます。例えば2番目の引数に15を指定すれば、ズームレベルが15以上の場合にだけマーカーが表示されます。
+					</p>
+
+					<p>
+					また省略可能な3番目の引数を指定した場合、ズームレベルが指定した値よりも大きくなった時にマーカーは削除されます。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.172304,136.908306), 15);
+
+var manager = new GMarkerManager(map);
+
+var marker = new GMarker(new GLatLng(35.172304,136.908306));
+manager.addMarker(marker, 15);
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code1_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/js/code1_1.js">code1_1.js</a>
+					</p>
+
+<pre class="fixcode">
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    var map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(35.172999,136.897057), 12);
+
+    var manager = new GMarkerManager(map);
+
+    var marker1_1 = new GMarker(new GLatLng(35.176468,136.896866));
+    var marker1_2 = new GMarker(new GLatLng(35.174153,136.8970979));
+    var marker1_3 = new GMarker(new GLatLng(35.173234,136.89762));
+    var marker1_4 = new GMarker(new GLatLng(35.173383,136.89987));
+    var marker1_5 = new GMarker(new GLatLng(35.172986,136.899894));
+    var marker1_6 = new GMarker(new GLatLng(35.172848,136.897845));
+    var marker1_7 = new GMarker(new GLatLng(35.174106,136.896676));
+    var marker1_8 = new GMarker(new GLatLng(35.175878,136.896483));
+
+    var marker2_1 = new GMarker(new GLatLng(35.17613,136.89667));
+    var marker2_2 = new GMarker(new GLatLng(35.174131,136.896885));
+    var marker2_3 = new GMarker(new GLatLng(35.173034,136.897818));
+    var marker2_4 = new GMarker(new GLatLng(35.173192,136.899881));
+
+    var marker3_1 = new GMarker(new GLatLng(35.172999,136.897057));
+
+    manager.addMarker(marker1_1, 16);
+    manager.addMarker(marker1_2, 16);
+    manager.addMarker(marker1_3, 16);
+    manager.addMarker(marker1_4, 16);
+    manager.addMarker(marker1_5, 16);
+    manager.addMarker(marker1_6, 16);
+    manager.addMarker(marker1_7, 16);
+    manager.addMarker(marker1_8, 16);
+
+    manager.addMarker(marker2_1, 14, 15);
+    manager.addMarker(marker2_2, 14, 15);
+    manager.addMarker(marker2_3, 14, 15);
+    manager.addMarker(marker2_4, 14, 15);
+
+    manager.addMarker(marker3_1, 0, 13);
+  }
+}
+</pre>
+
+					<p>
+					<a href="map1_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/map1_1.html">map1_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：表示されるズームレベルを指定しマーカーを表示&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code1_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 400px"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p1-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/img/p1-1.png" alt="p1-1" width="441" height="538">
+					</p>
+
+					<p>
+					地下鉄の駅の位置にマーカーを表示しています。このズームレベルではマーカーが1つだけ表示されています。広域地図が表示されているときは、地点を代表するマーカーを一つだけ表示するようにしているためです。
+					</p>
+
+					<p>
+					ではズームレベルを2つ上げてみます。
+					</p>
+
+					<p>
+					<img src="img/p1-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/img/p1-2.png" alt="p1-2" width="441" height="538">
+					</p>
+
+					<p>
+					<img src="img/p1-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/img/p1-3.png" alt="p1-3" width="441" height="538">
+					</p>
+
+					<p>
+					このズームレベルになると地下鉄の駅の出口付近に4つのマーカーを表示させています。
+					</p>
+
+					<p>
+					ではズームレベルを2つ上げてみます。
+					</p>
+
+					<p>
+					<img src="img/p1-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/img/p1-4.png" alt="p1-4" width="441" height="538">
+					</p>
+
+					<p>
+					<img src="img/p1-5.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmarkermanager/img/p1-5.png" alt="p1-5" width="441" height="538">
+					</p>
+
+					<p>
+					このズームレベルになると地下鉄の駅の出口の一つ一つにマーカーを表示させています。
+					</p>
+
+					<p>
+					このように表示されているズームレベル毎に表示されるマーカーを管理することができます。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

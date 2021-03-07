@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Servlet(サーブレット) / JSP入門 : Javaサーバサイドアプリ</title>
+<meta name="keywords" content="Servlet,JSP,サーブレット,Java" />
+<meta name="description" content="サーブレットとJSPを使ったサーバサイドプログラムの方法です" />
+
+<link rel="stylesheet" href="../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a></li>
+		</ul>
+</div>
+
+			<h1>サーブレット(Servlet) / JSP入門</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			サーバ側で動作するJavaアプリケーションを作成するにはサーブレットやJSPを使います。サーブレットとJSPは基本的に同じことを行いますが、サーブレットはJavaプログラムと同様に作成するのに対し、JSPはPHPのようにスクリプト言語のような記述します。そこで画面表示部分の作成にはJSPが適しており、データベースとの接続などバックエンドで動く部分はサーブレットで作成するのが適しています。
+			</p>
+
+			<p>
+			ここではサーブレット及びJSPの使い方に関して具体的なサンプルを使いながら確認していきます。
+			</p>
+
+			<p>
+			なおサーブレットやJSPはサーバ側でJavaアプリケーションを作成するための仕様であり、実装したアプリケーションとして無料で提供されているTomcatを使っていきます。TomcatはWebサーバとしての機能も持っておりTomacat単体で試していきますが、Apacheなどと組み合わせる場合は『<a href="javascript:if(confirm('http://www.adminweb.jp/apache/tomcat/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.adminweb.jp/apache/tomcat/'" tppabs="http://www.adminweb.jp/apache/tomcat/">Tomcatとの連携(mod_proxy_ajp)</a>』を参照して下さい。
+			</p>
+
+			<h2>サーブレット(Servlet)入門</h2>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="install/index.htm" tppabs="https://www.javadrive.jp/servlet/install/">Tomcat 6.0のインストールと環境設定</a></li>
+				<li class="navi"><a href="context/index.htm" tppabs="https://www.javadrive.jp/servlet/context/">アプリケーションの作成と配置</a></li>
+				<li class="navi"><a href="ini/index.htm" tppabs="https://www.javadrive.jp/servlet/ini/">サーブレットの基本</a></li>
+				<li class="navi"><a href="response/index.htm" tppabs="https://www.javadrive.jp/servlet/response/">クライアントへの出力(HttpServletResponse)</a></li>
+				<li class="navi"><a href="request/index.htm" tppabs="https://www.javadrive.jp/servlet/request/">リクエスト情報の取得(HttpServletRequest)</a></li>
+				<li class="navi"><a href="webxml/index.htm" tppabs="https://www.javadrive.jp/servlet/webxml/">Webアプリケーションの設定(web.xmlの設定)</a></li>
+				<li class="navi"><a href="cookie/index.htm" tppabs="https://www.javadrive.jp/servlet/cookie/">クッキーの利用</a></li>
+				<li class="navi"><a href="session/index.htm" tppabs="https://www.javadrive.jp/servlet/session/">セッション管理</a></li>
+				<li class="navi"><a href="dispatch/index.htm" tppabs="https://www.javadrive.jp/servlet/dispatch/">サーブレット間の連携</a></li>
+				<li class="navi"><a href="database/index.htm" tppabs="https://www.javadrive.jp/servlet/database/">データベース接続</a></li>
+				<li class="navi"><a href="filter/index.htm" tppabs="https://www.javadrive.jp/servlet/filter/">フィルタ</a></li>
+				<li class="navi"><a href="auth/index.htm" tppabs="https://www.javadrive.jp/servlet/auth/">ユーザー認証</a></li>
+				</ul>
+			</div>
+
+			<h2>サーブレットのサンプル</h2>
+
+			<p>
+			サーブレットを使って簡単なアプリケーションを作成していきます。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="schedule/index.htm" tppabs="https://www.javadrive.jp/servlet/schedule/">スケジュール管理</a></li>
+				</ul>
+			</div>
+
+			<h2>JSP入門</h2>
+
+			<p>
+			Tomcat上でJSPを利用するための各種設定方法を確認していきます。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="jsp/index.htm" tppabs="https://www.javadrive.jp/servlet/jsp/">JSPの基礎</a></li>
+				<li class="navi"><a href="jsp_directive/index.htm" tppabs="https://www.javadrive.jp/servlet/jsp_directive/">ディレクティブ</a></li>
+				<li class="navi"><a href="jsp_scripting/index.htm" tppabs="https://www.javadrive.jp/servlet/jsp_scripting/">スクリプティング</a></li>
+				<li class="navi"><a href="jsp_action/index.htm" tppabs="https://www.javadrive.jp/servlet/jsp_action/">アクションタグ</a></li>
+				<li class="navi"><a href="jsp_object/index.htm" tppabs="https://www.javadrive.jp/servlet/jsp_object/">暗黙オブジェクト</a></li>
+				</ul>
+			</div>
+
+			<h2>Jakarta Commons FileUploadの使い方</h2>
+
+			<p>
+			Jakarta Commons FileUploadは、Jakarta Commonsの中の1つでサーバへのファイルアップロードを行う時に利用します。ここではJakarta Commons FileUploadのインストール方法から実際の使い方までを見ていきます。
+			</p>
+
+			<div class="menubox">
+				<ul>
+				<li class="navi"><a href="fileupload_install/index.htm" tppabs="https://www.javadrive.jp/servlet/fileupload_install/">Jakarta Commons FileUploadのインストール</a></li>
+				<li class="navi"><a href="fileupload_tutorial/index.htm" tppabs="https://www.javadrive.jp/servlet/fileupload_tutorial/">Jakarta Commons FileUploadの利用手順</a></li>
+				</ul>
+			</div>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

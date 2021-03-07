@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSON/XML形式で出力する - Ruby on Rails入門</title>
+<meta name="keywords" content="JSON/XML形式で出力する" />
+<meta name="description" content="Railsアプリケーションでデータベースから取得したデータをJSON形式やXML形式で出力する方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/controller/" itemprop="url"><span itemprop="title">コントローラとアクション</span></a></li>
+		</ul>
+</div>
+
+			<h1>JSON/XML形式で出力する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			データベースから取得したデータをJSON形式やXML形式で返したい場合があります。ここではrenderメソッドを使ってJSON形式やXML形式で利用者へ結果を返す方法を解説します。またrespond_toメソッドを使いリクエストで指定されたフォーマットに合わせて出力する形式を決める方法についても解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">JSON形式で出力</a><br />
+			2.<a href="#section2">XML形式で出力</a><br />
+			3.<a href="#section3">respond_toメソッドを使った形式の選択</a><br />
+			</p>
+
+<h2><a id="section1">JSON形式で出力</a></h2>
+
+			<p>
+			JSON形式で出力を行なうには次の書式を使います。
+			</p>
+
+<pre class="fixcomment">
+render :json =&gt; オブジェクト
+</pre>
+
+			<p>
+			オブジェクトをJSON形式に変換した上で利用者へ返します。
+			</p>
+
+			<p>
+			では実際に試してみます。作成済みのコントローラクラス(app/controllers/movies_controller.rb)の中の「index」アクションメソッドを次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class MoviesController &lt; ApplicationController
+  def index
+    personal = {'name' =&gt; 'Yamada', 'old' =&gt; 28}
+
+    render :json =&gt; personal
+  end
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/movies/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p7-1.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-1.png" alt="p7-1" width="502" height="308" />
+			</p>
+
+			<p>
+			テスト用に作成したハッシュがJSON形式に変換されて返ってきていることが確認できます。
+			</p>
+
+			<p>
+			なおcurlを使って帰って来た結果を確認してみると次のように「Content-Type: application/json; charset=utf-8」として返ってきていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p7-2.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-2.png" alt="p7-2" width="517" height="338" />
+			</p>
+
+<h2><a id="section2">XML形式で出力</a></h2>
+
+			<p>
+			XML形式で出力を行なうには次の書式を使います。
+			</p>
+
+<pre class="fixcomment">
+render :xml =&gt; オブジェクト
+</pre>
+
+			<p>
+			オブジェクトをXML形式に変換した上で利用者へ返します。
+			</p>
+
+			<p>
+			では実際に試してみます。作成済みのコントローラクラス(app/controllers/movies_controller.rb)の中の「index」アクションメソッドを次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class MoviesController &lt; ApplicationController
+  def index
+    personal = {'name' =&gt; 'Yamada', 'old' =&gt; 28}
+
+    render :xml =&gt; personal
+  end
+end
+</pre>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/movies/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p7-3.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-3.png" alt="p7-3" width="502" height="308" />
+			</p>
+
+			<p>
+			テスト用に作成したハッシュがXML形式に変換されて返ってきていることが確認できます。
+			</p>
+
+			<p>
+			なおcurlを使って帰って来た結果を確認してみると次のように「Content-Type: application/xml; charset=utf-8」として返ってきていることが確認できます。
+			</p>
+
+			<p>
+			<img src="img/p7-4.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-4.png" alt="p7-4" width="517" height="338" />
+			</p>
+
+			<p>
+			今回はテスト用データを使いましたが、データベースから取得したデータを指定の形式で取得したい場合に便利です。
+			</p>
+
+<h2><a id="section3">respond_toメソッドを使った形式の選択</a></h2>
+
+			<p>
+			通常はHTML形式で結果を取得したいけど、明示的に指定した場合はJSON形式やXML形式でも取得したい、といったケースではrespond_toメソッドを使用すると便利です。次のような書式で使用します。
+			</p>
+
+<pre class="fixcomment">
+def index
+  respond_to do |format|
+    format.html
+    format.json {render :json =&gt; オブジェクト}
+    format.xml  {render :xml =&gt; オブジェクト}
+  end
+end
+</pre>
+
+			<p>
+			リクエストに明示的にフォーマットの指定が無かった場合はindexアクションのデフォルトのテンプレートが呼び出されて結果が返されますが、リクエストのフォーマットが指定されていた場合、それが「json」なら「render :json =&gt; オブジェクト」と返し、「xml」なら「render :xml =&gt; オブジェクト」を使って返します。
+			</p>
+
+			<p>
+			では実際に試してみます。作成済みのコントローラクラス(app/controllers/movies_controller.rb)の中の「index」アクションメソッドを次のように修正します。
+			</p>
+
+<pre class="fixcode">
+class MoviesController &lt; ApplicationController
+  def index
+    @personal = {'name' =&gt; 'Yamada', 'old' =&gt; 28}
+
+    respond_to do |format|
+      format.html
+      format.json {render :json =&gt; @personal}
+      format.xml  {render :xml =&gt; @personal}
+    end
+  end
+end
+</pre>
+
+			<p>
+			また「index」アクションから呼び出される「app/views/movies/index.html.erb」というテンプレートを次のように作成しました。
+			</p>
+
+<pre class="fixcode">
+&lt;p&gt;
+名前:&lt;%= @personal["name"] %&gt;&lt;br /&gt;
+年齢:&lt;%= @personal["old"] %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			アクションで設定されたインスタンス変数の値を取り出しHTML文を作成します。
+			</p>
+
+			<p>
+			では「sample」アプリケーションを実行し、ブラウザから「http://localhost:3000/movies/index」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p7-5.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-5.png" alt="p7-5" width="502" height="308" />
+			</p>
+
+			<p>
+			リクエストでフォーマットを指定しなかった場合はテンプレートが呼び出され、結果はHTML文として返ってきます。今度はフォーマットとして「.json」を付けた「http://localhost:3000/movies/index.json」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p7-6.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-6.png" alt="p7-6" width="502" height="308" />
+			</p>
+
+			<p>
+			テスト用に作成したハッシュがJSON形式に変換されて返ってきていることが確認できます。最後にフォーマットとして「.xml」を付けた「http://localhost:3000/movies/index.xml」へアクセスして下さい。すると次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p7-7.png" tppabs="https://www.javadrive.jp/rails/controller/img/p7-7.png" alt="p7-7" width="502" height="308" />
+			</p>
+
+			<p>
+			テスト用に作成したハッシュがXML形式に変換されて返ってきていることが確認できます。
+			</p>
+
+			<p>
+			このようにrespond_toメソッドを使うことで、リクエストで指定されたフォーマットに合わせて結果を返すことができます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>他のビューに対する相対位置の指定 - RelativeLayoutクラス - Androidプログラミング入門 | JavaDrive</title>
+<meta name="keywords" content="addRule,RelativeLayout,Android" />
+<meta name="description" content="他のビューに対する相対位置の指定" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/android/" itemprop="url"><span itemprop="title">Androidプログラミング入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/android/relativelayout/" itemprop="url"><span itemprop="title">RelativeLayoutクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>他のビューに対する相対位置の指定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					追加されるビューに対しては「RelativeLayout.LayoutParams」クラスのオブジェクトを使って幅や高さなどのレイアウト情報を設定していました。
+					</p>
+
+<pre class="fixcode">
+private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT; 
+
+Button button = new Button(this);
+RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(WC, WC);
+relativeLayout.addView(button, rlp);
+</pre>
+
+					<p>
+					このビュー自身のサイズに関する設定の他に、別に追加されたビューに対する位置関係を設定することが出来ます。「RelativeLayout.LayoutParams」クラスで用意されている「addRule」メソッドを使います。
+					</p>
+
+<pre class="mheader">
+addRule
+public void addRule(int verb, int anchor)
+</pre>
+<pre class="mexplain">
+Adds a layout rule to be interpreted by the RelativeLayout. Use this for 
+verbs that take a target, such as a sibling (ALIGN_RIGHT) or a boolean 
+value (VISIBLE).
+
+Parameters:
+  verb  One of the verbs defined by RelativeLayout, such as 
+    ALIGN_WITH_PARENT_LEFT.
+  anchor  The id of another view to use as an anchor, or a boolean 
+    value(represented as TRUE) for true or 0 for false). For verbs that 
+    don't refer to another sibling (for example, ALIGN_WITH_PARENT_BOTTOM) 
+    just use -1.
+</pre>
+
+					<p>
+					1番目の引数には対象となるビューに対する位置を表す値を設定します。設定できる値は「RelativeLayout」クラスで定義されており次のような値があります。
+					</p>
+
+<pre class="fixcomment">
+int  ALIGN_BASELINE
+int  ALIGN_BOTTOM
+int  ALIGN_LEFT
+int  ALIGN_RIGHT
+int  ALIGN_TOP
+int  ALIGN_WITH_PARENT_BOTTOM
+int  ALIGN_WITH_PARENT_LEFT
+int  ALIGN_WITH_PARENT_RIGHT
+int  ALIGN_WITH_PARENT_TOP
+int  CENTER_HORIZONTAL
+int  CENTER_IN_PARENT
+int  CENTER_VERTICAL
+int  POSITION_ABOVE
+int  POSITION_BELOW
+int  POSITION_TO_LEFT
+int  POSITION_TO_RIGHT
+int  TRUE 
+</pre>
+
+					<p>
+					例えば対象のビューに下側に配置したい場合には「RelativeLayout.POSITION_BELOW」を指定します。
+					</p>
+
+					<p>
+					次に2番目の引数には対象となるビューを表すIDを設定します。例えばビューBの位置を指定するために、ビューAを基準として位置を指定(例えばビューAの下側)する場合には、そのビューAに割り当てられたIDを指定します。
+					</p>
+
+					<p>
+					レイアウトXMLでビューを設定している場合はまた別ですがプログラムの中で作成したビューに対してIDを割り当てるにはビューの親クラスである「View」クラスで用意されてる「setId」メソッドを使います。
+					</p>
+
+<pre class="mheader">
+setId
+public void setId(int id)
+</pre>
+<pre class="mexplain">
+Sets the identifier for this view. The identifier does not have to be 
+unique in this view's hierarchy. The identifier should be a positive 
+number.
+
+Parameters:
+  id  a number used to identify the view
+</pre>
+
+					<p>
+					引数にはビューを識別するための数値を指定して下さい。ビューに設定する数値は複数のビューに対して同じ値を割り当てないようにしなければなりません。
+					</p>
+
+					<p>
+					具体的には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT; 
+
+@Override public void onCreate(Bundle icicle) {
+    super.onCreate(icicle);
+
+    RelativeLayout relativeLayout = new RelativeLayout(this);
+    setContentView(relativeLayout);
+
+    Button button1 = new Button(this);
+    button1.setId(1);
+    button1.setText("Yahoo Japan");
+    relativeLayout.addView(button1, 
+      new RelativeLayout.LayoutParams(140, 80));
+
+    Button button2 = new Button(this);
+    button2.setId(2);
+    button2.setText("Microsoft Corp");
+    RelativeLayout.LayoutParams param = 
+      new RelativeLayout.LayoutParams(WC, WC);
+    param.addRule(RelativeLayout.POSITION_TO_RIGHT, 1); 
+    relativeLayout.addView(button2, param);
+}
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					それでは実際に試してみます。プロジェクトを作成しソースコードを次のように変更しました。
+					</p>
+
+					<p>
+					<a href="Test03_01.java" tppabs="https://www.javadrive.jp/android/relativelayout/Test03_01.java">Test03_01.java</a>
+					</p>
+
+<pre class="fixcode">
+package jp.javadrive.android;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.view.ViewGroup;
+
+public class Test03_01 extends Activity {
+    private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT; 
+
+    @Override public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+
+        RelativeLayout relativeLayout = new RelativeLayout(this);
+        setContentView(relativeLayout);
+
+        Button button1 = new Button(this);
+        button1.setId(1);
+        button1.setText("Yahoo Japan");
+        relativeLayout.addView(button1, createParam(140, 80));
+
+        Button button2 = new Button(this);
+        button2.setId(2);
+        button2.setText("Microsoft Corp");
+        RelativeLayout.LayoutParams param2 = createParam(WC, WC);
+        param2.addRule(RelativeLayout.POSITION_TO_RIGHT, 1); 
+        relativeLayout.addView(button2, param2);
+
+        Button button3 = new Button(this);
+        button3.setText("Google");
+        RelativeLayout.LayoutParams param3 = createParam(WC, WC);
+        param3.addRule(RelativeLayout.POSITION_BELOW, 2); 
+        param3.addRule(RelativeLayout.ALIGN_RIGHT, 2); 
+        relativeLayout.addView(button3, param3);
+    }
+
+    private RelativeLayout.LayoutParams createParam(int w, int h){
+        return new RelativeLayout.LayoutParams(w, h);
+    }
+}
+</pre>
+
+					<p>
+					ビルド後にエミュレーター上で実行します。
+					</p>
+
+					<p>
+					<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/android/relativelayout/img/p3-1.png" alt="他のビューに対する相対位置の指定" width="344" height="382">
+					</p>
+
+					<p>
+					1つのレイアウトパラメーターに対して複数の「addRule」メソッドを実行することが出来ます。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

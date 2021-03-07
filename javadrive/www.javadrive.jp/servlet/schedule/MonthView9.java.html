@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MonthView9.java</title>
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/schedule/" itemprop="url"><span itemprop="title">スケジュール管理</span></a></li>
+		</ul>
+</div>
+
+	<div id="pagebody">
+
+		<div id="content">
+
+			<h1>MonthView9.java</h1>
+
+			<p>
+			<a href="MonthView9.java" tppabs="https://www.javadrive.jp/servlet/schedule/MonthView9.java">MonthView9.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.Calendar;
+import java.sql.*;
+
+public class MonthView9 extends HttpServlet{
+
+    protected Connection conn = null;
+
+    public void init() throws ServletException{
+        String url = "jdbc:mysql://localhost/servletschedule";
+        String user = "scheduleuser";
+        String password = "schedulepass";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(url, user, password);
+        }catch (ClassNotFoundException e){
+            log("ClassNotFoundException:" + e.getMessage());
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }catch (Exception e){
+            log("Exception:" + e.getMessage());
+        }
+    }
+
+    public void destory(){
+        try{
+            if (conn != null){
+                conn.close();
+            }
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }
+    }
+
+    public void doGet(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException{
+
+        res.setContentType("text/html;charset=Shift_Jis");
+        PrintWriter out = res.getWriter();
+
+        int[] calendarDay;
+        int count;
+
+        int year;
+        int month;
+        int day = 1;
+
+        calendarDay = new int[42];  /* 最大で7日×6週 */
+        count = 0;
+
+        String param = req.getParameter("YEAR");
+        if (param == null || param.length() == 0){
+            year = -999;
+        }else{
+            try{
+                year = Integer.parseInt(param);
+            }catch (NumberFormatException e){
+                year = -999;
+            }
+        }
+
+        param = req.getParameter("MONTH");
+        if (param == null || param.length() == 0){
+            month = -999;
+        }else{
+            try{
+                month = Integer.parseInt(param);
+            }catch (NumberFormatException e){
+                month = -999;
+            }
+        }
+
+        /* パラメータが指定されていない場合は本日の日付を設定 */
+        if (year == -999 || month == -999){
+            Calendar calendar = Calendar.getInstance();
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DATE);
+        }else{
+            if (month == 12){
+                month = 0;
+                year++;
+            }
+
+            if (month == -1){
+                month = 11;
+                year--;
+            }
+        }
+
+        /* ユーザー情報を取り出す */
+        HttpSession session = req.getSession(false);
+        Object tmp = session.getAttribute("username");
+ 
+        String username;
+        if (tmp == null){
+            username = "";
+        }else{
+            username = (String)tmp;
+        }
+
+        tmp = session.getAttribute("userid");
+        int userid;
+        if (tmp == null){
+            userid = 0;
+        }else{
+            userid = Integer.parseInt((String)tmp);
+        }
+
+        tmp = session.getAttribute("roll");
+        String roll;
+        if (tmp == null){
+            roll = "";
+        }else{
+            roll = (String)tmp;
+        }
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("&lt;!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0.1//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"&gt;");
+
+        sb.append("&lt;html lang=\"ja\"&gt;");
+        sb.append("&lt;head&gt;");
+        sb.append("&lt;meta http-equiv=\"Content-Type\" Content=\"text/html;charset=Shift_JIS\"&gt;");
+
+        sb.append("&lt;title&gt;スケジュール管理&lt;/title&gt;");
+
+        sb.append("&lt;style&gt;");
+        sb.append("table{border:1px solid #a9a9a9;width:90%;padding:0px;margin:0px;border-collapse:collapse;}");
+        sb.append("td{width:12%;border-top:1px solid #a9a9a9;border-left:1px solid #a9a9a9;vertical-align:top;margin:0px;padding:2px;}");
+        sb.append("td.week{background-color:#f0f8ff;text-align:center;}");
+        sb.append("td.day{background-color:#f5f5f5;text-align:right;font-size:0.75em;}");
+        sb.append("td.otherday{background-color:#f5f5f5;color:#d3d3d3;text-align:right;font-size:0.75em;}");
+        sb.append("td.sche{background-color:#fffffff;text-align:left;height:80px;}");
+        sb.append("img{border:0px;}");
+        sb.append("span.small{font-size:0.75em;}");
+        sb.append("&lt;/style&gt;");
+
+        sb.append("&lt;/head&gt;");
+        sb.append("&lt;body&gt;");
+
+        sb.append("&lt;p&gt;");
+        sb.append(username);
+        sb.append("さんのスケジュールです");
+
+        if (roll.equals("1")){
+            sb.append("&nbsp;[&lt;a href=\"/schedule/NewUser\"&gt;ユーザーの追加&lt;/a&gt;]");
+        }
+
+        sb.append("&nbsp;[&lt;a href=\"/schedule/Logout\"&gt;ログアウト&lt;/a&gt;]");
+
+        sb.append("&lt;/p&gt;");
+
+        /* 日付データを配列に格納 */
+        count = setDateArray(year, month, day, calendarDay, count);
+
+        /* 年月のリンク作成 */
+        sb.append(createMonthLink(year, month));
+
+        sb.append("&lt;table&gt;");
+
+        sb.append("&lt;tr&gt;&lt;td class=\"week\"&gt;日&lt;/td&gt;&lt;td class=\"week\"&gt;月&lt;/td&gt;&lt;td class=\"week\"&gt;火&lt;/td&gt;&lt;td class=\"week\"&gt;水&lt;/td&gt;&lt;td class=\"week\"&gt;木&lt;/td&gt;&lt;td class=\"week\"&gt;金&lt;/td&gt;&lt;td class=\"week\"&gt;土&lt;/td&gt;&lt;/tr&gt;");
+
+        int weekCount = count / 7;
+
+        for (int i = 0 ; i &lt; weekCount ; i++){
+            /* スケジュールの日付画面を作成する */
+            sb.append("&lt;tr&gt;");
+
+            for (int j = i * 7 ; j &lt; i * 7 + 7 ; j++){
+                if (calendarDay[j] &gt; 35){
+                    sb.append("&lt;td class=\"otherday\"&gt;");
+                    sb.append(calendarDay[j] - 35);
+                }else{
+                    sb.append("&lt;td class=\"day\"&gt;");
+                    sb.append(calendarDay[j]);
+                }
+                sb.append("&lt;/td&gt;");
+            }
+
+            sb.append("&lt;/tr&gt;");
+
+            /* カレンダーのスケジュール登録画面を作成する */
+            sb.append(createScheduleStr(year, month, i * 7, calendarDay, userid));
+        }
+
+        sb.append("&lt;/table&gt;");
+
+        sb.append("&lt;/body&gt;");
+        sb.append("&lt;/html&gt;");
+
+        out.println(new String(sb));
+    }
+
+    /* スケジュール登録へのリンクを設定する */
+    protected String createScheduleStr(int year, int month, int startDayNo, int[] calendarDay, int userid){
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("&lt;tr&gt;");
+
+        for (int i = startDayNo ; i &lt; startDayNo + 7 ; i++){
+            if (calendarDay[i] &gt; 35){
+                /* 前月及び翌月の箇所にはアイコンは表示しない */
+                sb.append("&lt;td class=\"sche\"&gt;&lt;/td&gt;");
+            }else{
+                sb.append("&lt;td class=\"sche\"&gt;");
+                sb.append("&lt;a href=\"/schedule/NewSchedule");
+
+                /* パラメータの作成 */
+                sb.append("?YEAR=");
+                sb.append(year);
+                sb.append("&MONTH=");
+                sb.append(month);
+                sb.append("&DAY=");
+                sb.append(calendarDay[i]);
+
+                sb.append("\"&gt;");
+                sb.append("&lt;img src=\"./img/memo.png\" width=\"14\" height=\"16\"&gt;");
+                sb.append("&lt;/a&gt;&lt;br&gt;");
+
+                /* スケジュールの表示 */
+
+                sb.append("&lt;span class=\"small\"&gt;");
+
+                try {
+                    String sql = "SELECT * FROM schedule WHERE userid = ? and scheduledate = ? ORDER BY starttime";
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+
+                    String startDateStr = year + "-" + (month + 1) + "-" + calendarDay[i];
+                    pstmt.setInt(1, userid);
+                    pstmt.setString(2, startDateStr);
+
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while(rs.next()){
+                        int id = rs.getInt("id");
+                        String starttime = rs.getString("starttime");
+                        String endtime = rs.getString("endtime");
+                        String schedule = rs.getString("schedule");
+
+                        if (starttime == null || endtime == null){
+                            sb.append("* ");
+                        }else{
+                            sb.append(starttime.substring(0, 5));
+                            sb.append("-");
+                            sb.append(endtime.substring(0, 5));
+                            sb.append(" ");
+                        }
+                        sb.append("&lt;a href=\"/schedule/ScheduleView?ID=");
+                        sb.append(id);
+                        sb.append("\"&gt;");
+                        sb.append(schedule);
+                        sb.append("&lt;/a&gt;&lt;br&gt;");
+                    }
+
+                    rs.close();
+                    pstmt.close();
+
+                }catch (SQLException e){
+                    log("SQLException:" + e.getMessage());
+                }
+
+                sb.append("&lt;/span&gt;");
+
+                sb.append("&lt;/td&gt;");
+            }
+            sb.append("&lt;/td&gt;");
+        }
+
+        sb.append("&lt;/tr&gt;");
+
+        return (new String(sb));
+    }
+
+    protected int setDateArray(int year, int month, int day, int[] calendarDay, int count){
+        Calendar calendar = Calendar.getInstance();
+
+        /* 今月が何曜日から開始されているか確認する */
+        calendar.set(year, month, 1);
+        int startWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        System.out.println("今月の曜日は" + startWeek + "から");
+
+        /* 先月が何日までだったかを確認する */
+        calendar.set(year, month, 0);
+        int beforeMonthlastDay = calendar.get(Calendar.DATE);
+        System.out.println("先月は" + beforeMonthlastDay + "日まで");
+
+        /* 今月が何日までかを確認する */
+        calendar.set(year, month + 1, 0);
+        int thisMonthlastDay = calendar.get(Calendar.DATE);
+        System.out.println("今月は" + thisMonthlastDay + "日まで\r\n");
+
+        /* 先月分の日付を格納する */
+        for (int i = startWeek - 2 ; i &gt;= 0 ; i--){
+            calendarDay[count++] = beforeMonthlastDay - i + 35;
+        }
+
+        /* 今月分の日付を格納する */
+        for (int i = 1 ; i &lt;= thisMonthlastDay ; i++){
+            calendarDay[count++] = i;
+        }
+
+        /* 翌月分の日付を格納する */
+        int nextMonthDay = 1;
+        while (count % 7 != 0){
+            calendarDay[count++] = 35 + nextMonthDay++;
+        }
+
+        return count;
+    }
+
+    protected String createMonthLink(int year, int month){
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("&lt;p&gt;");
+
+        sb.append("&lt;a href=\"/schedule/MonthView?YEAR=");
+        sb.append(year);
+        sb.append("&MONTH=");
+        sb.append(month - 1);
+        sb.append("\"&gt;&lt;span class=\"small\"&gt;前月&lt;/span&gt;&lt;/a&gt;&nbsp;&nbsp;");
+
+        sb.append(year);
+        sb.append("年");
+        sb.append(month + 1);
+        sb.append("月&nbsp;&nbsp;");
+
+        sb.append("&lt;a href=\"/schedule/MonthView?YEAR=");
+        sb.append(year);
+        sb.append("&MONTH=");
+        sb.append(month + 1);
+        sb.append("\"&gt;&lt;span class=\"small\"&gt;翌月&lt;/span&gt;&lt;/a&gt;");
+
+        sb.append("&lt;/p&gt;");
+
+        return (new String(sb));
+    }
+
+}
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

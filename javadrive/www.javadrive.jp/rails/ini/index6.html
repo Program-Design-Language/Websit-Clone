@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>モデルの作成とデータベースの利用 - Ruby on Rails入門</title>
+<meta name="keywords" content="モデルの作成とデータベースの利用" />
+<meta name="description" content="Railsアプリケーションでモデルを作成し、アプリケーションからデータベースのデータを利用する方法について確認します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/rails/" itemprop="url"><span itemprop="title">Ruby on Rails入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/rails/ini/" itemprop="url"><span itemprop="title">アプリケーション作成から実行までの手順</span></a></li>
+		</ul>
+</div>
+
+			<h1>モデルの作成とデータベースの利用</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			コントローラとアクションそしてビューを使って簡単なサンプルを作ってきました。最後にモデルを作成しデータベースに格納されたデータのやり取りを行なうサンプルを作成してみます。ここでは細かい説明は省略して実際に使うところまでを解説しています。手順は長いですが、一つ一つ見ていただけばお分かり頂けるかと思います。
+			</p>
+
+			<p>
+			1.<a href="#section1">データベースの設定ファイル</a><br />
+			2.<a href="#section2">データベースの作成</a><br />
+			3.<a href="#section3">モデルの作成</a><br />
+			4.<a href="#section4">マイグレーションを使ったテーブル作成</a><br />
+			5.<a href="#section5">テスト用データの作成</a><br />
+			6.<a href="#section6">モデルを使ってデータベースのデータを取得</a><br />
+			7.<a href="#section7">動作確認</a><br />
+			</p>
+
+			<p>
+			※ モデルに関する詳細は「<a href="../model/index.htm" tppabs="https://www.javadrive.jp/rails/model/">モデルとデータベース</a>」をご参照下さい。
+			</p>
+
+<h2><a id="section1">データベースの設定ファイル</a></h2>
+
+			<p>
+			Railsアプリケーションを「rails new アプリケーション名」コマンドで作成する時、明示的に指定しなければデータベースとしてSQLiteを使用するように設定されます。そしてアプリケーションからデータベースを利用する時の設定は「config\database.yml」ファイルに記載されます。
+			</p>
+
+			<p>
+			<img src="img/p6-1.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-1.png" alt="p6-1" width="489" height="377" />
+			</p>
+
+			<p>
+			このファイルをテキストエディタで開いてみると次のように表示されます。
+			</p>
+
+<pre class="fixcomment">
+# SQLite version 3.x
+#   gem install sqlite3
+#
+#   Ensure the SQLite 3 gem is defined in your Gemfile
+#   gem 'sqlite3'
+development:
+  adapter: sqlite3
+  database: db/development.sqlite3
+  pool: 5
+  timeout: 5000
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter: sqlite3
+  database: db/production.sqlite3
+  pool: 5
+  timeout: 5000
+</pre>
+
+			<p>
+			設定ファイルは「development」「test」「production」の3つのモードに分かれており、開発用、テスト用、本番用、で異なる設定が出来るようになっています。MySQLを利用する場合はユーザー名やパスワードの設定も加わります。
+			</p>
+
+			<p>
+			ここではこのファイルの細かい設定方法については省略しますが、開発モードで動かしている場合はSQLiteのデータベースファイルが「db\development.sqlite3」という名前で作成されることだけ確認しておいて下さい。
+			</p>
+
+<h2><a id="section2">データベースの作成</a></h2>
+
+			<p>
+			それではまずデータベースを作成します。使用するデータベースの種類はSQLiteやMySQLなどがありますが、Railsアプリケーションからデータベースを作成する場合は、コマンドプロンプトを起動しアプリケーションルートに移動してから次のようにコマンドを実行すればデータベースが作成されます。
+			</p>
+
+<pre class="fixcomment">
+rake db:create
+</pre>
+
+			<p>
+			<img src="img/p6-2.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-2.png" alt="p6-2" width="517" height="299" />
+			</p>
+
+			<p>
+			「db」ディレクトリを見てみると、開発用とテスト用のデータベースがそれぞれ作成されています。
+			</p>
+
+			<p>
+			<img src="img/p6-3.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-3.png" alt="p6-3" width="489" height="377" />
+			</p>
+
+<h2><a id="section3">モデルの作成</a></h2>
+
+			<p>
+			ではモデルを作成します。アプリケーションのルートディレクトリに移動し、次のようにコマンドを実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rails generate model モデル名
+rails generate model モデル名 フィールド名1:データ型1 ...
+</pre>
+
+			<p>
+			※ 後で説明いたしますが、モデルを作成するとマイグレーションファイルと呼ばれるテーブルの作成や更新のためのファイルも自動的に作成されます。2番目の書式を使った場合はテーブルに含むフィールド名とデータ型も同時に指定できます。今回はその部分は手動で行ないますので、最初の書式を使います。
+			</p>
+
+			<p>
+			今回は「title」モデルを作成してみます。(Enterキーを押してから反応があるまで少し時間が空きます)。
+			</p>
+
+<pre class="fixcomment">
+rails generate model title
+</pre>
+
+			<p>
+			<img src="img/p6-4.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-4.png" alt="p6-4" width="517" height="299" />
+			</p>
+
+			<p>
+			いくつかのファイルが作成されていますが「app\models\title.rb」が作成したモデルに関して記述されたファイルとなります。
+			</p>
+
+			<p>
+			<img src="img/p6-5.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-5.png" alt="p6-5" width="489" height="377" />
+			</p>
+
+			<p>
+			それでは作成された「title.rb」ファイルをテキストエディタで開いてみます。
+			</p>
+
+<pre class="fixcode">
+class Title &lt; ActiveRecord::Base
+end
+</pre>
+
+			<p>
+			このようにモデルを作成すると「ActiveRecord::Base」クラスを継承し、名前が「モデル名」のクラスが定義されます(モデル名の先頭は大文字となります)。
+			</p>
+
+			<p>
+			このクラスではデータベースの情報のやり取りに関する処理を記述することになるのですが、継承している「ActiveRecord::Base」クラスに基本的なメソッドは定義されているため、特に何も記述しなくても簡単な処理を行なうことができます。
+			</p>
+
+<h2><a id="section4">マイグレーションを使ったテーブル作成</a></h2>
+
+			<p>
+			モデルを作成した時に「db\migrate\20120322080659_create_titles.rb」というファイルも作成されています。これはマイグレーションスクリプトと呼ばれるファイルと呼ばれているものです。
+			</p>
+
+			<p>
+			<img src="img/p6-6.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-6.png" alt="p6-6" width="489" height="377" />
+			</p>
+
+			<p>
+			マイグレーションに関して簡単にご説明をしておきます。データベースは既に作成していますが、データを格納するにはテーブルを作成しなければなりません。Railsとは関係無くデータベースの持つ機能を使ってテーブルを作成することはもちろん可能です。ただRailsではテーブルの作成や変更の仕組みとしてマイグレーションと呼ばれる機能が提供されています。
+			</p>
+
+			<p>
+			マイグレーションとは、例えばテーブルを作成するのに直接作成するのではなく、テーブルを作成するというスクリプトファイルを作成した上で、そのスクリプトを実行することでテーブルを作成するものです。なぜこのような手間をかけるのかと言えば、(1)テーブルに関して行なった処理を記録し、元に戻したり別の環境で同じ処理を簡単に行なわせることができる、(2)データベースの種類に関係無く同じスクリプトでテーブルを作成できる、といった利点があります。
+			</p>
+
+			<p>
+			それでは作成された「20120322080659_create_titles.rb」ファイルをテキストエディタで開いてみます。
+			</p>
+
+<pre class="fixcode">
+class CreateTitles &lt; ActiveRecord::Migration
+  def change
+    create_table :titles do |t|
+
+      t.timestamps
+    end
+  end
+end
+</pre>
+
+			<p>
+			ここでは詳細な説明は省略させて頂きます。「name」カラムと「sales_data」カラムを持つ「titles」テーブルを作成するためには次のように編集します。
+			</p>
+
+<pre class="fixcode">
+class CreateTitles &lt; ActiveRecord::Migration
+  def change
+    create_table :titles do |t|
+
+      <span class="red">t.string :name
+      t.date :sales_date</span>
+
+      t.timestamps
+    end
+  end
+end
+</pre>
+
+			<p>
+			これでマイグレーションの準備はできました。ではアプリケーションルートに移動してから次のようにコマンドを実行してマイグレーションスクリプトを実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rake db:migrate
+</pre>
+
+			<p>
+			<img src="img/p6-7.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-7.png" alt="p6-7" width="517" height="299" />
+			</p>
+
+			<p>
+			今回作成したマイグレーションスクリプトはテーブルを作成するものですので、スクリプトを実行するとデータベースの中にテーブルが作成されます。
+			</p>
+
+<h2><a id="section5">テスト用データの作成</a></h2>
+
+			<p>
+			モデルの作成とデータベース側で必要なテーブルの作成までは完了しました。簡単なサンプルを作成するために、テーブルにいくつかデータを登録しておきます。
+			</p>
+
+			<p>
+			Railsではテーブルにデータを登録する仕組みが用意されています。「db」ディレクトリの中に「seeds.rb」というファイルが作成されています。
+			</p>
+
+			<p>
+			<img src="img/p6-8.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-8.png" alt="p6-8" width="489" height="377" />
+			</p>
+
+			<p>
+			このファイルをテキストエディタで開き、次のように編集します。
+			</p>
+
+<pre class="fixcomment">
+# coding: utf-8
+
+Title.create(:name =&gt; '宇宙に行った日', :sales_date =&gt; '2011-06-28')
+Title.create(:name =&gt; '観察日記', :sales_date =&gt; '2011-11-14')
+</pre>
+
+			<p>
+			「title」モデルの「create」メソッドを使いテーブルにデータを追加します。編集が終わりましたら文字コードを UTF-8 で上書き保存して下さい。
+			</p>
+
+			<p>
+			ではアプリケーションルートに移動してから先程記述したスクリプトを実行して下さい。
+			</p>
+
+<pre class="fixcomment">
+rake db:seed
+</pre>
+
+			<p>
+			<img src="img/p6-9.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-9.png" alt="p6-9" width="517" height="299" />
+			</p>
+
+			<p>
+			「titles」テーブルに2つのデータが登録されました。
+			</p>
+
+			<p>
+			では念の為に確認しておきます。アプリケーションルートに移動してから次のように実行して下さい。現在のデータベースの設定に従い、SQLiteのコマンドラインツールが起動します。
+			</p>
+
+<pre class="fixcomment">
+rails dbconsole
+</pre>
+
+			<p>
+			<img src="img/p6-10.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-10.png" alt="p6-10" width="517" height="299" />
+			</p>
+
+			<p>
+			「titles」テーブルから全データを取得してみます。
+			</p>
+
+			<p>
+			<img src="img/p6-11.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-11.png" alt="p6-11" width="517" height="299" />
+			</p>
+
+			<p>
+			2件のデータが登録されています。日本語の部分が文字化けしておりますが、WindowsのコマンドプロンプトではUTF-8で記述された日本語文字列を文字化けせずに表示する手段がありませんので気にしないで下さい。
+			</p>
+
+			<p>
+			これでサンプルデータの登録は完了です。クライアントを閉じる場合は「.quit」と実行して下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-12.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-12.png" alt="p6-12" width="517" height="299" />
+			</p>
+
+<h2><a id="section6">モデルを使ってデータベースのデータを取得</a></h2>
+
+			<p>
+			それではモデルを使ってデータベースのデータを取得してみます。まずアクションメソッドを書き換えます。「app\controllers\booklist_controller.rb」ファイルをテキストエディタで開いて下さい。
+			</p>
+
+<pre class="fixcode">
+class BooklistController &lt; ApplicationController
+
+  def hello
+  end
+
+end
+</pre>
+
+			<p>
+			今回は既存の「hello」アクションを使います。次のように編集して下さい。
+			</p>
+
+<pre class="fixcode">
+class BooklistController &lt; ApplicationController
+
+  def hello
+    @titles = Title.all
+  end
+
+end
+</pre>
+
+			<p>
+			「Title」モデルの「all」メソッドはテーブルに含まれる全てのデータをモデルクラスのオブジェクトの配列として返します。今回は返された配列を変数「titles」に格納しています。
+			</p>
+
+			<p>
+			続いてビューを編集します。「app\views\booklist\hello.html.erb」ファイルをテキストエディタで開いて下さい。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;p&gt;
+こんにちは。お元気ですか。
+&lt;/p&gt;
+</pre>
+
+			<p>
+			このファイルを次のように編集します。
+			</p>
+
+<pre class="fixcode">
+&lt;h1&gt;Hello&lt;/h1&gt;
+&lt;p&gt;
+現在登録されている本のタイトルは次のとおりです。
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;% @titles.each do |title| %&gt;
+[タイトル] &lt;%= title.name %&gt;, [発売日] &lt;%= title.sales_date %&gt;&lt;br /&gt;
+&lt;% end %&gt;
+&lt;/p&gt;
+</pre>
+
+			<p>
+			アクションから渡されてきたモデルクラスのオブジェクトの配列の数だけ順にタイトルと発売日を取得して画面に表示します。
+			</p>
+
+<h2><a id="section7">動作確認</a></h2>
+
+			<p>
+			それではRailsアプリケーションを起動してここまでの動作を確認してみます。コマンドプロンプトを起動し、起動させたいアプリケーションのルートディレクトリに移動して下さい。そして「rails server」と実行して下さい。
+			</p>
+
+			<p>
+			<img src="img/p6-13.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-13.png" alt="p6-13" width="517" height="299" />
+			</p>
+
+			<p>
+			ブラウザから次のURLへアクセスして下さい。
+			</p>
+
+<pre class="fixcode">
+http://localhost:3000/hello
+</pre>
+
+			<p>
+			「booklist」コントローラの「hello」アクションが呼び出され、アクションの中でモデルを使ってデータベースからデータを取得し、最終的に対応するビューが呼び出されて画面に次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p6-14.png" tppabs="https://www.javadrive.jp/rails/ini/img/p6-14.png" alt="p6-14" width="480" height="308" />
+			</p>
+
+			<p>
+			このようにモデルを利用してデータベースからデータを取得し、そのデータを使った結果を利用者のブラウザ上に表示させることができました。
+			</p>
+
+			<p>
+			以上でサンプルアプリケーションを使った動作確認は完了です。コントローラとアクション、ビュー、そしてモデルについては別のページにてより細かい利用方法について解説を行ないます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

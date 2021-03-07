@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ファイルハンドル - ファイル操作 - Perl入門</title>
+<meta name="keywords" content="ファイルハンドル,ファイル操作,入門,Perl" />
+<meta name="description" content="ファイルハンドル" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/perl/" itemprop="url"><span itemprop="title">Perl入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/perl/file/" itemprop="url"><span itemprop="title">ファイル操作</span></a></li>
+		</ul>
+</div>
+
+			<h1>ファイルハンドル</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					Perlのプログラムでファイルに対して何らかの操作を行う場合、指定したファイルとPerlのプログラムの間でやり取りを行うための通信経路(コネクション)を用意する必要があります。ファイルに対して何かを書き込んだりファイルから読み込んだりする場合はこのコネクションを経由して行われます。
+					</p>
+
+					<p>
+					プログラムでは必要になった時にファイルとのコネクションを開いて通信経路を用意し、ファイルに対する操作が終わったらコネクションを閉じます。別のファイルに対して何らかのやり取りが必要にならば、別のコネクションを開いて使用します。
+					</p>
+
+					<p>
+					複数のファイルとのやり取りを行う場合には複数のコネクションを使用します。コネクションを区別するためにコネクションに対して付ける名前をファイルハンドルと呼びます。書き込みや読み込みを行う場合はファイルハンドルを指定することで、どのファイルに対して操作を行うのかを指示することが出来ます。
+					</p>
+
+					<h2>ファイルハンドル名の付け方</h2>
+
+					<p>
+					ファイルハンドル名は次の規則に従っていれば任意の名前を設定することができます。
+					</p>
+
+<pre class="fixcomment">
+変数名にはアルファベット・数字・アンダーバー("_")を使うことが出来ます
+(例) name, old20, _hokan
+
+先頭の文字に数字は利用できません
+(例) 10kago は不可
+
+大文字と小文字は区別します。
+(例) old と Old は別の変数名となります
+</pre>
+
+					<p>
+					これは変数名を付ける時の規則と同じです(ただし「$」や「%」などの接頭語のようなものはありません)。小文字でも大文字でも規則上は問題ありませんが、慣習としてファイルハンドルは全て大文字で名前を付けることになっているようです。例えば次のようになります。
+					</p>
+
+<pre class="fixcomment">
+DATAFILE
+LOG
+</pre>
+
+					<h2>標準で用意されているファイルハンドル</h2>
+
+					<p>
+					プログラムの中で任意のファイルとの間で使用するファイルハンドルとは別に、標準で用意されているファイルハンドルがあります。
+					</p>
+
+<pre class="fixcomment">
+STDIN   標準入力。キーボードからの入力など。
+STDOUT  標準出力。画面への出力など。
+STDERR  標準エラー。エラーとしての出力。
+</pre>
+
+					<p>
+					これらのファイルハンドルは標準で用意されており、コネクションは開かれた状態です。その為、特に何もしなくてもファイルハンドルを指定してコネクションを利用することが出来ます。
+					</p>
+
+					<p>
+					ファイルハンドル「STDIN」は標準入力と呼ばれるものでファイルの代わりにキーボードやパイプ/リダイレクトなどからデータを読み込む場合に使用されます。
+					</p>
+
+					<p>
+					ファイルハンドル「STDOUT」は標準出力と呼ばれるものでファイルの代わりに画面やパイプ/リダイレクトなどに対してデータを出力する場合に使用されます。
+					</p>
+
+					<p>
+					ファイルハンドル「STDERR」は標準エラーと呼ばれるもので標準出力と同じく画面やパイプ/リダイレクトなどに対してデータを出力する場合に使用されます。標準出力との違いは、エラーが発生した時に使用されるという点です。
+					</p>
+
+					<p>
+					このようにキーボードからの入力や画面への出力などもファイルと同じようにコネクションを開き、対応するファイルハンドルに対して操作を行うことでファイルに対する読み書きと同じように処理することが出来ます。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

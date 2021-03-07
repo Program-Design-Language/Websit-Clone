@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python | 文字列の先頭や末尾などの位置にマッチするパターンを記述する</title>
+<meta name="description" content="正規表現では文字列の先頭や末尾、単語の境界など文字そのものではなく位置にマッチするメタ文字が用意されています。例えば文字の先頭とマッチするメタ文字を使用すれば、そのあとに記述したパターンが文字の先頭から始まっている場合だけマッチさせることができます。ここでは Python の正規表現で文字列の先頭や末尾など位置にマッチするパターンの記述方法について解説します。">
+
+<meta property="og:title" content="文字列の先頭や末尾などの位置にマッチするパターンを記述する">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/python/regex/index12.html">
+<meta property="og:image" content="https://www.javadrive.jp/python/regex/img/p12-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現では文字列の先頭や末尾、単語の境界など文字そのものではなく位置にマッチするメタ文字が用意されています。例えば文字の先頭とマッチするメタ文字を使用すれば、そのあとに記述したパターンが文字の先頭から始まっている場合だけマッチさせることができます。ここでは Python の正規表現で文字列の先頭や末尾など位置にマッチするパターンの記述方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Python入門",
+    "item": "https://www.javadrive.jp/python/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Python正規表現",
+    "item": "https://www.javadrive.jp/python/regex/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/python/">Python入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/python/regex/">Python正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>文字列の先頭や末尾などの位置にマッチするパターンを記述する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現では文字列の先頭や末尾、単語の境界など文字そのものではなく位置にマッチするメタ文字が用意されています。例えば文字の先頭とマッチするメタ文字を使用すれば、そのあとに記述したパターンが文字の先頭から始まっている場合だけマッチさせることができます。ここでは Python の正規表現で文字列の先頭や末尾など位置にマッチするパターンの記述方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">文字列の先頭にマッチする(^, \A)</a></li>
+			<li><a href="#section2">文字列の末尾にマッチする($, \Z)</a></li>
+			<li><a href="#section3">単語の先頭および末尾にマッチする(\b)</a></li>
+			<li><a href="#section4">単語の先頭と末尾以外にマッチする(\B)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">文字列の先頭にマッチする(^, \A)</a></h2>
+
+			<p>
+			メタ文字のひとつであるキャレット(^)は文字列の先頭位置ににマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+^
+</pre>
+</div>
+
+			<p>
+			メタ文字のひとつである \A も同じように文字列の先頭位置ににマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+\A
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは文字列の先頭から始まる文字列で、 R で始まり、そのあとに e そして d が続く文字列にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'^Red'
+</pre>
+</div>
+
+			<p>
+			Red や Reduce にはマッチします。ただし 文字列の先頭以外にある場合は Red であってもマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">Red </span>Color
+〇 <span class="k">Reduce</span>
+&#10005; Radio
+&#10005; Color is Red
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'^Red')
+
+print(bool(pattern.search('Red Table')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Reduce speed')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Border Color is Red')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+			<p>
+			^ の代わりに \A を使用した場合も同じ結果となります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'\ARed')
+
+print(bool(pattern.search('Red Table')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Reduce speed')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Border Color is Red')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section2">文字列の末尾にマッチする($, \Z)</a></h2>
+
+			<p>
+			メタ文字のひとつであるドル記号($)は文字列の末尾位置、および末尾に改行があった場合は改行の直前にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+$
+</pre>
+</div>
+
+			<p>
+			メタ文字のひとつである \Z も同じように文字列の末尾位置ににマッチします。ただし \Z の場合は末尾に改行があった場合はマッチしません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+\A
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは Script という文字列が文字列の末尾にある場合にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'Script$'
+</pre>
+</div>
+
+			<p>
+			JavaScript や TypeScript にはマッチします。ただし 文字列の末尾以外にある場合は JavaScript であってもマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 Java<span class="k">Script</span>
+〇 I am studying Type<span class="k">Script</span>
+&#10005; script
+&#10005; PostScript is difficult
+</pre>
+</div>
+
+			<p>
+			また末尾に改行がある場合は改行の直前にもマッチします。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 Java<span class="k">Script</span>\n
+〇 I am studying Type<span class="k">Script</span>\n
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Script$')
+
+print(bool(pattern.search('JavaScript')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('I am studying TypeScript')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('PostScript is difficult')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('OpenScript\n')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+</pre>
+</div>
+
+			<p>
+			$ の代わりに \Z を使用した場合も、末尾に改行がある場合を除いて同じ結果となります。末尾に改行がある場合はマッチしません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'Script\Z')
+
+print(bool(pattern.search('JavaScript')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('I am studying TypeScript')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('PostScript is difficult')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+print(bool(pattern.search('OpenScript\n')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section3">単語の先頭および末尾にマッチする(\b)</a></h2>
+
+			<p>
+			メタ文字のひとつである \b は単語の先頭位置および末尾位置にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\b
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは work という文字列が単語の先頭にある場合にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'\bwork'
+</pre>
+</div>
+
+			<p>
+			work や working にはマッチします。ただし fireworks のように単語の先頭以外にある場合はマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 <span class="k">work</span>
+〇 a <span class="k">work</span>ing person
+&#10005; worm
+&#10005; Go to see fireworks
+</pre>
+</div>
+
+			<p>
+			\b は単語の先頭だけでなく単語の末尾にもマッチします。例えば次のようなパターンは ing という文字列が単語の末尾にある場合にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'ing\b'
+</pre>
+</div>
+
+			<p>
+			swimming や working にはマッチします。ただし ingenious のように単語の末尾以外にある場合はマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 swimm<span class="k">ing</span>
+〇 a work<span class="k">ing</span> person
+&#10005; worm
+&#10005; ingenious design
+</pre>
+</div>
+
+			<p>
+			\b を単語の先頭と末尾にそれぞれ使用した次のようなパターンは working という単語の場合だけにマッチします。前後に文字が付いている場合はマッチしません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'\bworking\b'
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'\bwork')
+
+print(bool(pattern.search('a working person')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Go to see fireworks')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+
+pattern = re.compile(r'ing\b')
+
+print(bool(pattern.search('a working person')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('ingenious design')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+<h2><a id="section4">単語の先頭と末尾以外にマッチする(\B)</a></h2>
+
+			<p>
+			メタ文字のひとつである \B は単語の先頭と末尾以外の位置にマッチします。
+			</p>
+
+<div class="titlebox2">
+<pre>
+\B
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは単語の先頭以外の位置から始まり、そのあとに am と続く場合にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'\Bam'
+</pre>
+</div>
+
+			<p>
+			sample や program にはマッチします。ただし amount のように単語の先頭から始まっている場合はマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 s<span class="k">am</span>ple
+〇 Difficult progr<span class="k">am</span>
+&#10005; full amount
+</pre>
+</div>
+
+			<p>
+			例えば次のようなパターンは am という文字列のあとが単語の末尾以外の位置だった場合にマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+r'am\B'
+</pre>
+</div>
+
+			<p>
+			sample や amount にはマッチします。ただし program のように am が単語の末尾にある場合はマッチしません。
+			</p>
+
+<div class="titlebox3">
+<pre>
+〇 s<span class="k">am</span>ple
+〇 full <span class="k">am</span>ount
+&#10005; Difficult program
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			簡単なサンプルで試してみます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import re
+
+pattern = re.compile(r'\Bam')
+
+print(bool(pattern.search('Difficult program')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('full amount')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+
+pattern = re.compile(r'am\B')
+
+print(bool(pattern.search('full amount')))
+<span class="bold">&gt;&gt;</span> <span class="bluebold">True</span>
+print(bool(pattern.search('Difficult program')))
+<span class="bold">&gt;&gt;</span> <span class="redbold">False</span>
+</pre>
+</div>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Python の正規表現で文字列の先頭や末尾など位置にマッチするパターンの記述方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

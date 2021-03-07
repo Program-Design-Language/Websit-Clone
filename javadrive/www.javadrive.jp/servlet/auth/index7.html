@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FORM認証 - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="FORM認証,ユーザー認証,サーブレット" />
+<meta name="description" content="FORM認証" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>FORM認証</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			次はFORM認証について確認します。FORM認証ではユーザー名とパスワードを入力してもらう画面をダイアログの替わりに自分で作成したHTMLページを指定することが出来ます。
+			</p>
+
+			<p>
+			FORM認証の場合はHTTPプロトコルの認証の仕組みを使わずに認証が通った場合はセッションを使って認証が通っているかどうかを管理します。その為、一度成功した認証の有効期限はセッションの有効期限に従いますので注意が必要です。(HTTPプロトコルの認証方式は『<a href="javascript:if(confirm('http://www.adminweb.jp/apache/allow/index5.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.adminweb.jp/apache/allow/index5.html'" tppabs="http://www.adminweb.jp/apache/allow/index5.html">AdminWeb:認証の実行</a>』を参照して下さい)。
+			</p>
+
+			<h2>web.xmlの設定</h2>
+
+			<p>
+			FORM認証を行う場合には認証方法の設定で&lt;login-config&gt;要素に含まれる&lt;auth-method&gt;要素に「FORM」を指定します。
+			</p>
+
+<pre class="fixcode">
+&lt;login-config&gt;
+  &lt;auth-method&gt;FORM&lt;/auth-method&gt;
+  &lt;realm-name&gt;レルム名&lt;/realm-name&gt;
+  &lt;form-login-config&gt;
+    &lt;form-login-page&gt;/login.html&lt;/form-login-page&gt;
+    &lt;form-error-page&gt;/error.html&lt;/form-error-page&gt;
+  &lt;/form-login-config&gt;
+&lt;/login-config&gt;
+</pre>
+
+			<p>
+			また新しい子要素として&lt;form-login-config&gt;要素が追加され、さらに&lt;form-login-page&gt;要素と&lt;form-error-page&gt;要素が追加されています。
+			</p>
+
+			<p>
+			&lt;form-login-page&gt;要素にはログイン時に表示されるHTMLページを指定します。また&lt;form-error-page&gt;要素にはログインが失敗した場合に表示されるHTMLページを指定します。それぞれアプリケーションのルートからの相対パスでファイルを指定します。
+			</p>
+
+			<p>
+			その他の設定についてはBASIC認証の場合と同じです。詳しくは『<a href="index3.html" tppabs="https://www.javadrive.jp/servlet/auth/index3.html">BASIC認証(web.xmlの編集)</a>』を参照して下さい。
+			</p>
+
+			<h2>ログインページの作成</h2>
+
+			<p>
+			ログイン用のページではフォームを使ってユーザー名とパスワードを入力します。また送信方法は「POST」を使います。
+			</p>
+
+			<p>
+			入力欄には「text」コントロールと「password」コントロールを使い、名前はそれぞれ「j_username」と「j_password」と決まっています。またフォームの送信先も「j_security_check」と決まっています。
+			</p>
+
+			<p>
+			簡単な例としては次のようになります。
+			</p>
+
+<pre class="fixcode">
+&lt;form method="POST" action="<span class="red">j_security_check</span>" name="loginform"&gt;
+&lt;input type="text" name="<span class="red">j_username</span>" size="16"&gt;
+&lt;input type="password" name="<span class="red">j_password</span>" size="16"&gt;
+&lt;input type="submit" value="login"&gt;
+&lt;/form&gt;
+</pre>
+
+			<p>
+			上記の内容が記載されていればHTMLページのレイアウトなどは自由に記述出来ます。ただ、フォームに他の項目を追加して、追加情報として取得しようとしてもログインフォームから送られてきたデータの処理は自動化されているので自由に取り出したりする事は出来ません。
+			</p>
+
+			<h2>エラーページの作成</h2>
+
+			<p>
+			ログインに失敗した場合に表示されるのがエラーページです。エラーページを呼びだす時にはエラー情報などは一切渡されてきませんので静的なコンテンツしか記載できません。よってログインに失敗したという表示は出来てもエラーの内容などは表示ができません。
+			</p>
+
+			<h2>実際の設定例</h2>
+
+			<p>
+			では実際に試してみます。FORM認証の場合でもレルムはUserDatabaseRealmレルムとJDBCRealmレルムのどちらでも利用できます。今回はJDBCRealmレルムを使ってみます。
+			</p>
+
+<pre class="fixcode">
+&lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+       driverName="com.mysql.jdbc.Driver"
+    connectionURL="jdbc:mysql://localhost/auth"
+   connectionName="authtest" connectionPassword="authtest"
+        userTable="user_table" userNameCol="user" userCredCol="pass"
+    userRoleTable="role_table" roleNameCol="role" /&gt;
+</pre>
+
+			<p>
+			MySQLの設定についてはBASIC認証の時と同じ設定を使います。詳しくは『<a href="index5.html" tppabs="https://www.javadrive.jp/servlet/auth/index5.html">BASIC認証(JDBCRealmレルム)</a>』を参照して下さい。
+			</p>
+
+			<p>
+			次にweb.xmlファイルを次の条件で作成します。
+			</p>
+
+<pre class="fixcomment">
+リソース名：User Form Auth
+対象サーブレット：このアプリケーションに含まれる全てのサーブレット
+対象のHTTPメソッド：全て
+許可するロール名：sales
+認証方式：FORM認証
+レルム名：User Form Auth
+ログインページ：login.html
+エラーページ：error.html
+</pre>
+
+			<p>
+			作成したweb.xmlファイルは次の通りです。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;security-constraint&gt;
+    &lt;web-resource-collection&gt;
+      &lt;web-resource-name&gt;User Form Auth&lt;/web-resource-name&gt;
+      &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/web-resource-collection&gt;
+     &lt;auth-constraint&gt;
+      &lt;role-name&gt;sales&lt;/role-name&gt;
+    &lt;/auth-constraint&gt;
+  &lt;/security-constraint&gt;
+
+  &lt;login-config&gt;
+    &lt;auth-method&gt;FORM&lt;/auth-method&gt;
+    &lt;realm-name&gt;User Form Auth&lt;/realm-name&gt;
+    &lt;form-login-config&gt;
+      &lt;form-login-page&gt;/login.html&lt;/form-login-page&gt;
+      &lt;form-error-page&gt;/error.html&lt;/form-error-page&gt;
+    &lt;/form-login-config&gt;
+  &lt;/login-config&gt;
+
+  &lt;security-role&gt;
+    &lt;role-name&gt;sales&lt;/role-name&gt;
+  &lt;/security-role&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			ログイン用ページは次のようにします。
+			</p>
+
+			<p>
+			<a href="login.html" tppabs="https://www.javadrive.jp/servlet/auth/login.html">login.html</a>
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0.1//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" Content="text/html;charset=Shift_JIS"&gt;
+
+&lt;title&gt;ログイン画面&lt;/title&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;ログイン画面&lt;/h1&gt;
+
+&lt;p&gt;アクセス先のページを見るにはユーザー認証が必要です&lt;/p&gt;
+
+&lt;form method="POST" action="j_security_check" name="loginform"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;ユーザー名&lt;/td&gt;
+&lt;td&gt;&lt;input type="text" name="j_username" size="32"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;パスワード&lt;/td&gt;
+&lt;td&gt;&lt;input type="password" name="j_password" size="32"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;input type="submit" value="login"&gt;&lt;/td&gt;
+&lt;td&gt;&lt;input type="reset" value="reset"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			エラー用ページは次のようにします。
+			</p>
+
+			<p>
+			<a href="error.html" tppabs="https://www.javadrive.jp/servlet/auth/error.html">error.html</a>
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0.1//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" Content="text/html;charset=Shift_JIS"&gt;
+
+&lt;title&gt;ログイン失敗&lt;/title&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;ログイン失敗&lt;/h1&gt;
+
+&lt;p&gt;ログインに失敗しました&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			ログイン用HTMLページとエラー用HTMLページの配置場所は、アプリケーションのルート直下です。
+			</p>
+
+<pre class="fixcomment">
+D:&yen;servlet-sample
+   |
+   +--auth
+       |
+       +-- (login.html)
+       |
+       +-- (error.html)
+       |
+       +-- WEB-INF
+            |
+            +-- classes
+            |     |
+            |     +-- (AuthTest1.class)
+            |     |
+            |     +-- (AuthTest2.class)
+            |
+            +-- (web.xml)
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/AuthTest1」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p20.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p20.png" alt="FORM認証" width="501" height="364">
+			</p>
+
+			<p>
+			クッキーに関する確認が設定されている場合には、まずクッキーを使おうとしている警告が表示されます。セッション管理のためにクッキーを使うことが分かります。
+			</p>
+
+			<p>
+			<img src="img/p21.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p21.png" alt="FORM認証" width="500" height="362">
+			</p>
+
+			<p>
+			上記のようにログイン用のページが表示されました。ここでデータベースに登録したユーザー名「itou」パスワード「itou」を入力します。
+			</p>
+
+			<p>
+			<img src="img/p22.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p22.png" alt="FORM認証" width="501" height="364">
+			</p>
+
+			<p>
+			「itou」はユーザー認証が通り、所属するロールがアクセス許可に設定してるため、ページを見ることが出来ます。
+			</p>
+
+			<p>
+			<img src="img/p23.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p23.png" alt="FORM認証" width="500" height="362">
+			</p>
+
+			<p>
+			次にエラーページを表示させてみます。ログイン画面で許可されていないユーザー名でログインしようとして下さい。
+			</p>
+
+			<p>
+			<img src="img/p24.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p24.png" alt="FORM認証" width="501" height="360">
+			</p>
+
+			<p>
+			「yamada」はデータベースに登録されていませんのでエラーページが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p25.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p25.png" alt="FORM認証" width="502" height="364">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

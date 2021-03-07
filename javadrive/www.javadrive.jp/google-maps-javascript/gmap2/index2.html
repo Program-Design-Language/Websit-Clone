@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地図を作成する | Google Maps JavaScript API入門</title>
+<meta name="description" content="地図を表示するにはgoogle.maps.Mapクラスを使います。ここではMapクラスを使って地図を作成する方法について解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/" itemprop="url"><span itemprop="title">地図の表示</span></a></li>
+		</ul>
+</div>
+
+			<h1>地図を作成する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			地図を表示するにはgoogle.maps.Mapクラスを使います。ここではMapクラスを使って地図を作成する方法について解説します。
+			</p>
+
+			<p>
+			1.<a href="#section1">Mapクラス</a><br />
+			2.<a href="#section2">MapOptionsクラス</a><br />
+			3.<a href="#section3">setOptionsメソッドを使って座標などをあとから設定する</a><br />
+			4.<a href="#section4">1つのWebページに複数の地図を表示する</a><br />
+			5.<a href="#section5">サンプルコード</a><br />
+			</p>
+
+<h2><a id="section1">Mapクラス</a></h2>
+
+			<p>
+			地図を作成するにはgoogle.maps.Mapクラスを使います。このクラスのコンストラクタは次のように定義されています。
+			</p>
+
+<pre class="mheader">
+Map(mapDiv:Element, opts?:MapOptions)
+</pre>
+
+<pre class="mexplain">
+Creates a new map inside of the given HTML container, which is 
+typically a DIV element.
+</pre>
+
+			<p>
+			1番目の引数には地図を表示するdiv要素を指定します。2番目の引数には地図の座標やズームレベルなどを設定したMapOptionsクラスのオブジェクトを指定します。2番目の引数は省略可です(省略した場合はあとから中心座標とズームレベルを指定する必要があります)。
+			</p>
+
+			<p>
+			1番目の引数の指定の仕方ですが、Google Maps APIを使ってWebページの中に地図を表示する場合、地図を表示する位置にdiv要素を設置しておきます。
+			</p>
+
+<pre class="fixcode">
+&lt;body&gt;
+  &lt;p&gt;目的地までの地図はこちらです。&lt;/p&gt;
+
+  <span class="red">&lt;div id="map" style="width:500px; height:300px"&gt;&lt;/div&gt;</span>
+
+  &lt;p&gt;地図をみても分からない場合はご連絡下さい。&lt;/p&gt;
+&lt;/body&gt;
+</pre>
+
+			<p>
+			div要素に設定されたIDの値を使って次のように要素を取得できます。
+			</p>
+
+<pre class="fixcode">
+var mapDiv = document.getElementById("map");
+</pre>
+
+			<p>
+			取得した要素をmapクラスのコンストラクタの1番目の引数に指定してMapクラスのインスタンスを作成することで地図を作成することができます。
+			</p>
+
+<pre class="fixcode">
+var mapDiv = document.getElementById("map");
+var map = new google.maps.Map(mapDiv);
+</pre>
+
+			<p>
+			または次のようにまとめて書いて頂いても同じです。
+			</p>
+
+<pre class="fixcode">
+var map = new google.maps.Map(document.getElementById("map"));
+</pre>
+
+<h2><a id="section2">MapOptionsクラス</a></h2>
+
+			<p>
+			Mapクラスを使って地図を作成する時、2番目の引数に地図の中心座標やズームレベル、地図の種類、コントロールの表示/非表示、といった情報を指定できます。中心座標とズームレベルのプロパティは必須です。値を設定したいプロパティを次のように記述して下さい。
+			</p>
+
+<pre class="fixcomment">
+var opts = {
+    プロパティ名1: 値1,
+    プロパティ名2: 値2,
+    プロパティ名3: 値3,
+    プロパティ名4: 値4,
+    プロパティ名5: 値5
+};
+</pre>
+
+			<p>
+			中心座標を指定するプロパティは「center」です。値には座標を指定しますが、座標の指定にはLatLngクラスを使います。地図のズームレベルを指定するプロパティは「zoom」です。値にはズームレベルを数値で指定して下さい。数値が小さければ広域の地図となり、大きければより狭い範囲の詳細な地図となります。
+			</p>
+
+			<p>
+			実際の記述方法は次のようになります。下記では地図のズームレベルを13、地図の中心座標を(35.539001,134.228468)に設定しています。
+			</p>
+
+<pre class="fixcode">
+var opts = {
+    center: new google.maps.LatLng(35.539001,134.228468),
+    zoom: 13
+};
+
+var map = new google.maps.Map(document.getElementById("map"), opts);
+</pre>
+
+			<p>
+			これで中心座標、ズームレベルの情報が設定された地図が作成されます。
+			</p>
+
+<h2><a id="section3">setOptionsメソッドを使って座標などをあとから設定する</a></h2>
+
+			<p>
+			地図を作成する時に2番目の引数を指定しなかった場合や、後から座標などの設定を変更したくなった場合にはMapクラスで用意されているsetOptionsメソッドを使って設定します。
+			</p>
+
+<pre class="mheader">
+setOptions(options:MapOptions)
+</pre>
+
+<pre class="mexplain">
+Description:
+  ----
+Return:
+  None
+</pre>
+
+			<p>
+			引数に指定するオブジェクトは地図を作成する時の2番目の引数と同じものです。例えば次のように記述します。
+			</p>
+
+<pre class="fixcode">
+var map = new google.maps.Map(document.getElementById("map_canvas"));
+
+var opts = {
+    zoom: 13,
+    center: new google.maps.LatLng(35.539001,134.228468)
+};
+
+map.setOptions(opts);
+</pre>
+
+			<p>
+			地図を作成してから中心座標とズームレベルを設定しています。
+			</p>
+
+<h2><a id="section4">1つのWebページに複数の地図を表示する</a></h2>
+
+			<p>
+			一つのWebページ内に地図を表示するためのdiv要素を複数記述し、それぞれ別の地図を表示させることもできます。div要素毎に異なるid属性を設定しておき、別々のMapクラスのインスタンスを作成します。
+			</p>
+
+<pre class="fixcode">
+var mapDiv1 = document.getElementById("map1");
+var mapDiv2 = document.getElementById("map2");
+
+var opts1 = {
+    zoom: 13,
+    center: new google.maps.LatLng(35.697456,139.702148)
+};
+
+var opts2 = {
+    zoom: 10,
+    center: new google.maps.LatLng(34.694203,135.502625)
+};
+
+var map1 = new google.maps.Map(mapDiv1, opts1);
+var map2 = new google.maps.Map(mapDiv2, opts2);
+</pre>
+
+			<p>
+			同じ要領で2つ以上の地図であっても同時に1つのWebページ内に表示可能です。
+			</p>
+
+<h2><a id="section5">サンプルコード</a></h2>
+
+			<p>
+			では簡単なサンプルを作成して実際に試してみます。
+			</p>
+
+			<ul class="linktext">
+			<li class="title"><a href="map/code2_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/map/code2_1.js">code2_1.js</a></li>
+			</ul>
+
+<pre class="fixcode">
+function initMap() {
+  var opts1 = {
+    zoom: 15,
+    center: new google.maps.LatLng(35.6328964,139.8782003)
+  };
+
+  var opts2 = {
+    zoom: 15,
+    center: new google.maps.LatLng(34.6659803,135.4315818)
+  };
+
+  var map1 = new google.maps.Map(document.getElementById("map1"), opts1);
+
+  var map2 = new google.maps.Map(document.getElementById("map2"));
+  map2.setOptions(opts2);
+}
+</pre>
+
+			<ul class="linktext">
+			<li class="title"><a href="map/map2_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/map/map2_1.html">map2_1.html</a></li>
+			</ul>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Google Maps API サンプル&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;p&gt;東京ディズニーランド&lt;/p&gt;
+
+    &lt;div id="map1" style="width:600px; height:200px"&gt;&lt;/div&gt;
+
+    &lt;p&gt;ユニバーサルスタジオ&lt;/p&gt;
+
+    &lt;div id="map2" style="width:600px; height:200px"&gt;&lt;/div&gt;
+
+    &lt;script type="text/javascript" src="code2_1.js"&gt;
+    &lt;/script&gt;
+
+    &lt;script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=APIKey&callback=initMap"&gt;
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			ブラウザでWebページを開くと次のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gmap2/img/p2-1.png" alt="p2-1" width="640" height="630" class="waku" />
+			</p>
+
+			<p>
+			今回のサンプルでは2つの地図を1つのWebページ上に表示し、中心座標とズームレベルの指定方法を異なる方法で設定してみました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

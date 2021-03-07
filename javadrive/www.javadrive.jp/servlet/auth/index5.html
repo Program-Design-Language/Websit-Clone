@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ユーザー認証:BASIC認証(JDBCRealmレルム) - ユーザー認証 - サーブレット入門</title>
+<meta name="keywords" content="JDBCRealmレルム,ユーザー認証,サーブレット" />
+<meta name="description" content="ユーザー認証:BASIC認証(JDBCRealmレルム)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/auth/" itemprop="url"><span itemprop="title">ユーザー認証</span></a></li>
+		</ul>
+</div>
+
+			<h1>BASIC認証(JDBCRealmレルム)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			前回はユーザー管理をファイルで行っていましたが、今度はデータベースを用いてユーザー管理を行ってみます。データベースを使う場合には「JDBCRealmレルム」を使います。
+			</p>
+
+			<p>
+			まず「server.xml」ファイルを編集します。元々有効になっている「UserDatabaseRealm」に関する部分をコメントにし、JDBCRealm用として記述されている中のMySQLを使うものをコメントを外して有効にします。
+			</p>
+
+<pre class="fixcode">
+&lt;!--
+&lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+       resourceName="UserDatabase"/&gt;
+--&gt;
+
+&lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+       driverName="org.gjt.mm.mysql.Driver"
+    connectionURL="jdbc:mysql://localhost/authority"
+   connectionName="test" connectionPassword="test"
+        userTable="users" userNameCol="user_name" userCredCol="user_pass"
+    userRoleTable="user_roles" roleNameCol="role_name" /&gt;
+</pre>
+
+			<p>
+			それでは「JDBCRealm」レルムの使い方を詳しく見ていきます。
+			</p>
+
+			<h2>JDBCRealmレルム</h2>
+
+			<p>
+			「JDBCRealm」レルムはユーザー情報をデータベースで管理する方法で現実的にはこの方法がいいのではと思います。
+			</p>
+
+			<p>
+			設定できる属性は次の通りです。
+			</p>
+
+<table class="pro">
+<tr><th>属性</th><th>内容</th></tr>
+<tr><td>className</td><td>Javaクラス名を指定します。「org.apache.catalina.realm.JDBCRealm」を指定します。</td></tr>
+<tr><td>driverName</td><td>使用するJDBCドライバのJavaクラス名を指定します。MySQLの場合は「com.mysql.jdbc.Driver」を指定します。</td></tr>
+<tr><td>connectionURL</td><td>データベースのURLを指定します。</td></tr>
+<tr><td>connectionName</td><td>データベース接続用のユーザー名を指定します。</td></tr>
+<tr><td>connectionPassword</td><td>データベース接続用のパスワードを指定します。</td></tr>
+<tr><td>userTable</td><td>ユーザー名とパスワードが含まれるテーブル名を指定します。</td></tr>
+<tr><td>userNameCol</td><td>ユーザー名が含まれるカラム名を指定します。</td></tr>
+<tr><td>userCredCol</td><td>パスワードが含まれるカラム名を指定します。</td></tr>
+<tr><td>userRoleTable</td><td>ロール名とユーザー名が含まれるテーブル名を指定します。</td></tr>
+<tr><td>roleNameCol</td><td>ロール名が含まれるカラム名を指定します。</td></tr>
+<tr><td>digest</td><td>ダイジェストアルゴリズム。SHA、MD2、MD5を指定する。省略可能でデフォルトはcleartext。</td></tr>
+</table>
+
+			<p>
+			「className」以外はデータベースに関する設定となります。
+			</p>
+
+			<h3>利用するデータベースの設定</h3>
+
+			<p>
+			「driverName」には使用するJDBCドライバを指定します。デフォルトで「org.gjt.mm.mysql.Driver」が記述されていますが、新しいドライバーは「com.mysql.jdbc.Driver」ですので変更して下さい。
+			</p>
+
+			<p>
+			「connectionURL」には、サーブレットで「getConnection」メソッドを使う場合のURLと同じ形式で記述します。(詳しくは『<a href="../database/index3.html" tppabs="https://www.javadrive.jp/servlet/database/index3.html">データベースへの接続と切断</a>』を参照して下さい)。
+			</p>
+
+			<p>
+			MySQLの場合次のような書式となります。
+			</p>
+
+<pre class="fixcomment">
+jdbc:mysql://(サーバ名)/(データベース名)
+</pre>
+
+			<p>
+			ローカルホストにある「auth」データベースを使う場合には次のようになります。
+			</p>
+
+<pre class="fixcomment">
+jdbc:mysql://localhost/auth
+</pre>
+
+			<p>
+			データベース内には2つのテーブルを用意します。ユーザー名とパスワードが含まれるユーザーテーブル、そしてユーザー名とロール名が含まれるロールテーブルです。それぞれデータ型は「varchar型」でいいと思います。文字数は適当に設定して下さい。
+			</p>
+
+			<p>
+			例として次のようにMySQLでデータベースとテーブルを作成しました。
+			</p>
+
+			<p>
+			<img src="img/p11.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p11.png" alt="BASIC認証" width="513" height="314">
+			</p>
+
+			<p>
+			またデータベースへのアクセスのためにユーザーを作成しました。
+			</p>
+
+			<p>
+			<img src="img/p12.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p12.png" alt="BASIC認証" width="516" height="198">
+			</p>
+
+			<p>
+			以上のデータベースを使う場合、次のようになります。
+			</p>
+
+<pre class="fixcode">
+&lt;Realm  className="org.apache.catalina.realm.JDBCRealm"
+       driverName="com.mysql.jdbc.Driver"
+    connectionURL="jdbc:mysql://localhost/auth"
+   connectionName="authtest" connectionPassword="authtest"
+        userTable="user_table" userNameCol="user" userCredCol="pass"
+    userRoleTable="role_table" roleNameCol="role" /&gt;
+</pre>
+
+
+			<h3>ユーザーに複数のロールを設定する場合</h3>
+
+			<p>
+			「tomcat-users.xml」ファイルを使った場合には、ロールの指定にカンマ(,)で区切って複数のロールを記述していましたが、データベースの場合は1つのレコードにつき1つのロールしか設定できません。
+			</p>
+
+			<p>
+			その為、1人のユーザーに複数のロールを設定する場合は、ロールテーブルで複数のレコードを記述して下さい。
+			</p>
+
+			<h2>実際の設定例</h2>
+
+			<p>
+			では実際に試してみます。server.xmlのレルムの設定は先ほどのように変更しておいて下さい。
+			</p>
+
+			<p>
+			まずMySQLにユーザーを登録しておきます。今回は「itou」と「ueda」の二人のユーザーを追加しました。パスワードはユーザー名と同じです。そして「sales」ロールに所属するユーザーとして「itou」を、そして「staff」ロールに所属するユーザーとして「ueda」を追加します。
+			</p>
+
+			<p>
+			<img src="img/p13.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p13.png" alt="BASIC認証" width="516" height="250">
+			</p>
+
+			<p>
+			次にweb.xmlファイルを次の条件で作成します。
+			</p>
+
+<pre class="fixcomment">
+リソース名：User Basic Auth
+対象サーブレット：このアプリケーションに含まれる全てのサーブレット
+対象のHTTPメソッド：全て
+許可するロール名：sales
+認証方式：BASIC認証
+レルム名：User Basic Auth
+</pre>
+
+			<p>
+			作成したweb.xmlファイルは次の通りです。(前のページのサンプルと変更ありません)。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest1&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest1&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest1&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AuthTest2&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;AuthTest2&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;AuthTest2&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/AuthTest2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;security-constraint&gt;
+    &lt;web-resource-collection&gt;
+      &lt;web-resource-name&gt;User Basic Auth&lt;/web-resource-name&gt;
+      &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/web-resource-collection&gt;
+    &lt;auth-constraint&gt;
+      &lt;role-name&gt;sales&lt;/role-name&gt;
+    &lt;/auth-constraint&gt;
+  &lt;/security-constraint&gt;
+
+  &lt;login-config&gt;
+    &lt;auth-method&gt;BASIC&lt;/auth-method&gt;
+    &lt;realm-name&gt;User Basic Auth&lt;/realm-name&gt;
+  &lt;/login-config&gt;
+
+  &lt;security-role&gt;
+    &lt;role-name&gt;sales&lt;/role-name&gt;
+  &lt;/security-role&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			それでは一度サーブレットを再起動してから、ブラウザで「http://localhost:8080/auth/AuthTest1」へアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p14.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p14.png" alt="BASIC認証" width="500" height="420">
+			</p>
+
+			<p>
+			上記のようにユーザー名とパスワードを入力するダイアログが表示されます。先ほど登録したユーザー名「itou」パスワード「itou」を入力します。
+			</p>
+
+			<p>
+			<img src="img/p15.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p15.png" alt="BASIC認証" width="501" height="420">
+			</p>
+
+			<p>
+			「itou」はユーザー認証が通り、所属するロールがアクセス許可に設定してるため、ページを見ることが出来ます。
+			</p>
+
+			<p>
+			<img src="img/p16.png" tppabs="https://www.javadrive.jp/servlet/auth/img/p16.png" alt="BASIC認証" width="500" height="364">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

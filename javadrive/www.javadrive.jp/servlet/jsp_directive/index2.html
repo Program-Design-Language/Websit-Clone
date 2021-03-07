@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pageディレクティブ - ディレクティブ - JSP入門</title>
+<meta name="keywords" content="page,ディレクティブ,入門,JSP" />
+<meta name="description" content="pageディレクティブ" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/jsp_directive/" itemprop="url"><span itemprop="title">ディレクティブ</span></a></li>
+		</ul>
+</div>
+
+			<h1>pageディレクティブ</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			pageディレクティブについて確認していきます。構文は次の通りです。
+			</p>
+
+<pre class="fixcomment">
+&lt;%@ page
+   [ language="java" ]
+   [ extends="package.class" ]
+   [ import="{package.class | package.*}, ..." ]
+   [ session="true|false" ]
+   [ buffer="none|8kb|sizekb" ]
+   [ autoFlush="true|false" ]
+   [ isThreadSafe="true|false" ]
+   [ info="text" ]
+   [ errorPage="relativeURL" ]
+   [ contentType="mimeType [ ; charset=characterSet ]" |
+      "text/html ; charset=ISO-8859-1" ]
+   [ isErrorPage="true|false" ]
+   [ pageEncoding="characterSet | ISO-8859-1" ]
+   [ isELIgnored="true|false"]
+%&gt;
+</pre>
+
+			<p>
+			この中で設定したい項目だけを取り出してpageディレクティブに設定します。例えば次の通りです。
+			</p>
+
+<pre class="fixcomment">
+&lt;%@ page buffer="5kb" autoFlush="false" %&gt;
+</pre>
+
+			<p>
+			特に頻繁に使われる項目は「contentType」と「import」になるかと思います。詳しくは次の項目の詳細を見てください。
+			</p>
+
+			<h2>項目の詳細</h2>
+
+			<p>
+			それでは各項目について確認していきます。
+			</p>
+
+			<h3>language</h3>
+
+			<p>
+			JSPページで使用する言語を指定します。ただ現状ではJavaしか指定できないため設定する必要はありません。デフォルト値として「java」が設定されています。
+			</p>
+
+			<h3>extends</h3>
+
+			<p>
+			JSPページを他のクラスのサブクラスにする場合に、スーパークラスを指定します。この項目の詳細は不明です。
+			</p>
+
+			<h3>import</h3>
+
+			<p>
+			JSPページでクラスをimportする場合に使います。Javaにおける「import」文と同じ役割となります。なお、JSPではデフォルトで次のクラスをimportしているため改めてimportしなくても利用することが出来ます。
+			</p>
+
+<pre class="fixcomment">
+java.lang.* 
+javax.servlet.* 
+javax.servlet.jsp.* 
+javax.servlet.http.*
+</pre>
+
+			<p>
+			importの例ですが、今までのサンプルで次のような記述を行っていました。
+			</p>
+
+<pre class="fixcode">
+&lt;%@ page contentType="text/html;charset=Shift_JIS" %&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Hello World!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello World!&lt;/h1&gt;
+
+&lt;%
+out.println(new java.util.Date());
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			この中で日付を表示する部分で「new java.util.Date()」と言う記述があります。このように記述する代わりにimportを使って先に「java.util.Data」をimportしておき、JSPページ内では「new Data()」とだけ記述することも出来ます。
+			</p>
+
+<pre class="fixcode">
+&lt;%@ page contentType="text/html;charset=Shift_JIS" <span class="red">import="java.util.Date"</span> %&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Hello World!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello World!&lt;/h1&gt;
+
+&lt;%
+out.println(<span class="red">new Date()</span>);
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			利用方法についてはJavaにおける「import」文と同等です。
+			</p>
+
+			<p>
+			なお、2つ以上のクラスをimportする場合には、カンマで区切って記述するか、ディレクティブ自体を複数記述して下さい。
+			</p>
+
+<pre class="fixcode">
+&lt;%@ page import="java.util.*,java.io.*" %&gt;
+</pre>
+
+			<p>
+			又は
+			</p>
+
+<pre class="fixcode">
+&lt;%@ page import="java.util.*" %&gt;
+&lt;%@ page import="java.io.*" %&gt;
+</pre>
+
+			<h3>session</h3>
+
+			<p>
+			セッションを有効にするかどうかを指定します。「true」又は「false」を記述します。デフォルトは「true」です。JSPページにおけるセッション管理は別のページで詳しく見ていきます。
+			</p>
+
+			<h3>buffer</h3>
+
+			<p>
+			JSPページから出力されるデータをバッファしてからクライアントに返すかどうかを指定します。「none」を指定するとバッファされずにクライアントに出力データが送られます。「8kb」のようにキロバイト単位で容量を指定した場合は、出力データがバッファがいっぱいになるまで待ってからクライアントにまとめて送信されます(autoFlushも参照して下さい)。その為、効率よく送信が行えることが出来ます。デフォルトは「8kb」です。
+			</p>
+
+			<h3>autoFlush</h3>
+
+			<p>
+			バッファを使用する場合にバッファを超える出力データが合った場合の処理について指定します。「true」又は「false」を記述しますが、「true」の場合はバッファがいっぱいになった場合には自動的にクライアントにデータを送信します。「false」の場合はバッファがいっぱいになると例外が発生します。
+			</p>
+
+			<p>
+			「false」に設定する使い道が分かりませんが、「buffer」に「none」を指定した場合以外は「autoFlash」に「false」は設定しないほうがいいかと思います。
+			</p>
+
+			<h3>isThreadSafe</h3>
+
+			<p>
+			スレッドセーフで実行するかどうかを指定します。「true」又は「false」を記述しますが、「true」の場合は複数のリクエストが合った場合に同時に実行されることを許可します。「false」に設定した場合はリクエストの到着順に1つずつ処理されて行きます。デフォルトは「true」です。
+			</p>
+
+			<h3>info</h3>
+
+			<p>
+			JSPページに関する任意の情報を記述します。製作者や作成年月日など、どんなデータでも構いません。
+			</p>
+
+			<h3>errorPage</h3>
+
+			<p>
+			エラーが発生した場合に表示するページへのパスを記述します。指定しない場合はデフォルトのエラーページが表示されます。
+			</p>
+
+			<h3>isErrorPage</h3>
+
+			<p>
+			JSPページがエラー表示用のページかどうかを指定します。「true」又は「false」を記述しますがデフォルトは「false」です。「errorPage」でエラー表示先を指定した場合には「errorPage」を「true」に設定する必要があります。また「true」の場合は「exception」オブジェクトが利用可能になりますので、このオブジェクトを使ってエラーに関する情報を取得することが出来ます。
+			</p>
+
+			<h3>contentType</h3>
+
+			<p>
+			JSPページのデータ型と必要であれば文字コードをMIMEタイプを使って記述します。例えばJPEG画像を表すページであれば「image/jpeg」を、テキストファイルであれば「text/plain」を記述します。デフォルトで設定されているのはHTMLファイルで「text/html;charset=ISO-8859-1」となっています。このように文字コードを指定する場合はセミコロン(;)の後に「charset=文字コード」の書式で続けて記述して下さい。
+			</p>
+
+			<p>
+			文字コードはデフォルトで「ISO-8859-1」(通称Latin-1)が指定されています。日本語を使う場合にはデフォルトのままでは文字化けしますので、必ず日本語の文字コードを指定して下さい。Windwos環境であれば「text/html;charset=Shift_Jis」又は「text/html;charset=Windows-31J」などでいいかと思います。
+			</p>
+
+			<p>
+			今までのサンプルでも次のように記述していました。
+			</p>
+
+<pre class="fixcode">
+&lt;%@ page contentType="text/html;charset=Shift_JIS" %&gt;
+
+&lt;html&gt;
+...
+</pre>
+
+			<h3>pageEncoding</h3>
+
+			<p>
+			JSPページの文字コードを指定します。デフォルトの値は「contentType」で指定した文字コードとなりますのであえて指定は不要です。デフォルトは「ISO-8859-1」になります。
+			</p>
+
+			<h3>isElIgnored</h3>
+
+			<p>
+			EL式を適用するかどうかを指定します。trueの場合は適用しません。falseを設定すると適用します。デフォルトは「false」です。EL式については別のページで詳しく見ていきます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

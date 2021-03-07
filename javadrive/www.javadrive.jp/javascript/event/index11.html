@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | イベントの伝搬をキャンセルする(stopPropagation,stopImmediatePropagation)</title>
+<meta name="description" content="HTML ページ内でイベントが発生した場合、親要素へとイベントが伝搬していきますが、途中でこれ以上の伝搬を行わないようにイベントの伝搬を停止することができます。また同じターゲットの同じイベントに対して複数のイベントリスナーを登録できますが、途中で他のまだ呼び出されていないイベントリスナーを呼び出さないように停止することもできます。ここではイベントの伝搬をキャンセルする方法について解説します。">
+
+<meta property="og:title" content="イベントの伝搬をキャンセルする(stopPropagation,stopImmediatePropagation)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/event/index11.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/event/img/p11-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="HTML ページ内でイベントが発生した場合、親要素へとイベントが伝搬していきますが、途中でこれ以上の伝搬を行わないようにイベントの伝搬を停止することができます。また同じターゲットの同じイベントに対して複数のイベントリスナーを登録できますが、途中で他のまだ呼び出されていないイベントリスナーを呼び出さないように停止することもできます。ここではイベントの伝搬をキャンセルする方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "イベント処理",
+    "item": "https://www.javadrive.jp/javascript/event/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/event/">イベント処理</a></li>
+				</ul>
+			</div>
+
+			<h1>イベントの伝搬をキャンセルする</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			HTML ページ内でイベントが発生した場合、親要素へとイベントが伝搬していきますが、途中でこれ以上の伝搬を行わないようにイベントの伝搬を停止することができます。また同じターゲットの同じイベントに対して複数のイベントリスナーを登録できますが、途中で他のまだ呼び出されていないイベントリスナーを呼び出さないように停止することもできます。ここではイベントの伝搬をキャンセルする方法について解説します。
+			</p>
+
+			<p>
+			※ イベントがどのように他の要素に伝搬していくのかについては「<a href="index10.html" tppabs="https://www.javadrive.jp/javascript/event/index10.html">イベントの伝搬(キャプチャリングとバブリング)</a>」をご参照ください。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">イベントの伝搬を止める</a></li>
+			<li><a href="#section2">同じイベントに対して登録された他のイベントリスナーの呼び出しを止める</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">イベントの伝搬を止める</a></h2>
+
+			<p>
+			Event オブジェクトの stopPropagation メソッドを使用すると、イベントの伝搬を止めることができます。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+event.stopPropagation()
+</pre>
+</div>
+
+			<p>
+			例えばイベントが発生し呼び出されたイベントリスナーの中でこのメソッドが実行されると、これ以降のイベントの伝搬(キャプチャリングフェーズ、バブリングフェーズのどちらの場合でも)が行われなくなります。
+			</p>
+
+			<p>
+			<img src="img/p11-1.png" tppabs="https://www.javadrive.jp/javascript/event/img/p11-1.png" alt="イベントの伝搬を止める(1)" width="728" height="256">
+			</p>
+
+			<p>
+			実際には次のように記述します。イベントが呼び出されるときに引数として渡されてくる Event オブジェクトに対して stopPropagation メソッドを実行します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+let target = document.getElementById('xxx');
+
+target.addEventListener('click', function(event){
+    console.log('Hello');
+    event.stopPropagation();
+});
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;style type="text/css"&gt;
+div {
+  background-color:#E5E5E5;
+  border:5px solid #8f8f8f;
+}
+#outer{
+  width:300px;
+}
+#inner{
+  margin:20px;
+  padding:20px;
+  text-align:center;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;div id="outer"&gt;
+  &lt;div id="inner"&gt;
+    &lt;input type="button" value="buttonA" id="btnA"&gt;
+    &lt;input type="button" value="buttonB" id="btnB"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    let outer = document.getElementById('outer');
+    let inner = document.getElementById('inner');
+    let btna = document.getElementById('btnA');
+    let btnb = document.getElementById('btnB');
+
+    outer.addEventListener('click', function(){
+        console.log('outer');
+    });
+
+    inner.addEventListener('click', function(event){
+        console.log('inner');
+        event.stopPropagation();
+    });
+
+    btna.addEventListener('click', function(){
+        console.log('buttonA');
+    });
+
+    btnb.addEventListener('click', function(event){
+        console.log('buttonB');
+        event.stopPropagation();
+    });
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			外側の div 要素の中に内側の div 要素があり、さらに内側に input 要素が 2 つあります。それぞれの要素には click イベントに対するイベントリスナーが登録されています。今回は内側の div 要素のイベントリスナーと、右側の input 要素のイベントリスナーでそれぞれ stopPropagation メソッドを実行しています。
+			</p>
+
+			<p>
+			最初に左側の input 要素をクリックしてみます。 click イベントは親要素へと伝搬されていきますが、内側の div 要素で呼び出されたイベントリスナー内で stopPropagation メソッドを実行しているので click イベントの伝搬は止まりそれ以降は行われません。
+			</p>
+
+			<p>
+			<img src="img/p11-2.png" tppabs="https://www.javadrive.jp/javascript/event/img/p11-2.png" alt="イベントの伝搬を止める(2)" width="728" height="480" class="waku">
+			</p>
+
+			<p>
+			次に右側の input 要素をクリックしてみます。右側の input 要素で呼び出されたイベントリスナー内で stopPropagation メソッドを実行しているので click イベントの伝搬はそれ以降は行われませせん。
+			</p>
+
+			<p>
+			<img src="img/p11-3.png" tppabs="https://www.javadrive.jp/javascript/event/img/p11-3.png" alt="イベントの伝搬を止める(3)" width="728" height="460" class="waku">
+			</p>
+
+<h2><a id="section2">同じイベントに対して登録された他のイベントリスナーの呼び出しを止める</a></h2>
+
+			<p>
+			Event オブジェクトの stopImmediatePropagation メソッドを使用すると、同じイベントに対して登録されたまだ呼び出されていない他のイベントリスナーの呼び出しを止めることができます。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+event.stopImmediatePropagation()
+</pre>
+</div>
+
+			<p>
+			addEventListener メソッドを使ってイベントリスナーを登録する場合、同じターゲットの同じイベントに対して複数のイベントリスナーを登録することができます。イベントが発生すると登録された順番にイベントリスナーが呼び出されます。
+			</p>
+
+			<p>
+			イベントが発生し呼び出されたイベントリスナーの中で stopImmediatePropagation メソッドを実行すると、同じイベントに対して登録されていてまだ呼び出されていないイベントリスナーが呼び出されなくなります。また stopPropagation メソッドを実行したときと同じように親要素へのイベント伝搬も行われなくなります。
+			</p>
+
+			<p>
+			実際には次のように記述します。イベントが呼び出されるときに引数として渡されてくる Event オブジェクトに対して stopImmediatePropagation メソッドを実行します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+let target = document.getElementById('xxx');
+
+target.addEventListener('click', function(event){
+    console.log('Hello');
+    event.stopImmediatePropagation();
+});
+
+target.addEventListener('click', function(event){
+    console.log('Bye');
+});
+</pre>
+</div>
+
+			<div class="samplecode">サンプルコード</div>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;サンプル&lt;/title&gt;
+&lt;style type="text/css"&gt;
+div {
+  background-color:#E5E5E5;
+  border:5px solid #8f8f8f;
+}
+#outer{
+  width:300px;
+}
+#inner{
+  margin:20px;
+  padding:20px;
+  text-align:center;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;ボタンをクリックしてください。&lt;/p&gt;
+
+&lt;div id="outer"&gt;
+  &lt;div id="inner"&gt;
+    &lt;input type="button" value="buttonA" id="btnA"&gt;
+    &lt;input type="button" value="buttonB" id="btnB"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    let outer = document.getElementById('outer');
+    let btna = document.getElementById('btnA');
+    let btnb = document.getElementById('btnB');
+
+    outer.addEventListener('click', function(){
+        console.log('outer');
+    });
+
+    btna.addEventListener('click', function(event){
+        console.log('ActionA1');
+        event.stopPropagation();
+    });
+
+    btna.addEventListener('click', function(){
+        console.log('ActionA2');
+    });
+
+    btnb.addEventListener('click', function(event){
+        console.log('ActionB1');
+        event.stopImmediatePropagation();
+    });
+
+    btnb.addEventListener('click', function(){
+        console.log('ActionB2');
+    });
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+			<p>
+			外側の div 要素の中に input 要素が 2 つあります。 input 要素にはそれぞれ 2 つのイベントリスナーが登録されており、一つ目の input 要素の最初のイベントリスナーの中では stopPropagation メソッドを実行しています。そして二つ目の input 要素の最初のイベントリスナーの中では stopImmediatePropagation メソッドを呼びだしています。
+			</p>
+
+			<p>
+			最初に左側の input 要素をクリックしてみます。呼び出された最初のイベントリスナーの中で stopPropagation メソッドを実行しているので、親要素へのイベントは伝達しません。ただ同じ要素の同じイベントに対するイベントリスナーは実行されるため、二つ目のイベントリスナーも呼び出されています。
+			</p>
+
+			<p>
+			<img src="img/p11-4.png" tppabs="https://www.javadrive.jp/javascript/event/img/p11-4.png" alt="同じイベントに対して登録された他のイベントリスナーの呼び出しを止める(1)" width="728" height="480" class="waku">
+			</p>
+
+			<p>
+			次に左側の input 要素をクリックしてみます。呼び出された最初のイベントリスナーの中で stopImmediatePropagation メソッドを実行しているので親要素へのイベント伝達も停止し、同じ要素の同じイベントに対するイベントリスナーの中で、まだ実行されているイベントリスナーも呼び出されなくなります。
+			</p>
+
+			<p>
+			<img src="img/p11-5.png" tppabs="https://www.javadrive.jp/javascript/event/img/p11-5.png" alt="同じイベントに対して登録された他のイベントリスナーの呼び出しを止める(2)" width="728" height="460" class="waku">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			イベントの伝搬をキャンセルする方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

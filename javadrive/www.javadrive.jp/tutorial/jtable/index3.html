@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>各列の幅の調整方法の指定 - JTableクラス - Swing</title>
+<meta name="keywords" content="setAutoResizeMode,JTable,Swing,Java" />
+<meta name="description" content="各列の幅の調整方法の指定" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jtable/" itemprop="url"><span itemprop="title">JTableクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>各列の幅の調整方法の指定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ここでは、初期表示時及びある列の幅が変更された時に、他の列の幅にどのように影響が出るかを見ていきます。まずはデフォルトの動作から見ていきます。前のページで使った下記のサンプルを使います。
+			</p>
+
+<pre class="fixcode">
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+public class SwingTest extends JFrame{
+
+  private String[][] tabledata = {
+    {"日本", "3勝", "0敗", "1分"},
+    {"クロアチア", "3勝", "1敗", "0分"},
+    {"ブラジル", "1勝", "2敗", "1分"},
+    {"オーストラリア", "2勝", "2敗", "0分"}};
+
+  private String[] columnNames = {"COUNTRY", "WIN", "LOST", "EVEN"};
+
+  public static void main(String[] args){
+    SwingTest test = new SwingTest("SwingTest");
+
+    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    test.setVisible(true);
+  }
+
+  SwingTest(String title){
+    setTitle(title);
+    setBounds( 10, 10, 300, 200);
+
+    JTable table = new JTable(tabledata, columnNames);
+
+    JScrollPane sp = new JScrollPane(table);
+    sp.setPreferredSize(new Dimension(250, 70));
+
+    JPanel p = new JPanel();
+    p.add(sp);
+
+    getContentPane().add(p, BorderLayout.CENTER);
+  }
+}
+</pre>
+
+			<p>
+			上記を実行すると下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p4.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p4.png" width="310" height="209" alt="JTable作成時のデフォルトの動作サンプル">
+			</p>
+
+			<p>
+			見ていただくと分かる通り特に何も指定しない場合には各列の幅は均等になっています。(列幅の指定方法は後のページで詳しく見ていきます)。
+			</p>
+
+			<p>
+			ここで2列目の大きさをマウスを使って大きくしていみます。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p5.png" width="308" height="209" alt="JTable作成時のデフォルトの状態で列幅を変化させて場合のサンプル">
+			</p>
+
+			<p>
+			2列目の大きさを変化させると、1列目の幅は変化がありませんが、3列目と4列目の幅を調整して全体がはみ出さないように自動的に調整されます。これがデフォルトの動作のようです。
+			</p>
+
+			<p>
+			この列幅の調整方法を変更させるには、JTableで用意されている"setAutoResizeMode"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+setAutoResizeMode
+public void setAutoResizeMode(int mode)
+</pre>
+<pre class="mexplain">
+テーブルのサイズ変更時にテーブルの自動サイズ変更モードを設定します。
+
+パラメータ:
+  mode - 次の 5 つの有効値のどれか。
+    AUTO_RESIZE_OFF
+    AUTO_RESIZE_NEXT_COLUMN
+    AUTO_RESIZE_SUBSEQUENT_COLUMNS
+    AUTO_RESIZE_LAST_COLUMN
+    AUTO_RESIZE_ALL_COLUMNS
+</pre>
+
+			<p>
+			それぞれの値の意味は下記のようです。
+			</p>
+
+<pre class="fixcomment">
+AUTO_RESIZE_OFF
+  列の幅を自動調整しない。列の合計が Viewport の幅を超える場合は、水平ス
+  クロールバーを使用してそれらの列に対応する。JTable が JScrollPane に囲
+  まれていない場合、テーブルの一部を不可視のままにすることがある
+</pre>
+
+<pre class="fixcomment">
+AUTO_RESIZE_NEXT_COLUMN
+  サイズが変更された列の直後の列を使う。この場合、隣接するセルの間の「境
+  界」つまりディバイダを単独で調整できる
+</pre>
+
+<pre class="fixcomment">
+AUTO_RESIZE_SUBSEQUENT_COLUMNS
+  調整中の列の後ろのすべての列を使用して、変更を吸収する。これはデフォル
+  トの動作
+</pre>
+
+<pre class="fixcomment">
+AUTO_RESIZE_LAST_COLUMN
+  最後の列のサイズだけを自動調整する。最終列の境界のために望ましいサイズ
+  の割り当てができない場合は、最終列の幅を適切な限度に設定してそれ以上の
+  調整は行わない
+</pre>
+
+<pre class="fixcomment">
+AUTO_RESIZE_ALL_COLUMNS
+  調整中の列を含めた JTable 内のすべての列にデルタを分散させる
+</pre>
+
+			<p>
+			デフォルトの値は"AUTO_RESIZE_SUBSEQUENT_COLUMNS"のようです。列幅が変更されようとしている該当の列よりも後にある全ての列で調整するとなっていますので、先ほど実際に試した動作と合致しています。
+			</p>
+
+			<p>
+			では他の値を設定した場合も試してみましょう。1つ1つサンプルコードを記載するのは大変なので、最初に記載したサンプルコードを下記のように変更して試しています。
+			</p>
+
+<pre class="fixcode">
+JTable table = new JTable(tabledata, columnNames);
+table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+</pre>
+
+			<p>
+			JTable作成直後に"setAutoResizeMode"メソッドを実行して、列幅の調整方法を変更しています。
+			</p>
+
+			<h3>1.JTable.AUTO_RESIZE_OFFを指定した場合</h3>
+
+			<p>
+			実行直後は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p6.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p6.png" width="307" height="207" alt="JTable.AUTO_RESIZE_OFF指定時の動作サンプル">
+			</p>
+
+			<p>
+			この場合、横にもスクロールバーが表示されています。各列の幅は同じ大きさになっています。画面内に収める必要が無いため列の幅は"推奨幅"になっていると思われますが、ここも他のページで詳しく見ていきます。
+			</p>
+
+			<p>
+			上記の状態から2列目の幅を変化(小さくしてみました)させると下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p7.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p7.png" width="309" height="208" alt="JTable.AUTO_RESIZE_OFF指定時に列幅を変化させた場合">
+			</p>
+
+			<p>
+			この場合は変化させて2列目が変化するだけで、他の列には影響が出ないようです。
+			</p>
+
+			<h3>2.AUTO_RESIZE_NEXT_COLUMNを指定した場合</h3>
+
+			<p>
+			実行直後は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p8.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p8.png" width="307" height="209" alt="JTable.AUTO_RESIZE_NEXT_COLUMN指定時の動作サンプル">
+			</p>
+
+			<p>
+			実行直後はデフォルトの場合と同じで、全体がスクロールバーを使わなくても表示されるように調整されています。各列の幅も同じ大きさです。ここから3列目の幅を大きくさせると下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p9.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p9.png" width="307" height="206" alt="JTable.AUTO_RESIZE_NEXT_COLUMN指定時に列幅を変化させた場合">
+			</p>
+
+			<p>
+			この場合は、変更させている列の直後の列幅で調整が行われるようです。
+			</p>
+
+			<h3>3.AUTO_RESIZE_LAST_COLUMNを指定した場合</h3>
+
+			<p>
+			実行直後は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p10.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p10.png" width="308" height="208" alt="JTable.AUTO_RESIZE_LAST_COLUMN指定時の動作サンプル">
+			</p>
+
+			<p>
+			実行直後はデフォルトの場合と同じです。ここから3列目の幅を大きくさせると下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p11.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p11.png" width="307" height="208" alt="JTable.AUTO_RESIZE_LAST_COLUMN指定時に列幅を変化させた場合">
+			</p>
+
+			<p>
+			この場合は、最後の列の列幅で調整が行われるようです。
+			</p>
+
+			<h3>4.AUTO_RESIZE_ALL_COLUMNSを指定した場合</h3>
+
+			<p>
+			実行直後は下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p12.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p12.png" width="308" height="207" alt="JTable.AUTO_RESIZE_ALL_COLUMNS指定時の動作サンプル">
+			</p>
+
+			<p>
+			実行直後はデフォルトの場合と同じです。ここから3列目の幅を大きくさせると下記のようになります。
+			</p>
+
+			<p>
+			<img src="img/p13.png" tppabs="https://www.javadrive.jp/tutorial/jtable/img/p13.png" width="310" height="207" alt="JTable.AUTO_RESIZE_ALL_COLUMNS指定時に列幅を変化させた場合">
+			</p>
+
+			<p>
+			この場合は、全ての列の列幅で調整が行われるようです。変更させている列そのものも、マウスで動かした大きさよりも少しずれて大きさが変更されているので、変更している列自体でも調整が行われているのがわかります。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

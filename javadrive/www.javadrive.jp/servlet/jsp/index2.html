@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSP実行までの流れ - JSPの基礎 - JSP入門</title>
+<meta name="keywords" content="流れ,基礎,入門,JSP" />
+<meta name="description" content="JSP実行までの流れ" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/jsp/" itemprop="url"><span itemprop="title">JSPの基礎</span></a></li>
+		</ul>
+</div>
+
+			<h1>JSP実行までの流れ</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			JSPに関して文法などを詳しく見ていく前に、JSPで作成したアプリケーションを実行する手順を確認しておきます。
+			</p>
+
+			<p>
+			※JSPページはTomcat上で動作させていきます。Tomcatがインストールされていない場合には『<a href="../install/index.htm" tppabs="https://www.javadrive.jp/servlet/install/index.html">Tomcatのインストールと環境設定</a>』を参照して先にインストールをしておいて下さい。
+			</p>
+
+			<h2>コンテキストファイルの作成</h2>
+
+			<p>
+			サーブレットやJSPを使ったプログラムではアプリケーション単位で管理します。つまり単独のファイルをバラバラに配置して実行するというよりも、目的毎にアプリケーションを作成し、その中にサーブレットやJSPページを配置していきます。例えば「掲示板」や「ショッピングモール」と言った目的別にアプリケーションを作成して、その中に利用するJSPページなどを配置するわけです。
+			</p>
+
+			<p>
+			そこでJSPページを含むアプリケーションを配置するディレクトリを用意します。今後JSPのサンプルは「D:&yen;jsp-sample&yen;」内に配置することとし、今回作成するアプリケーションは「D:&yen;jsp-sample&yen;hello&yen;」ディレクトリ内に配置することにします。
+			</p>
+
+<pre class="fixcomment">
+[D] -- jsp-sample
+        |
+        +-- hello (アプリケーションのルートディレクトリ)
+        |    |
+             +-- HTMLページ
+             |
+             +-- JSPページ
+             |
+</pre>
+
+
+			<p>
+			次にコンテキストの設定を行います。コンテキストファイルとはアプリケーションの配置場所や呼び出し方などの情報をTomcatに設定するものです。
+			</p>
+
+			<p>
+			今回のアプリケーションはURLパスとして「hellojsp」を付けて「http://localhost:8080/hellojsp/xxxx」の形式で呼び出すことにします。「xxxx」の箇所にHTMLページやJSPページなどを指定することになります。
+			</p>
+
+			<p>
+			コンテキストファイルは以下のようになります。
+			</p>
+
+			<p>
+			<a href="hellojsp.xml.htm" tppabs="https://www.javadrive.jp/servlet/jsp/hellojsp.xml">hellojsp.xml</a>
+			</p>
+
+
+<pre class="fixcomment">
+&lt;Context path="/hellojsp"
+docBase="d:/jsp-sample/hello"/&gt;
+</pre>
+
+			<p>
+			「path」には呼び出す場合のURLパスを指定し、「docBase」には実際に呼び出されるファイルが置いてあるディレクトリを指定します。
+			</p>
+
+			<p>
+			作成したコンテキストファイルは「(Tomcatをインストールしたディレクトリ)&yen;conf&yen;Catalina&yen;localhost&yen;」に置いておきます。
+			</p>
+
+			<p>
+			※コンテキストファイルについては『<a href="../context/index2.html" tppabs="https://www.javadrive.jp/servlet/context/index2.html">コンテキストの設定</a>』を参照して下さい。
+			</p>
+
+			<h2>JSPページの作成</h2>
+
+			<p>
+			次にJSPページの作成です。
+			</p>
+
+			<p>
+			JSPページはHTMLページなどと同じくテキストファイルに記述していって下さい。またJSPページの拡張子は「.jsp」となります。
+			</p>
+
+			<p>
+			今回は次のようなファイルにします。
+			</p>
+
+			<p>
+			<a href="hello.jsp.htm" tppabs="https://www.javadrive.jp/servlet/jsp/hello.jsp">hello.jsp</a>
+			</p>
+
+<pre class="fixcode">
+&lt;%@ page contentType="text/html;charset=Shift_JIS" %&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Hello World!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello World!&lt;/h1&gt;
+
+&lt;%
+out.println(new java.util.Date());
+%&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			JSPページはコンパイルなどは必要無いため、作成したファイルをそのまま「D:&yen;jsp-sample&yen;hello&yen;」ディレクトリ内に配置しておきます。
+			</p>
+
+			<p>
+			<img src="img/p1.png" tppabs="https://www.javadrive.jp/servlet/jsp/img/p1.png" alt="JSPの実行" width="523" height="279">
+			</p>
+
+			<p>
+			これで準備は完了です。
+			</p>
+
+			<h2>アプリケーションの実行</h2>
+
+			<p>
+			それではブラウザで下記のURLを開いて下さい。
+			</p>
+
+<pre class="fixcomment">
+http://localhost:8080/hellojsp/hello.jsp
+</pre>
+
+			<p>
+			次のように表示されれば成功です。
+			</p>
+
+			<p>
+			<img src="img/p2.png" tppabs="https://www.javadrive.jp/servlet/jsp/img/p2.png" alt="JSPの実行" width="478" height="298">
+			</p>
+
+			<p>
+			JSPページの場合には事前にコンパイルも必要ありませんし「web.xml」の記述も必須ではありません。HTMLページと同じように扱うことが出来ます。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

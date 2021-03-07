@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>パラメータ名の取得(getParameterNames) - リクエスト情報の取得 - サーブレット入門</title>
+<meta name="keywords" content="getParameterNames,HttpServletRequest,サーブレット" />
+<meta name="description" content="パラメータ名の取得" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/request/" itemprop="url"><span itemprop="title">リクエスト情報の取得</span></a></li>
+		</ul>
+</div>
+
+			<h1>パラメータ名の取得(getParameterNames)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			リクエストに含まれるパラメータ名を取得する必要はあまりありませんが、デバックなどの目的で送付されてきたパラメータを取得したい場合には「HttpServletRequest」インターフェースの親インターフェースの「ServletRequest」インターフェースで定義されている「getParameterNames」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+getParameterNames
+public java.util.Enumeration getParameterNames()
+</pre>
+<pre class="mexplain">
+Returns an Enumeration of String objects containing the names of the
+parameters contained in this request. If the request has no
+parameters, the method returns an empty Enumeration. 
+
+Returns:
+  an Enumeration of String objects, each String containing the name
+    of a request parameter; or an empty Enumeration if the request
+    has no parameters
+</pre>
+
+			<p>
+			例えば次のように使います。
+			</p>
+
+<pre class="fixcode">
+public class Sample extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    Enumeration names = request.getParameterNames();
+    while (names.hasMoreElements()){
+      String name = (String)names.nextElement();
+    }
+  }
+}
+</pre>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では簡単なサンプルで試して見ます。
+			</p>
+
+			<p>
+			フォームが含まれるHTMLページは、送信方法を「POST」にしたものを使います。
+			</p>
+
+			<p>
+			<a href="formsample4.html" tppabs="https://www.javadrive.jp/servlet/request/formsample4.html">formsample4.html</a>
+			</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" Content="text/html;charset=Shift_JIS"&gt;
+&lt;title&gt;フォームサンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;p&gt;アンケート調査です&lt;/p&gt;
+
+&lt;form action="/sample/RequestSample4" method="post"&gt;
+
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;氏名&lt;/td&gt;
+&lt;td&gt;&lt;input type="text" size="20" value="" name="name"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;年齢&lt;/td&gt;
+&lt;td&gt;&lt;input type="text" size="5" value="" name="old"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;好きな果物&lt;/td&gt;
+&lt;td&gt;
+&lt;select name="food" size="3" multiple&gt;
+&lt;option value="りんご"&gt;りんご&lt;/option&gt;
+&lt;option value="メロン"&gt;メロン&lt;/option&gt;
+&lt;option value="ぶどう"&gt;ぶどう&lt;/option&gt;
+&lt;/select&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;input type="submit" name="button1" value="送信"&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			次にフォームから送られてくるリクエストパラメータを処理するサーブレットを作成します。パラメータ名を全て取得し、パラメータ名に対応する値を取り出して名前と値のペアで画面に表示します。
+			</p>
+
+			<p>
+			<a href="RequestSample4.java.htm" tppabs="https://www.javadrive.jp/servlet/request/RequestSample4.java">RequestSample4.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.Enumeration;
+
+public class RequestSample4 extends HttpServlet {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html;charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    request.setCharacterEncoding("Shift_JIS");
+
+    StringBuffer sb = new StringBuffer();
+
+    sb.append("&lt;html&gt;");
+    sb.append("&lt;head&gt;");
+    sb.append("&lt;title&gt;デバッグ&lt;/title&gt;");
+    sb.append("&lt;/head&gt;");
+    sb.append("&lt;body&gt;");
+
+    sb.append("&lt;p&gt;");
+
+    Enumeration names = request.getParameterNames();
+    while (names.hasMoreElements()){
+      String name = (String)names.nextElement();
+      String vals[] = request.getParameterValues(name);
+      if (vals != null){
+        for (int i = 0 ; i &lt; vals.length ; i++){
+          sb.append(name);
+          sb.append(":");
+          sb.append(vals[i]);
+          sb.append("&lt;br&gt;");
+        }
+      }
+    }
+
+    sb.append("&lt;/p&gt;");
+
+    sb.append("&lt;/body&gt;");
+    sb.append("&lt;/html&gt;");
+
+    out.println(new String(sb));
+
+    out.close();
+  }
+}
+</pre>
+
+			<p>
+			サンプルプログラムをコンパイルして作成した「RequestSample4.class」ファイルを別途作成した「web.xml」ファイルを次のように配置します。
+			</p>
+
+<pre class="fixcomment">
+D:&yen; -- servlet-sample
+        |
+        +-- (formsample4.html)
+        |
+        +-- WEB-INF
+             |
+             +-- (web.xml)
+             |
+             +-- classes
+                  |
+                  +-- (RequestSample4.class)
+</pre>
+
+			<p>
+			web.xmlファイルは次のようになります。
+			</p>
+
+<pre class="fixcode">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;RequestSample4&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;RequestSample4&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;RequestSample4&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/RequestSample4&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+
+			<p>
+			コンテキストファイルを作成し「(Tomcatをインストールしたディレクトリ)&yen;Tomcat 5.5&yen;conf&yen;Catalina&yen;localhost&yen;」ディレクトリに「sample.xml」ファイルとして保存します。内容は以下の通りです。
+			</p>
+
+
+<pre class="fixcomment">
+&lt;Context path="/sample"
+docBase="d:/servlet-sample/sample"&gt;
+&lt;/Context&gt;
+</pre>
+
+			<p>
+			準備は以上です。ではTomcatを再起動してから「http://localhost:8080/sample/formsample4.html」へブラウザでアクセスして下さい。
+			</p>
+
+			<p>
+			<img src="img/p10.png" tppabs="https://www.javadrive.jp/servlet/request/img/p10.png" alt="getParameterNames" width="488" height="352">
+			</p>
+
+			<p>
+			フォームが表示されますので、適当に値を入力してから送信ボタンをクリックして下さい。すると次のようにリクエストパラメータの名前と値を表示します。
+			</p>
+
+			<p>
+			<img src="img/p11.png" tppabs="https://www.javadrive.jp/servlet/request/img/p11.png" alt="getParameterNames" width="488" height="351">
+			</p>
+
+			<p>
+			リクエストパラメータの確認を行いたい場合には利用できると思います。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

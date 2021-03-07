@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ファイルの保存 - Jakarta Commons FileUploadの利用手順</title>
+<meta name="keywords" content="ファイルの保存,利用手順,FileUpload,Jakarta" />
+<meta name="description" content="ファイルの保存" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/fileupload_tutorial/" itemprop="url"><span itemprop="title">Jakarta Commons FileUploadの利用手順</span></a></li>
+		</ul>
+</div>
+
+			<h1>ファイルの保存</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ではいよいよクライアントから送られてきたファイルをサーバ側に保存してみます。前のページで見たとおり送られてきたデータの各パーツはFileItemインターフェースのオブジェクトとして取り出すことができます。そこでまずインターフェースについて見てみましょう。
+			</p>
+
+<pre class="fixcomment">
+org.apache.commons.fileupload 
+Interface FileItem
+
+public interface FileItem extends java.io.Serializable
+</pre>
+
+			<p>
+			では使い方を詳しく見ていきます。
+			</p>
+
+            <h2>アップロードされたファイルかそうではないのかの判別</h2>
+
+			<p>
+			クライアントからフォーム経由で送られ来るものは、アップロードしたいファイルだけではなく、フォームの他のコントロール(テキストやチェックボックス)のデータなども送られてきます。FileItemオブジェクトとして取得できるものは、ファイルだけではなくテキストコントールに入力されたテキストということもあるわけです。
+			</p>
+
+			<p>
+			そこでまずFileItemオブジェクトの中で、ファイルが添付されたものだけを選ぶようにします。このためにはFileItemインターフェースで定義されている"isFormField"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+isFormField
+public boolean isFormField()
+</pre>
+<pre class="mexplain">
+Determines whether or not a FileItem instance represents a simple 
+form field. 
+
+Returns:
+  true if the instance represents a simple form field; false if it
+    represents an uploaded file.
+</pre>
+
+			<p>
+			もし該当のFileItemオブジェクトが、アップロードされたファイルで無ければTrueを返します。この場合はフォームの他のコントロールで入力されたデータと言うわけです。
+			</p>
+
+			<p>
+			例えば下記のようになります。
+			</p>
+
+<pre class="fixcode">
+DiskFileItemFactory factory = new DiskFileItemFactory();
+ServletFileUpload sfu = new ServletFileUpload(factory);
+
+try {
+  List list = sfu.parseRequest(request);
+  Iterator iterator = list.iterator();
+
+  while(iterator.hasNext()){
+    FileItem item = (FileItem)iterator.next();
+
+    <span class="red">if (!item.isFormField()){
+      // アップロードされたファイルのみ対象の処理
+    }</span>
+  }
+}catch (FileUploadException e) {
+  e.printStackTrace();
+}
+</pre>
+
+			<h2>ファイルの名前の取得</h2>
+
+			<p>
+			前のサンプルでも使いましたが、アップロードされたファイルのファイル名を取得するにはFileItemインターフェースで定義されている"getName"メソッドを使います。アップロードされたファイルをサーバ側に保存する場合に、元のファイル名をそのまま使って保存する場合があると思います。その為にファイル名を取り出します。
+			</p>
+
+<pre class="mheader">
+getName
+public java.lang.String getName()
+</pre>
+<pre class="mexplain">
+Returns the original filename in the client's filesystem, as provided
+by the browser (or other client software). In most cases, this will be
+the base file name, without path information. However, some clients, 
+such as the Opera browser, do include path information. 
+
+Returns:
+  The original filename in the client's filesystem.
+</pre>
+
+			<p>
+			前のサンプルでは単にファイル名を取り出していましたが、ファイル名が定義されていなかったり、空白でない事を確認した上で処理しておきましょう。
+			</p>
+
+<pre class="fixcode">
+DiskFileItemFactory factory = new DiskFileItemFactory();
+ServletFileUpload sfu = new ServletFileUpload(factory);
+
+try {
+  List list = sfu.parseRequest(request);
+  Iterator iterator = list.iterator();
+
+  while(iterator.hasNext()){
+    FileItem item = (FileItem)iterator.next();
+
+    if (!item.isFormField()){
+      <span class="red">String filename = item.getName();</span>
+
+      if ((filename != null) && (!filename.equals(""))){
+        // ファイル名に関する処理
+      }
+    }
+  }
+}catch (FileUploadException e) {
+  e.printStackTrace();
+}
+</pre>
+
+			<p>
+			注意するのは、取り出せるファイル名はファイル名だけの場合もあるし、アップロードされたファイルのパス情報まで含めて取得する場合もあります。アップロードされたファイルが元々あったパス名が分かっても仕方無いので、ファイル名だけを取り出しておきます。その為には、いったんFileクラスのオブジェクトを作成し、そしてファイル名だけを取り出します。
+			</p>
+
+<pre class="fixcode">
+DiskFileItemFactory factory = new DiskFileItemFactory();
+ServletFileUpload sfu = new ServletFileUpload(factory);
+
+try {
+  List list = sfu.parseRequest(request);
+  Iterator iterator = list.iterator();
+
+  while(iterator.hasNext()){
+    FileItem item = (FileItem)iterator.next();
+
+    if (!item.isFormField()){
+      String filename = item.getName();
+
+      if ((filename != null) && (!filename.equals(""))){
+        // ファイル名に関する処理
+        <span class="red">filename = (new File(filename)).getName();</span>
+      }
+    }
+  }
+}catch (FileUploadException e) {
+  e.printStackTrace();
+}
+</pre>
+
+			<p>
+			これでファイル名だけを取り出す事が出来ました。
+			</p>
+
+			<h2>ファイルの保存</h2>
+
+			<p>
+			ではいよいよファイルを保存します。ファイルを保存するにはFileItemインターフェースで定義されている"write"メソッドを使います。
+			</p>
+
+<pre class="mheader">
+write
+public void write(java.io.File file) throws java.lang.Exception
+</pre>
+<pre class="mexplain">
+A convenience method to write an uploaded item to disk. The client 
+code is not concerned with whether or not the item is stored in 
+memory, or on disk in a temporary location. They just want to write
+the uploaded item to a file. 
+
+This method is not guaranteed to succeed if called more than once
+for the same item. This allows a particular implementation to use, 
+for example, file renaming, where possible, rather than copying all
+of the underlying data, thus gaining a significant performance benefit. 
+
+Parameters:
+  file - The File into which the uploaded item should be stored. 
+Throws: 
+  java.lang.Exception - if an error occurs.
+</pre>
+
+			<p>
+			保存先を表すファイルクラスのオブジェクト引数に指定して"write"メソッドを実行すると、FileItemオブジェクトに格納されているデータを保存することができます。
+			</p>
+
+			<p>
+			今回保存するディレクトリを「d:&yen;servlet-sample&yen;upload&yen;data」というディレクトリに保存することにしてみましょう。
+			</p>
+
+<pre class="fixcode">
+<span class="red">String path = getServletContext().getRealPath("data");</span>
+
+DiskFileItemFactory factory = new DiskFileItemFactory();
+ServletFileUpload sfu = new ServletFileUpload(factory);
+
+try {
+  List list = sfu.parseRequest(request);
+  Iterator iterator = list.iterator();
+
+  while(iterator.hasNext()){
+    FileItem item = (FileItem)iterator.next();
+
+    if (!item.isFormField()){
+      String filename = item.getName();
+
+      if ((filename != null) && (!filename.equals(""))){
+        filename = (new File(filename)).getName();
+        <span class="red">item.write(new File(path + "/" + filename));</span>
+      }
+    }
+  }
+}catch (FileUploadException e) {
+  e.printStackTrace();
+}catch (Exception e) {
+  e.printStackTrace();
+}
+</pre>
+
+			<p>
+			保存先のディレクトリ名は次のように求めています。
+			</p>
+
+<pre class="fixcode">
+String path = getServletContext().getRealPath("data");
+</pre>
+
+			<p>
+			これは、このWebアプリケーション上で「data」というディレクトリが実際のディレクトリ構成ではどのようになるかを取得しています。
+			</p>
+
+			<p>
+			保存してようとしているファイル名が既にある場合など細かい点は調整が必要ですが、一応これで保存できるようにはなりました。
+			</p>
+
+			<h2>アップロードテスト</h2>
+
+			<p>
+			では実際に試してみましょう。
+			</p>
+
+			<p>
+			下記を「UploadTest.java」として保存して下さい。下記はアップロードされたファイルのファイル名を表示するだけのサンプルです。
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import org.apache.commons.fileupload.*;
+import org.apache.commons.fileupload.servlet.*;
+import org.apache.commons.fileupload.disk.*;
+import java.util.List;
+import java.util.Iterator;
+
+public class UploadTest extends HttpServlet {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException{
+
+    response.setContentType("text/html; charset=Shift_JIS");
+    PrintWriter out = response.getWriter();
+
+    request.setCharacterEncoding("Shift-JIS");
+
+    String path = getServletContext().getRealPath("data");
+
+    out.println("&lt;html&gt;");
+    out.println("&lt;head&gt;");
+    out.println("&lt;meta http-equiv=&yen;"Content-Type&yen;" content=&yen;"text/html;charset=Shift_JIS&yen;"&gt;");
+    out.println("&lt;title&gt;Upload Test!&lt;/title&gt;");
+    out.println("&lt;/head&gt;");
+    out.println("&lt;body&gt;");
+
+    DiskFileItemFactory factory = new DiskFileItemFactory();
+    ServletFileUpload sfu = new ServletFileUpload(factory);
+
+    try {
+      List list = sfu.parseRequest(request);
+      Iterator iterator = list.iterator();
+
+      while(iterator.hasNext()){
+        FileItem item = (FileItem)iterator.next();
+
+        if (!item.isFormField()){
+          String filename = item.getName();
+
+          if ((filename != null) && (!filename.equals(""))){
+            filename = (new File(filename)).getName();
+            item.write(new File(path + "/" + filename));
+          }
+
+          out.println("&lt;p&gt;");
+          out.println("ファイル名" + item.getName() + "を");
+          out.println(path + "/" + filename + "に保存しました");
+          out.println("&lt;/p&gt;");
+        }
+      }
+    }catch (FileUploadException e) {
+      e.printStackTrace();
+    }catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    out.println("&lt;/body&gt;");
+    out.println("&lt;/html&gt;");
+  }
+}
+</pre>
+
+			<p>
+			コンパイルが終わりましたら作成されたクラスファイルを「d:&yen;servlet-sample&yen;upload&yen;WEB-INF&yen;classes&yen;」ディレクトリに配置します。(必要に応じてTomcatを再起動して下さい)。
+			</p>
+
+			<p>
+			ではブラウザから「http://localhost:8080/upload/uploadtest.html」と呼び出して下さい。
+			</p>
+
+			<p>
+			<img src="img/p14.png" tppabs="https://www.javadrive.jp/servlet/fileupload_tutorial/img/p14.png" alt="HTMLファイルの表示" width="473" height="276">
+			</p>
+
+			<p>
+			「参照」ボタンを押してアップロードするファイルを選択します。
+			</p>
+
+			<p>
+			<img src="img/p15.png" tppabs="https://www.javadrive.jp/servlet/fileupload_tutorial/img/p15.png" alt="アップロードファイルの選択" width="473" height="281">
+			</p>
+
+			<p>
+			今回は「d:&yen;servlet-sample&yen;tmp」内にある「test.txt」ファイルを選択しました。では「アップロード」ボタンをクリックします。
+			</p>
+
+			<p>
+			<img src="img/p16.png" tppabs="https://www.javadrive.jp/servlet/fileupload_tutorial/img/p16.png" alt="アップロードの結果" width="473" height="276">
+			</p>
+
+			<p>
+			上記のようにアップロードされたファイルのファイル名が表示されれば成功です。実際にアップロード先のディレクトリの中身を見てみると次のようにファイルが格納されています。
+			</p>
+
+			<p>
+			<img src="img/p17.png" tppabs="https://www.javadrive.jp/servlet/fileupload_tutorial/img/p17.png" alt="アップロードの結果" width="524" height="318">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

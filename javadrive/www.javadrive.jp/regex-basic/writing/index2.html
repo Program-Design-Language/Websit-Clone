@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>正規表現 | 先読みと後読みを使ったパターン</title>
+<meta name="description" content="正規表現ではパターンが対象の文字列とマッチするかどうかをチェックしますが、先読みや後読みでは文字列とマッチするかどうかは調べるけれどマッチした文字列としては取得しません。先読みと後読みでは利用方法に応じて、肯定先読み、否定先読み、肯定後読み、否定後読み、の 4 種類が利用できます。ここでは正規表現における先読みと後読みを使ったパターンの利用方法について解説します。">
+
+<meta property="og:title" content="先読みと後読みを使ったパターン">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/regex-basic/writing/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/regex-basic/writing/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="正規表現ではパターンが対象の文字列とマッチするかどうかをチェックしますが、先読みや後読みでは文字列とマッチするかどうかは調べるけれどマッチした文字列としては取得しません。先読みと後読みでは利用方法に応じて、肯定先読み、否定先読み、肯定後読み、否定後読み、の 4 種類が利用できます。ここでは正規表現における先読みと後読みを使ったパターンの利用方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "正規表現入門",
+	"item": "https://www.javadrive.jp/regex-basic/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "正規表現の色々な書き方",
+	"item": "https://www.javadrive.jp/regex-basic/writing/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/regex-basic/">正規表現入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/regex-basic/writing/">正規表現の色々な書き方</a></li>
+				</ul>
+			</div>
+
+			<h1>先読みと後読みを使ったパターン</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			正規表現ではパターンが対象の文字列とマッチするかどうかをチェックしますが、先読みや後読みでは文字列とマッチするかどうかは調べるけれどマッチした文字列としては取得しません。先読みと後読みでは利用方法に応じて、肯定先読み、否定先読み、肯定後読み、否定後読み、の 4 種類が利用できます。ここでは正規表現における先読みと後読みを使ったパターンの利用方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">肯定先読み</a></li>
+			<li><a href="#section2">肯定先読みがどのようなときに利用できるのか</a></li>
+			<li><a href="#section3">否定先読み</a></li>
+			<li><a href="#section4">肯定後読み</a></li>
+			<li><a href="#section5">否定後読み</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">肯定先読み</a></h2>
+
+			<p>
+			最初に肯定先読みについて解説します。肯定先読みは次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?=パターン)
+</pre>
+</div>
+
+			<p>
+			単にパターンを記述した場合は対象の文字列がパターンとマッチするかどうかを調べ、マッチした場合はどの部分にマッチしたのかを取得したりしますが、肯定先読みの形式で記述した場合には対象の文字列がパターンとマッチするかどうかを調べる点は同じですが、パターンと部分文字列が一致した場合にその部分文字列とマッチするのではなく、部分文字列の先頭位置にマッチします。
+			</p>
+
+			<p>
+			実際のサンプルをみながらもう少し詳しく解説します。
+			</p>
+
+<div class="titlebox3">
+<pre>
+パターン ： Word(?=Press)
+文字列 ： WordPress
+</pre>
+</div>
+
+			<p>
+			最初に対象の文字列の先頭から「Word」とマッチする部分を探します。
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-1.png" alt="肯定先読み(1)" width="728" height="120">
+			</p>
+
+			<p>
+			次に先ほどマッチした部分の次の文字から「Press」とマッチするかどうかを調べます。マッチした場合、肯定先読みの場合はマッチしたことだけを確認し、実際にはマッチした文字列の先頭の位置とマッチします。
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-2.png" alt="肯定先読み(2)" width="728" height="160">
+			</p>
+
+			<p>
+			結果的にこの文字列はパターンとマッチし、マッチした部分は「Word」という結果になります。
+			</p>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-3.png" alt="肯定先読み(3)" width="728" height="120">
+			</p>
+
+			<p>
+			このように肯定先読みのパターンでは、マッチするかどうかは調べるけれどマッチした文字列としては取得しません。今回のサンプルで言えば、マッチした結果として取得するのは「Word」で、「WordPress」にはマッチするけれど「WordBook」や「WordAge」にはマッチしません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regex = /Word(?=Press)/;
+
+regex.test('WordBook');
+--&gt; <span class="red">false</span>
+regex.test('WordPress');
+--&gt; <span class="blue">true</span>
+
+let result = regex.exec('WordPress');
+console.log(result[0]);
+--&gt; Word
+</pre>
+</div>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			もう一つサンプルを見てください。
+			</p>
+
+<div class="titlebox3">
+<pre>
+パターン ： (?=WordPress)Word
+文字列 ： WordPress
+</pre>
+</div>
+
+			<p>
+			最初に対象の文字列の先頭から「WordPress」とマッチする部分を探します。マッチした場合、肯定先読みの場合はマッチしたことだけを確認し、実際にはマッチした文字列の先頭の位置とマッチします。
+			</p>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-4.png" alt="肯定先読み(4)" width="728" height="170">
+			</p>
+
+			<p>
+			次に先ほどマッチした部分の次の文字から「Word」とマッチするかどうかをチェックします。
+			</p>
+
+			<p>
+			<img src="img/p2-5.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-5.png" alt="肯定先読み(5)" width="728" height="120">
+			</p>
+
+			<p>
+			結果的にこの文字列はパターンとマッチし、マッチした部分は「Word」という結果になります。
+			</p>
+
+			<p>
+			<img src="img/p2-6.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-6.png" alt="肯定先読み(6)" width="728" height="120">
+			</p>
+
+			<p>
+			このように肯定先読みのあとに別のパターンがを記述した場合は、肯定先読みのパターンと位置するかどうかを先に確認したあと、あらためて同じ位置からパターンとマッチするかどうかをチェックすることになります。今回のサンプルでは、マッチした結果として取得するのは「Word」で、前のサンプルと同じく「WordPress」にはマッチするけれど「WordBook」や「WordAge」にはマッチしません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regex = /(?=WordPress)Word/;
+
+regex.test('WordBook');
+--&gt; <span class="red">false</span>
+regex.test('WordPress');
+--&gt; <span class="blue">true</span>
+
+let result = regex.exec('WordPress');
+console.log(result[0]);
+--&gt; Word
+</pre>
+</div>
+
+<h2><a id="section2">肯定先読みがどのようなときに利用できるのか</a></h2>
+
+			<p>
+			具体的に肯定先読みができるとどのようなことができるのかについてですが、例えば少なくとも一文字は大文字のアルファベットが含まれる 5 文字の文字列、といったパターンを作成することができます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+(?=.*[A-Z]).{5}
+</pre>
+</div>
+
+			<p>
+			肯定先読みのパターンで、文字列の先頭から任意の文字が続いたあっとに大文字のアルファベットと一致するかどうかを先に調べ、マッチした場合に改めて文字列の先頭から任意の文字が5文字続く文字列とマッチします。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regex = /(?=.*[A-Z]).{5}/;
+
+regex.test('happy');
+--&gt; <span class="red">false</span>
+regex.test('Happy');
+--&gt; <span class="blue">true</span>
+regex.test('drINk');
+--&gt; <span class="blue">true</span>
+</pre>
+</div>
+
+<h2><a id="section3">否定先読み</a></h2>
+
+			<p>
+			続いて否定先読みについて解説します。否定先読みは次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?!パターン)
+</pre>
+</div>
+
+			<p>
+			否定先読みは肯定先読みと逆で、否定先読みの中で記述したパターンに一致しない場合にマッチします。
+			</p>
+
+			<p>
+			実際のサンプルをみながらもう少し詳しく解説します。
+			</p>
+
+<div class="titlebox3">
+<pre>
+パターン ： Word(?!Book)
+文字列 ： WordPress
+</pre>
+</div>
+
+			<p>
+			最初に対象の文字列の先頭から「Word」とマッチする部分を探します。
+			</p>
+
+			<p>
+			<img src="img/p2-7.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-7.png" alt="否定先読み(1)" width="728" height="120">
+			</p>
+
+			<p>
+			次に先ほどマッチした部分の次の文字から「Book」とマッチするかどうかを調べます。否定先読みの場合はパターンと一致しない場合にマッチします。マッチした場合、否定先読みの場合はマッチしたことだけを確認し、実際にはマッチした文字列の先頭の位置とマッチします。
+			</p>
+
+			<p>
+			<img src="img/p2-8.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-8.png" alt="否定先読み(2)" width="728" height="240">
+			</p>
+
+			<p>
+			結果的にこの文字列はパターンとマッチし、マッチした部分は「Word」という結果になります。
+			</p>
+
+			<p>
+			<img src="img/p2-9.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-9.png" alt="否定先読み(3)" width="728" height="120">
+			</p>
+
+			<p>
+			今回のサンプルで言えば、マッチした結果として取得するのは「Word」で、「WordPress」や「WordAge」にはマッチするけれど「WordBook」にはマッチしません。
+			</p>
+
+<h2><a id="section4">肯定後読み</a></h2>
+
+			<p>
+			続いて肯定後読みについて解説します。肯定後読みは次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?&lt;=パターン)
+</pre>
+</div>
+
+			<p>
+			肯定後読みの形式で記述した場合には対象の文字列がパターンとマッチするかどうかを調べる点は同じですが、パターンと部分文字列が一致した場合にその部分文字列とマッチするのではなく、部分文字列の末尾位置にマッチします。
+			</p>
+
+			<p>
+			実際のサンプルをみながらもう少し詳しく解説します。
+			</p>
+
+<div class="titlebox3">
+<pre>
+パターン ： (?&lt;=pe)Script
+文字列 ： TypeScript
+</pre>
+</div>
+
+			<p>
+			最初に対象の文字列の先頭から順に位置を右にずらしながら、左側の文字が「pe」とマッチするか調べます。マッチした場合、肯定後読みの場合はマッチしたことだけを確認し、実際にはマッチが成功した位置とマッチします。
+			</p>
+
+			<p>
+			<img src="img/p2-10.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-10.png" alt="肯定後読み(1)" width="728" height="240">
+			</p>
+
+			<p>
+			次に先ほどマッチした部分の次の文字から「Script」とマッチするかどうかをチェックします。
+			</p>
+
+			<p>
+			<img src="img/p2-11.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-11.png" alt="肯定後読み(2)" width="728" height="120">
+			</p>
+
+			<p>
+			結果的にこの文字列はパターンとマッチし、マッチした部分は「Script」という結果になります。
+			</p>
+
+			<p>
+			<img src="img/p2-12.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-12.png" alt="肯定後読み(3)" width="728" height="120">
+			</p>
+
+			<p>
+			このように肯定後読みのパターンでは、マッチするかどうかは調べるけれどマッチした文字列としては取得しません。今回のサンプルで言えば、マッチした結果として取得するのは「Script」で、「TypeScript」にはマッチするけれど「JavaScript」や「PostScript」にはマッチしません。
+			</p>
+
+<div class="titlebox1">
+<pre>
+const regex = /(?&lt;=pe)Script/;
+
+regex.test('JavaScript');
+--&gt; <span class="red">false</span>
+regex.test('TypeScript');
+--&gt; <span class="blue">true</span>
+
+let result = regex.exec('TypeScript');
+console.log(result[0]);
+--&gt; Script
+</pre>
+</div>
+
+<h2><a id="section5">否定後読み</a></h2>
+
+			<p>
+			続いて否定後読みについて解説します。否定後読みは次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+(?&lt;!パターン)
+</pre>
+</div>
+
+			<p>
+			否定後読みは否定先読みと逆で、否定後読みの中で記述したパターンに一致しない場合にマッチします。
+			</p>
+
+			<p>
+			実際のサンプルをみながらもう少し詳しく解説します。
+			</p>
+
+<div class="titlebox3">
+<pre>
+パターン ： (?&lt;!va)Script
+文字列 ： TypeScript
+</pre>
+</div>
+
+			<p>
+			最初に対象の文字列の先頭から順に位置を右にずらしながら、左側の文字が「va」とマッチするか調べます。否定後読みの場合はパターンと一致しない場合にマッチします。マッチした場合、否定後読みの場合はマッチしたことだけを確認し、実際にはマッチが成功した位置とマッチします。
+			</p>
+
+			<p>
+			最初の位置がまず否定後読みのパターンと一致しないのでマッチします。
+			</p>
+
+			<p>
+			<img src="img/p2-13.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-13.png" alt="否定後読み(1)" width="728" height="180">
+			</p>
+
+			<p>
+			次に先ほどマッチした部分の次の文字から「Script」とマッチするかどうかをチェックします。今回の場合はマッチしません。マッチしなかった場合は、一つ前に戻り位置を右にずらしながら、左側の文字が「va」と一致せずに次の文字が「Script」と一致するところまで進んでいきます。今回は次の位置に来た時にマッチしました。
+			</p>
+
+			<p>
+			<img src="img/p2-14.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-14.png" alt="否定後読み(2)" width="728" height="120">
+			</p>
+
+			<p>
+			結果的にこの文字列はパターンとマッチし、マッチした部分は「Script」という結果になります。
+			</p>
+
+			<p>
+			<img src="img/p2-15.png" tppabs="https://www.javadrive.jp/regex-basic/writing/img/p2-15.png" alt="否定後読み(3)" width="728" height="120">
+			</p>
+
+			<p>
+			今回のサンプルで言えば、マッチした結果として取得するのは「Script」で、「JavaScript」や「PostScrript」にはマッチするけれど「TypeScript」にはマッチしません。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			正規表現における先読みと後読みを使ったパターンの利用方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

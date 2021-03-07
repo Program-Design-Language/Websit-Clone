@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コマンドプロンプト | バッチファイル実行時に引数を渡す</title>
+<meta name="description" content="バッチファイルを実行する時に引数を指定してバッチファイルへ引き渡すことができます。受け取った引数はバッチファイルの中で取り出し利用することができます。ここではバッチファイルで引数を利用する方法について解説します。">
+
+<meta property="og:title" content="バッチファイル実行時に引数を渡す">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/command/bat/index6.html">
+<meta property="og:image" content="https://www.javadrive.jp/command/bat/img/p6-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="バッチファイルを実行する時に引数を指定してバッチファイルへ引き渡すことができます。受け取った引数はバッチファイルの中で取り出し利用することができます。ここではバッチファイルで引数を利用する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "コマンドプロンプトの使い方",
+    "item": "https://www.javadrive.jp/command/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "バッチファイルの作成",
+    "item": "https://www.javadrive.jp/command/bat/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/command/">コマンドプロンプトの使い方</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/command/bat/">バッチファイルの作成</a></li>
+				</ul>
+			</div>
+
+			<h1>バッチファイル実行時に引数を渡す</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			バッチファイルを実行する時に引数を指定してバッチファイルへ引き渡すことができます。受け取った引数はバッチファイルの中で取り出し利用することができます。ここではバッチファイルで引数を利用する方法について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">引数の指定とバッチファイル内で引数を参照する方法</a></li>
+			<li><a href="#section2">引数の区切り文字の種類</a></li>
+			<li><a href="#section3">区切り文字で使われる文字を引数の中で文字として使いたい場合</a></li>
+			<li><a href="#section4">引数で渡された値から引用符(ダブルクォーテーション)を取り除く</a></li>
+			<li><a href="#section5">すべての引数の値をまとめて参照する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">引数の指定とバッチファイル内で引数を参照する方法</a></h2>
+
+			<p>
+			バッチファイルを実行するときにコマンドライン引数を指定するには次のように記述します。
+			</p>
+
+<div class="titlebox2">
+<p>
+バッチファイル 引数1 引数2 ...
+</p>
+</div>
+
+			<p>
+			複数の引数を指定する場合は区切り文字として半角スペース(他にもあり、後程説明します)で区切って記述します。
+			</p>
+
+			<p>
+			コマンドライン引数で渡された値は、バッチファイルの中で %1 ~ %9 という特別な記述を使って取り出して使うことができます(最大で9個の引数を参照できます。10個目以上の引数を使う場合は「<a href="index7.html" tppabs="https://www.javadrive.jp/command/bat/index7.html">バッチファイルで10個以上の引数を使う</a>」を参照してください)。1番目の引数は %1 、2番目の引数は %2 のように対応しています。また %0 には実行しているバッチファイルの名前が入っています。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル argtest.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+echo %%0 = %0<br>
+echo %%1 = %1<br>
+echo %%2 = %2<br>
+echo %%3 = %3
+</p>
+</div>
+
+			<p>
+			ECHO コマンドは引数に指定した任意の文字列を表示することができるコマンドです。例えば「%%0 = 」の部分は文字列なのでそのまま画面に表示されます。(ECHO コマンドでは「%」は特別な文字のため、「%」を文字として表示する場合は「%%」と記述することになっています)。
+			</p>
+
+			<p>
+			それではバッチファイルを次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat 東京都 男性 25
+</p>
+</div>
+
+			<p>
+			<img src="img/p6-1.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-1.png" alt="引数の指定とバッチファイル内で引数を参照する方法(1)" width="723" height="352">
+			</p>
+
+			<p>
+			バッチファイルを実行すると、バッチファイルの中で実行しているバッチファイルの名前と3つの引数の値を参照して画面に表示します。
+			</p>
+
+			<p>
+			<img src="img/p6-2.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-2.png" alt="引数の指定とバッチファイル内で引数を参照する方法(1)" width="723" height="352">
+			</p>
+
+			<p>
+			このようにバッチファイルを実行するときに引数を指定することで、バッチファイルの中で引数の値を参照して利用することができます。
+			</p>
+
+<h2><a id="section2">引数の区切り文字の種類</a></h2>
+
+			<p>
+			バッチファイルで複数の引数を指定する場合、区切り文字としては半角スペースの他にセミコロン(;)、カンマ(,)、等号(=)が利用できます。
+			</p>
+
+			<p>
+			先程のバッチファイルは次のようにも実行することができます。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat 東京都 男性 25
+</p>
+</div>
+
+<div class="titlebox1">
+<p>
+argtest.bat 大阪府,女性,23
+</p>
+</div>
+
+<div class="titlebox1">
+<p>
+argtest.bat 愛知県;男性;34
+</p>
+</div>
+
+<div class="titlebox1">
+<p>
+argtest.bat 埼玉県=女性=28
+</p>
+</div>
+
+			<p>
+			最後の等号を使ったものを実際に試してみます。
+			</p>
+
+			<p>
+			<img src="img/p6-3.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-3.png" alt="引数の区切り文字の種類(1)" width="723" height="352">
+			</p>
+
+			<p>
+			念のために確認してみると、区切り文字は混在しても使用できます。次の例では区切り文字としてカンマ(,)と等号(=)を使っています。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat 東京都,男性=25<br>
+</p>
+</div>
+
+			<p>
+			<img src="img/p6-4.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-4.png" alt="引数の区切り文字の種類(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section3">区切り文字で使われる文字を引数の中で文字として使いたい場合</a></h2>
+
+			<p>
+			引数として指定する値の中で、空白やカンマなど区切り文字として使われている文字を使いたい場合にはそのまま記述すると区切り文字として扱われてしまいます。
+			</p>
+
+			<p>
+			例えば「東京都 港区」「男性」「3,425」という3つの値を引数として渡したい場合、次のように実行してしまうと意図した結果にはなりません。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat 東京都 港区 男性 3,425<br>
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると次のように実行されます。なお先ほど試したように区切り文字は混在しても動作するので、引数で使われていない区切り文字を使用しても同じ結果となります。
+			</p>
+
+			<p>
+			<img src="img/p6-5.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-5.png" alt="区切り文字で使われる文字を引数の中で文字として使いたい場合(1)" width="723" height="352">
+			</p>
+
+			<p>
+			区切り文字として使用する文字を引数の値の中で使用する場合には、値全体をダブルクォーテーションで囲います。例えば「東京都 港区」「男性」「3,425」という3つの値を引数として渡したい場合は次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat "東京都 港区" 男性 "3,425"<br>
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、区切り文字が含まれている値も正しく引き渡すことができました。
+			</p>
+
+			<p>
+			<img src="img/p6-6.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-6.png" alt="区切り文字で使われる文字を引数の中で文字として使いたい場合(2)" width="723" height="352">
+			</p>
+
+<h2><a id="section4">引数で渡された値から引用符(ダブルクォーテーション)を取り除く</a></h2>
+
+			<p>
+			区切り文字を含んだ値を引数の値として使用したい場合、値全体をダブルクォーテーションで囲うことで値として引き渡すことができますが、その場合渡された値がダブルクォーテーション付きとなってしまいます。
+			</p>
+
+			<p>
+			引数で渡された値からダブルクォーテーションを取り除いて受け取るには、「%1」などの代わりに「%~1」を使用します。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル argtest.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+echo %%0 = %0<br>
+echo %%1 = %1<br>
+echo %%~1 = %~1<br>
+echo %%2 = %2<br>
+echo %%~2 = %~2<br>
+echo %%3 = %3<br>
+echo %%~3 = %~3
+</p>
+</div>
+
+			<p>
+			それでは「東京都 港区」「男性」「3,425」という3つの値を引数として渡すように次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat "東京都 港区" 男性 "3,425"<br>
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、ダブルクォーテーションが含まれている値はダブルクォーテーションが取り除かれて受け取ることができました。
+			</p>
+
+			<p>
+			<img src="img/p6-7.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-7.png" alt="引数で渡された値から引用符(ダブルクォーテーション)を取り除く(1)" width="723" height="352">
+			</p>
+
+<h2><a id="section5">すべての引数の値をまとめて参照する</a></h2>
+
+			<p>
+			%0 から %9 までを使うことで引数毎に渡された値を参照することができますが、%* を使うと引数として入力された値を全部まとめて参照することができます。
+			</p>
+
+			<p>
+			テストを行うために次のような簡単なバッチファイル argtest.bat を c:\test に作成しました。
+			</p>
+
+<div class="titlebox1">
+<p>
+@echo off<br>
+echo %%0 = %0<br>
+echo %%1 = %1<br>
+echo %%2 = %2<br>
+echo %%3 = %3<br>
+echo %%* = %*
+</p>
+</div>
+
+			<p>
+			それでは「次のように実行します。
+			</p>
+
+<div class="titlebox1">
+<p>
+argtest.bat 東京都 男性 25<br>
+</p>
+</div>
+
+			<p>
+			バッチファイルを実行すると、%0 から %3 まではそれぞれの引数の値を参照しますが、%* は引数に入力された値を全部まとめて参照します。
+			</p>
+
+			<p>
+			<img src="img/p6-8.png" tppabs="https://www.javadrive.jp/command/bat/img/p6-8.png" alt="すべての引数の値をまとめて参照する(1)" width="723" height="352">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			バッチファイルで引数を引き渡す方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テキストファイルを読む - テキストファイルの入出力 - Java入門</title>
+<meta name="keywords" content="FileWriter,テキストファイル,入門,Java" />
+<meta name="description" content="テキストファイルを読む" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/stream/" itemprop="url"><span itemprop="title">テキストファイルの入出力</span></a></li>
+		</ul>
+</div>
+
+			<h1>テキストファイルを読む</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					ファイルからテキストを読み込むためには色々なクラスが用意されています。まずは基本となる"FileReader"クラスを使ってみます。
+					</p>
+
+					<p>
+					まず読み込みたいファイルを対象としてFileクラスのオブジェクトを作成します。そして、そのオブジェクトを引数としてFileReaderクラスのオブジェクトを作成します。(Fileクラスについては『<a href="../file/index.htm" tppabs="https://www.javadrive.jp/start/file/index.html">ファイルを管理する</a>』を参照して下さい)。
+					</p>
+
+<pre class="fixcode">
+File <span class="red">file</span> = new File(<span class="red">file_name</span>);
+FileReader <span class="red">filereader</span> = new FileReader(<span class="red">file</span>);
+</pre>
+
+					<p>
+					これで対象のファイルからテキストの読み込みを行う準備が出来ました。作成したFileReaderクラスのオブジェクトに対して、文字を読むメソッドを実行します。
+					</p>
+
+					<p>
+					ちなみにFileReaderクラスのオブジェクトを作成する場合には、"FileNotFoundException"という例外が発生する可能性があるため、例外の処理をしておかなければいけません。(例外については『<a href="../file/index4.html" tppabs="https://www.javadrive.jp/start/file/index4.html">ファイルを作成する</a>』にて少し説明しています)。
+					</p>
+
+<pre class="fixcode">
+<span class="red">try{</span>
+  File file = new File("c:\\tmp\\test.txt");
+  FileReader filereader = new FileReader(file);
+<span class="red">}catch(FileNotFoundException e){
+  System.out.println(e);
+}</span>
+</pre>
+
+					<h2>テキストを読む</h2>
+
+					<p>
+					次にファイルから文字を読み込みます。FileReaderクラスを使う場合には基本的に1文字ずつ読み込んでいきます。まとめて読むということが出来ませんので、効率はかなり悪いです。
+					</p>
+
+<pre class="mheader">
+read
+public int read() throws IOException
+</pre>
+<pre class="mexplain">
+単一の文字を読み込みます。
+
+戻り値:
+  読み込まれた文字。ストリームの終わりに達した場合は -1
+例外:
+  IOException - 入出力エラーが発生した場合
+</pre>
+
+					<p>
+					"read"メソッドでファイルから文字を1文字読み込みます。読み込んだ値はint型の値として取得できます。この整数は何だと言うと文字の文字コードを表す整数となってます。読み込んだ文字を、文字として表示する場合は下記のようにしてください。
+					</p>
+
+<pre class="fixcode">
+try{
+  File file = new File("c:\\tmp\\test.txt");
+  FileReader filereader = new FileReader(file);
+
+  int ch = filereader.read();
+  System.out.println(<span class="red">(char)ch</span>);
+}catch(FileNotFoundException e){
+  System.out.println(e);
+}catch(IOException e){
+  System.out.println(e);
+}
+</pre>
+
+					<p>
+					※"read"メソッドは"IOException"と言う例外を処理しなければいけません。
+					</p>
+
+					<p>
+					"read"で読み込んだ整数の値を、「(char)ch」とすることで文字に変換しています。
+					</p>
+
+					<h2>ファイルの最後まで読み込む</h2>
+
+					<p>
+					"read"メソッドを使うとまずファイルの先頭から1文字読み込みます。そして自動的に読み込む位置が次の文字に移ります。その為、連続して"read"メソッドを使うとファイルの先頭から順に1文字ずつ読み込んでくれます。そしてファイルの最後に達した時に"-1"という値を返してくれます。
+					</p>
+
+					<p>
+					その為、ファイルの先頭からファイルの最後まで文字を読み込みたい場合は、"read"メソッドの結果として"-1"を返してくるまで繰り返し"read"メソッドを実行します。例えば下記のような感じです。
+					</p>
+
+<pre class="fixcode">
+try{
+  File file = new File("c:\\tmp\\test.txt");
+  FileReader filereader = new FileReader(file);
+
+  int ch = filereader.read();
+  while(ch != -1){
+    System.out.print((char)ch);
+
+    ch = filereader.read();
+  }
+}catch(FileNotFoundException e){
+  System.out.println(e);
+}catch(IOException e){
+  System.out.println(e);
+}
+</pre>
+
+					<p>
+					ファイルから1文字読み、その値が"-1"で無ければ画面に表示し、"-1"だった場合は終了します。なお上記のようなことを記述する場合は、まとめて下記のような書き方をすることが出来ます。
+					</p>
+
+<pre class="fixcode">
+try{
+  File file = new File("c:\\tmp\\test.txt");
+  FileReader filereader = new FileReader(file);
+
+  int ch;
+  while(<span class="red">(ch = filereader.read()) != -1</span>){
+    System.out.print((char)ch);
+  }
+}catch(FileNotFoundException e){
+  System.out.println(e);
+}catch(IOException e){
+  System.out.println(e);
+}
+</pre>
+
+					<p>
+					上記のwhile文の中の条件式の部分は、ファイルから1文字読み込んだ値を変数"ch"に格納し、そして格納された値が"-1"と同じかどうかを比較しています。よくこのようにまとめて記述しますので、書き方として覚えておいてください。
+					</p>
+
+					<p>
+					また1文字読んでは表示するということを繰り返しますので、画面への表示も「System.out.println((char)ch)」とすると1文字ずつ改行されて表示されてしまうため、「System.out.print((char)ch)」にしています。こうすれば1文字ずつ改行される事は無く、またファイルから改行文字を読み込んだ場合も、その改行文字も表示しようとするため結果的にファイルの改行があるところで、画面表示も改行されて表示されます。
+					</p>
+
+					<h2>ファイルを閉じる</h2>
+
+					<p>
+					ファイルに対する全ての処理が終わったら、ファイルを閉じます。"close"メソッドを使います。
+					</p>
+
+<pre class="mheader">
+close
+public void close() throws IOException
+</pre>
+<pre class="mexplain">
+ストリームを閉じます。
+
+例外:
+  IOException - 入出力エラーが発生した場合
+</pre>
+
+					<p>
+					以上のことからファイルから文字を読み込む場合の一連の流れは次のようになります。
+					</p>
+
+<pre class="fixcode">
+try{
+  File file = new File("c:\\tmp\\test.txt");
+  FileReader filereader = new FileReader(file);
+
+  int ch;
+  while((ch = filereader.read()) != -1){
+    System.out.print((char)ch);
+  }
+
+  filereader.close();
+}catch(FileNotFoundException e){
+  System.out.println(e);
+}catch(IOException e){
+  System.out.println(e);
+}
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では実際に試してみましょう。
+					</p>
+
+					<p>
+					<a href="streamTest1.java" tppabs="https://www.javadrive.jp/start/stream/streamTest1.java">streamTest1.java</a>
+					</p>
+
+<pre class="fixcode">
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+class streamTest1{
+  public static void main(String args[]){
+    try{
+      File file = new File("c:\\tmp\\test.txt");
+      FileReader filereader = new FileReader(file);
+
+      int ch;
+      while((ch = filereader.read()) != -1){
+        System.out.print((char)ch);
+      }
+
+      filereader.close();
+    }catch(FileNotFoundException e){
+      System.out.println(e);
+    }catch(IOException e){
+      System.out.println(e);
+    }
+  }
+}
+</pre>
+
+					<p>
+					プログラムを実行する前に、Cドライブの「tmp」というディレクトリの中に「test.txt」というファイルを用意しておきました。
+					</p>
+
+					<p>
+					<a href="test.txt" tppabs="https://www.javadrive.jp/start/stream/test.txt">test.txt</a>
+					</p>
+
+					<p>
+					上記をコンパイルして実際に実行してみると下記のようになります。
+					</p>
+
+					<p>
+					<img src="img/p1.png" tppabs="https://www.javadrive.jp/start/stream/img/p1.png" alt="p1" width="515" height="199" alt="0">
+					</p>
+
+					<p>
+					無事ファイルの読み込みを行うことが出来ました。
+					</p>
+
+					<p>
+					ただFileWriterを直接使って文字を読み込み場合、1文字読んでは処理をするという方法になってしまい不便ですので、実際にはこの後に見ていく他のクラスを組み合わせて普通は使います。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GridBagConstraintsクラスを使ってコンポーネントを配置する - GridBagLayoutクラス - Swing</title>
+<meta name="keywords" content="GridBagConstraints,GridBagLayout,Swing,Java" />
+<meta name="description" content="GridBagConstraintsクラスを使ってコンポーネントを配置する" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/gridbaglayout/" itemprop="url"><span itemprop="title">GridBagLayoutクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>GridBagConstraintsクラスを使ってコンポーネントを配置する</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			GridBagLayoutクラスをレイアウトマネージャーとして設定したコンテナに対してコンポーネントを配置していく方法を確認します。
+			</p>
+			
+			<p>
+			コンポーネントを配置するには今までのレイアウトマネージャーと同じく「add」メソッドを使ってコンテナに対してコンポーネントを追加しますが、追加するコンポーネントに対してどのように配置されるのかを事前に設定しておく必要があります。コンポーネントに配置方法に関する情報を設定するにはGridBagLayoutクラスで用意されている「setConstraints」メソッドを使います。
+			</p>
+
+<pre class="mheader">
+setConstraints
+public void setConstraints(Component comp,
+                           GridBagConstraints constraints)
+</pre>
+<pre class="mexplain">
+このレイアウトの指定されたコンポーネントに対して制約を設定します。
+
+パラメータ:
+  comp - 変更されるコンポーネント
+  constraints - 適用される制約
+</pre>
+
+			<p>
+			1番目の引数に配置したいコンポーネントを指定します。そして2番目の引数にどのように配置するのかを表す制約と呼ばれるものを指定します。制約というのはコンポーネントを配置する位置やサイズを拡張するのかどうかを指定するものです。
+			</p>
+
+			<p>
+			制約を設定するにはGridBagConstraintsクラスのオブジェクトを作成して指定しますのでまずGridBagConstraintsクラスについて確認しておきましょう。
+			</p>
+			
+			<h2>GridBagConstraintsクラス</h2>
+			
+			<p>
+			GridBagLayoutクラスの定義を確認します。クラス図は次のようになっています。
+			</p>
+
+<div class="classwaku">
+<ul class="classdirectory">
+<li class="top">java.lang.Object</li>
+<li class="row1">java.awt.GridBagConstraints</li>
+<li class="detail">public class GridBagConstraints extends Object implements Cloneable, Serializable</li>
+</ul>
+</div>
+
+			<h2>GridBagConstraintsクラスのコンストラクタ</h2>
+
+			<p>
+			GridBagConstraintsクラスをを利用するにはコンストラクタを使ってGridBagConstraintsクラスのオブジェクトを作成します。どのようなコンストラクタが用意されているか確認してみます。
+			</p>
+
+<table class="pro">
+<tr><th>コンストラクタ</th></tr>
+<tr><td><span class="title">GridBagConstraints()</span><br>すべてのフィールドをデフォルト値に設定して GridBagConstraint オブジェクトを作成します。</td></tr>
+<tr><td><span class="title">GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)</span><br>すべてのフィールドを渡された引数に設定して GridBagConstraints オブジェクトを作成します。</td></tr>
+</table>
+
+			<p>
+			コンストラクタは2つ用意されています。2つ目のコンストラクタでは非常に多くの引数が用意されていますが、引数の数だけGridBagConstraintsクラスのオブジェクトには設定を行えるようになっています。
+			</p>
+
+			<p>
+			まず1番目のコンストラクタを確認してみます。
+			</p>
+
+<pre class="mheader">
+GridBagConstraints
+public GridBagConstraints()
+</pre>
+<pre class="mexplain">
+すべてのフィールドをデフォルト値に設定して GridBagConstraint オブジェク
+トを作成します。
+</pre>
+
+			<p>
+			全ての設定項目に対してデフォルトの値を使いGridBagConstraintクラスのオブジェクトを作成します。通常はこのコンストラクタを使ってオブジェクトを作成してから必要な項目についてだけ設定を別途行うようにします。
+			</p>
+
+			<p>
+			では2番目のコンストラクタを確認しどのような設定項目が用意されているのかを確認してみます。
+			</p>
+
+<pre class="mheader">
+GridBagConstraints
+public GridBagConstraints(int gridx,
+                          int gridy,
+                          int gridwidth,
+                          int gridheight,
+                          double weightx,
+                          double weighty,
+                          int anchor,
+                          int fill,
+                          Insets insets,
+                          int ipadx,
+                          int ipady)
+</pre>
+<pre class="mexplain">
+すべてのフィールドを渡された引数に設定して GridBagConstraints オブジェ
+クトを作成します。 注:このコンストラクタを使用するとソースコードが読み
+にくくなるので、このコンストラクタは自動ソースコード生成ツールでのみ使
+用してください。
+
+パラメータ:
+  gridx - 初期 gridx 値
+  gridy - 初期 gridy 値
+  gridwidth - 初期 gridwidth 値
+  gridheight - 初期 gridheight 値
+  weightx - 初期 weightx 値
+  weighty - 初期 weighty 値
+  anchor - 初期 anchor 値
+  fill - 初期 fill 値
+  insets - 初期 insets 値
+  ipadx - 初期 ipadx 値
+  ipady - 初期 ipady 値
+</pre>
+
+			<p>
+			大きく分類すると設定項目は「gridx, gridy, gridwidth, gridheight」「weightx, weighty」「anchor」「fill」「insets」「ipadx, ipady」の6つの項目に分けられます。先ほども記述したとおり、こちらのコンストラクタを使って全ての項目を一度に設定してオブジェクトを作成することはあまりありません。
+			</p>
+
+			<p>
+			実際に設定を行うには各設定項目に対応したフィールドが用意されていますのでフィールドに値を設定することで行います。
+			</p>
+
+<table class="pro">
+<tr><th style="width:100px;">フィールド名</th><th>設定内容</th></tr>
+<tr><td>gridx</td><td>コンポーネントの表示領域のリーディングエッジを含むセルを指定します。</td></tr>
+<tr><td>gridy</td><td>コンポーネントの表示領域の上部にセルを指定します。</td></tr>
+<tr><td>gridwidth</td><td>コンポーネントの表示領域の 1 行のセル数を指定します。</td></tr>
+<tr><td>gridheight</td><td>コンポーネントの表示領域の 1 列のセル数を指定します。</td></tr>
+<tr><td>weightx</td><td>余分の水平スペースを分配する方法を指定します。</td></tr>
+<tr><td>weighty</td><td>垂直の余分なスペースを分配する方法を指定します。</td></tr>
+<tr><td>anchor</td><td>このフィールドはコンポーネントがその表示領域より小さい場合に使用されます。</td></tr>
+<tr><td>fill</td><td>コンポーネントの表示領域がコンポーネントの必須サイズよりも大きいときに使用されます。</td></tr>
+<tr><td>insets</td><td>コンポーネントの外側のパディング、つまりコンポーネントとその表示領域の端までの領域の最小値を指定します。</td></tr>
+<tr><td>ipadx</td><td>コンポーネントの内側のパディング、つまりコンポーネントの最小幅に追加する領域の値を指定します。</td></tr>
+<tr><td>ipady</td><td>コンポーネントの内側のパディング、つまりコンポーネントの最小の高さに追加する領域の値を指定します。</td></tr>
+</table>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<pre class="fixcode">
+JPanel panel = new JPanel();
+panel.setLayout(new GridBagLayout());
+
+JButton button = new JButton("button");
+
+GridBagConstraints gbc = new GridBagConstraints();
+gbc.gridx = 0;
+gbc.gridy = 0;
+layout.setConstraints(button, gbc);
+
+p.add(button);
+</pre>
+
+			<p>
+			では次のページ以降でそれぞれのフィールドに関する解説と利用方法を確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>住所から座標を取得(getLatLngメソッド) - ジオコーディング(GClientGeocoder) - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="住所から座標を取得,GClientGeocoder,Google Maps API" />
+<meta name="description" content="住所から座標を取得する方法を確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/" itemprop="url"><span itemprop="title">ジオコーディング(GClientGeocoder)</span></a></li>
+		</ul>
+</div>
+
+			<h1>住所から座標を取得</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					まずジオコーディングの機能を利用するためのGClientGeocoderクラスのオブジェクトを作成します。コンストラクタ関数は次のように定義されています。 
+					</p>
+
+
+<pre class="mheader">
+GClientGeocoder(cache?:GGeocodeCache)
+</pre>
+<pre class="mexplain">
+Google サーバーと直接通信するジオコーダの新しいインスタンスを作成します。
+オプションのキャッシュ パラメータにより、不明な住所のカスタムのクライア
+ント側キャッシュを指定できます。何も指定していない場合、
+GFactualGeocodeCache が使用されます。
+</pre>
+
+					<p>
+					省略可能な引数であるcasheにはクライアント側で住所から座標への変換表を作成している場合などに指定します。ここでは取り合えず気にしないで下さい。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.172304,136.908306), 15);
+
+var geocoder = new GClientGeocoder();
+</pre>
+
+					<p>
+					GClientGeocoderクラスのオブジェクトが作成できました。このオブジェクトを通してGoogle側で用意されたサーバに対して問い合わせを行います。
+					</p>
+
+					<h2>getLatLngメソッド</h2>
+
+					<p>
+					指定した住所から座標を取得するにはGClientGeocoderクラスで用意されているgetLatLngメソッドを使います。
+					</p>
+
+<pre class="mheader">
+getLatLng(address:String, callback:function)
+</pre>
+<pre class="mexplain">
+指定された住所をジオコード化するために、Google サーバーにリクエストを送
+信します。住所が正常に特定できると、GLatLng 地点でユーザーが指定したコー
+ルバック関数が起動します。特定できない場合、コールバック関数は null 地点
+を取得します。あいまいな住所の場合、最も一致する地点のみがコールバック関
+数に渡されます。 
+</pre>
+
+					<p>
+					1番目の引数に座標を調べたい住所を文字列で指定して下さい。サーバからの応答には時間がかかる場合がありますので、2番目の引数にコールバック関数を指定します。
+					</p>
+
+					<p>
+					コールバック関数には呼び出される時にGLatLngクラスのオブジェクトが引数として渡されてきます。このオブジェクトは住所から座標に変換できた場合はその座標が格納されており、変換できなかった場合はnullが格納されています。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(35.658517, 139.745493), 15);
+
+var geocoder = new GClientGeocoder();
+geocoder.getLatLng("東京都千代田区", moveTo);
+
+function moveTo(latlng){
+  if (latlng){
+    map.setCenter(latlng, 15);
+  }else{
+    alert("住所から緯度経度に変換できません");
+  }
+}
+</pre>
+
+					<p>
+					上記では"東京都千代田区"に該当する座標を取得し、その座標へ移動します。
+					</p>
+
+					<p>
+					getLatLngメソッドでは常に1つの結果を返すことに注意して下さい。指定した住所があいまいで該当する座標が複数あった場合でもその中の一つを返してきます。
+					</p>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code1_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/js/code1_1.js">code1_1.js</a>
+					</p>
+
+<pre class="fixcode">
+var map;
+var geocoder;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(36.004673,137.351074), 5);
+
+    geocoder = new GClientGeocoder();
+  }
+}
+
+function moveAddress() {
+  var address = document.getElementById("address").value;
+  geocoder.getLatLng(address, moveTo);
+}
+
+function moveTo(latlng) {
+  if (latlng){
+    map.setCenter(latlng, 15);
+
+    map.clearOverlays();
+    var marker = new GMarker(latlng);
+    map.addOverlay(marker);
+
+  }else{
+    alert("住所から緯度経度に変換できません");
+  }
+}
+</pre>
+
+					<p>
+					<a href="map1_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/map1_1.html">map1_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：住所から座標を取得&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code1_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 400px"&gt;&lt;/div&gt;
+
+    &lt;form&gt;
+    &lt;p&gt;
+    &lt;input type="text" id="address" size="30" value="住所を入力" /&gt;
+    &lt;input type="button" id="addressbtn" value="座標取得" onclick="moveAddress()" /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p1-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p1-1.png" alt="p1-1" width="441" height="570">
+					</p>
+
+					<p>
+					地図下のテキストボックスに住所を入力してから「座標取得」ボタンを押して下さい。座標が取得できればその場所にマーカーを表示した上で移動します。
+					</p>
+
+					<p>
+					<img src="img/p1-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p1-2.png" alt="p1-2" width="441" height="570">
+					</p>
+
+					<p>
+					<img src="img/p1-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p1-3.png" alt="p1-3" width="441" height="570">
+					</p>
+
+					<p>
+					住所だけではなく、建物の名称などでも座標は取得できます。
+					</p>
+
+					<p>
+					<img src="img/p1-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p1-4.png" alt="p1-4" width="441" height="570">
+					</p>
+
+					<p>
+					<img src="img/p1-5.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p1-5.png" alt="p1-5" width="441" height="570">
+					</p>
+
+					<p>
+					座標の取得に失敗した場合は、ダイアログで表示します。
+					</p>
+
+					<p>
+					<img src="img/p1-6.png" tppabs="https://www.javadrive.jp/google-maps-javascript/geocoding/img/p1-6.png" alt="p1-6" width="441" height="570">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

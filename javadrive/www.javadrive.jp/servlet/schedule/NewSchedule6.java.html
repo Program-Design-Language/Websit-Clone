@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NewSchedule6.java</title>
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/servlet/" itemprop="url"><span itemprop="title">サーブレット/JSP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/servlet/schedule/" itemprop="url"><span itemprop="title">スケジュール管理</span></a></li>
+		</ul>
+</div>
+
+	<div id="pagebody">
+
+		<div id="content">
+
+			<h1>NewSchedule6.java</h1>
+
+			<p>
+			<a href="NewSchedule6.java" tppabs="https://www.javadrive.jp/servlet/schedule/NewSchedule6.java">NewSchedule6.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.Calendar;
+import java.sql.*;
+
+public class NewSchedule6 extends HttpServlet{
+
+    protected Connection conn = null;
+
+    public void init() throws ServletException{
+        String url = "jdbc:mysql://localhost/servletschedule";
+        String user = "scheduleuser";
+        String password = "schedulepass";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(url, user, password);
+        }catch (ClassNotFoundException e){
+            log("ClassNotFoundException:" + e.getMessage());
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }catch (Exception e){
+            log("Exception:" + e.getMessage());
+        }
+    }
+
+    public void destory(){
+        try{
+            if (conn != null){
+                conn.close();
+            }
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }
+    }
+
+    public void doGet(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException{
+
+        res.setContentType("text/html;charset=Shift_Jis");
+        PrintWriter out = res.getWriter();
+
+        int year;
+        int month;
+        int day;
+
+        String param = req.getParameter("YEAR");
+        if (param == null || param.length() == 0){
+            year = -999;
+        }else{
+            try{
+                year = Integer.parseInt(param);
+            }catch (NumberFormatException e){
+                year = -999;
+            }
+        }
+
+        param = req.getParameter("MONTH");
+        if (param == null || param.length() == 0){
+            month = -999;
+        }else{
+            try{
+                month = Integer.parseInt(param);
+            }catch (NumberFormatException e){
+                month = -999;
+            }
+        }
+
+        param = req.getParameter("DAY");
+        if (param == null || param.length() == 0){
+            day = -999;
+        }else{
+            try{
+                day = Integer.parseInt(param);
+            }catch (NumberFormatException e){
+                day = -999;
+            }
+        }
+
+        /* パラメータが指定されていない場合は本日の日付を設定 */
+        if (year == -999 || month == -999 || day == -999){
+            Calendar calendar = Calendar.getInstance();
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DATE);
+        }
+
+        /* ユーザー情報を取り出す */
+        HttpSession session = req.getSession(false);
+        String username = (String)session.getAttribute("username");
+        String tmpuserid = (String)session.getAttribute("userid");
+        int userid = 0;
+        if (tmpuserid != null){
+            userid = Integer.parseInt(tmpuserid);
+        }
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("&lt;!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0.1//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"&gt;");
+
+        sb.append("&lt;html lang=\"ja\"&gt;");
+        sb.append("&lt;head&gt;");
+        sb.append("&lt;meta http-equiv=\"Content-Type\" Content=\"text/html;charset=Shift_JIS\"&gt;");
+
+        sb.append("&lt;title&gt;スケジュール登録&lt;/title&gt;");
+
+        sb.append("&lt;style&gt;");
+        sb.append("table.sche{border:1px solid #a9a9a9;padding:0px;margin:0px;border-collapse:collapse;}");
+        sb.append("td{vertical-align:top;margin:0px;padding:2px;font-size:0.75em;height:20px;}");
+        sb.append("td.top{border-bottom:1px solid #a9a9a9;text-align:center;}");
+        sb.append("td.time{background-color:#f0f8ff;text-align:right;border-right:1px double #a9a9a9;padding-right:5px;}");
+        sb.append("td.timeb{background-color:#f0f8ff;border-bottom:1px solid #a9a9a9;border-right:1px double #a9a9a9;}");
+        sb.append("td.contents{background-color:#ffffff;border-bottom:1px dotted #a9a9a9;}");
+        sb.append("td.contentsb{background-color:#ffffff;border-bottom:1px solid #a9a9a9;}");
+        sb.append("td.ex{background-color:#ffebcd;border:1px solid #8b0000;}");
+        sb.append("img{border:0px;}");
+        sb.append("p{font-size:0.75em;}");
+
+        sb.append("#contents{margin:0;padding:0;width:710px;}");
+        sb.append("#left{margin:0;padding:0;float:left;width:400px;}");
+        sb.append("#right{margin:0;padding:0;float:right;width:300px;background-color:#ffffff;}");
+        sb.append("#contents:after{content:\".\";display:block;height:0;clear:both;visibility:hidden;}");
+        sb.append("&lt;/style&gt;");
+
+        sb.append("&lt;/head&gt;");
+        sb.append("&lt;body&gt;");
+
+        sb.append("&lt;p&gt;");
+        sb.append(username);
+        sb.append("さんのスケジュールです");
+        sb.append("&lt;/p&gt;");
+
+        sb.append("&lt;p&gt;");
+        sb.append("スケジュール登録&nbsp;&nbsp;");
+        sb.append("[&lt;a href=\"/schedule/MonthView");
+        sb.append("?YEAR=");
+        sb.append(year);
+        sb.append("&MONTH=");
+        sb.append(month);
+        sb.append("\"&gt;カレンダーへ戻る&lt;/a&gt;]");
+        sb.append("&lt;/p&gt;");
+
+        String[] scheduleArray = new String[49];
+        int[] widthArray = new int[49];
+
+        for (int i = 0 ; i &lt; 49 ; i++){
+            scheduleArray[i] = "";
+            widthArray[i] = 0;
+        }
+
+        try {
+            String sql = "SELECT * FROM schedule WHERE userid = ? and scheduledate = ? ORDER BY starttime";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            String startDateStr = year + "-" + (month + 1) + "-" + day;
+            pstmt.setInt(1, userid);
+            pstmt.setString(2, startDateStr);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                int id = rs.getInt("id");
+                String starttime = rs.getString("starttime");
+                String endtime = rs.getString("endtime");
+                String schedule = rs.getString("schedule");
+
+                if (starttime == null || endtime == null){
+                    widthArray[0] = 1;
+                    scheduleArray[0] = scheduleArray[0] + schedule + "&lt;br&gt;";
+                }else{
+                    String startTimeStr = starttime.substring(0, 2);
+                    String startMinuteStr = starttime.substring(3, 5);
+
+                    int startTimeNum = Integer.parseInt(startTimeStr);
+                    int index = startTimeNum * 2 + 1;
+                    if (startMinuteStr.equals("30")){
+                        index++;
+                    }
+
+                    if (widthArray[index] == 0){
+                    /* 既にデータが入っていた場合は異常な状態なので無視する */
+
+                        String endTimeStr = endtime.substring(0, 2);
+                        String endMinuteStr = endtime.substring(3, 5);
+
+                        int endTimeNum = Integer.parseInt(endTimeStr);
+                        int width = (endTimeNum - startTimeNum) * 2;
+
+                        if (startMinuteStr.equals("30")){
+                            width--;
+                        }
+
+                        if (endMinuteStr.equals("30")){
+                            width++;
+                        }
+
+                        StringBuffer sbSchedule = new StringBuffer();
+                        sbSchedule.append(startTimeStr);
+                        sbSchedule.append(":");
+                        sbSchedule.append(startMinuteStr);
+                        sbSchedule.append("-");
+                        sbSchedule.append(endTimeStr);
+                        sbSchedule.append(":");
+                        sbSchedule.append(endMinuteStr);
+                        sbSchedule.append(" ");
+                        sbSchedule.append("&lt;a href=\"/schedule/ScheduleView?ID=");
+                        sbSchedule.append(id);
+                        sbSchedule.append("\"&gt;");
+                        sbSchedule.append(schedule);
+                        sbSchedule.append("&lt;/a&gt;");
+
+                        scheduleArray[index] = new String(sbSchedule);
+                        widthArray[index] = width;
+
+                        /* 同じスケジュールの先頭以外の箇所には「-1」を設定 */
+                        for (int i = 1 ; i &lt; width ; i++){
+                            widthArray[index + i] = -1;
+                        }
+                    }
+                }
+            }
+
+            rs.close();
+            pstmt.close();
+
+        }catch (SQLException e){
+            log("SQLException:" + e.getMessage());
+        }
+
+        sb.append("&lt;div id=\"contents\"&gt;");
+
+        sb.append("&lt;div id=\"left\"&gt;");
+
+        sb.append("&lt;table class=\"sche\"&gt;");
+        sb.append("&lt;tr&gt;&lt;td class=\"top\" style=\"width:80px\"&gt;時刻&lt;/td&gt;&lt;td class=\"top\" style=\"width:300px\"&gt;予定&lt;/td&gt;&lt;/tr&gt;");
+
+        sb.append("&lt;tr&gt;&lt;td class=\"timeb\"&gt;未定&lt;/td&gt;");
+        sb.append("&lt;td class=\"contentsb\"&gt;");
+        if (widthArray[0] == 1){
+            sb.append(scheduleArray[0]);
+        }
+        sb.append("&lt;/td&gt;&lt;/tr&gt;");
+
+        for (int i = 1 ; i &lt; 49 ; i++){
+            if (i % 2 == 1){
+                sb.append("&lt;tr&gt;&lt;td class=\"time\"&gt;");
+                sb.append(i / 2);
+                sb.append(":00&lt;/td&gt;");
+            }else{
+                sb.append("&lt;tr&gt;&lt;td class=\"timeb\"&gt;&lt;/td&gt;");
+            }
+
+            if (widthArray[i] != 0){
+                if (widthArray[i] != -1){
+                    sb.append("&lt;td class=\"ex\" rowspan=\"");
+                    sb.append(widthArray[i]);
+                    sb.append("\"&gt;");
+
+                    sb.append(scheduleArray[i]);
+                }
+            }else{
+                if (i % 2 == 1){
+                    sb.append("&lt;td class=\"contents\"&gt;");
+                }else{
+                    sb.append("&lt;td class=\"contentsb\"&gt;");
+                }
+            }
+
+            sb.append("&lt;/td&gt;&lt;/tr&gt;");
+        }
+
+        sb.append("&lt;/table&gt;");
+
+        sb.append("&lt;/div&gt;");
+
+        sb.append("&lt;div id=\"right\"&gt;");
+
+        sb.append("&lt;form method=\"post\" action=\"/schedule/ScheduleInsert\"&gt;");
+        sb.append("&lt;table&gt;");
+        sb.append("&lt;tr&gt;");
+
+        sb.append("&lt;td nowrap&gt;日付&lt;/td&gt;");
+        sb.append("&lt;td&gt;");
+        sb.append("&lt;select name=\"YEAR\"&gt;");
+        for (int i = 2005 ; i &lt;= 2010 ; i++){
+            sb.append("&lt;option value=\"");
+            sb.append(i);
+            sb.append("\"");
+            if (i == year){
+                sb.append(" selected");
+            }
+            sb.append("&gt;");
+            sb.append(i);
+            sb.append("年");
+        }
+        sb.append("&lt;/select&gt; ");
+
+        sb.append("&lt;select name=\"MONTH\"&gt;");
+        for (int i = 1 ; i &lt;= 12 ; i++){
+            sb.append("&lt;option value=\"");
+            sb.append(i);
+            sb.append("\"");
+            if (i == (month + 1)){
+                sb.append(" selected");
+            }
+            sb.append("&gt;");
+            sb.append(i);
+            sb.append("月");
+        }
+        sb.append("&lt;/select&gt; ");
+
+        sb.append("&lt;select name=\"DAY\"&gt;");
+        int monthLastDay = getMonthLastDay(year, month, day);
+        for (int i = 1 ; i &lt;= monthLastDay ; i++){
+            sb.append("&lt;option value=\"");
+            sb.append(i);
+            sb.append("\"");
+            if (i == day){
+                sb.append(" selected");
+            }
+            sb.append("&gt;");
+            sb.append(i);
+            sb.append("日");
+        }
+        sb.append("&lt;/select&gt;");
+
+        sb.append("&lt;/td&gt;");
+        sb.append("&lt;/tr&gt;");
+
+        sb.append("&lt;tr&gt;");
+        sb.append("&lt;td nowrap&gt;時刻&lt;/td&gt;");
+        sb.append("&lt;td&gt;");
+        sb.append("&lt;select name=\"SHOUR\"&gt;");
+        sb.append("&lt;option value=\"\" selected&gt;--時");
+        for (int i = 0 ; i &lt;= 23 ; i++){
+            sb.append("&lt;option value=\"");
+            sb.append(i);
+            sb.append("\"&gt;");
+            sb.append(i);
+            sb.append("時");
+        }
+        sb.append("&lt;/select&gt; ");
+
+        sb.append("&lt;select name=\"SMINUTE\"&gt;");
+        sb.append("&lt;option value=\"0\"&gt;00分");
+        sb.append("&lt;option value=\"30\"&gt;30分");
+        sb.append("&lt;/select&gt;");
+
+        sb.append(" -- ");
+
+        sb.append("&lt;select name=\"EHOUR\"&gt;");
+        sb.append("&lt;option value=\"\" selected&gt;--時");
+        for (int i = 0 ; i &lt;= 23 ; i++){
+            sb.append("&lt;option value=\"");
+            sb.append(i);
+            sb.append("\"&gt;");
+            sb.append(i);
+            sb.append("時");
+        }
+        sb.append("&lt;/select&gt; ");
+
+        sb.append("&lt;select name=\"EMINUTE\"&gt;");
+        sb.append("&lt;option value=\"0\"&gt;00分");
+        sb.append("&lt;option value=\"30\"&gt;30分");
+        sb.append("&lt;/select&gt;");
+
+        sb.append("&lt;/td&gt;");
+        sb.append("&lt;/tr&gt;");
+
+        sb.append("&lt;tr&gt;");
+        sb.append("&lt;td nowrap&gt;予定&lt;/td&gt;");
+        sb.append("&lt;td&gt;&lt;input type=\"text\" name=\"PLAN\" value=\"\" size=\"30\" maxlength=\"100\"&gt;");
+        sb.append("&lt;/td&gt;");
+        sb.append("&lt;/tr&gt;");
+
+        sb.append("&lt;tr&gt;");
+        sb.append("&lt;td valign=\"top\" nowrap&gt;メモ&lt;/td&gt;");
+        sb.append("&lt;td&gt;&lt;textarea name=\"MEMO\" cols=\"30\" rows=\"10\" wrap=\"virtual\"&gt;&lt;/textarea&gt;&lt;/td&gt;");
+        sb.append("&lt;/tr&gt;");
+        sb.append("&lt;/table&gt;");
+
+        sb.append("&lt;p&gt;");
+        sb.append("&lt;input type=\"submit\" name=\"Register\" value=\"登録する\"&gt; &lt;input type=\"reset\" value=\"入力し直す\"&gt;");
+        sb.append("&lt;p&gt;");
+        sb.append("&lt;/form&gt;");
+
+        sb.append("&lt;/div&gt;");
+        sb.append("&lt;/div&gt;");
+
+        sb.append("&lt;/body&gt;");
+        sb.append("&lt;/html&gt;");
+
+        out.println(new String(sb));
+    }
+
+    protected int getMonthLastDay(int year, int month, int day){
+
+        Calendar calendar = Calendar.getInstance();
+
+        /* 今月が何日までかを確認する */
+        calendar.set(year, month + 1, 0);
+        int thisMonthlastDay = calendar.get(Calendar.DATE);
+
+        return thisMonthlastDay;
+    }
+
+}
+</pre>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

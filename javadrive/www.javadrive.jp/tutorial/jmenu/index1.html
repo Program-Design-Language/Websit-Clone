@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>メニューバー、メニュー、メニューアイテムの作成と基本的な使い方 | Swingを使ってみよう</title>
+<meta name="description" content="Swing を使ったアプリケーションでメニューを利用するには、メニューバー、メニュー、メニューアイテム、をそれぞれ作成する必要があります。メニューバーは JMenuBar クラス、メニューは JMenu クラス、メニューアイテムは JMenuItem クラスを使います。ここではそれぞれのクラスの定義やコンストラクトの確認、およびメニューバーにメニューを、メニューにメニューアイテムを追加してメニューを作成する基本的な使い方について解説します。">
+
+<meta property="og:title" content="メニューバー、メニュー、メニューアイテムの作成と基本的な使い方">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/tutorial/jmenu/index1.html">
+<meta property="og:image" content="https://www.javadrive.jp/tutorial/jmenu/img/p1-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Swing を使ったアプリケーションでメニューを利用するには、メニューバー、メニュー、メニューアイテム、をそれぞれ作成する必要があります。メニューバーは JMenuBar クラス、メニューは JMenu クラス、メニューアイテムは JMenuItem クラスを使います。ここではそれぞれのクラスの定義やコンストラクトの確認、およびメニューバーにメニューを、メニューにメニューアイテムを追加してメニューを作成する基本的な使い方について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jmenu/" itemprop="url"><span itemprop="title">メニューの作成(JMenuBar,JMenu,JMenuItemクラス)</span></a></li>
+		</ul>
+</div>
+
+			<h1>メニューバー、メニュー、メニューアイテムの作成と基本的な使い方</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Swing を使ったアプリケーションでメニューを利用するには、メニューバー、メニュー、メニューアイテム、をそれぞれ作成する必要があります。メニューバーは JMenuBar クラス、メニューは JMenu クラス、メニューアイテムは JMenuItem クラスを使います。ここではそれぞれのクラスの定義やコンストラクトの確認、およびメニューバーにメニューを、メニューにメニューアイテムを追加してメニューを作成する基本的な使い方について解説します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">JMenuBarクラスの定義とコンストラクタ</a></li>
+			<li><a href="#section2">JMenuクラスの定義とコンストラクタ</a></li>
+			<li><a href="#section3">JMenuItemクラスの定義とコンストラクタ</a></li>
+			<li><a href="#section4">メニューを作成する基本的な手順</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">JMenuBarクラスの定義とコンストラクタ</a></h2>
+
+			<p>
+			メニューバーはメニューの中の次の部分です。
+			</p>
+
+			<p>
+			<img src="img/p1-1.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-1.png" alt="JMenuBarクラスの定義とコンストラクタ" width="728" height="450">
+			</p>
+
+			<p>
+			JMenuBar クラスは次のように定義されています。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<pre>
+java.lang.Object
+  java.awt.Component
+    java.awt.Container
+      javax.swing.JComponent
+        javax.swing.JMenuBar
+</pre>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+public class JMenuBar<br>
+extends JComponent<br>
+implements Accessible, MenuElement
+</p>
+</div>
+
+			<p>
+			メニューバーはコンポーネントの親クラスである JComponent クラスのサブクラスとなっています。
+			</p>
+
+			<p>
+			JMenuBar クラスをを利用するにはコンストラクタを使って JMenuBar クラスのオブジェクトを作成します。次のようなコンストラクタが用意されています。
+			</p>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuBar()
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+新しいメニュー・バーを作成します。
+</p>
+</div>
+
+			<p>
+			メニューバーのコンストラクタは一つで次のように定義されています。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public JMenuBar()
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+新しいメニュー・バーを作成します。
+</p>
+</div>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JMenuBar menubar = new JMenuBar();
+</pre>
+</div>
+
+<h2><a id="section2">JMenuクラスの定義とコンストラクタ</a></h2>
+
+			<p>
+			メニューはメニューの中の次の部分です。
+			</p>
+
+			<p>
+			<img src="img/p1-2.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-2.png" alt="JMenuクラスの定義とコンストラクタ" width="728" height="450">
+			</p>
+
+			<p>
+			JMenu クラスは次のように定義されています。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<pre>
+java.lang.Object
+  java.awt.Component
+    java.awt.Container
+      javax.swing.JComponent
+        javax.swing.AbstractButton
+          javax.swing.JMenuItem
+            javax.swing.JMenu
+</pre>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+public class JMenu<br>
+extends JMenuItem<br>
+implements Accessible, MenuElement
+</p>
+</div>
+
+			<p>
+			メニューはコンポーネントの親クラスである JComponent クラスのサブクラスとなっています。またボタン系を扱うクラス全般の親クラスである AbstractButton クラスのサブクラスでもあります。
+			</p>
+
+			<p>
+			JMenu クラスをを利用するにはコンストラクタを使って JMenu クラスのオブジェクトを作成します。次のようなコンストラクタが用意されています。
+			</p>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenu()
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+テキストのない新しいJMenuを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenu?(String s)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定された文字列をテキストとして持つ新しいJMenuを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenu?(String s, boolean b)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定された文字列をテキストとして持ち、ティア・オフ・メニューかどうかが指定された、新しいJMenuを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenu?(Action a)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定されたActionからプロパティを取得するメニューを作成します。
+</p>
+</div>
+
+			<p>
+			コンストラクタはいくつか用意されていますが、この中からメニューに表示される文字列を指定してメニューを作成するコンストラクタを見てみます。次のように定義されています。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public JMenu?(String s)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定された文字列をテキストとして持つ新しいJMenuを作成します。<br>
+<br>
+パラメータ:<br>
+s - メニュー・ラベルのテキスト
+</p>
+</div>
+
+			<p>
+			引数にはメニューに表示されるテキストを表す String クラスのオブジェクトを指定します。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JMenuBar menubar = new JMenuBar();
+
+JMenu menu1 = new JMenu("File");
+JMenu menu2 = new JMenu("Edit");
+</pre>
+</div>
+
+<h2><a id="section3">JMenuItemクラスの定義とコンストラクタ</a></h2>
+
+			<p>
+			メニューアイテムはメニューの中の次の部分です。
+			</p>
+
+			<p>
+			<img src="img/p1-3.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-3.png" alt="JMenuItemクラスの定義とコンストラクタ" width="728" height="450">
+			</p>
+
+			<p>
+			JMenuItem クラスは次のように定義されています。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<pre>
+java.lang.Object
+  java.awt.Component
+    java.awt.Container
+      javax.swing.JComponent
+        javax.swing.AbstractButton
+          javax.swing.JMenuItem
+</pre>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+public class JMenuItem<br>
+extends AbstractButton<br>
+implements Accessible, MenuElement
+</p>
+</div>
+
+			<p>
+			メニューアイテムはコンポーネントの親クラスである JComponent クラスのサブクラスとなっています。またボタン系を扱うクラス全般の親クラスである AbstractButton クラスのサブクラスでもあります。
+			</p>
+
+			<p>
+			JMenuItem クラスをを利用するにはコンストラクタを使って JMenuItem クラスのオブジェクトを作成します。次のようなコンストラクタが用意されています。
+			</p>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuItem()
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+テキストおよびアイコンを指定しないでJMenuItemを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuItem?(String text)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定されたテキストでJMenuItemを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuItem?(String text, int mnemonic)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定されたテキストおよびキーボード・ニーモニックでJMenuItemを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuItem?(String text, Icon icon)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定されたテキストおよびアイコンでJMenuItemを作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuItem?(Action a)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定されたActionからプロパティを取得するメニュー項目を作成します。
+</p>
+</div>
+
+<div class="titlebox3 titlebox-top">
+<p>
+JMenuItem?(Icon icon)
+</p>
+</div>
+<div class="titlebox3 titlebox-bottom">
+<p>
+指定されたアイコンでJMenuItemを作成します。
+</p>
+</div>
+
+			<p>
+			メニューアイテムには文字列や画像を表示することができ、コンストラクも何を表示するのかに合わせていくつか用意されています。
+			</p>
+
+			<p>
+			最初に表示する文字列を指定してメニューアイテムを作成するコンストラクタを見てみます。次のように定義されています。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public JMenuItem?(String text)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+指定されたテキストでJMenuItemを作成します。<br>
+<br>
+パラメータ:<br>
+text - JMenuItemのテキスト
+</p>
+</div>
+
+			<p>
+			引数にはメニューに表示されるテキストを表す String クラスのオブジェクトを指定します。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JMenuBar menubar = new JMenuBar();
+
+JMenu menu1 = new JMenu("File");
+JMenu menu2 = new JMenu("Edit");
+
+JMenuItem? menuitem1_1 = new JMenuItem?("Open");
+JMenuItem? menuitem1_2 = new JMenuItem?("Exit");
+</pre>
+</div>
+
+<h2><a id="section4">メニューを作成する基本的な手順</a></h2>
+
+			<p>
+			メニューを作成する基本的な手順は、メニューバーを作成したあとでメニューを作成してメニューバーに追加します。そしてメニューアイテムを作成してメニューへ追加します。最後にフレームに対してメニューバーを追加します。
+			</p>
+
+			<p>
+			メニューバーへメニューを追加するには JMenuBar クラスで定義されている add メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public JMenu add?(JMenu c)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+メニュー・バーの最後に、指定されたメニューを追加します。<br>
+<br>
+パラメータ:<br>
+c - 追加するJMenuコンポーネント<br>
+<br>
+戻り値:<br>
+メニュー・コンポーネント
+</p>
+</div>
+
+			<p>
+			引数にはメニューバーに追加する JMenu クラスのオブジェクトを指定します。
+			</p>
+
+			<p>
+			次にメニューへメニューアイテムを追加するには JMenu クラスで定義されている add メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public JMenuItem add?(JMenuItem menuItem)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+このメニューの最後にメニュー項目を追加します。 追加されたメニュー項目を返します。<br>
+<br>
+パラメータ:<br>
+menuItem - 追加されるJMenuitem<br>
+<br>
+戻り値:<br>
+追加されたJMenuItem
+</p>
+</div>
+
+			<p>
+			引数にはメニューに追加する JMenuItem クラスのオブジェクトを指定します。
+			</p>
+
+			<p>
+			最後に作成したメニューバーをフレームに追加するには JFrame クラスで定義されている setJMenuBar? メソッドを使います。
+			</p>
+
+<div class="titlebox2 titlebox-top">
+<p>
+public void setJMenuBar?(JMenuBar menubar)
+</p>
+</div>
+<div class="titlebox2 titlebox-bottom">
+<p>
+このフレームのメニュー・バーを設定します。<br>
+<br>
+パラメータ:<br>
+menubar - フレーム内に配置されているメニュー・バー
+</p>
+</div>
+
+			<p>
+			引数にはフレームに追加する JMenuBar クラスのオブジェクトを指定します。
+			</p>
+
+			<p>
+			実際の使い方は次のようになります。
+			</p>
+
+<div class="titlebox1">
+<pre>
+JMenuBar menubar = new JMenuBar();
+
+JMenu menu1 = new JMenu("File");
+JMenu menu2 = new JMenu("Edit");
+
+menubar.add(menu1);
+menubar.add(menu2);
+
+JMenuItem? menuitem1_1 = new JMenuItem?("Open");
+JMenuItem? menuitem1_2 = new JMenuItem?("Exit");
+
+menu1.add(menuitem1);
+menu1.add(menuitem2);
+
+JFrame frame = new JFrame();
+frame.setJMenuBar?(menubar)
+</pre>
+</div>
+
+			<h3>サンプルプログラム</h3>
+
+			<p>
+			それでは簡単なサンプルプログラムを作って試してみます。テキストエディタで次のように記述したあと、 JSample1_1.java という名前で保存します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+class JSample1_1 extends JFrame{
+  public static void main(String args[]){
+    JSample1_1 frame = new JSample1_1("MyTitle");
+    frame.setVisible(true);
+  }
+
+  JSample1_1(String title){
+    setTitle(title);
+    setBounds(100, 100, 600, 400);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    JMenuBar menubar = new JMenuBar();
+
+    JMenu menu1 = new JMenu("File");
+    JMenu menu2 = new JMenu("Edit");
+
+    menubar.add(menu1);
+    menubar.add(menu2);
+
+    JMenuItem menuitem1_1 = new JMenuItem("New");
+    JMenuItem menuitem1_2 = new JMenuItem("Open");
+    JMenuItem menuitem1_3 = new JMenuItem("Exit");
+
+    JMenuItem menuitem2_1 = new JMenuItem("Cut");
+    JMenuItem menuitem2_2 = new JMenuItem("Copy");
+    JMenuItem menuitem2_3 = new JMenuItem("Paste");
+
+    menu1.add(menuitem1_1);
+    menu1.add(menuitem1_2);
+    menu1.add(menuitem1_3);
+
+    menu2.add(menuitem2_1);
+    menu2.add(menuitem2_2);
+    menu2.add(menuitem2_3);
+
+    setJMenuBar(menubar);
+  }
+}
+</pre>
+</div>
+
+			<p>
+			次のようにコンパイルを行います。
+			</p>
+
+<div class="titlebox1">
+<pre>
+javac JSample1_1.java
+</pre>
+</div>
+
+			<p>
+			<img src="img/p1-4.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-4.png" alt="メニューを作成する基本的な手順(1)" width="723" height="352">
+			</p>
+
+			<p>
+			コンパイルが終わりましたら実行します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+java JSample1_1
+</pre>
+</div>
+
+			<p>
+			メニューを作成しました。メニューバーには 2 つのメニューが追加されています。
+			</p>
+
+			<p>
+			<img src="img/p1-5.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-5.png" alt="メニューを作成する基本的な手順(2)" width="586" height="393">
+			</p>
+
+			<p>
+			それぞれのメニューをクリックすると、メニューに追加されているメニューアイテムが表示されます。
+			</p>
+
+			<p>
+			<img src="img/p1-6.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-6.png" alt="メニューを作成する基本的な手順(3)" width="586" height="393">
+			</p>
+
+			<p>
+			<img src="img/p1-7.png" tppabs="https://www.javadrive.jp/tutorial/jmenu/img/p1-7.png" alt="メニューを作成する基本的な手順(3)" width="586" height="393">
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			メニューを構成する各クラスの定義やコンストラクトの確認、およびメニューバーにメニューを、メニューにメニューアイテムを追加してメニューを作成する基本的な使い方について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

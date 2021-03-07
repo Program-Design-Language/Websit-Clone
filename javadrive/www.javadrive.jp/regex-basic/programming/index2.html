@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>正規表現 | JavaScriptの正規表現</title>
+<meta name="description" content="JavaScript で正規表現を利用する場合の記述方法です。正規表現オブジェクトの作成方法、メソッドを使ってマッチした文字列を取得したり置換を行う方法、そして JavaScript で利用可能なオプション(フラグ)について解説します。">
+
+<meta property="og:title" content="JavaScriptの正規表現">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/regex-basic/programming/index2.html">
+<meta property="og:image" content="https://www.javadrive.jp/regex-basic/programming/img/p2-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="JavaScript で正規表現を利用する場合の記述方法です。正規表現オブジェクトの作成方法、メソッドを使ってマッチした文字列を取得したり置換を行う方法、そして JavaScript で利用可能なオプション(フラグ)について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "正規表現入門",
+	"item": "https://www.javadrive.jp/regex-basic/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "プログラミング言語別の正規表現",
+	"item": "https://www.javadrive.jp/regex-basic/programming/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/regex-basic/">正規表現入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/regex-basic/programming/">プログラミング言語別の正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>JavaScriptの正規表現</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			JavaScript で正規表現を利用する場合の記述方法です。正規表現オブジェクトの作成方法、メソッドを使ってマッチした文字列を取得したり置換を行う方法、そして JavaScript で利用可能なオプション(フラグ)について解説します。
+			</p>
+
+			<p>
+			※ JavaScript を使った正規表現の詳細な使い方については「JavaScript入門」の中の「<a href="../../javascript/regexp/index.htm" tppabs="https://www.javadrive.jp/javascript/regexp/">JavaScript正規表現</a>」を参照されてください。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">正規表現オブジェクトの作成</a></li>
+			<li><a href="#section2">各種メソッドの利用</a></li>
+			<li><a href="#section3">JavaScriptで使用できるオプション(フラグ)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">正規表現オブジェクトの作成</a></h2>
+
+			<p>
+			JavaScriptで正規表現オブジェクトを作成するには、正規表現リテラルを使用するか RegExp コンストラクタを使用します。
+			</p>
+
+<div class="titlebox2">
+<pre>
+/パターン/
+/パターン/フラグ
+new RegExp(/パターン/)
+new RegExp(/パターン/, 'フラグ')
+</pre>
+</div>
+
+			<p>
+			具合的には次のように記述します。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regex1 = /apple/;
+let regex2 = /apple/i;
+let regex3 = new RegExp(/apple/);
+let regex4 = new RegExp(/apple/, 'i');
+</pre>
+</div>
+
+			<p>
+			RegExp コンストラクタを使用する場合はパターンを文字列として指定することもできます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regex1 = new RegExp('apple');
+let regex2 = new RegExp('apple', 'i');
+</pre>
+</div>
+
+<h2><a id="section2">各種メソッドの利用</a></h2>
+
+			<p>
+			JavaScript で文字列がパターンにマッチしているかどうか調べたり、置換を行うためのメソッドとして次の 6 種類が用意されています。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let regex = /apple/;
+let str = 'I like apple';
+
+// 文字列が正規表現とマッチするかテストする
+console.log(regex.test(str));
+--&gt; true
+
+// 正規表現にマッチした文字列を取得する
+let result1 = regex.exec(str);
+console.log(result1[0]);
+--&gt; apple
+
+// 正規表現にマッチした文字列のインデックスを取得する
+console.log(str.search(regex));
+--&gt; 7
+
+// 正規表現にマッチしたすべての文字列を取得する
+let result2 = str.match(regex);
+console.log(result2[0]);
+--&gt; apple
+
+// 文字列を正規表現を使った区切り文字で分割する
+let strAry = str.split(/[ ]/);
+console.log(strAry);
+--&gt; (3)?["I", "like", "apple"]
+
+// 正規表現を使って指定した文字列を新しい文字列に置換する
+let newstr = str.replace(/apple/, 'Apple');
+console.log(newstr);
+--&gt; I like Apple
+</pre>
+</div>
+
+<h2><a id="section3">JavaScriptで使用できるオプション(フラグ)</a></h2>
+
+			<p>
+			JavaScript で用意されているオプション(フラグ)は次の 6 種類です。
+			</p>
+
+<table class="pro2">
+<tr><th>フラグ</th><th>フラグ名</th><th>説明</th></tr>
+<tr><td>g</td><td>Global</td><td>パターンに一致するすべての文字列が対象となります。</td></tr>
+<tr><td>i</td><td>IgnoreCase</td><td>パターンで大文字と小文字を区別しなくなります。</td></tr>
+<tr><td>m</td><td>Multiline</td><td>メタ文字の ^ や $ が各行の先頭と末尾にもマッチします。</td></tr>
+<tr><td>s</td><td>DotAll</td><td>メタ文字の . が改行文字にもマッチします。</td></tr>
+<tr><td>u</td><td>Unicode</td><td>Unicode コードポイントが使用できます。</td></tr>
+<tr><td>y</td><td>Sticky</td><td>lastIndex プロパティの位置からのみ一致するかどうかを判定します。</td></tr>
+</table>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			JavaScript で正規表現を利用する場合の記述方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

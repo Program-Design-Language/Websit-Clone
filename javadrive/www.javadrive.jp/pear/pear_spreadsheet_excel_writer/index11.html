@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>セルにリンクを書き込む(writeUrl) - Excelファイル作成(PEAR::Spreadsheet_Excel_Writer) - PEAR入門</title>
+<meta name="keywords" content="セルにリンクを書き込む(writeUrl),PEAR::Spreadsheet_Excel_Writer,入門,PEAR" />
+<meta name="description" content="セルにリンクを書き込む(writeUrl)" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/pear/" itemprop="url"><span itemprop="title">PEAR入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/" itemprop="url"><span itemprop="title">Excelファイル作成(PEAR::Spreadsheet_Excel_Writer)</span></a></li>
+		</ul>
+</div>
+
+			<h1>セルにリンクを書き込む(writeUrl)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					セルにリンクを書き込む方法を確認します。(「<a href="index6.html" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/index6.html">writeメソッド</a>もご確認下さい)。
+					</p>
+
+					<p>
+					セルにリンクを書き込むにはSpreadsheet_Excel_Writer_Worksheetクラスで用意されているwriteUrlメソッドを使います。
+					</p>
+
+<pre class="mheader">
+void writeUrl(integer $row, integer $col, string $url
+           [, string $string='' [, mixed $format=0]])
+</pre>
+<pre class="mexplain">
+ハイパーリンクを書き込みます。これは表示されるラベルおよび非表示のリンク
+の2つの要素から構成されます。別途文字列が指定されなければ、表示されるラベ
+ルはリンクと同じになります。ラベルは writeString() メソッドを使用して書き
+込まれます。そのため、255 文字までという制限があります。
+$string および $format はオプションで、その順序は交換可能です。ハイパーリ
+ンクとして 指定できるのは http、ftp、メールアドレス、同じドキュメント内の
+場所、あるいは外部のディレクトリを表すURLです。正常に終了した場合に 0、パ
+ラメータが足りない場合に -1、行や列が範囲を超えている場合に -2、長い文字
+列を 255 文字に切り詰めた場合に -3 を返します。
+
+パラメータ:
+  $row  書き込み先の行
+  $col  書き込み先の列
+  $url  URL 文字列
+  $string  表示用のラベル
+  $format  セルに適用する書式
+
+戻り値:
+  正常に終了した場合は 0、数式にエラーがあった場合は -1、行や列が範囲を
+    超えている場合に -2 を返します。
+</pre>
+
+					<p>
+					1番目と2番目の引数で対象となるセルの行番号と列番号を指定します。3番目の引数でセルに書き込むリンクのURLを指定します。4番目の引数でリンクとして表示されてる文字列を指定します。4番目の引数を省略した場合は3番目の引数で指定したリンクのURLを文字列として使います。
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer();
+$workbook-&gt;send('sample1-1.xls');
+
+$worksheet =& $workbook-&gt;addWorksheet('シート1');
+$worksheet-&gt;writeUrl(0, 0, 'http://www.google.co.jp/', 'Google');
+$workbook-&gt;close();
+?&gt;
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では簡単なサンプルで試してみます。
+					</p>
+
+					<p>
+					<a href="sample11-1.html" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/sample11-1.html">sample11-1.php</a>
+					</p>
+
+<pre class="fixcode">
+&lt;?php
+require_once("Spreadsheet/Excel/Writer.php");
+
+$workbook = new Spreadsheet_Excel_Writer('./sheet/sample11-1.xls');
+$worksheet =& $workbook-&gt;addWorksheet('シート1');
+
+$worksheet-&gt;writeUrl(0, 0, 'http://www.google.co.jp/', 'Google');
+$worksheet-&gt;writeUrl(1, 0, 'http://www.yahoo.co.jp/');
+$workbook-&gt;close();
+
+print('&lt;html&gt;');
+print('&lt;head&gt;');
+print('&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /&gt;');
+print('&lt;/head&gt;');
+print('&lt;body&gt;');
+print('&lt;p&gt;&lt;a href="./sheet/sample11-1.xls"&gt;Excelファイル&lt;/a&gt;&lt;/p&gt;');
+print('&lt;/body&gt;&lt;/html&gt;');
+?&gt;
+</pre>
+
+					<p>
+					上記のファイルをWWWサーバのドキュメントルート以下に設置しブラウザからアクセスすると次のように表示されます。
+					</p>
+
+					<p>
+					<img src="img/p11-1.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p11-1.png" alt="セルにリンクを書き込む(writeUrl)" width="462" height="269">
+					</p>
+
+					<p>
+					作成されたExcelファイルへのリンクが表示されます。リンクからExcelファイルをローカルに保存しExcelで開いて下さい。
+					</p>
+
+					<p>
+					<img src="img/p11-2.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p11-2.png" alt="セルにリンクを書き込む(writeUrl)" width="489" height="342">
+					</p>
+
+					<p>
+					セル内に外部リンク先に関するリンクが書き込まれています。
+					</p>
+
+					<p>
+					<img src="img/p11-3.png" tppabs="https://www.javadrive.jp/pear/pear_spreadsheet_excel_writer/img/p11-3.png" alt="セルにリンクを書き込む(writeUrl)" width="489" height="342">
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

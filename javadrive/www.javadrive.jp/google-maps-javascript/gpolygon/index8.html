@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>頂点の挿入と削除(insertVertex, deleteVertexメソッド) - ポリゴン(GPolygon) - Google Maps JavaScript API入門</title>
+<meta name="keywords" content="頂点の挿入と削除,GPolygon,Google Maps API" />
+<meta name="description" content="頂点の挿入と削除する方法について確認します" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/" itemprop="url"><span itemprop="title">Google Maps JavaScript API入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/" itemprop="url"><span itemprop="title">ポリゴン(GPolygon)</span></a></li>
+		</ul>
+</div>
+
+			<h1>頂点の挿入と削除</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+					<p>
+					地図上に表示されたポリゴンにインデックスを指定して頂点を挿入する方法と削除する方法を確認します。地図上の任意の位置に頂点を挿入するにはGPolygonクラスで用意されているinsertVertexメソッドを使います。 
+					</p>
+
+<pre class="mheader">
+insertVertex(index:Number, latlng:GLatLng)
+</pre>
+<pre class="mexplain">
+ポリゴンの指定インデックスに新しいポイントを挿入します。既に GPolygon が
+ GMap2.addOverlay() 経由で地図に追加されている必要があります。 
+</pre>
+
+					<p>
+					1番目の引数にはポリゴンのどの位置に頂点を挿入するのかをインデックスで指定します。インデックスは先頭の頂点が0となり順に1、2、3...と割り当てられています。1と2の頂点の間に挿入したい場合は2を指定して下さい。2番目の引数には新しい頂点の座標を表すGLatLngクラスのオブジェクトを指定します。 
+					</p>
+
+					<p>
+					頂点が挿入されると自動的に多角形が再描画されます。 
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(34.98655,135.75531), 13);
+
+var points = [
+  new GLatLng(34.991261,135.730076),
+  new GLatLng(34.997976,135.759945),
+  new GLatLng(34.965979,135.772219),
+  new GLatLng(34.991261,135.730076)
+];
+var polygon = new GPolygon(points, "#ff00ff", 4, 0.5, "#ff0000", 0.2);
+map.addOverlay(polygon);
+
+polygon.insertVertex(1, new GLatLng(43.335167,142.377319));
+</pre>
+
+					<h2>頂点の削除</h2>
+
+					<p>
+					ポリゴンの既存の頂点を削除するにはGPolygonクラスで用意されているdeleteVertexメソッドを使います。 
+					</p>
+
+<pre class="mheader">
+deleteVertex(index:Number) 
+</pre>
+<pre class="mexplain">
+ポリゴンに指定のインデックスを持つ頂点を削除し、それに応じてポリゴンの形
+状を更新します。既に GPolygon が GMap2.addOverlay() 経由で地図に追加され
+ている必要があります。 
+</pre>
+
+					<p>
+					1番目の引数にはポリゴンのどの頂点を削除するのかをインデックで指定します。 
+					</p>
+
+					<p>
+					挿入の場合と同じく頂点が削除されると自動的に多角形が再描画されます。 
+					</p>
+
+					<p>
+					実際には次のように記述します。
+					</p>
+
+<pre class="fixcode">
+var map = new GMap2(document.getElementById("map"));
+map.setCenter(new GLatLng(34.98655,135.75531), 13);
+
+var points = [
+  new GLatLng(34.991261,135.730076),
+  new GLatLng(34.997976,135.759945),
+  new GLatLng(34.965979,135.772219),
+  new GLatLng(34.991261,135.730076)
+];
+var polygon = new GPolygon(points, "#ff00ff", 4, 0.5, "#ff0000", 0.2);
+map.addOverlay(polygon);
+
+polygon.deleteVertex(1);
+</pre>
+
+					<h2>サンプルプログラム</h2>
+
+					<p>
+					では試してみます。
+					</p>
+
+					<p>
+					<a href="js/code8_1.js" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/js/code8_1.js">code8_1.js</a>
+					</p>
+
+<pre class="fixcode">
+var polygon;
+
+function initialize() {
+  if (GBrowserIsCompatible()) {
+    var map = new GMap2(document.getElementById("map_canvas"));
+    map.setCenter(new GLatLng(43.555018,142.386932), 8);
+
+    var points = [
+      new GLatLng(44.19599,142.421265),
+      new GLatLng(43.082931,141.459961),
+      new GLatLng(42.910172,143.250732),
+      new GLatLng(44.19599,142.421265)
+    ];
+
+    polygon = new GPolygon(points, "#0000ff", 5, 0.5, "#f0e68c", 0.5);
+    map.addOverlay(polygon);
+  }
+}
+
+function insertPoint() {
+  var index = parseInt(document.getElementById("insertindex").value);
+  var lat = parseFloat(document.getElementById("latval").value);
+  var lng = parseFloat(document.getElementById("lngval").value);
+
+  polygon.insertVertex(index, new GLatLng(lat, lng));
+}
+
+function deletePoint() {
+  var index = parseInt(document.getElementById("deleteindex").value);
+
+  polygon.deleteVertex(index);
+}
+</pre>
+
+					<p>
+					<a href="map8_1.html" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/map8_1.html">map8_1.html</a>
+					</p>
+
+<pre class="fixcode">
+&lt;!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"/&gt;
+    &lt;title&gt;サンプル：頂点の挿入と削除&lt;/title&gt;
+    &lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=(key)&amp;sensor=false"
+            type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="./js/code8_1.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="initialize()" onunload="GUnload()"&gt;
+    &lt;div id="map_canvas" style="width: 400px; height: 400px"&gt;&lt;/div&gt;
+    &lt;form&gt;
+    &lt;p&gt;
+    index：&lt;input type="text" id="insertindex" size="2" value="0" /&gt;
+    Lat：&lt;input type="text" id="latval" size="15" value="10" /&gt;
+    Lng：&lt;input type="text" id="lngval" size="15" value="10" /&gt;
+    &lt;input type="button" id="insertbtn" value="挿入" onclick="insertPoint()" /&gt;&lt;br /&gt;
+    index：&lt;input type="text" id="deleteindex" size="2" value="0" /&gt;
+    &lt;input type="button" id="deletebtn" value="削除" onclick="deletePoint()" /&gt;&lt;br /&gt;
+    &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+					<p>
+					ではブラウザで上記のURLを見てみます。
+					</p>
+
+					<p>
+					<img src="img/p8-1.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p8-1.png" alt="p8-1" width="441" height="600">
+					</p>
+
+					<p>
+					では地図下のindexにインデックス、latに緯度、lngに経度を入力し「挿入」ボタンを押して下さい。 
+					</p>
+
+					<p>
+					<img src="img/p8-2.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p8-2.png" alt="p8-2" width="441" height="600">
+					</p>
+
+					<p>
+					<img src="img/p8-3.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p8-3.png" alt="p8-3" width="441" height="600">
+					</p>
+
+					<p>
+					頂点が挿入され、多角形が再描画されました。
+					</p>
+
+					<p>
+					次に地図下のindexにインデックスを入力し「削除」ボタンを押して下さい。 
+					</p>
+
+					<p>
+					<img src="img/p8-4.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p8-4.png" alt="p8-4" width="441" height="600">
+					</p>
+
+					<p>
+					<img src="img/p8-5.png" tppabs="https://www.javadrive.jp/google-maps-javascript/gpolygon/img/p8-5.png" alt="p8-5" width="441" height="600">
+					</p>
+
+					<p>
+					指定したインデックスの頂点が削除され、多角形が再描画されました。
+					</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

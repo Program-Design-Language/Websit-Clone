@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChoiceFormatクラス - JFormattedTextFieldクラス - Swing</title>
+<meta name="keywords" content="ChoiceFormat,JFormattedTextField,Swing,Java" />
+<meta name="description" content="ChoiceFormatクラス" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/tutorial/" itemprop="url"><span itemprop="title">Swing</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/tutorial/jformattedtextfield/" itemprop="url"><span itemprop="title">JFormattedTextFieldクラス</span></a></li>
+		</ul>
+</div>
+
+			<h1>ChoiceFormatクラス</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			ChoiceFormatはDecimalFormatクラスと同様、NumberFormatクラスの実装クラスです。ただ使い方はかなり違っており、対象となる数値の大きさによって対応する文字列を選択するようなフォーマットを指定します。
+			</p>
+
+			<p>
+			まず下記のクラス図を見てください。
+			</p>
+
+<div class="classwaku">
+<ul class="classdirectory">
+<li class="top">java.lang.Object</li>
+<li class="row1">java.text.Format</li>
+<li class="row2">java.text.NumberFormat</li>
+<li class="row3">java.text.ChoiceFormat</li>
+<li class="detail">public class ChoiceFormat extends NumberFormat</li>
+</ul>
+</div>
+
+			<p>
+			コンストラクタは2つ用意されています。
+			</p>
+
+<table class="pro">
+<tr><th>コンストラクタ</th></tr>
+<tr><td><span class="title">ChoiceFormat(double[] limits, String[] formats)</span><br>指定されたリミットとそれに対応するフォーマットによりオブジェクトを構築します。</td></tr>
+<tr><td><span class="title">ChoiceFormat(String newPattern)</span><br>指定されたパターンに基づくリミットとそれに対応するフォーマットによりオブジェクトを構築します。</td></tr>
+</table>
+
+			<p>
+			まず1番目のコンストラクタを見てください。
+			</p>
+
+<pre class="mheader">
+ChoiceFormat
+public ChoiceFormat(double[] limits, String[] formats)
+</pre>
+<pre class="mexplain">
+指定されたリミットとそれに対応するフォーマットによりオブジェクトを構築
+します。
+</pre>
+
+			<p>
+			基本的な考え方は次の通りです。まずdouble型の配列を用意します。これはフォーマットの対象となる数値を区分するための仕切りの値の配列です。例えば、下記のような配列だったとします。
+			</p>
+
+<pre class="fixcode">
+double[] limits = {1,2,3,4,5,6,7};
+</pre>
+
+			<p>
+			このようにした場合、フォーマットの対象となる数値が2.5だった場合は2に、3.4だった場合は3に、となります。これは次のルールによります。
+			</p>
+
+<pre class="fixcomment">
+X matches j if and only if limit[j] &lt;= X &lt; limit[j+1]
+</pre>
+
+			<p>
+			これでフォーマットの対象となる数値が、limitの配列に記述した数値のどれかに所属することになります。次にlimitの配列と同じ数の対応する文字列の配列を用意します。
+			</p>
+
+<pre class="fixcode">
+String[] formats = {"Sun","Mon","Tue","Wed","Thur","Fri","Sat"};
+</pre>
+
+			<p>
+			フォーマットの対象となる数値が2.5だった場合は、まずlimit内の配列の値から"2"になり、それに対応するfomatの配列から"Mon"がフォーマットされた結果となります。
+			</p>
+
+			<p>
+			1番目のコンストラクタを使った場合はこのような感じです。実際に簡単な例で試してみましょう。
+			</p>
+
+<pre class="fixcode">
+import java.text.ChoiceFormat;
+
+public class SwingTest{
+  public static void main(String[] args){
+
+    double[] limits = {1,1.5,2,2.5,3};
+    String[] monthNames = {"Sun","Mon","Tue","Wed","Thur"};
+
+    ChoiceFormat cf = new ChoiceFormat(limits, monthNames);
+
+    for (double i = 0.0; i &lt;= 4.5; i += 0.3){
+      System.out.println(i + " -&gt; " + cf.format(i));
+    }
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+0.0 -&gt; Sun
+0.3 -&gt; Sun
+0.6 -&gt; Sun
+0.8999999999999999 -&gt; Sun
+1.2 -&gt; Sun
+1.5 -&gt; Mon
+1.8 -&gt; Mon
+2.1 -&gt; Tue
+2.4 -&gt; Tue
+2.6999999999999997 -&gt; Wed
+2.9999999999999996 -&gt; Wed
+3.2999999999999994 -&gt; Thur
+3.599999999999999 -&gt; Thur
+3.899999999999999 -&gt; Thur
+4.199999999999999 -&gt; Thur
+4.499999999999999 -&gt; Thur
+</pre>
+
+			<p>
+			見ていただくと分かる通り、limitの配列で指定した区切りの数値と比較して、最小値よりも小さい値は最小値と同じに、最大値よりも大きい値は最大値と同じ結果となります。
+			</p>
+
+			<p>
+			では、最後の値よりも大きい値は別のフォーマットを指定したい場合はどうするかというと、ChoiceFormatクラスで用意されているnextDoubleメソッドを使います。
+			</p>
+
+<pre class="mheader">
+nextDouble
+public static final double nextDouble(double d)
+</pre>
+<pre class="mexplain">
+d より大きな最小の double を見つけます。NaN の場合は、同じ値を返します。
+一方が開いた間隔を作るのに使用します。
+</pre>
+
+			<p>
+			staticなメソッドですので、下記のような使い方をします。
+			</p>
+
+<pre class="fixcode">
+double[] limits = {1,1.5,2,2.5,3,ChoiceFormat.nextDouble(3)};
+String[] monthNames = {"Sun","Mon","Tue","Wed","Thur","Fri"};
+</pre>
+
+			<p>
+			これで3までの値は"Wed"ですが、3より大きい値は"Fri"となります。ChoiceFormat.nextDouble(3)の代わりに3より大きい適当な値を入れても結果は同じとなりますが(対象の数値がその値よりも大きくても最後の値に対応するのは先ほどの例で見た通りです。その為適当な値が何であっても結果は同じとなります)、適当な値を入れるよりはこのように書いた方が意図が分かりやすいかと思います。
+			</p>
+
+			<p>
+			同じように小さい値のためにpreviousDoubleメソッドも用意されています。
+			</p>
+
+<pre class="mheader">
+previousDouble
+public static final double previousDouble(double d)
+</pre>
+<pre class="mexplain">
+d より小さな最大の double を見つけます。NaN の場合は、同じ値を返します。
+</pre>
+
+			<p>
+			これも簡単なサンプルで試してみましょう。
+			</p>
+
+<pre class="fixcode">
+import java.text.ChoiceFormat;
+
+public class SwingTest{
+  public static void main(String[] args){
+
+    double[] limits = 
+        {ChoiceFormat.previousDouble(1),1,1.5,2,2.5,3,ChoiceFormat.nextDouble(3)};
+    String[] monthNames = {"Sun","Mon","Tue","Wed","Thur", "Fri", "Sat"};
+
+    ChoiceFormat cf = new ChoiceFormat(limits, monthNames);
+
+    for (double i = 0.5; i &lt;= 3.5; i += 0.5){
+      System.out.println(i + " -&gt; " + cf.format(i));
+    }
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+0.5 -&gt; Sun
+1.0 -&gt; Mon
+1.5 -&gt; Tue
+2.0 -&gt; Wed
+2.5 -&gt; Thur
+3.0 -&gt; Fri
+3.5 -&gt; Sat
+</pre>
+
+			<h2>パターンで指定する</h2>
+
+			<p>
+			次にパターンで指定する場合です。2番目のコンストラクタを見て下さい。
+			</p>
+
+<pre class="mheader">
+ChoiceFormat
+public ChoiceFormat(String newPattern)
+</pre>
+<pre class="mexplain">
+指定されたパターンに基づくリミットとそれに対応するフォーマットにより
+オブジェクトを構築します。
+</pre>
+
+			<p>
+			パターンは、先ほどのコンストラクタの引数で指定したlimitとformatをまとめて記載するような書き方となります。詳しい書き方が記載されていないのですが、推測すると下記のような記述方法となります。
+			</p>
+
+<pre class="fixcomment">
+(対象となる値) (識別子) (フォーマット形式) という書き方となる
+識別子には"#"と"&lt;"がある
+仕切りには"|"を使って項目を列挙していく
+</pre>
+
+			<p>
+			例えば下記のようになります。
+			</p>
+
+<pre class="fixcode">
+String pattern = "1# Sun |2# Mon|3# Tue |3&lt; Wed";
+ChoiceFormat cf = new ChoiceFormat(pattern);
+</pre>
+
+			<p>
+			実際に試してみます。
+			</p>
+
+<pre class="fixcode">
+import java.text.ChoiceFormat;
+
+public class SwingTest{
+  public static void main(String[] args){
+
+    String pattern = "1# Sun |2# Mon|3# Tue |3&lt; Wed";
+    ChoiceFormat cf = new ChoiceFormat(pattern);
+
+    for (double i = 0.5; i &lt;= 3.5; i += 0.5){
+      System.out.println(i + " -&gt; " + cf.format(i));
+    }
+  }
+}
+</pre>
+
+			<p>
+			実行結果は下記のようになります。
+			</p>
+
+<pre class="fixcomment">
+0.5 -&gt;  Sun
+1.0 -&gt;  Sun
+1.5 -&gt;  Sun
+2.0 -&gt;  Mon
+2.5 -&gt;  Mon
+3.0 -&gt;  Tue
+3.5 -&gt;  Wed
+</pre>
+
+			<h2>メソッドでの指定</h2>
+
+			<p>
+			コンストラクタで指定した値はメソッドでも設定が可能です。1番目のコンストラクタで使ったdoubleとStringの配列はsetChoicesメソッドで指定します。
+			</p>
+
+<pre class="mheader">
+setChoices
+public void setChoices(double[] limits, String[] formats)
+</pre>
+<pre class="mexplain">
+フォーマットの際に使用する選択項目を設定します。 
+
+パラメータ:
+  limits - そのフォーマットで解析する 1 番大きい値。これは昇順でなけれ
+    ばならない。X をフォーマットする場合、limit[i] &lt;= X &lt; limit[i+1] 
+    であれば、選択項目は i になる。リミット配列が昇順でない場合、フォー
+    マットの結果は正しくならない
+  formats - それぞれのリミットに対して使用するフォーマット。これは、Format
+    オブジェクトか文字列である。オブジェクト Y でフォーマットする場合、オ
+    ブジェクトが NumberFormat であれば、((NumberFormat) Y).format(X) が呼
+    び出される。そうでなければ、Y.toString() が呼び出される
+</pre>
+
+			<p>
+			2番目のコンストラクタで使ったパターンはapplyPatternメソッドで指定します。
+			</p>
+
+<pre class="mheader">
+applyPattern
+public void applyPattern(String newPattern)
+</pre>
+<pre class="mexplain">
+パターンを設定します。 
+
+パラメータ:
+  newPattern - クラスの説明を参照
+</pre>
+
+			<p>
+			ChoiceFormatクラスについては次のような注意書きがありました。「ChoiceFormat は、ほかの Format クラスとは次の点で異なります。ChoiceFormat オブジェクトは、getInstance スタイルファクトリメソッドではなく、コンストラクタで作成します。ChoiceFormat では、指定されたロケールに対して複雑なセットアップは必要ないので、ファクトリメソッドは不要です。実際、ChoiceFormat には、ロケール固有の動作は実装されません。」
+			</p>
+
+			<p>
+			よって、普通にコンストラクタで作成して利用すればいいようです。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アクティビティのライフサイクル - Androidプログラミング入門 | JavaDrive</title>
+<meta name="keywords" content="アクティビティのライフサイクル" />
+<meta name="description" content="アクティビティのライフサイクルに関して解説します。" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/android/" itemprop="url"><span itemprop="title">Androidプログラミング入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/android/activity/" itemprop="url"><span itemprop="title">アクティビティ(Activity)を使った画面作成とレイアウト</span></a></li>
+		</ul>
+</div>
+
+			<h1>アクティビティのライフサイクル</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Androidの画面からアプリケーションが起動されると最初のアクティビティが開始し画面に表示されます。同じアプリの別のアクティビティ(画面)が表示されれば最初のアクティビティは隠れますし、別のアプリが起動して違う画面が表示されることもあります。このように1つ1つのアクティビティは表示されたり隠れたりといったことを繰り返します。このようなアクティビティが開始されて、そして破棄されるまでをアクティビティのライフサイクルと呼んでいます。
+			</p>
+
+			<p>
+			下記の図はアクティビティのライフサイクルと、状態が変わる時に呼び出されるメソッドの一覧です。
+			</p>
+
+			<p>
+			<img src="img/p2-1.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-1.png" alt="p2-1" width="576" height="568" />
+			</p>
+
+			<p>
+			一見すると複雑な図ですが、実際はそれほど難しいものではありません。順に解説していきます。
+			</p>
+
+<h2>アプリを起動しアクティビティが表示</h2>
+
+			<p>
+			Androidのホーム画面からアプリのアイコンをクリックするとアプリが起動し、最初のアクティビティが画面上に表示されます。
+			</p>
+
+			<p>
+			<img src="img/p2-2.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-2.png" alt="p2-2" width="365" height="188" />
+			</p>
+
+			<p>
+			この時、このアクティビティは「実行中」の状態となります。先程のライフサイクルで言えば、下記の部分です。
+			</p>
+
+			<p>
+			<img src="img/p2-3.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-3.png" alt="p2-3" width="189" height="311" />
+			</p>
+
+			<p>
+			「アクティビティが開始」されると「onCreate()」メソッド、「onStart()」メソッド、「onResume()」メソッドが順に呼ばれて「実行中」の状態になります。メソッドが3つに分かれているのは、実行中になるまでに厳密には状態が細かく分かれているためで、その状態に応じて処理を行えるように分かれています。
+			</p>
+
+<h2>別のアクティビティが開始される時</h2>
+
+			<p>
+			同じアプリの別のアクティビティが開始されようとしたり、別のアプリのアクティビティが開始されようとすると、元のアクティビティは他のアクティビティによって見えなくなります。
+			</p>
+
+			<p>
+			<img src="img/p2-4.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-4.png" alt="p2-4" width="365" height="188" />
+			</p>
+
+			<p>
+			この時、別のアクティビティが画面に表示される前に「onPause()」メソッドが呼び出されます。
+			</p>
+
+			<p>
+			<img src="img/p2-5.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-5.png" alt="p2-5" width="274" height="241" />
+			</p>
+
+			<p>
+			アクティビティが表示されなくなる前に行う処理をこのメソッドで行います。
+			</p>
+
+			<p>
+			ここで元のアクティビティが再び画面に表示される場合は、右のルートを通って「onResume()」メソッドが呼ばれた上で「実行中」の状態に戻ります。
+			</p>
+
+			<p>
+			新しいアクティビティが画面に表示され元のアクティビティが見えなくなった場合は、下のルートを通って「onStop()」メソッドが呼ばれて「停止中」の状態となります。
+			</p>
+
+<h2>再び表示される時</h2>
+
+			<p>
+			アクティビティは他のアクティビティの裏に隠れて表示されていない状態でも終了してはいません。停止の状態のままです。ユーザーによって非表示の状態から再び画面に表示されようとした場合には、まず「onRestart()」メソッドが呼ばれた後、「onStart()」メソッドと「onResume()」メソッドが呼ばれて再び実行中となります。
+			</p>
+
+			<p>
+			<img src="img/p2-6.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-6.png" alt="p2-6" width="379" height="312" />
+			</p>
+
+			<p>
+			ただ注意点があります。停止中でもアクティビティは終了はしていないのですが、Androidのメモリが足りなくと、メモリを確保するために実行中でないアクティビティが強制的に終了となる場合があります。
+			</p>
+
+			<p>
+			<img src="img/p2-7.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-7.png" alt="p2-7" width="383" height="370" />
+			</p>
+
+			<p>
+			この場合、アクティビティはいったん終了します。この状態からユーザーが再びアクティビティを表示させようとした場合は「onCreate()」メソッドから改めて呼び出されることになります。
+			</p>
+
+<h2>アクティビティの終了</h2>
+
+			<p>
+			アクティビティが終了する場合には最後に「onDestroy()」メソッドが呼ばれて終了します。
+			</p>
+
+			<p>
+			<img src="img/p2-8.png" tppabs="https://www.javadrive.jp/android/activity/img/p2-8.png" alt="p2-8" width="186" height="311" />
+			</p>
+
+			<p>
+			終了となる場合は色々なパターンがありますがが、例えばホーム画面からアプリが起動してアクティビティが表示されます。その後、別のアクティビティが開始されるといったんアクティビティ表示されなくなりますが、ユーザーがAndroidのBackキーを押すことで1つ前に戻り再びアクティビティが画面に表示されます。ここでさらにBackキーを押すとさらに1つ前に戻りホーム画面が表示されます。この時、アクティビティは終了となります。
+			</p>
+
+			<p>
+			つまり他のアクティビティが表示されたことによって見えなくなっても直ぐに終了とはならないですが、アクティビティが開始される前の状態に戻るとアクティビティはいったん終了となります。
+			</p>
+
+			<p>
+			以上のようにアクティビティは開始された後で表示されたり他のアクティビティの後ろに隠れたりといった状態の変化を繰り返していきます。その度に決められたメソッドが呼び出されます。あるメソッドが呼ばれるタイミングで何か実行したい場合には、アクティビティメソッドの中でメソッドをオーバーライドすることで実現します。
+			</p>
+
+<h2>コールバックメソッド</h2>
+
+			<p>
+			先程のライフサイクルの図では色々なメソッドが出てきましたが、これらはコールバックメソッドと呼ばれるものです。Activityクラスでそれぞれ定義されており、アクティビティがある状態になった時に自動的に呼び出されて処理が実行されます。
+			</p>
+
+			<p>
+			例えばコールバックメソッドの一つである「onCreate」メソッドはActivityクラスで次のように定義されています。
+			</p>
+
+<pre class="methodtb">
+onCreate
+protected void onCreate (Bundle savedInstanceState)
+</pre>
+<pre class="methodcb">
+Called when the activity is starting. This is where most initialization should 
+go: calling setContentView(int) to inflate the activity's UI, using 
+findViewById(int) to programmatically interact with widgets in the UI, calling 
+managedQuery(android.net.Uri, String[], String, String[], String) to retrieve 
+cursors for data being displayed, etc.
+You can call finish() from within this function, in which case onDestroy() will 
+be immediately called without any of the rest of the activity lifecycle (onStart(), 
+onResume(), onPause(), etc) executing.
+Derived classes must call through to the super class's implementation of this 
+method. If they do not, an exception will be thrown.
+
+Parameters:
+  savedInstanceState  If the activity is being re-initialized after previously 
+    being shut down then this Bundle contains the data it most recently supplied 
+    in onSaveInstanceState(Bundle). Note: Otherwise it is null.
+</pre>
+
+			<p>
+			もし自分で作成したアクティビティで、onCreateメソッドば呼ばれるタイミングで何らかの処理を行いたい場合は、onCreateメソッドをオーバーライドします。
+			</p>
+
+<pre class="fixcode">
+@Override
+protected void onCreate(Bundle savedInstanceState){
+  super.onCreate(savedInstanceState);
+
+  /* 行いたい処理を記述 */
+
+}
+</pre>
+
+			<p>
+			※ 先頭に付いている @Override はアノテーションと呼ばれるJavaで用意されている機能で、@Overrideを付けたメソッドはオーバーライドされたメソッドであることを宣言しています。
+			</p>
+
+			<p>
+			最初にスーパークラスのメソッドを呼び出した後、そのメソッドが呼び出されたときに行いたい処理を記述していきます。
+			</p>
+
+			<p>
+			この記述をどこかで見たことがあると思いますが、これはEclipseなどでAndroidのプロジェクトを新規に作成した時に自動で作成されたソースコードと同じです。
+			</p>
+
+<pre class="fixcode">
+package jp.javadrive.hello;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class HelloActivity extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+    }
+}
+</pre>
+
+			<p>
+			この中の「setContentView(R.layout.main);」の部分が自分で追加した処理の部分です。また別のところで詳しく解説しますが、これは別のファイルに定義したボタンやテキストなどを画面内に配置するための処理が記述されています。
+			</p>
+
+			<p>
+			ライフサイクルを再度見て頂ければお分かり頂けるようにonCreateメソッドはアクティビティが開始された時に最初に呼び出されるメソッドです。このメソッドの中でアクティビティ内に表示するテキストやボタンを配置を行っているわけです。
+			</p>
+
+			<p>
+			今回はonCreateメソッドについて記載しましたが、他のメソッドについても同じです。アクティビティのライフサイクルに合わせて、何らかの処理を行いたい場合は、その時呼び出されるコールバックメソッドをオーバーライドすることで処理を行わせることができます。次のページでは実際に各メソッドをオーバーライドして、どのようにメソッドが呼び出されるのかを確認します。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

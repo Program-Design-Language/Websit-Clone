@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アンカー境界フラグの設定(useAnchoringBoundsメソッド) - リージョン - Java正規表現の使い方</title>
+<meta name="keywords" content="アンカー境界フラグの設定,リージョン,正規表現,java" />
+<meta name="description" content="アンカー境界フラグの設定する方法を確認します" />
+
+<link rel="stylesheet" href="../../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/start/" itemprop="url"><span itemprop="title">Java入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/start/regex/" itemprop="url"><span itemprop="title">Java正規表現の使い方</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/start/regex/region/" itemprop="url"><span itemprop="title">リージョン</span></a></li>
+		</ul>
+</div>
+
+			<h1>アンカー境界フラグの設定</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			リージョンを設定すると、ターゲット文字列の中でマッチするかどうかの対象となる範囲が設定されますが、指定した範囲の文字列に対して行の先頭や行の末尾が存在するように見なされます。
+			</p>
+
+			<p>
+			次の例を見てください。
+			</p>
+
+<pre class="fixcomment">
+border color is red
+</pre>
+
+			<p>
+			上記のターゲット文字列に対し、パターン"^color"はマッチしません。このパターンは行の先頭の位置から"color"が現れる場合にマッチするからです。
+			</p>
+
+			<p>
+			では先ほどのターゲット文字列に、リージョンを(7, 15)に設定します。すると対象となる文字列は次のようになります。
+			</p>
+
+<pre class="fixcomment">
+color is
+</pre>
+
+			<p>
+			今度はパターン"^color"はマッチします。リージョンの設定によってあたかもターゲット文字列の行の先頭が"color"から始まっているように見えるからです。
+			</p>
+
+			<p>
+			以上がデフォルトの動作なのですが、リージョンを設定したことによる境界が行頭や行末としてマッチさせたくない場合はMatcherクラスで定義されているuseAnchoringBoundsメソッドを使用します。
+			</p>
+
+<pre class="mheader">
+useAnchoringBounds
+public Matcher useAnchoringBounds(boolean b)
+</pre>
+<pre class="mexplain">
+この正規表現エンジンの領域境界のアンカーを設定します。
+
+このメソッドに true の引数を指定して呼び出すと、anchoring 境界がこの正規表現エンジンで使
+用されます。boolean 引数が false の場合は、non-anchoring 境界が使用されます。
+
+アンカー設定境界が使用されると、この正規表現エンジンの領域の境界は、 ^ および $ などのア
+ンカーにマッチします。
+
+アンカー設定境界が使用されない場合は、この正規表現エンジンの領域の境界は、 ^ および $ な
+どのアンカーにマッチしません。
+
+デフォルトでは、正規表現エンジンはアンカー設定領域境界を使用します。
+
+パラメータ:
+  b - アンカー設定境界を使用するかどうかを示す boolean 
+戻り値:
+  この正規表現エンジン
+</pre>
+
+			<p>
+			引数にfalseを設定すると、リージョンを設定しても行の先頭や行の末尾は元々のターゲット文字列のままとなります。デフォルトはtrueとなっています。
+			</p>
+
+			<p>
+			リージョンの設定を行っても行の先頭や文字列の先頭などの扱いは元のままにしたい場合にfalseを設定して下さい。
+			</p>
+
+			<p>
+			なお、現在の設定を取得するにはMatcherクラスで定義されているhasAnchoringBoundsメソッドを使用します。
+			</p>
+
+<pre class="mheader">
+hasAnchoringBounds
+public boolean hasAnchoringBounds()
+</pre>
+<pre class="mexplain">
+この正規表現エンジンの領域境界のアンカー設定を問い合わせるクエリーを出します。
+
+このメソッドは、anchoring 境界がこの正規表現エンジンで使用される場合は true を返し、そう
+でない場合は false を返します。
+
+アンカー設定境界の詳細については、 useTransparentBounds を参照してください。
+
+デフォルトでは、正規表現エンジンはアンカー設定領域境界を使用します。
+
+戻り値:
+  この正規表現エンジンがアンカー設定境界を使用する場合は true、そうでない場合は false
+</pre>
+
+			<p>
+			メソッドを実行すると、現在の設定をboolean型の値として返します。
+			</p>
+
+			<h2>サンプルプログラム</h2>
+
+			<p>
+			では実際に試してみます。 
+			</p>
+
+			<p>
+			<a href="JSample3_1.java" tppabs="https://www.javadrive.jp/start/regex/region/JSample3_1.java">JSample3_1.java</a>
+			</p>
+
+<pre class="fixcode">
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+class JSample3_1{
+  public static void main(String args[]){
+    String str = "Blackcolor is dark color.";
+
+    String regex = "^color";
+    Pattern p = Pattern.compile(regex);
+
+    System.out.println("パターン : " + regex);
+    System.out.println("ターゲット文字列 : \"" + str + "\"");
+
+    Matcher m = p.matcher(str);
+
+    int start = m.regionStart();
+    int end = m.regionEnd();
+
+    System.out.println("\nデフォルトのままマッチ：");
+    System.out.println("region : \"" + str.substring(start, end) + "\"");
+
+    if (m.find()){
+      System.out.println("match：" + m.group());
+    }else{
+      System.out.println("×");
+    }
+
+    start = 5;
+    m.region(start, end);
+
+    System.out.println("\nリージョンを(" + start + "," + end + ")に設定：");
+    System.out.println("region : \"" + str.substring(start, end) + "\"");
+
+    if (m.find()){
+      System.out.println("match：" + m.group());
+    }else{
+      System.out.println("×");
+    }
+
+    m.useAnchoringBounds(false);
+
+    System.out.println("\nアンカー境界フラグを false に設定：");
+    System.out.println("region : \"" + str.substring(start, end) + "\"");
+
+    if (m.find()){
+      System.out.println("match：" + m.group());
+    }else{
+      System.out.println("×");
+    }
+  }
+}
+</pre>
+
+			<p>
+			ではコンパイルを行った上で実行してみます。 
+			</p>
+
+			<p>
+			<img src="img/p3-1.png" tppabs="https://www.javadrive.jp/start/regex/region/img/p3-1.png" alt="p3-1" width="509" height="311">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

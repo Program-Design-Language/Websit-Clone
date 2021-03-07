@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java | 配列をコピーする(シャローコピーとディープコピー)</title>
+<meta name="description" content="Java で作成した配列を別の配列にコピーする方法について解説します。単に = 演算子を使って配列変数を別の配列変数に代入した場合、同じ配列を参照するようになるだけです。独立した配列としてコピーするには手動でひとつひとつ要素を代入していくか、 Array クラスのメソッドを使用します。">
+
+<meta property="og:title" content="配列をコピーする(シャローコピーとディープコピー)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/start/array/index10.html">
+<meta property="og:image" content="https://www.javadrive.jp/start/array/img/p10-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="Java で作成した配列を別の配列にコピーする方法について解説します。単に = 演算子を使って配列変数を別の配列変数に代入した場合、同じ配列を参照するようになるだけです。独立した配列としてコピーするには手動でひとつひとつ要素を代入していくか、 Array クラスのメソッドを使用します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"name": "Home",
+	"item": "https://www.javadrive.jp/"
+  },{
+	"@type": "ListItem",
+	"position": 2,
+	"name": "Java入門",
+	"item": "https://www.javadrive.jp/start/"
+  },{
+	"@type": "ListItem",
+	"position": 3,
+	"name": "配列",
+	"item": "https://www.javadrive.jp/start/array/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/start/">Java入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/start/array/">配列</a></li>
+				</ul>
+			</div>
+
+			<h1>配列をコピーする(シャローコピーとディープコピー)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			Java で作成した配列を別の配列にコピーする方法について解説します。単に = 演算子を使って配列変数を別の配列変数に代入した場合、同じ配列を参照するようになるだけです。独立した配列としてコピーするには手動でひとつひとつ要素を代入していくか、 Array クラスのメソッドを使用します。
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">配列変数を別の配列変数に代入</a></li>
+			<li><a href="#section2">要素の値をひとつひとつコピーする</a></li>
+			<li><a href="#section3">Arrays.copyOfメソッドを使ってコピーする</a></li>
+			<li><a href="#section4">System.arraycopyメソッドを使ってコピーする</a></li>
+			<li><a href="#section5">要素の値が参照型の場合(shallowコピーとdeepコピー)</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">配列変数を別の配列変数に代入</a></h2>
+
+			<p>
+			最初に配列変数を別の配列変数に代入した場合を確認しておきます。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int[] src = {12, 24, 18};
+int[] dst = src;
+
+System.out.println("src[0] = " + src[0]);  // 12
+System.out.println("dst[0] = " + dst[0]);  // 12
+</pre>
+</div>
+
+			<p>
+			一見すると配列がコピーできているように思いますが、配列のような参照型の場合は変数には配列本体への参照が格納されています。配列変数を別の配列変数に代入した場合、同じ配列本体への参照がコピーされるため、どちらの配列変数も同じ配列本体を参照することになります。
+			</p>
+
+			<p>
+			<img src="img/p10-1.png" tppabs="https://www.javadrive.jp/start/array/img/p10-1.png" alt="配列変数を別の配列変数に代入(1)" width="728" height="150">
+			</p>
+
+			<p>
+			配列本体は同じため、要素の値を変更するとどちらの配列変数を使って要素の値を参照しても変更した値が取得されます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int[] src = {12, 24, 18};
+int[] dst = src;
+
+System.out.println("src[0] = " + src[0]);  // 12
+System.out.println("dst[0] = " + dst[0]);  // 12
+
+src[0] = 42;
+
+System.out.println("src[0] = " + src[0]);  // 42
+System.out.println("dst[0] = " + dst[0]);  // 42
+</pre>
+</div>
+
+			<p>
+			もちろん意図的に参照のコピーを行う場合にはこれでいいのですが、それぞれが独立した配列として要素の値だけをコピーしたい場合には別の方法を使用する必要があります。
+			</p>
+
+<h2><a id="section2">要素の値をひとつひとつコピーする</a></h2>
+
+			<p>
+			コピー元の要素の値を一つ一つ取り出し、コピー先の要素に代入していく方法です。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int[] src = {12, 24, 18};
+int[] dst = new int[3];
+
+for (int i = 0; i &lt; src.length; i++){
+  dst[i] = src[i];
+}
+
+System.out.println("src[0] = " + src[0]);  // 12
+System.out.println("dst[0] = " + dst[0]);  // 12
+
+src[0] = 42;
+
+System.out.println("src[0] = " + src[0]);  // 42
+System.out.println("dst[0] = " + dst[0]);  // 12
+</pre>
+</div>
+
+			<p>
+			今回はコピー先の配列を作成した上で、コピー元の要素に格納されている値をひとつひとつコピー先に配列に代入しています。その為、それぞれの配列本体は別となっているので、コピー元の配列の要素の値を変更してもコピー先の配列の要素の値には影響がありません。
+			</p>
+
+			<p>
+			<img src="img/p10-2.png" tppabs="https://www.javadrive.jp/start/array/img/p10-2.png" alt="要素の値をひとつひとつコピーする(1)" width="728" height="210">
+			</p>
+
+			<p>
+			ただしこれは配列の要素に格納されているのが int 型や boolean 型など基本型の場合です。クラスのオブジェクトなど参照型の値が格納されている場合は注意が必要です(このページの後半で解説します)。
+			</p>
+
+<h2><a id="section3">Arrays.copyOfメソッドを使ってコピーする</a></h2>
+
+			<p>
+			次に Arrays クラスで用意されている copyOf メソッドを使う方法です。 copyOf はクラスメソッドとして定義されており、引数の型毎に異なるメソッドが定義されています。例えば int[] 型の値を引数に取る copyOf メソッドは次のように定義されています。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public static int[] copyOf​(int[] original, int newLength)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+original - コピーされる配列<br>
+newLength - 返されるコピーの長さ<br>
+<br>
+戻り値:<br>
+指定された長さにするために切り詰められた、またはゼロでパディングされた元の配列のコピー<br>
+<br>
+例外:<br>
+NegativeArraySizeException - newLengthが負の値の場合<br>
+NullPointerException - originalがnullの場合
+</p>
+</div>
+
+			<p>
+			1 番目の引数にコピーする対象の配列を指定します。 2 番目の引数にはコピーする配列の長さを指定します。すべての要素をコピーするには配列の要素数を指定します。コピーした要素から作成した新しい配列を戻り値として返します。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+import java.util.Arrays;  // java.util.Arraysのインポートが必要です
+
+int[] src = {12, 24, 18};
+int[] dst = Arrays.copyOf(src, 3);
+
+System.out.println("src[0] = " + src[0]);  // 12
+System.out.println("dst[0] = " + dst[0]);  // 12
+
+src[0] = 42;
+
+System.out.println("src[0] = " + src[0]);  // 42
+System.out.println("dst[0] = " + dst[0]);  // 12
+</pre>
+</div>
+
+			<p>
+			Arrays.copyOf メソッドを使用した場合も手動でコピーした場合と同じようにコピー元とコピー先の配列本体は別となっているので、コピー元の配列の要素の値を変更してもコピー先の配列の要素の値には影響がありません。
+			</p>
+
+			<p>
+			<img src="img/p10-3.png" tppabs="https://www.javadrive.jp/start/array/img/p10-3.png" alt="Arrays.copyOfメソッドを使ってコピーする(1)" width="728" height="210">
+			</p>
+
+			<p>
+			ただしこれは配列の要素に格納されているのが int 型や boolean 型など基本型の場合です。クラスのオブジェクトなど参照型の値が格納されている場合は注意が必要です(このページの後半で解説します)。
+			</p>
+
+<h2><a id="section4">System.arraycopyメソッドを使ってコピーする</a></h2>
+
+			<p>
+			次に System クラスで用意されている arraycopy メソッドを使う方法です。 arraycopy はクラスメソッドとして定義されています。
+			</p>
+
+<div class="titlebox1 titlebox-top">
+<p>
+<span class="bold">public static void arraycopy​(Object src, int srcPos, Object dest, int destPos, int length)</span>
+</p>
+</div>
+
+<div class="titlebox3 titlebox-bottom">
+<p>
+パラメータ:<br>
+src - 転送元配列<br>
+srcPos - ソース配列の開始位置<br>
+dest - 転送先配列<br>
+destPos - 転送先データ内の開始位置<br>
+length - コピーされる配列要素の数<br>
+<br>
+例外:<br>
+IndexOutOfBoundsException - コピーによって配列の境界を越えたデータのアクセスが生じた場合<br>
+ArrayStoreException - 型の不一致により、配列srcの要素が配列destに保存できなかった場合<br>
+NullPointerException - srcとdestのどちらかがnullの場合
+</p>
+</div>
+
+			<p>
+			1 番目の引数にコピー元の配列を指定し、 3 番目の引数にコピー先の配列を指定します。そしてコピー元の 2 番目の引数で指定した位置あら、コピー先の 4 番目の引数で指定した位置に、 5 番目の引数で指定した数だけコピーを行います。
+			</p>
+
+			<p>
+			System.arraycopy​ メソッドを使う場合は、あらかじめコピー先の配列を作成しておく必要があります。次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+int[] src = {12, 24, 18};
+int[] dst = new int[3];
+
+System.arraycopy​(src, 0, dst, 0, 3);
+
+System.out.println("src[0] = " + src[0]);  // 12
+System.out.println("dst[0] = " + dst[0]);  // 12
+
+src[0] = 42;
+
+System.out.println("src[0] = " + src[0]);  // 42
+System.out.println("dst[0] = " + dst[0]);  // 12
+</pre>
+</div>
+
+			<p>
+			System.arraycopy​ メソッドを使用した場合も手動でコピーした場合と同じようにコピー元とコピー先の配列本体は別となっているので、コピー元の配列の要素の値を変更してもコピー先の配列の要素の値には影響がありません。
+			</p>
+
+			<p>
+			<img src="img/p10-4.png" tppabs="https://www.javadrive.jp/start/array/img/p10-4.png" alt="System.arraycopyメソッドを使ってコピーする(1)" width="728" height="210">
+			</p>
+
+			<p>
+			ただしこれは配列の要素に格納されているのが int 型や boolean 型など基本型の場合です。クラスのオブジェクトなど参照型の値が格納されている場合は注意が必要です(このページの後半で解説します)。
+			</p>
+
+<h2><a id="section5">要素の値が参照型の場合(shallowコピーとdeepコピー)</a></h2>
+
+			<p>
+			ここまで手動でコピーする方法や、 Arrays.copyOf メソッドまたは System.arraycopy​ メソッドを使って配列をコピーする方法を解説しました。ただそれぞれコピー元の要素に格納されている値が int 型など基本データ型の場合には問題ないのですが、格納されている値が参照型の場合には注意が必要となります。
+			</p>
+
+			<p>
+			次のサンプルを見てください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+class JSample10_1{
+  public static void main(String[] args){
+
+    MyTest[] src = {new MyTest(28), new MyTest(12)};
+    MyTest[] dst = new MyTest[2];
+
+    for (int i = 0; i &lt; src.length; i++){
+      <span class="red">dst[i] = src[i];</span>
+    }
+
+    System.out.println("src[0] = " + src[0].num);  // 28
+    System.out.println("dst[0] = " + dst[0].num);  // 28
+
+    src[0].num = 41;
+
+    System.out.println("src[0] = " + src[0].num);  // 41
+    System.out.println("dst[0] = " + dst[0].num);  // 41
+  }
+}
+
+class MyTest{
+  public int num;
+
+  public MyTest(int n){
+    num = n;
+  }
+}
+</pre>
+</div>
+
+			<p>
+			MyTest クラスを定義したあと、配列の要素に MyTest クラスのインスタンスを格納しました。そのあとで、手動で新しい配列に要素の値をコピーしています。
+			</p>
+
+			<p>
+			要素に格納された値が基本データ型だった場合はこの方法で問題がなかったのですが、今回のようにクラスのインスタンスなど参照型の値が格納されていた場合、コピー先の要素にコピー元の要素の値を代入したときに、要素に格納されていたクラスのインスタンスへの参照がコピーされます。その為、配列本体そのものは分かれているのですが、要素が参照しているクラスのインスタンスは同じものを参照しています。
+			</p>
+
+			<p>
+			<img src="img/p10-5.png" tppabs="https://www.javadrive.jp/start/array/img/p10-5.png" alt="要素の値が参照型の場合(shallowコピーとdeepコピー)(1)" width="728" height="184">
+			</p>
+
+			<p>
+			その為、コピー元の配列の要素に格納されているインスタンスへの参照を使ってインスタンスの値を変更すると、コピー先の要素に格納されているインスタンスにも同じように変更されます。
+			</p>
+
+			<p>
+			Arrays.copyOf メソッドまたは System.arraycopy​ メソッドを使って配列をコピーした場合も、同じ結果となります。このようにコピーしたときに要素の参照先をコピーする方式を shallow コピー(シャローコピー、浅いコピー)と呼びます。
+			</p>
+
+			<p>
+			それに対して要素の値が参照型であった場合、参照先をコピーするのではなく参照しているインスタンスそのものを複製し、その参照先を要素に格納する方式を deep コピー(ディープコピー、深いコピー)と呼びます。
+			</p>
+
+			<p>
+			deep コピーを行うようなメソッドは用意されていないので、要素に格納されている参照型の値に応じて手動でコピーを行う必要がります。例えば先ほどのケースであれば次のように書き換えることで deep コピーが行われます。
+			</p>
+
+<div class="titlebox1">
+<pre>
+class JSample10_1{
+  public static void main(String[] args){
+
+    MyTest[] src = {new MyTest(28), new MyTest(12)};
+    MyTest[] dst = new MyTest[2];
+
+    for (int i = 0; &lt; < src.length; i++){
+      <span class="red">dst[i] = new MyTest(src[i].num);</span>
+    }
+
+    System.out.println("src[0] = " + src[0].num);  // 28
+    System.out.println("dst[0] = " + dst[0].num);  // 28
+
+    src[0].num = 41;
+
+    System.out.println("src[0] = " + src[0].num);  // 41
+    System.out.println("dst[0] = " + dst[0].num);  // 16
+  }
+}
+
+class MyTest{
+  public int num;
+
+  public MyTest(int n){
+    num = n;
+  }
+}
+</pre>
+</div>
+
+			<p>
+			今度のサンプルではコピー先の要素に対してコピー元の要素の値を代入するのではなく、コピー元の要素が参照しているインスタンスが保持している値を使って、新しいインスタンスを作成して代入しています。この方法であれば、コピー元とコピー先の要素が参照しているインスタンスがそれぞれ独立しているので、コピー元の配列に加えた変更がコピー先には反映されません。
+			</p>
+
+			<p>
+			<img src="img/p10-6.png" tppabs="https://www.javadrive.jp/start/array/img/p10-6.png" alt="要素の値が参照型の場合(shallowコピーとdeepコピー)(2)" width="728" height="200">
+			</p>
+
+			<p>
+			配列の要素に格納されている参照型の値に合わせて調整を行ってください。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			Java で作成した配列を別の配列にコピーする方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

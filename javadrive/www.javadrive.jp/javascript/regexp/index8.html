@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript | 正規表現にマッチした文字列を新しい文字列に置換する(String.prototype.replace)</title>
+<meta name="description" content="String オブジェクトのインスタンスメソッドである replace は、文字列の中の指定した文字列を別の文字列に置換し新しい文字列として返しますが、置換を行う文字列を正規表現のパターンを使って指定することもできます。この時グローバルオプションを設定することでまとめて置換を行うこともできます。ここでは String オブジェクトの replace メソッドで置換を行う文字列を正規表現パターンを使って指定する方法について解説します。">
+
+<meta property="og:title" content="正規表現にマッチした文字列を新しい文字列に置換する(String.prototype.replace)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.javadrive.jp/javascript/regexp/index8.html">
+<meta property="og:image" content="https://www.javadrive.jp/javascript/regexp/img/p8-0.png">
+<meta property="og:site_name" content="Let'sプログラミング">
+<meta property="og:description" content="String オブジェクトのインスタンスメソッドである replace は、文字列の中の指定した文字列を別の文字列に置換し新しい文字列として返しますが、置換を行う文字列を正規表現のパターンを使って指定することもできます。この時グローバルオプションを設定することでまとめて置換を行うこともできます。ここでは String オブジェクトの replace メソッドで置換を行う文字列を正規表現パターンを使って指定する方法について解説します。">
+<meta property="fb:app_id" content="281106649095842">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@buzzwordjp">
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://www.javadrive.jp/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "JavaScript入門",
+    "item": "https://www.javadrive.jp/javascript/"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "JavaScript正規表現",
+    "item": "https://www.javadrive.jp/javascript/regexp/"
+  }]
+}
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+			<div id="newpankuzubar">
+				<ul id="newpankuzu">
+				<li><a href="../../index.htm" tppabs="https://www.javadrive.jp/">Home</a>&nbsp;&rsaquo;</li>
+				<li><a href="../index.htm" tppabs="https://www.javadrive.jp/javascript/">JavaScript入門</a>&nbsp;&rsaquo;</li>
+				<li><a href="index.htm" tppabs="https://www.javadrive.jp/javascript/regexp/">JavaScript正規表現</a></li>
+				</ul>
+			</div>
+
+			<h1>正規表現にマッチした文字列を新しい文字列に置換する(String.prototype.replace)</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			String オブジェクトのインスタンスメソッドである replace は、文字列の中の指定した文字列を別の文字列に置換し新しい文字列として返しますが、置換を行う文字列を正規表現のパターンを使って指定することもできます。この時グローバルオプションを設定することでまとめて置換を行うこともできます。ここでは String オブジェクトの replace メソッドで置換を行う文字列を正規表現パターンを使って指定する方法について解説します。
+			</p>
+
+			<p>
+			※ replace メソッドの基本的な使い方については「<a href="../string/index25.html" tppabs="https://www.javadrive.jp/javascript/string/index25.html">文字列を置換する(replace)</a>」を参照されてください。 
+			</p>
+
+			<div id="mokuji">
+			<p id="mokujititle">目次</p>
+			<ol>
+			<li><a href="#section1">置換の対象を正規表現を使って指定する</a></li>
+			<li><a href="#section2">キャプチャグループにマッチした文字列を参照する</a></li>
+			<li><a href="#section3">置換する新しい文字列として関数を指定する</a></li>
+			</ol>
+			</div>
+
+<div id="adcenter_box">
+  <div id="adcenter_l">
+<style type="text/css">
+.adslot_center_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_center_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterL Res -->
+<ins class="adsbygoogle adslot_center_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4273087831"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adcenter_r">
+<style type="text/css">
+.adslot_center_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_center_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageCenterR Res -->
+<ins class="adsbygoogle adslot_center_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1900410632"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+<h2><a id="section1">置換の対象を正規表現を使って指定する</a></h2>
+
+			<p>
+			String オブジェクトの replace メソッドは、対象の文字列の中の指定した文字列を、別の文字列で置換した新しい文字列を返します。書式は次のとおりです。
+			</p>
+
+<div class="titlebox2">
+<pre>
+文字列.replace(置換する文字列, 新しい文字列)
+</pre>
+</div>
+
+			<p>
+			引数の置換する文字列には固定の文字列を指定することもできますが、正規表現オブジェクトを指定することもできます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+文字列.replace(正規表現, 新しい文字列)
+</pre>
+</div>
+
+			<p>
+			対象の文字列の中で 1 番目で指定した正規表現にマッチした文字列を 2 番目で指定した文字列に置換します。対象の文字列に変更は行わず、置換したあとの新しい文字列が返されます。
+			</p>
+
+			<p>
+			正規表現にグローバルフラグが設定されていない場合には、対象の文字列の中の最初に正規表現にマッチした文字列だけが置換されます。正規表現にグローバルフラグが設定されていた場合はマッチしたすべての文字列が置換されます。
+			</p>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let str = 'Border Color is Red, Line Color is RED';
+let newstr = str.replace(/(Red|RED)/, 'red');
+
+console.log(newstr);
+<span class="bold">&gt;&gt; Border Color is red, Line Color is RED</span>
+</pre>
+</div>
+
+			<p>
+			対象の文字列の中に Red または RED が含まれていた場合は red に置換します。今回のサンプルのように正規表現オブジェクトにグローバルフラグ設定されていない場合は最初にマッチした文字列だけを置換します。
+			</p>
+
+			<p>
+			今度はグローバルフラグが設定されている場合のサンプルです。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let str = 'Border Color is Red, Line Color is RED';
+let newstr = str.replace(/(Red|RED)/g, 'red');
+
+console.log(newstr);
+<span class="bold">&gt;&gt; Border Color is red, Line Color is red</span>
+</pre>
+</div>
+
+			<p>
+			今回はグローバルフラグが設定されているため、対象の文字列の中で正規表現にマッチするすべての文字列が置換されました。
+			</p>
+
+<h2><a id="section2">キャプチャグループにマッチした文字列を参照する</a></h2>
+
+			<p>
+			replace メソッドでは置換する新しい文字列としてドル記号($)を使った特別な値を記述することができます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+$&amp;  マッチした部分文字列
+$`  マッチした部分の前の文字列
+$'  マッチした部分の後の文字列
+$$  $の文字
+</pre>
+</div>
+
+			<p>
+			上記に加えて、置換する対象の文字列として正規表現を指定した場合に、正規表現の中でキャプチャグループが含まれている場合は $1, $2, ... を使用することでキャプチャグループでキャプチャされた文字列を参照することができます。
+			</p>
+
+<div class="titlebox2">
+<pre>
+$1, $2, ...  キャプチャグループでキャプチャされた文字列
+</pre>
+</div>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let str = '誕生日は 1994-04-21 です';
+let regexp = /(\d{4})-(\d{2})-(\d{2})/;
+let newstr = str.replace(regexp, '$1年$2月$3日');
+
+console.log(newstr);
+<span class="bold">&gt;&gt; 誕生日は 1994年04月21日 です</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは正規表現パターンに 3 つのキャプチャグループが含まれます。置換する新しい文字列の中で $1 $2 $3 を使ってキャプチャグループでキャプチャした文字列を参照し置換する新しい文字列を指定しています。
+			</p>
+
+<h2><a id="section3">置換する新しい文字列として関数を指定する</a></h2>
+
+			<p>
+			replace メソッドの 2 番目の引数には置換する新しい文字列を指定しますが、文字列の代わりにコールバック関数を指定することもできます。関数を指定した場合は、 1 番目の引数に指定した文字列または正規表現がマッチした時点で関数が呼び出され、関数からの戻り値が新しい値として置換を行います。
+			</p>
+
+<div class="titlebox2">
+<pre>
+文字列.replace(正規表現, 関数)
+</pre>
+</div>
+
+			<p>
+			関数は呼び出される時に最大で次の引数を受け取ります。必要な数の引数を受け取り、関数のブロック内で置換する文字列を return 文を使って返してください。
+			</p>
+
+<div class="titlebox2">
+<pre>
+match     パターンにマッチした文字列
+c1,c2,... パターンにキャプチャグループが含まれる場合にキャプチャした文字列
+offset    マッチした文字列の先頭文字のインデックス
+str       対象の文字列
+</pre>
+</div>
+
+			<p>
+			次のサンプルをみてください。
+			</p>
+
+<div class="titlebox1">
+<pre>
+let str = 'Border Color is GREEN, Line Color is RED';
+let newstr = str.replace(/[A-Z].+?\b/g, function(match){
+  return match.toLowerCase();
+});
+
+console.log(newstr);
+<span class="bold">&gt;&gt; border color is green, line color is red</span>
+</pre>
+</div>
+
+			<p>
+			今回のサンプルでは大文字から始まる単語にマッチする正規表現パターンを指定して置換を行います。置換する新しい文字列は、コールバック関数内でマッチした文字列をすべて小文字に変換した文字列を return 文で返しています。グローバルフラグを設定しているので、対象の文字列の中で正規表現にマッチするすべての文字列が置換されます。
+			</p>
+
+			<p>
+			-- --
+			</p>
+
+			<p>
+			String オブジェクトの replace メソッドで置換を行う文字列を正規表現パターンを使って指定する方法について解説しました。
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>

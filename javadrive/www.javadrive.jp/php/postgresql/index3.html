@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PostgreSQLへ接続 - PostgreSQLへの接続 - PHP入門</title>
+<meta name="keywords" content="接続,PostgreSQL,PHP入門" />
+<meta name="description" content="PostgreSQLへ接続" />
+
+<link rel="stylesheet" href="../../css/style070.css" tppabs="https://www.javadrive.jp/css/style070.css">
+<link href="../../../fonts.googleapis.com/css2-family=Noto+Sans+JP-wght@400;700&display=swap.css" tppabs="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="../../../www.googletagmanager.com/gtag/js-id=UA-6293295-1" tppabs="https://www.googletagmanager.com/gtag/js?id=UA-6293295-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-6293295-1');
+</script>
+
+</head>
+<body>
+
+	<div id="header">
+		<div id="sitelogo">
+			<img src="../../img/logo_small_c.png" tppabs="https://www.javadrive.jp/img/logo_small_c.png" alt="ロゴ" width="24" height="24"><span> Let'sプログラミング</span>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="main">
+
+<div id="pankuzubar">
+		<ul id="pankuzu">
+		<li class="s" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../index.htm" tppabs="https://www.javadrive.jp/" itemprop="url"><span itemprop="title">Home</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../index.htm" tppabs="https://www.javadrive.jp/php/" itemprop="url"><span itemprop="title">PHP入門</span></a><span class="sya">&nbsp;&rsaquo;</span></li>
+		<li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.htm" tppabs="https://www.javadrive.jp/php/postgresql/" itemprop="url"><span itemprop="title">PostgreSQLへの接続</span></a></li>
+		</ul>
+</div>
+
+			<h1>PostgreSQLへ接続</h1>
+
+<div id="adtoplabel">
+広告
+</div>
+
+			<div id="adtop">
+<style type="text/css">
+.adslot_top_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_top_l { width: 728px; height: 200px; } }
+</style>
+<!-- JavaDrive PageTop Res -->
+<ins class="adsbygoogle adslot_top_l"
+     style="display:inline-block;"
+     data-full-width-responsive="true"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2935955435"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<p>
+			それでは実際にPHPを使ってPostgreSQLへ接続してみます。「pg_connect」関数を使います。
+			</p>
+
+<pre class="mheader">
+pg_connect
+resource pg_connect(string connection_string [, int connect_type])
+</pre>
+<pre class="mexplain">
+pg_connect() は、connection_string で指定された情報を用いてデータベース
+との接続をオープンします。同じ connection_string 引数で 2 回 pg_connect() 
+関数がコールされた場合は、connect_type に PGSQL_CONNECT_FORCE_NEW を指定
+していない限り既存の接続が返されます。
+
+引数:
+  connection_string  接続するデータベースやユーザー名などを指定する文字
+    列。デフォルトの値以外に指定する部分を記述します。個々のパラメータは
+    keyword = value の形式で 設定します。等号の前後の空白はあってもなく
+    てもかまいません。 空の値や空白を含む値を指定する場合は、その値をシ
+    ングルクォートで 囲みます。（例: keyword = 'a value'）
+    値の中に シングルクォートやバックスラッシュが含まれる場合は、それら
+    を バックスラッシュでエスケープする必要があります（例: &yen;' および &yen;&yen;）。
+
+    現在利用できるパラメータは以下のとおりです。 host, hostaddr, port, 
+    dbname, user, password, connect_timeout, options, tty（無視されます）,
+    sslmode, requiressl（非推奨。代わりに sslmode を推奨します）および 
+    service 。これらのうち実際にどの パラメータが使えるかは、PostgreSQL 
+    のバージョンに依存します。
+
+  connect_type  PGSQL_CONNECT_FORCE_NEW が渡された場合は、たとえ 
+    connection_string が既存の接続と まったく同一であっても新しい接続
+    をオープンします。 
+返り値:
+  成功した場合にPostgreSQLの接続リソース、失敗した場合にFALSEを返します。
+</pre>
+
+			<p>
+			実際に指定する値としてはPostgreSQLのホスト名(host)やデータベース名(dbname)、そしてユーザー名(user)とパスワード(password)などかと思います。
+			</p>
+
+<pre class="fixcode">
+$link = pg_connect("host=localhost dbname=db user=usr password=pass");
+</pre>
+
+			<h2>PostgreSQLからの切断</h2>
+
+			<p>
+			接続後、接続を切断するには「pg_close」関数を使います。
+			</p>
+
+<pre class="mheader">
+pg_close
+bool pg_close([resource connection])
+</pre>
+<pre class="mexplain">
+connection リソースで指定した PostgreSQL データベースへの持続的でない接
+続を閉じます。
+
+引数:
+  connection  PostgreSQL データベース接続リソース。connection が指定され
+    ていない場合はデフォルトの接続が使用されます。デフォルトの接続は、直
+    近の pg_connect() あるいは pg_pconnect() によって作成されたものです。
+返り値:
+  成功した場合に TRUE を、失敗した場合に FALSE を返します。
+</pre>
+
+			<p>
+			実際の使い方は下記のようになるかと思います。
+			</p>
+
+<pre class="fixcode">
+$link = pg_connect("host=localhost dbname=db user=usr password=pass");
+
+// PostgreSQLに対する処理
+
+pg_close($link);
+</pre>
+
+			<h2>エラー処理</h2>
+
+			<p>
+			PostgreSQLに対する処理の過程で何かエラーが発生した場合「pg_last_error」関数でエラーメッセージを取得することが出来ます。
+			</p>
+
+<pre class="mheader">
+pg_last_error
+string pg_last_error([resource connection])
+</pre>
+<pre class="mexplain">
+pg_last_error() は、指定した connection から直近のエラーメッセージを返
+します。
+
+引数:
+  connection  PostgreSQL データベース接続リソース。connection が指定され
+    ていない場合はデフォルトの接続が使用されます。デフォルトの接続は、直
+    近の pg_connect() あるいは pg_pconnect() によって作成されたものです。
+返り値:
+  指定した connection の直近のエラーメッセージを 含む文字列を返します。
+    エラー時には FALSE を返します。
+</pre>
+
+			<p>
+			例えば「pg_connect」関数利用時にエラーが発生した場合、エラーメッセージを見るには下記のように記述します。
+			</p>
+
+<pre class="fixcode">
+$link = pg_connect("host=localhost dbname=db user=usr password=pass");
+
+if (!$link) {
+    print(pg_last_error());
+}
+
+// PostgreSQLに対する処理
+
+pg_close($link);
+</pre>
+
+			<p>
+			実際には接続に失敗した場合、その後のPostgreSQLに対する処理を実行出来ない為、「exit」関数又は「die」関数を用いてスクリプトを終了させます。
+			</p>
+
+<pre class="fixcode">
+$link = pg_connect("host=localhost dbname=db user=usr password=pass");
+if (!$link) {
+    die('接続失敗です。'.pg_last_error());
+}
+
+// PostgreSQLに対する処理
+
+pg_close($link);
+</pre>
+
+			<p>
+			※「exit」関数及び「die」関数については『<a href="../../phpfunc/other/index1.html" tppabs="https://www.javadrive.jp/phpfunc/other/index1.html">スクリプトを終了する(exit, die)</a>』を参照して下さい。
+			</p>
+
+			<h2>テスト</h2>
+
+			<p>
+			では実際に試してみます。ユーザー名「pguser」パスワード「pguser」で「uriage」データベースへ接続を行います。
+			</p>
+
+			<p>
+			<a href="pgtest1.php.htm" tppabs="https://www.javadrive.jp/php/postgresql/pgtest1.php">pgtest1.php</a>
+			</p>
+
+<pre class="fixcode">
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;PHP TEST&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+&lt;?php
+
+$conn = "host=localhost dbname=uriage user=pguser password=pguser";
+$link = pg_connect($conn);
+if (!$link) {
+    die('接続失敗です。'.pg_last_error());
+}
+
+print('接続に成功しました。&lt;br&gt;');
+
+// PostgreSQLに対する処理
+
+$close_flag = pg_close($link);
+
+if ($close_flag){
+    print('切断に成功しました。&lt;br&gt;');
+}
+
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+			<p>
+			上記ファイルをWWWサーバに設置しブラウザ経由で見ると下記のように表示されます。
+			</p>
+
+			<p>
+			<img src="img/p5.png" tppabs="https://www.javadrive.jp/php/postgresql/img/p5.png" alt="PostgreSQLへの接続テスト" width="509" height="291">
+			</p>
+
+			<div id="profile">
+			<p>( Written by Tatsuo Ikura )</p>
+			</div>
+
+<div id="adbottom_box">
+  <div id="adbottom_l">
+<style type="text/css">
+.adslot_bottom_l { width: 300px; height: 250px; }
+@media (min-width:730px) { .adslot_bottom_l { width: 360px; height: 280px; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomL Res -->
+<ins class="adsbygoogle adslot_bottom_l"
+     style="display:inline-block;"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="4549256893"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+
+  <div id="adbottom_r">
+<style type="text/css">
+.adslot_bottom_r { display:inline-block; width: 360px; height: 280px; }
+@media (max-width: 730px) { .adslot_bottom_r { display: none; } }
+</style>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- JavaDrive PageBottomR Res -->
+<ins class="adsbygoogle adslot_bottom_r"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="1319621435"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  </div>
+</div>
+
+			<div class="relatedlabel">
+			関連記事 (一部広告含む)
+			</div>
+
+			<div class="relatedarea">
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-5403370376223466"
+     data-matched-content-rows-num="4,3"
+     data-matched-content-columns-num="1,2"
+     data-matched-content-ui-type="image_card_stacked,image_card_stacked"
+     data-ad-slot="7621756236"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+			</div>
+
+			<div id="profiletitle2">Profile</div>
+
+			<div id="profileblock2">
+
+				<div id="profilephoto2">
+				<img src="../../img/face2.png" tppabs="https://www.javadrive.jp/img/face2.png" width="100" height="100" alt="profile_img">
+				</div>
+
+				<div id="profiletext2">
+					<p>
+					著者 / <a href="javascript:if(confirm('http://www.buzzword.co.jp/profile/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/profile/'" tppabs="http://www.buzzword.co.jp/profile/" rel="nofollow">TATSUO IKURA</a>
+					</p>
+
+					<p>
+					初心者～中級者の方を対象としたプログラミング方法や開発環境の構築の解説を行うサイトの運営を行っています。
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="sidebar">
+
+			<div class="adsticky restitle">
+
+				<div class="adstickyinner">
+<style type="text/css">
+.adslot_3 { display:inline-block; width: 300px; height: 600px; }
+@media (max-width: 1010px) { .adslot_3 { display: none; } }
+</style>
+<!-- JavaDrive PageRight Res Sticky -->
+<ins class="adsbygoogle adslot_3"
+     data-ad-client="ca-pub-5403370376223466"
+     data-ad-slot="2926458638"></ins>
+<script async src="../../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<p id="copyright">
+		Let'sプログラミング &copy;2006-2021 <a href="javascript:if(confirm('http://www.buzzword.co.jp/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.buzzword.co.jp/'" tppabs="http://www.buzzword.co.jp/" rel="nofollow">Buzzword Inc.</a>. All Rights Reserved.
+		</p>
+	</div>
+
+</body>
+</html>
