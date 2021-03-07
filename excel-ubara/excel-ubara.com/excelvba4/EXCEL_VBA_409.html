@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Byte配列と文字コード関数について｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="マクロVBAのデータ型にByte型がありますが、使う機会はかなり限られています。バイト型は、8ビット(1バイト)の変数で、0～255の範囲の単精度の正の数値が格納されます。1バイトで使う事もなくはありませんが、Byte型配列として使われることがしばしばあります。">
+  <meta name="keywords" content="Byte,技術解説,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL_VBA_409.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Byte配列と文字コード関数について｜VBA技術解説" />
+  <meta property="og:description" content="マクロVBAのデータ型にByte型がありますが、使う機会はかなり限られています。バイト型は、8ビット(1バイト)の変数で、0～255の範囲の単精度の正の数値が格納されます。1バイトで使う事もなくはありませんが、Byte型配列として使われることがしばしばあります。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba4/image951.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL_VBA_409.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Byte配列と文字コード関数について｜VBA技術解説" />
+  <meta name="twitter:description" content="マクロVBAのデータ型にByte型がありますが、使う機会はかなり限られています。バイト型は、8ビット(1バイト)の変数で、0～255の範囲の単精度の正の数値が格納されます。1バイトで使う事もなくはありませんが、Byte型配列として使われることがしばしばあります。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba4/image951.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>Byte配列と文字コード関数について</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL_VBA_409.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_409.html">
+<span itemprop="name">Byte配列と文字コード関数について</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2019-09-19</span>
+<h2 align="center">Byte配列と文字コード関数について</h2><p><br>
+マクロVBAのデータ型にByte型がありますが、使う機会はかなり限られています。<br>
+バイト型は、8 ビット (1 バイト) の変数で、0～255の範囲の単精度の正の数値が格納されます。<br><div class="br2"><br></div>
+1バイトで使う事もなくはありませんが、Byte型配列として使われることがしばしばあります。<br>
+今回はByte配列に文字列を入れることで、文字コードについて考察してみます。<br><div class="br2"><br></div>
+今回の記事は、実用としては何も役に立つものはありません。<br>
+文字コードとは面倒なものだなーと、それくらいの意識で読んでもらえれば良いと思います。<br><div class="br2"><br></div>
+以下では、半角全角ひらがな漢字を入れ込んだ「Excelの神髄」を例にしています。<br><div class="br2"><br></div></p>
+<h3>文字列をByte配列に入れる</h3>
+<div class="main-indent">文字列(String)は直接Byte配列に入れることができます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub 文字列_Byte配列()<br>
+      　　Dim aryByte() As Byte<br>
+      　　aryByte = &quot;Excelの神髄&quot;<br>
+      　　Stop<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+バイト配列の宣言は、<br>
+Dim aryByte() As Byte<br>
+普通にByteを配列として宣言します。<br>
+配列の要素数は文字数に依存するので、今回は動的配列にしています。<br>
+このByte配列には、文字列(String)を直接代入できます。<br><div class="br2"><br></div>
+Stopの時点で、ローカルウインドウを見てみましょう。<br><div class="br2"><br></div>
+<img src="image951.jpg" tppabs="https://excel-ubara.com/excelvba4/image951.jpg" width="382" height="396" border="0" alt="VBA マクロ Byte配列 文字コード"><br><div class="br2"><br></div>
+バイト型なので、0～255の数値が入っているのが分かります。<br>
+この数値が文字コードになります。<br>
+ですが、文字コードは色々な種類があると聞いたことがある・・・<br>
+では、文字コードについて少し確認してみましょう。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>文字コードについて</h3>
+<div class="main-indent"> まず基本として、<br>
+<strong>ASCIIコード</strong>は、数字、アルファベット、記号を1バイトで表現<br>
+<strong>JISコード</strong>は、ASCIIコードに日本語（全角）を追加した文字コード<br>
+<strong>Shift_JIS</strong>は、半角はJISコードのまま、全角文字をJISコードからシフトした文字コード<br>
+<strong>Unicode</strong>は、符号化文字集合で、文字コードの国際的な業界標準<br>
+<strong>UTF-8,UTF-16</strong>は、Unicodeを実装した符号化方式です。<br><div class="br2"><br></div>
+VBAで問題となる部分をもう少し詳しく見て見ましょう。<br><div class="br2"><br></div>
+<strong>Shit-JIS</strong></div>
+<div class="main-indent">
+<div class="main-indent">Windowsでは標準ともいえる文字コードです。<br>
+Windowsで作成したcsvなら、ほとんどがShit-JISでしよう。<br>
+メモ帳で保存時には、「ANSI」になります。<br><div class="br2"><br></div>
+<strong>VBEでは、Shift-JISが使われています。</strong><br>
+<strong><a href="EXCEL_VBA_403.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_403.html" target="_blank">マクロでShift_JIS文字コードか判定する</a></strong><div class="details">環境依存文字・機種依存文字をチェックしたいという話は時々聞くことなのですが、何をもってして判別するかという事が実はとても難しい問題になります、①②もIMEでは[環境依存]と表示されますが、通常これが問題になる事はないでしょう。そもそもコンピューターの中は2進数だけで表現されているもので、コンピューターの文字とは、</div><br>
+</div>
+</div>
+<div class="main-indent"><strong>UTF-8</strong></div>
+<div class="main-indent">
+<div class="main-indent">BOM付きとBOM無しがあります。<br>
+BOM無しはUTF-8Nと言われたりします。<br>
+VBAでWEB関係のCSVを扱う時に必要となりますが、VBAでUTF-8を扱う場合はADODB.Streamを使います。<br>
+<strong><a href="../excelvba5/EXCELVBA257.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA257.html" target="_blank">CSVの読み込み方法（改の改）</a></strong><div class="details">CSVのVBAでの読込方法については複数の記事を掲載しており、人気記事として多くのアクセスがあります。掲載しているVBAコードは汎用的に書いてあり、ほぼそのまま使用できるものです。しかし、CSVは多くの形式（区切り文字、文字コード等）があり、今まで掲載したコードでは解決出来ないものがあります。</div><br>
+</div>
+</div>
+<div class="main-indent"><strong>UTF-16</strong></div>
+<div class="main-indent">
+<div class="main-indent">Unicodeには、複数バイトで構成されるデータの並べ方で、エンディアンというものがあり、<br>
+ビッグエンディアンとリトルエンディアンがあります。<br>
+メモ帳でも保存時の、<br>
+「Unicode」は、UTF-16のリトルエンディアン<br>
+「Unicode big endian」は、UTF-16のビッグエンディアン<br><div class="br2"><br></div>
+文字コード、例えば「あ」をUTF-16の16進法で表現したとき、<br>
+上位側から順に並べ「30 42」とするのがビッグエンディアン、<br>
+下位側から「42 30」のように並べるのをリトルエンディアンと呼びます。<br>
+UTF-16のビッグエンディアンを、UTF-16BE<br>
+UTF-16のリトルエンディアンを、UTF-16LE<br>
+このように表記されたりします。<br>エンディアンの詳細について知りたい場合は別途検索してください、詳しく説明しているページが多数存在します。<br><div class="br2"><br></div>
+<strong>VBAでは、UTF-16LEが使われています。</strong><br>
+つまり、先に掲載したローカルウインドウのaryByteの中身は、UTF-16LEだという事です。<br>
+ローカルウインドウでは、この文字コードが10進で表示されています。<br><div class="br2"><br></div>
+</div>
+以下では、<br>
+VBEで使われているShift-JISとVBAで使われているUTF-16LEについて、<br>
+マクロVBAでByte配列と関数を使って少し詳しく見ていきます。<br><div class="br2"><br></div>
+</div>
+<h3>文字列をByte配列に入れて、文字列に戻す</h3>
+<div class="main-indent">文字列(String)をByte配列に入れた後で、再度文字列に戻します。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub 文字列_Byte配列_文字列()<br>
+      　　Dim aryByte() As Byte<br>
+　　aryByte = &quot;Excelの神髄&quot;<br>
+　　<br>
+　　Dim str As String<br>
+　　str = aryByte<br>
+      　　Debug.Print str<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+このように、Byte配列は単純に文字列(String)に入れることができます。<br>
+VBAでは、暗黙の型変換が行われるので、<br>
+Debug.Print aryByte<br>
+これだけでも正しく元の文字列が表示されます。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3><strong>文字列をByte配列に入れて、自力で文字列に戻す</strong></h3>
+<div class="main-indent">上記では、VBAが自動でByte配列に入っている文字列(String)を元の文字列に戻してくれましたが、<br>
+何をしているのか、なんだかよく分かりません。<br>
+そこで、自力でByte配列を文字列に戻してみましょう。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub 文字列_Byte配列_自力文字列()<br>
+      　　Dim aryByte() As Byte<br>
+      　　aryByte = &quot;Excelの神髄&quot;<br>
+      　　<br>
+      　　Dim str As String: str = &quot;&quot;<br>
+      　　Dim i As Long<br>
+      　　For i = 0 To UBound(aryByte) - 1 Step 2<br>
+      　　　　str = str &amp; ChrW(aryByte(i + 1) * 256&amp; + aryByte(i))<br>
+      　　Next<br>
+      　　Debug.Print str<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<strong>VBAでは、UTF-16LEが使われています。</strong><br>
+つまり、aryByteの中の順番は、<br>
+2バイト（1文字）ごとに、順番が入れ替わっています。<br>
+aryByte(0) aryByte(1)<br>
+これは、aryByte(1) aryByte(0)の順として文字コードを見る必要があります。<br>
+1バイトの数値は256なので、2バイトで1つの数値とするには、<br>
+aryByte(i + 1) * 256&amp; + aryByte(i)<br>
+これで、2バイトの文字コードを10進に変換できることになります。<br>
+256&amp;の&amp;はLong型の型宣言文字になります。<br>
+この&amp;がないと、オーバーフローが発生します。<br><div class="br2"><br></div>
+<img src="image198.jpg" tppabs="https://excel-ubara.com/excelvba4/image198.jpg" width="488" height="242" border="0" alt="VBA マクロ Byte配列 文字コード"><br><div class="br2"><br></div>
+これは、<br>
+aryByteも256も、どちらもInteger型なので、掛け算の結果もInteger型になってしまう為に発生します。<br>
+いずれかがLong型であれば結果もLongになるので、256&amp;としています。<br><div class="br2"><br></div>
+<strong>Chr関数とChrW関数</strong></div>
+<div class="main-indent">
+<div class="main-indent">Chr関数は、指定したShif-JIS文字コードに対応する文字を返します。<br>
+ChrW関数は、指定したUTF-16文字コードに対応する文字を返します。<br><div class="br2"><br></div>
+</div>
+</div>
+<h3><strong>文字列をSJISに変換してからByte配列にいれて、自力で文字列に戻す</strong></h3>
+<div class="main-indent">マクロVBAで、サーバーにPOSTしてデータ取得するようなときには、パラメーターをShift-JISのBYTE型に変換します。<br>
+Shift-JISのBYTE型に変換するには、StrConvのvbFromUnicodeを使います。<br><div class="br2"><br></div>
+では、イミディエイトウインドウで、<br>
+?StrConv(&quot;Excelの神髄&quot;, vbFromUnicode)<br>
+といれてEnterしてみると、<br><div class="br2"><br></div>
+<img src="image941.jpg" tppabs="https://excel-ubara.com/excelvba4/image941.jpg" width="592" height="107" border="0" alt="VBA マクロ Byte配列 文字コード"><br><div class="br2"><br></div>
+何やら文字化けしています。<br>
+Shift-JISなら正しく表示されそうですが、、、<br>
+VBEはShift-JISですが、VBAはUTF-16LEです。<br>
+つまり、StrConvでShift-JISになっているものを、UTF-16LEとして判断されている為に文字化けしています。<br><div class="br2"><br></div>
+では、<br>
+StrConvでShift-JISになっているものを、UTF-16LEに戻してみましょう。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub 文字列_SJIS_Byte配列_自力文字列()<br>
+      　　Dim aryByte() As Byte<br>
+      　　aryByte = StrConv(&quot;Excelの神髄&quot;, vbFromUnicode)<br>
+      　　<br>
+      　　Stop <span style="color:#009900;">'←ここでローカルウインドウで確認</span><br>
+      　　<br>
+      　　Dim str As String: str = &quot;&quot;<br>
+      　　Dim i As Long: i = 0<br>
+      　　Do<br>
+      　　　　If (aryByte(i) &gt;= 128 And aryByte(i) &lt;= 159) Or _<br>
+      　　　　　 (aryByte(i) &gt;= 224 And aryByte(i) &lt;= 255) Then<br>
+      　　　　　　str = str &amp; Chr(aryByte(i) * 256&amp; + aryByte(i + 1))<br>
+      　　　　　　i = i + 2<br>
+      　　　　Else<br>
+      　　　　　　str = str &amp; Chr(aryByte(i))<br>
+      　　　　　　i = i + 1<br>
+      　　　　End If<br>
+      　　　　If i &gt; UBound(aryByte) Then Exit Do<br>
+      　　Loop<br>
+      　　Debug.Print str<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Stop時点でローカルウインドウでみてみると、<br><div class="br2"><br></div>
+<img src="image731.jpg" tppabs="https://excel-ubara.com/excelvba4/image731.jpg" width="372" height="346" border="0" alt="VBA マクロ Byte配列 文字コード"><br><div class="br2"><br></div>
+単に、<br>
+aryByte = &quot;Excelの神髄&quot;<br>
+とした時とは、配列の要素数が違うようです。<br>
+UTF-16LEでは、全て2バイトでしたが、<br>
+Shift-JISでは、半角は1バイト、全角は2バイトとなっています。<br>
+つまり、<br>
+(0)～(4)は半角文字で1バイトで1文字、<br>
+(5)～(10)は全角文字で2バイトで1文字ということです。<br>
+Shift-JISの半角が1バイトであることは、<br>
+VBAにおいて、文字列中の半角文字数の判定に使う事が出来ます。</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="../excelvba8/EXCELVBA804.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA804.html" target="_blank">Len関数,LenB関数</a></strong><div class="details">Len関数は、指定した文字列の文字数を、LenB関数はバイト数を返します、長整数型(Long)の値を返します。Len関数 Len(string|varname) string 任意の文字列式を指定します。引数stringにNull値が含まれている場合は、Null値を返します。</div>
+</div>
+</div>
+<div class="main-indent"><br>
+Shift-JISの文字コードは、半角文字(1バイト)は以下のように割り当てられています。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+      <td colspan="2" rowspan="2"></td>
+      <td colspan="16">下位4ビット</td>
+    </tr>
+  <tr>
+      <td align="right">0</td>
+    <td align="right">1</td>
+    <td align="right">2</td>
+    <td align="right">3</td>
+    <td align="right">4</td>
+    <td align="right">5</td>
+    <td align="right">6</td>
+    <td align="right">7</td>
+    <td align="right">8</td>
+    <td align="right">9</td>
+    <td>A</td>
+    <td>B</td>
+    <td>C</td>
+    <td>D</td>
+    <td>E</td>
+    <td>F</td>
+  </tr>
+  <tr>
+      <td rowspan="16">上<br>
+      位<br>
+      4<br>
+      ビ<br>
+      ッ<br>
+      ト</td>
+      <td align="right">0</td>
+    <td>NUL</td>
+    <td>SOH</td>
+    <td>STX</td>
+    <td>ETX</td>
+    <td>EOT</td>
+    <td>ENQ</td>
+    <td>ACK</td>
+    <td>BEL</td>
+    <td>BS</td>
+    <td>HT</td>
+    <td>LF</td>
+    <td>VT</td>
+    <td>FF</td>
+    <td>CR</td>
+    <td>SO</td>
+    <td>SI</td>
+  </tr>
+  <tr>
+      <td align="right">1</td>
+    <td>DLE</td>
+    <td>DC1</td>
+    <td>DC2</td>
+    <td>DC3</td>
+    <td>DC4</td>
+    <td>NAK</td>
+    <td>SYN</td>
+    <td>ETB</td>
+    <td>CAN</td>
+    <td>EM</td>
+    <td>SUB</td>
+    <td>ESC</td>
+    <td>FS</td>
+    <td>GS</td>
+    <td>RS</td>
+    <td>US</td>
+  </tr>
+  <tr>
+      <td align="right">2</td>
+    <td>SP</td>
+    <td>!</td>
+    <td>&quot;</td>
+    <td>#</td>
+  <td>$</td>
+      <td>%</td>
+      <td>&amp;</td>
+      <td>'</td>
+      <td>(</td>
+      <td>)</td>
+      <td>*</td>
+      <td>+</td>
+      <td>,</td>
+      <td>-</td>
+      <td>.</td>
+      <td>/</td>
+    </tr>
+  <tr>
+      <td align="right">3</td>
+    <td align="right">0</td>
+    <td align="right">1</td>
+    <td align="right">2</td>
+    <td align="right">3</td>
+    <td align="right">4</td>
+    <td align="right">5</td>
+    <td align="right">6</td>
+    <td align="right">7</td>
+    <td align="right">8</td>
+    <td align="right">9</td>
+    <td>:</td>
+    <td>;</td>
+    <td>&lt;</td>
+    <td>=</td>
+    <td>&gt;</td>
+    <td>?</td>
+  </tr>
+  <tr>
+      <td align="right">4</td>
+    <td>@</td>
+    <td>A</td>
+    <td>B</td>
+    <td>C</td>
+    <td>D</td>
+    <td>E</td>
+    <td>F</td>
+    <td>G</td>
+    <td>H</td>
+    <td>I</td>
+    <td>J</td>
+    <td>K</td>
+    <td>L</td>
+    <td>M</td>
+    <td>N</td>
+    <td>O</td>
+  </tr>
+  <tr>
+      <td align="right">5</td>
+    <td>P</td>
+    <td>Q</td>
+    <td>R</td>
+    <td>S</td>
+    <td>T</td>
+    <td>U</td>
+    <td>V</td>
+    <td>W</td>
+    <td>X</td>
+    <td>Y</td>
+    <td>Z</td>
+    <td>[</td>
+    <td>\</td>
+    <td>]</td>
+    <td>^</td>
+    <td>_</td>
+  </tr>
+  <tr>
+      <td align="right">6</td>
+    <td>`</td>
+    <td>a</td>
+    <td>b</td>
+    <td>c</td>
+    <td>d</td>
+    <td>e</td>
+    <td>f</td>
+    <td>g</td>
+    <td>h</td>
+    <td>i</td>
+    <td>j</td>
+    <td>k</td>
+    <td>l</td>
+    <td>m</td>
+    <td>n</td>
+    <td>o</td>
+  </tr>
+  <tr>
+      <td align="right">7</td>
+    <td>p</td>
+    <td>q</td>
+    <td>r</td>
+    <td>s</td>
+    <td>t</td>
+    <td>u</td>
+    <td>v</td>
+    <td>w</td>
+    <td>x</td>
+    <td>y</td>
+    <td>z</td>
+    <td>{</td>
+    <td>|</td>
+    <td>}</td>
+    <td>~</td>
+    <td>DEL</td>
+  </tr>
+  <tr>
+      <td align="right">8</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+    </tr>
+  <tr>
+      <td align="right">9</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+    </tr>
+  <tr>
+      <td>A</td>
+    <td></td>
+    <td>｡</td>
+    <td>｢</td>
+    <td>｣</td>
+    <td>､</td>
+    <td>･</td>
+    <td>ｦ</td>
+    <td>ｧ</td>
+    <td>ｨ</td>
+    <td>ｩ</td>
+    <td>ｪ</td>
+    <td>ｫ</td>
+    <td>ｬ</td>
+    <td>ｭ</td>
+    <td>ｮ</td>
+    <td>ｯ</td>
+  </tr>
+  <tr>
+      <td>B</td>
+    <td>ｰ</td>
+    <td>ｱ</td>
+    <td>ｲ</td>
+    <td>ｳ</td>
+    <td>ｴ</td>
+    <td>ｵ</td>
+    <td>ｶ</td>
+    <td>ｷ</td>
+    <td>ｸ</td>
+    <td>ｹ</td>
+    <td>ｺ</td>
+    <td>ｻ</td>
+    <td>ｼ</td>
+    <td>ｽ</td>
+    <td>ｾ</td>
+    <td>ｿ</td>
+  </tr>
+  <tr>
+      <td>C</td>
+    <td>ﾀ</td>
+    <td>ﾁ</td>
+    <td>ﾂ</td>
+    <td>ﾃ</td>
+    <td>ﾄ</td>
+    <td>ﾅ</td>
+    <td>ﾆ</td>
+    <td>ﾇ</td>
+    <td>ﾈ</td>
+    <td>ﾉ</td>
+    <td>ﾊ</td>
+    <td>ﾋ</td>
+    <td>ﾌ</td>
+    <td>ﾍ</td>
+    <td>ﾎ</td>
+    <td>ﾏ</td>
+  </tr>
+  <tr>
+      <td>D</td>
+    <td>ﾐ</td>
+    <td>ﾑ</td>
+    <td>ﾒ</td>
+    <td>ﾓ</td>
+    <td>ﾔ</td>
+    <td>ﾕ</td>
+    <td>ﾖ</td>
+    <td>ﾗ</td>
+    <td>ﾘ</td>
+    <td>ﾙ</td>
+    <td>ﾚ</td>
+    <td>ﾛ</td>
+    <td>ﾜ</td>
+    <td>ﾝ</td>
+    <td>ﾞ</td>
+    <td>ﾟ</td>
+  </tr>
+  <tr>
+      <td>E</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+      <td bgcolor="#ffff00">&nbsp;</td>
+    </tr>
+  <tr>
+      <td>F</td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+      <td bgcolor="#ffff00"></td>
+    </tr>
+</tbody>
+</table></div>
+※文字コードの詳しい表はWEBに多数ありますので別途調べてください。<br><div class="br2"><br></div>
+Shift-JISの全角文字は2バイトで、最初の1バイトが上記表の黄色部分が使われています。<br>
+つまり、<strong>最初の1バイトが上表の黄色部分なら全角文字</strong>だという事になります。<br>
+10進で表現した時は、128～159,224～255の範囲という事です。<br>
+この範囲の時は、次の1バイトと合わせて2バイトで全角1文字になるという事です。<br><div class="br2"><br></div>
+</div>
+<h3><strong>最後に</strong></h3>
+<div class="main-indent">マクロVBAで文字コードを意識することは滅多にないでしょう。<br>ましてや、Windowsを使っているとUnicodeを意識することはほとんどないでしょう。<br>
+私も普段はほとんど意識することはありません。<br>
+従って、本記事もいろいろ確認しながら書いたものになります。<br><div class="br2"><br></div>
+文字コードが多種多様なことは、コンピューターの歴史そのものでもありますが、<br>
+現在においては負の遺産と言っても良いかもしれません。<br>
+いずれ全く意識する必要がなくなる日が来るとは思います。<br>
+しかし現在はまだまだこれを考慮しなければならない場面も出てきますので、<br>
+IT知識の一端として紹介したものになります。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL297.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL297.html">Excelアドインの作成と登録について</A><br>
+<A href="EXCEL299.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL299.html">VBAでのタイマー処理（SetTimer,OnTime）</A><br>
+<A href="EXCEL_VBA_403.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_403.html">マクロでShift_JIS文字コードか判定する</A><br>
+<span class="strrev">Byte配列と文字コード関数について</span><br>
+<A href="EXCEL_VBA_404.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_404.html">VBA+SeleniumBasicで検索順位チェッカー（改）</A><br>
+<A href="EXCEL_VBA_407.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_407.html">Applicationを省略できるApplicationのメソッド・プロパティ一覧</A><br>
+<A href="EXCEL_VBA_408.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_408.html">PowerQueryの強力な機能をVBAから利用する方法</A><br>
+<A href="EXCEL_VBA_411.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_411.html">ShapesとDrawingObjectsの相違点と使い方</A><br>
+<A href="EXCEL_VBA_412.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_412.html">新規挿入可能なシート名の判定</A><br>
+<A href="EXCEL_VBA_413.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_413.html">VBAにおける配列やコレクションの起点について</A><br>
+<A href="EXCEL_VBA_416.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_416.html">VBAのマルチステートメント（複数のステートメントを同じ行に）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>Byte配列と文字コード関数について</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>Byte配列と文字コード関数について</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCEL_VBA_403.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_403.html" target="_blank">マクロでShift_JIS文字コードか判定する</a></li><li><a href="../excelvba5/EXCELVBA257.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA257.html" target="_blank">CSVの読み込み方法<br>(改の改)</a></li><li><a href="../excelvba8/EXCELVBA804.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA804.html" target="_blank">Len関数,LenB関数</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

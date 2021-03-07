@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>イベントプロシージャーの共通化（Enter,Exit）｜ユーザーフォーム入門</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ユーザーフォームのVBAでは、同じイベントプロシージャーを何個も作成することが多々あります。テキストボックスを複数個配置して同じイベント処理を実装する時、全く同じイベントプロシージャーをコピペで何個も作るといったことが必要になります。その解決方法として前回、第23回.イベントプロシージャーの共通化 WithEventを使った方法を紹介しましたが、">
+  <meta name="keywords" content="Enter,Exit,イベントプロシージャー,共通化,ユーザーフォーム入門,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba3/EXCELFORM024.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="イベントプロシージャーの共通化（Enter,Exit）｜ユーザーフォーム入門" />
+  <meta property="og:description" content="ユーザーフォームのVBAでは、同じイベントプロシージャーを何個も作成することが多々あります。テキストボックスを複数個配置して同じイベント処理を実装する時、全く同じイベントプロシージャーをコピペで何個も作るといったことが必要になります。その解決方法として前回、第23回.イベントプロシージャーの共通化 WithEventを使った方法を紹介しましたが、" />
+  <meta property="og:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba3/EXCELFORM024.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="イベントプロシージャーの共通化（Enter,Exit）｜ユーザーフォーム入門" />
+  <meta name="twitter:description" content="ユーザーフォームのVBAでは、同じイベントプロシージャーを何個も作成することが多々あります。テキストボックスを複数個配置して同じイベント処理を実装する時、全く同じイベントプロシージャーをコピペで何個も作るといったことが必要になります。その解決方法として前回、第23回.イベントプロシージャーの共通化 WithEventを使った方法を紹介しましたが、" />
+  <meta name="twitter:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>ユーザーフォーム入門<br>第24回.イベントプロシージャーの共通化（Enter,Exit）</h1>Excelマクロのユーザーフォームの基礎、エクセルVBAの入門解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">
+<span itemprop="name">ユーザーフォーム入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELFORM024.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM024.html">
+<span itemprop="name">イベントプロシージャーの共通化（Enter,Exit）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-01-13</span>
+<h2 align="center">第24回.イベントプロシージャーの共通化（Enter,Exit）</h2><p><br>
+ユーザーフォームのVBAでは、同じイベントプロシージャーを何個も作成することが多々あります。<br>
+テキストボックスを複数個配置して同じイベント処理を実装する時、全く同じイベントプロシージャーをコピペで何個も作るといったことが必要になります。<br><div class="br2"><br></div>
+その解決方法として前回、<br>
+<strong><a href="EXCELFORM023.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM023.html">第23回.イベントプロシージャーの共通化</a></strong><div class="details">ユーザーフォームに部品コントロールを配置していくとき、同種のコントロールを繰り返し何個も配置することは良くあります。コピペしながらようやく配置し終わったと思ったら、今度はVBAで同じイベントプロシージャーを何個も作成しなければならなくなります。</div>
+WithEventを使った方法を紹介しましたが、この中で問題点を指摘しました。<br>
+今回は、この問題点を解決する方法を紹介します。<br><div class="br2"><br></div></p>
+<h3>イベントプロシージャーの共通化の問題点</h3>
+<div class="main-indent">前回の記事で指摘した問題点の記述抜粋<br><div class="br2"><br></div>
+<strong>コントロールの型ごとにWithEventsが必要 </strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>WithEvents</strong>の型に指定するのは、MSFormsの当該の具体的なコントロールの型を指定します。<br>
+したがって、コントロールの種類ごとに<strong>WithEvents</strong>を定義する必要があります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>使えるイベントに制限があります</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>&nbsp;</td>
+      <td>Text<br>
+      Box</td>
+      <td>Check<br>
+      Box</td>
+      <td>Option<br>
+      Button</td>
+      <td>Combo<br>
+      Box</td>
+      <td>List<br>
+      Box</td>
+      <td>Command<br>
+      Button</td>
+    </tr>
+    <tr>
+      <td>AfterUpdate</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">－</td>
+    </tr>
+    <tr>
+      <td>BeforeDragOver</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>BeforeDropOrPaste</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+    </tr>
+    <tr>
+      <td>BeforeUpdate</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">－</td>
+    </tr>
+    <tr>
+      <td>Change</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">－</td>
+    </tr>
+    <tr>
+      <td>Click</td>
+      <td align="center">－</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>DblClick</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>DropButtonClick</td>
+      <td align="center">〇</td>
+      <td align="center">－</td>
+      <td align="center">－</td>
+      <td align="center">〇</td>
+      <td align="center">－</td>
+      <td align="center">－</td>
+    </tr>
+    <tr>
+      <td>Enter</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+    </tr>
+    <tr>
+      <td>Exit</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+      <td align="center">×</td>
+    </tr>
+    <tr>
+      <td>KeyDown</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>KeyPress</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>KeyUp</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>MouseDown</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>MouseMove</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+    <tr>
+      <td>MouseUp</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+      <td align="center">〇</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
+<div class="main-indent">
+<div class="main-indent">〇：使用できます。<br>
+×：使用できません。<br>
+－：元々イベントが存在しません。<br>
+</div>
+</div>
+<div class="main-indent"><strong>AfterUpdate</strong><br>
+<strong>Enter</strong><br>
+<strong>Exit</strong><br>
+このあたりが使用できないところが厳しいところです。<br>
+例えば、<br>
+<strong><a href="EXCELFORM016.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM016.html">第16回.アクティブコントロールに色を付ける</a></strong><div class="details">ユーザーフォーム入門として基礎から解説します。フォーム内のどこにカーソルがあるか分かりづらい場合があります。そこで、アクティブなコントロールのバックカラーを変えたり、対応するラベルのフォントを変更したりして、アクティブなコントロールを解り易くします。</div>
+ここではEnterイベントを使っていますので、これは共通化できないことになります。<br><div class="br2"><br></div>
+※これについては、何か良い方法がありそうにも思えます。
+<div class="main-indent">良い解決策が見つかったら、新たに記事を書きますね。<br>
+</div>
+</div>
+<div class="main-indent">このように記載していました。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>問題解決した経緯</h3>
+<div class="main-indent"><strong>最初に以下のツイートをみかけました</strong></div>
+<div class="main-indent">
+<div class="main-indent"><a href="javascript:if(confirm('https://twitter.com/nukie_53/status/1215601274298621952?ref_src=twsrc%5Etfw  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://twitter.com/nukie_53/status/1215601274298621952?ref_src=twsrc%5Etfw'" tppabs="https://twitter.com/nukie_53/status/1215601274298621952?ref_src=twsrc%5Etfw" target="_blank">https://twitter.com/nukie_53/status/1215601274298621952?ref_src=twsrc%5Etfw</a><br>
+このツイートでリンクされている先は、<br>
+<a href="javascript:if(confirm('http://addinbox.sakura.ne.jp/Temp/EventHandling_C2CP.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://addinbox.sakura.ne.jp/Temp/EventHandling_C2CP.htm'" tppabs="http://addinbox.sakura.ne.jp/Temp/EventHandling_C2CP.htm" target="_blank">http://addinbox.sakura.ne.jp/Temp/EventHandling_C2CP.htm</a><br>
+AddinBoxという有名なサイトです。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>調べていく過程で見つけたページ</strong></div>
+<div class="main-indent">
+<div class="main-indent">https://br.ccm.net/faq/29419-gestao-dos-eventos-sair-e-entrar-da-caixa-de-texto-criados-dinamicamente<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>AddinBoxの中の人が教えてくれました</strong></div>
+<div class="main-indent">
+<div class="main-indent">私のツイートをたどって前回の記事を読まれたようで、解決方法を教えてくれました。<br>
+教えていただいたリンクは、<br><div class="br2"><br></div>
+「API:ConnectToConnectionPointによるイベント処理の構築」<br>
+<a href="javascript:if(confirm('http://addinbox.sakura.ne.jp/Bpca_Common.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://addinbox.sakura.ne.jp/Bpca_Common.htm#C2CP'" tppabs="http://addinbox.sakura.ne.jp/Bpca_Common.htm#C2CP" target="_blank">http://addinbox.sakura.ne.jp/Bpca_Common.htm#C2CP</a><br><div class="br2"><br></div>
+併せて熟読すると良い内容として、mougさんのアーカイブリンクも紹介して頂きました。<br><div class="br2"><br></div>
+moug/VBAクラス研究室(1)～(5)<br>https://web.archive.org/web/20120911012129/http://moug.net/faq/viewtopic.php?t=62306<br>
+https://web.archive.org/web/20120911231242/http://moug.net/faq/viewtopic.php?t=62566<br>
+https://web.archive.org/web/20130115194304/http://moug.net/faq/viewtopic.php?t=62720<br>
+https://web.archive.org/web/20130514173245/http://moug.net/faq/viewtopic.php?t=64302<br>
+https://web.archive.org/web/20150322143040/http://moug.net/faq/viewtopic.php?t=68110<br>
+今回の件については、一番下の(5)がとても参考になります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>API:ConnectToConnectionPointについて</h3>
+<div class="main-indent">「ConnectToConnectionPoint function」<br>
+http://msdn.microsoft.com/en-us/library/windows/desktop/bb773794(v=vs.85).aspx<br><div class="br2"><br></div>
+関連するMSDNのページもほとんどがアーカイブとなっているようで、詳細を調べるのはとても大変そうです。<br>
+詳細の解説はとてもできそうにないので、知りたい方はリンクを辿って各自で調べてみてください。<br><div class="br2"><br></div>
+特にConnectToConnectionPointの挙動についてより詳しく確認したい場合は、<br>
+VBAクラス研究室(5)<br>
+https://web.archive.org/web/20150322143040/http://moug.net/faq/viewtopic.php?t=68110<br>
+この中の真ん中位に、<br>
+「…UserForm上すべてのTextBoxに対してイベントを接続させ、イベント名とConnectionPointContainer名（今回だと対象TextBox名）を列挙します。」<br>
+として、VBAの全コードが掲載されています。<br>
+32bit用のVBAとなっていますが、そのまま動かすことができます。<br>
+このVBAの内容を一つずつ調べていくと理解が進むと思いますが、<br>
+ただし、この全てを理解するのはとても大変だと思います・・・<br><div class="br2"><br></div>
+</div>
+<h3>ConnectToConnectionPointの使用例</h3>
+<div class="main-indent">実際にConnectToConnectionPointを使ってみました。<br>
+フォーム上の全てのコントロールについて、<br>
+フォーカスを受け取った時に背景色を変えて、フォーカスを失ったときに色を戻します。<br>
+使用例という事もあり、EnterイベントとExitイベントのペアでVBAを書きました。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>クラスモジュール</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">クラスにAttributeを設定する必要があります。<br>
+詳細については、<br>
+<strong><a href="../vba_class/VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html" target="_blank">VBAクラスのAttributeについて（既定メンバーとFor Each）</a></strong><div class="details">VBAクラスをエクスポートすると各種のAttributeが設定されているのが確認できます。それぞれのAttributeの意味と、さらに追加で指定できるAttributeについて説明します。Attributeの変更はVBA標準でサポートされておらず、その使用については慎重であるべきですが、どのようなものがあるかを知るのは、</div>
+こちらを参照してください。<br><div class="br2"><br></div>
+<strong>インポートファイル：clsEvent.cls</strong></div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="コードをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = &quot;clsEvent&quot;
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+'API定義 [ ConnectToConnectionPoint ]
+Private Type GUID
+    Data1 As Long
+    Data2 As Integer
+    Data3 As Integer
+    Data4(0 To 7) As Byte
+End Type
+Private Declare PtrSafe Function ConnectToConnectionPoint Lib &quot;shlwapi&quot; Alias &quot;#168&quot; _
+        (ByVal pUnk As stdole.IUnknown, ByRef riidEvent As GUID, _
+        ByVal fConnect As Long, ByVal punkTarget As stdole.IUnknown, _
+        ByRef pdwCookie As Long, Optional ByVal ppcpOut As LongPtr) As Long
+Private Cookie As Long
+Private MyCtrl As Object 'イベント接続するコントロール
+'イベント接続
+Public Property Set Control(NewCtrl As Object)
+    Set MyCtrl = NewCtrl
+    Call ConnectEvent(True)
+End Property
+'イベント切断
+Public Sub Clear()
+    If (Cookie &lt;&gt; 0) Then
+        Call ConnectEvent(False)
+    End If
+    Set MyCtrl = Nothing
+End Sub
+'イベント接続切断
+Private Sub ConnectEvent(ByVal Connect As Boolean)
+    Dim IID_IDispatch As GUID
+    With IID_IDispatch
+        .Data1 = &amp;H20400
+        .Data4(0) = &amp;HC0
+        .Data4(7) = &amp;H46
+    End With
+    ConnectToConnectionPoint Me, IID_IDispatch, Connect, MyCtrl, Cookie, 0&amp;
+End Sub
+'Enterイベントで背景色設定
+Public Sub Event_Enter()
+    <strong>Attribute Event_Enter.VB_UserMemId = -2147384830</strong>
+    If TypeName(MyCtrl) = &quot;Frame&quot; Then Exit Sub
+    MyCtrl.Tag = MyCtrl.BackColor
+    MyCtrl.BackColor = RGB(255, 153, 204)
+End Sub
+'Exitイベントで背景色戻し
+Public Sub Event_Exit(ByVal Cancel As MSForms.ReturnBoolean)
+    <strong>Attribute Event_Exit.VB_UserMemId = -2147384829</strong>
+    Dim ctl As Control
+    If TypeName(MyCtrl) = &quot;Frame&quot; Then
+        For Each ctl In MyCtrl.Controls
+            If ctl.Tag &lt;&gt; &quot;&quot; Then ctl.BackColor = ctl.Tag
+        Next
+    Else
+        MyCtrl.BackColor = MyCtrl.Tag
+    End If
+End Sub</pre></code></div><br>
+Attribute Event_Enter.VB_UserMemId = -2147384830<br>
+Attribute Event_Exit.VB_UserMemId = -2147384829<br>
+この2行がそれぞれのイベントプロシージャーに対するID数値の設定になります。<br><div class="br2"><br></div>
+Event_EnterやEvent_Exitのプロシージャー名は自由に変更して構いません。<br>
+<strong>引数</strong>と<strong>VB_UserMemId</strong>だけは一致させてください。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>インポート後のclsEvent</strong>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      <span style="color:#009900;">'API定義 [ ConnectToConnectionPoint ]</span><br>
+      Private Type GUID<br>
+      　　Data1 As Long<br>
+      　　Data2 As Integer<br>
+      　　Data3 As Integer<br>
+      　　Data4(0 To 7) As Byte<br>
+      End Type<br>
+      Private Declare PtrSafe Function ConnectToConnectionPoint Lib &quot;shlwapi&quot; Alias &quot;#168&quot; _<br>
+      　　　　(ByVal pUnk As stdole.IUnknown, ByRef riidEvent As GUID, _<br>
+      　　　　ByVal fConnect As Long, ByVal punkTarget As stdole.IUnknown, _<br>
+      　　　　ByRef pdwCookie As Long, Optional ByVal ppcpOut As LongPtr) As Long<br>
+      Private Cookie As Long<br><div class="br2"><br></div>
+      Private MyCtrl As Object <span style="color:#009900;">'イベント接続するコントロール</span><br><div class="br2"><br></div>
+      <span style="color:#009900;">'イベント接続</span><br>
+      Public Property Set Control(NewCtrl As Object)<br>
+      　　Set MyCtrl = NewCtrl<br>
+      　　Call ConnectEvent(True)<br>
+      End Property<br><div class="br2"><br></div>
+      <span style="color:#009900;">'イベント切断</span><br>
+      Public Sub Clear()<br>
+      　　If (Cookie &lt;&gt; 0) Then<br>
+      　　　　Call ConnectEvent(False)<br>
+      　　End If<br>
+      　　Set MyCtrl = Nothing<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'イベント接続切断</span><br>
+      Private Sub ConnectEvent(ByVal Connect As Boolean)<br>
+      　　Dim IID_IDispatch As GUID<br>
+      　　With IID_IDispatch<br>
+      　　　　.Data1 = &amp;H20400<br>
+      　　　　.Data4(0) = &amp;HC0<br>
+      　　　　.Data4(7) = &amp;H46<br>
+      　　End With<br>
+      　　ConnectToConnectionPoint Me, IID_IDispatch, Connect, MyCtrl, Cookie, 0&amp;<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'Enterイベントで背景色設定</span><br>
+      Public Sub Event_Enter()<br>
+      　　If TypeName(MyCtrl) = &quot;Frame&quot; Then Exit Sub<br>
+      　　MyCtrl.Tag = MyCtrl.BackColor<br>
+      　　MyCtrl.BackColor = RGB(255, 153, 204)<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'Exitイベントで背景色戻し</span><br>
+      Public Sub Event_Exit(ByVal Cancel As MSForms.ReturnBoolean)<br>
+      　　Dim ctl As Control<br>
+      　　If TypeName(MyCtrl) = &quot;Frame&quot; Then<br>
+      　　　　For Each ctl In MyCtrl.Controls<br>
+      　　　　　　If ctl.Tag &lt;&gt; &quot;&quot; Then ctl.BackColor = ctl.Tag<br>
+      　　　　Next<br>
+      　　Else<br>
+      　　　　MyCtrl.BackColor = MyCtrl.Tag<br>
+      　　End If<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<h4>フォームモジュール</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">モジュール名：何でも構いません<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+<span style="color:#009900;">'イベント補足クラスのコレクション</span><br>
+Private colEvent As New Collection<br><div class="br2"><br></div>
+Private Sub UserForm_Initialize()<br>
+　　Dim clsEvent As clsEvent<br>
+　　Dim ctl As Control<br>
+　　For Each ctl In Me.Controls<br>
+　　　　Set clsEvent = New clsEvent<br>
+　　　　Set clsEvent.Control = ctl<br>
+　　　　colEvent.Add clsEvent<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+Private Sub UserForm_Terminate()<br>
+　　Dim clsEvent As clsEvent<br>
+　　Dim ctl As clsEvent<br>
+　　For Each ctl In colEvent<br>
+　　　　ctl.Clear<br>
+　　Next<br>
+　　Set colEvent = Nothing<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent"><br>
+フォームを作成して、適当にいろいろなコントロールを配置し動作確認してください。<br>
+元の色はTagプロパティに保存するようにしています。<br>
+ここはやり方がいろいろありますが、Tagプロパティの使い方の紹介も兼ねてこのようにしてみました。<br><div class="br2"><br></div>
+Frameについては、EnterとExitイベントの挙動が難しいものになります。<br>
+フレーム外に移った時、フレーム内の選択コントロールはフォーカスを失いません。<br>
+上記では、無理やり色を戻していますので、<br>
+フレーム内の先頭コントロールからフレーム外に移り、再度フレームに戻った時は先頭コントロールに色が付きません。<br>
+今回の趣旨から外れるのでVBAを複雑にしないために、この細部の挙動についての対応はしていません。<br>
+もし実際に使うのであれば、フレーム内の最終コントロールを別途保存しておくといった方法等をかんがえる必要があります。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>イベントと対応するVB_UserMemIdの一覧とインポート用雛形</h3>
+<div class="main-indent">
+<h4>VB_UserMemIdの一覧</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>イベント</td>
+      <td>16進</td>
+      <td>10進</td>
+    </tr>
+    <tr>
+      <td>Change</td>
+      <td>&amp;H2</td>
+      <td align="right">2</td>
+    </tr>
+    <tr>
+      <td>BeforeDragOver</td>
+      <td>&amp;H3</td>
+      <td align="right">3</td>
+    </tr>
+    <tr>
+      <td>BeforeDropOrPaste</td>
+      <td>&amp;H4</td>
+      <td align="right">4</td>
+    </tr>
+    <tr>
+      <td>Click</td>
+      <td>&amp;HFFFFFD9E</td>
+      <td align="right">-610</td>
+    </tr>
+    <tr>
+      <td>DblClick</td>
+      <td>&amp;HFFFFFDA7</td>
+      <td align="right">-601</td>
+    </tr>
+    <tr>
+      <td>KeyDown</td>
+      <td>&amp;HFFFFFDA6</td>
+      <td align="right">-602</td>
+    </tr>
+    <tr>
+      <td>KeyPress</td>
+      <td>&amp;HFFFFFDA5</td>
+      <td align="right">-603</td>
+    </tr>
+    <tr>
+      <td>KeyUp</td>
+      <td>&amp;HFFFFFDA4</td>
+      <td align="right">-604</td>
+    </tr>
+    <tr>
+      <td>MouseDown</td>
+      <td>&amp;HFFFFFDA3</td>
+      <td align="right">-605</td>
+    </tr>
+    <tr>
+      <td>MouseMove</td>
+      <td>&amp;HFFFFFDA2</td>
+      <td align="right">-606</td>
+    </tr>
+    <tr>
+      <td>MouseUp</td>
+      <td>&amp;HFFFFFDA1</td>
+      <td align="right">-607</td>
+    </tr>
+    <tr>
+      <td>Error</td>
+      <td>&amp;HFFFFFDA0</td>
+      <td align="right">-608</td>
+    </tr>
+    <tr>
+      <td>Exit</td>
+      <td>&amp;H80018203</td>
+      <td align="right">-2147384829</td>
+    </tr>
+    <tr>
+      <td>Enter</td>
+      <td>&amp;H80018202</td>
+      <td align="right">-2147384830</td>
+    </tr>
+    <tr>
+      <td>BeforeUpdate</td>
+      <td>&amp;H80018201</td>
+      <td align="right">-2147384831</td>
+    </tr>
+    <tr>
+      <td>AfterUpdate</td>
+      <td>&amp;H80018200</td>
+      <td align="right">-2147384832</td>
+    </tr>
+    <tr>
+      <td>DropButtonClick</td>
+      <td>&amp;H7D2</td>
+      <td align="right">2002</td>
+    </tr>
+  </tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>クラスのインポート用雛形</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">イベント記載部分だけになります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="コードをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>Private Sub Event_Enter()
+    Attribute Event_Enter.VB_UserMemId = -2147384830
+End Sub
+Private Sub Event_Exit(ByVal Cancel As MSForms.ReturnBoolean)
+    Attribute Event_Enter.VB_UserMemId = -2147384829
+End Sub
+Private Sub Event_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+    Attribute Event_Enter.VB_UserMemId = -2147384831
+End Sub
+Private Sub Event_AfterUpdate()
+    Attribute Event_Enter.VB_UserMemId = -2147384832
+End Sub
+Private Sub Event_Change()
+    Attribute Event_Enter.VB_UserMemId = 2
+End Sub
+Private Sub Event_BeforeDragOver(ByVal Cancel As MSForms.ReturnBoolean, ByVal Data As MSForms.DataObject, ByVal X As Single, ByVal Y As Single, ByVal DragState As MSForms.fmDragState, ByVal Effect As MSForms.ReturnEffect, ByVal Shift As Integer)
+    Attribute Event_Enter.VB_UserMemId = 3
+End Sub
+Private Sub Event_BeforeDropOrPaste(ByVal Cancel As MSForms.ReturnBoolean, ByVal Action As MSForms.fmAction, ByVal Data As MSForms.DataObject, ByVal X As Single, ByVal Y As Single, ByVal Effect As MSForms.ReturnEffect, ByVal Shift As Integer)
+    Attribute Event_Enter.VB_UserMemId = 4
+End Sub
+Private Sub Event_Click()
+    Attribute Event_Enter.VB_UserMemId = -610
+End Sub
+Private Sub Event_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+    Attribute Event_Enter.VB_UserMemId = -601
+End Sub
+Private Sub Event_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    Attribute Event_Enter.VB_UserMemId = -602
+End Sub
+Private Sub Event_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
+    Attribute Event_Enter.VB_UserMemId = -603
+End Sub
+Private Sub Event_KeyUp(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    Attribute Event_Enter.VB_UserMemId = -604
+End Sub
+Private Sub Event_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    Attribute Event_Enter.VB_UserMemId = -605
+End Sub
+Private Sub Event_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    Attribute Event_Enter.VB_UserMemId = -606
+End Sub
+Private Sub Event_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    Attribute Event_Enter.VB_UserMemId = -607
+End Sub
+Private Sub Event_DropButtonClick()
+    Attribute Event_Enter.VB_UserMemId = 2002
+End Sub</pre></code></div><br>
+</div>
+</div>
+<h3>イベントプロシージャーの共通化の最後に</h3>
+<div class="main-indent">前回も書きましたが、<br>
+クラスを使った難解なVBAになってしまうので、気軽に使うという類のものではないようにも思います。<br><div class="br2"><br></div>
+よほど汎用的にコントロールを自在に扱う必要に迫られなければ使う事はないでしょう。<br>
+今回は、もし必要になった時の参考として、ここにまとめておきました。<br><div class="br2"><br></div>
+むしろ実際に使うというより、イベントの動作への理解を深める教材としてとてもよいかもしれません。<br>
+ぜひ一度、実際に動かしてその挙動を確認してみてください。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</a>」の記事</h3><p>
+<A href="EXCELFORM017.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM017.html">第17回.Enterキーで次のコントロールに移動する</A><br>
+<A href="EXCELFORM018.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM018.html">第18回.２段階のコンボボックス</A><br>
+<A href="EXCELFORM019.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM019.html">第19回.数値専用のテキストボックス</A><br>
+<A href="EXCELFORM020.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM020.html">第20回.テキストボックスの各種イベント</A><br>
+<A href="EXCELFORM021.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM021.html">第21回.ユーザーフォームの各種イベント</A><br>
+<A href="EXCELFORM022.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM022.html">第22回.コントロールの動的作成</A><br>
+<A href="EXCELFORM023.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM023.html">第23回.イベントプロシージャーの共通化</A><br>
+<span class="strrev">第24回.イベントプロシージャーの共通化（Enter,Exit）</span><br>
+<A href="EXCELFORM025.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM025.html">第25回.簡易音楽プレーヤーの作成</A><br>
+<A href="EXCELFORM026.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM026.html">第26回.プログレスバーを自作する</A><br>
+<A href="EXCELFORM027.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM027.html">第27回.インクリメンタルサーチの実装</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</a></li>
+<li><span class="strrev2"><strong>イベントプロシージャーの共通化（Enter,Exit）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</a></li>
+<li><span class="strrev2"><strong>イベントプロシージャーの共通化</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCELFORM023.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM023.html">第23回.イベントプロシージャーの共通化</a></li><li><a href="EXCELFORM016.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM016.html">第16回.アクティブコントロールに色を付ける</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

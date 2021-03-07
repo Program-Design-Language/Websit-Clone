@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VBAクラスの作り方：独自Rangeっぽいものを作ってみた｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="クラスの作成は、標準モジュールで作成していた時とは様相が違い戸惑う部分も多いと思います、それは、初めてVBAに取り組んだ時の戸惑いと同じかもしれません。最初はとにかく慣れることが一番です、細かい文法や機能は、少し慣れてから改めて学んでも遅くはありません。">
+  <meta name="keywords" content="VBA,Range,クラス,作り方,独自っぽいも,を作ってみた,技術解説,エクセル,Excel,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba_class/VBA_CLASS_05.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="VBAクラスの作り方：独自Rangeっぽいものを作ってみた｜VBA技術解説" />
+  <meta property="og:description" content="クラスの作成は、標準モジュールで作成していた時とは様相が違い戸惑う部分も多いと思います、それは、初めてVBAに取り組んだ時の戸惑いと同じかもしれません。最初はとにかく慣れることが一番です、細かい文法や機能は、少し慣れてから改めて学んでも遅くはありません。" />
+  <meta property="og:image" content="https://excel-ubara.com/vba_class/image158.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/vba_class/VBA_CLASS_05.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VBAクラスの作り方：独自Rangeっぽいものを作ってみた｜VBA技術解説" />
+  <meta name="twitter:description" content="クラスの作成は、標準モジュールで作成していた時とは様相が違い戸惑う部分も多いと思います、それは、初めてVBAに取り組んだ時の戸惑いと同じかもしれません。最初はとにかく慣れることが一番です、細かい文法や機能は、少し慣れてから改めて学んでも遅くはありません。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/vba_class/image158.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>VBAクラスの作り方：独自Rangeっぽいものを作ってみた</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba_class/">
+<span itemprop="name">VBAクラス入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="VBA_CLASS_05.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_05.html">
+<span itemprop="name">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2019-03-09</span>
+<h2 align="center">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</h2><p><br>
+クラスの作成は、標準モジュールで作成していた時とは様相が違い戸惑う部分も多いと思います、<br>
+それは、初めてVBAに取り組んだ時の戸惑いと同じかもしれません。<br><div class="br2"><br></div>
+最初はとにかく慣れることが一番です、<br>
+細かい文法や機能は、少し慣れてから改めて学んでも遅くはありません。<br><div class="br2"><br></div>
+「Rangeっぽいもの」って良くわからないタイトルになっていますが、良いタイトルが思いつきませんでした・・・<br><div class="br2"><br></div>
+標準モジュールでは、直接Rangeオブジェクト(Range,Cells等)を記述せずに、<br>
+それらを極力クラスに委ねようということです。<br>
+マクロVBAが遅いのは、多くの場合Rangeオブジェクトの操作に関係しています。<br>
+これを避けるためには表範囲を配列に入れて処理するといった方法がありますが、<br>
+これをクラスにカプセル化しようということです。<br>
+クラス化することで入力支援が使えることも利点になります。<br>
+ただし、<br>
+今回のクラスは即実用で使う為ではなく、あくまでクラスの<strong>作り方のサンプル</strong>として作成しています。<br>
+従って、どういう機能をどうやって実装するかという部分を中心にVBAコードを読んでください。<br><div class="br2"><br></div>
+VBAクラスに慣れるには、とにかく、<strong>VBAコードを読んで書いて動かしてみることです。</strong><br>
+その為のVBAクラスのサンプルとして作成しています。<br>
+また学習素材の意味として、意図的にいろいろなテクニックを使っている部分もあります。<br>
+そいったテクニックも込みでサンプルとして使ってください。 <div class="main-indent">列挙体、配列、コレクション、Optional、ParamArray<br>
+これらを使っていますので、もしこれらが分からない場合はクラスの前にそちらを先に学んでください。<br>
+特に実務でVBAを使い業務の自動化を目指すのなら、クラスよりもこれらの方がはるかに重要です。</div><p><br>
+以下、いきなりクラスの全VBAコードを提示します。<br>
+クラス モジュールを挿入して、コピペで貼り付けてください。<br>
+クラス作成後は、後の標準モジュールで動作を確認しつつクラス内のVBAコードを読んでみてください。<br><div class="br2"><br></div>
+<H3><strong>クラスの全VBAコード</strong></H3>
+<div class="main-indent"><br>
+クラス名は何でも構いませんが、<br>
+後の標準モジュールでの使い方では、<br>
+<strong>clsRange</strong><br>
+このクラス名になっています。<br>
+独自Rangeオブジェクトっぽいものということで、この名称にしました。<br><div class="br2"><br></div><br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br><form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 公開変数等</span><br>
+<span style="color:#009900;">'==================================================</span><br>
+      Public Enum ErrValue <span style="color:#009900;">'このクラス専用の列挙の意味でここに</span><br>
+　　Through <span style="color:#009900;">'そのまま返す</span><br>
+　　ToBlank <span style="color:#009900;">'&quot;&quot;を返す</span><br>
+　　ToEmpty <span style="color:#009900;">'Emptyを返す</span><br>
+　　ToNull <span style="color:#009900;">'Nullを返す</span><br>
+End Enum<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 非公開変数</span><br>
+<span style="color:#009900;">'==================================================</span><br>
+Private Ws As Worksheet　　　　 <span style="color:#009900;">'対象ワークシート</span><br>
+Private pHeadRow As Long　　　　<span style="color:#009900;">'見出し行</span><br>
+Private pDataRow As Long　　　　<span style="color:#009900;">'データ開始行</span><br>
+Private pDataCol As Long　　　　<span style="color:#009900;">'データ開始列</span><br>
+Private pArray As Variant　　　 <span style="color:#009900;">'データ格納2次元配列(1～)</span><br>
+Private pErrCells As Integer　　<span style="color:#009900;">'エラー値の場合の値</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 公開プロパティ</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'対象シート</span><br>
+Public Property Get Worksheet() As Worksheet<br>
+　　Set Worksheet = Ws<br>
+End Property<br>
+Public Property Set Worksheet(ByVal argWs As Worksheet)<br>
+　　Set Ws = argWs<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'表の見出し行：名前定義がされている行</span><br>
+Public Property Get HeadRow() As Long<br>
+　　HeadRow = pHeadRow<br>
+End Property<br>
+Public Property Let HeadRow(ByVal HeadRow As Long)<br>
+　　pHeadRow = HeadRow<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'表のデータ開始行</span><br>
+Public Property Get DataRow() As Long<br>
+　　DataRow = pDataRow<br>
+End Property<br>
+Public Property Let DataRow(ByVal DataRow As Long)<br>
+　　pDataRow = DataRow<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'表のデータ開始列</span><br>
+Public Property Get DataCol() As Long<br>
+　　DataCol = pDataCol<br>
+End Property<br>
+Public Property Let DataCol(ByVal DataCol As Long)<br>
+　　pDataCol = DataCol<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'データ行数：ReadOnly Property</span><br>
+Public Property Get RowsCount() As Long<br>
+　　If IsArray(pArray) Then<br>
+　　　　RowsCount = UBound(pArray, 1)<br>
+　　End If<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'データ列数：ReadOnly Property</span><br>
+Public Property Get ColumnsCount() As Long<br>
+　　If IsArray(pArray) Then<br>
+　　　　ColumnsCount = UBound(pArray, 2)<br>
+　　End If<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'クラス独自のCells</span><br>
+Public Property Get Cells(ByVal Row As Long, ByVal col As Long) As Variant<br>
+　　Cells = pArray(Row, col)<br>
+　　If IsError(Cells) Then<br>
+　　　　Select Case pErrCells<br>
+　　　　　　Case ErrValue.Through<br>
+　　　　　　　　<span style="color:#009900;">'そのまま</span><br>
+　　　　　　Case ErrValue.ToBlank<br>
+　　　　　　　　Cells = &quot;&quot;<br>
+　　　　　　Case ErrValue.ToEmpty<br>
+　　　　　　　　Cells = Empty<br>
+　　　　　　Case ErrValue.ToNull<br>
+　　　　　　　　Cells = Null<br>
+　　　　End Select<br>
+　　End If<br>
+End Property<br>
+Public Property Let Cells(ByVal Row As Long, ByVal col As Long, ByVal Value As Variant)<br>
+　　pArray(Row, col) = Value<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'エラー値の場合にCellsが戻す値を指定：ReadOnly Property</span><br>
+Public Property Let ErrCells(ByVal arg As ErrValue)<br>
+　　pErrCells = arg<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'クラス独自のColumn：WriteOnly Property</span><br>
+Public Property Let Column(ByVal col As Long, ByVal Value As Variant)<br>
+　　Dim i As Long<br>
+　　For i = 1 To RowsCount<br>
+　　　　pArray(i, col) = Value<br>
+　　Next<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 公開メソッド</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'指定されたワークシートの表全体を2次元配列に入れる</span><br>
+Public Sub StoreValues(Optional ByVal TargetSheet As Worksheet)<br>
+　　Dim myRange1 As Range, myrange2 As Range<br>
+　　Set myRange1 = Ws.Cells(pDataRow, pDataCol)<br>
+　　Set myrange2 = myRange1.CurrentRegion<br>
+　　Set myrange2 = myrange2.Item(myrange2.Count)<br>
+　　<br>
+　　<span style="color:#009900;">'行・列が途切れている場合は警告</span><br>
+　　If myrange2.Column _<br>
+　　　　&lt; Ws.Cells(pDataRow, Ws.Columns.Count).End(xlToLeft).Column Then<br>
+　　　　If MsgBox(&quot;表内に空白列があります。&quot; &amp; vbLf &amp; vbLf &amp; _<br>
+　　　　　　　　　&quot;処理を中断してよろしいですか?&quot;, vbYesNo, &quot;確認&quot;) _<br>
+　　　　　　　　　= vbYes Then<br>
+　　　　　　End<br>
+　　　　Else<br>
+　　　　　　If MsgBox(&quot;表内に空白列があるので、&quot; &amp; vbLf &amp; vbLf &amp; _<br>
+　　　　　　　　　　　&quot;エラーとなる可能性があります。&quot; &amp; vbLf &amp; vbLf &amp; _<br>
+　　　　　　　　　　　&quot;処理を続行してよろしいですか?&quot;, vbYesNo, &quot;確認&quot;) _<br>
+　　　　　　　　　　　= vbYes Then<br>
+　　　　　　　　End<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　End If<br>
+　　pArray = Ws.Range(myRange1, myrange2)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'データ格納用の2次元配列から指定範囲をシートに戻す</span><br>
+<span style="color:#009900;">'オプションの指定状況により範囲を変更</span><br>
+Public Sub PutArray(Optional ByVal Row1 As Long = 0, Optional ByVal Col1 As Long = 0, _<br>
+　　　　　　　　　　Optional ByVal Row2 As Long = 0, Optional ByVal Col2 As Long = 0)<br>
+　　<span style="color:#009900;">'引数全て省略：全データ→配列全体を出力し抜ける</span><br>
+　　If Row1 = 0 And Col1 = 0 And _<br>
+　　　　Row2 = 0 And Col2 = 0 Then<br>
+　　　　Ws.Cells(DataRow, DataCol) _<br>
+　　　　　　.Resize(RowsCount, ColumnsCount) _<br>
+　　　　　　= pArray<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　Select Case True<br>
+　　　　Case Row1 &lt;&gt; 0 And Col1 &lt;&gt; 0 And Row2 &lt;&gt; 0 And Col2 &lt;&gt; 0<br>
+　　　　　　<span style="color:#009900;">'全て指定：指定行列範囲</span><br>
+　　　　　　<span style="color:#009900;">'処理なし</span><br>
+　　　　Case Row1 &lt;&gt; 0 And Col1 &lt;&gt; 0 And Row2 = 0 And Col2 = 0<br>
+　　　　　　<span style="color:#009900;">'Row1とCol1のみ：指定セル</span><br>
+　　　　　　Row2 = Row1<br>
+　　　　　　Col2 = Col1<br>
+　　　　Case Row1 &lt;&gt; 0 And Col1 = 0 And Row2 = 0 And Col2 = 0<br>
+　　　　　　<span style="color:#009900;">'Row1のみ：指定行のみ</span><br>
+　　　　　　Row2 = Row1<br>
+　　　　　　Col1 = 1<br>
+　　　　　　Col2 = ColumnsCount<br>
+　　　　Case Row1 &lt;&gt; 0 And Col1 = 0 And Row2 &lt;&gt; 0 And Col2 = 0<br>
+　　　　　　<span style="color:#009900;">'Row1とRow2のみ：指定行範囲</span><br>
+　　　　　　Col1 = 1<br>
+　　　　　　Col2 = ColumnsCount<br>
+　　　　Case Row1 = 0 And Col1 &lt;&gt; 0 And Row2 = 0 And Col2 = 0<br>
+　　　　　　<span style="color:#009900;">'Col1のみ：指定列のみ</span><br>
+　　　　　　Col2 = Col1<br>
+　　　　　　Row1 = 1<br>
+　　　　　　Row2 = RowsCount<br>
+　　　　Case Row1 = 0 And Col1 &lt;&gt; 0 And Row2 = 0 And Col2 &lt;&gt; 0<br>
+　　　　　　<span style="color:#009900;">'Col1とCol2のみ：指定列範囲</span><br>
+　　　　　　Row1 = 1<br>
+　　　　　　Row2 = RowsCount<br>
+　　　　Case Else<br>
+　　　　　　MsgBox &quot;PutRangeの引数不正&quot;<br>
+　　　　　　Exit Sub<br>
+　　End Select<br>
+　　<br>
+　　<span style="color:#009900;">'始点行・列～終点行・列範囲を配列からシートへ</span><br>
+　　<span style="color:#009900;">'配列の指定範囲を別配列へ</span><br>
+　　Dim myArray()<br>
+　　Dim i1 As Long, i2 As Long<br>
+　　ReDim myArray(1 To Row2 - Row1 + 1, 1 To Col2 - Col1 + 1)<br>
+　　For i1 = 1 To Row2 - Row1 + 1<br>
+　　　　For i2 = 1 To Col2 - Col1 + 1<br>
+　　　　　　myArray(i1, i2) = pArray(i1 + Row1 - 1, i2 + Col1 - 1)<br>
+　　　　Next<br>
+　　Next<br>
+　　<span style="color:#009900;">'出力先のセル範囲を求める</span><br>
+　　Dim myRange1 As Range, myrange2 As Range<br>
+　　Set myRange1 = Ws.Cells(DataRow + Row1 - 1, DataCol + Col1 - 1)<br>
+　　Set myrange2 = Ws.Cells(DataRow + Row2 - 1, DataCol + Col2 - 1)<br>
+　　<span style="color:#009900;">'シートへ出力</span><br>
+　　Ws.Range(myRange1, myrange2) = myArray<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'データ格納用の2次元配列から指定範囲をシートに戻す</span><br>
+<span style="color:#009900;">'列1,比較演算子1,値1,列2,比較演算子2,値2・・・</span><br>
+<span style="color:#009900;">'全てAnd条件です。Orが必要な場合は別途作成</span><br>
+Public Function FilterArray(ParamArray ParamFilter()) As Variant<br>
+　　<span style="color:#009900;">'引数未指定は配列全体を返し抜ける</span><br>
+　　If UBound(ParamFilter) &lt; 0 Then<br>
+　　　　FilterArray = pArray<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'該当行をコレクションに入れる：要素数が不定なのでコレクション</span><br>
+　　Dim i1 As Long, i2 As Long, ix As Long<br>
+　　Dim myCollection As New Collection<br>
+　　Dim varTemp As Variant<br>
+　　Dim myArray()<br>
+　　ReDim myArray(1 To ColumnsCount)<br>
+　　For i1 = 1 To RowsCount<br>
+　　　　<span style="color:#009900;">'関数IsTargtで欽定</span><br>
+　　　　If IsTargt(i1, ParamFilter()) Then<br>
+　　　　　　For i2 = 1 To ColumnsCount<br>
+　　　　　　　　myArray(i2) = Cells(i1, i2)<br>
+　　　　　　Next<br>
+　　　　　　myCollection.Add myArray<br>
+　　　　　　ix = ix + 1<br>
+　　　　End If<br>
+　　Next<br>
+　　If myCollection.Count = 0 Then<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'コレクションを2次元配列にする</span><br>
+　　ReDim myArray(1 To myCollection.Count, 1 To ColumnsCount)<br>
+　　i1 = 1<br>
+　　For Each varTemp In myCollection<br>
+　　　　For i2 = 1 To ColumnsCount<br>
+　　　　　　myArray(i1, i2) = varTemp(i2)<br>
+　　　　Next<br>
+　　　　i1 = i1 + 1<br>
+　　Next<br>
+　　<br>
+　　FilterArray = myArray<br>
+　　Exit Function<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'Vlookup機能</span><br>
+<span style="color:#009900;">'検索値(String),検索列(Long),取得列(Long)</span><br>
+<span style="color:#009900;">'検索値はVariant同士の比較を避けるために型を指定している</span><br>
+Public Function Vlookup(ByVal What As String, _<br>
+　　　　　　　　　　　　ByVal ColSearch As Long, _<br>
+　　　　　　　　　　　　ByVal ColReturn As Long) As Variant<br>
+　　Dim i As Long<br>
+　　For i = 1 To RowsCount<br>
+　　　　If Cells(i, ColSearch) = What Then<br>
+　　　　　　Vlookup = Cells(i, ColReturn)<br>
+　　　　　　Exit Function<br>
+　　　　End If<br>
+　　Next<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 非公開メソッド</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'列1,比較演算子1,値1,列2,比較演算子2,値2・・・</span><br>
+Private Function IsTargt(ByVal i1 As Long, ParamArray AryFilter()) As Boolean<br>
+　　Dim i2 As Long<br>
+　　IsTargt = True<br>
+　　<span style="color:#009900;">'ParamArrayを配列で受け取ると(0,要素数)の2次元配列</span><br>
+　　For i2 = 0 To UBound(AryFilter(0)) Step 3<br>
+　　　　<span style="color:#009900;">'比較演算子</span><br>
+　　　　Select Case UCase(AryFilter(0)(i2 + 1))<br>
+　　　　　　Case &quot;=&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) = AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;&gt;&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) &gt; AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;&lt;&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) &lt; AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;&gt;=&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) &gt;= AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;&lt;=&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) &lt;= AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;&lt;&gt;&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) &lt;&gt; AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;LIKE&quot;<br>
+　　　　　　　　If Not Cells(i1, AryFilter(0)(i2)) Like AryFilter(0)(i2 + 2) Then<br>
+　　　　　　　　　　IsTargt = False<br>
+　　　　　　　　End If<br>
+　　　　　　Case Else<br>
+　　　　　　　　IsTargt = False<br>
+　　　　End Select<br>
+　　Next<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' クラスのメソッド</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'クラス初期処理</span><br>
+Private Sub Class_Initialize()<br>
+　　HeadRow = 1<br>
+　　DataRow = 2<br>
+　　DataCol = 1<br>
+　　pErrCells = ErrValue.Through<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+以下、コメントおよびプロシージャーを抜き出したものです。<br>
+全体の構成を見る時の参考にしてください。<br><div class="br2"><br></div>
+'==================================================<br>
+' 公開プロパティ<br>
+'==================================================</div>
+<div class="main-indent">
+<div class="main-indent">'対象シート<br>
+Public Property Get Worksheet() As Worksheet<br>
+Public Property Set Worksheet(ByVal argWs As Worksheet)<br><div class="br2"><br></div>
+'表の見出し行：名前定義がされている行<br>
+Public Property Get HeadRow() As Long<br>
+Public Property Let HeadRow(ByVal HeadRow As Long)<br><div class="br2"><br></div>
+'表のデータ開始行<br>
+Public Property Get DataRow() As Long<br>
+Public Property Let DataRow(ByVal DataRow As Long)<br><div class="br2"><br></div>
+'表のデータ開始列<br>
+Public Property Get DataCol() As Long<br>
+Public Property Let DataCol(ByVal DataCol As Long)<br><div class="br2"><br></div>
+'データ行数：ReadOnly Property<br>
+Public Property Get RowsCount() As Long<br><div class="br2"><br></div>
+'データ列数：ReadOnly Property<br>
+Public Property Get ColumnsCount() As Long<br><div class="br2"><br></div>
+'クラス独自のCells<br>
+Public Property Get Cells(ByVal Row As Long, ByVal col As Long) As Variant<br>
+Public Property Let Cells(ByVal Row As Long, ByVal col As Long, ByVal Value As Variant)<br><div class="br2"><br></div>
+'エラー値の場合にCellsが戻す値を指定：ReadOnly Property<br>
+Public Property Let ErrCells(ByVal arg As ErrValue)<br><div class="br2"><br></div>
+'クラス独自のColumn：WriteOnly Property<br>
+Public Property Let Column(ByVal col As Long, ByVal Value As Variant)</div>
+</div>
+<div class="main-indent">'==================================================<br>
+' 公開メソッド<br>
+'==================================================</div>
+<div class="main-indent">
+<div class="main-indent">'指定されたワークシートの表全体を2次元配列に入れる<br>
+Public Sub StoreValues(Optional ByVal TargetSheet As Worksheet)<br><div class="br2"><br></div>
+'データ格納用の2次元配列から指定範囲をシートに戻す<br>
+'オプションの指定状況により範囲を変更<br>
+Public Sub PutArray(Optional ByVal Row1 As Long = 0, Optional ByVal Col1 As Long = 0, _<br>
+　　　　　　　　　　Optional ByVal Row2 As Long = 0, Optional ByVal Col2 As Long = 0)<br><div class="br2"><br></div>
+'データ格納用の2次元配列から指定範囲をシートに戻す<br>
+'列1,比較演算子1,値1,列2,比較演算子2,値2・・・<br>
+'全てAnd条件です。Orが必要な場合は別途作成<br>
+Public Function FilterArray(ParamArray ParamFilter()) As Variant<br><div class="br2"><br></div>
+'Vlookup機能<br>
+'検索値(String),検索列(Long),取得列(Long)<br>
+'検索値はVariant同士の比較を避けるために型を指定している<br>
+Public Function Vlookup(ByVal What As String, _<br>
+　　　　　　　　　　　　ByVal ColSearch As Long, _<br>
+　　　　　　　　　　　　ByVal ColReturn As Long) As Variant</div>
+</div>
+<div class="main-indent">'==================================================<br>
+' 非公開メソッド<br>
+'==================================================</div>
+<div class="main-indent">
+<div class="main-indent">'列1,比較演算子1,値1,列2,比較演算子2,値2・・・<br>
+Private Function IsTargt(ByVal i1 As Long, ParamArray AryFilter()) As Boolean</div>
+</div>
+<div class="main-indent">'==================================================<br>
+' クラスのメソッド<br>
+'==================================================</div>
+<div class="main-indent">
+<div class="main-indent">'クラス初期処理<br>
+Private Sub Class_Initialize()<br><div class="br2"><br></div>
+</div>
+</div>
+<H3><strong>サンプルとして使うブックの構成 </strong></H3>
+<div class="main-indent"><br>
+シートは、<br>
+顧客マスタ<br>
+売上データ<br>
+この2シートになります。<br><div class="br2"><br></div>
+<img src="image241.jpg" tppabs="https://excel-ubara.com/vba_class/image241.jpg" width="588" height="68" border="0" alt="マクロ VBA クラス 入門"><br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br><div class="br2"><br></div>
+シート名
+<div class="main-indent">顧客マスタ </div>
+フィールド
+<div class="main-indent">顧客ID<br>
+氏名<br>
+氏名（カナ）<br>
+性別<br>
+生年月日<br>
+年齢<br>
+郵便番号<br>
+都道府県<br>
+電話番号<br>
+Email<br>
+備考 </div><p><br>
+<img src="image141.jpg" tppabs="https://excel-ubara.com/vba_class/image141.jpg" width="585" height="65" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+シート名</p>
+<div class="main-indent">売上データ </div><p>
+フィールド</p>
+<div class="main-indent">伝票番号<br>
+顧客ID<br>
+売上日<br>
+金額<br>
+氏名<br>
+都道府県</div><p><br>
+この2シートについては、<br>
+前回までにやった、列名のクラスを作成します。<br><div class="br2"><br></div>
+<strong><a href="VBA_CLASS_03.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_03.html">VBAクラスの作り方：列名の入力支援と列移動対応</a></strong><div class="details">クラスを使う良さとして、入力支援が使えてコーディングが楽になるという利点があります、列番号をクラスに持てば、列名が候補表示されて非常に便利です。しかし、これを実装するには、かなりの手間がかかります。つまり、クラス作成に手間をかけて、その後を楽にするということになります。</div><br>
+<strong><a href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</a></strong><div class="details">クラスに列名のプロパティを作成することで、入力支援が使えてコーディングが楽になりますが、列数が多くなればVBAの記述量が増え、コーディングが大変になります。入力支援が使えるのは良いが、その事前準備があまりに大変ではやる気が失せてクラス作るのが面倒になってしまいます。</div><br>
+作成されるクラスは</p>
+<div class="main-indent"><strong>clsC顧客マスタ</strong><br>
+<strong>clsC売上データ</strong><br><div class="br2"><br></div>
+以下では、この2つのクラスがインポートされているものとして書いています。</div><p><br>
+データは適当に入れてください。<br>
+ネット上には、無料のテストデータ作成ツールがいろいろありますので活用してください。<br><div class="br2"><br></div></p>
+</div></p>
+<h3><strong>標準モジュールでの使い方 </strong></h3>
+<div class="main-indent"><br>
+標準モジュールに以下のVBAコードを貼り付けてください。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      <span style="color:#009900;">'clsRangeの使い方サンプル</span><br>
+      Sub ClassTestMain()<br>
+      　　Dim clsMst As New clsRange<br>
+      　　Dim colMst As New clsC顧客マスタ<br>
+      　　Dim clsDat As New clsRange<br>
+      　　Dim colDat As New clsC売上データ<br>
+      　　Dim Ws As Worksheet<br>
+      　　<br>
+      　　<span style="color:#009900;">'顧客マスタClassの初期設定</span><br>
+      　　With clsMst<br>
+      　　　　Set .Worksheet = ThisWorkbook.Worksheets(&quot;顧客マスタ&quot;)<br>
+      　　　　Set colMst.Worksheet = .Worksheet<br>
+      　　　　.HeadRow = 1 <span style="color:#009900;">'列タイトル行</span><br>
+      　　　　.DataRow = 2 <span style="color:#009900;">'データ開始行</span><br>
+      　　　　.DataCol = 1 <span style="color:#009900;">'データ開始列</span><br>
+      　　　　.ErrCells = ToNull <span style="color:#009900;">'エラー値処理</span><br>
+      　　　　Call .StoreValues <span style="color:#009900;">'データ全体を配列へ格納</span><br>
+      　　End With<br>
+      　　<br>
+      　　<span style="color:#009900;">'売上データClassの初期設定</span><br>
+      　　With clsDat<br>
+      　　　　Set .Worksheet = ThisWorkbook.Worksheets(&quot;売上データ&quot;)<br>
+      　　　　Set colDat.Worksheet = .Worksheet<br>
+      　　　　.HeadRow = 1 <span style="color:#009900;">'列タイトル行</span><br>
+      　　　　.DataRow = 2 <span style="color:#009900;">'データ開始行</span><br>
+      　　　　.DataCol = 1 <span style="color:#009900;">'データ開始列</span><br>
+      　　　　.ErrCells = ToEmpty <span style="color:#009900;">'エラー値処理</span><br>
+      　　　　Call .StoreValues <span style="color:#009900;">'データ全体を配列へ格納</span><br>
+      　　End With<br>
+      　　<br>
+      　　Call 顧客マスタ更新(clsMst, colMst)<br>
+      　　Call 売上データ更新(clsDat, colDat, clsMst, colMst)<br><div class="br2"><br></div>
+      　　<span style="color:#009900;">'解放</span><br>
+      　　Set clsMst = Nothing<br>
+      　　Set colMst = Nothing<br>
+      　　Set clsDat = Nothing<br>
+      　　Set colDat = Nothing<br>
+      End Sub<br><div class="br2"><br></div>
+      Private Sub 顧客マスタ更新(ByVal clsMst As clsRange, ByVal colMst As clsC顧客マスタ)<br>
+      　　Dim i As Long<br>
+      　　<span style="color:#009900;">'シートの内容を更新する場合</span><br>
+      　　With clsMst<br>
+      　　　　<span style="color:#009900;">'クラスのCellsを使った読み書き</span><br>
+      　　　　.Cells(3, colMst.氏名_カナ) = StrConv(.Cells(3, colMst.氏名_カナ), vbHiragana)<br>
+      　　　　.Cells(4, colMst.氏名_カナ) = Application.GetPhonetic(.Cells(4, colMst.氏名))<br>
+      　　　　.Cells(5, colMst.氏名_カナ) = Application.GetPhonetic(.Cells(5, colMst.氏名))<br>
+      　　　　.Cells(5, colMst.備考) = &quot;引っ越し：&quot; &amp; .Cells(5, colMst.都道府県)<br>
+      　　　　.Cells(5, colMst.都道府県) = &quot;千葉県&quot;<br>
+      　　　　<span style="color:#009900;">'全行処理</span><br>
+      　　　　For i = 1 To .RowsCount<br>
+      　　　　　　.Cells(i, colMst.年齢) = Age(.Cells(i, colMst.生年月日), Date)<br>
+      　　　　Next<br><div class="br2"><br></div>
+      　　　　<span style="color:#009900;">'シートへの書き出し</span><br>
+      　　　　<span style="color:#009900;">'名前付き引数：[Row1:=開始行][,Col1:=開始列][,Row2:=終了行][,Col2:=終了列]</span><br>
+      　　　　Call .PutArray(Row1:=3, Col1:=colMst.氏名_カナ, Row2:=4, Col2:=colMst.氏名_カナ)<br>
+      　　　　Call .PutArray(Row1:=5)<br>
+      　　　　Call .PutArray(Col1:=colMst.年齢)<br>
+      　　End With<br><div class="br2"><br></div>
+      　　<span style="color:#009900;">'Filterを指定して配列を受け取り別シートへ出力する場合</span><br>
+      　　Dim Ws As Worksheet<br>
+      　　Dim myArray As Variant<br>
+      　　With clsMst<br>
+      　　　　myArray = .FilterArray(colMst.性別, &quot;=&quot;, &quot;女&quot;, _<br>
+      　　　　　　　　　　　　　　　 colMst.年齢, &quot;&lt;&quot;, 30, _<br>
+      　　　　　　　　　　　　　　　 colMst.電話番号, &quot;Like&quot;, &quot;080*&quot;)<br>
+      　　　　Set Ws = Worksheets.Add(After:=Worksheets(Sheets.Count))<br>
+      　　　　On Error Resume Next<br>
+      　　　　Application.DisplayAlerts = False<br>
+      　　　　Worksheets(&quot;Filter出力&quot;).Delete <span style="color:#009900;">'2度実行対応</span><br>
+      　　　　Application.DisplayAlerts = True<br>
+      　　　　On Error GoTo 0<br>
+      　　　　Ws.Name = &quot;Filter出力&quot;<br>
+      　　　　.Worksheet.Rows(.HeadRow).Copy Destination:=Ws.Rows(1)<br>
+      　　　　If IsArray(myArray) Then<br>
+      　　　　　　Ws.Cells(2, 1).Resize(UBound(myArray, 1), UBound(myArray, 2)) = myArray<br>
+      　　　　End If<br>
+      　　End With<br>
+      End Sub<br><div class="br2"><br></div>
+      Private Sub 売上データ更新(ByVal clsDat As clsRange, ByVal colDat As clsC売上データ, _<br>
+      　　　　　　　　　　　　　 ByVal clsMst As clsRange, ByVal colMst As clsC顧客マスタ)<br>
+      　　Dim i As Long<br>
+      　　Dim strSearch As String<br>
+      　　<span style="color:#009900;">'顧客マスタの情報を取得し更新する</span><br>
+      　　With clsDat<br>
+      　　　　For i = 1 To .RowsCount<br>
+      　　　　　　strSearch = .Cells(i, colDat.顧客ID)<br>
+      　　　　　　<span style="color:#009900;">'検索値(String),検索列(Long),取得列(Long)</span><br>
+      　　　　　　.Cells(i, colDat.氏名) = clsMst.Vlookup(strSearch, colMst.顧客ID, colMst.氏名)<br>
+      　　　　　　.Cells(i, colDat.都道府県) = clsMst.Vlookup(strSearch, colMst.顧客ID, colMst.都道府県)<br>
+      　　　　Next<br>
+      　　　　Call .PutArray(Col1:=colDat.氏名)<br>
+      　　　　Call .PutArray(Col1:=colDat.都道府県)<br>
+      　　End With<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'年齢算出</span><br>
+      Public Function Age(FromDate As Variant, ToDate As Variant) As Integer<br>
+      　　Dim intAge As Integer<br>
+      　　intAge = Year(ToDate) - Year(FromDate)<br>
+      　　If Format(ToDate, &quot;mmdd&quot;) &lt; Format(FromDate, &quot;mmdd&quot;) Then<br>
+      　　　　intAge = intAge - 1<br>
+      　　End If<br>
+      　　Age = intAge<br>
+      End Function&nbsp;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+ClassTestMainが起動のプロシージャーです。<br>
+ここでやっていることは他愛のないことなので、VBA内のコメントを参考にしてください。<br>
+一番下の年齢算出については、おまけみたいなものになりますので参考までに。<br><div class="br2"><br></div>
+以下、ポイントのみ解説します。<br><div class="br2"><br></div>
+<strong>Dim clsMst As New clsRange<br>
+Dim clsDat As New clsRange</strong></div>
+<div class="main-indent">
+<div class="main-indent">このようにクラスのインスタンスを複数作れる、<br>
+つまり、同じ型のオブジェクトが複数作れるのが良いところです。<br><div class="br2"><br></div>
+クラスは型(オブジェクトの設計図)で、型を使って実体化(インスタンス)したものがオブジェクトです。<br>
+<strong><a href="VBA_CLASS_01.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_01.html">VBAのクラスとは（Class,Property）</a></strong><div class="details">VBAを覚えて、いろいろ作りながらネットで調べたりしていると、クラスとかオブジェクト指向といった言葉に出くわします。VBEの「挿入」の一番下にある「クラスモジュール」は気になっていたかもしれません。このクラスモジュールを使ってクラスを作ります。</div>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>Dim colMst As New clsC顧客マスタ<br>
+Dim colDat As New clsC売上データ</strong></div>
+<div class="main-indent">
+<div class="main-indent">これらは、各シートの列名表示のクラスになります。<br>
+<strong>clsRange</strong>の中に入れられれば使いやすいのですが、<br>
+クラスの型が違いますし、何より列名入力支援の為なので統一することができません。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>入力支援は実際にタイピングして確認</strong></div>
+<div class="main-indent">
+<div class="main-indent"><img src="image146.jpg" tppabs="https://excel-ubara.com/vba_class/image146.jpg" width="487" height="151" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+クラス名が表示されます。<br>
+クラス名称にプリフィックスを付けておくと、ここでまとまって表示されます。<br><div class="br2"><br></div>
+<img src="image147.jpg" tppabs="https://excel-ubara.com/vba_class/image147.jpg" width="260" height="174" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+<strong>.</strong>ピリオドを打つと、クラスのメンバーが表示されます。<br><div class="br2"><br></div>
+<img src="image148.jpg" tppabs="https://excel-ubara.com/vba_class/image148.jpg" width="368" height="238" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+<strong>プロパティの引数で列挙体を指定しているので設定値が候補表示</strong>されています。</div>
+<div class="main-indent">
+<div class="main-indent">Public Enum ErrValue<br>
+・・・<br>
+Public Property Let ErrCells(ByVal arg As ErrValue)<br>
+これで実現されています。<br>
+列挙体はPublicにする必要があります。<br>
+クラス内のプロパティ等のプロシーシャーの型として使うことで、<br>
+それを外部で指定する場合に列挙体のメンバーが候補表示されるようになります。</div>
+<div class="main-indent">
+<div class="main-indent"><strong>後日追記</strong><br>
+列挙体はプロジェクト内でユニークでなければなりません。<br>
+列挙体はモジュール名で修飾することはできません。<br>
+つまり、<br>
+クラスのインスタンスを経由して直接列挙体そのものを参照することもできません。<br>
+従って clsMst.ErrValue このような参照はできないということです。</div>
+</div>
+<div class="main-indent">列挙体は標準モジュールに書いても同じですが、<br>
+このクラス専用なのでクラス内にパッケージしたほうが再利用しやすくなるということです。</div>
+</div>
+<div class="main-indent"><br>
+<img src="image149.jpg" tppabs="https://excel-ubara.com/vba_class/image149.jpg" width="392" height="174" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+列名も一覧表示されるので悩まずに選択できます。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>エラーが出たときはF8で確認</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>.ErrCells = ToEmpty 'エラー値処理</strong></div>
+<div class="main-indent">
+<div class="main-indent">これは、セル値がエラー値(#○○!)の場合、IfステートメントやVBA関数がエラーとなってしまう事に対応しています。<br>
+プロパティCellsの中でエラー値判定して、返す値(&quot;&quot;,Empty,Null)を制御しています。<br>
+ではエラーを出してみましょう。<br><div class="br2"><br></div>
+.ErrCells = ToEmptyをコメントアウトし、<br>
+データ3行目(シートでは4行目)の「氏名（カナ）」のセルをエラー値にします。<br>
+=NA() や =1/0 等々<br>
+そして、ClassTestMainを実行すると、<br><div class="br2"><br></div>
+<img src="image150.jpg" tppabs="https://excel-ubara.com/vba_class/image150.jpg" width="488" height="242" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+<img src="image151.jpg" tppabs="https://excel-ubara.com/vba_class/image151.jpg" width="519" height="53" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+.Cellsにマウスカーソルを当てると、<br><div class="br2"><br></div>
+<img src="image153.jpg" tppabs="https://excel-ubara.com/vba_class/image153.jpg" width="457" height="56" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+では、ステップイン(F8)でクラスの中に入ります。<br><div class="br2"><br></div>
+<img src="image152.jpg" tppabs="https://excel-ubara.com/vba_class/image152.jpg" width="322" height="35" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+さらにF8で進めていくと、<br><div class="br2"><br></div>
+<img src="image154.jpg" tppabs="https://excel-ubara.com/vba_class/image154.jpg" width="442" height="143" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+セル値が入った、Variantの配列の値をそのまま返しているのが分かります。<br>
+.ErrCells = ToEmptyを生かすと、<br>
+このCells内で値を変更している動きが理解できるはずです。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>意図的にクラス内でエラーを起こしてみましょう。</strong></div>
+<div class="main-indent">
+<div class="main-indent"><img src="image155.jpg" tppabs="https://excel-ubara.com/vba_class/image155.jpg" width="312" height="95" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+これなら確実にエラーになります。<br>
+ClassTestMainを実行すると、<br>
+「型が一致しません」となりますので、「デバッグ」<br><div class="br2"><br></div>
+<img src="image156.jpg" tppabs="https://excel-ubara.com/vba_class/image156.jpg" width="507" height="63" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+クラス内で停止してくれませんでした、、、<br>
+そこで、F8で進めると、<br><div class="br2"><br></div>
+<img src="image157.jpg" tppabs="https://excel-ubara.com/vba_class/image157.jpg" width="282" height="55" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+ここまで来て、F8を押すと「型が一致しません」となり「デバッグ」で標準モジュールに戻ります。<br>
+なんか不便ですよね、エラー箇所で止まってくれない、、、<br><div class="br2"><br></div>
+VBEの「オプション」→「全般」タブ<br><div class="br2"><br></div>
+<img src="image158.jpg" tppabs="https://excel-ubara.com/vba_class/image158.jpg" width="506" height="389" border="0" alt="VBA クラス 入門"><br><div class="br2"><br></div>
+「クラス モジュールで中断(R)」を選択して「OK」<br>
+これで、クラス内で停止するようになります。<br>
+ただし、クラス内でOn Errorが指定されればスルーします。<br><div class="br2"><br></div>
+「エラー発生時に中断(B)」にすれば、<br>
+全モジュールにおいて、On Errorに関係なくエラー停止させることができます。<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<h3>最後に</h3>
+<div class="main-indent"><br>
+今回は練習用・学習用のクラスということで紹介しましたが、<br>
+もう少し手を加えれば、実用としても十分耐えうるものにできるはずです。<br><div class="br2"><br></div>
+最初に書きましたが、ここでは、<br>
+列挙体、配列、コレクション、Optional、ParamArray、そしてProperty<br>
+これらが使われていますが、これに、<br>
+構造体や、WithEventsキーワード、RaiseEventステートメント<br>
+これらが使えるようになれば、もう文法的には学ぶものはほとんどありません。<br>
+（ステートメントやプロパティの細部については別として）<br><div class="br2"><br></div>
+クラスに直接関連するものとして残りは、<strong>インターフェース</strong>になります。</div>
+<div class="main-indent">
+<div class="main-indent">インフェースは、<br>
+VBAでオブジェクト指向の多態性（ポリモーフィズム）を実現する手段と言えます。<br>
+スーパークラス（親クラス）には、プロパティ・メソッド等の「枠」「型」のみ定義し、<br>
+<strong>Implementsステートメント</strong>を実装した子クラスで実際の動作を決定するものです。<br>
+こんな感じの説明でしょうか、、、これでわかるはずもありません。<br><div class="br2"><br></div>
+身近で、実感できるサンプルもなかなかありません。<br>
+インターフェースの説明で良くある「ワンワン」「ニャンニャン」的なものでは、、、<br>
+単にサンプルVBAコードを提示しても、あーそうなのか、ということが分かるだけで、<br>
+実際の使い道を実感できないと思います。<br><div class="br2"><br></div>
+VBAのンターフェースは、<br>
+大規模かつ堅牢なシステムを作るような時でもなければ良さを実感できるものではないと思います。<br>
+実装の大変さを上回る利点を実感できないだろうということです。<br>
+逆に言えば、VBAでそういうシステムを今後作ろうと考えているのなら是非習得してください。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+最初に書いた通り、クラスを使うには慣れが必要です。<br>
+どうしてもクラスはVBAコードが多くなりがちで、VBA記述が大変になることが多いものです。<br>
+だからと言って、VBAコードを短くしたいだけの理由で、<br>
+変数をやたらに公開するようなカプセル化できていないようなクラスでは本末転倒になります。<br><div class="br2"><br></div>
+基本を守りつつ、少しずつ慣れていきながら実践で使ってみてください。<br>
+クラスはしっかり使えれば、その大変さを補ってあまりある恩恵があります。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a>」の記事</h3><p>
+<A href="VBA_CLASS_02.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_02.html">クラスを使った全ブック（他ブック）のイベント補足</A><br>
+<A href="VBA_CLASS_03.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_03.html">VBAクラスの作り方：列名の入力支援と列移動対応</A><br>
+<A href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</A><br>
+<span class="strrev">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</span><br>
+<A href="VBA_CLASS_06.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_06.html">クラスとイベントとマルチプロセス並列処理</A><br>
+<A href="VBA_CLASS_07.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_07.html">クラスとCallByNameとポリモーフィズム(多態性)</A><br>
+<A href="VBA_CLASS_08.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_08.html">オートフィルターを退避回復するVBAクラス</A><br>
+<A href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</A><br>
+<A href="VBA_CLASS_10.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_10.html">コレクション（Collection）の並べ替え（Sort）に対応するクラス</A><br>
+<A href="VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html">VBAクラスのAttributeについて（既定メンバーとFor Each）</A><br>
+<A href="VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html">VBAクラスのAttributeについて（既定メンバーとFor Each）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>VBAクラスの作り方：独自Rangeっぽいものを作ってみた</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>VBAクラスの作り方：独自Rangeっぽいものを作ってみた</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="VBA_CLASS_03.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_03.html">VBAクラスの作り方：列名の入力支援と列移動対応</a></li><li><a href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</a></li><li><a href="VBA_CLASS_01.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_01.html">VBAのクラスとは<br></a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Excel将棋：棋譜ファイルから対局一覧作成(№19)｜VBAサンプル集</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Excelで将棋を作るシリーズの当初目標の、人vs人で動かしてゲームとして成立するところまでは完成しました。今回は機能拡張として、棋譜ファイルを読み込み対局一覧を作成します。複数の棋譜ファイルも一度に処理できるようにしています。">
+  <meta name="keywords" content="Excel,将棋,棋譜ファイルから対局一覧作成,№19,サンプル集,エクセル,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba5/EXCELVBA282_19.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Excel将棋：棋譜ファイルから対局一覧作成(№19)｜VBAサンプル集" />
+  <meta property="og:description" content="Excelで将棋を作るシリーズの当初目標の、人vs人で動かしてゲームとして成立するところまでは完成しました。今回は機能拡張として、棋譜ファイルを読み込み対局一覧を作成します。複数の棋譜ファイルも一度に処理できるようにしています。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba5/sample_gif039.gif" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba5/EXCELVBA282_19.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Excel将棋：棋譜ファイルから対局一覧作成(№19)｜VBAサンプル集" />
+  <meta name="twitter:description" content="Excelで将棋を作るシリーズの当初目標の、人vs人で動かしてゲームとして成立するところまでは完成しました。今回は機能拡張として、棋譜ファイルを読み込み対局一覧を作成します。複数の棋譜ファイルも一度に処理できるようにしています。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba5/sample_gif039.gif" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBAサンプル集<br>Excel将棋：棋譜ファイルから対局一覧作成(№19)</h1>ExcelマクロVBAの実用サンプル、エクセルVBA集と解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">
+<span itemprop="name">マクロVBAサンプル集</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA282_19.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_19.html">
+<span itemprop="name">Excel将棋：棋譜ファイルから対局一覧作成(№19)</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-08-31</span>
+<h2 align="center">Excel将棋：棋譜ファイルから対局一覧作成(№19)</h2><br><a href="image133.jpg" tppabs="https://excel-ubara.com/excelvba5/image133.jpg" target="_blank"><img src="image133.jpg" tppabs="https://excel-ubara.com/excelvba5/image133.jpg" width="360" height="313" style="float:right;margin: 0px 10px 10px 10px;" border="0" alt="VBA マクロ Excel将棋"></a><p>Excelで将棋を作るシリーズの当初目標の、人vs人で動かしてゲームとして成立するところまでは完成しました。<br><div class="br2"><br></div>今回は機能拡張として、棋譜ファイルを読み込み対局一覧を作成します。<br>複数の棋譜ファイルも一度に処理できるようにしています。<br>
+また、その一覧のファイル名をダブルクリックすることで、棋譜の自動再現も動くようにしました。<br><div class="br2"><br></div>
+今回追加した機能は以下になります。
+<div class="main-indent">・対局一覧シートを追加<br>
+・棋譜ファイル（複数可）を読み込み対局一覧を作成<br>
+・対局一覧のファイル名ダブルクリックで棋譜を自動再生<br><div class="br2"><br></div>
+</div></p>
+<h3>対局一覧のシート</h3>
+<div class="main-indent"><img src="image146.jpg" tppabs="https://excel-ubara.com/excelvba5/image146.jpg" width="871" height="631" border="0" alt="VBA マクロ Excel将棋"><br><div class="br2"><br></div>
+<strong>将棋ウォーズ</strong>のKIFを参考に作成しています。<br>
+以下で、<strong>KIFファイルをダウンロード</strong>できます。</div>
+<div class="main-indent">
+<div class="main-indent"><a href="javascript:if(confirm('https://www.shogi-extend.com/w  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.shogi-extend.com/w'" tppabs="https://www.shogi-extend.com/w" target="_blank">将棋ウォーズ棋譜検索</a><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>項目は以下</strong>です</div>
+<div class="main-indent">
+<div class="main-indent">開始日時 ・・・ ここのダブルクリックで棋譜の自動再生が始まります。<br>
+先手<br>
+後手<br>
+棋戦<br>
+持ち時間<br>
+先手の戦型<br>
+後手の戦型<br>
+先手の手筋<br>
+後手の手筋<br>
+先手の備考<br>
+後手の備考<br>
+手合割<br>
+手数<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>Excel将棋の動作</h3>
+<div class="main-indent"><img src="sample_gif039.gif" tppabs="https://excel-ubara.com/excelvba5/sample_gif039.gif" width="1164" height="636" border="0" alt="VBA マクロ Excel将棋"><br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>全体構成図</h3>
+<div class="main-indent"><img src="image148.jpg" tppabs="https://excel-ubara.com/excelvba5/image148.jpg" width="535" height="654" border="0" alt="VBA マクロ Excel将棋"><br><div class="br2"><br></div>
+太線部分が今回新規作成した部分になります。<br><div class="br2"><br></div>
+</div>
+<h3>Excel将棋のダウンロード</h3>
+<div class="main-indent">№19.Excel将棋：棋譜ファイルから対局一覧作成</div>
+<div class="main-indent">
+<div class="main-indent"><a href="../excelsample/shogi_19.zip" tppabs="https://excel-ubara.com/excelsample/shogi_19.zip" target="_blank">shogi_19.zip</a>　<a href="../excelsample/shogi_19.xlsm" tppabs="https://excel-ubara.com/excelsample/shogi_19.xlsm" target="_blank">shogi_19.xlsm</a> ・・・ 現在の最終版</div>
+</div>
+<div class="main-indent"><br>
+他のゲーム（数独やオセロ）も含めたダウンロード一覧は以下になります。</div>
+<div class="main-indent">
+<div class="main-indent"><a href="../excel_download.html" tppabs="https://excel-ubara.com/excel_download.html" target="_blank">エクセルのサンプルダウンロード</a><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>新規追加したVBAコード</h3>
+<div class="main-indent">
+<h4>標準モジュール</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+Sub ゲーム開始()<br>
+　　Dim obj将棋 As cls将棋進行<br>
+　　Set obj将棋 = New cls将棋進行<br>
+　　obj将棋.ゲーム開始<br>
+End Sub<br><div class="br2"><br></div>
+Sub 対局一覧作成()<br>
+　　Dim vFile As Variant<br>
+　　vFile = Application.GetOpenFilename(FileFilter:=&quot;KIFファイル,*.kif&quot;, _<br>
+　　　　　　　　　　　　　　　　　　　　MultiSelect:=True)<br>
+　　If Not IsArray(vFile) Then<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　Application.ScreenUpdating = False<br>
+　　<br>
+　　Dim ws As Worksheet<br>
+　　Set ws = ActiveSheet<br>
+　　Dim tbl As ListObject<br>
+　　Set tbl = getTable(ws, &quot;tbl対局一覧&quot;)<br>
+　　<br>
+　　Dim lastRow As Long<br>
+　　lastRow = tbl.DataBodyRange.Rows.Count<br>
+　　Do Until WorksheetFunction.CountA(tbl.DataBodyRange.Rows(lastRow)) &gt; 0<br>
+　　　　lastRow = lastRow - 1<br>
+　　Loop<br>
+　　<br>
+　　On Error Resume Next<br>
+　　<br>
+　　Dim objKif読込 As clsKIF読込<br>
+　　Dim playTime As Date<br>
+　　Dim i As Long, j As Long<br>
+　　For i = LBound(vFile) To UBound(vFile)<br>
+　　　　Set objKif読込 = New clsKIF読込<br>
+　　　　Call objKif読込.棋譜読込(vFile(i))<br>
+　　　　With tbl.DataBodyRange<br>
+　　　　　　playTime = objKif読込.開始日時<br>
+　　　　　　j = WorksheetFunction.Match(CDbl(playTime), tbl.DataBodyRange.Columns(tbl.ListColumns(&quot;開始日時&quot;).Index), 0)<br>
+　　　　　　If Err Then<br>
+　　　　　　　　lastRow = lastRow + 1<br>
+　　　　　　　　j = lastRow<br>
+　　　　　　End If<br>
+　　　　　　<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;開始日時&quot;).Index) = objKif読込.開始日時<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;先手&quot;).Index) = objKif読込.先手<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;後手&quot;).Index) = objKif読込.後手<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;棋戦&quot;).Index) = objKif読込.棋戦<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;持ち時間&quot;).Index) = objKif読込.持ち時間<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;先手の戦型&quot;).Index) = objKif読込.先手の戦型<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;後手の戦型&quot;).Index) = objKif読込.後手の戦型<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;先手の手筋&quot;).Index) = objKif読込.先手の手筋<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;後手の手筋&quot;).Index) = objKif読込.後手の手筋<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;先手の備考&quot;).Index) = objKif読込.先手の備考<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;後手の備考&quot;).Index) = objKif読込.後手の備考<br>
+　　　　　　.Cells(j, tbl.ListColumns(&quot;手合割&quot;).Index) = objKif読込.手合割<br>
+      　　　　　　.Cells(j, tbl.ListColumns(&quot;手数&quot;).Index) = objKif読込.手数<br>
+      　　　　　　.Cells(j, tbl.ListColumns(&quot;KIFファイル&quot;).Index) = vFile(i)<br>
+      　　　　　　<br>
+　　　　　　If objKif読込.手数 Mod 2 = 0 Then<br>
+　　　　　　　　.Cells(j, tbl.ListColumns(&quot;先手&quot;).Index).Font.Bold = False<br>
+　　　　　　　　.Cells(j, tbl.ListColumns(&quot;後手&quot;).Index).Font.Bold = True<br>
+　　　　　　Else<br>
+　　　　　　　　.Cells(j, tbl.ListColumns(&quot;先手&quot;).Index).Font.Bold = True<br>
+　　　　　　　　.Cells(j, tbl.ListColumns(&quot;後手&quot;).Index).Font.Bold = False<br>
+　　　　　　End If<br>
+　　　　End With<br>
+　　Next<br>
+　　<br>
+　　On Error GoTo 0<br>
+　　Application.ScreenUpdating = True<br>
+End Sub<br><div class="br2"><br></div>
+Function getTable(ByVal ws As Worksheet, _<br>
+　　　　　　　　　ByVal argName As String) As ListObject<br>
+　　Set getTable = Nothing<br>
+　　Dim tbl As ListObject<br>
+　　For Each tbl In ws.ListObjects<br>
+　　　　If tbl.Name = argName Then<br>
+　　　　　　Set getTable = tbl<br>
+　　　　　　Exit Function<br>
+　　　　End If<br>
+　　Next<br>
+End Function<br>
+</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>シートモジュール：</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)<br>
+　　If Intersect(Columns(1), Target.Item(1)) Is Nothing Then<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　Cancel = True<br>
+　　<br>
+      　　Worksheets(&quot;Excel将棋&quot;).Select<br>
+　　Dim obj将棋 As cls将棋進行<br>
+　　Set obj将棋 = New cls将棋進行<br>
+　　obj将棋.ゲーム開始<br>
+　　Call obj将棋.棋譜読込(Target.Item(1).Value)<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+このシート自体のシート名は任意です。<br>
+ただし、このVBAで将棋盤を作成する<strong>シートは「Excel将棋」</strong>の固定名称にしています。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>棋譜読込クラス：cls棋譜読込</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+<span style="color:#009900;">'プロパティ作成を省略した公開変数</span><br>
+Public 先手 As String<br>
+Public 後手 As String<br>
+Public 開始日時 As Date<br>
+Public 棋戦 As String<br>
+Public 持ち時間 As Long<br>
+Public 先手の戦型 As String<br>
+Public 後手の戦型 As String<br>
+Public 先手の手筋 As String<br>
+Public 後手の手筋 As String<br>
+Public 先手の備考 As String<br>
+Public 後手の備考 As String<br>
+Public 手合割 As String<br>
+Public 勝敗コメント As String<br>
+Public 手数 As Long<br><div class="br2"><br></div>
+<span style="color:#009900;">'KIF棋譜形式のclsKIFの配列</span><br>
+Private pAryKIF() As clsKIF<br><div class="br2"><br></div>
+<span style="color:#009900;">'**********************************************************************</span><br>
+<span style="color:#009900;">' 公開プロパティ</span><br>
+<span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+Public Property Get KIF配列() As clsKIF()<br>
+　　KIF配列 = pAryKIF<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'**********************************************************************</span><br>
+<span style="color:#009900;">' イベント</span><br>
+<span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+Private Sub Class_Initialize()<br>
+　　手数 = 0<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'**********************************************************************</span><br>
+<span style="color:#009900;">' 公開メソッド</span><br>
+<span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'拡張子&quot;.kif&quot;のShift-JISとUTF-8に対応</span><br>
+Public Function 棋譜読込(ByVal argFile As String, _<br>
+　　　　　　　　　　　　 Optional ByVal CharSet As String = &quot;SHIFT-JIS&quot;) _<br>
+　　　　　　　　　　　　 As Boolean<br>
+　　<span style="color:#009900;">'KIFファイルを読み込んで配列に</span><br>
+　　If KIF棋譜読込(readKif(argFile)) Then<br>
+　　　　棋譜読込 = True<br>
+　　Else<br>
+　　　　棋譜読込 = False<br>
+　　End If<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'KIF形式ファイルからの棋譜の配列を読み盤面を再現する</span><br>
+Private Function KIF棋譜読込(ByRef argAry() As String) As Boolean<br>
+　　Dim sSplit() As String<br>
+　　Dim i As Long, j As Long<br>
+　　<br>
+　　j = 1<br>
+　　For i = LBound(argAry) To UBound(argAry)<br>
+　　　　Select Case True<br>
+　　　　　　Case Trim(argAry(i)) = &quot;&quot;<br>
+　　　　　　　　<span style="color:#009900;">'空行</span><br>
+　　　　　　Case Left(argAry(i), 1) = &quot;#&quot;, Left(argAry(i), 1) = &quot;*&quot;<br>
+　　　　　　　　<span style="color:#009900;">'コメント</span><br>
+　　　　　　Case InStr(argAry(i), &quot;：&quot;) &gt;= 1<br>
+　　　　　　　　Call midString(先手, argAry(i), &quot;先手&quot;)<br>
+　　　　　　　　Call midString(後手, argAry(i), &quot;後手&quot;)<br>
+　　　　　　　　Call midString(開始日時, argAry(i), &quot;開始日時&quot;)<br>
+　　　　　　　　Call midString(棋戦, argAry(i), &quot;棋戦&quot;)<br>
+　　　　　　　　Call midString(持ち時間, argAry(i), &quot;持ち時間&quot;)<br>
+　　　　　　　　Call midString(先手の戦型, argAry(i), &quot;先手の戦型&quot;)<br>
+　　　　　　　　Call midString(後手の戦型, argAry(i), &quot;後手の戦型&quot;)<br>
+　　　　　　　　Call midString(先手の手筋, argAry(i), &quot;先手の手筋&quot;)<br>
+　　　　　　　　Call midString(後手の手筋, argAry(i), &quot;後手の手筋&quot;)<br>
+　　　　　　　　Call midString(先手の備考, argAry(i), &quot;先手の備考&quot;)<br>
+　　　　　　　　Call midString(後手の備考, argAry(i), &quot;後手の備考&quot;)<br>
+　　　　　　　　Call midString(手合割, argAry(i), &quot;手合割&quot;)<br>
+　　　　　　Case IsNumeric(Split(Trim(argAry(i)), &quot; &quot;)(0))<br>
+　　　　　　　　sSplit = Split(Trim(argAry(i)), &quot; &quot;)<br>
+　　　　　　　　If IsNumeric(sSplit(0)) Then<br>
+　　　　　　　　　　ReDim Preserve pAryKIF(1 To j)<br>
+　　　　　　　　　　Set pAryKIF(j) = parseKif(argAry(i))<br>
+　　　　　　　　　　If pAryKIF(j).手数 &lt; 0 Then<br>
+　　　　　　　　　　　　KIF棋譜読込 = False<br>
+　　　　　　　　　　　　Exit Function<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　　　If pAryKIF(j).筋 &gt; 0 Then<br>
+　　　　　　　　　　　　If 手数 &lt; pAryKIF(j).手数 Then<br>
+　　　　　　　　　　　　　　手数 = pAryKIF(j).手数<br>
+　　　　　　　　　　　　End If<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　　　j = j + 1<br>
+　　　　　　　　End If<br>
+　　　　　　Case Else<br>
+　　　　　　　　勝敗コメント = Trim(argAry(i))<br>
+　　　　End Select<br>
+　　Next<br>
+　　<br>
+　　KIF棋譜読込 = True<br>
+End Function<br><div class="br2"><br></div>
+Private Sub midString(ByRef rtnStr As Variant, _<br>
+　　　　　　　　　　　ByVal argStr As String, _<br>
+　　　　　　　　　　　ByVal keyStr As String)<br>
+　　If Left(Trim(argStr), Len(keyStr) + 1) = keyStr &amp; &quot;：&quot; Then<br>
+　　　　Select Case TypeName(rtnStr)<br>
+　　　　　　Case &quot;Date&quot;<br>
+　　　　　　　　rtnStr = CDate(Trim(Mid(argStr, Len(keyStr) + 2)))<br>
+　　　　　　Case &quot;Long&quot;, &quot;Integer&quot;, &quot;Double&quot;, &quot;Single&quot;<br>
+　　　　　　　　rtnStr = Val(Trim(Mid(argStr, Len(keyStr) + 2)))<br>
+　　　　　　Case Else<br>
+　　　　　　　　rtnStr = Trim(Mid(argStr, Len(keyStr) + 2))<br>
+　　　　End Select<br>
+　　End If<br>
+End Sub<br><div class="br2"><br></div>
+Private Function parseKif(ByVal argKif As String) As clsKIF<br>
+<span style="color:#009900;">'　　On Error GoTo ErrExit</span><br>
+　　Set parseKif = New clsKIF<br>
+　　<br>
+　　Const cns漢数字 = &quot;一二三四五六七八九&quot;<br>
+　　Dim sSplit() As String<br>
+　　argKif = Replace(argKif, &quot;(&quot;, &quot; &quot;)<br>
+　　argKif = Replace(argKif, &quot;)&quot;, &quot; &quot;)<br>
+　　argKif = Replace(argKif, &quot;/&quot;, &quot; &quot;)<br>
+　　argKif = WorksheetFunction.Trim(argKif)<br>
+　　sSplit = Split(argKif, &quot; &quot;)<br>
+　　<br>
+　　parseKif.手数 = sSplit(0)<br>
+　　If Not IsNumeric(sSplit(0)) Or _<br>
+　　　 Left(sSplit(1), 1) &lt; &quot;１&quot; Or Left(sSplit(1), 1) &gt; &quot;９&quot; Then<br>
+　　　 parseKif.駒 = sSplit(1)<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　parseKif.筋 = StrConv(Left(sSplit(1), 1), vbNarrow)<br>
+　　parseKif.段 = InStr(cns漢数字, Mid(sSplit(1), 2, 1))<br>
+　　If Mid(sSplit(1), 3, 1) = &quot;成&quot; Then<br>
+　　　　parseKif.駒 = Mid(sSplit(1), 4, 1)<br>
+　　Else<br>
+　　　　parseKif.駒 = Mid(sSplit(1), 3, 1)<br>
+　　End If<br>
+　　If Right(sSplit(1), 1) = &quot;成&quot; Then<br>
+　　　　parseKif.成 = &quot;成&quot;<br>
+　　End If<br>
+　　<br>
+　　Select Case UBound(sSplit)<br>
+　　　　Case 3<br>
+　　　　　　parseKif.時間1手 = mmss2hhmmss(sSplit(2))<br>
+　　　　　　parseKif.時間累計 = CDate(sSplit(3))<br>
+　　　　Case Is &gt;= 4<br>
+　　　　　　parseKif.元筋 = Left(sSplit(2), 1)<br>
+　　　　　　parseKif.元段 = Right(sSplit(2), 1)<br>
+　　　　　　parseKif.時間1手 = mmss2hhmmss(sSplit(3))<br>
+　　　　　　parseKif.時間累計 = CDate(sSplit(4))<br>
+　　　　Case Else<br>
+　　　　　　parseKif.手数 = -1<br>
+　　　　　　Exit Function<br>
+　　End Select<br>
+　　Exit Function<br>
+　　<br>
+ErrExit:<br>
+　　parseKif.手数 = -1<br>
+End Function<br><div class="br2"><br></div>
+Private Function readKif(ByVal argFile As String, _<br>
+　　　　　　　　　　　　 Optional ByVal CharSet As String = &quot;SHIFT-JIS&quot;) _<br>
+　　　　　　　　　　　　 As String()<br>
+　　Dim strRec As String<br>
+　　Dim aryRec() As String<br>
+　　<br>
+　　<span style="color:#009900;">'SHIFT-JISで読んで&quot;先手：&quot;が無ければUTF-8で読み直す</span><br>
+　　strRec = readStream(argFile, CharSet)<br>
+　　If UCase(CharSet) = &quot;SHIFT-JIS&quot; And InStr(strRec, &quot;先手：&quot;) = 0 Then<br>
+　　　　strRec = readStream(argFile, &quot;UTF-8&quot;)<br>
+　　End If<br>
+　　<br>
+　　readKif = Split(Replace(strRec, vbCrLf, vbLf), vbLf)<br>
+End Function<br><div class="br2"><br></div>
+Private Function readStream(ByVal argFile As String, _<br>
+　　　　　　　　　　　　　　ByVal CharSet As String) As String<br>
+　　With CreateObject(&quot;ADODB.Stream&quot;)<br>
+　　　　.CharSet = CharSet<br>
+　　　　.Open<br>
+　　　　.LoadFromFile argFile<br>
+　　　　readStream = .ReadText<br>
+　　　　.Close<br>
+　　End With<br>
+End Function<br><div class="br2"><br></div>
+Private Function mmss2hhmmss(ByVal mmss As String) As Date<br>
+　　If Len(mmss) = Len(Replace(mmss, &quot;:&quot;, &quot;&quot;)) + 1 Then<br>
+　　　　mmss = &quot;0:&quot; &amp; mmss<br>
+　　End If<br>
+　　If IsDate(mmss) Then<br>
+　　　　mmss2hhmmss = CDate(mmss)<br>
+　　Else<br>
+　　　　mmss2hhmmss = 0<br>
+　　End If<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+棋譜フォーム「frm棋譜」の中で処理していたKIFファイルの処理をこちらに移動しています。<br>
+「frm棋譜」からもこのクラスを通してKIFファイルを処理するように変更しています。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>KIFクラス：clsKIF</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+Public 手数 As Integer<br>
+Public 筋 As Integer<br>
+Public 段 As Integer<br>
+Public 駒 As String<br>
+Public 成 As String<br>
+Public 元筋 As Integer<br>
+Public 元段 As Integer<br>
+Public 時間1手 As Date<br>
+Public 時間累計 As Date</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<h3>Excel将棋の目次</h3>
+<div class="main-indent"><strong><a href="EXCELVBA282.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282.html">№1. Excel将棋：マクロVBAの学習用</a></strong><div class="details">Excelで将棋を作ってみましょう。今やコンピューター将棋はプロをしのぐ強さです。しかし、Excelでそのようなソフトを作ろうと言うのではありません。と言いますか、残念ながら私には作れません、、、ExcelマクロVBAの学習素材として将棋を作ってみましょう。</div>
+<strong><a href="EXCELVBA282_2.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_2.html">№2. Excel将棋：クラスの設計</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、VBAクラスの設計になります。設計といっても、どのようなプロパティ・メソッドをもたせるかといった概要だけです。</div>
+<strong><a href="EXCELVBA282_3.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_3.html">№3. Excel将棋：駒クラスの作成</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、駒クラスの作成になります。駒クラスに必要な部品クラスとして、位置クラスと移動クラスを先に作成してから駒クラスの作成に進みます。</div>
+<strong><a href="EXCELVBA282_4.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_4.html">№4. Excel将棋：駒クラスの単体テスト</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、前回の№3.Excel将棋：駒クラスの作成、この単体テストになります。駒クラスは、今後作成していく駒台クラス、将棋盤クラスで使用するものです。</div>
+<strong><a href="EXCELVBA282_5.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_5.html">№5. Excel将棋：駒台クラスの作成&amp;単体テスト</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、駒台クラスの作成と単体テストになります。作成するクラス全体の設計は、№2.Excel将棋：クラスの設計、こちらを参照してください。</div>
+<strong><a href="EXCELVBA282_6.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_6.html">№6. Excel将棋：位置クラスをデフォルトインスタンスに変更</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、前に作った位置クラスをデフォルトインスタンスに変更します。作成するクラス全体の設計は、№2.Excel将棋：クラスの設計、こちらを参照してください。</div>
+<strong><a href="EXCELVBA282_7.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_7.html">№7. Excel将棋：将棋盤クラスの作成&amp;単体テスト</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、いよいよ将棋盤クラスを作成します。駒クラスを2次元配列(1To9,1To9)に入れて将棋盤全体を管理します。</div>
+<strong><a href="EXCELVBA282_8.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_8.html">№8. Excel将棋：将棋進行クラスの作成</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、シートとやり取りする将棋進行クラスを作成します。ここまでは、作成したクラスのテスト実行用のVBAを別途作成し、結果をイミディエイトウィンドウに表示して確認していました。</div>
+<strong><a href="EXCELVBA282_9.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_9.html">№9. Excel将棋：駒を動かす</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、駒を動かします。駒を動かせるように将棋進行クラスを拡張します。将棋進行クラスの完成はまだまだこれからですが、駒を動かせるようになるとゲームらしくなってきます。</div>
+<strong><a href="EXCELVBA282_10.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_10.html">№10. Excel将棋：相手の駒を取る、持ち駒を打つ</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、相手の駒を取ったり、持駒を打ったりできるようにします。取った駒は駒台へ移し、駒台から駒を選んで打てるようにします。</div>
+<strong><a href="EXCELVBA282_11.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_11.html">№11. Excel将棋：駒を成る</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、駒を成れるようにします。ただし、将棋では成らない選択も出来ますので、成れるタイミングで成るか成らないかを選択できるようにします。</div>
+<strong><a href="EXCELVBA282_12.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_12.html">№12. Excel将棋：棋譜をユーザーフォームに表示する</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、ユーザーフォームを作成し、初手からの棋譜を表示できるようにします。シート操作ができるように、ユーザーフォームはモードレスで表示します。</div>
+<strong><a href="EXCELVBA282_13.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_13.html">№13. Excel将棋：棋譜選択でその時点の盤面に戻す</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、棋譜フォームの棋譜を選択することで、その時点の盤面に戻す機能を実装します。さらに、その時点から指し継ぐこともできるようにします。</div>
+<strong><a href="EXCELVBA282_14.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_14.html">№14. Excel将棋：棋譜ファイルの出力と読込自動再生</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、KIF形式の棋譜ファイルの出力と、KIF形式の棋譜ファイルを読み込んで初手から終局までを自動再生させます。</div>
+<strong><a href="EXCELVBA282_15.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_15.html">№15. Excel将棋：反則（禁じ手）判定</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、反則（禁じ手）の判定を入れます。禁じ手は指し手そのものが出来ないようにします。※クラス名、プロシージャー名、変数名に日本語を使用しています。</div>
+<strong><a href="EXCELVBA282_16.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_16.html">№16. Excel将棋：終局（詰み）判定と打ち歩詰め</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、前回の反則（禁じ手）の続きで「打ち歩詰め」を実装します。打ち歩詰めを判定するには、そもそも「詰み」の判定が必要です。</div>
+<strong><a href="EXCELVBA282_17.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_17.html">№17. Excel将棋：千日手と連続王手の千日手</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。今回は、千日手と反則の「連続王手の千日手」を実装します。千日手は、他とは違ってある局面だけでは判定できません。</div>
+<strong><a href="EXCELVBA282_18.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_18.html">№18 Excel将棋：ひとまず完成、これまでとこれから</a></strong><div class="details">Excelで将棋を作ってみましょう。人vs人で動かしてゲームとして成立するところまでが当面の目標です。前回でひとまず当初目標の人vs人で動かしてゲームとして成立するところまでできました。連載の途中で、急遽棋譜の出力と読み込んで自動再生も作成しました。</div>
+<strong><a href="EXCELVBA282_19.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_19.html">№19 Excel将棋：棋譜ファイルから対局一覧作成</a></strong><div class="details">Excelで将棋を作るシリーズの当初目標の、人vs人で動かしてゲームとして成立するところまでは完成しました。今回は機能拡張として、棋譜ファイルを読み込み対局一覧を作成します。複数の棋譜ファイルも一度に処理できるようにしています。</div><br>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+          
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>Excel将棋：棋譜ファイルから対局一覧作成(№19)</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>Excel将棋：棋譜ファイルから対局一覧作成(№19)</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelsample/shogi_19.zip" tppabs="https://excel-ubara.com/excelsample/shogi_19.zip" target="_blank">shogi_19.zip</a></li><li><a href="../excelsample/shogi_19.xlsm" tppabs="https://excel-ubara.com/excelsample/shogi_19.xlsm" target="_blank">shogi_19.xlsm</a></li><li><a href="../excel_download.html" tppabs="https://excel-ubara.com/excel_download.html" target="_blank">エクセルのサンプルダウンロード</a></li><li><a href="EXCELVBA282.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282.html">№1. Excel将棋：マクロVBAの学習用</a></li><li><a href="EXCELVBA282_2.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_2.html">№2. Excel将棋：クラスの設計</a></li><li><a href="EXCELVBA282_3.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_3.html">№3. Excel将棋：駒クラスの作成</a></li><li><a href="EXCELVBA282_4.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_4.html">№4. Excel将棋：駒クラスの単体テスト</a></li><li><a href="EXCELVBA282_5.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_5.html">№5. Excel将棋：駒台クラスの作成&amp;単体テスト</a></li><li><a href="EXCELVBA282_6.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_6.html">№6. Excel将棋：位置クラスをデフォルトインスタンスに変更</a></li><li><a href="EXCELVBA282_7.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_7.html">№7. Excel将棋：将棋盤クラスの作成&amp;単体テスト</a></li><li><a href="EXCELVBA282_8.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_8.html">№8. Excel将棋：将棋進行クラスの作成</a></li><li><a href="EXCELVBA282_9.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_9.html">№9. Excel将棋：駒を動かす</a></li><li><a href="EXCELVBA282_10.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_10.html">№10. Excel将棋：相手の駒を取る、持ち駒を打つ</a></li><li><a href="EXCELVBA282_11.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_11.html">№11. Excel将棋：駒を成る</a></li><li><a href="EXCELVBA282_12.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_12.html">№12. Excel将棋：棋譜をユーザーフォームに表示する</a></li><li><a href="EXCELVBA282_13.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_13.html">№13. Excel将棋：棋譜選択でその時点の盤面に戻す</a></li><li><a href="EXCELVBA282_14.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_14.html">№14. Excel将棋：棋譜ファイルの出力と読込自動再生</a></li><li><a href="EXCELVBA282_15.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_15.html">№15. Excel将棋：反則<br>(禁じ手)判定</a></li><li><a href="EXCELVBA282_16.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_16.html">№16. Excel将棋：終局<br></a></li><li><a href="EXCELVBA282_17.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_17.html">№17. Excel将棋：千日手と連続王手の千日手</a></li><li><a href="EXCELVBA282_18.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_18.html">№18 Excel将棋：ひとまず完成、これまでとこれから</a></li><li><a href="EXCELVBA282_19.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282_19.html">№19 Excel将棋：棋譜ファイルから対局一覧作成</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

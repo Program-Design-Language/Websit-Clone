@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CSVの読み込み方法（ジャグ配列）｜VBAサンプル集</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。当初作成して以来、ご要望をいただいたり自身で使っている中で、対応できないCSVが出てくるたびに改良を重ねています。今回のVBAは、一旦ジャグ配列を使用したCSV読み込み方法になります。">
+  <meta name="keywords" content="CSV,読み込み方法,ジャグ配列,サンプル集,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba5/EXCELVBA268.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CSVの読み込み方法（ジャグ配列）｜VBAサンプル集" />
+  <meta property="og:description" content="CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。当初作成して以来、ご要望をいただいたり自身で使っている中で、対応できないCSVが出てくるたびに改良を重ねています。今回のVBAは、一旦ジャグ配列を使用したCSV読み込み方法になります。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba5/image67.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba5/EXCELVBA268.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CSVの読み込み方法（ジャグ配列）｜VBAサンプル集" />
+  <meta name="twitter:description" content="CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。当初作成して以来、ご要望をいただいたり自身で使っている中で、対応できないCSVが出てくるたびに改良を重ねています。今回のVBAは、一旦ジャグ配列を使用したCSV読み込み方法になります。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba5/image67.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBAサンプル集<br>CSVの読み込み方法（ジャグ配列）</h1>ExcelマクロVBAの実用サンプル、エクセルVBA集と解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">
+<span itemprop="name">マクロVBAサンプル集</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA268.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA268.html">
+<span itemprop="name">CSVの読み込み方法（ジャグ配列）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-07-02</span>
+<h2 align="center">CSVの読み込み方法（ジャグ配列）</h2><p>
+CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。<br>
+当初作成して以来、ご要望をいただいたり自身で使っている中で、<br>
+対応できないCSVが出てくるたびに改良を重ねています。<br><div class="br2"><br></div>
+今回のVBAは、一旦ジャグ配列を使用したCSV読み込み方法になります。<br><div class="br2"><br></div>
+現在、本サイト内のCSV読み込み関連としては以下のページがあります。 <div class="main-indent"><strong><a href="EXCEL111.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL111.html" target="_blank">CSVの読み込み方法</a></strong><div class="details">エクセルのVBAでのCSVの読込方法としては。・テキストファイルとして読み込む ・ワークブックとして読み込む ・クエリーテーブルを使う ・ADOを使う ・PowerQueryを使う 大別するとこのようになります。この記事を書いた当初は、エクセルのVBAでCSVの読み込みについてネットで検索したところ、</div>
+<strong><a href="EXCEL119.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL119.html" target="_blank">CSVの読み込み方法（改）</a></strong><div class="details">実施したいこと ・ファイル名を指定し、形式をカンマ区切り、文字列で開く、その際、改行コードLF、CRLF、CRいずれにも対応、セル内の&quot;,&quot;や改行についてはカラムで区切らない。掲示板で上記のリクエストを頂きました。ということで、対応ロジックを書いてみました。</div>
+<strong><a href="EXCELVBA257.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA257.html" target="_blank">CSVの読み込み方法（改の改）</a></strong><div class="details">CSVのVBAでの読込方法については複数の記事を掲載しており、人気記事として多くのアクセスがあります。掲載しているVBAコードは汎用的に書いてあり、ほぼそのまま使用できるものです。しかし、CSVは多くの形式（区切り文字、文字コード等）があり、今まで掲載したコードでは解決出来ないものがあります。</div>
+</div><p><br>
+この中の、「CSVの読み込み方法（改の改）」で以下のように記載しました。<br><div class="br2"><br></div></p>
+<h3>CSVの読み込み方法（改の改）での予告</h3>
+<div class="main-indent">
+<h4>配列を使ってシートにまとめて出力する場合</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">上記のマクロVBAでは、1フィールドごとにセルに出力しています。<br>
+これは明らかに処理速度が遅くなってしまいます。<br>
+（数万件くらいまでなら、そもそもそんなに時間もかかりませんが）<br>
+ここは、一旦配列に入れておいて、最後にまとめてシートに出力したいところです。<br>
+なのですが、<br>
+世の中には、お行儀のよいCSVばかりではありません。<br>
+行によって列数（つまりカンマの区切り数）が不定となっているようなものもあったりします。<br>
+先頭行は10列ではじまっているのに、途中から12列になっていたりという事です。<br>
+このようなCSVにおいては列数を事前に決められない為、配列を用意するのが難しくなります。<br>
+これらに対応するには、列数を多めにとった配列を用意するか、<br>
+一旦ジャグ配列（要素も配列である配列）として確保して、最後に2次元配列に入れ直してからシートに出力する等の工夫が必要です。<br>
+・列数が決まっていれば、その列数で配列を用意<br>
+・列数不明の時は、1行目の列数取得後に配列を用意<br>
+・列数不定の場合は、ジャグ配列で処理<br>
+以上のどれかで対応することになります。<br>
+下に行くにしたがって、VBAの難易度は上がっていきます。<br>
+上記VBAの主な変更点は、<br>
+・CsvInTextで配列を用意<br>
+・PutCellの<br>
+　ws.Cells(i, j) = strCell<br>
+　このws.Cells(i, j)を配列に変更<br>
+固定列数であれば、そんなに多くの修正は必要ないと思います。<br>
+配列の行数は最初は少し大きめに確保しておいて、行数が足らなくなったらRedim Preserveで確保すれば良いでしょう。<br>
+このような面倒な処理の必要性がないのは、シートのセルを直接利用する最大の利点ともいえます。<br><div class="br2"><br></div>
+興味のある方は、ぜひ配列化にチャレンジしてみてください。<br>
+要望があり機会があれば、当サイトでも公開しようと思います。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>CSV読み込みでのジャグ配列の使いどころ</h3>
+<div class="main-indent">直接セルに出力したからと言って、そんなに遅いという事はありません。<br>
+そもそも所要時間の半分近くは、ファイルからのデータ読み込み部分になるからです。<br>
+特にUTF-8で改行がLFになっている場合と、Windows標準のCRLFのCSVを共通で処理しているため、<br>
+データとしてのLFと改行としてのLFの区別をつけるために、行ごとの読み込みが必要となっています。<br>
+この部分の処理時間を短縮するには、<br>
+ある程度決め打ち（UTF-8専用とか、データ内にLFが無いとか）しないとかなり難しいVBAになると思います。<br><div class="br2"><br></div>
+今回はファイルからデータ読み込んだ後のセルへの出力方法のみ変更しています。<br>
+1セル毎ではなく、一旦配列に入れてから一括でシートに出力するようにして時簡短縮を図っています。<br>
+ですが、<br>
+結果から言うと、計測してみた限りではさほど変わりませんでした。<br>
+確かに速くはなっていますが、数MBのCSVでは時間を測ってみないと分からない程度の違いです。<br>
+4MB程度のCSVで試したところ、<br>
+前が9秒くらいで、今回が7秒くらい、<br>
+まあ早くはなっていますが、、、<br>
+そもそもデータ読み込みに3秒以上かかっているので仕方ないところではあります。<br><div class="br2"><br></div>
+CSVの列数が不定（1つのファイル内において行ごとに列数が違う）の場合の対応としてジャグ配列を使います。<br>
+CSVの行を1次元配列として、<br>
+その1行の要素の中に、1フィールドごとの1次元配列を入れます。<br><div class="br2"><br></div>
+<img src="image67.jpg" tppabs="https://excel-ubara.com/excelvba5/image67.jpg" width="493" height="147" border="0" alt="マクロ VBA CSV ジャグ配列"><br><div class="br2"><br></div>
+このようなイメージになります。<br>
+ただし、このままではワークシートのセルにまとめて出力することができないので、<br>
+2次元配列（行数×最大列数）に入れ直してから、ワークシートに出力しています。<br>※配列は1スタートで作成しています。<br><div class="br2"><br></div>
+CSVを読み込む基本部分は、「CSVの読み込み方法（改の改）」と変更がありません。<br>
+あくまで、セル出力の部分を配列に変更したものになります。<br>
+CSV→ジャグ配列→2次元配列→シート<br>
+このような順で処理しているので、必要に応じてと途中の配列を使う事が出来ます。<br>
+シートに出力せずに処理するような場合には色々と活用できるのではないでしょうか。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>CSV読み込みVBAコード：ジャグ配列バージョン</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+<span style="color:#009900;">'使用例</span><br>
+Sub sample1()<br>
+　　Dim ws As Worksheet<br>
+　　Dim sFile As String<br>
+      　　sFile = &quot;csvのフルパス&quot;<br>
+　　<span style="color:#009900;">'出力シート</span><br>
+　　Set ws = ActiveSheet<br>
+　　ws.Cells.Clear<br>
+　　<span style="color:#009900;">'以下では全列を文字に設定</span><br>
+　　<span style="color:#009900;">'数値も文字としてセルに入ります</span><br>
+　　<span style="color:#009900;">'文字設定にしなければ数値は数値として入ります。</span><br>
+　　ws.Cells.NumberFormatLocal = &quot;@&quot;<br>
+　　Application.ScreenUpdating = False<br>
+　　<span style="color:#009900;">'CSV取込</span><br>
+      　　Call CsvToSheet(ws, sFile)<br>
+　　<span style="color:#009900;">'utf-8決め打ちで読み込む場合は以下で</span><br>
+      　　<span style="color:#009900;">'Call CsvToSheet(ws, sFile, &quot;utf-8&quot;)</span><br>
+　　Application.ScreenUpdating = True<br>
+End Sub<br><div class="br2"><br></div>
+Public Sub CsvToSheet(ByVal ws As Worksheet, _<br>
+　　　　　　　　　　　ByVal strFile As String, _<br>
+　　　　　　　　　　　Optional ByVal CharSet As String = &quot;Auto&quot;)<br>
+　　Dim myArray() As Variant<br>
+　　<span style="color:#009900;">'readCsvでCSVを読み込み</span><br>
+      　　Dim strRec As String<br>
+　　strRec = readCsv(strFile, CharSet)<br>
+　　<span style="color:#009900;">'CsvToJaggedで行・フィールドに分割してジャグ配列に</span><br>
+　　Dim jagArray() As Variant<br>
+      　　jagArray = CsvToJagged(strRec)<br>
+　　<span style="color:#009900;">'JaggedTo2Dでジャグ配列を2次元配列に変換</span><br>
+      　　Call JaggedTo2D(jagArray, myArray)<br>
+      　　<span style="color:#009900;">'上記を全てネストすれば以下で書けますが、お勧めはしません。</span><br>
+      　　<span style="color:#009900;">'Call JaggedTo2D(CsvToJagged(readCsv(strFile, CharSet)), myArray)</span><br>
+　　<span style="color:#009900;">'2次元配列→シート</span><br>
+　　ws.Range(&quot;A1&quot;).Resize(UBound(myArray, 1), UBound(myArray, 2)) = myArray<br>
+End Sub<br><div class="br2"><br></div>
+Private Sub JaggedTo2D(ByRef jagArray() As Variant, _<br>
+　　　　　　　　　　　 ByRef twoDArray As Variant)<br>
+　　<span style="color:#009900;">'ジャグ配列の最大列数取得</span><br>
+　　Dim maxCol As Long, v As Variant<br>
+　　maxCol = 0<br>
+　　For Each v In jagArray<br>
+　　　　If UBound(v) &gt; maxCol Then<br>
+　　　　　　maxCol = UBound(v)<br>
+　　　　End If<br>
+　　Next<br>
+　　<span style="color:#009900;">'ジャグ配列→2次元配列</span><br>
+　　Dim i1 As Long, i2 As Long<br>
+　　ReDim twoDArray(1 To UBound(jagArray), 1 To maxCol)<br>
+　　For i1 = 1 To UBound(jagArray)<br>
+　　　　For i2 = 1 To UBound(jagArray(i1))<br>
+　　　　　　twoDArray(i1, i2) = jagArray(i1)(i2)<br>
+　　　　Next<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+Private Function CsvToJagged(ByVal strRec As String) As Variant()<br>
+　　Dim childArray() As Variant <span style="color:#009900;">'ジャグ配列の子配列</span><br>
+　　Dim lngQuate As Long <span style="color:#009900;">'ダブルクォーテーション数</span><br>
+　　Dim strCell As String <span style="color:#009900;">'1フィールド文字列</span><br>
+　　Dim blnCrLf As Boolean <span style="color:#009900;">'改行判定</span><br>
+　　Dim i As Long <span style="color:#009900;">'行位置</span><br>
+　　Dim j As Long <span style="color:#009900;">'列位置</span><br>
+　　Dim k As Long<br>
+　　<br>
+　　ReDim CsvToJagged(1 To 1) <span style="color:#009900;">'ジャグ配列の初期化</span><br>
+　　ReDim childArray(1 To 1) <span style="color:#009900;">'ジャグ配列の子配列の初期化</span><br>
+　　i = 1 <span style="color:#009900;">'シートの1行目から出力</span><br>
+　　j = 0 <span style="color:#009900;">'列位置はputChildArrayでカウントアップ</span><br>
+　　lngQuate = 0 <span style="color:#009900;">'ダブルクォーテーションの数</span><br>
+　　strCell = &quot;&quot;<br>
+　　For k = 1 To Len(strRec)<br>
+　　　　Select Case Mid(strRec, k, 1)<br>
+　　　　　　Case vbLf, vbCr <span style="color:#009900;">'「&quot;」が偶数なら改行、奇数ならただの文字</span><br>
+　　　　　　　　If lngQuate Mod 2 = 0 Then<br>
+　　　　　　　　　　blnCrLf = False<br>
+　　　　　　　　　　If k &gt; 1 Then <span style="color:#009900;">'改行のCrLfはCrで改行判定済なので無視する</span><br>
+　　　　　　　　　　　　If Mid(strRec, k - 1, 2) = vbCrLf Then<br>
+　　　　　　　　　　　　　　blnCrLf = True<br>
+　　　　　　　　　　　　End If<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　　　If blnCrLf = False Then<br>
+　　　　　　　　　　　　Call putChildArray(childArray, j, strCell, lngQuate)<br>
+　　　　　　　　　　　　<span style="color:#009900;">'これが改行となる</span><br>
+　　　　　　　　　　　　Call putjagArray(CsvToJagged, childArray, _<br>
+　　　　　　　　　　　　　　　　　　　　 i, j, lngQuate, strCell)<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　Else<br>
+　　　　　　　　　　strCell = strCell &amp; Mid(strRec, k, 1)<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;,&quot;, vbTab <span style="color:#009900;">'「&quot;」が偶数なら区切り、奇数ならただの文字</span><br>
+　　　　　　　　If lngQuate Mod 2 = 0 Then<br>
+　　　　　　　　　　Call putChildArray(childArray, j, strCell, lngQuate)<br>
+　　　　　　　　Else<br>
+　　　　　　　　　　strCell = strCell &amp; Mid(strRec, k, 1)<br>
+　　　　　　　　End If<br>
+　　　　　　Case &quot;&quot;&quot;&quot; <span style="color:#009900;">'「&quot;」のカウントをとる</span><br>
+　　　　　　　　lngQuate = lngQuate + 1<br>
+　　　　　　　　strCell = strCell &amp; Mid(strRec, k, 1)<br>
+　　　　　　Case Else<br>
+　　　　　　　　strCell = strCell &amp; Mid(strRec, k, 1)<br>
+　　　　End Select<br>
+　　Next<br>
+　<br>
+　　<span style="color:#009900;">'最終行の最終列の処理</span><br>
+　　If j &gt; 0 And strCell &lt;&gt; &quot;&quot; Then<br>
+　　　　Call putChildArray(childArray, j, strCell, lngQuate)<br>
+　　　　Call putjagArray(CsvToJagged, childArray, _<br>
+　　　　　　　　　　　　 i, j, lngQuate, strCell)<br>
+　　End If<br>
+End Function<br><div class="br2"><br></div>
+Private Sub putjagArray(ByRef jagArray() As Variant, _<br>
+　　　　　　　　　　　　ByRef childArray() As Variant, _<br>
+　　　　　　　　　　　　ByRef i As Long, _<br>
+　　　　　　　　　　　　ByRef j As Long, _<br>
+　　　　　　　　　　　　ByRef lngQuate As Long, _<br>
+　　　　　　　　　　　　ByRef strCell As String)<br>
+　　If i &gt; UBound(jagArray) Then <span style="color:#009900;">'常に成立するが一応記述</span><br>
+　　　　ReDim Preserve jagArray(1 To i)<br>
+　　End If<br>
+　　jagArray(i) = childArray <span style="color:#009900;">'子配列をジャグ配列に入れる</span><br>
+　　ReDim childArray(1 To 1) <span style="color:#009900;">'子配列の初期化</span><br>
+　　i = i + 1 <span style="color:#009900;">'列位置</span><br>
+　　j = 0 <span style="color:#009900;">'列位置</span><br>
+　　lngQuate = 0 <span style="color:#009900;">'ダブルクォーテーション数</span><br>
+　　strCell = &quot;&quot; <span style="color:#009900;">'1フィールド文字列</span><br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'1フィールドごとにセルに出力</span><br>
+Private Sub putChildArray(ByRef childArray() As Variant, _<br>
+　　　　　　　　　　　　　ByRef j As Long, _<br>
+　　　　　　　　　　　　　ByRef strCell As String, _<br>
+　　　　　　　　　　　　　ByRef lngQuate As Long)<br>
+　　j = j + 1<br>
+　　<span style="color:#009900;">'「&quot;&quot;」を「&quot;」で置換</span><br>
+　　strCell = Replace(strCell, &quot;&quot;&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;)<br>
+　　<span style="color:#009900;">'前後の「&quot;」を削除</span><br>
+　　If Left(strCell, 1) = &quot;&quot;&quot;&quot; And Right(strCell, 1) = &quot;&quot;&quot;&quot; Then<br>
+　　　　If Len(strCell) &lt;= 2 Then<br>
+　　　　　　strCell = &quot;&quot;<br>
+　　　　Else<br>
+　　　　　　strCell = Mid(strCell, 2, Len(strCell) - 2)<br>
+　　　　End If<br>
+　　End If<br>
+　　If j &gt; UBound(childArray) Then<br>
+　　　　ReDim Preserve childArray(1 To j)<br>
+　　End If<br>
+　　childArray(j) = strCell<br>
+　　strCell = &quot;&quot;<br>
+　　lngQuate = 0<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'文字コードを自動判別し、全行をCrLf区切りに統一してStringに入れる</span><br>
+Private Function readCsv(ByVal strFile As String, _<br>
+　　　　　　　　　　　　 ByVal CharSet As String) As String<br>
+　　Dim objFSO As New FileSystemObject<br>
+　　Dim inTS As TextStream<br>
+　　Dim adoSt As New ADODB.Stream<br>
+　　Dim strRec As String<br>
+　　Dim i As Long<br>
+　　Dim aryRec() As String<br>
+　　<br>
+　　If CharSet = &quot;Auto&quot; Then CharSet = getCharSet(strFile)<br>
+　　Select Case LCase(CharSet)<br>
+　　　　Case &quot;unicode&quot;, &quot;unicodefeff&quot;<br>
+　　　　　　<span style="color:#009900;">'TristateTrueで読込</span><br>
+　　　　　　Set inTS = objFSO.OpenTextFile(strFile, ForReading, , TristateTrue)<br>
+　　　　　　strRec = inTS.ReadAll<br>
+　　　　　　inTS.Close<br>
+　　　　Case &quot;utf-8&quot;<br>
+　　　　　　<span style="color:#009900;">'ADOを使って読込、その後の処理を統一するため全レコードをCrLfで結合</span><br>
+　　　　　　Set inTS = objFSO.OpenTextFile(strFile, ForAppending)<br>
+　　　　　　i = inTS.Line - 1<br>
+　　　　　　inTS.Close<br>
+　　　　　　ReDim aryRec(i)<br>
+　　　　　　With adoSt<br>
+　　　　　　　　.Type = adTypeText<br>
+　　　　　　　　.CharSet = &quot;UTF-8&quot;<br>
+　　　　　　　　.Open<br>
+　　　　　　　　.LoadFromFile strFile<br>
+　　　　　　　　i = 0<br>
+　　　　　　　　Do While Not (.EOS)<br>
+　　　　　　　　　　aryRec(i) = .ReadText(adReadLine)<br>
+　　　　　　　　　　i = i + 1<br>
+　　　　　　　　Loop<br>
+　　　　　　　　.Close<br>
+　　　　　　　　strRec = Join(aryRec, vbCrLf)<br>
+　　　　　　End With<br>
+　　　　Case Else<br>
+　　　　　　Set inTS = objFSO.OpenTextFile(strFile, ForReading)<br>
+　　　　　　strRec = inTS.ReadAll<br>
+　　　　　　inTS.Close<br>
+　　End Select<br>
+　　Set inTS = Nothing<br>
+　　Set objFSO = Nothing<br>
+　　readCsv = strRec<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'文字コードの自動判別</span><br>
+<span style="color:#009900;">'UTF-8のBOMなしは文字コードの判別に対応できていません。</span><br>
+Private Function getCharSet(ByVal sFile As String) As String<br>
+　　Dim objHtml As MSHTML.HTMLDocument<br>
+　　Dim strRec As String<br>
+　　<span style="color:#009900;">'GetObjectでHTMLDocumentを生成し、文字コードを判定する</span><br>
+　　Set objHtml = GetObject(sFile, &quot;htmlfile&quot;)<br>
+　　Do While objHtml.readyState &lt;&gt; &quot;complete&quot;<br>
+　　　　DoEvents<br>
+　　Loop<br>
+　　getCharSet = objHtml.CharSet<br>
+　　Set objHtml = Nothing<br>
+      End Function</td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+<strong>参照設定</strong></div>
+<div class="main-indent">
+<div class="main-indent">Microsoft Scripting Runtime<br>
+Microsoft ActiveX Data Objects x.x Library<br>
+Microsoft Html Object Library</div>
+</div>
+<div class="main-indent"><br>
+VBAコードについては解説しきれないので、<br>
+コード内のコメントを参考にしてください。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>最後に</h3>
+<div class="main-indent">CSVを読み込む方法は多種多様にありますが、<br>
+この記事を書いた当初は、<br>
+エクセルのマクロVBAでCSVの読み込みについてネットで検索したところ、なかなか良いものが見つかりませんでした。<br>
+それならということで、CSVの読み込みのマクロVBAを作成しました。<br>
+それ以来改良を何度か重ねた結果が今回のものとなっています。<br><div class="br2"><br></div>
+VBAコードは、常に引き継いでいるので、冗長な部分もあると思いますが、<br>
+旧バージョンを使い、独自に変更を加えている人にとっては、<br>
+新バージョンでは、なるべく旧バージョンのVBAコードが継承されている方が良いだろうという理由もあります。<br><div class="br2"><br></div>
+掲載しているVBAは当然そのままでも動作しますが、<br>
+独自にアレンジを加えて使用したり、そもそもVBA学習の素材として使ってもらう事を目的としています。<br><div class="br2"><br></div>
+<strong>後日追記</strong></div>
+<div class="main-indent">
+<div class="main-indent">文字コード判定で、UTF-8Nが判定できていないという課題が残っています。<br>
+文字コードの判定を全て完璧に行うのは無理ですが、簡易的にでもUTF-8Nを判定したいところです。<br>
+そこで、きわめて簡易的ではありますが、これに対応するVBAを書いてみました。<br>
+また、使うにあたって参照設定が面倒な場合もあるので、参照設定せずにCreateObjectに変更しています。<br>
+<strong><a href="EXCELVBA271.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA271.html" target="_blank">CSVの読み込み方法（ジャグ配列）（改）</a></strong><div class="details">CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。順次改定していくつかのバージョンが存在します。最新のジャグ配列（配列の配列）で読み込むVBAについて、UTF-8Nの文字コード判別の課題が残っていました。</div><br>
+</div>
+</div>
+<h3>本サイトにあるCSV関連記事一覧</h3>
+<div class="main-indent"><strong><a href="EXCELVBA270.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA270.html" target="_blank">VBAでのCSVの扱い方まとめ</a></strong><div class="details">マクロVBAでCSVの読み書きする方法はいくつもあり、当サイトでも複数のページでそれぞれVBAコードを掲載しています。順次記事を掲載しているので、それぞれどのような特徴があるかが良く分からなくなってしまっているようです。そこで、CSVに関するページをまとめておきました。</div>
+<strong><a href="EXCEL111.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL111.html" target="_blank">CSVの読込方法</a></strong><div class="details">エクセルのVBAでのCSVの読込方法としては。・テキストファイルとして読み込む ・ワークブックとして読み込む ・クエリーテーブルを使う ・ADOを使う ・PowerQueryを使う 大別するとこのようになります。この記事を書いた当初は、エクセルのVBAでCSVの読み込みについてネットで検索したところ、</div>
+<strong><a href="EXCEL119.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL119.html" target="_blank">CSVの読み込み方法（改）</a></strong><div class="details">実施したいこと ・ファイル名を指定し、形式をカンマ区切り、文字列で開く、その際、改行コードLF、CRLF、CRいずれにも対応、セル内の&quot;,&quot;や改行についてはカラムで区切らない。掲示板で上記のリクエストを頂きました。ということで、対応ロジックを書いてみました。</div>
+<strong><a href="EXCELVBA257.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA257.html" target="_blank">CSVの読み込み方法（改の改）</a></strong><div class="details">CSVのVBAでの読込方法については複数の記事を掲載しており、人気記事として多くのアクセスがあります。掲載しているVBAコードは汎用的に書いてあり、ほぼそのまま使用できるものです。しかし、CSVは多くの形式（区切り文字、文字コード等）があり、今まで掲載したコードでは解決出来ないものがあります。</div>
+<strong><a href="EXCELVBA268.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA268.html" target="_blank">CSVの読み込み方法（ジャグ配列）</a></strong><div class="details">CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。当初作成して以来、ご要望をいただいたり自身で使っている中で、対応できないCSVが出てくるたびに改良を重ねています。今回のVBAは、一旦ジャグ配列を使用したCSV読み込み方法になります。</div>
+<strong><a href="EXCELVBA271.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA271.html" target="_blank">CSVの読み込み方法（ジャグ配列）（改）</a></strong><div class="details">CSVのマクロVBAでの読込方法についての記事は、人気記事として多くのアクセスがあります。順次改定していくつかのバージョンが存在します。最新のジャグ配列（配列の配列）で読み込むVBAについて、UTF-8Nの文字コード判別の課題が残っていました。</div>
+<strong><a href="EXCEL120.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL120.html" target="_blank">CSVの出力（書き出し）方法</a></strong><div class="details">シート内容をCSV出力（書き出し）する方法です。CSVの読込は、VBAでのCSVの扱い方まとめ こちらを参照して下さい。以下では、2通りの方法を紹介します。エクセルの機能をそのまま利用します ※csv出力時日付がm/d/yyyyになってしまう場合の対処 日付がm/d/yyyyになってしまう場合に、yyyy/m/dにする場合には、</div>
+<strong><a href="EXCEL220.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL220.html" target="_blank">UTF-8でCSVの読み書き（ADODB.Stream）</a></strong><div class="details">VBAでUTF-8を扱う為には、ADODB.Streamを使う必要があります。以下のコードを使用するには、参照設定で、「MicrosoftActiveXDataObjects2.8Library」にチェックを付けて下さい。または、DimadoStAsNewADODB.Stream ここを DimadoStAsObject SetadoSt=CreateO…</div>
+<strong><a href="EXCEL118.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL118.html" target="_blank">ADOでCSVの読み込み（SQL）</a></strong><div class="details">VBAでADOを使用し、CSVデータを読み込みます。ADOではSQL文が必要になりますが、ここではSQL文の詳細については説明を省略します。ADO以外の方法については、「CSVの読み込み方法」を参考にして下さい。</div><br>
+※ほとんどの記事でUTF-8に対応しています。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a>」の記事</h3><p>
+<A href="EXCELVBA270.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA270.html">VBAでのCSVの扱い方まとめ</A><br>
+<A href="EXCEL111.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL111.html">CSVの読み込み方法</A><br>
+<A href="EXCEL119.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL119.html">CSVの読み込み方法（改）</A><br>
+<A href="EXCELVBA257.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA257.html">CSVの読み込み方法（改の改）</A><br>
+<span class="strrev">CSVの読み込み方法（ジャグ配列）</span><br>
+<A href="EXCELVBA271.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA271.html">CSVの読み込み方法（ジャグ配列）（改）</A><br>
+<A href="EXCEL120.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL120.html">CSVの出力（書き出し）方法</A><br>
+<A href="EXCEL220.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL220.html">UTF-8でCSVの読み書き（ADODB.Stream）</A><br>
+<A href="EXCEL114.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL114.html">ADOでマスタ付加と集計（SQL）</A><br>
+<A href="EXCEL116.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL116.html">ADOでマスタ更新（SQL）</A><br>
+<A href="EXCEL118.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL118.html">ADOでCSVの読み込み（SQL）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>CSVの読み込み方法（ジャグ配列）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>CSVの読み込み方法</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCEL111.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL111.html" target="_blank">CSVの読み込み方法</a></li><li><a href="EXCEL119.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL119.html" target="_blank">CSVの読み込み方法<br>(改)</a></li><li><a href="EXCELVBA257.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA257.html" target="_blank">CSVの読み込み方法<br>(改の改)</a></li><li><a href="EXCELVBA271.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA271.html" target="_blank">CSVの読み込み方法<br>(ジャグ配列)(改)</a></li><li><a href="EXCELVBA270.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA270.html" target="_blank">VBAでのCSVの扱い方まとめ</a></li><li><a href="EXCELVBA268.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA268.html" target="_blank">CSVの読み込み方法<br>(ジャグ配列)</a></li><li><a href="EXCEL120.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL120.html" target="_blank">CSVの出力<br>(書き出し)方法</a></li><li><a href="EXCEL220.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL220.html" target="_blank">UTF-8でCSVの読み書き<br></a></li><li><a href="EXCEL118.html" tppabs="https://excel-ubara.com/excelvba5/EXCEL118.html" target="_blank">ADOでCSVの読み込み<br>(SQL)</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

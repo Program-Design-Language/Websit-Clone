@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>分析関数（OVER句,WINDOW句）｜SQL入門</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="分析関数はグループ内の指定された範囲で集計を行い、結果を集計元の各行に戻すことができます。分析関数はSQLとしては比較的新しい機能で、ウィンドウ(Window)関数とも呼ばれます。。サブクエリーを複数組み合わせなければできなかったものが比較的簡単なSQL文で実現できるようになります。">
+  <meta name="keywords" content="OVER,WINDOW,分析関数,入門,SQL,VBA,マクロ,RMS,DB,Excel,エクセル">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba_sql/vba_SQL023.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="分析関数（OVER句,WINDOW句）｜SQL入門" />
+  <meta property="og:description" content="分析関数はグループ内の指定された範囲で集計を行い、結果を集計元の各行に戻すことができます。分析関数はSQLとしては比較的新しい機能で、ウィンドウ(Window)関数とも呼ばれます。。サブクエリーを複数組み合わせなければできなかったものが比較的簡単なSQL文で実現できるようになります。" />
+  <meta property="og:image" content="https://excel-ubara.com/ogp_sql2.png" />
+  <meta property="og:url" content="https://excel-ubara.com/vba_sql/vba_SQL023.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="分析関数（OVER句,WINDOW句）｜SQL入門" />
+  <meta name="twitter:description" content="分析関数はグループ内の指定された範囲で集計を行い、結果を集計元の各行に戻すことができます。分析関数はSQLとしては比較的新しい機能で、ウィンドウ(Window)関数とも呼ばれます。。サブクエリーを複数組み合わせなければできなかったものが比較的簡単なSQL文で実現できるようになります。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/ogp_sql2.png" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>SQL入門<br>分析関数（OVER句,WINDOW句）</h1>SQLの初心者向け入門解説、VBAからデータベースを扱うためのSQLを解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">
+<span itemprop="name">その他</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">
+<span itemprop="name">SQL入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="vba_SQL023.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL023.html">
+<span itemprop="name">分析関数（OVER句,WINDOW句）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2019-12-25</span>
+<h2 align="center">分析関数（OVER句,WINDOW句）</h2><p><br>
+分析関数はグループ内の指定された範囲で集計を行い、結果を集計元の各行に戻すことができます。<br>
+分析関数はSQLとしては比較的新しい機能で、ウィンドウ(Window)関数とも呼ばれます。。<br>
+サブクエリーを複数組み合わせなければできなかったものが比較的簡単なSQL文で実現できるようになります。<br><div class="br2"><br></div></p>
+<h3>分析関数とは</h3>
+<div class="main-indent">集計関数(SUM,AVG,MAX,MIN等)はグループ全体に対して集計を行い集計された結果を戻すだけですが、<br>
+分析関数はグループ内の指定された範囲で集計し、集計元の各行に戻すことができます。<br>
+また、分析関数はレコードの順序の概念を持つので、指定行位置のデータを取得することができます。<br><div class="br2"><br></div>
+分析関数を使うメリットは、速度の向上、SQLの簡素化にあります。<br>
+簡潔なSQL文で複雑な分析処理を従来よりも高速に処理可能となります。<br><div class="br2"><br></div>
+分析関数を使うには、分析関数にOVER句を指定します。<br>
+OVER句に以下を指定することで集計範囲を各種指定できます。<br>
+PARTITION BY ・・・ グループ分け<br>
+ORDER BY ・・・ 順序指定<br>
+ROWS BETWEEN ・・・ レコード範囲<br>
+さらにOVER句の前にFILTER句を指定することで、条件を満たしたレコードのみで処理を行うこともできます。<br><div class="br2"><br></div>
+<strong>分析関数の種類</strong></div>
+<div class="main-indent">
+<div class="main-indent">以下は、データベース全般でサポートされていて良く使われる分析関数になります。<br><div class="br2"><br></div>
+COUNT関数 ・・・ 件数<br>
+SUM関数 ・・・ 合計<br>
+AVG関数 ・・・ 平均<br>
+MAX関数 ・・・ 最大<br>
+MIN関数 ・・・ 最小<br>
+RANK関数 ・・・ 順位<br>
+DENSE_RANK関数 ・・・ 順位<br>
+LAG関数 ・・・ n個前<br>
+LEAD関数 ・・・ n個後<br><div class="br2"><br></div>
+各データベースで、より豊富な分析関数が用意されていますので、それぞれのリファレンスを参照してください。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>OVER句</h3>
+<div class="main-indent">SELECTの選択リストに記述します。<br><div class="br2"><br></div>
+<strong>分析関数 OVER(ORDER BY カラム名,・・・)</strong></div>
+<div class="main-indent">
+<div class="main-indent">並べ替えを指定します。<br>
+</div>
+</div>
+<div class="main-indent"><strong>分析関数 OVER(PARTITION BY カラム名,・・・)</strong></div>
+<div class="main-indent">
+<div class="main-indent">集計範囲を指定します。<br>
+</div>
+</div>
+<div class="main-indent"><strong>分析関数 OVER(ROWS BETWEEN　開始位置 AND 終了位置)</strong></div>
+<div class="main-indent">
+<div class="main-indent">開始位置、終了位置には、以下を指定します。<br>
+UNBOUNDED PRECEDING ・・・ 最初のレコード<br>
+n PRECEDING ・・・ n個前のレコード<br>
+CURRENT ROW          現在のレコード<br>
+n FOLLOWING ・・・ n個後のレコード<br>
+UNBOUNDEE FOLLOWING ・・・ 最後のレコード<br><div class="br2"><br></div>
+※<strong>ROWS</strong>ではなく<strong>RANGE</strong>もあります。</div>
+<div class="main-indent">
+<div class="main-indent"><strong>ROWSは単純なレコード位置</strong>での範囲ですが、<br>
+<strong>RANGEはORDER BYで指定したカラムの値で範囲指定</strong>します。<br><div class="br2"><br></div>
+SQLiteで何通りか試したところ、<br>
+「<strong>RANGE must use only UNBOUNDED or CURRENT ROW</strong>」<br>
+このエラーが発生しました。<br>
+UNBOUNDED または CURRENTだけを指定すると確かに動作しますが、<br>
+これしか使えないとすると、用途がかなり限定されてしまいます。<br>
+このような事情があるので、今回は具体的な解説を省略しています。<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<h3>WINDOW句</h3>
+<div class="main-indent">OVER句の()括弧内の記述に対して、WITH句を使ってエイリアスを付けるイメージをしてもらえれば良いでしょう。<br>
+使い方としては、WITH句と同様に考えると分かり易いと思います。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>分析関数 OVER(・・・)</pre></code></div>
+↓これをWINDOW句を使って書き直しができます。<br>
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>分析関数 OVER ウインドウ名
+・・・
+FROM ・・・
+WINDOW ウインドウ名 AS (・・・)</pre></code></div>
+データベースによってかなり違いがありますが、<br>
+少なくともSQLiteにおいては、上記のように単純な使い方としてとらえて良いでしょう。<br><div class="br2"><br></div>
+WINDOW句のSQLないでの記述位置</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT ・・・
+FROM ・・・
+WHERE ・・・
+GROUP BY ・・・
+WINDOW ・・・
+ORDER BY ・・・</pre></code></div>
+WINDOW句を使う場合、GROUP句やORDER句はあまり使う必要がありませんが指定順に気を付けてください。<br><div class="br2"><br></div>
+</div>
+</div>
+<h3>FILTER句</h3>
+<div class="main-indent">OVER句の前にFILTER句を記述することで、条件を満たしたレコードのみで集計処理を行います。<br><div class="br2"><br></div>
+<strong>分析関数 FILTER(WHERE 条件式) OVER(・・・)</strong><br><div class="br2"><br></div>
+条件式は、通常のWHERE句と同様になります。<br><div class="br2"><br></div>
+</div>
+<h3>分析関数の使用例</h3>
+<div class="main-indent"> 以下の使用例で使用するテーブル定義は以下になります。</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="vba_SQL111.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL111.html" target="_blank">全テーブル定義とテーブル自動作成VBA</a></strong><div class="details">データベースの正規化とマスタの作成で作成した全テーブル定義と、テーブル名変更と列追加（ALTERTABLE）とテーブル自動作成で作成したテーブル自動作成VBAを掲載しておきます。エクセルVBAでデータベースを扱うためのSQL入門です。前回までにテーブルを作成したり、削除したりできるようになりました。</div>
+</div>
+</div>
+<div class="main-indent">以下の使用例のSQL実行では処理時間がかかるため、実行する前に下記のインデックスを作成しておいてください。
+<div class="main-indent">
+<div class="main-indent">t_sales.code + t_sales.item_code<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<div class="main-indent">分析関数の使用例として、以下のサンプルを用意しました。</div>
+<div class="main-indent">
+<div class="main-indent"><a href="#sec11">グループの最大/最小/平均を明細に付加</a><br>
+<a href="#sec12">FILTER句で条件指定</a><br>
+<a href="#sec13">明細にレコード番号（連番）を振る</a><br>
+<a href="#sec14">前回販売日を取得</a><br>
+<a href="#sec15">RANK関数,DENSE_RANK関数</a><br>
+<a href="#sec16">LAG関数,LEAD関数</a><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec11">分析関数の使用例：グループの最大/最小/平均を明細に出力</h3>
+<div class="main-indent">codeとitem_codeでグループ化し、各グループの金額の最大/最小/平均を各明細に出力します。<br>
+以下の処理順となります。</div>
+<div class="main-indent">
+<div class="main-indent">・GROUP BY code,item_code<br>
+・MAX,MIN,AVG<br>
+・元の明細と列出力<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>サブクエリだけのSQL</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  T.code,T.sales_date,T.item_code
+ ,T.item_count * T.item_price AS item_amount
+ ,TT.max_amount,TT.min_amount,TT.avg_amount
+FROM t_sales T
+     INNER JOIN
+    (SELECT code,item_code
+      ,MAX(item_count * item_price) AS max_amount
+      ,MIN(item_count * item_price) AS min_amount
+      ,AVG(item_count * item_price) AS avg_amount
+       FROM t_sales
+       GROUP BY code,item_code) TT
+     ON T.code = TT.code AND T.item_code = TT.item_code</pre></code></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>OVER句を使ったSQL</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  code,sales_date,item_code
+ ,item_count * item_price AS item_amount
+ ,MAX(item_count * item_price) OVER(PARTITION BY code,item_code) AS max_amount
+ ,MIN(item_count * item_price) OVER(PARTITION BY code,item_code) AS min_amount
+ ,AVG(item_count * item_price) OVER(PARTITION BY code,item_code) AS avg_amount
+  FROM t_sales</pre></code></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>OVER句+WINDOW句</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  code,sales_date,item_code
+ ,item_count * item_price AS item_amount
+ ,MAX(item_count * item_price) OVER PART AS max_amount
+ ,MIN(item_count * item_price) OVER PART AS min_amount
+ ,AVG(item_count * item_price) OVER PART AS avg_amount
+  FROM t_sales
+  WINDOW PART AS (PARTITION BY code,item_code)</pre></code></div>
+</div>
+</div>
+<div class="main-indent">最後のOVER句+WINDOW句を使ったSQLが可読性や保守性を考えると最も良いでしょう。<br><div class="br2"><br></div>
+</div>
+<h3 id="sec12">分析関数の使用例：FILTER句で条件指定</h3>
+<div class="main-indent">上の「グループの最大/最小/平均を明細に付加」では、金額が0も含めて最大/最小/平均が算出されてしまいます。<br>
+そこで、以下では金額が0は集計から除外しています。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  code,sales_date,item_code
+ ,item_count * item_price AS item_amount
+ ,AVG(item_count * item_price)
+    FILTER(WHERE item_count * item_price &lt;&gt; 0)
+    OVER PART AS item_avg
+  FROM t_sales
+  WINDOW PART AS (PARTITION BY code,item_code)</pre></code></div>
+OVER句の前に、FILTER句を追加しただけの違いです。<br><div class="br2"><br></div>
+</div>
+<h3 id="sec13">分析関数の使用例：明細にレコード番号（連番）を振る</h3>
+<div class="main-indent">金額ベスト100に通し番号を振って出力します。<br>
+以下の処理順となります。<br>
+・金額降順で並べ替え<br>
+・1から順に通し番号を振る<br>
+同じ金額かどうかは関係なく出力順通りの通し番号にします。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>WITH TT AS
+  (SELECT *, 1 AS nn,item_count * item_price AS item_amount
+     FROM t_sales)
+SELECT
+  SUM(nn) OVER pre AS No
+ ,code,sales_date,item_code,item_amount
+  FROM TT
+  WINDOW pre AS 
+   (ORDER BY item_count * item_price DESC
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+  LIMIT 100</pre></code></div>
+※SQLite以外のデータベースでは</div>
+<div class="main-indent">
+<div class="main-indent">最初からレコード番号を取得できる機能が用意されているものが多いです。<br>
+ROW_NUMBERまたはROWNUM等を使う事で、簡単にレコード番号を取得できます。<br>
+SQLiteにはこの機能がないため、サンプル例題としています。<br><div class="br2"><br></div>
+</div>
+</div>
+<h3 id="sec14">分析関数の使用例：前回販売日を取得</h3>
+<div class="main-indent">code,item_code別に、前回の販売日（カレントレコードより前の最後の販売日）を取得します。<br>
+ただし、code,item_code,sales_dateが同一のレコードが複数あることが前提ですので、<br>
+単純に直前のレコード取得では、意図した結果になりません。<br><div class="br2"><br></div>
+※<strong>当初はRANGEを使ったSQLサンプルを予定</strong>していました。</div>
+<div class="main-indent">
+<div class="main-indent">前述したとおり、SQLiteではRangeがエラーとなってしまい目的のSQLが作成できませんでした。<br>
+RANGEでPRECEDINGを指定できれば、かなり簡単に取得できるはずでした。<br>
+以下のSQLは代替えとして作成したものになりますが、かなり複雑なSQLとなってしまいました。<br>
+したがってこのSQLは、あくまで練習用SQLとしてお考え下さい。<br>
+それでも、分析関数を使っているのでこの程度で済んでいますが、使わなければさらに複雑なSQLになるはずです。<br><div class="br2"><br></div>
+INNER以降のサブクエリで、code,item_code,sales_dateごとの前回販売日を取得しています。<br>先頭日付では、前回の販売日はnullになります。<br>
+その後は、これをJOINしているだけになります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>WITH TT AS 
+  (SELECT code,item_code,sales_date
+     FROM t_sales
+     GROUP BY code,item_code,sales_date)
+SELECT 
+  T.code,T.item_code,T.sales_date,MT.last_date
+  FROM t_sales T
+       INNER JOIN 
+       (SELECT
+          code,item_code,sales_date
+         ,MAX(sales_date) OVER pre AS last_date
+          FROM TT
+          WINDOW pre AS
+           (PARTITION BY code,item_code
+            ORDER BY code,item_code,sales_date
+            ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+        ) MT
+        ON  T.code = MT.code
+        AND T.item_code = MT.item_code
+        AND T.sales_date = MT.sales_date
+  ORDER BY T.code,T.item_code,T.sales_date</pre></code></div><br>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec15">RANK関数,DENSE_RANK関数</h3>
+<div class="main-indent">
+<h4>RANK関数</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">先のレコード番号とは違い、<br>
+値が同じ場合は同じ番号が振られる、エクセルのシート関数と同じ一般的なランク番号になります。<br>
+1,2,2,4,5,5,5,8,・・・<br>
+同値の場合は同じ番号が振られ、その分は抜け番になります。</div>
+</div>
+<div class="main-indent">
+<h4>DENSE_RANK関数</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">RANK関数との違いは、同値の時に抜け番にせず連続番号の数値を振るところです。<br>
+1,2,2,3,4,4,4,5,・・・<br>
+</div>
+</div>
+<div class="main-indent">それぞれ、OVER句と合わせて使用します。<br>
+連番の範囲（1にリセット）は、OVER句の<strong>PARTITION BY</strong>で指定します。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>全体でRANK関数</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  RANK() OVER (ORDER BY item_count * item_price DESC)
+ ,code,sales_date,item_code
+ ,item_count * item_price AS item_amount
+  FROM t_sales</pre></code></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>codeごとにDENSE_RANK関数</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  DENSE_RANK() OVER rnum
+ ,code,sales_date,item_code
+ ,item_count * item_price AS item_amount
+  FROM t_sales
+WINDOW rnum AS 
+  (PARTITION BY code ORDER BY code,item_count * item_price DESC)</pre></code></div><br>
+</div>
+</div>
+<h3 id="sec16">LAG関数,LEAD関数</h3>
+<div class="main-indent">LAG関数はカレント行より前、LEAD関数はカレント行より後ろの行のデータを取得します。<br><div class="br2"><br></div>
+<strong>LAG(カラム名, n個前, デフォルト値) OVER(・・・)</strong><br>
+<strong>LEAD(カラム名, n個後, デフォルト値) OVER(・・・)</strong><br><div class="br2"><br></div>
+「デフォルト」は参照レコードが存在しない場合に返される値です。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="SQLをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>SELECT
+  code,sales_date,item_count
+ ,SUM(item_count * item_price) AS item_amount
+ ,LAG(SUM(item_count * item_price),1,0) OVER(ORDER BY code,sales_date) AS lag_amounr
+ ,LEAD(SUM(item_count * item_price),1,0) OVER(ORDER BY code,sales_date) AS lead_amount
+  FROM t_sales
+  GROUP BY code,sales_date</pre></code></div><br>
+</div>
+<h3 id="sec17">分析関数の最後に</h3>
+<div class="main-indent">分析関数は、SQLとしてはかなり新しく追加された機能です。<br>
+各データベースがバージョンアップとともにサポートしてきたものです。<br>
+したがって、いずれのデータベースでも古いバージョンでは動作しません。<br><div class="br2"><br></div>
+分析関数と言うくらいで、データ分析するときにはとても強力な機能になります。<br>
+ここで紹介したもの以外にもまだまだ沢山ありますので、使用するデータベースごとに調べてみてください。<br>
+ただし、分析関数の情報はWEBではまだかなり少ないと感じられました。<br>
+ブログ等での紹介は限られているようで、まとまった情報があまり見当たりませんでした。<br>
+これから徐々に増えてくるとは思います。<br><div class="br2"><br></div>
+分析関数はとても便利な機能です。<br>
+他の方法ではとても面倒な処理が、分析関数を使うといとも簡単に実現できる場合も多くあります。<br>
+分析関数、ぜひ積極的に使用してみてください。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a>」の記事</h3><p>
+<A href="vba_SQL014.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL014.html">データの更新（UPDATE）</A><br>
+<A href="vba_SQL015.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL015.html">データの削除（DELETE）</A><br>
+<A href="vba_SQL016.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL016.html">他のテーブルのデータで追加/更新/削除</A><br>
+<A href="vba_SQL017.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL017.html">インデックスを作成して高速化（CREATE INDEX）</A><br>
+<A href="vba_SQL018.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL018.html">トランザクション処理</A><br>
+<A href="vba_SQL118.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL118.html">VBAクラスの全コード：トランザクション処理</A><br>
+<A href="vba_SQL019.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL019.html">サブクエリ（副問合せ）</A><br>
+<A href="vba_SQL020.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL020.html">サブクエリのネストとSQLコメント&amp;整形</A><br>
+<A href="vba_SQL021.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL021.html">WITH句（共通テーブル式）</A><br>
+<A href="vba_SQL022.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL022.html">取得行数を限定するLIMIT句</A><br>
+<span class="strrev">分析関数（OVER句,WINDOW句）</span><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+<li><span class="strrev2"><strong>分析関数（OVER句,WINDOW句）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+<li><span class="strrev2"><strong>分析関数</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="vba_SQL111.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL111.html" target="_blank">全テーブル定義とテーブル自動作成VBA</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

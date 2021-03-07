@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>ADO(ActiveX Data Objects)の使い方の要点｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ADOはMicrosoftが提供するデータベースアクセスのためのソフトウェア部品です。OLEDBをActiveXコントロールの形で使えるようにしたプログラミングインターフェースになります。ここでは、ADOを使用したデータベースへの接続方法を解説します。">
+  <meta name="keywords" content="ADO,ActiveX,Data,Objects,使い方,要点,技術解説,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL273.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="ADO(ActiveX Data Objects)の使い方の要点｜VBA技術解説" />
+  <meta property="og:description" content="ADOはMicrosoftが提供するデータベースアクセスのためのソフトウェア部品です。OLEDBをActiveXコントロールの形で使えるようにしたプログラミングインターフェースになります。ここでは、ADOを使用したデータベースへの接続方法を解説します。" />
+  <meta property="og:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL273.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="ADO(ActiveX Data Objects)の使い方の要点｜VBA技術解説" />
+  <meta name="twitter:description" content="ADOはMicrosoftが提供するデータベースアクセスのためのソフトウェア部品です。OLEDBをActiveXコントロールの形で使えるようにしたプログラミングインターフェースになります。ここでは、ADOを使用したデータベースへの接続方法を解説します。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>ADO(ActiveX Data Objects)の使い方の要点</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL273.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL273.html">
+<span itemprop="name">ADO(ActiveX Data Objects)の使い方の要点</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2021-02-26</span>
+<h2 align="center">ADO(ActiveX Data Objects)の使い方の要点</h2><p><br>
+ADOはMicrosoftが提供するデータベースアクセスのためのソフトウェア部品です。<br>
+OLE DBをActiveXコントロールの形で使えるようにしたプログラミングインターフェースになります。<br>
+ここでは、ADOを使用したデータベースへの接続方法を解説します。<br><div class="br2"><br></div>
+扱えるデータベースに特段の制限はありません。<br>
+対応するドライバーや、プロバイダが使用可能であれば、どんなDBでも扱えます。<br><div class="br2"><br></div>
+<div class="main-indent">
+<h4>目次</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent"><a href="#sec01">データベースの種類</a><br>
+<a href="#sec02">SQL（SQL:Structured Query Language）</a><br>
+<a href="#sec03">ADOを使う準備</a><br>
+<a href="#sec04">ADOでのDB接続方法</a><br>
+<a href="#sec05">ADODB.Recordsetの取得方法</a><br>
+<a href="#sec06">ADODBのレコードセットの扱い方</a><br>
+<a href="#sec07">ADODBのトランザクション処理</a><br>
+<a href="#sec08">ADODB.Commandの使い方</a><br>
+<a href="#sec08">最後に注意点等</a><br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+</div></p>
+<h3 id="sec01">データベースの種類</h3>
+<div class="main-indent">本ページで接続礼として記載するデータベースは、<br><div class="br2"><br></div>
+<strong>CSV</strong><br>
+<strong>Excel</strong><br>
+<strong>Access</strong><br>
+<strong>MySql</strong><br>
+<strong>SQLServer</strong><br>
+<strong>Oracle</strong><br><div class="br2"><br></div>
+以上になります。<br>
+CSVもExcelもデータベースとして扱えます。<br>
+ただし、データがデータベース形式になっていることが前提です。<br>
+（各列に見出しがあり、列見出しの下に1行1件のデータが並んでいること）<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec02">SQL（SQL:Structured Query Language）</h3>
+<div class="main-indent">※「SQLは何かの略語ではない」らしいですが、上記のように説明されていることが多いので記載しています。<br><div class="br2"><br></div>
+ADOには、<br>
+レコードの追加・削除・検索・抽出・並べ替えなどの基本的な操作が用意されています。<br>
+この操作を記述するのが、SQL文です。<br>
+<strong><a href="EXCEL224.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL224.html" target="_blank">VBAでのSQLの基礎（SQL:Structured Query Language）</a></strong><div class="details">SQL(StructuredQueryLanguage：構造化問い合わせ言語)は、データベースの定義や表の操作を行う言語です。データ定義言語であるDDL(datadescriptionlanguage)と データ操作言語であるDML(datamanipulationlanguage)に分けられます。</div><br>
+SQL文を書くことで、<br>
+複数のテーブルから、必要なデータセットを自由に抽出、また更新、追加する事ができます。<br><div class="br2"><br></div>
+新シリーズ「<strong><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/" target="_blank">SQL入門</a></strong>」を開始しました。<div class="details">社会的にパソコンで扱うデータ量は近年急激に増えています。これに呼応してエクセルも2003までは65536行まででしたが、2007から飛躍的に増えて1048576行となっています。しかしエクセルで100万行扱えるといっても、データ量としては列数もありますので、実際には100万行はおろか数十万行でもエクセルが重くなって扱いづらくなってしまいます。</div>
+より詳しくSQLについて解説しています。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3 id="sec03">ADOを使う準備</h3>
+<div class="main-indent">VBE（VBAの編集画面）で、<br>
+ツール→参照<br>
+ここで、<br>
+<strong>Microsoft ActiveX Data Objects 2.X Library</strong><br>
+または<br>
+<strong>Microsoft ActiveX Data Objects 6.1 Library</strong><br>
+を追加して下さい。<br>
+オブジェクトのバージョンは各種ありますが、現在なら2.8が無難でしょうか。<br>
+このように、事前に参照設定することを、<strong>事前バインディング</strong>として、<br><div class="br2"><br></div>
+事前に参照設定をしない方法もあります。<br>
+<strong>CreateObject関数</strong>を使います。<br>
+この方法は、<br>
+<strong>実行時バインディング</strong>または<strong>遅延バインディング</strong>といいます。</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="EXCEL296.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL296.html" target="_blank">参照設定、CreateObject、オブジェクト式の一覧</a></strong><div class="details">VBAでエクセル外のオブジェクトを使うときには、事前バインディングと遅延バインディング（実行時バインディング）の２通りがあります、この時それぞれ何を指定したらよいのか、指定する文字列が長いので結構探してしまうことが度々あります。そこで、自身の覚え書きとしての意味も含めて、参照設定、CreateObjectのclass、</div></div>
+</div>
+<div class="main-indent"><br>
+基本的には、<strong>事前バインディングを使ってマクロを作成</strong>します。<br>
+入力候補に、オブシェクトのメンバーが表示されますので、マクロを書く際に役に立ちます。<br><div class="br2"><br></div>
+以下では、DBごとにサンプルコードを掲載します。<br>
+自身の備忘録も兼ねています。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3 id="sec04">ADOでのDB接続方法</h3>
+<div class="main-indent">
+<h4>CSV</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub ReadCsv()<br>
+      　　Dim objCn As New ADODB.Connection<br>
+      　　Dim objRS As ADODB.Recordset<br>
+      　　Dim strSQL As String<br><div class="br2"><br></div>
+      　　<span style="color:#009900;">'コネクション</span><br>
+      　　With objCn<br>
+      　　　　.Provider = &quot;Microsoft.ACE.OLEDB.12.0&quot;<br>
+      　　　　.Properties(&quot;Extended Properties&quot;) = &quot;Text;HDR=NO&quot;<br>
+      　　　　.Open ThisWorkbook.Path &amp; &quot;\&quot;<br>
+      　　End With<br>
+      　　<br>
+      　　<span style="color:#009900;">'SQL作成</span><br>
+      　　strSQL = &quot;&quot;<br>
+      　　strSQL = strSQL &amp; &quot; SELECT *&quot;<br>
+      　　strSQL = strSQL &amp; &quot; FROM&quot;<br>
+      　　strSQL = strSQL &amp; &quot; CSVTEST.csv&quot;<br>
+      　　<br>
+      　　<span style="color:#009900;">'SQL実行</span><br>
+      　　Set objRS = objCn.Execute(strSQL)<br>
+      　　<br>
+      　　<span style="color:#009900;">'レコードセットをシート出力</span><br>
+      　　With Worksheets(&quot;出力シート&quot;)<br>
+      　　　　.UsedRange.ClearContents<br>
+      　　　　.Range(&quot;A1&quot;).CopyFromRecordset objRS<br>
+      　　End With<br>
+      　　<br>
+      　　<span style="color:#009900;">'切断</span><br>
+      　　objRs.Close<br>
+      　　objCn.Close<br>
+      　　Set objRS = Nothing<br>
+      　　Set objCn = Nothing<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">以下、<br>
+<strong>With objCn<br>
+　　この部分の違いだけですので、ここだけを掲載します。<br>
+End With</strong><br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>Excel</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>With objCn<br>
+      　　.Provider = &quot;Microsoft.ACE.OLEDB.12.0&quot;<br>
+      　　.Properties(&quot;Extended Properties&quot;) = &quot;Excel 12.0&quot;<br>
+      　　.Open ThisWorkbook.Path &amp; &quot;\TEST.xlsx&quot;<br>
+      End With</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>Access</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim strDb As String<br>
+      strDB = ThisWorkbook.Path &amp; &quot;\sample.accdb&quot;<br>
+      With objCn<br>
+      　　.ConnectionString = &quot;Provider=Microsoft.ACE.OLEDB.12.0;Data Source=&quot;
+      &amp; strDB<br>
+      　　.Open<br>
+      End With</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">ここからは、<br>
+<strong>.ConnectionStringに入れる文字列の違いになります。</strong><br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>MySql</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>&quot;Driver={MySQL ODBC 5.1 DRIVER}; SERVER=サーバー名(またはIPアドレス); DATABASE=DB名;
+      USER=ユーザーID; PASSWORD=パスワード;&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+ドライバーは、<br>
+&quot;MySQL ODBC 3.51 DRIVER&quot;<br>
+&quot;MySQL ODBC 4.1 DRIVER&quot;<br>
+&quot;MySQL ODBC 4.2 DRIVER&quot;<br>
+&quot;MySQL ODBC 5.1 DRIVER&quot;<br>
+&quot;MySQL ODBC 5.2 DRIVER&quot;<br>
+&quot;MySQL ODBC 5.3 DRIVER&quot;<br>
+等、PCにインストールされているドライバーを指定します。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>SQLServer</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>&quot;Provider=SQLOLEDB;Data Source=サーバー名(またはIPアドレス);Initial Catalog=DB名;user
+      id=ユーザーID;password=パスワード&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>Oracle</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>&quot;Provider=OraOLEDB.Oracle;Data Source=リスナー名;User ID=ユーザーID;Password=パスワード;&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+オラクルの場合は、Oracleクライアントのインストールが必要です。<br>
+そして、リスナーの登録をしておいて下さい。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>ODBCを使う場合</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">DBに依存しない方法としては、ODBCを使う事も出来ます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>&quot;DSN=ODBC名;UID=ユーザーID;PWD=パスワード;&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+ODBCを事前に作成しておきますが、<strong>ODBCの32bitと64bitに注意</strong>してください。<br>
+※OSが64bitのコントロールパネルにあるODBCは64bit用です。</div>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="main-indent">32bit用の設定は、C:\Windows\SysWOW64\odbcad32.exe<br>
+<strong>VBAで使用する場合は、32bit用のODBC</strong>を使用した方がやりやすいかもしれません。<br>
+もちろん64bitでも問題ありません。<br>
+ODBC用のドライバーとbit数を合わせて使ってください。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec05">ADODB.Recordsetの取得方法</h3>
+<div class="main-indent"><h4>ADODB.ConnectionのExecuteメソッド</h4></div>
+<div class="main-indent">
+<div class="main-indent">最初のサンプルVBAで使っている方法です。<br><div class="br2"><br></div>
+<strong>Set recordset = connection.Execute (CommandText, RecordsAffected, Options)
+</strong><br><div class="br2"><br></div>
+<strong>CommandText</strong>
+<div class="main-indent">実行する SQL文字列の値です。<br>
+</div>
+</div>
+<div class="main-indent"><strong>RecordsAffected</strong>
+<div class="main-indent">省略可能です。<br>
+この操作の影響を受けたレコード数をプロバイダーが返す長整数型 ( Long ) の値です。<br>
+</div>
+</div>
+<div class="main-indent"><strong>Options</strong>
+<div class="main-indent">省略可能です。<br>
+MoveRecordOptionsEnum値を指定します。<br>
+プロバイダーが CommandText引数を評価する方法を示す長整数型 (Long) の値です。<br>
+1つまたは複数のCommandTypeEnum値またはExecuteOptionEnum値のビットマスクを指定できます。<br>
+</div>
+</div>
+<div class="main-indent"><strong>CommandTypeEnum</strong>
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>定数</td>
+      <td>値</td>
+      <td>説明</td>
+    </tr>
+    <tr>
+      <td>adcmdunspecified</td>
+      <td align="right">-1</td>
+      <td>コマンドの種類の引数を指定しません。</td>
+    </tr>
+    <tr>
+      <td>adcmdtext</td>
+      <td align="right">1</td>
+      <td>CommandTextを、コマンドまたはストアド プロシージャのテキスト定義として評価します。</td>
+    </tr>
+    <tr>
+      <td>adcmdtable</td>
+      <td align="right">2</td>
+      <td>CommandTextを、内部的に生成された SQL クエリから返された列のみで構成されるテーブル名として評価します。</td>
+    </tr>
+    <tr>
+      <td>adCmdStoredProc</td>
+      <td align="right">4</td>
+      <td>CommandTextをストアド プロシージャ名として評価します。</td>
+    </tr>
+    <tr>
+      <td>adcmdunknown</td>
+      <td align="right">8</td>
+      <td>既定値。<br>
+      CommandTextプロパティのコマンドの種類が不明であることを示します。</td>
+    </tr>
+    <tr>
+      <td>adCmdFile</td>
+      <td align="right">256</td>
+      <td>CommandTextを、保存されたRecordsetのファイル名として評価します。Recordset.OpenまたはRequeryと組み合わせてのみ使用できます。</td>
+    </tr>
+    <tr>
+      <td>adCmdTableDirect</td>
+      <td align="right">512</td>
+      <td>CommandTextを、すべての列が返されたテーブル名として評価します。<br>
+      Recordset.OpenまたはRequeryと組み合わせてのみ使用できます。<br>
+      Seekメソッドを使用する場合、RecordsetはadCmdTableDirectを指定して開く必要があります。<br>
+      この値は、ExecuteOptionEnumの値adAsyncExecuteと組み合わせて使用できません。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent"><strong>ExecuteOptionEnum</strong>
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>定数</td>
+      <td>値</td>
+      <td>説明</td>
+    </tr>
+    <tr>
+      <td>adAsyncExecute</td>
+      <td>0x10</td>
+      <td>コマンドを非同期に実行することを示します。<br>
+      この値は、CommandTypeEnumの値adCmdTableDirectと組み合わせて使用できません。</td>
+    </tr>
+    <tr>
+      <td>adAsyncFetch</td>
+      <td>0x20</td>
+      <td>CacheSizeプロパティで指定した初期量の残りの行を非同期に取得することを示します。</td>
+    </tr>
+    <tr>
+      <td>adAsyncFetchNonBlocking</td>
+      <td>0x40</td>
+      <td>取得中にメイン スレッドがブロックしないことを示します。<br>
+      要求された行がまだ取得されていない場合、現在の行が自動的にファイルの最後に移動します。<br>
+      永続的に保存されたRecordsetを持つStreamからRecordsetを開いた場合、adAsyncFetchNonBlockingは無効になり、操作は同期で実行され、ブロッキングが発生します。<br>
+      adCmdTableDirectオプションを使用してRecordsetを開いた場合、adAsynchFetchNonBlockingは無効になります。</td>
+    </tr>
+    <tr>
+      <td>adExecuteNoRecords</td>
+      <td>0x80</td>
+      <td>コマンド テキストが、行を返さないコマンドまたはストアド プロシージャ (たとえば、データの挿入のみを行うコマンド) であることを示します。<br>
+      取得した行があっても削除されるので、コマンドからは返されません。<br>
+      adExecuteNoRecordsは、コマンドまたはConnectionのExecuteメソッドに、省略可能なパラメーターとしてのみ渡すことができます。</td>
+    </tr>
+    <tr>
+      <td>adExecuteStream</td>
+      <td>0x400</td>
+      <td>コマンドの実行結果がストリームとして返されることを示します。<br>
+      adExecuteStreamは、CommandExecuteメソッドにオプションのパラメーターとして渡すことができます。</td>
+    </tr>
+    <tr>
+      <td>adExecuteRecord</td>
+      <td></td>
+      <td>CommandTextが、Recordオブジェクトとして返される単一の行を返すコマンドまたはストアド プロシージャであることを示します。</td>
+    </tr>
+    <tr>
+      <td>adoptionunspecified</td>
+      <td align="right">-1</td>
+      <td>コマンドが指定されていないことを示します。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+</div>
+<div class="main-indent">内部処理を最小限に抑えてパフォーマンスを向上させるには、ExecuteOptionEnumの値adExecuteNoRecords を使用します。<br>
+Executeでは、CommandTypeEnumの値 dCmdFileまたはadCmdTableDirectを使用しないでください。 これらの値は、RecordsetのOpenメソッドおよびRequeryメソッドのオプションとしてのみ使用できます。<br><div class="br2"><br></div>
+</div>
+<strong>ADODB.ConnectionのExecuteの使用例</strong>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim objCn As New ADODB.Connection<br>
+      Dim objRS As ADODB.Recordset<br>
+      <span style="color:#009900;">'コネクション</span><br>
+      <span style="color:#009900;">'SQL作成</span><br>
+      Set objRS = New ADODB.Recordset<br>
+      Set objRS = objCn.<strong>Execute</strong>(&quot;SQL文字列&quot;)</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+<div class="main-indent">
+</div>
+</div>
+</div>
+<div class="main-indent"><h4>ADODB.RecordsetのOpenメソッド</h4></div>
+<div class="main-indent">
+<div class="main-indent"><strong>recordset.Open Source, ActiveConnection, CursorType, LockType, Options</strong><br><div class="br2"><br></div>
+<strong>Source</strong></div>
+<div class="main-indent">
+<div class="main-indent">オプション。<br>
+有効なCommandオブジェクト、SQLステートメント、テーブル名、ストアドプロシージャコール、URL、または永続的に保存されたRecordsetを含むファイルまたはStreamオブジェクトの名前に評価されるVariant。<br>
+</div>
+</div>
+<div class="main-indent"><strong>ActiveConnection</strong></div>
+<div class="main-indent">
+<div class="main-indent">オプション。<br>
+有効なConnectionオブジェクト変数名に評価されるVariant、またはConnectionStringパラメーターを含むStringのいずれか。<br>
+</div>
+</div>
+<div class="main-indent"><strong>CursorType</strong></div>
+<div class="main-indent">
+<div class="main-indent">オプション。<br>
+Recordsetを開くときにプロバイダーが使用するカーソルのタイプを決定するCursorTypeEnum値。<br>
+デフォルト値はadOpenForwardOnlyです。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>定数</td>
+    <td>Value</td>
+    <td>説明</td>
+  </tr>
+  <tr>
+    <td>adOpenDynamic</td>
+    <td align="right">2</td>
+    <td>動的カーソルを使用します。<br>
+      他のユーザーによる追加、変更、削除が表示され、プロバイダーがサポートしていない場合、ブックマークを除き、Recordsetを介したすべてのタイプの移動が許可されます。</td>
+  </tr>
+  <tr>
+    <td>adOpenForwardOnly</td>
+    <td align="right">0</td>
+    <td>デフォルト。<br>
+      順方向専用カーソルを使用します。<br>
+      レコードを順方向にしかスクロールできないことを除いて、静的カーソルと同じです。<br>
+      これにより、レコードセットを1回だけ通過する必要がある場合のパフォーマンスが向上します。</td>
+  </tr>
+  <tr>
+    <td>adOpenKeyset</td>
+    <td align="right">1</td>
+    <td>キーセットカーソルを使用します。<br>
+      動的カーソルに似ていますが、他のユーザーが追加したレコードは表示できませんが、他のユーザーが削除したレコードにはレコードセットからアクセスできません。<br>
+      他のユーザーによるデータの変更は引き続き表示されます。</td>
+  </tr>
+  <tr>
+    <td>adOpenStatic</td>
+    <td align="right">3</td>
+    <td>静的カーソルを使用します。<br>
+      静的カーソルは、データの検索またはレポートの生成に使用できる一連のレコードの静的コピーです。<br>
+      他のユーザーによる追加、変更、または削除は表示されません。</td>
+  </tr>
+  <tr>
+    <td>adOpenUnspecified</td>
+    <td align="right">-1</td>
+    <td>カーソルの種類を指定しません。</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent"><strong>LockType</strong></div>
+<div class="main-indent">
+<div class="main-indent">オプション。<br>
+Recordsetを開くときにプロバイダーが使用するロックの種類（同時実行性）を決定するLockTypeEnum値。<br>
+デフォルト値はadLockReadOnlyです。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>Constant</td>
+    <td>Value</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>adLockBatchOptimistic</td>
+    <td align="right">4</td>
+    <td>楽観的なバッチ更新を示します。<br>
+      バッチ更新モードに必要です。</td>
+  </tr>
+  <tr>
+    <td>adLockOptimistic</td>
+    <td align="right">3</td>
+    <td>レコードごとに楽観的ロックを示します。<br>
+      プロバイダーは楽観的ロックを使用し、Updateメソッドを呼び出すときにのみレコードをロックします。</td>
+  </tr>
+  <tr>
+    <td>adLockPessimistic</td>
+    <td align="right">2</td>
+    <td>レコードごとに悲観的ロックを示します。<br>
+      プロバイダーは、通常、編集直後にデータソースでレコードをロックすることにより、レコードの正常な編集を保証するために必要なことを行います。</td>
+  </tr>
+  <tr>
+    <td>adLockReadOnly</td>
+    <td align="right">1</td>
+    <td>読み取り専用レコードを示します。<br>
+      データを変更することはできません。</td>
+  </tr>
+  <tr>
+    <td>adLockUnspecified</td>
+    <td align="right">-1</td>
+    <td>ロックのタイプを指定しません。<br>
+      クローンの場合、クローンはオリジナルと同じロックタイプで作成されます。</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent"><strong>Options</strong></div>
+<div class="main-indent">
+<div class="main-indent">オプション。<br>
+Commandオブジェクト以外のものを表す場合、または以前に保存されたファイルからRecordsetを復元する必要がある場合、プロバイダがSource引数を評価する方法を示すLong値。<br>
+1つ以上のCommandTypeEnum値またはExecuteOptionEnum値を指定できます。<br>
+これらの値は、ビット単位のOR演算子と組み合わせることができます。<br>
+※CommandTypeEnum値およびExecuteOptionEnum値については、ConnectionのExecuteに記載してあります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<strong>ADODB.RecordsetのOpenメソッドの使用例</strong>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim objCn As New ADODB.Connection<br>
+      Dim objRS As ADODB.Recordset<br>
+      <span style="color:#009900;">'コネクション接続する</span><br>
+      <span style="color:#009900;">'SQL作成する</span><br>
+      Set objRS = New ADODB.Recordset<br>
+      Call objRS.Open(&quot;SQL文字列&quot;, objCn, adOpenStatic, adLockReadOnly)</td>
+    </tr>
+  </tbody>
+</table></code></div><br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<h3 id="sec06">ADODBのレコードセットの扱い方</h3>
+<div class="main-indent">ADODBのレコードセットには多くのメソッドがあります。<br>
+以下は良く使う代表的なメソッド・プロパィについての使用例になります。<br><div class="br2"><br></div>
+Recordsetを開くと、現在のレコードは最初のレコード（存在する場合）に配置され、<strong>BOF</strong>プロパティと<strong>EOF</strong>プロパティはFalseに設定されます。<br>
+レコードがない場合、<strong>BOF</strong>および<strong>EOF</strong>プロパティ設定はTrueです。<br><div class="br2"><br></div>
+指定されたRecordsetオブジェクトの最初(<strong>MoveFirst</strong>)、最後(<strong>MoveLast</strong>)、次(<strong>MoveNext</strong>)、または前<strong>(MovePrevious</strong>)のレコードに移動し、そのレコードを現在のレコードにします。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>Recordsetのシートへの一括出力</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim objCn As New ADODB.Connection<br>
+      Dim objRS As ADODB.Recordset<br>
+      <span style="color:#009900;">'コネクション接続する</span><br>
+      <span style="color:#009900;">'SQL作成する</span><br>
+      Set objRS = New ADODB.Recordset<br>
+      Call objRS.Open(&quot;SQL文字列&quot;, objCn, adOpenStatic, adLockReadOnly)<br>
+      With Worksheets(&quot;出力シート&quot;)<br>
+      　　.UsedRange.ClearContents<br>
+      　　.Range(&quot;A1&quot;).<strong>CopyFromRecordset</strong> objRS<br>
+      End With</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+RangeオブジェクトのCopyFromRecortsetメソッドを使用します。</div>
+<div class="main-indent"><strong>CopyFromRecortsetメソッド</strong>
+<div class="main-indent">指定された範囲の左上隅を始点として、Recordsetオブジェクトの内容をワークシートにコピーします。<br><div class="br2"><br></div>
+<strong>Rangeオブジェクト.Copyfromrecordset(Data、 MaxRows、 MaxColumns)</strong><br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>名前</td>
+      <td>説明</td>
+    </tr>
+    <tr>
+      <td>Data</td>
+      <td>必須です。<br>
+      セル範囲にコピーするRecordsetオブジェクトを指定します。</td>
+    </tr>
+    <tr>
+      <td>MaxRows</td>
+      <td>省略可能です。<br>
+      ワークシートにコピーするレコードの最大数を指定します。<br>
+      この引数を省略すると、Recordset?オブジェクトのすべてのレコードをコピーします。</td>
+    </tr>
+    <tr>
+      <td>MaxColumns</td>
+      <td>省略可能です。<br>
+      ワークシートにコピーするフィールドの最大数を指定します。<br>
+      この引数を省略すると、Recordsetオブジェクトのすべてのフィールドをコピーします。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+Recordsetオブジェクトのカレント レコードの位置からコピーが行われます。<br>
+コピーが完了すると、Recordset オブジェクトのEOFプロパティはTrueになります。<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<h4>Recordsetの配列への出力</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim objCn As New ADODB.Connection<br>
+      Dim objRS As ADODB.Recordset<br>
+      <span style="color:#009900;">'コネクション接続する</span><br>
+      <span style="color:#009900;">'SQL作成する</span><br>
+      Set objRS = New 
+ADODB.Recordset<br>
+      Call objRS.Open("SQL文字列", objCn, adOpenStatic, 
+adLockReadOnly)<br>
+      Dim ary()<br>
+      ary = objRS.<strong>GetRows</strong></td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+RecordsetのGetRowsメソッドを使用します。<br><div class="br2"><br></div>
+<strong>GetRowsメソッド</strong></div>
+<div class="main-indent">
+<div class="main-indent">レコードセットオブジェクトの複数のレコードを配列に取得します。<br>
+値が2次元配列であるバリアントを返します。<br><div class="br2"><br></div>
+<strong>array = recordset.GetRows(Rows, Start, Fields)</strong><br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+   <tr>
+      <td>名前</td>
+      <td>説明</td>
+    </tr>
+  <tr>
+    <td>Rows</td>
+    <td>省略可能。<br>
+      取得するレコードの数を示すGetRowsOptionEnum値です。<br>
+      既定値はadGetRowsRestです。（Startパラメーターによって指定された現在の位置またはブックマークから、レコードセット内の残りのレコードを取得します。）</td>
+  </tr>
+  <tr>
+    <td>Start</td>
+    <td>省略可能。<br>
+      GetRows操作の開始位置となるレコードのブックマークに評価される文字列値またはバリアント。<br>
+      BookmarkEnum値を使用することもできます。</td>
+  </tr>
+  <tr>
+    <td>Fields</td>
+    <td>省略可能。<br>
+      1つのフィールド名または序数位置、またはフィールド名または序数位置の配列を表すバリアント。<br>
+      ADOは、これらのフィールド内のデータのみを返します。</td>
+  </tr>
+</tbody>
+</table></div><br>
+最初の添字はフィールドを識別し、2番目のインデックスはレコード番号を識別します。<br>
+GetRowsメソッドがデータを返すと、配列変数は自動的に正しいサイズに設定されます。<br>
+つまり、1次元目が列で、2次元目が行になっています。<br>
+したがって、シートに出力するためには、縦横を反転（Transpose等）させる必要があります。<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<div class="main-indent"><h4>Recordsetの取得件数</h4>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim objCn As New ADODB.Connection<br>
+      Dim objRS As ADODB.Recordset<br>
+      <span style="color:#009900;">'コネクション接続する</span><br>
+      <span style="color:#009900;">'SQL作成する</span><br>
+      Set objRS = New ADODB.Recordset<br>
+      Call objRS.Open(&quot;SQL文字列&quot;, objCn, <strong>adOpenStatic</strong>, adLockReadOnly)<br>
+      If objRS.<strong>RecordCount</strong> &lt;= 0 Then<br>
+      　　MsgBox &quot;レコードなし&quot;<br>
+      End If</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+RecordCountで件数を取得する場合は、<strong>adOpenStaticを指定しRecordCountで取得</strong>します。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><h4>カラム名の取得</h4>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim i As Long<br>
+      <span style="color:#009900;">'カラム名の出力</span><br>
+      For i = 0 To objRS.Fields.Count - 1<br>
+      　　Cells(1, i + 1) = objRS.<strong>Fields(i).Name</strong><br>
+      Next</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Fieldsコレクションの要素を指定してFieldオブジェクトを特定し、<strong>Nameプロパティ</strong>で取得します。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><h4>レコードセットの全件順処理</h4>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim i As Long, j As Long<br>
+      i = 2<br>
+      objRS.<strong>MoveFirst</strong> <span style="color:#009900;">'ここでは不要だが参考として</span><br>
+      Do Until objRS.<strong>EOF</strong><br>
+      　　For j = 0 To objRS.Fields.Count - 1<br>
+      　　　　Cells(i, j + 1) = objRS(j).Value<br>
+      　　Next<br>
+      　　objRS.<strong>MoveNext</strong><br>
+      　　i = i + 1<br>
+      Loop</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<strong>EOFプロパティがTrueになるまで、MoveNext</strong>でカレントレコードを次に進めていきます。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><h4>レコードの検索/追加/更新/削除</h4>
+<div class="main-indent"><strong>レコードの検索</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>recordset.Find (Criteria、 SkipRows、 searchdirection、 Start)</strong><br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>adsearchbackward</td>
+      <td align="right">-1</td>
+      <td>後方検索をし、Recordset?の先頭で終了します。一致するレコードが見つからない場合、レコード ポインターは?BOF?に移動します。</td>
+    </tr>
+    <tr>
+      <td>adsearchforward</td>
+      <td>1-d</td>
+      <td>前方検索をし、Recordset?の末尾で終了します。一致するレコードが見つからない場合、レコード ポインターは?EOF?に移動します。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent"><strong>レコードの追加</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>recordset.AddNew FieldList, Values</strong><br>
+FieldListおよびValuesは、配列を指定します。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>レコードの更新</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>recordset.Update FieldList, Values</strong><br>
+FieldListおよびValuesは、配列を指定します。<br>
+カレント行が更新されますので、事前に対象レコードに移動しておきます。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>レコードの削除</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>recordset.Delete</strong><br>
+カレント行が削除されますので、事前に対象レコードに移動しておきます。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>検索/追加/更新/削除の使用例</strong></div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>With objRS<br>
+      　　<span style="color:#009900;">'追加</span><br>
+      　　<strong>.AddNew</strong> Array(&quot;列1&quot;, &quot;列2&quot;), Array(&quot;値1&quot;, &quot;値2&quot;)<br><div class="br2"><br></div>
+      　　<span style="color:#009900;">'更新</span><br>
+      　　<strong>.MoveFirst</strong><br>
+      　　.Find &quot;列1 = 値1&quot;, 0, adSearchForward<br>
+      　　<strong>.Update</strong> Array(&quot;列1&quot;, &quot;列2&quot;), Array(&quot;値1&quot;, &quot;値2&quot;)<br><div class="br2"><br></div>
+      　　<span style="color:#009900;">'削除</span><br>
+      　　<strong>.MoveFirs</strong>t<br>
+      　　.Find &quot;列2 = 値2&quot;, 0, adSearchForward<br>
+      　　<strong>.Delete</strong><br>
+      End With</td>
+    </tr>
+  </tbody>
+</table></code></div><br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<h3 id="sec07">ADODBのトランザクション処理</h3>
+<div class="main-indent">ADODBでトランザクション処理を行うには、ADODB.Connectionオブジェクトのメソッドを使用します。<br><div class="br2"><br></div>
+<strong>BeginTrans</strong> メソッド<br>
+<strong>CommitTrans</strong> メソッド<br>
+<strong>RollbackTrans</strong> メソッド<br><div class="br2"><br></div>
+各DBのプロバイダーによっては、入れ子になったトランザクションをサポートしています。<br>
+BeginTransでトランザクションを開始した後、CommitTransすることなくDBをクローズした場合はロールバックされます。<br>
+トランザクションの更新内容は、CommitTransしない限り確定されることはありません。<br><div class="br2"><br></div>
+トランザクション処理の詳細については、以下を参照してください。 </div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="../vba_sql/vba_SQL018.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL018.html" target="_blank">トランザクション処理｜SQL入門</a></strong><div class="details">エクセルVBAでデータベースを扱うためのSQL入門です。前回までは、1つのテーブルにデータを追加/更新/削除してきました。システム構築していく上では、複数のテーブルへの処理は必要不可欠になります。しかし、このとき注意しなければならない問題があります。</div><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec08">ADODB.Commandの使い方</h3>
+<div class="main-indent">ADOにはCommandオブジェクトがあり、パラメーター方式でSQLを実行できます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>AdoCmd = New ADODB.Command<br>
+      Set AdoCmd.ActiveConnection = 接続済コネンション<br>
+      AdoCmd.CommandText = SQL文字列 <span style="color:#009900;">'(?,?,?)</span><br>
+      AdoCmd.Execute Parameters:=値リスト1 <span style="color:#009900;">'(値1,値2,値3)</span><br>
+      <span style="color:#009900;">'・・・</span><br>
+      AdoCmd.Execute Parameters:=値リスト2 <span style="color:#009900;">'(値4,値5,値6)</span></td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+SQL文字列中の「?」に対して値リストを順番に適用します。<br>
+同じSQLを実行する場合は、データだけをパラメーターとして渡すので効率的です。<br><div class="br2"><br></div>
+以下で具体的に使用しています。
+<div class="main-indent"><strong><a href="../vba_sql/vba_SQL005.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL005.html" target="_blank">データの挿入（INSERT）と全削除｜SQL入門</a></strong><div class="details">エクセルVBAでデータベースを扱うためのSQL入門です。前回までにテーブルを自由に作れるようになり、ワークシートからの自動作成も出来上がりました。今回は作成したテーブルにデータを追加(INSERT)していきます。</div><br><div class="br2"><br></div>
+</div>
+</div>
+<h3 id="sec09">最後に注意点等</h3>
+<div class="main-indent">接続文字列等では大文字小文字が混在していますが、大文字小文字は区別されませんので問題ありません。<br>
+最後の<strong>;</strong>については、あっても無くても動きますが、書いておいた方が良いと思います。<br><div class="br2"><br></div>
+全体を通しての注意点としては、<br>
+データに、<strong>'シングルクォーテーションを含む場合</strong>は、<br>
+それをエスケープするために、<strong>'シングルクォーテーションを2個重ねる</strong>ようにします。<br><div class="br2"><br></div>
+データを更新・追加する場合は、nullに注意してください。<br>
+Excelの空欄セルをデータとして使う時に、<strong>0バイト文字なのかnullなのか</strong>、DB仕様と合わせて記述に気を付けます。<br><div class="br2"><br></div>
+更新・追加する場合は、<strong>トランザクション処理</strong>は必須だとお考え下さい。<br>
+さらにデータが多い時は、<strong>マルチプルインサート</strong>にすることも考えましょう。<br>
+これを<strong>バルクインサート</strong>という言い方もします、ただしDBによって構文がそれぞれ違ってきます。<br>
+またDBによりますが、<br>
+大抵はCSVから直接ロードする命令が用意されていて、これを使うとかなり高速で全件処理が可能ですので検討してみましょう。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL217.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL217.html">VBAでのInternetExplorer自動操作</A><br>
+<A href="EXCEL224.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL224.html">VBAでのSQLの基礎（SQL:Structured Query Language）</A><br>
+<A href="EXCEL232.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL232.html">VBAで正規表現を利用する（RegExp）</A><br>
+<A href="EXCEL233.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL233.html">VBAでメール送信する（CDO:Microsoft Collaboration Data Objects）</A><br>
+<A href="EXCEL245.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL245.html">VBAでのOutlook自動操作</A><br>
+<span class="strrev">ADO(ActiveX Data Objects)の使い方の要点</span><br>
+<A href="EXCEL293.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL293.html">特殊フォルダの取得（WScript.Shell,SpecialFolders）</A><br>
+<A href="EXCEL296.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL296.html">参照設定、CreateObject、オブジェクト式の一覧</A><br>
+<A href="EXCEL_VBA_401.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_401.html">VBAのスクレイピングを簡単楽にしてくれるSelenium</A><br>
+<A href="EXCEL_VBA_402.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_402.html">VBA+SeleniumBasicで検索順位チェッカー作成</A><br>
+<A href="EXCEL_VBA_404.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_404.html">VBA+SeleniumBasicで検索順位チェッカー（改）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>ADO(ActiveX Data Objects)の使い方の要点</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>ADO(ActiveX Data Objects)の使い方の要点</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCEL224.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL224.html" target="_blank">VBAでのSQLの基礎<br></a></li><li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/" target="_blank">SQL入門</a></li><li><a href="EXCEL296.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL296.html" target="_blank">参照設定、CreateObject、オブジェクト式の一覧</a></li><li><a href="../vba_sql/vba_SQL018.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL018.html" target="_blank">トランザクション処理｜SQL入門</a></li><li><a href="../vba_sql/vba_SQL005.html" tppabs="https://excel-ubara.com/vba_sql/vba_SQL005.html" target="_blank">データの挿入<br></a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

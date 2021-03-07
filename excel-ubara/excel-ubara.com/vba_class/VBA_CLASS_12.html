@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VBAクラスを使う事で、ユーザー定義イベントを作成したり、動的にイベントを割り当てる事が出来ます。ユーザー独自のイベントを作成したり、フォームに動的に追加したコントロールにイベントを設定することができます。EventステートメントとRaiseEventステートメントを使う事で、ユーザー定義イベントつまりユーザー独自のイベントを作成できます。">
+  <meta name="keywords" content="VBA,Event,Raise,Withs,クラスを使ったイベント作成,技術解説,エクセル,Excel,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba_class/VBA_CLASS_12.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）｜VBA技術解説" />
+  <meta property="og:description" content="VBAクラスを使う事で、ユーザー定義イベントを作成したり、動的にイベントを割り当てる事が出来ます。ユーザー独自のイベントを作成したり、フォームに動的に追加したコントロールにイベントを設定することができます。EventステートメントとRaiseEventステートメントを使う事で、ユーザー定義イベントつまりユーザー独自のイベントを作成できます。" />
+  <meta property="og:image" content="https://excel-ubara.com/vba_class/image234.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/vba_class/VBA_CLASS_12.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）｜VBA技術解説" />
+  <meta name="twitter:description" content="VBAクラスを使う事で、ユーザー定義イベントを作成したり、動的にイベントを割り当てる事が出来ます。ユーザー独自のイベントを作成したり、フォームに動的に追加したコントロールにイベントを設定することができます。EventステートメントとRaiseEventステートメントを使う事で、ユーザー定義イベントつまりユーザー独自のイベントを作成できます。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/vba_class/image234.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba_class/">
+<span itemprop="name">VBAクラス入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="VBA_CLASS_12.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_12.html">
+<span itemprop="name">VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-01-06</span>
+<h2 align="center">VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</h2><p><br>
+VBAクラスを使う事で、ユーザー定義イベントを作成したり、動的にイベントを割り当てる事が出来ます。<br>
+ユーザー独自のイベントを作成したり、フォームに動的に追加したコントロールにイベントを設定することができます。<br><div class="br2"><br></div>
+EventステートメントとRaiseEventステートメントを使う事で、ユーザー定義イベントつまりユーザー独自のイベントを作成できます。<br>
+変数宣言にWithEventsキーワードを指定することで、クラスで発生するイベントに応答することができます。<br><div class="br2"><br></div>
+ここでは、ユーザーフォームを使って、極めて単純なイベントを実装しています。<br>
+このVBAサンプルは、これで何かができるというものではなく、<br>
+クラスのイベントを理解する為に極めて単純化したVBAコードになります。<br><div class="br2"><br></div></p>
+<h3>Eventステートメント</h3>
+<div class="main-indent">ユーザー定義イベントを宣言します。<br>
+<strong>[Public] Event プロシージャー名[(引数リスト)]</strong><br><div class="br2"><br></div>
+引数リストは、プロシージャーの引数リストと同様ですが、<br>
+イベントに名前付き引数、省略可能な引数、またはParamArray引数を指定することはできません。<br><div class="br2"><br></div>
+モジュールレベルで宣言します。<br>値を返すようにイベントを宣言することはできません。<br>
+イベントが宣言されたら、 RaiseEventステートメントを使用してイベントを発生させます。<br>
+イベントは、それが宣言されているモジュール内でしか生成できません。<br>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>RaiseEventステートメント </h3>
+<div class="main-indent">モジュールレベルで宣言したイベントを発生させます。<br>
+<strong>RaiseEvent イベント名[(引数リスト)]</strong><br><div class="br2"><br></div>
+イベント名は、モジュール内でEventステートメントで宣言されたイベントの名前です。<br>
+イベントが発生したモジュール内で、そのイベントが宣言されていない場合は、エラーが発生します。<br><div class="br2"><br></div>
+</div>
+<h3>WithEventsキーワード</h3>
+<div class="main-indent">WithEventsキーワードは、次の構文で使用します。<br>
+Dim ステートメント<br>
+Private ステートメント<br>
+Public ステートメント<br>
+モジュール レベルで使用します。<br><div class="br2"><br></div>
+変数がイベントに対応するためのオブジェクト変数であることを指定するキーワードです。<br>
+オブジェクトのモジュールのみで使えます、つまり、<strong>標準モジュールでは使用できません。</strong><br>
+WithEventsは任意の数の変数に宣言できます。<br>
+ただし、WithEventsでは配列は作成できません。<br>
+また、キーワードNewとWithEventsは一緒には使用できません。<br><div class="br2"><br></div>
+<s>Private <strong>WithEvents</strong> xlApp As <strong>New</strong> Excel.Application</s><br>
+↓<br>
+Private <strong>WithEvents</strong> xlApp As  Excel.Application<br>
+・・・<br>
+Set xlApp = <strong>New</strong> Excel.Application<br>
+このように、WithEventsとNewは分けて使わなければなりません。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>標準モジュールと動作概要</h3>
+<div class="main-indent">ユーザーフォームにボタンが2つだけ存在し、クリックでメッセージボックスを表示します。<br>
+たったこれだけですが、<br>
+ボタン1とボタン2では全く違った実装となります。<br><div class="br2"><br></div>
+<img src="image233.jpg" tppabs="https://excel-ubara.com/vba_class/image233.jpg" width="384" height="292" border="0" alt="マクロ VBA クラス class event"><br><div class="br2"><br></div>
+<strong>ボタン1</strong></div>
+<div class="main-indent">
+<div class="main-indent">ユーザーフォームに最初から配置されているボタンです。<br>
+クリックすると、3秒後にセッメージボックスが表示されます。<br><div class="br2"><br></div>
+<img src="image235.jpg" tppabs="https://excel-ubara.com/vba_class/image235.jpg" width="164" height="194" border="0" alt="マクロ VBA クラス class event"><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>ボタン2</strong></div>
+<div class="main-indent">
+<div class="main-indent">ユーザーフォームの初期化(Initialize)で動的に追加したボタンです。。<br>
+クリックすると、直ぐにセッメージボックスが表示されます。<br><div class="br2"><br></div>
+<img src="image237.jpg" tppabs="https://excel-ubara.com/vba_class/image237.jpg" width="224" height="194" border="0" alt="マクロ VBA クラス class event"><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><br>
+起動するプロシージャーは以下になります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub EventTest()<br>
+　　UserForm1.Show<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+記述場所およびプロシージャー名等、特に何も制限はありません。<br>
+UserForm1を表示さえすれば、どのような方法でも構いません。<br><div class="br2"><br></div>
+</div>
+<h3>ユーザーフォーム(UserForm1)</h3>
+<div class="main-indent">ユーザーフォームの<strong>オブジェクト名：UserForm1</strong><br><div class="br2"><br></div>
+<img src="image234.jpg" tppabs="https://excel-ubara.com/vba_class/image234.jpg" width="423" height="324" border="0" alt="マクロ VBA クラス class event"><br><div class="br2"><br></div>
+ボタンを1つだけ配置、ボタンの<strong>オブジェクト名：btn1</strong><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン1：イベントに応答するために定義する変数</span><br>
+Private WithEvents mTimer As clsEvent<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン2：動的ボタン対応クラスのインスタンス変数</span><br>
+Private clsEvent As clsEvent<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン1：最初から存在するbtn1のClickイベント</span><br>
+Private Sub btn1_Click()<br>
+　　Set mTimer = New clsEvent<br>
+　　Call mTimer.TimerMsg(3)<br>
+End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン1：WithEventsを指定したmTimerのTimerEventイベント</span><br>
+Private Sub mTimer_TimerEvent(ByVal aTime As Long)<br>
+　　MsgBox aTime &amp; &quot;秒経過しました。&quot;<br>
+End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン2：イベントクラスにボタンを追加</span><br>
+Private Sub UserForm_Initialize()<br>
+　　Set clsEvent = New clsEvent<br>
+　　Set clsEvent.Button = addButton(Me.btn1.Top + 50, _<br>
+　　　　　　　　　　　　　　　　　　Me.btn1.Left, _<br>
+　　　　　　　　　　　　　　　　　　Me.btn1.Height, _<br>
+　　　　　　　　　　　　　　　　　　Me.btn1.Width, _<br>
+　　　　　　　　　　　　　　　　　　&quot;ボタン2&quot;)<br>
+End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン2：ユーザーフォームにボタンを追加</span><br>
+Private Function addButton(ByVal aTop As Single, _<br>
+　　　　　　　　　　　　　 ByVal aLeft As Single, _<br>
+　　　　　　　　　　　　　 ByVal aHeight As Single, _<br>
+　　　　　　　　　　　　　 ByVal aWidth As Single, _<br>
+　　　　　　　　　　　　　 ByVal aName As String) As MSForms.CommandButton<br>
+      　　Set addButton = Me.Controls.Add(&quot;Forms.CommandButton.1&quot;, aName)<br>
+　　With addButton<br>
+　　　　.Top = aTop<br>
+　　　　.Left = aLeft<br>
+　　　　.Height = aHeight<br>
+　　　　.Width = aWidth<br>
+　　　　.Caption = aName<br>
+　　End With<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>クラス(clsEvent)</h3>
+<div class="main-indent">クラスの<strong>オブジェクト名：clsEvent</strong><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン1：イベントの宣言、RaiseEventでイベント発生</span><br>
+Public Event TimerEvent(ByVal aTime As Long)<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン2：イベントに応答するために定義する変数</span><br>
+Private WithEvents myButton As MSForms.CommandButton<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン1：指定時間後にTimerEventイベントを発生させる</span><br>
+Public Sub TimerMsg(ByVal aTime As Long)<br>
+　　Application.Wait Now() + TimeSerial(0, 0, aTime)<br>
+　　RaiseEvent TimerEvent(aTime)<br>
+End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン2：クラスで扱うボタンの設定/取得</span><br>
+Public Property Get Button() As Control<br>
+　　Set Button = myButton<br>
+End Property<br>
+Public Property Set Button(ByVal addBtn As Control)<br>
+　　Set myButton = addBtn<br>
+End Property<br><div class="br2"><br></div>
+      <span style="color:#009900;">'ボタン2：クラスで扱うボタンのClickイベント</span><br>
+Private Sub myButton_Click()<br>
+　　MsgBox myButton.Caption &amp; &quot;がクリックされました。&quot;<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+<h3>クラスを使ったイベントの解説</h3>
+<div class="main-indent">2つのボタンは全く互いに関係はありません、基本的に独立したボタンです。<br>
+（ボタン2を配置する時だけボタン1を使っています。）<br>
+本来は、<br>
+・EventステートメントとRaiseEventステートメントでの、ユーザー定義イベント<br>
+・WithEventsキーワードでの、クラス発生イベントの応答<br>
+これらを別々に解説するところなのでしょうが、ここではこの2つを一緒にしたものになります。<br>
+クラスを使ったイベントとして、混乱しやすく覚えづらい部分なので、その違いを比較しやすいようにと言う目的があります。<br><div class="br2"><br></div>
+VBAの中でのコメントとして、<br>
+<strong>ボタン1：</strong><br>
+<strong>ボタン2：</strong><br>
+その変数またはプロシージャーが使われているボタンを指しています。<br>
+変数およびプロシージャーは、それぞれのボタンで全く別々のものが使用されています。<br><div class="br2"><br></div>
+<strong>ボタン1の動作順</strong></div>
+<div class="main-indent">
+<div class="main-indent">ユーザーフォームに最初から配置されているボタンです。<br>
+ユーザーフォームが表示された後にボタン1クリック。<br><div class="br2"><br></div>
+・<strong>btn1_Click</strong>プロシージャー<br>
+・<strong>TimerMsg</strong>プロシージャー</div>
+<div class="main-indent">
+<div class="main-indent">RaiseEvent TimerEvent<br>
+ここでEventステートメントで定義されているTimerEventを発生させる</div>
+</div>
+<div class="main-indent">・<strong>mTimer_TimerEvent</strong>プロシージャー</div>
+<div class="main-indent">
+<div class="main-indent">WithEventsキーワード定義したmTimerのTimerEventが呼ばれる</div>
+</div>
+<div class="main-indent"><br>
+<img src="image235.jpg" tppabs="https://excel-ubara.com/vba_class/image235.jpg" width="164" height="194" border="0" alt="マクロ VBA クラス class event"><br><div class="br2"><br></div>
+ここでの動作自体は、単にClickイベントでメッセージ表示している事と何も変わりません。<br>
+あくので、EventとRaiseEventの使い方のサンプルVBAとしての意味合いだけのものです。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>ボタン2の動作順</strong></div>
+<div class="main-indent">
+<div class="main-indent">フォームに動的に追加したコントロールにイベントを設定しています。。<br>
+ボタン2は、ユーザーフォームには最初は配置されていないボタンです。<br>
+ユーザーフォームが初めて表示（使用）されたとき、<br><div class="br2"><br></div>
+・<strong>UserForm_Initialize</strong></div>
+<div class="main-indent">
+<div class="main-indent">Set clsEvent = New clsEvent 'クラスのインスタンス<br>
+Set clsEvent.Button = addButton(… 'クラスにボタンを登録</div>
+</div>
+<div class="main-indent">・<strong>addButton</strong><br><div class="br2"><br></div>
+ここで動的にボタンを作成し、クラスにボタンを登録しています。<br>
+ユーザーフォームが表示された後にボタン2クリック。<br><div class="br2"><br></div>
+・<strong>myButton_Click</strong></div>
+<div class="main-indent">
+<div class="main-indent">WithEvents myButton As MSForms.CommandButton<br>
+フォーム標準のボタンを割り当てています。<br>
+Clickはボタンに標準で存在するイベントです。<br>
+プロシージャー名は、<br>
+変数名_イベント名<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<img src="image236.jpg" tppabs="https://excel-ubara.com/vba_class/image236.jpg" width="224" height="194" border="0" alt="マクロ VBA クラス class event"><br><div class="br2"><br></div>
+</div>
+</div>
+<h3>VBAクラスを使ったイベントの最後に</h3>
+<div class="main-indent">今回紹介した2つの処理<br>
+・EventステートメントとRaiseEventステートメントでの、ユーザー定義イベント<br>
+・WithEventsキーワードでの、クラス発生イベントの応答<br>
+いずれも頻繁に使うものではないと思います。<br><div class="br2"><br></div>
+したがって、全部を覚えようとすることは無いと思います。<br>
+動作の仕組みを理解しておき、実際に使う時に調べながら記述できるようにしておくだけで良いでしょう。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a>」の記事</h3><p>
+<A href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</A><br>
+<A href="VBA_CLASS_05.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_05.html">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</A><br>
+<A href="VBA_CLASS_06.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_06.html">クラスとイベントとマルチプロセス並列処理</A><br>
+<A href="VBA_CLASS_07.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_07.html">クラスとCallByNameとポリモーフィズム(多態性)</A><br>
+<A href="VBA_CLASS_08.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_08.html">オートフィルターを退避回復するVBAクラス</A><br>
+<A href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</A><br>
+<A href="VBA_CLASS_10.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_10.html">コレクション（Collection）の並べ替え（Sort）に対応するクラス</A><br>
+<A href="VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html">VBAクラスのAttributeについて（既定メンバーとFor Each）</A><br>
+<span class="strrev">VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</span><br>
+<A href="VBA_CLASS_13.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_13.html">VBAで音楽再生するクラスを作成</A><br>
+<A href="VBA_CLASS_14.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_14.html">図形を方程式で動かすVBAクラス</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>VBAクラスを使ったイベント作成</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+          
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>クラスを使った全ブック（他ブック）のイベント補足｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VBAでイベントを使う場合は、通常はイベントが発生するオブジェクト（ブックやシート等）のモジュールに記載します、つまり、各ブックの中にマクロを入れなければなりません。開いている全ブックまたは、他の特定のブックのイベントを処理するには、WithEventsキーワードを付けた変数宣言を使います、クラスを使って全ブックまたは他ブックのイベントを補足する方法につ…">
+  <meta name="keywords" content="クラスを使った全ブック,他ブック,イベント補足,技術解説,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba_class/VBA_CLASS_02.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="クラスを使った全ブック（他ブック）のイベント補足｜VBA技術解説" />
+  <meta property="og:description" content="VBAでイベントを使う場合は、通常はイベントが発生するオブジェクト（ブックやシート等）のモジュールに記載します、つまり、各ブックの中にマクロを入れなければなりません。開いている全ブックまたは、他の特定のブックのイベントを処理するには、WithEventsキーワードを付けた変数宣言を使います、クラスを使って全ブックまたは他ブックのイベントを補足する方法につ…" />
+  <meta property="og:image" content="https://excel-ubara.com/vba_class/image132.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/vba_class/VBA_CLASS_02.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="クラスを使った全ブック（他ブック）のイベント補足｜VBA技術解説" />
+  <meta name="twitter:description" content="VBAでイベントを使う場合は、通常はイベントが発生するオブジェクト（ブックやシート等）のモジュールに記載します、つまり、各ブックの中にマクロを入れなければなりません。開いている全ブックまたは、他の特定のブックのイベントを処理するには、WithEventsキーワードを付けた変数宣言を使います、クラスを使って全ブックまたは他ブックのイベントを補足する方法につ…" />
+  <meta name="twitter:image" content="https://excel-ubara.com/vba_class/image132.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>クラスを使った全ブック（他ブック）のイベント補足</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba_class/">
+<span itemprop="name">VBAクラス入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="VBA_CLASS_02.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_02.html">
+<span itemprop="name">クラスを使った全ブック（他ブック）のイベント補足</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-03-18</span>
+<h2 align="center">クラスを使った全ブック（他ブック）のイベント補足</h2><p><br>
+VBAでイベントを使う場合は、通常はイベントが発生するオブジェクト（ブックやシート等）のモジュールに記載します、<br>
+つまり、各ブックの中にマクロを入れなければなりません。<br><div class="br2"><br></div>
+開いている全ブックまたは、他の特定のブックのイベントを処理するには、<br>
+<strong>WithEvents</strong>キーワードを付けた変数宣言を使います、<br>
+<strong>クラス</strong>を使って全ブックまたは他ブックのイベントを補足する方法について具体的なVBAコードで紹介します。<br><div class="br2"><br></div>
+他ブック（全ブック）のイベントを補足するだけなら、クラスを使わなくても、<br>
+ThisWorkbookにWithEventsキーワードを付けた変数宣言をする方法で可能です。<br>
+ですが、こまような処理の場合にはクラスを使ったほうが保守や拡張がしやすくなると思います。<br><div class="br2"><br></div>
+クラスの基本と、イベントについては以下を参照してください。 
+<div class="main-indent"><strong><a href="VBA_CLASS_01.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_01.html">VBAのクラスとは（Class,Property）</a></strong><div class="details">VBAを覚えて、いろいろ作りながらネットで調べたりしていると、クラスとかオブジェクト指向といった言葉に出くわします。VBEの「挿入」の一番下にある「クラスモジュール」は気になっていたかもしれません。このクラスモジュールを使ってクラスを作ります。</div>
+<strong><a href="../excelvba1/EXCELVBA424.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA424.html">Workbookのイベントプロシージャー</a></strong><div class="details">Workbookのイベントプロシージャーは、ブックに対し特定の操作（これがイベント）が行われた時に実行されます。イベントは、手動でもVBAでも、どちらで操作が行われても発生します。Workbookのイベントは多数用意されています。</div>
+<strong><a href="../excelvba1/EXCELVBA425.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA425.html">Worksheetのイベントプロシージャー</a></strong><div class="details">Worksheetのイベントプロシージャーは、ワークシートまたはそのセルに対し特定の操作（これがイベント）が行われた時に実行されます。イベントは、手動でもVBAでも、どちらで操作が行われても発生します。Worksheetのイベントプロシージャーの一覧紹介と主要なイベントについて解説します。</div>
+<strong><a href="../MOS_VBA/mosvba022.html" tppabs="https://excel-ubara.com/MOS_VBA/mosvba022.html">VBAスタンダード：イベント</a></strong><div class="details">・イベントとは ・ブックのイベント ・シートのイベント 2019/05/15からの「VBAエキスパート」リニューアルに伴い出題範囲から削除されました。しかし、VBAをやっていくうえで、イベントは必ず覚えなければならないものです。試験は別として、必ず学習することをお勧めいたします。</div>
+</div><p>
+今回の場合は、開いている全ブックのイベントを補足したいので、<br>
+<a href="../EXCEL/EXCEL914.html#sec03" tppabs="https://excel-ubara.com/EXCEL/EXCEL914.html#sec03" target="_blank">Applicationのイベント</a>の中にあるブックやシートのイベントを使用します。<br>
+これについての詳細は後述します。<br><div class="br2"><br></div></p>
+<H3><strong>WithEventsキーワード</strong></H3>
+<div class="main-indent"><br>
+WithEventsキーワードは、次の構文で使用します。<br>
+Dim ステートメント<br>
+Private ステートメント<br>
+Public ステートメント<br><div class="br2"><br></div>
+変数がイベントに対応するためのオブジェクト変数であることを指定するキーワードです。<br>
+オブジェクトのモジュールのみで使えます、つまり、<strong>標準モジュールでは使用できません。</strong><br>
+WithEventsは任意の数の変数に宣言できます。<br>
+ただし、WithEventsでは配列は作成できません。<br>
+また、キーワードNewとWithEventsは一緒には使用できません。<br><div class="br2"><br></div>
+<s>Private <strong>WithEvents</strong> xlApp As <strong>New</strong> Excel.Application</s><br>
+↓<br>
+Private <strong>WithEvents</strong> xlApp As  Excel.Application<br>
+・・・<br>
+Set xlApp = <strong>New</strong> Excel.Application<br>
+このように、WithEventsとNewは分けて使わなければなりません。<br><div class="br2"><br></div>
+</div>
+<H3><strong>全体の機能と構成</strong></H3>
+<div class="main-indent"><br>
+他ブックのイベントを補足するプロシージャーを起動することで、<br>
+指定のExcelアプリケーション（既定は同一Excelアプリケーション）内での、<br>
+全てのブック・シートのイベントを補足し、<br>
+何らかの処理（ここではメッセージボックスを表示して補足できている事のみ確認）を行えるようにしています。<br><div class="br2"><br></div>
+イベントを補足するブック・シートを指定して対象を絞れるようにしています。<br>
+何も指定しない場合は、全てのブック・シートが対象になります。<br><div class="br2"><br></div>
+<strong>クラスを作成するブックの全体構成</strong><br><div class="br2"><br></div>
+<strong>ブック</strong></div>
+<div class="main-indent">
+<div class="main-indent">任意の名称のマクロ有効ブック(.xlsm)</div>
+</div>
+<div class="main-indent"><strong>シート</strong></div>
+<div class="main-indent">
+<div class="main-indent">先頭シートを対象ブック・シートの指定に使用<br><div class="br2"><br></div>
+<img src="image129.jpg" tppabs="https://excel-ubara.com/vba_class/image129.jpg" width="304" height="162" border="0" alt="マクロ VBA サンプル画像"><br><div class="br2"><br></div>
+これはクラスの動作確認用に使うものです。<br>
+クラスを起動する標準モジュールのプロシージャーで使用しています。<br><div class="br2"><br></div>
+A列：ブック名を指定<br>
+B列～：シート名を指定、横に何個でも指定可能<br><div class="br2"><br></div>
+ブック名のみ指定した場合は、指定したブックのイベントに対して有効<br>
+シート名が指定されている場合は、指定ブックの指定シートのイベントに対して有効<br>
+上図であれば、以下が対象となります。<br><div class="br2"><br></div>
+・Book2のブックイベント<br>
+・Book*のSheet2,Sheet3のシートのイベント<br>
+・全てのブックのSheet5*のシートのイベント<br><div class="br2"><br></div>
+ブック名・シート名ともに、Like演算子で有効なワイルドカードが使用できます。</div>
+</div>
+<div class="main-indent"><strong>クラスモジュール</strong></div>
+<div class="main-indent">
+<div class="main-indent">オブジェクト名：clsEvent<br><div class="br2"><br></div>
+オブジェクト名を変更する場合は、標準モジュールの変数宣言も変更してください。</div>
+</div>
+<div class="main-indent"><strong>標準モジュール</strong></div>
+<div class="main-indent">
+<div class="main-indent">クラス動作確認用のメインプロシージャー<br>
+Public Sub StartEventClass()<br><div class="br2"><br></div>
+クラスに指定したブック・シートを配列で受けとる<br>
+Sub checkBookSheets()<br><div class="br2"><br></div>
+プロシージャー名は任意に変更して構いません。<br>
+この標準モジュールは、あくまでクラスの動作確認用で作成したものです。<br><div class="br2"><br></div>
+</div>
+</div>
+<H3><strong>VBAコード</strong></H3>
+<div class="main-indent"><br>
+クラス：clsEvent の全VBAコード<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+<span style="color:#009900;">'対象のExcelアプリケーション</span><br>
+Private WithEvents xlApp As Excel.Application<br><div class="br2"><br></div>
+<span style="color:#009900;">'対象ブック・シート：1次元配列の要素に構造体を入れる</span><br>
+Private Type typeBookSheets<br>
+　　Book As String <span style="color:#009900;">'ブック</span><br>
+　　Sheets() As String <span style="color:#009900;">'シート1,シート2,…</span><br>
+End Type<br>
+Private pBookSheets() As typeBookSheets<br>
+Private pCntBS As Integer<br><div class="br2"><br></div>
+<span style="color:#009900;">'イベント停止（一時的に停止させる）</span><br>
+Private pStopEvent As Boolean<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 公開プロパティ</span><br>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">'Excelアプリケーションの設定・取得</span><br>
+Public Property Set ExcelApplication(argApp As Excel.Application)<br>
+　　Set xlApp = argApp<br>
+End Property<br>
+Public Property Get ExcelApplication() As Excel.Application<br>
+　　Set ExcelApplication = xlApp<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'イベント停止（一時的に停止させる）の取得設定</span><br>
+Public Property Let StopEvent(argStop As Boolean)<br>
+　　pStopEvent = argStop<br>
+End Property<br>
+Public Property Get StopEvent() As Boolean<br>
+　　StopEvent = pStopEvent<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 公開メソッド</span><br>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">'対象ブック・シートの初期化</span><br>
+Public Sub InitializeBookSheets()<br>
+　　pCntBS = 0<br>
+　　Erase pBookSheets<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'対象ブック・シートの設定</span><br>
+Public Function AddBookSheet(ByRef argAry) As Boolean<br>
+　　Dim i1 As Long<br>
+　　Dim i2 As Long<br>
+　　Dim ix As Integer<br>
+　　Dim myArray() As String<br>
+　　<br>
+　　<span style="color:#009900;">'配列の次元数により分岐</span><br>
+　　Select Case GetDimension(argAry)<br>
+　　　　<br>
+　　　　Case 1 <span style="color:#009900;">'1次元配列</span><br>
+　　　　　　ReDim Preserve pBookSheets(pCntBS)<br>
+　　　　　　pBookSheets(pCntBS).Book = argAry(LBound(argAry))<br>
+　　　　　　ix = 0<br>
+　　　　　　ReDim myArray(ix)<br>
+　　　　　　For i1 = LBound(argAry) + 1 To UBound(argAry)<br>
+　　　　　　　　If argAry(i1) &lt;&gt; &quot;&quot; Then<br>
+　　　　　　　　　　ReDim Preserve myArray(ix)<br>
+　　　　　　　　　　myArray(ix) = argAry(i1)<br>
+　　　　　　　　　　ix = ix + 1<br>
+　　　　　　　　End If<br>
+　　　　　　Next<br>
+　　　　　　pBookSheets(pCntBS).Sheets = myArray<br>
+　　　　　　Erase myArray<br>
+　　　　　　pCntBS = pCntBS + 1<br>
+　　　　　　<br>
+　　　　Case 2 <span style="color:#009900;">'2次元配列</span><br>
+　　　　　　For i1 = LBound(argAry, 1) To UBound(argAry, 1)<br>
+　　　　　　　　ReDim Preserve pBookSheets(pCntBS)<br>
+　　　　　　　　pBookSheets(pCntBS).Book = argAry(i1, LBound(argAry, 2))<br>
+　　　　　　　　ix = 0<br>
+　　　　　　　　ReDim myArray(ix)<br>
+　　　　　　　　For i2 = LBound(argAry, 2) + 1 To UBound(argAry, 2)<br>
+　　　　　　　　　　If argAry(i1, i2) &lt;&gt; &quot;&quot; Then<br>
+　　　　　　　　　　　　ReDim Preserve myArray(ix)<br>
+　　　　　　　　　　　　myArray(ix) = argAry(i1, i2)<br>
+　　　　　　　　　　　　ix = ix + 1<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　Next<br>
+　　　　　　　　pBookSheets(pCntBS).Sheets = myArray<br>
+　　　　　　　　Erase myArray<br>
+　　　　　　　　pCntBS = pCntBS + 1<br>
+　　　　　　Next<br>
+　　　　　　<br>
+　　　　Case Else <span style="color:#009900;">'1,2次元以外はエラーで戻す</span><br>
+　　　　　　AddBookSheet = False<br>
+　　　　　　Exit Function<br>
+　　End Select<br>
+　　<br>
+　　AddBookSheet = True<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'対象ブック・シートの全取得：2次元配列で戻す</span><br>
+Public Function GetBookSheets() As Variant<br>
+　　Dim i1 As Integer, i2 As Integer<br>
+　　Dim intMax As Integer<br>
+　　Dim myArray() As String<br>
+　　<br>
+　　<span style="color:#009900;">'配列内の最大シート数を取得</span><br>
+　　intMax = 0<br>
+　　For i1 = 0 To UBound(pBookSheets)<br>
+　　　　If UBound(pBookSheets(i1).Sheets) &gt; intMax Then<br>
+　　　　　　intMax = UBound(pBookSheets(i1).Sheets)<br>
+　　　　End If<br>
+　　Next<br>
+　　<br>
+　　<span style="color:#009900;">'構造体の1次元配列を、構造体をバラして2次元配列に</span><br>
+　　ReDim myArray(UBound(pBookSheets), intMax + 1)<br>
+　　For i1 = 0 To UBound(pBookSheets)<br>
+　　　　myArray(i1, 0) = pBookSheets(i1).Book<br>
+　　　　For i2 = LBound(pBookSheets(i1).Sheets) To UBound(pBookSheets(i1).Sheets)<br>
+　　　　　　myArray(i1, i2 + 1) = pBookSheets(i1).Sheets(i2)<br>
+　　　　Next<br>
+　　Next<br>
+　　GetBookSheets = myArray<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' クラスのメソッド</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'クラスの初期化</span><br>
+Private Sub Class_Initialize()<br>
+　　Set Me.ExcelApplication = Application<br>
+　　Me.StopEvent = False<br>
+　　Me.InitializeBookSheets<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'クラスの終了処理</span><br>
+Private Sub Class_Terminate()<br>
+　　Set xlApp = Nothing<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' Applicationのブックイベント</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'ブックが開かれたときに発生</span><br>
+Private Sub xlApp_WorkbookOpen(ByVal wb As Workbook)<br>
+　　If Me.StopEvent Then Exit Sub<br>
+　　If Not CheckBook(wb) Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'メッセージボックスでイベント補足を確認</span><br>
+　　MsgBox &quot;WorkbookOpen : &quot; &amp; wb.FullName<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'ブックが閉じられる直前に発生</span><br>
+Private Sub xlApp_WorkbookBeforeClose(ByVal wb As Workbook, Cancel As Boolean)<br>
+　　If Me.StopEvent Then Exit Sub<br>
+　　If Not CheckBook(wb) Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'メッセージボックスでイベント補足を確認</span><br>
+　　MsgBox &quot;WorkbookBeforeClose : &quot; &amp; wb.FullName<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'新しいブックが作成されたときに発生</span><br>
+Private Sub xlApp_NewWorkbook(ByVal wb As Workbook)<br>
+　　If Me.StopEvent Then Exit Sub<br>
+　　If Not CheckBook(wb) Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'メッセージボックスでイベント補足を確認</span><br>
+　　MsgBox &quot;NewWorkbook : &quot; &amp; wb.Name<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' Applicationのシートイベント</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'シートがアクティブになったときに発生</span><br>
+Private Sub xlApp_SheetActivate(ByVal Sh As Object)<br>
+　　If Me.StopEvent Then Exit Sub<br>
+　　If Not CheckSheet(Sh) Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'メッセージボックスでイベント補足を確認</span><br>
+　　MsgBox &quot;SheetActivate : [&quot; &amp; Sh.Parent.Name &amp; &quot;]&quot; &amp; Sh.Name<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'ワークシートのセルが変更されたときに発生</span><br>
+Private Sub xlApp_SheetChange(ByVal Sh As Object, ByVal Target As Range)<br>
+　　If Me.StopEvent Then Exit Sub<br>
+　　If Not CheckSheet(Sh) Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'メッセージボックスでイベント補足を確認</span><br>
+　　MsgBox &quot;SheetChange : &quot; &amp; Target.Address(external:=True)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'セルがダブルクリックされたときに発生</span><br>
+Private Sub xlApp_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As Range, Cancel As Boolean)<br>
+　　If Me.StopEvent Then Exit Sub<br>
+　　If Not CheckSheet(Sh) Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'メッセージボックスでイベント補足を確認</span><br>
+　　MsgBox &quot;SheetBeforeDoubleClick : &quot; &amp; Target.Address(external:=True)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'==================================================</span><br>
+<span style="color:#009900;">' 非公開メソッド</span><br>
+<span style="color:#009900;">'==================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'対象ブックの判定</span><br>
+Private Function CheckBook(ByVal wb As Workbook) As Boolean<br>
+　　<span style="color:#009900;">'指定なしはすべて対象とする</span><br>
+　　If pCntBS = 0 Then<br>
+　　　　CheckBook = True<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'ブック・シート指定の配列にブック名があるか判定</span><br>
+　　Dim i1 As Integer<br>
+　　CheckBook = False<br>
+　　For i1 = 0 To UBound(pBookSheets)<br>
+　　　　<span style="color:#009900;">'ブックの名称判定</span><br>
+　　　　If wb.Name Like pBookSheets(i1).Book Then<br>
+　　　　　　<span style="color:#009900;">'シート指定がない時のみブックの指定と判定</span><br>
+　　　　　　If pBookSheets(i1).Sheets(0) = &quot;&quot; Then<br>
+　　　　　　　　CheckBook = True<br>
+　　　　　　　　Exit Function<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　Next<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'対象シートの判定</span><br>
+Private Function CheckSheet(ByVal ws As Worksheet) As Boolean<br>
+　　<span style="color:#009900;">'指定なしはすべて対象とする</span><br>
+　　If pCntBS = 0 Then<br>
+　　　　CheckSheet = True<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'ブック・シート指定の配列にシート名があるか判定</span><br>
+　　Dim i1 As Integer, i2 As Integer<br>
+　　Dim wb As Workbook<br>
+　　CheckSheet = False<br>
+　　Set wb = ws.Parent<br>
+　　For i1 = 0 To UBound(pBookSheets)<br>
+　　　　<span style="color:#009900;">'ブックの名称判定</span><br>
+　　　　If wb.Name Like pBookSheets(i1).Book Then<br>
+　　　　　　<span style="color:#009900;">'シートの名称判定</span><br>
+　　　　　　For i2 = LBound(pBookSheets(i1).Sheets) To UBound(pBookSheets(i1).Sheets)<br>
+　　　　　　　　If ws.Name Like pBookSheets(i1).Sheets(i2) Then<br>
+　　　　　　　　　　CheckSheet = True<br>
+　　　　　　　　　　Exit Function<br>
+　　　　　　　　End If<br>
+　　　　　　Next<br>
+　　　　End If<br>
+　　Next<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'配列の次元数取得とエラー値判定：1,2以外の戻り値はエラー</span><br>
+Private Function GetDimension(ByVal argAry) As Integer<br>
+　　On Error Resume Next<br>
+　　<br>
+　　<span style="color:#009900;">'配列の次元数取得</span><br>
+　　Dim intDim As Integer<br>
+　　Dim tmpDim As Integer<br>
+　　intDim = 0<br>
+　　Do While Err.Number = 0<br>
+　　　　intDim = intDim + 1<br>
+　　　　<span style="color:#009900;">'エラーになった時点で配列が終わり</span><br>
+　　　　tmpDim = UBound(argAry, intDim)<br>
+　　Loop<br>
+　　Err.Clear<br>
+　　intDim = intDim - 1<br>
+　　<br>
+　　<span style="color:#009900;">'配列の場合、エラー値データの判定</span><br>
+　　Dim vTemp<br>
+　　Select Case intDim<br>
+　　　　Case 1, 2<br>
+　　　　　　For Each vTemp In argAry<br>
+　　　　　　　　If IsError(vTemp) Then<br>
+　　　　　　　　　　GetDimension = 0<br>
+　　　　　　　　　　Exit Function<br>
+　　　　　　　　End If<br>
+　　　　　　Next<br>
+　　End Select<br>
+　　<br>
+　　GetDimension = intDim<br>
+　　On Error GoTo 0<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+以下のVBAコードの解説で簡単に説明しています。<br>
+個々のステートメントについての詳細までは解説していません。<br>
+VBA内のコメントを頼りに読み解いてください。<br><div class="br2"><br></div>
+クラスに興味を持つということは、VBAはある程度理解していると思いますので、<br>
+今回のクラス特有の機能部分にはあまりこだわらず、<br>
+クラスの全体構成と、他ブックのイベント補足方法について確認しつつ、<br>
+実際に動かして、ブレークポイントで止めたりしながら動作確認してみてください。<br><div class="br2"><br></div>
+クラスでのプロパティ・メソッドの実装方法や、WithEventsの使い方を中心にVBAコードを読んでください。<br><div class="br2"><br></div>
+</div>
+<H3><strong>VBAコードの解説</strong></H3><br>
+<strong>変数
+</strong>
+<div class="main-indent"><strong>対象のExcelアプリケーション</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private WithEvents xlApp As Excel.Application<br><div class="br2"><br></div>
+イベントに対応するためのオブジェクト変数の定義です。<br>
+</div>
+</div>
+<div class="main-indent"><strong>対象ブック・シート、1次元配列の要素に構造体を入れる</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Type typeBookSheets<br>
+　　Book As String 'ブック<br>
+　　Sheets() As String 'シート1,シート2,…<br>
+End Type<br>
+Private pBookSheets() As typeBookSheets<br>
+Private pCntBS As Integer<br><div class="br2"><br></div>
+構造体typeBookSheetsを定義<br>
+構造体のメンバーはBookとSheets()になります。<br>
+Bookはプック名をいれ、<br>
+Sheets()は、シート名を強い列で入れます。<br>
+そして、構造体typeBookSheetsを型に持つ配列を定義しています。<br>
+pCntBSは、配列の現在要素数のカウントに使用します。<br>
+</div>
+</div>
+<div class="main-indent"><strong>イベント停止（一時的に停止させる）</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private pStopEvent As Boolean<br><div class="br2"><br></div>
+マクロ動作でブックやシートの変更を行ってもイベントが発生します。<br>
+そのような場合に、この変数をFalseにすることでその間のイベント発生を停止できるようにしています。<br><div class="br2"><br></div>
+このプロパティを使わずに、<br>
+Application.EnableEvents = False<br>
+こちらを使っても良いでしょう、この場合はこのクラスだけではなく全てのイベントが抑止されます。<br><div class="br2"><br></div>
+</div>
+</div><p><br>
+<strong>公開プロパティ
+</strong>
+<div class="main-indent"><br>
+<strong>Excelアプリケーションの設定・取得</strong></div>
+<div class="main-indent">
+<div class="main-indent">Public Property Set ExcelApplication(argApp As Excel.Application)<br><div class="br2"><br></div>
+このクラスの対象となるExcel.Applicationを設定するプロパティです。<br>
+Class_Initializeで自身の動作しているExcel.Applicationを入れているので、<br>
+通常は設定する必要がありません。<br><div class="br2"><br></div>
+Public Property Get ExcelApplication() As Excel.Application<br><div class="br2"><br></div>
+現在設定されているExcel.Applicationを取得するプロパティです。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>イベント停止（一時的に停止させる）の取得設定</strong></div>
+<div class="main-indent">
+<div class="main-indent">Public Property Let StopEvent(argStop As Boolean)<br><div class="br2"><br></div>
+このクラスを使用するマクロ動作中に、このクラスのイベントを停止させたいときに使うプロパティです。<br>
+Trueを設定すると、イベント発生しても何も動作しないようにしています。<br><div class="br2"><br></div>
+Public Property Get StopEvent() As Boolean<br><div class="br2"><br></div>
+イベント停止の設定状態を取得します。<br>
+</div>
+</div><p><br>
+<strong>公開メソッド
+</strong>
+<div class="main-indent"><strong>対象ブック・シートの初期化</strong></div>
+<div class="main-indent">
+<div class="main-indent">Public Sub InitializeBookSheets()<br><div class="br2"><br></div>
+対象ブック・シートの設定を初期設定（クリア）するメソッドです。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>対象ブック・シートの設定</strong></div>
+<div class="main-indent">
+<div class="main-indent">Public Function AddBookSheet(ByRef argAry) As Boolean<br><div class="br2"><br></div>
+対象ブック・シートを設定するメソッドです。<br>
+<strong>1次元配列と2次元配列をサポート</strong>しています。<br>
+そのため、引数は型をVariantにしています。<br><div class="br2"><br></div>
+このクラスを使うプロシージャーが、対象ブック・シートをどのように用意するかで使い分けられるようにしています。<br>
+Array(・・・)なら1次元配列として、必要な回数このメソッドを呼び出します。<br>
+セル範囲なら2次元配列をこのメソッドに渡せば1回で複数の設定を入れることができます。<br>
+※標準モジュール参照<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>対象ブック・シートの全取得：2次元配列で戻す</strong></div>
+<div class="main-indent">
+<div class="main-indent">Public Function GetBookSheets() As Variant<br><div class="br2"><br></div>
+このクラスを使うプロシージャーが、<br>
+対象ブック・シートの設定状態を取得し確認するためのプロパティです。<br>
+VBA開発時のデバッグ等で使用する目的で作成しています。<br>
+</div>
+</div><p><br>
+<strong>クラスのメソッド
+</strong>
+<div class="main-indent"><strong>クラスの初期化</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub Class_Initialize()<br><div class="br2"><br></div>
+クラスのイベントで、クラスのインスタンスが生成(New)されたときに呼び出されます。<br>
+クラス内の変数・プロパティの初期化を行います。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>クラスの終了処理</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub Class_Terminate()<br><div class="br2"><br></div>
+クラスが解放（オブジェクト変数がNothingに設定）されたときに呼び出されます。<br>
+ここでは特にやることもないので、<br>
+クラス内で変数に保持しているExcel.Applicationを解放しています。<br>
+</div>
+</div><p><br>
+<strong>Applicationのブックイベント
+</strong>
+<div class="main-indent"><strong>ブックが開かれたときに発生</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub xlApp_WorkbookOpen(ByVal wb As Workbook)<br><div class="br2"><br></div>
+オブジェクト変数xlApp(Excel.Application)内で、ブックが開かれたとき発生するイベントです。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>ブックが閉じられる直前に発生</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub xlApp_WorkbookBeforeClose(ByVal wb As Workbook, Cancel As Boolean)<br><div class="br2"><br></div>
+オブジェクト変数xlApp(Excel.Application)内で、ブックが閉じられたとき発生するイベントです。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>新しいブックが作成されたときに発生</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub xlApp_NewWorkbook(ByVal wb As Workbook)<br><div class="br2"><br></div>
+オブジェクト変数xlApp(Excel.Application)内で、ブックが新規作成されたとき発生するイベントです。<br>
+</div>
+</div><p><br>
+<strong>Applicationのシートイベント</strong> 
+<div class="main-indent"><strong>シートがアクティブになったときに発生</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub xlApp_SheetActivate(ByVal Sh As Object)<br><div class="br2"><br></div>
+オブジェクト変数xlApp(Excel.Application)内で、アクティブシートが移ったとき発生するイベントです。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>ワークシートのセルが変更されるたときに発生</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Sub xlApp_SheetChange(ByVal Sh As Object, ByVal Target As Range)<br><div class="br2"><br></div>
+オブジェクト変数xlApp(Excel.Application)内で、セルが変更されたとき発生するイベントです。</div><br>
+<strong>セルがダブルクリックされたときに発生</strong>
+<div class="main-indent">Private Sub xlApp_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As Range, Cancel As Boolean)<br><div class="br2"><br></div>
+オブジェクト変数xlApp(Excel.Application)内で、セルがダブルクリックされたとき発生するイベントです。<br>
+</div>
+</div><p><br>
+<strong>非公開メソッド
+</strong>
+<div class="main-indent"><strong>対象ブックの判定</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Function CheckBook(ByVal wb As Workbook) As Boolean<br><div class="br2"><br></div>
+引数で指定されたブックが、対象ブック・シートの配列に存在するかどうかを判定します。<br>
+存在したときにはTrueを返し、存在しないときにはFalseを返します。<br><div class="br2"><br></div>
+構造体(typeBookSheets)の配列(pBookSheets)内をループ検索します。<br>
+構造体のBookが対象ブック名で、Sheets(0)が空文字の場合がブックイベントに対する指定になります。<br>
+名称はLike演算子を使って比較しています。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>対象シートの判定</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Function CheckSheet(ByVal ws As Worksheet) As Boolean<br><div class="br2"><br></div>
+引数で指定されたシートが、対象ブック・シートの配列に存在するかどうかを判定します。<br>
+存在したときにはTrueを返します。<br><div class="br2"><br></div>
+引数はシートオブジェクトなので、.Parentプロパティを使って親であるブックオブジェクトを取得しています。<br><div class="br2"><br></div>
+構造体(typeBookSheets)の配列(pBookSheets)内をループ検索します。<br>
+構造体のBookが対象ブック名、Sheets()がシート名と一致している場合に対象となります。<br>
+名称はLike演算子を使って比較しています。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>配列の次元数取得とエラー値判定</strong></div>
+<div class="main-indent">
+<div class="main-indent">Private Function GetDimension(ByVal argAry) As Long<br><div class="br2"><br></div>
+引数argAryの配列の次元を求め、数値で返します。<br>
+1次元2次元配列の場合は、エラー値が含まれていないかのチェックも行っています。<br><div class="br2"><br></div>
+配列以外やエラー値が含まれるときは0を返します。<br><div class="br2"><br></div>
+</div>
+</div></p>
+<h3><strong>標準モジュールでのクラスの使い方</strong></h3>
+<div class="main-indent"><br>
+クラスを使う場合のサンプルになります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+Private myClass As clsEvent<br><div class="br2"><br></div>
+Public Sub StartEventClass()<br>
+　　<span style="color:#009900;">'クラスのインスタンス</span><br>
+　　Set myClass = New clsEvent<br>
+　　<span style="color:#009900;">'Excel.Applicationを設定（同一Appなら設定不要）</span><br>
+　　Set myClass.ExcelApplication = Application<br>
+　　<span style="color:#009900;">'ブック・シートの指定を初期化、不要だが記述説明の意味で</span><br>
+　　myClass.InitializeBookSheets<br>
+　　<span style="color:#009900;">'イベント発生停止、不要だが記述説明の意味で</span><br>
+　　myClass.StopEvent = True<br>
+　　<br>
+　　<span style="color:#009900;">'***** シートから設定する場合 *****</span><br>
+　　Dim myArray<br>
+　　With ThisWorkbook.Worksheets(1).Range(&quot;A1&quot;)<br>
+　　　　If .CurrentRegion.Rows.Count &gt; 1 Then<br>
+　　　　　　myArray = Intersect(.CurrentRegion, .CurrentRegion.Offset(1))<br>
+　　　　　　<span style="color:#009900;">'シート入力なのでエラー判定</span><br>
+　　　　　　If Not myClass.AddBookSheet(myArray) Then<br>
+　　　　　　　　MsgBox &quot;シートにエラー値があります。&quot;<br>
+　　　　　　　　Set myClass = Nothing<br>
+　　　　　　　　Exit Sub<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　End With<br>
+　　<br>
+　　<span style="color:#009900;">'***** 配列を直書きして設定する場合 *****</span><br>
+　　<span style="color:#009900;">'ブック,シート1,シート2,…シート省略時はブックイベント</span><br>
+　　Call myClass.AddBookSheet(Array(&quot;Book4&quot;))<br>
+　　Call myClass.AddBookSheet(Array(&quot;*&quot;, &quot;Sheet7&quot;))<br>
+　　<br>
+　　<span style="color:#009900;">'確認のため設定内容をイミィディエイトに出力</span><br>
+　　Call checkBookSheets<br>
+　　<br>
+　　<span style="color:#009900;">'イベント発生再開</span><br>
+　　myClass.StopEvent = False<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'クラスに指定したブック・シートを配列で受けとる</span><br>
+Sub checkBookSheets()<br>
+　　Dim i1 As Integer<br>
+　　Dim i2 As Integer<br>
+　　Dim sTemp As String<br>
+　　Dim myArray<br>
+　　myArray = myClass.GetBookSheets<br>
+　　For i1 = 0 To UBound(myArray)<br>
+　　　　sTemp = myArray(i1, 0)<br>
+　　　　For i2 = 1 To UBound(myArray, 2)<br>
+　　　　　　sTemp = sTemp &amp; &quot; , &quot; &amp; myArray(i1, i2)<br>
+　　　　Next<br>
+　　　　Debug.Print sTemp<br>
+　　Next<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Private myClass As clsEvent<br>
+モジュールレベル変数として、クラスの変数宣言をしています。<br><div class="br2"><br></div>
+StartEventClassがメインのプロシージャーです。<br>
+Set myClass = New clsEvent<br>
+クラスのインスタンスを作成しています。<br>
+モジュールレベル変数宣言時にNewしても構いません。<br><div class="br2"><br></div>
+checkBookSheetsは、ブック・シートの指定が正しくできているかを確認するためのものです。<br>
+主な作成目的は、クラス作成時のデバッグ用途になります。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>アプリケーションのイベント一覧と調べ方 </h3><p><br>
+<strong>アブリケーションのイベント一覧</strong><br></p>
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td bgcolor="#009999">名前</td>
+      <td bgcolor="#009999">説明</td>
+    </tr>
+    <tr>
+      <td>AfterCalculate</td>
+      <td>中断中の更新作業(同期と非同期の両方)と結果の計算作業がすべて完了すると、AfterCalculateイベントが発生します。</td>
+    </tr>
+    <tr>
+      <td>NewWorkbook</td>
+      <td>新しいブックを作成したときに発生します。</td>
+    </tr>
+    <tr>
+      <td>ProtectedViewWindowActivate</td>
+      <td>[保護されたビュー]ウィンドウがアクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>ProtectedViewWindowBeforeClose</td>
+      <td>[保護されたビュー]ウィンドウまたは[保護されたビュー]ウィンドウ内のブックを閉じる直前に発生します。</td>
+    </tr>
+    <tr>
+      <td>ProtectedViewWindowBeforeEdit</td>
+      <td>指定した[保護されたビュー]ウィンドウでブックの編集が有効になる直前に発生します。</td>
+    </tr>
+    <tr>
+      <td>ProtectedViewWindowDeactivate</td>
+      <td>[保護されたビュー]ウィンドウが非アクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>ProtectedViewWindowOpen</td>
+      <td>ブックを[保護されたビュー]ウィンドウで開いたときに発生します。</td>
+    </tr>
+    <tr>
+      <td>ProtectedViewWindowResize</td>
+      <td>[保護されたビュー]ウィンドウのサイズを変更したときに発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetActivate</td>
+      <td>シートがアクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetBeforeDoubleClick</td>
+      <td>既定のダブルクリックの操作の前に、ワークシートをダブルクリックしたときに発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetBeforeRightClick</td>
+      <td>既定の右クリックの操作の前に、ワークシートを右クリックしたときに発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetCalculate</td>
+      <td>ワークシートを再計算したり、グラフでデータをプロットして変更した後に発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetChange</td>
+      <td>ユーザーまたは外部リンクにより、ワークシートのセルが変更されるときに発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetDeactivate</td>
+      <td>シートが非アクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetFollowHyperlink</td>
+      <td>Excelのハイパーリンクをクリックすると発生します。<br>
+      ワークシートレベルでのイベントについては、FollowHyperlinkイベントのヘルプトピックを参照してください。</td>
+    </tr>
+    <tr>
+      <td>SheetPivotTableAfterValueChange</td>
+      <td>ピボットテーブル内のセルまたはセル範囲が編集または再計算された後に発生します(数式を含むセルの場合)。</td>
+    </tr>
+    <tr>
+      <td>SheetPivotTableBeforeAllocateChanges</td>
+      <td>ピボットテーブルに変更が適用される前に発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetPivotTableBeforeCommitChanges</td>
+      <td>ピボットテーブルのOLAPデータソースに対する変更が適用される前に発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetPivotTableBeforeDiscardChanges</td>
+      <td>ピボットテーブルに対する変更が破棄される前に発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetPivotTableUpdate</td>
+      <td>ピボットテーブルレポートのシートが更新された後に発生します。</td>
+    </tr>
+    <tr>
+      <td>SheetSelectionChange</td>
+      <td>いずれかのワークシートで選択範囲を変更したときに発生します。<br>
+      選択範囲がグラフシート上にある場合は発生しません。</td>
+    </tr>
+    <tr>
+      <td>WindowActivate</td>
+      <td>ブックのウィンドウがアクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WindowDeactivate</td>
+      <td>ブックのウィンドウが非アクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WindowResize</td>
+      <td>ブックのウィンドウサイズを変更したときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookActivate</td>
+      <td>ブックがアクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookAddinInstall</td>
+      <td>ブックがアドインとして組み込まれたときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookAddinUninstall</td>
+      <td>アドインブックの組み込みを解除したときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookAfterSave</td>
+      <td>ブックが保存された後に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookAfterXmlExport</td>
+      <td>MicrosoftOfficeExcelがデータを保存するか、指定されたワークブックからXMLデータをエクスポートした後で発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookAfterXmlImport</td>
+      <td>既存のXMLデータ接続が更新されたか、または開いているMicrosoftExcelブックに新しいXMLデータがインポートされた後に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookBeforeClose</td>
+      <td>開いたブックを閉じる直前に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookBeforePrint</td>
+      <td>開いているブックを印刷する前に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookBeforeSave</td>
+      <td>開いているブックを保存する前に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookBeforeXmlExport</td>
+      <td>MicrosoftOfficeExcelがデータを保存するか、指定されたワークブックからXMLデータをエクスポートする前に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookBeforeXmlImport</td>
+      <td>既存のXMLデータ接続が更新されるか、または開いているMicrosoftExcelブックに新しいXMLデータがインポートされる前に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookDeactivate</td>
+      <td>開いているブックが非アクティブになったときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookNewChart</td>
+      <td>開いているブックで新しいグラフが作成されるときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookNewSheet</td>
+      <td>開いているブックで新しいシートが作成されるときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookOpen</td>
+      <td>ブックを開くときに発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookPivotTableCloseConnection</td>
+      <td>ピボットテーブルレポート接続が閉じた後に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookPivotTableOpenConnection</td>
+      <td>ピボットテーブルレポート接続が開いた後に発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookRowsetComplete</td>
+      <td>ユーザーがOLAPピボットテーブルで行セットアクションを起動するか、レコードセットを詳細表示するとWorkbookRowsetCompleteイベントが発生します。</td>
+    </tr>
+    <tr>
+      <td>WorkbookSync</td>
+      <td>ドキュメントワークスペースに含まれているブックのローカルコピーがサーバー上のコピーと同期されたときに発生します。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+引数については、以下のイベントの調べ方を参考にして使用するイベントについて調べてください。<br>
+</div><p><br>
+<strong>アプリケーションのイベントの調べ方</strong></p>
+<div class="main-indent">オブジェクトブラウザーで、クラスで<strong>Applicationを選択</strong><br><div class="br2"><br></div>
+<img src="image132.jpg" tppabs="https://excel-ubara.com/vba_class/image132.jpg" width="450" height="470" border="0" alt="マクロ VBA クラス"><br><div class="br2"><br></div>
+<strong>カミナリのアイコンがイベント</strong>になります。<br>
+メンバーの中から使用したいイベントを選択、<br><div class="br2"><br></div>
+<img src="image133.jpg" tppabs="https://excel-ubara.com/vba_class/image133.jpg" width="450" height="349" border="0" alt="マクロ VBA クラス"><br><div class="br2"><br></div>
+一番下に以下のように<br>
+表示されます。<br><div class="br2"><br></div>
+<img src="image134.jpg" tppabs="https://excel-ubara.com/vba_class/image134.jpg" width="401" height="72" border="0" alt="マクロ VBA クラス"><br><div class="br2"><br></div>
+この画像で選択している部分をコピペしてVBAに貼り付けてください。<br>
+そして、<br><div class="br2"><br></div>
+SheetChange(Sh As Object, Target As Range)<br>
+↓<br>
+<strong>Private</strong> <strong>xlApp_</strong>SheetChange(<strong>Byva</strong>l Sh As Object, Target As Range)<br><div class="br2"><br></div>
+VBAに貼り付けたあと、太字を追加します。<br>
+先頭にPrivateを書いて、<br>
+WithWithEventsキーワードを付けた変数（<strong>xlApp</strong>）に_(アンダバー)を付けます。<br>
+つまり、<br>
+<strong>WithWithEvents変数_イベント名</strong><br>
+このようにします。<br>
+そして、<strong>wbやshtのオブジェクトにはＢyval</strong>を付けてください。<br>
+これを付けないと、以下のエラーが出てしまいます。<br>
+つまり省略のByRefではだめだということです。<br><div class="br2"><br></div>
+<img src="image130.jpg" tppabs="https://excel-ubara.com/vba_class/image130.jpg" width="534" height="224" border="0" alt="マクロ VBA クラス"><br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>最後に</h3>
+<div class="main-indent"><br>
+以上が、クラスを使った他ブックのイベント補足方法になります。<br><div class="br2"><br></div>
+先にも書きましたが、<br><div class="br2"><br></div>
+・<strong>クラスでのプロパティ・メソッドの実装方法</strong><br>
+・<strong>WithEventsの使い方</strong><br><div class="br2"><br></div>
+これらを中心にVBAコードを読んで参考にしてください。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a>」の記事</h3><p>
+<A href="VBA_CLASS_01.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_01.html">VBAクラス入門：クラスとは?オブジェクト指向とは?</A><br>
+<span class="strrev">クラスを使った全ブック（他ブック）のイベント補足</span><br>
+<A href="VBA_CLASS_03.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_03.html">VBAクラスの作り方：列名の入力支援と列移動対応</A><br>
+<A href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</A><br>
+<A href="VBA_CLASS_05.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_05.html">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</A><br>
+<A href="VBA_CLASS_06.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_06.html">クラスとイベントとマルチプロセス並列処理</A><br>
+<A href="VBA_CLASS_07.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_07.html">クラスとCallByNameとポリモーフィズム(多態性)</A><br>
+<A href="VBA_CLASS_08.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_08.html">オートフィルターを退避回復するVBAクラス</A><br>
+<A href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</A><br>
+<A href="VBA_CLASS_10.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_10.html">コレクション（Collection）の並べ替え（Sort）に対応するクラス</A><br>
+<A href="VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html">VBAクラスのAttributeについて（既定メンバーとFor Each）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>クラスを使った全ブック（他ブック）のイベント補足</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>クラスを使った全ブック（他ブック）のイベント補足</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="VBA_CLASS_01.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_01.html">VBAのクラスとは<br></a></li><li><a href="../excelvba1/EXCELVBA424.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA424.html">Workbookのイベントプロシージャー</a></li><li><a href="../excelvba1/EXCELVBA425.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA425.html">Worksheetのイベントプロシージャー</a></li><li><a href="../MOS_VBA/mosvba022.html" tppabs="https://excel-ubara.com/MOS_VBA/mosvba022.html">VBAスタンダード：イベント</a></li><li><a href="../EXCEL/EXCEL914.html#sec03" tppabs="https://excel-ubara.com/EXCEL/EXCEL914.html#sec03" target="_blank">Applicationのイベント</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

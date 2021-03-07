@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>いろいろな繰り返し処理｜Google Apps Script入門</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="プログラミングにおいて、最も重要で最も多く使われるのが、条件分岐と繰り返し処理です。「条件により処理を変えながら繰り返し処理を行う」、これこそがプログラムによる自動化です。今回は、この繰り返し処理の記述について、ここまで説明してこなかった書き方も加えて、繰り返し処理の前提について説明します。">
+  <meta name="keywords" content="入門,Google,Apps,Script,GAS,スプレッドシート">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210306.css" tppabs="https://excel-ubara.com/css/style.css?20210306">
+  <link rel="stylesheet" href="../css/slide.css-20210306.css" tppabs="https://excel-ubara.com/css/slide.css?20210306">
+  <link rel="canonical" href="https://excel-ubara.com/apps_script1/GAS019.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="いろいろな繰り返し処理｜Google Apps Script入門" />
+  <meta property="og:description" content="プログラミングにおいて、最も重要で最も多く使われるのが、条件分岐と繰り返し処理です。「条件により処理を変えながら繰り返し処理を行う」、これこそがプログラムによる自動化です。今回は、この繰り返し処理の記述について、ここまで説明してこなかった書き方も加えて、繰り返し処理の前提について説明します。" />
+  <meta property="og:image" content="https://excel-ubara.com/apps_script1/image.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/apps_script1/GAS019.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="いろいろな繰り返し処理｜Google Apps Script入門" />
+  <meta name="twitter:description" content="プログラミングにおいて、最も重要で最も多く使われるのが、条件分岐と繰り返し処理です。「条件により処理を変えながら繰り返し処理を行う」、これこそがプログラムによる自動化です。今回は、この繰り返し処理の記述について、ここまで説明してこなかった書き方も加えて、繰り返し処理の前提について説明します。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/apps_script1/image.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210306" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210306" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210306" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210306" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>Google Apps Script入門<br>第19回.いろいろな繰り返し処理</h1>Google Apps Script（GAS）の入門解説です
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">
+<span itemprop="name">その他</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">
+<span itemprop="name">Google Apps Script入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="GAS019.html" tppabs="https://excel-ubara.com/apps_script1/GAS019.html">
+<span itemprop="name">いろいろな繰り返し処理</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2021-03-06</span>
+<h2 align="center">第19回.いろいろな繰り返し処理</h2><p><br>
+プログラミングにおいて、最も重要で最も多く使われるのが、条件分岐と繰り返し処理です。<br><div class="br2"><br></div>
+「条件により処理を変えながら繰り返し処理を行う」、これこそがプログラムによる自動化です。<br><div class="br2"><br></div>
+今回は、この繰り返し処理の記述について、<br>
+ここまで説明してこなかった書き方も加えて、繰り返し処理の前提について説明します。<br><div class="br2"><br></div><div class="br2"><br></div></p>
+<h3><a href="GAS017.html" tppabs="https://excel-ubara.com/apps_script1/GAS017.html" target="_blank">リファレンス</a>にある反復処理</h3>
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>do...while</td>
+      <td>テスト条件が偽と評価されるまで指定された文を実行するループを作成します。<br>
+      この条件は文が実行されたあとに評価され、その結果少なくとも 1 回は指定された文が実行されます。</td>
+    </tr>
+    <tr>
+      <td>for</td>
+      <td>丸括弧で囲まれ、セミコロンで区切られた 3 つの式と、それに続くループ内で実行される文から構成されるループを作成します。</td>
+    </tr>
+    <tr>
+      <td>for...in</td>
+      <td>オブジェクトの列挙可能なプロパティに対し任意の順番で反復処理を行います。<br>
+      それぞれ個別のプロパティに対し、文を実行できます。</td>
+    </tr>
+    <tr>
+      <td>for...of</td>
+      <td>反復可能オブジェクト（配列、配列様のオブジェクト、イテレータとジェネレータを含む）を反復処理し、それぞれ個別のプロパティの値に対する実行文をともなった反復処理フックを呼び出します。</td>
+    </tr>
+    <tr>
+      <td>while</td>
+      <td>テスト条件が真と評価される間、指定した文を実行するループを作成します。<br>
+      この条件は文が実行される前に評価されます。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+この中では、forについては、</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="GAS007.html" tppabs="https://excel-ubara.com/apps_script1/GAS007.html" target="_blank">第7回.同じ計算を行数分繰り返す</a></strong><div class="details">1回だけの処理なら、マクロ（スクリプト）を使わなくても手作業で十分です。同じ処理を繰り返し実行できるところに、マクロ（スクリプト）の最大の良さがあります。同じ計算を行数分繰り返すとは 前回に続いて、以下の表で、金額=単価×数量 を計算します。</div>
+<strong><a href="GAS008.html" tppabs="https://excel-ubara.com/apps_script1/GAS008.html">第8回.最終行を取得して繰り返す</a></strong><div class="details">データは常に増減します、決まった行数しか処理できないのではこまりますので、データに応じて最終行を取得する必要があります。今回は実際に入っているデータの最終行をいかに取得するかを解説します。前回の復習 前回に続いて、以下の表で、金額=単価×数量 の計算を、データ行数が増減しても対応できるようにスクリプトを書き直します。</div><br>
+</div>
+</div>
+<div class="main-indent">こちらで説明しました。<br><div class="br2"><br></div>
+上記では割愛したものに、<br>
+<strong>for each...in</strong><br>
+と言うのもあったようで、<br>
+<strong>for...in</strong><br>
+<strong>for...of</strong><br>
+と合わせて、<strong>主に配列のループ</strong>に使われたりしているようですが、「Legacy generator function」となっているので割愛します。<br><div class="br2"><br></div>
+このページでは、<br>
+for<br>
+の再確認と、<br>
+do...while<br>
+while<br>
+および、<br>
+break<br>
+continue<br>
+について解説します。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>繰り返し処理の例題</h3>
+<div class="main-indent">以下の表で、<br>
+<strong>金額 = 単価 × 数量</strong><br>
+の計算を行う場合で説明します。<br><div class="br2"><br></div>
+<img src="image.jpg" tppabs="https://excel-ubara.com/apps_script1/image.jpg" width="344" height="272" border="0" alt="Apps Script 画像"><br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>for</h3>
+<div class="main-indent"><strong>for ([initialization]; [condition]; [final-expression]) {<br>
+　statement<br>
+}</strong><br><div class="br2"><br></div>
+<strong>initialization</strong></div>
+<div class="main-indent">
+<div class="main-indent">式または変数宣言で、大抵はカウンタ変数を初期化するために使われます。<br>
+この式では、var キーワードを用いて新しい変数を任意で宣言してもかまいません。<br>
+これらの変数はループにローカルなものではありません。<br>
+つまり、ループの外でも有効な変数となります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>condition</strong></div>
+<div class="main-indent">
+<div class="main-indent">ループの各反復の前に評価される式。<br>
+この式が true に評価されるなら、statement が実行されます。<br>
+この式が false に評価されるなら、実行は for の構成子に続く最初の式に飛びます。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>final-expression</strong></div>
+<div class="main-indent">
+<div class="main-indent">ループの各反復の終わりに評価される式。<br>
+これは、condition の次の評価の前に発生します。<br>
+カウンタ変数を更新または増加するために使われます。<br>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>statement</strong></div>
+<div class="main-indent">
+<div class="main-indent">条件が true に評価される限り実行される文。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<form>
+<input type="button" value="GASをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>function mySample5() {
+  var sheet = SpreadsheetApp.getActiveSheet()
+  var tannka,suuryou,lastRow
+  lastRow = sheet.getLastRow()
+  <strong>for (var i=2; i&lt;=lastRow; i++) {</strong>
+    tannka = sheet.getRange(i, 2).getValue()
+    suuryou = sheet.getRange(i, 3).getValue()
+    sheet.getRange(i, 4).setValue(tannka * suuryou) 
+  <strong>}</strong>
+}
+</pre></code></div><br>
+<strong><a href="GAS008.html" tppabs="https://excel-ubara.com/apps_script1/GAS008.html">第8回.最終行を取得して繰り返す</a></strong><div class="details">データは常に増減します、決まった行数しか処理できないのではこまりますので、データに応じて最終行を取得する必要があります。今回は実際に入っているデータの最終行をいかに取得するかを解説します。前回の復習 前回に続いて、以下の表で、金額=単価×数量 の計算を、データ行数が増減しても対応できるようにスクリプトを書き直します。</div>
+でのスクリプトです。<br>
+詳細は、第8回を参照してください。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>do...while</h3>
+<div class="main-indent"><strong>do {<br>
+　statement<br>
+} while (condition);</strong><br><div class="br2"><br></div>
+<strong>statement</strong></div>
+<div class="main-indent">
+<div class="main-indent">少なくとも 1 回は実行され、条件が真に評価されるたびに再度実行される文。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>condition</strong></div>
+<div class="main-indent">
+<div class="main-indent">ループを通過した後ごとに評価される式。<br>
+condition が true に評価されるなら、statement は再度実行されます。<br>
+condition が false に評価されるときは、制御が do...while に続く文へ渡ります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<form>
+<input type="button" value="GASをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>function mySample19_1() {
+  var sheet = SpreadsheetApp.getActiveSheet()
+  var tannka,suuryou,i
+  i=2;
+  <strong>do {</strong>
+    tannka = sheet.getRange(i, 2).getValue();
+    suuryou = sheet.getRange(i, 3).getValue();
+    sheet.getRange(i, 4).setValue(tannka * suuryou);
+    i++;
+  <strong>} while (sheet.getRange(i, 1).getValue() != &quot;&quot;);</strong>
+}</pre></code></div><br>
+指定された<strong>文は少なくとも 1回は実行</strong>されます。<br>
+つまり、必ず1回はstatementが<strong>実行され、その後に条件判定</strong>されます。<br>
+上記のスクリプトの場合、2行目にデータが無い場合でも実行されてしまいます。<br><div class="br2"><br></div>
+<strong>do...while</strong> を使用する場面は限定的です。<br>
+時に便利な場合もありますが、<br>
+<strong>for</strong>と、次の<strong>while</strong> で、全て代用できるので、無理に覚える必要はないでしょう。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>while</h3>
+<div class="main-indent"><strong>while (condition) {<br>
+　statement<br>
+}</strong><br><div class="br2"><br></div>
+<strong>condition</strong></div>
+<div class="main-indent">
+<div class="main-indent">ループを通過する前ごとに評価される式。<br>
+この条件が true に評価されるなら、statement が実行されます。<br>
+条件が false に評価されるときは、while ループの後の文に実行が続きます。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>statement</strong></div>
+<div class="main-indent">
+<div class="main-indent">条件が true に評価される間実行される文。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<form>
+<input type="button" value="GASをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>function mySample19_2() {
+  var sheet = SpreadsheetApp.getActiveSheet()
+  var tannka,suuryou,i
+  i=2;
+  <strong>while (sheet.getRange(i, 1).getValue() != &quot;&quot;) {</strong>
+    tannka = sheet.getRange(i, 2).getValue();
+    suuryou = sheet.getRange(i, 3).getValue();
+    sheet.getRange(i, 4).setValue(tannka * suuryou);
+    i++;
+  <strong>}</strong>
+}</pre></code></div><br>
+<strong>ループに入る前に、条件が判定</strong>されます。<br>
+最初から条件が満たされなければ、1回もstatementは実行されません。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>break</h3>
+<div class="main-indent"><strong>break;</strong><br><div class="br2"><br></div>
+本来は、<br>
+break [label];<br>
+であり、labelを指定できますが、使う必要が無い、というより、使わない方が良いでしょう。<br><div class="br2"><br></div>
+プログラムがラベル付き文から抜け出すことを可能にします。<br>
+ラベル付き文はどんなブロック文でもかまいません。<br>
+ループ文である必要もありませんが、ループからの脱出に使われることが多いです。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="GASをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>function mySample19_3() {
+  var sheet = SpreadsheetApp.getActiveSheet()
+  var tannka,suuryou
+  for (var i=2; i&lt;=11; i++) {
+    tannka = sheet.getRange(i, 2).getValue();
+    suuryou = sheet.getRange(i, 3).getValue();
+    <strong>if (tannka == &quot;&quot;) {</strong>
+      <strong>break;</strong>
+    <strong>}</strong>
+    sheet.getRange(i, 4).setValue(tannka * suuryou);
+  }
+}</pre></code></div><br>
+上記では、<strong>単価（B列）に値が入っていなければ、forのループを抜けています</strong>。<br>
+単価が空欄の行に達した時点でループを抜け、それ以降の行は佳さんしません。<br><div class="br2"><br></div>
+ラベル付きのブロック文ブロックがネストされている場合は、<br>
+一番内側のプロックからだけ抜けることになります。<br><div class="br2"><br></div>
+for (・・・) {<br>
+　for (・・・) {<br>
+　　<strong>break;</strong><br>
+　　statement1<br>
+　}<br>
+　statement2<br>
+}<br>
+この場合のbreakは、<br>
+statement1を実行せずに、statement2に移ります。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>continue</h3>
+<div class="main-indent">continue<br><div class="br2"><br></div>
+本来は、<br>
+continue [label];<br>
+であり、labelを指定できますが、あまり使わない方が良いでしょう。<br><div class="br2"><br></div>
+break 文とは対照的に、continue はループの実行を完全には終了しません。代わりに、<br><div class="br2"><br></div>
+while ループの中では、条件へ戻ります。<br>
+for ループの中では、更新式へジャンプします。<br>
+continue 文には、プログラムが現在のループの代わりにラベル付きループ文の次の反復へジャンプすることを可能にする、任意のラベルを含められます。<br>
+この場合、continue 文は、このラベル付き文の中にネストされている必要があります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="GASをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><pre>function mySample19_4() {
+  var sheet = SpreadsheetApp.getActiveSheet()
+  var tannka,suuryou
+  for (var i=2; i&lt;=11; i++) {
+    tannka = sheet.getRange(i, 2).getValue();
+    suuryou = sheet.getRange(i, 3).getValue();
+    <strong>if (tannka == &quot;&quot;) {</strong>
+      <strong>continue;</strong>
+    <strong>}</strong>
+    sheet.getRange(i, 4).setValue(tannka * suuryou);
+  }
+}</pre></code></div><br>
+上記では、<strong>単価（B列）に値が入っていなければ、forに戻りループを続けます。</strong><br>
+単価が空欄の行は飛ばして、次の行に進むという事です。<br>
+結果として、単価が空欄の行以外は全て計算されます。<br><div class="br2"><br></div>
+ラベル付きのブロック文ブロックがネストされている場合は、<br>
+一番内側のプロックのラベル(for)に進みます。<br><div class="br2"><br></div>
+for (・・・) {<br>
+　for (・・・) {<br>
+　　<strong>continue;</strong><br>
+　　statement1<br>
+　}<br>
+　statement1<br>
+}<br>
+この場合のbreakは、<br>
+statement1を実行せずに、内側（2行目）のforに移ります。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>繰り返し処理の最後に</h3>
+<div class="main-indent">基本的には、forを使えば大抵は記述可能なはずです。<br>
+つまり、ループに入る前に、繰り返し回数を取得できることが多いはずだということです。<br><div class="br2"><br></div>
+繰り返し回数がどうしても取得できない時に、whileを使うという事になります。<br>
+また、<br>
+continueは、ifのブロックにそれ以降を全て入れてしまえば同じことになりますので、無理に使う必要はありません。<br>
+まあ、それでも使えれば便利な時もありますので、一応は覚えておきましょう。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">Google Apps Script入門</a>」の記事</h3><p>
+<A href="GAS016.html" tppabs="https://excel-ubara.com/apps_script1/GAS016.html">第16回.Google Apps Scriptの文法</A><br>
+<A href="GAS017.html" tppabs="https://excel-ubara.com/apps_script1/GAS017.html">第17回.JavaScript リファレンス</A><br>
+<A href="GAS018.html" tppabs="https://excel-ubara.com/apps_script1/GAS018.html">第18回.組み込み関数を使う</A><br>
+<span class="strrev">第19回.いろいろな繰り返し処理</span><br>
+<A href="GAS020.html" tppabs="https://excel-ubara.com/apps_script1/GAS020.html">第20回.エラー処理（try・・・catch）</A><br>
+<A href="GAS021.html" tppabs="https://excel-ubara.com/apps_script1/GAS021.html">第21回.配列って何なんだ？</A><br>
+<A href="GAS022.html" tppabs="https://excel-ubara.com/apps_script1/GAS022.html">第22回.オブジェクト、メソッド、プロパティとは</A><br>
+<A href="GAS023.html" tppabs="https://excel-ubara.com/apps_script1/GAS023.html">第23回.行・列を操作する（挿入・削除・非表示・サイズ）</A><br>
+<A href="GAS024.html" tppabs="https://excel-ubara.com/apps_script1/GAS024.html">第24回.シートの挿入・削除・名前変更</A><br>
+<A href="GAS025.html" tppabs="https://excel-ubara.com/apps_script1/GAS025.html">第25回.スプレッドシート（ブック）の作成・名前変更</A><br>
+<A href="GAS026.html" tppabs="https://excel-ubara.com/apps_script1/GAS026.html">第26回.セルのコピー&amp;各種ペースト</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">Google Apps Script入門</a></li>
+<li><span class="strrev2"><strong>いろいろな繰り返し処理</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">Google Apps Script入門</a></li>
+<li><span class="strrev2"><strong>いろいろな繰り返し処理</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="GAS017.html" tppabs="https://excel-ubara.com/apps_script1/GAS017.html" target="_blank">リファレンス</a></li><li><a href="GAS007.html" tppabs="https://excel-ubara.com/apps_script1/GAS007.html" target="_blank">第7回.同じ計算を行数分繰り返す</a></li><li><a href="GAS008.html" tppabs="https://excel-ubara.com/apps_script1/GAS008.html">第8回.最終行を取得して繰り返す</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>セル範囲⇔配列（マクロVBA高速化必須テクニック）｜VBA入門</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="セル範囲をVariant型変数に入れる事で、配列を作成することができます。また、配列をセル範囲にまとめて出力する事も出来ます。これは、マクロVBAを高速処理したい時の必須テクニックになります、マクロの処理が遅い場合は、このテクニックが使えないか検討してください。">
+  <meta name="keywords" content="VBA,セル範囲,配列,高速化必須テクニック,入門,エクセル,Excel,マクロ,基礎">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210306.css" tppabs="https://excel-ubara.com/css/style.css?20210306">
+  <link rel="stylesheet" href="../css/slide.css-20210306.css" tppabs="https://excel-ubara.com/css/slide.css?20210306">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba1/EXCELVBA414.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="セル範囲⇔配列（マクロVBA高速化必須テクニック）｜VBA入門" />
+  <meta property="og:description" content="セル範囲をVariant型変数に入れる事で、配列を作成することができます。また、配列をセル範囲にまとめて出力する事も出来ます。これは、マクロVBAを高速処理したい時の必須テクニックになります、マクロの処理が遅い場合は、このテクニックが使えないか検討してください。" />
+  <meta property="og:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba1/EXCELVBA414.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="セル範囲⇔配列（マクロVBA高速化必須テクニック）｜VBA入門" />
+  <meta name="twitter:description" content="セル範囲をVariant型変数に入れる事で、配列を作成することができます。また、配列をセル範囲にまとめて出力する事も出来ます。これは、マクロVBAを高速処理したい時の必須テクニックになります、マクロの処理が遅い場合は、このテクニックが使えないか検討してください。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210306" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210306" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210306" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210306" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA入門<br>第114回.セル範囲⇔配列（マクロVBA高速化必須テクニック）</h1>ExcelマクロVBAの基本と応用、エクセルVBAの初級・初心者向け解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">
+<span itemprop="name">マクロVBA入門編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">
+<span itemprop="name">マクロVBA入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA414.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA414.html">
+<span itemprop="name">セル範囲⇔配列（マクロVBA高速化必須テクニック）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-08-27</span>
+<h2 align="center">第114回.セル範囲⇔配列（マクロVBA高速化必須テクニック）</h2><p><br>
+セル範囲をVariant型変数に入れる事で、配列を作成することができます。<br>
+また、配列をセル範囲にまとめて出力する事も出来ます。<br><div class="br2"><br></div>
+これは、マクロVBAを高速処理したい時の必須テクニックになります、<br>
+マクロの処理が遅い場合は、このテクニックが使えないか検討してください。<br><div class="br2"><br></div>
+マクロが遅いという相談の多くは、Applicationのプロパティ設定で大幅に速くなることが多いですが、<br>
+そもそもデータ量が多いために時間がかかっている場合は、マクロVBAを根本的に見直す必要が出てきます。</p>
+<div class="main-indent"><strong><a href="EXCELVBA357.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA357.html">第57回.Applicationのプロパティ（マクロ高速化と警告停止等）</a></strong><div class="details">Applicationは、Excel全体をあらわすオブジェクトです、つまり、エクセルそのものだと考えて下さい。ここでは、そのプロパティの一部を紹介します。ここで紹介するApplicationのプロパティはほんの一部です。</div><br>
+</div><p>
+マクロVBAの処理速度を改善するときの根本として、「セル範囲⇔配列」が必要となります。<br><div class="br2"><br></div></p>
+<h3>セル範囲⇔配列の基本VBA</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>
+      <p>Dim MyArray<br>
+      MyArray = Range(&quot;A1:B100&quot;).Value<br>
+      <span style="color:#009900;">'・・・処理・・・</span><br>
+      Range(&quot;A1:B100&quot;).Value = MyArray</p>
+      </td>
+    </tr>
+  </tbody>
+</table></code></div>
+※.Valueは省略しても構いません。<br><div class="br2"><br></div>
+<strong>MyArray = Range(&quot;A1:B100&quot;).Value</strong><br>
+これで、MyArrayは配列になります。<br><div class="br2"><br></div>
+<strong>MyArray(1 To 100, 1 To 2)</strong><br>
+このような縦横の2次元配列です。<br><div class="br2"><br></div>
+<strong>Range(&quot;A1:B100&quot;).Value = MyArray</strong><br>
+これで、配列の中の値が全てセル範囲に一括で出力する事が出来ます。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>セル範囲を受け取る変数宣言について</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">変数MyArrayは、データ型を指定していませんのでVariant型になっています。<br><div class="br2"><br></div>
+Dim MyArray<br>
+Dim MyArray As Variant<br>
+これは、どちらも単なるVariant宣言です。<br><div class="br2"><br></div>
+Dim MyArray()<br>
+Dim MyArray() As Variant<br>
+これはVariantの配列宣言になります。<br><div class="br2"><br></div>
+セル範囲とのやりとりにおいては、どちらでも構いません。<br>
+VBA内部としては厳密には違いがありますが、一般的に気にするような違いはありません。<br><div class="br2"><br></div>
+※本サイト内では、<br>
+Dim MyArray<br>
+この記述を基本としていますが、他の記述をしている場合もあります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>配列の下限について</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">セル範囲のValueをいれた配列の<strong>下限は1</strong>になります。<br>
+<strong><font color="#ff0000">LBoundが必ず1</font></strong>になる点に注意して下さい。<br>
+ただし、セルに出力する場合の配列下限は0である必要はありません。<br><div class="br2"><br></div>
+<strong><a href="EXCELVBA413.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA413.html">第113回.配列に関連する関数</a></strong><div class="details">マクロVBAで配列を使う上で、必要となるVBA関数がいくつかあります。より便利に配列を活用するために必須となるVBA関数、・LBound関数 ・UBound関数 ・Array関数 ・IsArray関数 ・Join関数 ・Filter関数 以上のVBA関数について解説します。</div>
+<strong><a href="EXCELVBA413.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA413.html" target="_blank">VBAにおける配列やコレクションの起点について</a></strong><div class="details">マクロVBAで配列を使う上で、必要となるVBA関数がいくつかあります。より便利に配列を活用するために必須となるVBA関数、・LBound関数 ・UBound関数 ・Array関数 ・IsArray関数 ・Join関数 ・Filter関数 以上のVBA関数について解説します。</div><br>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>使用例</h3>
+<div class="main-indent">以下は、配列を使わない場合と、配列を使った場合のサンプルになります。<br>
+速度の違いは一目瞭然ですので、実際にやって体感してみて下さい。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample1()<br>
+      　　Dim i As Long<br>
+      　　Application.ScreenUpdating = False<br>
+      　　For i = 1 To 100000<br>
+      　　　　Cells(i, 3) = Cells(i, 1) * Cells(i, 2)<br>
+      　　Next i<br>
+      　　Application.ScreenUpdating = False<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample2()<br>
+      　　Dim i As Long<br>
+      　　Dim MyArray1<br>
+      　　Dim MyArray2<br>
+      　　MyArray1 = Range(&quot;A1:B100000&quot;)<br>
+      　　ReDim MyArray2(1 To 100000, 1 To 1)<br>
+      　　For i = LBound(MyArray1, 1) To UBound(MyArray1, 1)<br>
+      　　　　MyArray2(i, 1) = MyArray1(i, 1) * MyArray1(i, 2)<br>
+      　　Next i<br>
+      　　Range(&quot;C1:C100000&quot;) = MyArray2<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+単に、100,000行の掛け算をしています。<br><div class="br2"><br></div>
+<strong>セル範囲とやり取りする配列は、</strong><br>
+<strong><font color="#ff0000">必ず2次元の配列になっている必要があります。</font></strong><br>
+<strong>2次元配列として定義するか、Variant型への代入の結果が2次元配列になっていればよい</strong>です。<br><div class="br2"><br></div>
+上記の、<br>
+<strong>ReDim MyArray2(1 To 100000, 1 To 1)</strong><br>
+これは、<br>
+C列に出力する為の配列で、2次元で定義しています。<br>
+1次元目が行、2次元目が列に相当します。<br><div class="br2"><br></div>
+要素下限を0開始にしても構いませんが、セル範囲とやり取りすることを考えると、<br>
+1開始にしたほうが方が理解しやすいと思います。</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="../excelvba4/EXCEL_VBA_413.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_413.html" target="_blank">VBAにおける配列やコレクションの起点について</a></strong><div class="details">VBAの配列を扱っていると、0から開始されていたり1から開始されていたりします。さすがに、混乱したり、間違ってしまう事もあると思います。0から開始される場合を、「0オリジン」英語では「zero-based」1から開始される場合を、「1オリジン」英語では「one-based」このような呼び方をします。</div><br>
+</div>
+</div>
+<div class="main-indent">これほど単純な処理は、あまり無いと思いますが、<br>
+大量データを扱う場合は、適宜配列を使うようにする事で、高速処理を実現する事が出来ます。<br>
+ぜひ、マスターして頂きたいテクニックになります。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>配列およびマクロVBAの高速化に関するページ </h3>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="../excelvba4/EXCEL209.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL209.html">配列の使い方について</a></strong><div class="details">配列に関する記事は多数掲載していますが、今回は配列についての基礎知識をまとめました。配列に関する基本的事項のみを解説しています。配列とは まずシートのセルを考えて下さい。縦１列だけを取り出した場合は、1次元の配列です。</div>
+<strong><a href="../excelvba4/EXCEL284.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL284.html">VBAの配列まとめ（静的配列、動的配列）</a></strong><div class="details">VBAで配列を必要とするのは、処理速度を上げる為だと言って良いでしょう。そもそも、エクセルにはセルの2次元配列であるシートがあります。にもかかわらず、VBAの学習を進めると必ず配列が出てきます。ではなぜVBAで配列必須になるかと言うと、セルを使うと処理速度が非常に遅く、これを高速に処理するために配列が必要となるからです。</div>
+<strong><a href="../excelvba4/EXCEL203.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL203.html">最終行の判定、Rangeオブジェクトと配列、高速化の為に</a></strong><div class="details">最終行の判定 エクセル顧客管理の記事からのスピンオフ記事になります。以前に、モジュール「顧客一覧へ登録」において、.Cells.SpecialCells(xlLastCell).End(xlUp).Row と Cells(Rows.Count,1).End(xlUp).).Row を紹介しましたが、</div>
+<strong><a href="../excelvba4/EXCEL205.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL205.html">記述による処理速度の違い</a></strong><div class="details">記述の違いで、どの程度処理速度に変化があるかを検証します。どのような記述が処理速度に影響するかという点を分かり易くするために、あえて極端なマクロVBAで検証をしています。※本記事は2013年に書いたものを2019/2に再計測しつつ一部書き直したものです。</div>
+<strong><a href="../excelvba4/EXCEL212.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL212.html">速度比較決定版【Range,Cells,Do,For,For Each】</a></strong><div class="details">何度も言っているのですが、RangeとCellsでどっちが早いか、とか、DoとForとFor Eachでどれが早いか とか、そもそも、その議論がナンセンスなんです。以下のコードと結果を見て、各自で判断して下さい。巷の議論が、いかに無意味で、実は良く解っていないのだと言う事を、理解してもらいたい。</div>
+<strong><a href="../excelvba4/EXCEL215.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL215.html">エクセルVBAのパフォーマンス・処理速度に関するレポート</a></strong><div class="details">ExcelのVBAは遅い・重いと良く言われることが多いようですが、VBAが遅い・重いのではなく、その書かれたVBAコードが遅いのです。正しい高速化・速度対策をしたコードなら、それほど遅くはありません。むしろ、巨大なスプレッドシートを扱っている事を考えれば、驚異的なパフォーマンスとも言えるのです。</div>
+<strong><a href="../excelvba4/EXCEL225.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL225.html">VBAのFindメソッドの使い方には注意が必要です</a></strong><div class="details">vbafindでの検索が極めて多く、Findメソッドは検索からの流入ではトップクラスです、アクセス解析で分かった事ですが正直少し戸惑っています。なぜなら私はFindメソッドをほとんど使いません、Match関数や配列を使って処理したほうが高速かつ確実に動作するからです。</div>
+<strong><a href="../excelvba4/EXCEL226.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL226.html">WorksheetFunction.Matchで配列を指定した場合の制限について</a></strong><div class="details">WorksheetFunctionでMatchを使いデータ検索する事は良くあります。この時、他の部分の記述との関係で、配列を指定してMatchを行う事があります。以下のようなVBAコードになります。これは正しく動作します。</div>
+<strong><a href="../excelvba4/EXCEL228.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL228.html">マクロVBAの高速化・速度対策の具体的手順と検証</a></strong><div class="details">マクロVBAが遅い・重いという相談が非常に多いので、遅い・重いマクロVBAを高速化・速度対策する場合の具体的な手順をここに解説・検証します。マクロVBAの速度に関する記事は既にいくつか書いています。特に、以下はぜひお読みください。</div>
+<strong><a href="../excelvba4/EXCEL258.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL258.html">動的2次元配列の次元を入れ替えてシートへ出力（Transpose）</a></strong><div class="details">動的配列を使い様々な処理をした後にシートへ出力しようとしたとき、縦横が違っている為そのまま出力できません、そもそも、動的配列の要素数をRedimで変更できるのは、最下位の次元のみになります。2次元配列の場合、ReDimmyArray(2,10) ReDimmyArray(2,11) これはOKですが、</div>
+<strong><a href="../excelvba4/EXCEL260.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL260.html">大量データで処理時間がかかる関数の対処方法（WorksheetFunction）</a></strong><div class="details">大量データ処理において、一般的な速度対策をやってさえ、時に何時間もかかってしまう事があります、そういう場合でも、多くの場合は何らかの対策があるものです、個別のロジックの記述でこれらに対応する方法として、一つの有効なマクロVBAコ－ドについて解説します。以下の例で解説します。</div>
+<strong><a href="../excelvba4/EXCEL270.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL270.html">大量データにおける処理方法の速度王決定戦</a></strong><div class="details">VBAで自動化したが、大量データ処理に時間がかかってしまう… そんな悩みが非常に多いようです、そこで、各種処理方法の速度比較を行い、どの処理方法が最も速いかを検証します。つまり、処理方法の速度王決定戦です。検証する題材としては、最も一般的な集計で行います。</div>
+<strong><a href="../excelvba4/EXCEL271.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL271.html">遅い文字列結合を最速処理する方法について</a></strong><div class="details">VBAは遅い… よく聞くことですが、確かに普通にコード記述しているととても遅いことがあります、その代表の一つに、文字列結合があります、文字列結合を最速処理する方法について解説します。そもそも文字列結合は、なぜ遅いのか、String型（可変長文字列）についての基礎知識が必要です。</div>
+<strong><a href="../excelvba4/EXCEL280.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL280.html">大量VlookupをVBAで高速に処理する方法について</a></strong><div class="details">大量データ同士のVlookup処理は、非常に時間のかかる処理となります、マクロVBAで、これを高速に処理する方法について、VBAコードを示し解説します。ワークシート上の関数の場合 シートに関数を入れる場合は、以下を参照してください。【奥義】大量データでの高速VLOOKUP 以下の表で検証します。</div>
+<strong><a href="../excelvba4/EXCEL_VBA_405.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_405.html">Withステートメントのマクロ実行速度と注意点</a></strong><div class="details">マクロVBAにおいてWithステートメントはとても重要です、可読性（読みやすさ、理解しやすさ）、実行速度においては、その役割はとても大きいものになります。本記事では、Withステートメントを使うか使わないかでのマクロ実行速度の差に焦点を絞って検証します。</div>
+<strong><a href="../excelvba4/EXCEL_VBA_406.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_406.html">IfステートメントとIIF関数とMax関数の速度比較</a></strong><div class="details">VBAの実行速度比較はとても良く読まれている人気記事となっていますが、そのほとんどは配列やDictionaryを使った少し高度なVBAでの比較が多くなっています。今回は極めて基本的な、大小比較して大きい方を返すという処理において、Ifステートメント、VBA関数のIIF関数、シート関数のMax関数 これらの処理速度を比較検証してみます。</div><br>
+</div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a>」の記事</h3><p>
+<A href="EXCELVBA411.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA411.html">第111回.静的配列</A><br>
+<A href="EXCELVBA412.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA412.html">第112回.動的配列（Redim）</A><br>
+<A href="EXCELVBA413.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA413.html">第113回.配列に関連する関数</A><br>
+<span class="strrev">第114回.セル範囲⇔配列（マクロVBA高速化必須テクニック）</span><br>
+<A href="EXCELVBA415.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA415.html">第115回.Split関数</A><br>
+<A href="EXCELVBA416.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA416.html">第116回.ファイル操作Ⅱ（OpenとClose）</A><br>
+<A href="EXCELVBA417.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA417.html">第117回.ファイル操作Ⅱ（Line Input #）</A><br>
+<A href="EXCELVBA418.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA418.html">第118回.ファイル操作Ⅱ（Print #）</A><br>
+<A href="EXCELVBA419.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA419.html">第119回.ファイルシステムオブジェクト（FileSystemObject）</A><br>
+<A href="EXCELVBA420.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA420.html">第120回.OnTimeメソッド</A><br>
+<A href="EXCELVBA421.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA421.html">第121回.SendKeysメソッドとAppActivateステートメント</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+<li><span class="strrev2"><strong>セル範囲⇔配列（マクロVBA高速化必須テクニック）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+<li><span class="strrev2"><strong>セル範囲⇔配列</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCELVBA357.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA357.html">第57回.Applicationのプロパティ<br></a></li><li><a href="EXCELVBA413.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA413.html">第113回.配列に関連する関数</a></li><li><a href="../excelvba4/EXCEL_VBA_413.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_413.html" target="_blank">VBAにおける配列やコレクションの起点について</a></li><li><a href="../excelvba4/EXCEL209.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL209.html">配列の使い方について</a></li><li><a href="../excelvba4/EXCEL284.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL284.html">VBAの配列まとめ<br></a></li><li><a href="../excelvba4/EXCEL203.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL203.html">最終行の判定、Rangeオブジェクトと配列、高速化の為に</a></li><li><a href="../excelvba4/EXCEL205.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL205.html">記述による処理速度の違い</a></li><li><a href="../excelvba4/EXCEL212.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL212.html">速度比較決定版【Range,Cells,Do,For,For Each】</a></li><li><a href="../excelvba4/EXCEL215.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL215.html">エクセルVBAのパフォーマンス・処理速度に関するレポート</a></li><li><a href="../excelvba4/EXCEL225.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL225.html">VBAのFindメソッドの使い方には注意が必要です</a></li><li><a href="../excelvba4/EXCEL226.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL226.html">WorksheetFunction.Matchで配列を指定した場合の制限について</a></li><li><a href="../excelvba4/EXCEL228.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL228.html">マクロVBAの高速化・速度対策の具体的手順と検証</a></li><li><a href="../excelvba4/EXCEL258.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL258.html">動的2次元配列の次元を入れ替えてシートへ出力<br></a></li><li><a href="../excelvba4/EXCEL260.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL260.html">大量データで処理時間がかかる関数の対処方法<br></a></li><li><a href="../excelvba4/EXCEL270.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL270.html">大量データにおける処理方法の速度王決定戦</a></li><li><a href="../excelvba4/EXCEL271.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL271.html">遅い文字列結合を最速処理する方法について</a></li><li><a href="../excelvba4/EXCEL280.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL280.html">大量VlookupをVBAで高速に処理する方法について</a></li><li><a href="../excelvba4/EXCEL_VBA_405.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_405.html">Withステートメントのマクロ実行速度と注意点</a></li><li><a href="../excelvba4/EXCEL_VBA_406.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_406.html">IfステートメントとIIF関数とMax関数の速度比較</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

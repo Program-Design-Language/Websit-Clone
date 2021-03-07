@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>「On Error Resume Next」とErrオブジェクト｜VBA入門</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="「OnErrorResumeNext」ステートメントは、実行時エラーが発生してもマクロVBAを中断せずに、エラーが発生したステートメントの次のステートメントから実行を継続します。マクロVBAは、エラーが発生するとその時点で停止してしまいます。">
+  <meta name="keywords" content="On,or,Resume,Next,Err,とオブジェクト,入門,エクセル,Excel,マクロ,VBA,基礎">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210306.css" tppabs="https://excel-ubara.com/css/style.css?20210306">
+  <link rel="stylesheet" href="../css/slide.css-20210306.css" tppabs="https://excel-ubara.com/css/slide.css?20210306">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba1/EXCELVBA362.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="「On Error Resume Next」とErrオブジェクト｜VBA入門" />
+  <meta property="og:description" content="「OnErrorResumeNext」ステートメントは、実行時エラーが発生してもマクロVBAを中断せずに、エラーが発生したステートメントの次のステートメントから実行を継続します。マクロVBAは、エラーが発生するとその時点で停止してしまいます。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba1/image59.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba1/EXCELVBA362.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="「On Error Resume Next」とErrオブジェクト｜VBA入門" />
+  <meta name="twitter:description" content="「OnErrorResumeNext」ステートメントは、実行時エラーが発生してもマクロVBAを中断せずに、エラーが発生したステートメントの次のステートメントから実行を継続します。マクロVBAは、エラーが発生するとその時点で停止してしまいます。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba1/image59.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210306" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210306" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210306" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210306" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA入門<br>第62回.「On Error Resume Next」とErrオブジェクト</h1>ExcelマクロVBAの基本と応用、エクセルVBAの初級・初心者向け解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">
+<span itemprop="name">マクロVBA入門編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">
+<span itemprop="name">マクロVBA入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA362.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA362.html">
+<span itemprop="name">「On Error Resume Next」とErrオブジェクト</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-10-14</span>
+<h2 align="center">第62回.「On Error Resume Next」とErrオブジェクト</h2><p><br>
+<strong>「On Error Resume Next」</strong>ステートメントは、<br>
+実行時エラーが発生してもマクロVBAを中断せずに、エラーが発生したステートメントの次のステートメントから実行を継続します。<br><div class="br2"><br></div>
+マクロVBAは、エラーが発生するとその時点で停止してしまいます。<br><div class="br2"><br></div>
+<img src="image59.jpg" tppabs="https://excel-ubara.com/excelvba1/image59.jpg" width="488" height="242" border="0" alt="マクろVBA on error Go To"><br><div class="br2"><br></div>
+VBAが実行不能となった場合に、エラー発生したVBAコードで停止します。<br>
+このような状態になるエラー発生時にも、マクロVBAが停止せずに次のVBAコードに進んでほしい時には、<br>
+On Error Resume Next ステートメントを使用します。<br><div class="br2"><br></div></p>
+<h3>On Error Resume Next</h3>
+<div class="main-indent">エラーが発生しても、エラーが発生したステートメントの次のステートメントから実行を継続します。<br>
+このステートメント以降、<strong>On Error GoTo 0</strong> が無い限り、プロシージャーの終わりまで有効となります。<br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+On Errorの有効範囲については、<strong><a href="EXCELVBA361.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA361.html" target="_blank">前回の「On Error Go To」と「Exit Sub」</a></strong><div class="details">「OnErrorGoTo行ラベル」このステートメントは、実行時エラーが発生した時に、制御を指定の行ラベルに移動させるものです。マクロVBAは、エラーが発生するとその時点で停止してしまいます。VBAが実行不能となった場合に、エラー発生したVBAコードで停止します。</div>
+こちらを参照してください。<br><div class="br2"><br></div>
+オブジェクトを操作する場合は、<br>
+On Error GoTo ステートメントではなく、このステートメントを使うようにします。<br><div class="br2"><br></div>
+<strong>On Error Resume Next</strong> によって、エラーが発生しても、停止することなく次のステートメントへ進みます。<br>
+しかし、エラーが発生している訳ですから、<br>
+エラーに対する何らかの処理が必要になります。<br>
+そこで、エラー発生しているかを判定する必要が出てきます。<br>
+エラー発生の情報は、<strong>Errオブジェクト</strong>に入っています。<br><div class="br2"><br></div>
+On Errorが実行された時点で、それ以前のエラー情報は消去さます。<br><div class="br2"><br></div>
+</div>
+<h3>Errオブジェクト</h3>
+<div class="main-indent">Err オブジェクトは、実行時エラーに関する情報を保有しています。<br>
+<strong>Errオブジェクトのプロパティとメソッド</strong><br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <TBODY>
+    <tr>
+      <td><strong>Err.Clear</strong></td>
+      <td>すべてのプロパティの設定値をクリア</td>
+    </tr>
+    <tr>
+      <td><strong>Err.Description</strong></td>
+      <td>エラーに関する簡単な説明</td>
+    </tr>
+    <tr>
+      <td>Err.HelpContext</td>
+      <td>ヘルプ ファイルのトピックに対応するコンテキスト番号</td>
+    </tr>
+    <tr>
+      <td>Err.HelpFile</td>
+      <td>ヘルプ ファイルへの絶対バス</td>
+    </tr>
+    <tr>
+      <td>Err.LastDllError</td>
+      <td>最後にダイナミック リンク ライブラリ (DLL) を呼び出したときのエラー コード</td>
+    </tr>
+    <tr>
+      <td><strong>Err.Number</strong></td>
+      <td>エラーを指定する数値。エラーではない場合は0</td>
+    </tr>
+    <tr>
+      <td>Err.Source</td>
+      <td>エラーの発生元のオブジェクトまたはアプリケーションの名前</td>
+    </tr>
+  </TBODY>
+</table></div><br>
+Errオブジェクトは、プロジェクト内で一つしか存在しません。<br>
+従って、エラーの情報を複数保持しておくことはできません。<br><div class="br2"><br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br></div>
+</div>
+<h3>On Error Resume Next の使用例</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td>Dim i As Long<br>
+On Error Resume Next<br>
+i = &quot;ABC&quot;<br>
+      If Err.Number &lt;&gt; 0 Then<br>
+      　　MsgBox Err.Description<br>
+　　Err.Clear<br>
+      End If<br>
+      MsgBox Err.Number</td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+この場合、メッセージボックスには、<br>
+「型が一致しません」と表示されます。<br><div class="br2"><br></div>
+<strong>Err.Clearでエラー情報をクリア</strong>しています。<br>
+クリアしないと、エラー情報はそのまま残っています。<br>
+次のエラーが発生したことを判断できるように、エラー処理の後でクリアするようにします。<br>
+Err.Clearを実行すると、Errオブジェクトがクリアされエラー情報は消去されます。<br>
+従って、最後のメッセージ表示は「0」となります。<br><div class="br2"><br></div>
+</div>
+<h3>「On Error Resume Next」の最後に</h3>
+<div class="main-indent">エラー処理はマクロVBAにおいて極めて重要です。<br>
+もちろん、エラー発生しないようにVBAを書くべきではありますが、<br>
+エクセルVBAでは、避けようのないエラー（でしか判定できないような場合）も存在します。<br>
+エラー処理を正しく行えるかどうかは、VBAスキルの判断になるとも言えます。<br>
+前回のOn Error Go Toと合わせてしっかりと習得してください。<br><div class="br2"><br></div>
+<strong><a href="EXCELVBA360.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA360.html">第60回.エラー処理（On Error）</a></strong><div class="details">マクロを実行していると、エラーメッセージが表示されマクロ実行が停止してしまう事があります。マクロがエラー停止しては自動化の目的が達成されませんので、エラー停止しないようにしなければなりません。エラーが出ないようにVBAを記述出来ればそれに越したことはありませんが、一切エラーを出さないようにVBAを書くことはかなり困難なものです。</div>
+<strong><a href="EXCELVBA361.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA361.html">第61回.「On Error GoTo」と「Exit Sub」</a></strong><div class="details">「OnErrorGoTo行ラベル」このステートメントは、実行時エラーが発生した時に、制御を指定の行ラベルに移動させるものです。マクロVBAは、エラーが発生するとその時点で停止してしまいます。VBAが実行不能となった場合に、エラー発生したVBAコードで停止します。</div>
+<strong><a href="EXCELVBA434.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA434.html" target="_blank">第134回.Errオブジェクトとユーザー定義エラー</a></strong><div class="details">VBA実行時には種々のエラーが発生します。実行時エラーに関する情報は、Errオブジェクトには入っていますので、VBA実行でエラー発生した場合は、Errオブジェクトを参照しエラー内容を調べることになります。Errオブジェクトの使い方と、ユーザー定義エラーの生成方法について解説します。</div>
+<strong><a href="../excelvba4/EXCEL242.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL242.html">実行時にトラップ可能なエラー番号一覧と対処</a></strong><div class="details">マクロVBA実行時に発生するエラーのエラー番号とエラーメッセージおよび簡単な理由と対策の一覧です。以下の表にあるエラーはトラップ（捕捉）できるエラー一覧になります。OnErrorステートメントおよびErrオブジェクトのNumberロパティを使用して、エラーへの対処を行うことができます。</div>
+<strong><a href="../excelvba4/EXCEL265.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL265.html">よくあるVBA実行時エラーの解説と対応</a></strong><div class="details">VBAを書き終えて、いざ実行したら意味不明なメッセージが… ここでは初心者向けに、代表的な実行時エラーの解説とその対応について説明します。中級者以上の方は、実行時にトラップ可能なエラー番号一覧と対処 こちらを参考に、エラー対応（OnError等）を実装してください。</div><br>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a>」の記事</h3><p>
+<A href="EXCELVBA359.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA359.html">第59回.コレクション処理（For Each）</A><br>
+<A href="EXCELVBA360.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA360.html">第60回.エラー処理（On Error）</A><br>
+<A href="EXCELVBA361.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA361.html">第61回.「On Error GoTo」と「Exit Sub」</A><br>
+<span class="strrev">第62回.「On Error Resume Next」とErrオブジェクト</span><br>
+<A href="EXCELVBA363.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA363.html">第63回.ブックを開く（Open,Add）</A><br>
+<A href="EXCELVBA364.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA364.html">第64回.ブックを閉じる・保存（Close,Save,SaveAs）</A><br>
+<A href="EXCELVBA365.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA365.html">第65回.シートの挿入、名前の変更（Add,Name）</A><br>
+<A href="EXCELVBA366.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA366.html">第66回.シートのコピー・移動・削除（Copy,Move,Delete）</A><br>
+<A href="EXCELVBA367.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA367.html">第67回.総合練習問題7</A><br>
+<A href="EXCELVBA368.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA368.html">第68回.シートの保護、ブックの保護（Protect）</A><br>
+<A href="EXCELVBA369.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA369.html">第69回.シートの非表示（Visible,Hidden）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+<li><span class="strrev2"><strong>「On Error Resume Next」とErrオブジェクト</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+<li><span class="strrev2"><strong>「On Error Resume Next」とErrオブジェクト</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCELVBA361.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA361.html" target="_blank">前回の「On Error Go To」と「Exit Sub」</a></li><li><a href="EXCELVBA360.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA360.html">第60回.エラー処理<br>(On Error)</a></li><li><a href="EXCELVBA434.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA434.html" target="_blank">第134回.Errオブジェクトとユーザー定義エラー</a></li><li><a href="../excelvba4/EXCEL242.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL242.html">実行時にトラップ可能なエラー番号一覧と対処</a></li><li><a href="../excelvba4/EXCEL265.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL265.html">よくあるVBA実行時エラーの解説と対応</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

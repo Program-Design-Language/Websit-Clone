@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）｜VBA再入門</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="エクセルの表は、横の項目はあまり変更はないものですが、縦のデータ数、つまり行数は常に変わるものです。前回のように、固定の回数しか繰り返せないのでは困ります。データ数に応じて、最終行まで繰り返す方法が必要です。">
+  <meta name="keywords" content="For,End,xlUp,Row,先頭から最終行まで繰り返す,エクセル,Excel,マクロ,VBA,入門,基礎">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba1r/EXCELVBA506.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）｜VBA再入門" />
+  <meta property="og:description" content="エクセルの表は、横の項目はあまり変更はないものですが、縦のデータ数、つまり行数は常に変わるものです。前回のように、固定の回数しか繰り返せないのでは困ります。データ数に応じて、最終行まで繰り返す方法が必要です。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba1r/image23.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba1r/EXCELVBA506.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）｜VBA再入門" />
+  <meta name="twitter:description" content="エクセルの表は、横の項目はあまり変更はないものですが、縦のデータ数、つまり行数は常に変わるものです。前回のように、固定の回数しか繰り返せないのでは困ります。データ数に応じて、最終行まで繰り返す方法が必要です。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba1r/image23.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA再入門<br>第6回.表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）</h1>マクロが覚えられないという初心者向けに理屈抜きのやさしい解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">
+<span itemprop="name">マクロVBA入門編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">
+<span itemprop="name">マクロVBA再入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA506.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA506.html">
+<span itemprop="name">表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-09-26</span>
+<h2 align="center">第6回.表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）</h2><p><br>
+エクセルの表は、横の項目はあまり変更はないものですが、<br>
+縦のデータ数、つまり行数は常に変わるものです。<br><div class="br2"><br></div>
+前回のように、固定の回数しか繰り返せないのでは困ります。<br>
+データ数に応じて、最終行まで繰り返す方法が必要です。<br>
+それにはデータの最終行が分かれば良いのです。<br>
+幸いなことに、VBAにはデータの入っている最終行を取得する方法が用意されています。<br><div class="br2"><br></div>
+前回と同じ、以下の表を使います。<strong><br><div class="br2"><br></div>
+</strong></p><p>
+<img src="image23.jpg" tppabs="https://excel-ubara.com/excelvba1r/image23.jpg" width="297" height="236" border="0" alt="Excel マクロVBA 実行結果"><br><div class="br2"><br></div></p>
+<h3>表の最終行を取得する</h3>
+<div class="main-indent">上記の表なら、データの最終行である、<br>
+<strong>11</strong><br>
+これを取得できれば良い訳です。<br>
+この11を取得するにはどうしたらよいでしょうか。<br><div class="br2"><br></div>
+数十行、数百行程度なら、スクロールして最終行を目視で確認できますが、<br>
+数万行あったら、スクロールも面倒です。<br>
+そういう時は、<br>
+A列の適当なセル（A1セルで良い）を選択して、<br>
+<strong>Ctrl + ↓</strong><br>
+とすれば、連続データの最終行に飛んでいきます。<br>
+上記の表なら、<br>
+<strong>A1セルで、</strong><br>
+<strong>Ctrl + ↓</strong><br>
+<strong>A11セルに選択セルが移動</strong>します。<br>
+これなら、データが何万行あっても、一瞬で最終行に移動できます。<br>
+これをマクロVBAで書くと、<br><div class="br2"><br></div>
+<strong>Cells(1, 1).End(xlDown)</strong><br><div class="br2"><br></div>
+このように書きます。<br>
+ですが、A列の途中に空白セルがあると、そこで止まってしまいます。<br>
+<strong>Ctrl + ↓</strong><br>
+これを何度も押して、一番下に移動した経験がある方も多いのではないでしょうか。<br>
+つまり、上のコードでは、ちゃんとした最終行を取得できません。<br>
+また、もし1行目の項目名しかないと、<br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+<strong>Ctrl + ↓</strong><br>
+これでは、シートの一番下の、1048576行まで行ってしまいます。<br><div class="br2"><br></div>
+ではどうしたら良いか・・・<br>
+シートの一番下の行から、<br>
+<strong>Ctrl + ↑</strong><br>
+これで、データの入っている最終行で止まります。<br>
+つまり、<br>
+<strong>A1048576のセルから、</strong><br>
+<strong>Ctrl + ↑</strong><br>
+これで間違いなく、<strong>データの最終行に移動</strong>できます。<br>
+これをマクロVBAで書くと、<br><div class="br2"><br></div>
+<strong>Cells(Rows.Count, 1).End(xlUp)</strong><br><div class="br2"><br></div>
+このように書きます。<br>
+<strong>Rows.Count</strong>は、<br>
+<strong>1048576</strong><br>
+という数値と同じ意味です。<br>
+シートの一番下の行の数値、つまり、シートの全行数を取得しています。<br>
+ですので、<br>
+<strong>Cells(1048576, 1).End(xlUp)</strong><br>
+これと同じことになります。<br><div class="br2"><br></div>
+<strong>.End(xlDown)<br>
+.End(xlUp)<br>
+</strong>これらが、<br>
+<strong>Ｃｔｒｌ + ↓</strong>や<strong>Ｃｔｒｌ + ↑</strong><br>
+これらを意味します。<br><div class="br2"><br></div>
+これで最終行のセルは分かりました。<br>
+しかし、これはあくまで<strong>最終行のセル</strong>です、箱としてのセルそのものです。<br>
+<strong>行数</strong>ではありません。<br>
+セルの行数は、<br>
+<strong>.Row</strong><br>
+と付け足すと、ぞの<strong>セルの行数</strong>が取得できます。<br>
+つまり、<br>
+<strong>A1048576</strong>のセルから ・・・ <strong>Cells(Rows.Count, 1)</strong><br>
+<strong>Ｃｔｒｌ + ↑</strong>で移動したセル ・・・ <strong>.End(xlUp)</strong><br>
+の<strong>行数</strong> ・・・ <strong>.Row</strong><br>
+という事です。<br><div class="br2"><br></div>
+<strong>Cells(Rows.Count, 1).End(xlUp).Row</strong><br><div class="br2"><br></div>
+このように書くと、最終行の行数になります。<br>
+最初の画像の表なら、<br><div class="br2"><br></div>
+<strong>Cells(Rows.Count, 1).End(xlUp).Row</strong><br>
+これは、<br>
+<strong>11</strong><br>
+にまります。<br><div class="br2"><br></div>
+つまり、<br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+<strong>Cells(Rows.Count, 1)</strong><br>
+これは、<br>
+<strong>A1048576</strong>セルの事で<br>
+そこから、<br>
+<strong>.End(xlUp)<br>
+</strong>そのセルから<strong>Ctrl + ↑</strong>で移動したセルの<strong>.Row</strong>行番号という事です。<br><div class="br2"><br></div>
+</div>
+<h3>表の最終行まで繰り返す</h3>
+<div class="main-indent">そこで、前回の繰り返し処理の<br><div class="br2"><br></div>
+<strong>For i = 2 To 11</strong><br>
+この終了値の<br>
+<strong>11</strong><br>
+を<br>
+<strong>Cells(Rows.Count, 1).End(xlUp).Row</strong><br>
+これに取り替えることで、<br>
+（デー件数が変わっても）常に最終行まで処理されるようになります。<br><div class="br2"><br></div>
+<img src="image44.jpg" tppabs="https://excel-ubara.com/excelvba1r/image44.jpg" width="444" height="103" border="0" alt="Excel マクロVBA サンプルコード"><br><div class="br2"><br></div>
+これを変更して、<br><div class="br2"><br></div>
+<img src="image48.jpg" tppabs="https://excel-ubara.com/excelvba1r/image48.jpg" width="456" height="111" border="0" alt="マクロ VBA サンプル画像"><br><div class="br2"><br></div>
+このようにすることで、常に最終行まで処理されます。<br>
+実際に、データを追加したり、削除して、<br>
+ちゃんと最終行まで計算されることを確認してください。<br><div class="br2"><br></div>
+</div>
+<h3>VBAの文法を覚える必要があるか</h3>
+<div class="main-indent">上記の最終行取得のVBAコードを説明しようとすると、かなり難しい文法説明が必要になります。<br>
+VBAを書くだけなら、上記のコードをコピペすれば済むことです。<br><div class="br2"><br></div>
+<strong>オブジェクト、プロパティ、メソッド</strong><br>
+ここを訪れるまでに、書籍やネットでVBAを勉強したことある人は、これらの言葉で挫折した人も多いのではないでしょうか。<br><div class="br2"><br></div>
+<strong>オブジェクトとは</strong></div>
+<div class="main-indent">
+<div class="main-indent">対象物です。<br>
+ほとんどのオブジェクトは、マウスで操作できるもので、そのマウスで操作する対象の事です。<br>
+エクセルの代表的なオブジェクトと言えば、ブック、シート、セルという事になります。</div>
+</div>
+<div class="main-indent"><strong>プロパティとは</strong></div>
+<div class="main-indent">
+<div class="main-indent">オブジェクトの属性・状態・様子といったものになります。<br>
+オブジェクトを物体としてとらえると、その物体の状態を表すという事です。</div>
+</div>
+<div class="main-indent"><strong>メソッドとは</strong></div>
+<div class="main-indent">
+<div class="main-indent">オブジェクトに動作を与える命令です。<br>
+オブジェクトに対して、こう動作しろ、こうなれ、と命令するという事です</div>
+</div>
+<div class="main-indent"><strong>コレクションとは</strong></div>
+<div class="main-indent">
+<div class="main-indent">同一のオブジェクトの集まりです。<br>
+多くの場合、オブジェクト名称を複数形にした名前になっています。</div>
+</div>
+<div class="main-indent">上記の最終行取得のコードを、これらの用語を使って説明しても簡単に理解できるものではありません。<br>
+そのような説明を聞いて理解できるなら苦労しないし、ここには来ていないはずです。<br>
+こういう事をちゃんと覚えるのは後回しにしましょう。<br>
+今の段階では、用語としてそういう言い方をすると、それだけの理解で十分です。<br><div class="br2"><br></div>
+マクロを書くのに、このようなオブジェクト、プロパティ、メソッドが何で、どういうものかなどという事は、知らなくても書けます。<br>
+しかし、書籍やネットを見れば、このような用語が出てきますし、<br>
+エクセルも、書き間違えてエラーを起こすと、これらの言葉で注意します。<br>
+その時に、何の事かが分からないと困ってしまいます。<br>
+逆に言えば、そのような時に困らなければ、それで十分だという事です。<br><div class="br2"><br></div>
+本当に詳しい話、本質を語れば、<br>
+そもそもオブジェクト、プロパティ、メソッドの違いなんて、ほとんど大した違いはありません。<br>
+VBAでの使い方・書き方の違い程度の事でしかないのです。<br><div class="br2"><br></div>
+オブジェクトは、階層構造になっていて、オブジェクトの中にオブジェクトがある。<br>
+（あらゆる物体は、より小さな物体の集まりです）<br>
+オブジェクトは、プロパティとメソッドの集合体である。<br>
+（どういう物体かをプロパティが決めていて、メソッドでその物体は動かせる）<br>
+このようにイメージしてください。<br><div class="br2"><br></div>
+これらの用語については、後の回にもう少し詳しく解説します。<br><div class="br2"><br></div>
+</div>
+<h3>ExcelマクロVBA入門等の対応ページ</h3>
+<div class="main-indent"><strong><a href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">第18回.最終行の取得（End,Rows.Count）</a></strong><div class="details">Excelワークシートにおける表の最終行の取得は、VBAの必須技術になります、エクセルVBAにおける最終行取得の必要性 エクセルは表計算ソフトです、つまり縦横の表を扱います、データは横に項目があり、縦に項目に対するデータが入っている事が一般的です。しかし、そのデータ行数は決まった行数ではない事が普通です。</div><br>
+<strong><a href="../excelvba4/EXCEL261.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL261.html" target="_blank">オブジェクト式について</a></strong><div class="details">オブジェクトは、objectであり、物・物体のことです、VBAで何か操作をしようとする対象となるものがオブシェクトです、オブジェクト式とは、オブジェクトを操作しようとしたときに、オブジェクトを特定するための書き方です。ただし「オブジェクト式」という言い方を特別なものとして覚える必要はありません。</div><br>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a>」の記事</h3><p>
+<A href="EXCELVBA503.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA503.html">第3回.セルに数字や文字を入れる（RnageとCells）</A><br>
+<A href="EXCELVBA504.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA504.html">第4回.セルの値を使って計算する（四則演算）</A><br>
+<A href="EXCELVBA505.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA505.html">第5回.同じ計算を行数分繰り返す（For～Next）</A><br>
+<span class="strrev">第6回.表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）</span><br>
+<A href="EXCELVBA507.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA507.html">第7回.セルの値によって計算を変える（Ifステートメント）</A><br>
+<A href="EXCELVBA508.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA508.html">第8回.表範囲をまとめて消去する（OffsetとClearContents）</A><br>
+<A href="EXCELVBA509.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA509.html">第9回.関数という便利な道具（VBA関数）</A><br>
+<A href="EXCELVBA510.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA510.html">第10回.ワークシートの関数を使う（WorksheetFunction）</A><br>
+<A href="EXCELVBA511.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA511.html">第11回.分からない事はエクセルに聞く（マクロの記録）</A><br>
+<A href="EXCELVBA512.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA512.html">第12回.エクセルの言葉を理解する（オブジェクト、プロパティ、メソッド）</A><br>
+<A href="EXCELVBA513.html" tppabs="https://excel-ubara.com/excelvba1r/EXCELVBA513.html">第13回.セルのコピペ方法を知る（CopyとPaste、さらに）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+<li><span class="strrev2"><strong>表の先頭から最終行まで繰り返す（ForとEnd(xlUp).Row）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+<li><span class="strrev2"><strong>表の先頭から最終行まで繰り返す</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">第18回.最終行の取得<br></a></li><li><a href="../excelvba4/EXCEL261.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL261.html" target="_blank">オブジェクト式について</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

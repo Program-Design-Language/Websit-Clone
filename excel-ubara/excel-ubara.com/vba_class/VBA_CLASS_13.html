@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VBAで音楽再生するクラスを作成｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VBAにも音楽を！ということでVBAで音楽再生をしてみることにしました。VBAでの音楽再生方法はいろいろありそうですが、多くの環境で動くのではないかという事でAPIを使いました。mciSendString このAPIで音楽再生します。">
+  <meta name="keywords" content="VBA,技術解説,エクセル,Excel,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba_class/VBA_CLASS_13.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="VBAで音楽再生するクラスを作成｜VBA技術解説" />
+  <meta property="og:description" content="VBAにも音楽を！ということでVBAで音楽再生をしてみることにしました。VBAでの音楽再生方法はいろいろありそうですが、多くの環境で動くのではないかという事でAPIを使いました。mciSendString このAPIで音楽再生します。" />
+  <meta property="og:image" content="https://excel-ubara.com/vba_class/sample_gif14.gif" />
+  <meta property="og:url" content="https://excel-ubara.com/vba_class/VBA_CLASS_13.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VBAで音楽再生するクラスを作成｜VBA技術解説" />
+  <meta name="twitter:description" content="VBAにも音楽を！ということでVBAで音楽再生をしてみることにしました。VBAでの音楽再生方法はいろいろありそうですが、多くの環境で動くのではないかという事でAPIを使いました。mciSendString このAPIで音楽再生します。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/vba_class/sample_gif14.gif" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>VBAで音楽再生するクラスを作成</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba_class/">
+<span itemprop="name">VBAクラス入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="VBA_CLASS_13.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_13.html">
+<span itemprop="name">VBAで音楽再生するクラスを作成</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-02-22</span>
+<h2 align="center">VBAで音楽再生するクラスを作成</h2><p><br>
+VBAにも音楽を！<br>
+ということでVBAで音楽再生をしてみることにしました。<br><div class="br2"><br></div>
+VBAでの音楽再生方法はいろいろありそうですが、多くの環境で動くのではないかという事でAPIを使いました。<br>
+<strong>mciSendString</strong><br>
+このAPIで音楽再生します。<br>
+エラーメッセージの取得では、<strong>mciGetErrorString</strong>も使っています。<br><div class="br2"><br></div></p>
+<h3>APIの解説</h3>
+<div class="main-indent">APIの細かい仕様は詳しく調べていませんし、詳細を説明しているとかなり長くなりそうですのでごく簡単に。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>mciSendString</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">Declare PtrSafe Function mciSendString Lib &quot;winmm.dll&quot; Alias &quot;mciSendStringA&quot; ( _<br>
+ByVal lpstrCommand As String, _<br>
+ByVal lpstrReturnString As String, _<br>
+ByVal uReturnLength As Long, _<br>
+ByVal hwndCallback As Long) As Long<br><div class="br2"><br></div>
+<strong>lpszCommand</strong></div>
+<div class="main-indent">
+<div class="main-indent">MCIコマンド文字列を指定します。<br>
+今回使ったコマンドは、<br>open<br>
+play<br>
+seek<br>
+pause<br>
+resume<br>
+stop<br>
+close<br>
+status<br>
+</div>
+</div>
+<div class="main-indent"><strong>lpszReturnString</strong></div>
+<div class="main-indent">
+<div class="main-indent">1個のバッファへのポインタを指定します。<br>
+statusの場合にこのバッファに情報が格納されます。<br>
+この情報を必要としない場合は、NULL（&quot;&quot;で良い） を指定します。<br>
+</div>
+</div>
+<div class="main-indent"><strong>uReturnLength</strong></div>
+<div class="main-indent">
+<div class="main-indent">lpszReturnStringのバッファのサイズを、文字単位で指定します。<br>
+</div>
+</div>
+<div class="main-indent"><strong>hwndCallback</strong>
+<div class="main-indent">コールバックウィンドウのハンドルを指定します。<br>
+使っていません。<br>
+　</div>
+</div>
+<div class="main-indent"><strong>戻り値</strong></div>
+<div class="main-indent">
+<div class="main-indent">成功すると0が返り、失敗すると0以外の値が返ります。<br>
+エラーコードに対応する、エラーの内容を取得するには、この戻り値をmciGetErrorString関数に渡します。<br>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<h4>mciGetErrorString</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">Private Declare PtrSafe Function mciGetErrorString Lib &quot;winmm&quot; Alias &quot;mciGetErrorStringA&quot; ( _<br>
+ByVal dwError As Long, _<br>
+ByVal lpstrBuffer As String, _<br>
+ByVal uLength As Long) As Long<br><div class="br2"><br></div>
+<strong>dwError</strong></div>
+<div class="main-indent">
+<div class="main-indent">mciSendStringが返したエラーコードを指定します。<br>
+</div>
+</div>
+<div class="main-indent"><strong>lpstrBuffer</strong></div>
+<div class="main-indent">
+<div class="main-indent">1個のバッファへのポインタを指定します。<br>
+エラーを説明するNULLで終わる文字列が格納される。<br>
+最大で128文字なので、実際には適当な大きさを確保しておく。<br>
+</div>
+</div>
+<div class="main-indent"><strong>uLength </strong></div>
+<div class="main-indent">
+<div class="main-indent">lpszErrorTextのサイズを文字単位で指定します。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>戻り値</strong></div>
+<div class="main-indent">
+<div class="main-indent">成功すると、0以外の値が返ります。<br>
+指定したエラーコードが不明だった場合、0が返ります。<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>VBAで音楽再生するクラスのVBAコード</h3>
+<div class="main-indent">クラス名は何でも構いませんが、以下の使用例では、<br>
+<strong>clsSound</strong><br>
+として使っています。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+Private Declare PtrSafe Function mciSendString Lib &quot;winmm.dll&quot; Alias &quot;mciSendStringA&quot; ( _<br>
+　　　　　　　　　　　　　　ByVal lpstrCommand As String, _<br>
+　　　　　　　　　　　　　　ByVal lpstrReturnString As String, _<br>
+　　　　　　　　　　　　　　ByVal uReturnLength As Long, _<br>
+　　　　　　　　　　　　　　ByVal hwndCallback As Long) As Long<br>
+　　　　　　　　　　　　　　　　　　　　<br>
+Private Declare PtrSafe Function mciGetErrorString Lib &quot;winmm&quot; Alias &quot;mciGetErrorStringA&quot; ( _<br>
+　　　　　　　　　　　　　　ByVal dwError As Long, _<br>
+　　　　　　　　　　　　　　ByVal lpstrBuffer As String, _<br>
+　　　　　　　　　　　　　　ByVal uLength As Long) As Long<br><div class="br2"><br></div>
+Private pHasOpen As Boolean <span style="color:#009900;">'オープルされているか</span><br>
+Private pFile As String <span style="color:#009900;">'音楽ファイル</span><br>
+Private pAlias As String <span style="color:#009900;">'音楽エイリアス</span><br>
+Private pErrDescription As String <span style="color:#009900;">'APIエラーメッセージ</span><br>
+Private pCommand As String <span style="color:#009900;">'lpstrCommand作成用</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'音楽ファイル</span><br>
+Public Property Get SoundFile() As String<br>
+　　SoundFile = pFile<br>
+End Property<br>
+Public Property Let SoundFile(ByVal sFile As String)<br>
+　　pFile = sFile<br>
+　　<span style="color:#009900;">'再生中等の場合もあるのでいったん停止させる</span><br>
+　　On Error Resume Next<br>
+　　Call StopSound<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'エラーメッセージ</span><br>
+Public Property Get ErrDescription() As String<br>
+　　ErrDescription = pErrDescription<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'Openしているか</span><br>
+Public Property Get HasOpen() As Boolean<br>
+　　HasOpen = pHasOpen<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'mciSendStringのエラーメッセージ</span><br>
+Private Function GetMciError(ByVal aErrCode As Long, _<br>
+　　　　　　　　　　　　　　 ByVal ErrRaise As Boolean) As String<br>
+　　Dim Buf As String * 256<br>
+　　Dim rtnCode As Long<br>
+　　rtnCode = mciGetErrorString(aErrCode, Buf, Len(Buf))<br>
+　　If rtnCode = 0 Then<br>
+　　　　pErrDescription = aErrCode &amp; &quot;:&quot; &amp; &quot;不明なエラー&quot;<br>
+　　Else<br>
+　　　　pErrDescription = aErrCode &amp; &quot;:&quot; &amp; Left(Buf, InStr(Buf, vbNullChar) - 1)<br>
+　　End If<br>
+　　If ErrRaise Then<br>
+      　　　　Err.Raise Number:=vbObjectError + 513, Description:=pErrDescription<br>
+　　End If<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'オープン：音楽ファイルのチェック兼用</span><br>
+Public Function OpenSound(Optional ByVal ErrRaise As Boolean = True) As Boolean<br>
+　　OpenSound = True<br>
+　　<br>
+　　<span style="color:#009900;">'現在の状態確認</span><br>
+　　Dim rtnStatus As String<br>
+　　rtnStatus = GetStatus<br>
+　　Select Case rtnStatus<br>
+　　　　Case &quot;not ready&quot;<br>
+　　　　　　Exit Function <span style="color:#009900;">'発生条件は不明</span><br>
+　　　　Case &quot;playing&quot;, &quot;paused&quot;, &quot;stopped&quot;<br>
+　　　　　　Exit Function<br>
+　　End Select<br>
+　　<br>
+　　<span style="color:#009900;">'オープン</span><br>
+　　pAlias = &quot;MySound&quot; <span style="color:#009900;">'エイリアス作成</span><br>
+　　Dim ret As Long<br>
+　　pCommand = &quot;open &quot;&quot;&quot; &amp; SoundFile &amp; &quot;&quot;&quot; alias &quot; &amp; pAlias<br>
+　　ret = mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+　　pHasOpen = True<br>
+　　If ret = 0 Then Exit Function<br>
+　　<br>
+　　<span style="color:#009900;">'エラー</span><br>
+　　Call GetMciError(ret, ErrRaise)<br>
+　　OpenSound = False<br>
+　　pHasOpen = False<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'再生：引数は秒数指定</span><br>
+Public Sub Play(Optional ByVal aPosition As Long = 0)<br>
+　　If Not pHasOpen Then Exit Sub<br>
+　　If Not Me.OpenSound(False) Then Exit Sub<br>
+　　If aPosition = 0 Then<br>
+　　　　pCommand = &quot;play &quot; &amp; pAlias<br>
+　　　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+　　Else<br>
+　　　　<span style="color:#009900;">'指定位置から再生</span><br>
+　　　　Call PlayPosition(aPosition)<br>
+　　End If<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'指定位置再生：引数は秒数指定</span><br>
+Public Sub PlayPosition(ByVal aPosition As Long)<br>
+　　If Not pHasOpen Then Exit Sub<br>
+　　pCommand = &quot;seek &quot; &amp; pAlias &amp; &quot; to &quot; &amp; aPosition * 1000<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+　　pCommand = &quot;play &quot; &amp; pAlias<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'指定秒数スキップ</span><br>
+Public Sub SkipPosition(ByVal aPostion As Long)<br>
+　　If Not pHasOpen Then Exit Sub<br>
+　　Dim curPos As Long<br>
+　　curPos = GetPosition() * 200<br>
+　　curPos = curPos + (aPostion * 200)<br>
+　　pCommand = &quot;seek &quot; &amp; pAlias &amp; &quot; to &quot; &amp; curPos<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+　　pCommand = &quot;play &quot; &amp; pAlias<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'一時停止</span><br>
+Public Sub Pause()<br>
+　　If Not pHasOpen Then Exit Sub<br>
+　　pCommand = &quot;pause &quot; &amp; pAlias<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'再生再開</span><br>
+Public Sub PlayResume()<br>
+　　If Not pHasOpen Then Exit Sub<br>
+　　pCommand = &quot;resume &quot; &amp; pAlias<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'停止</span><br>
+Public Sub StopSound()<br>
+　　pCommand = &quot;stop &quot; &amp; pAlias<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+　　Call CloseSound<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'クローズ</span><br>
+Public Sub CloseSound()<br>
+　　pCommand = &quot;close &quot; &amp; pAlias<br>
+　　Call mciSendString(pCommand, &quot;&quot;, 0, 0)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'ステータス取得</span><br>
+<span style="color:#009900;">'戻り値：&quot;not ready&quot;,&quot;paused&quot;,&quot;playing&quot;,&quot;stopped&quot;</span><br>
+<span style="color:#009900;">'　　　：未Open時は&quot;&quot;空文字</span><br>
+Public Function GetStatus() As String<br>
+　　If Not pHasOpen Then Exit Function<br>
+　　Dim Mode As String<br>
+　　Dim Buf As String * 20<br>
+　　pCommand = &quot;status &quot; &amp; pAlias &amp; &quot; mode&quot;<br>
+　　Call mciSendString(pCommand, Buf, Len(Buf), 0)<br>
+　　GetStatus = Replace(Buf, Chr(0), &quot;&quot;)<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'再生位置取得：戻り値は秒数</span><br>
+Public Function GetPosition() As Double<br>
+　　On Error Resume Next<br>
+　　If Not pHasOpen Then Exit Function<br>
+　　<br>
+　　Dim Buf As String * 20<br>
+　　pCommand = &quot;status &quot; &amp; pAlias &amp; &quot; position&quot;<br>
+　　Call mciSendString(pCommand, Buf, Len(Buf), 0)<br>
+　　GetPosition = CLng(Buf) / 1000<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'再生時間取得：戻り値は秒数</span><br>
+Public Function GetLength(Optional ByVal ErrRaise As Boolean = False) As Double<br>
+　　Dim ret As String<br>
+　　ret = GetStatus <span style="color:#009900;">'現在の状態を退避</span><br>
+　　<br>
+      　　Call OpenSound(ErrRaise)<br>
+　　If Not pHasOpen Then Exit Function<br>
+　　<br>
+　　Dim Buf As String * 20<br>
+　　pCommand = &quot;status &quot; &amp; pAlias &amp; &quot; length&quot;<br>
+　　Call mciSendString(pCommand, Buf, Len(Buf), 0)<br>
+　　<br>
+　　<span style="color:#009900;">'元々OpenしていなかったらClose</span><br>
+　　If ret = &quot;&quot; Then Call CloseSound<br>
+　　<br>
+　　GetLength = CLng(Buf) / 1000<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'クラス終了処理</span><br>
+Private Sub Class_Terminate()<br>
+　　<span style="color:#009900;">'あくまで念の為</span><br>
+　　On Error Resume Next<br>
+　　Call StopSound<br>
+End Sub<br>
+</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+ほとんどはそのままAPIをCallしているだけです。<br>
+Openする部分については、少し込み入ったことをしていますが、<br>
+これは、このクラスを使用するときにOpenしているかをなるべく気にしなくて良いように考慮したものになります。<br><div class="br2"><br></div>
+また、エラー処理についてもOpenだけに入れてみました。<br>
+他でもなくはないのでしょうが、実質Openが通れば大体大丈夫そうです。<br>
+Err.Raiseも使い方によりますが、再生されなければVBAを止めなければならない事ってあまり無さそうなので、少し曖昧な感じにしてあります。<br>
+音楽ファイルの妥当性については、以下での使用例のように、OpenSoundでチェックするくらいで大丈夫ではないかと思います。<br><div class="br2"><br></div>
+プロシージャー名が少しわかりづらくなっているかもしれません。<br>
+Open、Close、Stop等はプロシージャー名として使えないので、後ろにSoundを付けてみました。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>VBAで音楽再生するクラスの使用例</h3>
+<div class="main-indent">
+<h4>VBAクラスの機能テスト評価用</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample1()<br>
+　　Dim clsSound As clsSound<br>
+　　Set clsSound = New clsSound<br>
+　　clsSound.SoundFile = &quot;C:\Users\yamao\Desktop\米津玄師__MV「Lemon」.mp3&quot;<br>
+　　<br>
+　　<span style="color:#009900;">'音楽ファイルの確認</span><br>
+      　　If Not clsSound.OpenSound(False) Then<br>
+　　　　MsgBox clsSound.ErrDescription<br>
+　　　　Set clsSound = Nothing<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'再生時間取得</span><br>
+　　MsgBox clsSound.GetLength<br>
+　　<br>
+　　<span style="color:#009900;">'2秒の位置から再生</span><br>
+　　Call clsSound.Play(2)<br>
+　　MsgBox clsSound.GetStatus<br>
+　　<br>
+　　<span style="color:#009900;">'一時停止</span><br>
+　　Call clsSound.Pause<br>
+　　MsgBox clsSound.GetStatus<br>
+　　<br>
+　　<span style="color:#009900;">'再生再開</span><br>
+　　Call clsSound.PlayResume<br>
+　　MsgBox clsSound.GetStatus<br>
+　　<br>
+　　<span style="color:#009900;">'60秒スキップ</span><br>
+　　Call clsSound.SkipPosition(60)<br>
+　　MsgBox clsSound.GetPosition<br>
+　　<br>
+　　<span style="color:#009900;">'180秒の位置から再生</span><br>
+　　Call clsSound.PlayPosition(120)<br>
+　　MsgBox clsSound.GetPosition<br>
+　　<br>
+　　<span style="color:#009900;">'停止</span><br>
+　　Call clsSound.StopSound<br>
+　　Set clsSound = Nothing<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+単純にクラスの各機能を呼び出しています。<br>
+クラス作成時のテストで使ったものになります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>処理時間のかかるマクロの実行中に音楽を再生する</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+Sub sample2()<br>
+　　Dim clsSound As clsSound<br>
+　　Set clsSound = New clsSound<br>
+　　<br>
+　　<span style="color:#009900;">'音楽再生</span><br>
+      　　clsSound.SoundFile = &quot;音楽ファイルをフルパスで指定&quot;<br>
+　　clsSound.Play<br>
+　　<br>
+　　<span style="color:#009900;">'いろいろと時間のかかる処理</span><br>
+　　Application.Wait Now() + TimeSerial(0, 0, 5)<br>
+　　<br>
+　　<span style="color:#009900;">'音楽停止</span><br>
+　　clsSound.StopSound<br>
+　　<br>
+      　　<span style="color:#009900;">'Windowsにある音</span><br>
+　　clsSound.SoundFile = &quot;C:\Windows\Media\Windows Notify Email.wav&quot;<br>
+　　Dim playTime As Double<br>
+　　playTime = clsSound.GetLength <span style="color:#009900;">'再生時間取得</span><br>
+　　clsSound.Play<br>
+　　Application.Wait Now() + TimeSerial(0, 0, playTime)<br>
+　　clsSound.StopSound<br>
+　　<br>
+　　Set clsSound = Nothing<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+音楽の再生は、マクロVBAとは非同期（つまりVBAは先に進む）で再生されます。<br>
+マクロ開始時に再生し、マクロ終了時に停止できます。<br><div class="br2"><br></div>
+最後のWindowsにある音の部分は、再生時間を取得して再生する場合のサンプルになります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>音楽プレーヤーを作成</h3>
+<div class="main-indent">このVBAクラスを使用して、簡易的な音楽プレーヤーを作成しました。<br><div class="br2"><br></div>
+<strong><a href="../excelvba3/EXCELFORM025.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM025.html">第25回．簡易音楽プレーヤーの作成｜ユーザーフォーム入門</a></strong><div class="details">VBAにも音楽を！ということでVBAで音楽再生するVBAクラスを作成しました。VBAで音楽再生するクラスを作成 そこで、このクラスを使い簡易的な音楽プレーヤーを作ってみました。あまり本格的なものは作れませんし、良いソフトが沢山ありますので自作しても仕方ありません。</div><br>
+<img src="sample_gif14.gif" tppabs="https://excel-ubara.com/vba_class/sample_gif14.gif" width="484" height="349" border="0" alt="VBA マクロ 音楽再生"><br>
+※これはGIFで音は出していません。動作イメージだけです。<br><div class="br2"><br></div>
+</div>
+<h3>VBAで音楽再生するクラスの最後に</h3>
+<div class="main-indent">このVBAはお遊び的に作成したものなので、厳密なテストはしていません。<br>
+したがって、使用する場合はご自身でいろいろ試しながら改造してお使いください。<br><div class="br2"><br></div>
+初めてやってみましたが、VBAで音楽再生するのもなかなか面白いですね。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a>」の記事</h3><p>
+<A href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</A><br>
+<A href="VBA_CLASS_05.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_05.html">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</A><br>
+<A href="VBA_CLASS_06.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_06.html">クラスとイベントとマルチプロセス並列処理</A><br>
+<A href="VBA_CLASS_07.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_07.html">クラスとCallByNameとポリモーフィズム(多態性)</A><br>
+<A href="VBA_CLASS_08.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_08.html">オートフィルターを退避回復するVBAクラス</A><br>
+<A href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</A><br>
+<A href="VBA_CLASS_10.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_10.html">コレクション（Collection）の並べ替え（Sort）に対応するクラス</A><br>
+<A href="VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html">VBAクラスのAttributeについて（既定メンバーとFor Each）</A><br>
+<A href="VBA_CLASS_12.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_12.html">VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</A><br>
+<span class="strrev">VBAで音楽再生するクラスを作成</span><br>
+<A href="VBA_CLASS_14.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_14.html">図形を方程式で動かすVBAクラス</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>VBAで音楽再生するクラスを作成</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>VBAで音楽再生するクラスを作成</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelvba3/EXCELFORM025.html" tppabs="https://excel-ubara.com/excelvba3/EXCELFORM025.html">第25回．簡易音楽プレーヤーの作成｜ユーザーフォーム入門</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

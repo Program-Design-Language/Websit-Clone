@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VBAのスクレイピングを簡単楽にしてくれるSelenium｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VBAでWebスクレイピングする方法としてIE自動操作がありますが、VBA記述が結構面倒になります、もっと簡単にスマートにVBAを書きたいと思ったら…SeleniumBasicを使ってみましょう。SeleniumBasicは、エクセルVBAでのWeb閲覧を自動化することを強力かつ簡単に実現してくれます。">
+  <meta name="keywords" content="VBA,Selenium,スクレイピングを簡単楽にしてくれる,技術解説,エクセル,Excel,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL_VBA_401.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="VBAのスクレイピングを簡単楽にしてくれるSelenium｜VBA技術解説" />
+  <meta property="og:description" content="VBAでWebスクレイピングする方法としてIE自動操作がありますが、VBA記述が結構面倒になります、もっと簡単にスマートにVBAを書きたいと思ったら…SeleniumBasicを使ってみましょう。SeleniumBasicは、エクセルVBAでのWeb閲覧を自動化することを強力かつ簡単に実現してくれます。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba4/image710.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL_VBA_401.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VBAのスクレイピングを簡単楽にしてくれるSelenium｜VBA技術解説" />
+  <meta name="twitter:description" content="VBAでWebスクレイピングする方法としてIE自動操作がありますが、VBA記述が結構面倒になります、もっと簡単にスマートにVBAを書きたいと思ったら…SeleniumBasicを使ってみましょう。SeleniumBasicは、エクセルVBAでのWeb閲覧を自動化することを強力かつ簡単に実現してくれます。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba4/image710.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>VBAのスクレイピングを簡単楽にしてくれるSelenium</h1>ExcelマクロVBAの問題点と解決策の記述的解説、マクロVBA技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL_VBA_401.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_401.html">
+<span itemprop="name">VBAのスクレイピングを簡単楽にしてくれるSelenium</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-10-11</span>
+<h2 align="center">VBAのスクレイピングを簡単楽にしてくれるSelenium</h2><p><br>
+VBAでWebスクレイピングする方法としてIE自動操作がありますが、VBA記述が結構面倒になります、<br>
+もっと簡単にスマートにVBAを書きたいと思ったら…SeleniumBasicを使ってみましょう。<br><div class="br2"><br></div>
+SeleniumBasicは、エクセルVBAでのWeb閲覧を自動化することを強力かつ簡単に実現してくれます。<br>
+今回は、ブラウザはChromeを使っての自動操作を解説します。<br>
+Google Chromeは別途インストールしておいてください。<br><div class="br2"><br></div>
+IE操作については以下を参照
+<div class="main-indent"><strong><a href="EXCEL217.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL217.html" target="_blank">VBAでのInternetExplorer自動操作</a></strong><div class="details">VBAでInternetExplorerを操作する場合の基本について解説します。VBAでInternetExplorerを操作し、Webのデータを取得したり、リンクをクリックしたり、これらを自動で行う事が出来ます。定型的なブラウザ操作であれば、VBAで自動化することで大きな省力化になります。</div>
+</div><p>
+WEBページのいろいろな取得方法については以下を参照
+<div class="main-indent"><strong><a href="../excelvba5/EXCELVBA222.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA222.html" target="_blank">WEBデータの取得方法</a></strong><div class="details">WEBページのデータを取得して、エクセルのデータとして取り込みたいとの要望が多いようです。マクロVBAでWEBページのデータを取得する方法はいろいろあります。QueryTables InternetExplorer MSHTML MSXML2 順番に、以下で説明します。</div>
+</div><p><br>
+以下では、VBAについては相応の知識があることを前提に、Seleniumの使い方のみ解説しています。<br>
+少なくとも、メソッドという単語の理解が不安な場合は、そちらを確認してからお読みください。<br><div class="br2"><br></div>
+<strong>※以下に掲載しているバージョンやcss selectorは当初執筆時点のもので、その後変更されています。</strong><br><div class="br2"><br></div>
+<div class="main-indent">
+<h4>目次</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent"><a href="#sec01">SeleniumBasicのインストール</a><br>
+<a href="#sec02">VBEでの参照設定</a><br>
+<a href="#sec03">WEBサイトを表示してみましょう</a><br>
+<a href="#sec04">Seleniumの基本的な使い方（株価情報を取得してみる）</a><br>
+<a href="#sec05">色々なパターンでのseleniumの使い方</a><br></div>
+<div class="main-indent">
+<div class="main-indent"><a href="#sec05_01">画面最大化</a><br>
+<a href="#sec05_02">Wait処理</a><br>
+<a href="#sec05_03">テキストボックスに文字を入れる</a><br>
+<a href="#sec05_04">ドロップダウン（プルダウン）メニューの選択</a><br>
+<a href="#sec05_05">フレームを切り替える</a><br></div>
+</div>
+<div class="main-indent"><a href="#sec06">色々組み合わせて目的の画面にたどり着きます</a><br>
+<a href="#sec07">elementをコレクションで取得する</a><br>
+<a href="#sec08">新規ページが開かれる場合</a><br>
+<a href="#sec09">上手くいかない特殊な場合の対処方法</a><br></div>
+<div class="main-indent">
+<div class="main-indent"><a href="#sec09_01">テキストボックスに1回で文字列を入れられない場合</a><br>
+<a href="#sec09_02">クリック後に新ページ移動前にseleniumから戻ってきてしまう場合</a><br>
+<a href="#sec09_03">画面ロード完了前にseleniumから戻ってきてしまう場合</a><br>
+<a href="#sec09_04">遷移後のURLに直接移動する</a><br></div>
+</div>
+<div class="main-indent"><a href="#sec10">Seleniumの実践例例</a><br>
+<a href="#sec11">最後に</a><br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+</div></p>
+<h3 id="sec01">SeleniumBasicのインストール</h3>
+<div class="main-indent">以下よりダウンロードします。<br>
+<a href="javascript:if(confirm('http://florentbr.github.io/SeleniumBasic/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://florentbr.github.io/SeleniumBasic/'" tppabs="http://florentbr.github.io/SeleniumBasic/" target="_blank">http://florentbr.github.io/SeleniumBasic/</a><br>
+中段のRelease pageへ、<br>
+<a href="javascript:if(confirm('https://github.com/florentbr/SeleniumBasic/releases/tag/v2.0.9.0  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://github.com/florentbr/SeleniumBasic/releases/tag/v2.0.9.0'" tppabs="https://github.com/florentbr/SeleniumBasic/releases/tag/v2.0.9.0" target="_blank">https://github.com/florentbr/SeleniumBasic/releases/tag/v2.0.9.0</a><br>
+執筆時点では、<br>
+SeleniumBasic-2.0.9.0.exe<br>
+これをダウンロードしてインストールします。<br><div class="br2"><br></div>
+<img src="image168.jpg" tppabs="https://excel-ubara.com/excelvba4/image168.jpg" width="582" height="476" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+画面指示に従って、そのままインストールします。<br><div class="br2"><br></div>
+<strong>Selenium VBA</strong></div>
+<div class="main-indent">
+<div class="main-indent">Selenium Basicは、以前はSelenium VBAと呼ばれていました。<br><div class="br2"><br></div>
+<a href="javascript:if(confirm('https://code.google.com/archive/p/selenium-vba/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://code.google.com/archive/p/selenium-vba/'" tppabs="https://code.google.com/archive/p/selenium-vba/" target="_blank">https://code.google.com/archive/p/selenium-vba/</a><br>
+ダウンロードは、<br>
+<a href="javascript:if(confirm('https://code.google.com/archive/p/selenium-vba/downloads  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://code.google.com/archive/p/selenium-vba/downloads'" tppabs="https://code.google.com/archive/p/selenium-vba/downloads" target="_blank">https://code.google.com/archive/p/selenium-vba/downloads</a><br><div class="br2"><br></div>
+既に開発は停止していて、後継として先のSelenium Basicに移行されています。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>chromedriver.exe</strong></div>
+<div class="main-indent">
+<div class="main-indent">以下より、お使いのChromeバージョンに合わせて、「chromedriver.exe」を入れ替えてください。<br><div class="br2"><br></div>
+<a href="javascript:if(confirm('https://sites.google.com/a/chromium.org/chromedriver/downloads  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://sites.google.com/a/chromium.org/chromedriver/downloads'" tppabs="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank">https://sites.google.com/a/chromium.org/chromedriver/downloads</a><br><div class="br2"><br></div>
+<a href="javascript:if(confirm('http://chromedriver.chromium.org/downloads  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://chromedriver.chromium.org/downloads'" tppabs="http://chromedriver.chromium.org/downloads" target="_blank">http://chromedriver.chromium.org/downloads</a><br><div class="br2"><br></div>
+「chromedriver.exe」を入れ替える場所（Windows10で普通にインストールした場合）は、<br>
+C:\Users\ユーザー\AppData\Local\SeleniumBasic<br>
+exeを差し替えてください。<br>
+Chromeバージョンが変更された場合は、そのバージョンに合わせて入れ替えしてください。<br>
+執筆時点では、<br><div class="br2"><br></div>
+<img src="image175.jpg" tppabs="https://excel-ubara.com/excelvba4/image175.jpg" width="668" height="189" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+<a href="javascript:if(confirm('https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/'" tppabs="https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/" target="_blank">https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/</a><br><div class="br2"><br></div>
+こちらを使用しました。<br>
+chromedriverのバージョンが違うと動作しません。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec02">VBEでの参照設定</h3>
+<div class="main-indent"><br>
+<img src="image172.jpg" tppabs="https://excel-ubara.com/excelvba4/image172.jpg" width="455" height="395" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+参照できているか確認<br><div class="br2"><br></div>
+<img src="image176.jpg" tppabs="https://excel-ubara.com/excelvba4/image176.jpg" width="636" height="185" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+Selenium.には、以下もあります。<br>
+ChromeDriver<br>
+EdgeDriver<br>
+FirefoxDriver<br>
+Startメソッドでブラウザを指定するので、とりあえずWebDriverにしておけば良いでしょう。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3 id="sec03">WEBサイトを表示してみましょう</h3>
+<div class="main-indent">何はともあれ、お決まりのヤホーを表示してみましょう。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample()<br>
+　　Dim Driver As New Selenium.WebDriver<br>
+　　Driver.Start &quot;chrome&quot;<br>
+　　Driver.Get &quot;https://www.yahoo.co.jp/&quot;<br>
+　　Stop<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+プロシージャーが終了するとブラウザが閉じてしまうのでStopしています。<br><div class="br2"><br></div>
+ブラウザ起動・終了の定型文としては以下のようにしておけば良いでしょう。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample()<br>
+　　Dim Driver As New Selenium.WebDriver<br>
+　　Driver.Start &quot;chrome&quot;, &quot;https://www.yahoo.co.jp/&quot;<br>
+　　Driver.Get &quot;/&quot;<br>
+　　<span style="color:#009900;">'・・・</span><br>
+　　Driver.Close<br>
+      　　Set driver = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br><div class="br2"><br></div>
+</div>
+<h3 id="sec04">Seleniumの基本的な使い方（株価情報を取得してみる）</h3>
+<div class="main-indent">Yahooを表示したので、<br>
+「経済」タブの「日経平均株価」を取得してみましょう。<br><div class="br2"><br></div>
+取得するには、そもそもページ全体の中から、取得したいデータの場所を特定しなければなりません。<br>
+WEBページはHTMLで作成されています。<br><div class="br2"><br></div>
+どの要素(element)を取得するかをSeleniumに指定しなければなりません。<br>
+WEBページのソースをみてHTMLタグ等からだけでは必要な情報(element)がどれかを探すのは大変だったり、たどり着けなかったりします。<br><div class="br2"><br></div>
+Chromeのデベロッパーツールを使用します。<br><div class="br2"><br></div>
+<img src="image1681.jpg" tppabs="https://excel-ubara.com/excelvba4/image1681.jpg" width="184" height="131" border="0" alt="VBA Selenium Basic"><br>
+「Google Chrome の設定」→「その他のツール」→「デベロッパー ツール」<br>
+ショートカットは、<strong>F12</strong><br><div class="br2"><br></div>
+<img src="image210.jpg" tppabs="https://excel-ubara.com/excelvba4/image210.jpg" width="513" height="338" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+「デベロッパー ツール」の表示位置は、以下のアイコンで変更できます。<br><div class="br2"><br></div>
+<img src="image311.jpg" tppabs="https://excel-ubara.com/excelvba4/image311.jpg" width="291" height="346" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+下または右にするのが普通でしょうか。<br>
+では、まずはこれを使って、Yahooの「経済タブ」の要素を特定します。<br><div class="br2"><br></div>
+<img src="image416.jpg" tppabs="https://excel-ubara.com/excelvba4/image416.jpg" width="471" height="86" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+このアイコンをクリックすると、要素(element)の選択モードになります。<br>
+element選択モードを解除するには、もう一度このアイコンをクリックしてください。<br>
+WEBページ内をクリックしても選択モードは解除されます。<br>
+element選択モードで、マウスカーソルをWEBページ内で移動すると、<br><div class="br2"><br></div>
+<img src="image514.jpg" tppabs="https://excel-ubara.com/excelvba4/image514.jpg" width="516" height="235" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+このように、カーソル下が色付けされて表示されるのが分かるようになっています。<br>
+適当にカーソルを動かしてみて、色付けされている範囲が変更されることを確認してください。<br>
+この色付けされている範囲が、ページを構成している要素(element)になります。<br><div class="br2"><br></div>
+このエレメントは入れ子になっていて、<br>
+エレメントの中にエレメントがあり、そのエレメントの中にもさらにエレメントが入っている作りになっています。<br><div class="br2"><br></div>
+上図のように、「経済」が選択された状態でクリックすると、<br>
+「デベロッパー ツール」内の該当箇所が選択されます。<br><div class="br2"><br></div>
+<img src="image611.jpg" tppabs="https://excel-ubara.com/excelvba4/image611.jpg" width="515" height="395" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+今度は、「デベロッパー ツール」内でマウスを移動させてみてください。<br>
+「デベロッパー ツール」のマウスカーソル位置に該当するWEBページの当該箇所が色付けされます。<br><div class="br2"><br></div>
+element選択モードで、WEBページ内から目的の箇所を探したり、<br>
+デベロッパー ツール内の選択から目的の箇所を探したりと、双方向で探すことができます。<br><div class="br2"><br></div>
+目的のエレメントに到達したら、デベロッパー ツールのelementを右クリックします。<br><div class="br2"><br></div>
+<img src="image710.jpg" tppabs="https://excel-ubara.com/excelvba4/image710.jpg" width="494" height="569" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+そして、「Copy」から「Copy selecter」をクリックしてください。<br>
+クリップボードに、CSSセレクターが入ります。<br>
+「経済」タブは、<br>
+#economy<br>
+とコピーされたはずです。<br>
+これを使って、seleniumで「経済」タブをクリックしてみましょう。<br><div class="br2"><br></div>
+前出のコードに追記します。<br><div class="br2"><br></div>
+<img src="image811.jpg" tppabs="https://excel-ubara.com/excelvba4/image811.jpg" width="450" height="265" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+エレメントを見つけるので、Find○○というメソッドになります。<br><div class="br2"><br></div>
+.FindElementByClass<br>
+.FindElementByCss<br>
+.FindElementById<br>
+.FindElementByLinkText<br>
+.FindElementByName<br>
+.FindElementByPartialLinkText<br>
+.FindElementByTag<br>
+.FindElementByXPath<br><div class="br2"><br></div>
+いろいろなメソッドが用意されていることを確認しておきましょう。<br>
+どれを使うかは、その時々で変わってきますが、<br>
+今回は、CSSセレクターなので、<br>
+FindElementByCss<br>
+これになります。<br><div class="br2"><br></div>
+この引数に先ほどCopyしたCSSを入れます。<br>
+そして、それをクリックなので、Clickメソッドを使用します。<br><div class="br2"><br></div>
+<img src="image1011.jpg" tppabs="https://excel-ubara.com/excelvba4/image1011.jpg" width="676" height="151" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample()<br>
+　　Dim Driver As New Selenium.WebDriver<br>
+　　Driver.Start &quot;chrome&quot;, &quot;https://www.yahoo.co.jp/&quot;<br>
+　　Driver.Get &quot;/&quot;<br>
+　　Driver.FindElementByCss(&quot;#economy&quot;).Click<br>
+      　　Stop <span style="color:#009900;">'確認するため</span><br>
+　　Driver.Close<br>
+　　Set Driver = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+これで「経済」タブが表示されたので、<br><div class="br2"><br></div>
+<img src="image1112.jpg" tppabs="https://excel-ubara.com/excelvba4/image1112.jpg" width="263" height="219" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+クリック→elementを右クリック→Copy selector<br>
+#economyfb &gt; div.topicscatch &gt; div &gt; dl &gt; dd:nth-child(2)<br>
+これがコピーされますので、これを使って、<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample()<br>
+　　Dim Driver As New Selenium.WebDriver<br>
+　　Driver.Start &quot;chrome&quot;, &quot;https://www.yahoo.co.jp/&quot;<br>
+　　Driver.Get &quot;/&quot;<br>
+　　Driver.FindElementByCss(&quot;#economy&quot;).Click<br>
+　　Dim txt As String<br>
+      　　txt = Driver.FindElementByCss(&quot;#economyfb &gt; div.topicscatch &gt;
+      div &gt; dl &gt; dd:nth-child(2)&quot;).Text<br>
+　　Debug.Print txt<br>
+　　Driver.Close<br>
+　　Set Driver = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+もうお分かりいただけると思います。<br>
+文字列を取得するのですから、Textメソッドを使用します。<br><div class="br2"><br></div>
+結果は、イミディエイトに、<br>
+22,258.73<br>
+このように表示され、ブラウザも閉じられます。<br>
+（当たり前すぎますが、株価は実行日によって変わりますよ。）<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec05">色々なパターンでのseleniumの使い方</h3>
+<div class="main-indent">
+<h4 id="sec05_01">画面最大化</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Driver.Window.Maximize</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+ブラウザで見えていないエレメントにはアクセスできないページもあるので、<br>
+最大化しておいた方がとりあえずは扱いやすいと思います。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec05_02">Wait処理</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Driver.Wait ミリ秒</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Seleniumは、画面が表示されるまで自動で待ってから戻ってくるので、ページロード待ちはあまり気にする必要はありません。<br>
+なのですが、それだけでは対応できないページもあります。<br>
+といいますか、結構多いです。<br>
+そこで、ページによっては明示的にwaitを入れる必要が出てきます。<br><div class="br2"><br></div>
+必要なエレメントが見つかるまでループさせる方法にしたほうが良いのですが、<br>
+単純に、1～3秒程度待たせてしまったほうが、VBA自体は簡単になります。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec05_03">テキストボックスに文字を入れる</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sampla1()<br>
+　　Dim Driver As New Selenium.WebDriver<br>
+      　　<strong>Dim sKey As New Selenium.Keys</strong><br>
+      　　<strong>Dim elm As Selenium.WebElement</strong><br>
+　　Driver.Start &quot;chrome&quot;, &quot;https://www.google.co.jp/&quot;<br>
+　　Driver.Get &quot;/&quot;<br>
+      　　<strong>Set elm = Driver.FindElementByXPath</strong>(&quot;//*[@id=&quot;&quot;tsf&quot;&quot;]/div[2]/div/div[1]/div/div[1]/input&quot;)<br>
+      　　elm.<strong>Clear</strong><br>
+      　　elm.<strong>SendKeys</strong> &quot;エクセルの神髄&quot;<br>
+      　　elm.<strong>SendKeys sKey.Enter</strong><br>
+　　Stop <span style="color:#009900;">'確認</span><br>
+　　Driver.Close<br>
+　　Set Driver = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+ここではVBAサンプルとして、Googleで「エクセルの神髄」を検索しています。<br>
+エレメント検索のバリエーションとして<strong>XPath</strong>をにしています。<br><div class="br2"><br></div>
+また、サンプルとしてエレメントをオブジェクト変数にセットするようにしています。<br>
+文字列の送信は、<strong>SendKeys</strong>になりますが、<br>
+既に文字が入っている場合はその後ろに入ってしまうので一旦Clearするようにしています。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec05_04">ドロップダウン（プルダウン）メニューの選択</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">AsSelectメソッドを使います。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Driver.FindElementByCss(css文字列).AsSelect.SelectByText &quot;値&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Driver.FindElementByCss(css文字列).AsSelect.SelectByIndex 2</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+上記のほか、SelectByValueやSelectByOptionもあります。<br><div class="br2"><br></div>
+<img src="image1610.jpg" tppabs="https://excel-ubara.com/excelvba4/image1610.jpg" width="329" height="156" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec05_05">フレームを切り替える</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">iframeタグが使われているページの場合、各iframe内の要素にはそのままではアクセスできません。<br><div class="br2"><br></div>
+iframeは「inline frame」の略で、インラインのフレームを作成するためのタグです。<br>
+HTMLは以下のようなものになります。<br>
+&lt;iframe id=&quot;identiFier&quot; src=&quot;https://・・・&quot;<br><div class="br2"><br></div>
+iframe内の要素にアクセスするには、その前に当該のiframeに切替てから行います。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Driver.SwitchToFrame &quot;identiFier&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+iframe内に切り替えた後は、普通にFindElement○で要素を取得できます。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">WEBサイトの操作は、マウスクリックとキーボード入力で全て操作できます。<br>
+従って基本としては、ClickとSendKeysで操作することになりますが、seleniumで操作するときにいくつか専用の使い方が必要なものがあります。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3 id="sec06">色々組み合わせて目的の画面にたどり着きます</h3>
+<div class="main-indent">Yahooで以下の操作を行います。<br>
+「経済」→「日経平均株価」→「銘柄コード」に4689→「検索」→「アラート設定」<br>
+→「ID」入力→「次へ」→「パスワード」入力→「次へ」→「値上がり率」に15%<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      Sub sample2()<br>
+      　　Dim Driver As New Selenium.WebDriver<br>
+      　　Dim elm As Selenium.WebElement<br>
+      　　Driver.Start &quot;chrome&quot;, &quot;https://www.yahoo.co.jp/&quot;<br>
+      　　Driver.Get &quot;/&quot;<br>
+      　　Driver.Window.Maximize<br>
+      　　<span style="color:#009900;">'「経済」</span><br>
+      　　Driver.FindElementByCss(&quot;#economy&quot;).Click<br>
+      　　<span style="color:#009900;">'「日経平均株価」</span><br>
+      　　Driver.FindElementByCss(&quot;#economyfb &gt; div.topicscatch &gt; div &gt; dl &gt; dt:nth-child(1) &gt; a&quot;).Click<br>
+      　　<span style="color:#009900;">'「銘柄コード」に4689</span><br>
+      　　Driver.FindElementByCss(&quot;#searchText&quot;).SendKeys &quot;4689&quot;<br>
+      　　<span style="color:#009900;">'「検索」</span><br>
+      　　Driver.FindElementByCss(&quot;#searchButton&quot;).Click<br>
+      　　<span style="color:#009900;">'「アラート設定」</span><br>
+      　　Driver.FindElementByCss(&quot;#settings &gt; span.alerts &gt; a&quot;).Click<br>
+      　　<span style="color:#009900;">'「ID」入力</span><br>
+      　　Driver.FindElementByCss(&quot;#username&quot;).SendKeys &quot;ID&quot;<br>
+      　　<span style="color:#009900;">'「次へ」</span><br>
+      　　Driver.FindElementByCss(&quot;#btnNext&quot;).Click<br>
+      　　<span style="color:#009900;">'「パスワード」入力：そのまま続けるとエラーとなるのでWait対応</span><br>
+      　　Set elm = WaitForElement(Driver, &quot;#passwd&quot;)<br>
+      　　If elm Is Nothing Then<br>
+      　　　　MsgBox &quot;「#passwd」見つかりません。&quot;<br>
+      　　　　End<br>
+      　　End If<br>
+      　　If Not WaitForSendKeys(Driver, elm, &quot;パスワード&quot;) Then<br>
+      　　　　MsgBox &quot;パスワードを入力できませんでした。&quot;<br>
+      　　　　End<br>
+      　　End If<br>
+      　　<span style="color:#009900;">'「次へ」</span><br>
+      　　Driver.FindElementByCss(&quot;#btnSubmit&quot;).Click<br>
+      　　<span style="color:#009900;">'「値上がり率」に15%</span><br>
+      　　Driver.FindElementByCss(&quot;#up_0&quot;).AsSelect.SelectByText &quot;15％&quot;<br>
+      　　Stop <span style="color:#009900;">'確認</span><br>
+      　　Driver.Close<br>
+      　　Set Driver = Nothing<br>
+      End Sub<br><div class="br2"><br></div>
+      Function WaitForElement(ByVal Driver As WebDriver, ByVal sCss As String) As Selenium.WebElement<br>
+      　　Dim cnt As Long<br>
+      　　On Error Resume Next<br>
+      　　Do<br>
+      　　　　cnt = cnt + 1<br>
+      　　　　Set WaitForElement = Driver.FindElementByCss(sCss)<br>
+      　　　　If Not Err Then<br>
+      　　　　　　Exit Function<br>
+      　　　　End If<br>
+      　　　　Driver.Wait 100<br>
+      　　　　If cnt &gt; 100 Then Exit Do<br>
+      　　Loop<br>
+      　　Set WaitForElement = Nothing<br>
+      End Function<br><div class="br2"><br></div>
+      Function WaitForSendKeys(ByVal Driver As WebDriver, _<br>
+      　　　　　　　　　　　　 ByVal elm As WebElement, _<br>
+      　　　　　　　　　　　　 ByVal sText As String) As Boolean<br>
+      　　Dim cnt As Long<br>
+      　　On Error Resume Next<br>
+      　　Do<br>
+      　　　　cnt = cnt + 1<br>
+      　　　　Err.Clear<br>
+      　　　　elm.Clear<br>
+      　　　　If Err.Number = 0 Then<br>
+      　　　　　　Err.Clear<br>
+      　　　　　　elm.SendKeys sText<br>
+      　　　　　　If Err.Number = 0 Then<br>
+      　　　　　　　　WaitForSendKeys = True<br>
+      　　　　　　　　Exit Function<br>
+      　　　　　　End If<br>
+      　　　　End If<br>
+      　　　　Driver.Wait 100<br>
+      　　　　If cnt &gt; 100 Then Exit Do<br>
+      　　Loop<br>
+      　　WaitForSendKeys = False<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Seleniumでブラウザを起動すると、<br>
+クッキー等は全て無効になっているので画面によっては、通常操作では必要ないログインを求められます。<br><div class="br2"><br></div>
+Yahooのこのページでは、パスワード入力がそのままではエラーとなってしまいます。<br>
+1秒程度のWaitで問題なく進めますが、<br>
+上記ではサンプルの意味も兼ねて、エレメントへの設定が正しく行われるまで繰り返すようにしています。<br><div class="br2"><br></div>
+最後のドロップダウンのoptionを確認する場合、<br>
+デベロッパーツールで、ドロップダウンをクリック後に、<br><div class="br2"><br></div>
+<img src="image1410.jpg" tppabs="https://excel-ubara.com/excelvba4/image1410.jpg" width="527" height="88" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div>
+&quot;down_0&gt;…&lt;/select&gt;この…をダブルクリッククリックすると、optionの中が展開されます。<br><div class="br2"><br></div>
+<img src="image1310.jpg" tppabs="https://excel-ubara.com/excelvba4/image1310.jpg" width="380" height="339" border="0" alt="VBA Selenium Basic"><br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3 id="sec07">elementをコレクションで取得する</h3>
+<div class="main-indent">tdタグやliタグのように、同一タグの繰り返しを順次処理する場合は、<br>
+指定タグのエレメントをコレクションで取得し、For～Eachで処理します。<br><div class="br2"><br></div>
+以下では、Yahooのトピック一覧を取得しています。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample4()<br>
+      　　Dim Driver As New Selenium.WebDriver<br>
+      　　Dim elm1 As Selenium.WebElement<br>
+      　　Dim elm2 As Selenium.WebElement<br>
+      　　Driver.Start &quot;chrome&quot;, &quot;https://www.yahoo.co.jp/&quot;<br>
+      　　Driver.Get &quot;/&quot;<br>
+      　　Set elm1 = Driver.FindElementByCss(&quot;#topicsfb &gt; div.topicsindex &gt; ul.emphasis&quot;)<br>
+      　　For Each elm2 In elm1.FindElementsByTag(&quot;li&quot;)<br>
+      　　　　Debug.Print elm2.Text<br>
+      　　Next<br>
+      　　Driver.Close<br>
+      　　Set Driver = Nothing<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Find○○メソッドには、オブジェクト単体の取得とコレクションの取得が用意されています。<br>
+FindElementとFindElement<strong><font color="#ff0000">s</font></strong>が存在します。<br>
+コレクションとして取得する場合は、FindElement<strong><font color="#ff0000">s</font></strong>を使用します。<br><div class="br2"><br></div>
+.FindElementsByClass<br>
+.FindElementsByCss<br>
+.FindElementsById<br>
+.FindElementsByLinkText<br>
+.FindElementsByName<br>
+.FindElementsByPartialLinkText<br>
+.FindElementsByTag<br>
+.FindElementsByXPath<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec08">新規ページが開かれる場合 </h3>
+<div class="main-indent">クリックによって新規ページが開かれるような場合、新規ページへ移動する必要があります。<br>
+まずは特に何もしない場合の動作状況になります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample3()<br>
+      　　Dim Driver As New Selenium.WebDriver<br>
+　　Driver.Start &quot;chrome&quot;<br>
+　　Driver.Get &quot;https://excel-ubara.com/EXCEL/EXCEL918.html&quot;<br>
+　　Driver.FindElementByLinkText(&quot;Excelシートの複雑な計算式を解析するVBAの関数構文&quot;).Click<br>
+　　Debug.Print Driver.FindElementByTag(&quot;h1&quot;).Text<br>
+　　Stop <span style="color:#009900;">'確認</span><br>
+　　Driver.Close<br>
+　　Set Driver = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+これでイミディエイトに出力されるのは、<br>
+「VBAリファレンス<br>
+Excelワークシート関数一覧（2010以降）」<br><div class="br2"><br></div>
+このように、クリックする前の元のページのh1が取得されてしまいます。<br>
+そこで、次のウィンドウへ移動する必要があります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample3()<br>
+      　　Dim Driver As New Selenium.WebDriver<br>
+　　Driver.Start &quot;chrome&quot;<br>
+　　Driver.Get &quot;https://excel-ubara.com/EXCEL/EXCEL918.html&quot;<br>
+　　Driver.FindElementByLinkText(&quot;Excelシートの複雑な計算式を解析するVBAの関数構文&quot;).Click<br>
+      　　Driver.SwitchToNextWindow<br>
+　　Debug.Print Driver.FindElementByTag(&quot;h1&quot;).Text<br>
+　　Driver.Close<br>
+　　Set Driver = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+これでイミディエイトに、以下のように出力されます。<br>
+「ExcelマクロVBAサンプル集<br>
+Excelシートの複雑な計算式を解析するVBAの関数構文」<br><div class="br2"><br></div>
+複数開いている場合は、タイトルを保存しておいて、<br>
+Driver.SwitchToWindowByTitle &quot;タイトル&quot;<br>
+これで移動可能です。<br><div class="br2"><br></div>
+以下のようなVBAコードを追加して、画面遷移を確認してみると良いでしょう。<br>    Debug.Print &quot;1:&quot; &amp; Driver.window.Title<br>
+    Driver.SwitchToNextWindow<br>
+    Debug.Print &quot;2:&quot; &amp; Driver.window.Title<br>
+    Debug.Print Driver.FindElementByTag(&quot;h1&quot;).Text<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3 id="sec09">上手くいかない特殊な場合の対処方法</h3>
+<div class="main-indent">実際のWEBページは多種多様で、ここまでの対処できない場合が多々あります。<br>
+そのような場合は、個別の対処方法を考える必要があります。<br>
+以下に代表的な対処方法の例を載せておきます。<br>
+あくまで一例ですので、使う場合は個別に工夫してお使いください。<br><div class="br2"><br></div>
+※以下では、Driverはモジュールレベルで宣言されているものとしています。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4 id="sec09_01">テキストボックスに1回で文字列を入れられない場合</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Function SendKeysTextBox(ByVal argText As String, _<br>
+      　　　　　　　　　　　　 ByVal sCss As String, _<br>
+      　　　　　　　　　　　　 Optional ByVal waitTime As Long = 200, _<br>
+      　　　　　　　　　　　　 Optional ByVal maxTime As Long = 2000) As Boolean<br>
+      　　On Error Resume Next<br>
+      　　SendKeysTextBox = False<br>
+      　　<br>
+      　　Dim t As Double<br>
+      　　t = Timer<br>
+      　　Do<br>
+      　　　　Driver.FindElementByCss(sCss).Clear<br>
+      　　　　Driver.FindElementByCss(sCss).SendKeys argText<br>
+      　　　　If Driver.FindElementByCss(sCss).Value = argText Then Exit Do<br>
+      　　　　If Timer &gt; t + maxTime Then Exit Function<br>
+      　　　　Driver.Wait waitTime<br>
+      　　Loop<br>
+      　　<br>
+      　　Driver.Wait waitTime<br>
+      　　SendKeysTextBox = True<br>
+      　　On Error GoTo 0<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec09_02">クリック後に新ページ移動前にseleniumから戻ってきてしまう場合</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Function ClickToNewPage(ByVal sCss As String, _<br>
+      　　　　　　　　　　　　Optional ByVal waitTime As Long = 200, _<br>
+      　　　　　　　　　　　　Optional ByVal maxTime As Long = 2000) As Boolean<br>
+      　　On Error Resume Next<br>
+      　　ClickToNewPage = False<br>
+      　　<br>
+      　　Dim sUrl As String<br>
+      　　Dim t As Double<br>
+      　　t = Timer<br>
+      　　<br>
+      　　sUrl = Driver.Url<br>
+      　　Do<br>
+      　　　　Driver.FindElementByCss(sCss).Click<br>
+      　　　　If sUrl &lt;&gt; Driver.Url Then Exit Do<br>
+      　　　　If Timer &gt; t + maxTime Then Exit Function<br>
+      　　　　Driver.Wait waitTime<br>
+      　　Loop<br>
+      　　<br>
+      　　Driver.Wait waitTime<br>
+      　　ClickToNewPage = True<br>
+      　　On Error GoTo 0<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec09_03">画面ロード完了前にseleniumから戻ってきてしまう場合</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Function ExistElement(ByVal sCss As String, _<br>
+      　　　　　　　　　　　Optional ByVal waitTime As Long = 200, _<br>
+      　　　　　　　　　　　Optional ByVal maxTime As Long = 2000) As Boolean<br>
+      　　On Error GoTo 0<br>
+      　　ExistElement = False<br>
+      　　<br>
+      　　Dim t As Double<br>
+      　　t = Timer<br>
+      　　<br>
+      　　Dim elms As Selenium.WebElements<br>
+      　　Do<br>
+      　　　　Set elms = Driver.FindElementsByCss(sCss)<br>
+      　　　　If elms.Count &gt; 0 Then Exit Do<br>
+      　　　　If Timer &gt; t + maxTime Then Exit Function<br>
+      　　　　Driver.Wait waitTime<br>
+      　　Loop<br>
+      　　<br>
+      　　Driver.Wait waitTime<br>
+      　　ExistElement = True<br>
+      　　On Error GoTo 0<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4 id="sec09_04">遷移後のURLに直接移動する</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Driver.Get Driver.Url &amp; &quot;?xxx&amp;yyy&quot;</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+最後の手段になりますが、遷移後のURLに移動してしまう方法も結構有効です。<br>
+クリック後にURLパラメーターが追加になるような場合は、直接パラメーターを追加したURLを指定してしまう方法になります。<br><div class="br2"><br></div>
+元々のURLの最後が&quot;/&quot;で終わっているか、既に&quot;?&quot;が入っているか、<br>
+これらの状態によって、追加するパラメーターは適宜変更が必要になります。<br><div class="br2"><br></div>
+URLパラメーター</div>
+</div>
+<div class="main-indent">
+<div class="main-indent">URLに付け加える変数です｡<br>
+クエスチョンマーク&quot;?&quot;をURLの末尾に付け、「変数(パラメータ)＝値」の形式で指定します。<br>
+複数のパラメーターはアンパサンド(&amp;)でつなげます。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+</div>
+<h3 id="sec10">Seleniumの実践例例</h3>
+<div class="main-indent">ここで紹介したテクニックを使い、キーワードを指定してGoogleの検索順位を取得しています。<br><div class="br2"><br></div>
+<strong><a href="EXCEL_VBA_402.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_402.html">VBA+SeleniumBasicで検索順位チェッカー作成</a></strong><div class="details">VBAでSeleniumBasicを使って検索順位チェッカーを作ってみます。SEO対策として各キーワードでの検索順位チェックは欠かせませんが、簡単に使えてキーワードを大量に指定できる良いツールがなかなかありません。Google検索をスクレイピングすることは、Google利用規約に反する可能性があります。</div>
+<strong><a href="EXCEL_VBA_404.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_404.html">VBA+SeleniumBasicで検索順位チェッカー（改）</a></strong><div class="details">VBAでSeleniumBasicを使って検索順位チェッカーを作り、Google検索順位の履歴を管理します、既に作成解説した、VBA+SeleniumBasicで検索順位チェッカー作成こちらの改訂版になります。Google検索をスクレイピングすることは、Google利用規約に反する可能性があります。</div><br><div class="br2"><br></div>
+</div>
+<h3 id="sec11">最後に</h3>
+<div class="main-indent"> 今まで筆者はSeleniumVBAを使っていたのですが、SeleniumBasicではメソッドが結構変更になっていました。<br>
+実際に動作確認しながら本記事を書きましたが、細部においてはより効率的な使い方があるかもしれません。<br>
+ただし全体的には、SeleniumVBAより使いやすくなっているように感じました。<br><div class="br2"><br></div>
+クローリング＆スクレイピングは、サイトごとのクセを見極めることが面倒な作業になります。<br>
+特にJavaScriptでマウスオーバーにより切り替わるような場合はかなり面倒です。<br>
+SeleniumでJavaScriptのコードを実行（.ExecuteScript）することもできますが、<br>
+このようなサイトでは、結構頻繁にサイトが更新されてしまう為になかなか安定運用できない場合が多いようにも思われます。<br><div class="br2"><br></div>
+いずれにしても、クローリング＆スクレイピングではサイト変更によってVBAを変更しなければならないものです。<br>
+従って、いつでも簡単にVBA修正して運用できる環境であることが望まれます。<br>
+もし、そのような運用が難しい場合（開発会社に依頼して作ってもらう等の場合）は、<br>
+サイト変更時の対応を事前に良く確認しておくことをお勧めします。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL217.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL217.html">VBAでのInternetExplorer自動操作</A><br>
+<A href="EXCEL224.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL224.html">VBAでのSQLの基礎（SQL:Structured Query Language）</A><br>
+<A href="EXCEL232.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL232.html">VBAで正規表現を利用する（RegExp）</A><br>
+<A href="EXCEL233.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL233.html">VBAでメール送信する（CDO:Microsoft Collaboration Data Objects）</A><br>
+<A href="EXCEL245.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL245.html">VBAでのOutlook自動操作</A><br>
+<A href="EXCEL273.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL273.html">ADO(ActiveX Data Objects)の使い方の要点</A><br>
+<A href="EXCEL293.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL293.html">特殊フォルダの取得（WScript.Shell,SpecialFolders）</A><br>
+<A href="EXCEL296.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL296.html">参照設定、CreateObject、オブジェクト式の一覧</A><br>
+<span class="strrev">VBAのスクレイピングを簡単楽にしてくれるSelenium</span><br>
+<A href="EXCEL_VBA_402.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_402.html">VBA+SeleniumBasicで検索順位チェッカー作成</A><br>
+<A href="EXCEL_VBA_404.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_404.html">VBA+SeleniumBasicで検索順位チェッカー（改）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>VBAのスクレイピングを簡単楽にしてくれるSelenium</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>VBAのスクレイピングを簡単楽にしてくれるSelenium</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCEL217.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL217.html" target="_blank">VBAでのInternetExplorer自動操作</a></li><li><a href="../excelvba5/EXCELVBA222.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA222.html" target="_blank">WEBデータの取得方法</a></li><li><a href="EXCEL_VBA_404.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_404.html">VBA+SeleniumBasicで検索順位チェッカー<br>(改)</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

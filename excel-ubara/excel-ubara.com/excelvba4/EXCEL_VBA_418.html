@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>クリップボードに2次元配列を作成してシートに貼り付ける｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="タイトルはいささかとっぴな感じですが、目的はクリップボードのデータ取得とクリップボードへデータを送る方法と、そもそもクリップボードの中に、セル範囲（つまり2次元）のデータがどのように入っているかを確認してみようという事です。そして、それが解ればクリップボードに2次元配列としてデータを用意してシートに貼り付けられるだろうという事です。">
+  <meta name="keywords" content="技術解説,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL_VBA_418.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="クリップボードに2次元配列を作成してシートに貼り付ける｜VBA技術解説" />
+  <meta property="og:description" content="タイトルはいささかとっぴな感じですが、目的はクリップボードのデータ取得とクリップボードへデータを送る方法と、そもそもクリップボードの中に、セル範囲（つまり2次元）のデータがどのように入っているかを確認してみようという事です。そして、それが解ればクリップボードに2次元配列としてデータを用意してシートに貼り付けられるだろうという事です。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba4/image244.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL_VBA_418.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="クリップボードに2次元配列を作成してシートに貼り付ける｜VBA技術解説" />
+  <meta name="twitter:description" content="タイトルはいささかとっぴな感じですが、目的はクリップボードのデータ取得とクリップボードへデータを送る方法と、そもそもクリップボードの中に、セル範囲（つまり2次元）のデータがどのように入っているかを確認してみようという事です。そして、それが解ればクリップボードに2次元配列としてデータを用意してシートに貼り付けられるだろうという事です。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba4/image244.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>クリップボードに2次元配列を作成してシートに貼り付ける</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL_VBA_418.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_418.html">
+<span itemprop="name">クリップボードに2次元配列を作成してシートに貼り付ける</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2019-11-01</span>
+<h2 align="center">クリップボードに2次元配列を作成してシートに貼り付ける</h2><p><br>
+タイトルはいささかとっぴな感じですが、<br>
+目的はクリップボードのデータ取得とクリップボードへデータを送る方法と、<br>
+そもそもクリップボードの中に、セル範囲（つまり2次元）のデータがどのように入っているかを確認してみようという事です。<br>
+そして、それが解ればクリップボードに2次元配列としてデータを用意してシートに貼り付けられるだろうという事です。<br><div class="br2"><br></div>
+クリップボードと言っても、ここではあくまでテキストデータだけを扱います。<br><div class="br2"><br></div>
+2次元配列云々というのは、それで特に実務で何かをしようと言う意図ではなく、<br>
+あくまで、クリップボードをVBAで扱う題材としての意味合いとしてお考え下さい。<br>
+以下で記載のVBAは、普通に2次元配列を作成してできることは言うまでもありません。<br><div class="br2"><br></div></p>
+<h3>クリップボードのデータ取得/クリップボードへデータ送信</h3>
+<div class="main-indent"><strong>DataObjectを利用する</strong></div>
+<div class="main-indent">
+<div class="main-indent">恐らく検索すると一番良く見かける方法です。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td><span style="color:#009900;">'クリップボードのデータ取得</span><br>
+      Public Sub SetClipboard(ByRef aText As String)<br>
+　　With New DataObject<br>
+      　　　　.SetText aText<br>
+　　　　.PutInClipboard<br>
+　　End With<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'クリップボードへ送信</span><br>
+      Public Function GetClipboard() As String<br>
+      　　On Error Resume Next<br>
+　　With New DataObject<br>
+　　　　.GetFromClipboard<br>
+　　　　GetClipboard = .GetText<br>
+　　End With<br>
+End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+参照設定：Microsoft Forms 2.0 Object Library<br>
+もしくは、New DataObjectを以下に変更してください。<br>
+CreateObject(&quot;new:{1C3B4210-F441-11CE-B9EA-00AA006B1A69}&quot;)<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><strong>Windows API を使用する</strong><br>
+</div>
+<div class="main-indent">
+<div class="main-indent">以下のVBAは、<br>
+Docs / Office VBA リファレンス / Access / 概念 / Windows API /<br>
+クリップボードに情報を送信する<br>
+https://docs.microsoft.com/ja-jp/office/vba/access/concepts/windows-api/send-information-to-the-clipboard<br>
+ここに掲載されているものを、64bitで使えるように変更したものです。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      Private Declare PtrSafe Function OpenClipboard Lib &quot;user32.dll&quot; (ByVal hWnd As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function EmptyClipboard Lib &quot;user32.dll&quot; () As LongPtr<br>
+      Private Declare PtrSafe Function CloseClipboard Lib &quot;user32.dll&quot; () As LongPtr<br>
+      Private Declare PtrSafe Function IsClipboardFormatAvailable Lib &quot;user32.dll&quot; (ByVal wFormat As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function GetClipboardData Lib &quot;user32.dll&quot; (ByVal wFormat As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function SetClipboardData Lib &quot;user32.dll&quot; (ByVal wFormat As LongPtr, ByVal hMem As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function GlobalAlloc Lib &quot;kernel32.dll&quot; (ByVal wFlags As LongPtr, ByVal dwBytes As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function GlobalLock Lib &quot;kernel32.dll&quot; (ByVal hMem As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function GlobalUnlock Lib &quot;kernel32.dll&quot; (ByVal hMem As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function GlobalSize Lib &quot;kernel32&quot; (ByVal hMem As LongPtr) As LongPtr<br>
+      Private Declare PtrSafe Function lstrcpy Lib &quot;kernel32.dll&quot; Alias &quot;lstrcpyW&quot; (ByVal lpString1 As LongPtr, ByVal lpString2 As LongPtr) As LongPtr<br><div class="br2"><br></div>
+      <span style="color:#009900;">'クリップボードのデータ取得</span><br>
+      Public Sub SetClipboard(ByRef sUniText As String)<br>
+      　　Dim iStrPtr As LongPtr<br>
+      　　Dim iLen As LongPtr<br>
+      　　Dim iLock As LongPtr<br>
+      　　Const GMEM_MOVEABLE As LongPtr = &amp;H2<br>
+      　　Const GMEM_ZEROINIT As LongPtr = &amp;H40<br>
+      　　Const CF_UNICODETEXT As LongPtr = &amp;HD<br>
+      　　OpenClipboard 0&amp;<br>
+      　　EmptyClipboard<br>
+      　　iLen = LenB(sUniText) + 2&amp;<br>
+      　　iStrPtr = GlobalAlloc(GMEM_MOVEABLE Or GMEM_ZEROINIT, iLen)<br>
+      　　iLock = GlobalLock(iStrPtr)<br>
+      　　lstrcpy iLock, StrPtr(sUniText)<br>
+      　　GlobalUnlock iStrPtr<br>
+      　　SetClipboardData CF_UNICODETEXT, iStrPtr<br>
+      　　CloseClipboard<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'クリップボードへ送信</span><br>
+      Public Function GetClipboard() As String<br>
+      　　Dim iStrPtr As LongPtr<br>
+      　　Dim iLen As LongPtr<br>
+      　　Dim iLock As LongPtr<br>
+      　　Dim sUniText As String<br>
+      　　Const CF_UNICODETEXT As LongPtr = 13&amp;<br>
+      　　OpenClipboard 0&amp;<br>
+      　　If IsClipboardFormatAvailable(CF_UNICODETEXT) Then<br>
+      　　　　iStrPtr = GetClipboardData(CF_UNICODETEXT)<br>
+      　　　　If iStrPtr Then<br>
+      　　　　　　iLock = GlobalLock(iStrPtr)<br>
+      　　　　　　iLen = GlobalSize(iStrPtr)<br>
+      　　　　　　sUniText = String$(CLng(iLen \ 2&amp; - 1&amp;), vbNullChar)<br>
+      　　　　　　lstrcpy StrPtr(sUniText), iLock<br>
+      　　　　　　GlobalUnlock iStrPtr<br>
+      　　　　End If<br>
+      　　　　GetClipboard = sUniText<br>
+      　　End If<br>
+      　　CloseClipboard<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+</div>
+<div class="main-indent">この下のVBAでは、上記どちらでも動作するようにしています。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>エクセルの行・列のデータ</h3>
+<div class="main-indent">クリップボードの中身を見てみましょう。<br><div class="br2"><br></div>
+<img src="image240.jpg" tppabs="https://excel-ubara.com/excelvba4/image240.jpg" width="305" height="139" border="0" alt="マクロ　VBA クリップボード"><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub Test<br>
+      　　ActiveSheet.Range(&quot;A1:C2&quot;).CurrentRegion.Copy<br>
+      　　Dim buf<br>
+      　　buf = GetClipboard<br><div class="br2"><br></div>
+      　　<span style="color:#009900;">'バイト配列に入れてコード確認</span><br>
+      　　Dim b() As Byte<br>
+      　　b = buf<br>
+      　　Stop<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+これを実行してBufに入っているデートを見てみましょう。<br><div class="br2"><br></div>
+<img src="image243.jpg" tppabs="https://excel-ubara.com/excelvba4/image243.jpg" width="245" height="287" border="0" alt="マクロ　VBA クリップボード"><br>
+</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="EXCEL_VBA_409.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_409.html">Byte配列と文字コード関数について</a></strong><div class="details">マクロVBAのデータ型にByte型がありますが、使う機会はかなり限られています。バイト型は、8ビット(1バイト)の変数で、0～255の範囲の単精度の正の数値が格納されます。1バイトで使う事もなくはありませんが、Byte型配列として使われることがしばしばあります。</div></div>
+</div>
+<div class="main-indent">2バイトで1文字です。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+      <td align="center">インデックス</td>
+      <td align="center">0</td>
+      <td align="center">1</td>
+      <td align="center">2</td>
+      <td align="center">3</td>
+      <td align="center">4</td>
+      <td align="center">5</td>
+      <td align="center">6</td>
+      <td align="center">7</td>
+      <td align="center">8</td>
+      <td align="center">9</td>
+      <td align="center">10</td>
+      <td align="center">11</td>
+      <td align="center">12</td>
+      <td align="center">13</td>
+    </tr>
+    <tr>
+      <td align="center">文字コード</td>
+      <td align="center">65</td>
+      <td align="center">0</td>
+      <td align="center">49</td>
+      <td align="center">0</td>
+      <td align="center">9</td>
+      <td align="center">0</td>
+      <td align="center">66</td>
+      <td align="center">0</td>
+      <td align="center">49</td>
+      <td align="center">0</td>
+      <td align="center">13</td>
+      <td align="center">0</td>
+      <td align="center">10</td>
+      <td align="center">0</td>
+    </tr>
+    <tr>
+      <td align="center">文字</td>
+      <td align="center" colspan="2">A</td>
+      <td align="center" colspan="2">1</td>
+      <td colspan="2" align="center">Tab</td>
+      <td colspan="2" align="center">B</td>
+      <td align="center" colspan="2">1</td>
+      <td colspan="2" align="center">Cr</td>
+      <td colspan="2" align="center">Lf</td>
+    </tr>
+</tbody>
+</table></div><br>
+b(0) b(1) b(2) b(3)、65 0 49 0、これは<strong>Ａ１</strong>です。<br>
+b(4) b(5)、9 0、これは<strong>Tab</strong>で列区切りです。<br>
+b(10) b(11) b(12) b(13)、13 0 10 0、こりは<strong>CrLf</strong>で改行になります。<br>
+つまり、<br>
+<strong>改列はvbTab</strong>、<strong>改行はvbCrLf</strong>で入っているという事です。<br><div class="br2"><br></div>
+という事は、これと同じデータをクリップボードに入れてやれば、<br>
+2次元配列として、シートに貼り付けられるという事になります。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>data1</td>
+      <td bgcolor="#ffff00">vbTab</td>
+      <td>data2</td>
+      <td bgcolor="#ffff00">vbTab</td>
+      <td>data3</td>
+      <td bgcolor="#ffff00">vbCrLf</td>
+    </tr>
+    <tr>
+      <td>data11</td>
+      <td bgcolor="#ffff00">vbTab</td>
+      <td>data12</td>
+      <td bgcolor="#ffff00">vbTab</td>
+      <td>data13</td>
+      <td bgcolor="#ffff00">vbCrLf</td>
+    </tr>
+    <tr>
+      <td>data21</td>
+      <td bgcolor="#ffff00">vbTab</td>
+      <td>data22</td>
+      <td bgcolor="#ffff00">vbTab</td>
+      <td>data23</td>
+      <td bgcolor="#ffff00">vbCrLf</td>
+    </tr>
+  </tbody>
+</table></div><br>
+このようにデータが並んでいるという事です。<br>
+つまり、これと同様の並びデータをクリップボードに入れてやれば良いという事です。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>クリップボードに2次元配列を作成してシートに貼り付けるVBA</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td><span style="color:#009900;">'5列20行のデータを作成してシートに貼り付ける</span><br>
+      Sub sample1()<br>
+      　　<span style="color:#009900;">'100件の1次元サンプルデータ作成</span><br>
+      　　Dim ary(1 To 100)<br>
+      　　Dim i As Long<br>
+      　　For i = 1 To 100<br>
+      　　　　ary(i) = IIf(i Mod 2 = 0, i, &quot;Data&quot; &amp; i)<br>
+      　　Next<br>
+      　　<br>
+      　　<span style="color:#009900;">'1次元配列を5列の2次元配列としてクリップボード作成</span><br>
+      　　Call Array2Clipboard(ary, 5)<br>
+      　　<br>
+      　　<span style="color:#009900;">'クリップボードをシートに貼り付け</span><br>
+      　　With ActiveSheet<br>
+      　　　　.Cells.Clear<br>
+      　　　　.Range(&quot;A1&quot;).Select<br>
+      　　　　.Paste<br>　　　　.Range(&quot;A1&quot;).Select<br>
+      　　End With<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'セル範囲のデータを10列のデータにしてシートに貼り付ける</span><br>
+      Sub sample2()<br>
+      　　<span style="color:#009900;">'A1セル領域をコピー</span><br>
+      　　ActiveSheet.Range(&quot;A1&quot;).CurrentRegion.Copy<br>
+      　　<br>
+      　　<span style="color:#009900;">'クリップボードのデータ取得</span><br>
+      　　Dim buf<br>
+      　　buf = GetClipboard<br>
+      　　<br>
+      　　<span style="color:#009900;">'クリップボードのデータを1次元配列に</span><br>
+      　　buf = Split(Replace(buf, vbCrLf, vbTab), vbTab)<br>
+      　　<br>
+      　　<span style="color:#009900;">'1次元配列を10列の2次元配列としてクリップボード作成</span><br>
+      　　Call Array2Clipboard(buf, 10)<br>
+      　　<br>
+      　　<span style="color:#009900;">'クリップボードをシートに貼り付け</span><br>
+      　　With ActiveSheet<br>
+      　　　　.Cells.Clear<br>
+      　　　　.Range(&quot;A1&quot;).Select<br>
+      　　　　.Paste<br>　　　　.Range(&quot;A1&quot;).Select<br>
+      　　End With<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'1次元配列を指定列数の2次元配列としてクリップボード作成</span><br>
+      Public Sub Array2Clipboard(ByRef ary, _<br>
+      　　　　　　　　　　　　　 ByVal col As Long)<br>
+      　　Dim i As Long, j As Long<br>
+      　　Dim buf<br>
+      　　<br>
+      　　<span style="color:#009900;">'クリップボードへ送る2次元データ作成</span><br>
+      　　j = 0<br>
+      　　For i = LBound(ary) To UBound(ary)<br>
+      　　　　If Not IsEmpty(buf) Then<br>
+      　　　　　　buf = buf &amp; IIf(j = 0, vbCrLf, vbTab)<br>
+      　　　　End If<br>
+      　　　　buf = buf &amp; ary(i)<br>
+      　　　　j = j + 1<br>
+      　　　　If j &gt;= col Then j = 0<br>
+      　　Next<br>
+      　　<br>
+      　　<span style="color:#009900;">'クリップボードへ送信</span><br>
+      　　Call SetClipboard(CStr(buf))<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<strong>sample1</strong></div>
+<div class="main-indent">
+<div class="main-indent">5列20行のデータを作成してシートに貼り付ける<br><div class="br2"><br></div>
+・100件の1次元サンプルデータ作成<br>
+・'1次元配列を5列の2次元配列としてクリップボード作成<br>
+・クリップボードをシートに貼り付け<br><div class="br2"><br></div>
+<img src="image244.jpg" tppabs="https://excel-ubara.com/excelvba4/image244.jpg" width="480" height="636" border="0" alt="マクロ　VBA クリップボード"><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>sample2</strong></div>
+<div class="main-indent">
+<div class="main-indent">セル範囲のデータを10列のデータにしてシートに貼り付ける<br><div class="br2"><br></div>
+・A1セル領域をコピー<br>
+・クリップボードのデータ取得<br>
+・クリップボードのデータを1次元配列に<br>
+・1次元配列を10列の2次元配列としてクリップボード作成<br>
+・クリップボードをシートに貼り付け<br><div class="br2"><br></div>
+<img src="image245.jpg" tppabs="https://excel-ubara.com/excelvba4/image245.jpg" width="818" height="298" border="0" alt="マクロ　VBA クリップボード"><br><div class="br2"><br></div>
+直前でCopyしているので、クリップボードにデータが入っているかの確認は省略しています。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><br>
+<strong>Array2Clipboard</strong><br>
+<div class="main-indent">1次元配列を指定列数の2次元配列としてクリップボード作成<br><div class="br2"><br></div>
+・クリップボードへ送る2次元データ作成<br>
+　→列区切りはvbTab、行区切りはCrLf<br>
+・クリップボードへ送信<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>クリップボードに2次元配列の最後に</h3>
+<div class="main-indent">ここに記載したVBAについては、エラー処理等についてはあまり考慮していません。<br>
+クリップボードを扱う基本的なVBAのみとしています。<br>
+また、クリップボードをVBAで扱う場合、環境によっては安定動作しない事もあり得ます。<br><div class="br2"><br></div>
+最初に書きましたが、2次元配列云々については、これを使って実務で何かしようという事ではありません。<br>
+あくまでクリップボードの扱い方を覚えようという事です。<br>
+ただし、少量データであれば、ここで試したように処理時間も特段にはかかりませんので、<br>
+何らかの折には使えることもあるかもしれません。<br><div class="br2"><br></div>
+ただし、クリップボードをVBAで扱う事は時々必要になりますので、基本だけはぜひ覚えておいてください。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL_VBA_412.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_412.html">新規挿入可能なシート名の判定</A><br>
+<A href="EXCEL_VBA_413.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_413.html">VBAにおける配列やコレクションの起点について</A><br>
+<A href="EXCEL_VBA_416.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_416.html">VBAのマルチステートメント（複数のステートメントを同じ行に）</A><br>
+<span class="strrev">クリップボードに2次元配列を作成してシートに貼り付ける</span><br>
+<A href="EXCEL_VBA_419.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_419.html">ユーザー定義型の制限とクラスとの使い分け</A><br>
+<A href="EXCEL_VBA_420.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_420.html">シングルクォートの削除とコピー（PrefixCharacter）</A><br>
+<A href="EXCEL_VBA_421.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_421.html">空文字列の扱い方と処理速度について（&quot;&quot;とvbNullString）</A><br>
+<A href="EXCEL_VBA_422.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_422.html">VBAにおける変数のメモリアドレスについて</A><br>
+<A href="EXCEL_VBA_424.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_424.html">Evaluateメソッド（文字列の数式を実行します）</A><br>
+<A href="EXCEL_VBA_425.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_425.html">Rangeオブジェクトの論理演算（差集合と排他的論理和）</A><br>
+<A href="EXCEL_VBA_426.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_426.html">VBAで写真の撮影日時や音楽動画の長さを取得する</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>クリップボードに2次元配列を作成してシートに貼り付ける</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>クリップボードに2次元配列を作成してシートに貼り付ける</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+          
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

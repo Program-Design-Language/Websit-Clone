@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="空白セルの判定は、VBAにおいては頻繁に発生しますが、正しく空白セルを判定する事は以外と難しいものです。そもそも「空白」とはどのような状態なのか… これが、はっきりしない為に何が正しいのかが判然としないことが問題を複雑にしています。以下、A1セルが空白かどうか判定する方法をいくつか紹介します。">
+  <meta name="keywords" content="IsEmpty,IsError,HasFormula,空白セルを正しく判定する方法,技術解説,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210306.css" tppabs="https://excel-ubara.com/css/style.css?20210306">
+  <link rel="stylesheet" href="../css/slide.css-20210306.css" tppabs="https://excel-ubara.com/css/slide.css?20210306">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL237.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）｜VBA技術解説" />
+  <meta property="og:description" content="空白セルの判定は、VBAにおいては頻繁に発生しますが、正しく空白セルを判定する事は以外と難しいものです。そもそも「空白」とはどのような状態なのか… これが、はっきりしない為に何が正しいのかが判然としないことが問題を複雑にしています。以下、A1セルが空白かどうか判定する方法をいくつか紹介します。" />
+  <meta property="og:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL237.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）｜VBA技術解説" />
+  <meta name="twitter:description" content="空白セルの判定は、VBAにおいては頻繁に発生しますが、正しく空白セルを判定する事は以外と難しいものです。そもそも「空白」とはどのような状態なのか… これが、はっきりしない為に何が正しいのかが判然としないことが問題を複雑にしています。以下、A1セルが空白かどうか判定する方法をいくつか紹介します。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/ogp.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210306" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210306" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210306" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210306" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL237.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL237.html">
+<span itemprop="name">空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2021-03-06</span>
+<h2 align="center">空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）</h2><p><br>
+空白セルの判定は、マクロVBAにおいては頻繁に発生しますが、<br>
+正しく空白セルを判定する事は以外と難しいものです。<br><div class="br2"><br></div>
+そもそも「空白」とはどのような状態なのか・・・<br>
+これが、はっきりしない為に何が正しいのかが判然としないことが問題を複雑にしています。<br><div class="br2"><br></div>
+以下、A1セルが空白かどうか判定する方法をいくつか紹介します。<br><div class="br2"><br></div><div class="br2"><br></div></p>
+<h3>セルの値が空白の判定</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td><strong>If Cells(1, 1).Value = &quot;&quot; Then</strong><br>
+      　　<span style="color:#009900;">'空白</span><br>
+      End If</td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td><strong>If Len(Cells(i, 1).Value) = 0 Then</strong><br>
+      　　<span style="color:#009900;">'空白</span><br>
+      End If</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+普通に、= &quot;&quot;が最も簡単です。<br>
+わざわざLen関数を使っているのを、ネットでは割と多く見かけます。<br>
+恐らく、古いVB等の記述からきているのでしょうが、<br>
+VBAでは特に使う必要性はないように思います。</div>
+<div class="main-indent">
+<div class="main-indent">厳密にはLen関数で比較したほうが処理速度が速くなります。<br>
+僅かな差ではありますが、LenB関数を使うとさらに速くなります。<br>
+ただし、いずれにしても計測するのが困難なほどの時間差しかありません。<br>
+<strong><a href="EXCEL237.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL237.html" target="_blank">空文字列の扱い方と処理速度について（&quot;&quot;とvbNullString）</a></strong><div class="details">空白セルの判定は、VBAにおいては頻繁に発生しますが、正しく空白セルを判定する事は以外と難しいものです。そもそも「空白」とはどのような状態なのか… これが、はっきりしない為に何が正しいのかが判然としないことが問題を複雑にしています。以下、A1セルが空白かどうか判定する方法をいくつか紹介します。</div>
+</div>
+</div>
+<div class="main-indent"><br>
+では、これで空白セルの判定は終わりでしょうか・・・<br>
+それでは、この記事の意味がありませんね。（笑）<br>
+もし、A1セルに関数が入っていて、その結果が空白の場合です。<br>
+この場合に、空白セルと判定したくない場合です。<br>
+これは良くある事です。<br><div class="br2"><br></div>
+上記のIfでは、空白と判定されてしまいますので、<br>
+何らかの対策が必要になります。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>計算式が入っていない判定</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td>
+      <strong>If Not Cells(i, 1).HasFormula Then</strong><br>
+      <strong>　　If Cells(1, 1).Value = &quot;&quot; Then</strong><br>
+      　　　　<span style="color:#009900;">'空白</span><br>
+      　　End If<br>
+      End If
+      </td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+<strong>HasFormula</strong></div>
+<div class="main-indent">
+<div class="main-indent">HasFormulaは、<strong>Rangeオブジェクトのプロパティ</strong>で、<br>
+そのRangeオブジェクトに数式が入力されているか同課を判定し、<br>
+<strong>数式が入っている場合はTrue、数式が入っていない場合はFalse</strong>が返されます。</div>
+</div>
+<div class="main-indent">つまり上のマクロVBAでは、<br>
+数式が入力されていない状態で、&quot;&quot;なら空白と判断しています。<br>
+これで大抵の場合はOKでしょう。<br><div class="br2"><br></div>
+しかし、もし、セル値が、エラー値の場合はどうでしょう・・・<br>
+通常は、数式の結果がエラー値となっているので、<br>
+HasFormulaで、はじかれるので問題ないのですが、<br>
+エラー値そのものが値としてセル入っている場合は、<br>
+If Cells(i, 1) = &quot;&quot; Then<br>
+ここで、「型が一致しません」のエラーが発生してしまいます。<br>
+コピペで値貼り付けしている場合にはこれがありえます、そしてエクセルではしばしば発生します。<br>
+これを避けるように何とかしたいところです。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>エラー値の判定</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td>
+      <strong>If Not IsError(Cells(i, 1).Value) Then<br>
+      　　If Not Cells(i, 1).HasFormula Then<br>
+      　　　　If Cells(i, 1).Value = &quot;&quot; Then</strong><br>
+      　　　　　　<span style="color:#009900;">'空白</span><br>
+      　　　　End If<br>
+      　　End If<br>
+      End If
+      </td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+<strong>IsError</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>IsErrorはVBA関数</strong>です。<br>
+引数の値がエラー値かどうか判定し、<br>
+<strong>エラー値の場合はTrue、エラー値以外の場合はFalse</strong>が返ります。</div>
+</div>
+<div class="main-indent">IsErrorとHasFormulaは、どちらが先でも良いですし、Andで判定しても問題ありません。<br>
+ここまで判定すれば問題ないでしょう。<br><div class="br2"><br></div>
+しかし、たかが空白判定に、これほど面倒な事をする必要があるのでしょうか・・・<br>
+VBA関数はいろいろ用意されています。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>IsEmpty関数：空白を判定するVBA関数</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td>
+      <strong>If IsEmpty(Cells(i, 1).Value) Then</strong><br>
+      　　<span style="color:#009900;">'空白</span><br>
+      End If
+      </td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+マクロVBAを上達する為には、VBA関数の習得は必須です。<br>
+どんなVBA関数があるかは、一通り見ておく事をお勧め致します。<br><div class="br2"><br></div>
+IsEmpty関数ならエラー値でも判定できますので、IsError関数で事前にエラー値をはじく必要がありません。<br>
+ただし、IsEmpty関数は計算結果が空白(&quot;&quot;)セルを値貼り付けした場合にはFalseを返します。<br>
+これは、Excelの機能のジャンプでも、「空白セル」として判定されません。<br>
+従って、<br>
+IsError、HasFormula、= &quot;&quot;<br>
+この3段階判定がやはり必要になります。<br>
+やはり、空白判定は、とても面倒なものです。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>TypeName関数：データ型を判定するVBA関数</h3>
+<div class="main-indent"><strong><a href="../excelvba8/EXCELVBA884.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA884.html" target="_blank">TypeName関数：VBA関数</a></strong><div class="details">TypeName関数は、引数で指定された変数に関する情報を文字列で返します。TypeName関数 TypeName(varname) varname 必ず指定します。引数varnameには、ユーザー定義型の変数を除く、任意のバリアント型(Variant)の変数を指定します。</div>
+TypeName関数の戻り値は上記ページを参照してください。<br><div class="br2"><br></div>
+TypeName関数は、セルが初期状態つまり何も入っていない状態では、&quot;Empty&quot;を返します。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>TypeName(Range(&quot;A1&quot;).Value)</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+※.Valueを省略してしまうと、&quot;Range&quot;になってしまいます。<br><div class="br2"><br></div>
+A1セルが完全に空欄なら、&quot;Empty&quot;になります。<br>
+しかし、計算結果が空白(&quot;&quot;)セルを値貼り付けしたセルの場合は、&quot;String&quot;が戻ってきます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>If TypeName(Cells(i, 1).Value) = &quot;String&quot; Then<br>
+      　　If Not Cells(i, 1).HasFormula Then<br>
+      　　　　If Cells(i, 1).Value = &quot;&quot; Then<br>
+　　　　　　<span style="color:#009900;">'計算結果が空白(&amp;quot;&amp;quot;)セルを値貼り付けしたセル</span><br>
+　　　　　　Stop<br>
+　　　　End If<br>
+　　End If<br>
+End If</td>
+    </tr>
+  </tbody>
+</table></code></div><br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>RangeオブジェクトのFormulaプロパティ</h3>
+<div class="main-indent">メールで頂いた内容で、<br>
+<strong>Cells(i, 1).Formula = &quot;&quot;</strong><br>
+これで判定できるのではないかというご意見をいただきました。<br>
+・セル値が空白<br>
+・計算式が入っていない<br>
+・計算結果が空白(&quot;&quot;)を値貼り付けした場合は空白判定<br>
+確かにFormulaだけで、これらを満たす判定が可能です。<br><div class="br2"><br></div>
+本記事の流れとして、<br>
+Cells(i, 1) = &quot;&quot;<br>
+これでは、<br>
+・数式が入っているセルが判定出来ない → Not Cells(i, 1).HasFormula<br>
+・エラー値の場合 → Not IsError(Cells(i, 1))<br>
+と解説を進めて、では最終的にどのような判定が良いかという段で、いろいろと意見をもらいました。<br><div class="br2"><br></div>
+ただし、実際に使う場面では単にセル値が空白と言っても、<br>
+どれをどのように使うかは、処理内容によってさまざまになると思います。<br>
+一番わかれるところは、計算結果が空白の場合どうするかという事でしょう。<br><div class="br2"><br></div>
+上記とは逆に、例えば、<br>
+「セル値が空白のセルに色を塗る」とした場合、<br>
+計算結果が空白も対象にしたい場合が多いと思います。<br>
+この場合は、<br>
+Not IsError(Cells(i, 1))<br>
+Cells(i, 1) = &quot;&quot;<br>
+この組み合わせで判定が必要になってきます。<br><div class="br2"><br></div>
+従って、実際に使う場合は、<br>
+ここでの、各プロパティを随時組み合わせて実現したい処理に対応してください。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<h3>空白セルを正しく判定する方法続編</h3>
+<div class="main-indent">「空白セルを正しく判定する方法」の続編として、<br>
+さらに別の判定方法も追加して、<br>
+セルの状態により、それぞれがどのような判定結果になるのかを一覧にまとめました。<br>
+ぜひこちらの追加記事も参考にしてください。<br><div class="br2"><br></div>
+<a href="EXCEL276.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL276.html"><strong>空白セルを正しく判定する方法2</strong></a><div class="details">空白セルの判定について、いろいろな方から意見を頂きました。やはり、空白判定は奥が深く結構難しいものとなっています。ここでは、各プロパティや関数が、セルの状態によって返す値を再確認してみます。元記事は、空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula） 上記の記事では、</div><br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL229.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL229.html">ユーザー定義関数の作り方</A><br>
+<A href="EXCEL230.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL230.html">セルの値について（Value,Value2,Text）</A><br>
+<A href="EXCEL235.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL235.html">Excelのバージョンを判断して「名前を付けて保存」</A><br>
+<span class="strrev">空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）</span><br>
+<A href="EXCEL276.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL276.html">空白セルを正しく判定する方法2</A><br>
+<A href="EXCEL246.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL246.html">Rangeオブジェクト.Valueの省略について</A><br>
+<A href="EXCEL247.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL247.html">シート保護でユーザー操作を制限する</A><br>
+<A href="EXCEL249.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL249.html">シートに数式を設定する時のセル参照の指定方法</A><br>
+<A href="EXCEL251.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL251.html">標準モジュールとシートモジュールの違い</A><br>
+<A href="EXCEL253.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL253.html">オートフィルタ（AutoFilter）の使い方まとめ</A><br>
+<A href="EXCEL259.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL259.html">複雑な条件（複数除外等）のオートフィルター（AutoFilter）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>空白セルを正しく判定する方法</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCEL237.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL237.html" target="_blank">空文字列の扱い方と処理速度について<br></a></li><li><a href="../excelvba8/EXCELVBA884.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA884.html" target="_blank">TypeName関数：VBA関数</a></li><li><a href="EXCEL276.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL276.html"><strong>空白セルを正しく判定する方法2</strong></a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

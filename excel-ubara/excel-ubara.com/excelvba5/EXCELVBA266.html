@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Excelシートの複雑な計算式を解析するVBA｜VBAサンプル集</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="セルに入力されている数式が折り返されていて複数行（ときに3行以上）になっている場合、数式バーで見ていたのでは、どんな数式なのかがさっぱりわからなくなります。このような複雑な数式を分解し、分かり易く表示するVBAを作成しました。最初に言っておきますが、そもそも、そのような複雑な数式は作らないほうが良いというのが基本です。">
+  <meta name="keywords" content="Excel,VBA,シート,複雑な計算式を解析する,サンプル集,エクセル,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba5/EXCELVBA266.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Excelシートの複雑な計算式を解析するVBA｜VBAサンプル集" />
+  <meta property="og:description" content="セルに入力されている数式が折り返されていて複数行（ときに3行以上）になっている場合、数式バーで見ていたのでは、どんな数式なのかがさっぱりわからなくなります。このような複雑な数式を分解し、分かり易く表示するVBAを作成しました。最初に言っておきますが、そもそも、そのような複雑な数式は作らないほうが良いというのが基本です。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba5/image170.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba5/EXCELVBA266.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Excelシートの複雑な計算式を解析するVBA｜VBAサンプル集" />
+  <meta name="twitter:description" content="セルに入力されている数式が折り返されていて複数行（ときに3行以上）になっている場合、数式バーで見ていたのでは、どんな数式なのかがさっぱりわからなくなります。このような複雑な数式を分解し、分かり易く表示するVBAを作成しました。最初に言っておきますが、そもそも、そのような複雑な数式は作らないほうが良いというのが基本です。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba5/image170.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBAサンプル集<br>Excelシートの複雑な計算式を解析するVBA</h1>ExcelマクロVBAの実用サンプル、エクセルVBA集と解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">
+<span itemprop="name">マクロVBAサンプル集</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA266.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA266.html">
+<span itemprop="name">Excelシートの複雑な計算式を解析するVBA</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2019-11-21</span>
+<h2 align="center">Excelシートの複雑な計算式を解析するVBA</h2><p><br>
+セルに入力されている数式が折り返されていて複数行（ときに3行以上）になっている場合、<br>
+数式バーで見ていたのでは、どんな数式なのかがさっぱりわからなくなります。<br><div class="br2"><br></div>
+このような複雑な数式を分解し、分かり易く表示するVBAを作成しました。<br><div class="br2"><br></div>
+最初に言っておきますが、<br>
+そもそも、そのような複雑な数式は作らないほうが良いというのが基本です。<br>
+作業セル（計算セル）を使い、順序立ててわかるようにしておくべきものです。<br><div class="br2"><br></div>
+複雑な数式は一見すごいように見えてしまいますが、<br>
+追加々で組み立てていくと割と簡単に複雑な数式が出来上がってしまいます。<br>
+このような方法で作成されるので、<br>
+数式全体に無駄が多く条件が整理されていないなど最適化されていない数式である場合が多々あります。<br><div class="br2"><br></div>
+とはいえ、<br>
+既に作成済み（誰が作ったかはこの際抜きにして）の数式であれば、<br>
+変更が必要になった時など、いずれその数式を解析しなければならない時がきます。<br>
+今回のVBAは、そんな時の手助けツールとして作成したものです。<br><div class="br2"><br></div>
+今回のVBAを作ろうとしたとき、最初はどうしてよいか戸惑いました。<br>
+やたら複雑なことを考えては、VBAでは厳しいかなと諦めてしまったり。<br>
+・・・そして、よくよく落ち着いて考えたら・・・<br>
+人が（私が）複雑な数式を読むときの手順をその順番通りにやれば良いのだと気づき、<br>
+今回のVBA完成に至っています。<br><div class="br2"><br></div>
+解析の中核としては、一番外側の関数の引数を分解しているだけです。<br>
+これは人が（私が）複雑な数式を読むときの基本手順です。<br>
+そして、これを繰り返して最小単位の関数にまで掘り下げています。<br>
+つまり今回のVBAは、これをそのままVBAにしたということです。<br><div class="br2"><br></div>
+=IF(COUNTIF(範囲,検索条件)=1,A1,VLOOKUP(検索値,範囲,列番号,検索方法))<br>
+このような数式の場合、まず最初にIF関数の引数に分解します。<br>
+論理式：COUNTIF(範囲,検索条件)=1<br>
+真の場合：A1<br>
+真の場合：VLOOKUP(検索値,範囲,列番号,検索方法<br>
+そして次に、引数の数式を確認し、これが複雑なら同じことを繰り返します。
+<div class="main-indent">私はこれを数式バーを見ながら、必要に応じて数式内で改行(Alt+Enter)したりしながら解読します。<br>
+より複雑で長い数式であれば、<br>
+メモ帳に数式を貼り付けて、適宜改行したり、字下げしながら解読していきます。</div><p>
+複雑な数式の解析としては、実務的にはこれで十分なはずです。<br><div class="br2"><br></div>
+結果のシートへの表示方法は好みもありますので、<br>
+自由にカスタマイズして使ってもらえれば良いと思います。<br><div class="br2"><br></div></p>
+<h3>複雑な計算式を解析するVBAの概要</h3><p><br>
+<strong>シート構成</strong></p>
+<div class="main-indent">シートは以下の2つです。<br><div class="br2"><br></div>
+数式解析 ・・・ シート名はVBAでは使っていないので何でも構いません。<br>
+関数構文 ・・・ VBA内のモジュールレベル定数で名称を指定しています。</div><p><br>
+<strong>数式解析</strong></p>
+<div class="main-indent">処理メインのシートになります。<br><div class="br2"><br></div>
+<img src="image166.jpg" tppabs="https://excel-ubara.com/excelvba5/image166.jpg" width="485" height="107" border="0" alt="VBA 複雑な数式 解析"><br><div class="br2"><br></div>
+B1:K1はセル結合します。<br>
+数式が折り返されて、数式全体がみえるようにする目的があります。<br>
+1行目の行高さは、VBA内で自動調整しています。<br>
+B1の番地は、VBA内のモジュールレベル定数で指定していますので変更可能です。<br>
+このB1セルに数式を文字列として貼り付け解析します。<br>
+（先頭の=はあってもなくても良い）<br><div class="br2"><br></div>
+「消去」：2行目以下の解析結果部分を消去します。<br>
+「全解析」：数式を全て最小単位の関数になるまで解析します。<br><div class="br2"><br></div>
+B1セルをダブルクリック：一番外側の数式だけを分解します。</div>
+<div class="main-indent">
+<div class="main-indent"><img src="image168.jpg" tppabs="https://excel-ubara.com/excelvba5/image168.jpg" width="568" height="144" border="0" alt="VBA 複雑な数式 解析"><br><div class="br2"><br></div>
+2行目や4行目の数式（のある行）をダブルクリックすることで、<br>
+その数式を分解し、当該行の下に行挿入して引数を出力します。<br>
+順次これを繰り返すことで、数式内の必要な部分を解析していけます。<br><div class="br2"><br></div>
+A列はネストの深さレベルを表す数字になります。<br>
+</div>
+</div><p><br>
+<strong>関数構文</strong></p>
+<div class="main-indent">数式を分解したときに、関数の引数名の表示に使います。<br><div class="br2"><br></div>
+<img src="image167.jpg" tppabs="https://excel-ubara.com/excelvba5/image167.jpg" width="545" height="223" border="0" alt="VBA 複雑な数式 解析"><br><div class="br2"><br></div>
+A列に関数名、B列以降に引数名を入れておきます。<br>
+ここに設定した引数名が、解析結果の時に表示されます。<br><div class="br2"><br></div>
+未登録の関数は、1行目の名称（引数1,引数2,・・・）が表示されますので、<br>
+1行目以外は必須ではありません。<br>
+解析結果を見やすくするためだけが目的のシートになります。<br><div class="br2"><br></div>
+<strong><a href="EXCELVBA266_2.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA266_2.html" target="_blank">関数構文のサンプル</a></strong><br>
+（ほとんどの関数を入れています。）<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>複雑な計算式を解析する全VBAコード</h3><p><br>
+<strong>シートモジュール（数式解析のシート）</strong></p><p></p>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As
+      Boolean)<br>
+      　　Call AnalyzeFormula(Target)<br>
+      　　Cancel = True<br>
+      End Sub<br><div class="br2"><br></div>
+      Private Sub Worksheet_SelectionChange(ByVal Target As Range)<br>
+      　　Call AnalyzeHighlight(Target)<br>
+      End Sub<br>
+      </td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<strong>BeforeDoubleClick</strong></div>
+<div class="main-indent">
+<div class="main-indent">数式をダブルクリックしたときに、AnalyzeFormula(Target)をCallます。<br>
+数式解析のメイン処理です。</div>
+</div>
+<div class="main-indent"><strong>SelectionChange</strong></div>
+<div class="main-indent">
+<div class="main-indent">解析結果の数式をセル選択したときに、AnalyzeHighlight(Target)を呼びます。<br>
+元の数式(B1)内で、選択セルの文字列と同じ文字列部分をハイライト（赤）表示します。<br>
+</div>
+</div><p><br>
+<strong>標準モジュール</strong></p>
+<div class="main-indent">※以下のVBAコードは当初掲載以降に何度か修正しています。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+<span style="color:#009900;">'元数式のセル</span><br>
+Private Const oRange As String = &quot;B1&quot;<br>
+<span style="color:#009900;">'ネストレベル管理列</span><br>
+Private Const ctlCol As Integer = 1<br>
+<span style="color:#009900;">'関数構文シート</span><br>
+Private Const shFunc As String = &quot;関数構文&quot;<br>
+<span style="color:#009900;">'ハイライトカラー</span><br>
+Const HightLight1 As Long = XlRgbColor.rgbRed<br>
+Const HightLight2 As Long = XlRgbColor.rgbBrown<br><div class="br2"><br></div>
+<span style="color:#009900;">'数式解析結果をクリア</span><br>
+Public Sub AnalyzeClear()<br>
+　　Application.ScreenUpdating = False<br>
+　　<br>
+　　Dim ws As Worksheet<br>
+　　Set ws = ActiveSheet<br>
+　　<br>
+　　<span style="color:#009900;">'初期化：途中に空白行があるときも考慮</span><br>
+　　Dim i1 As Long, i2 As Long<br>
+　　i1 = ws.Range(oRange).Offset(1).Row<br>
+　　i2 = ws.UsedRange(ws.UsedRange.Count).Row<br>
+　　If i2 &gt;= i1 Then<br>
+　　　　ws.Range(ws.Rows(i1), ws.Rows(i2)).Delete<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'元数式のセルの初期設定もここでやっておく</span><br>
+　　<span style="color:#009900;">'先頭の=と改行があると邪魔なので消しておく</span><br>
+　　Dim strCalc As String<br>
+　　strCalc = ws.Range(oRange).Value<br>
+　　If Left(strCalc, 1) = &quot;=&quot; Then strCalc = Mid(strCalc, 2)<br>
+　　strCalc = Replace(Replace(strCalc, vbLf, &quot;&quot;), vbCr, &quot;&quot;)<br>
+　　ws.Range(oRange).Value = strCalc<br>
+　　<br>
+　　<span style="color:#009900;">'元数式のセルは式全体が見えるように行高調整</span><br>
+　　Call ColumnFit(ws, ws.Range(oRange))<br>
+　　<br>
+　　<span style="color:#009900;">'Tagに初期値を入れておく：ControlのTagプロパティの代用</span><br>
+　　Call setTag(ws.Range(oRange), 1)<br>
+　　<br>
+　　Application.ScreenUpdating = True<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'数式を一気に全解析</span><br>
+Public Sub AnalyzeAllFormula()<br>
+　　Application.ScreenUpdating = False<br>
+　　<br>
+　　Dim ws As Worksheet<br>
+　　Set ws = ActiveSheet<br>
+　　<br>
+　　<span style="color:#009900;">'元数式の解析だけ最初に行う</span><br>
+　　Call AnalyzeFormula(ws.Range(oRange), False)<br>
+　　<br>
+　　<span style="color:#009900;">'解析結果に変化がなくなるまで</span><br>
+　　Dim iLast1 As Long<br>
+　　Dim iLast2 As Long<br>
+　　Dim myRng1 As Range<br>
+　　Dim myRng2 As Range<br>
+　　iLast2 = ws.Cells(ws.Rows.Count, ctlCol).End(xlUp).Row<br>
+　　Do Until iLast1 = iLast2<br>
+　　　　iLast1 = iLast2<br>
+　　　　Set myRng1 = Intersect(ws.UsedRange, _<br>
+　　　　　　　　　　　　　　　 ws.Range(ws.Rows(ws.Range(oRange).Offset(1).Row), _<br>
+　　　　　　　　　　　　　　　　　　　　ws.Rows(iLast1)))<br>
+　　　　For Each myRng2 In myRng1<br>
+　　　　　　<span style="color:#009900;">'速度アップのためここではじく</span><br>
+　　　　　　If InStr(myRng2.Value, &quot;(&quot;) &gt; 0 Then<br>
+　　　　　　　　Call AnalyzeFormula(myRng2, False)<br>
+　　　　　　End If<br>
+　　　　Next<br>
+　　　　iLast2 = ws.Cells(ws.Rows.Count, ctlCol).End(xlUp).Row<br>
+　　Loop<br>
+　　<br>
+　　Application.ScreenUpdating = True<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'数式解析メイン処理：一番外側の関数のみ解析</span><br>
+Public Sub AnalyzeFormula(ByVal Target As Range, _<br>
+　　　　　　　　　　　　　Optional ByVal IsExpComp As Boolean = True)<br>
+　　<span style="color:#009900;">'元計算式の場合のみ初期処理</span><br>
+　　If Target.Item(1).Address = &quot;$B$1&quot; Then<br>
+　　　　Call AnalyzeClear<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'既に展開済み</span><br>
+　　If ExpComp(Target, IsExpComp) Then<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'関数が無ければ無視</span><br>
+　　Dim strCalc As String<br>
+　　strCalc = Target.Item(1).Value<br>
+　　If InStr(strCalc, &quot;(&quot;) = 0 Then <span style="color:#009900;">'数式以外の列をクリックしたときの対応</span><br>
+　　　　With Target.Worksheet<br>
+　　　　　　Set Target = .Cells(Target.Row, .Columns.Count).End(xlToLeft)<br>
+　　　　　　strCalc = Target.Item(1).Value<br>
+　　　　End With<br>
+　　End If<br>
+　　If InStr(strCalc, &quot;(&quot;) = 0 Then <span style="color:#009900;">'それでも関数がないときは抜ける</span><br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'入力数式から改行を削除</span><br>
+　　strCalc = Replace(Replace(strCalc, vbLf, &quot;&quot;), vbCr, &quot;&quot;)<br>
+　　<br>
+　　<span style="color:#009900;">'分解して配列に</span><br>
+　　Dim i As Integer, j As Integer<br>
+　　Dim ix As Integer<br>
+　　Dim CntParen As Integer <span style="color:#009900;">'始まり括弧の数</span><br>
+　　Dim StartPos As Integer <span style="color:#009900;">'処理文字位置</span><br>
+　　<span style="color:#009900;">'引数を入れる配列：(0)関数名、(1)～引数</span><br>
+　　<span style="color:#009900;">'ixが最後の引数のインデックスになります。</span><br>
+　　<span style="color:#009900;">'ix+1に関数以降（+○）の数式を入れます。</span><br>
+　　Dim OutAray(255) As String<br>
+　　Dim OutAray2(255) As Integer <span style="color:#009900;">'文字位置保存用</span><br>
+　　Dim sTag As String<br>
+　　sTag = getTag(Target)<br>
+　　StartPos = 1<br>
+　　i = 1<br>
+　　ix = 0<br>
+　　Do<br>
+　　　　Select Case Mid(strCalc, i, 1)<br>
+　　　　　　Case &quot;&quot;&quot;&quot; <span style="color:#009900;">'次の&quot;まで読み飛ばす</span><br>
+　　　　　　　　i = i + 1<br>
+　　　　　　　　Do Until Mid(strCalc, i, 1) = &quot;&quot;&quot;&quot;<br>
+　　　　　　　　　　i = i + 1<br>
+　　　　　　　　　　If i &gt;= Len(strCalc) Then MsgBox &quot;数式不正&quot;: Exit Sub<br>
+　　　　　　　　Loop<br>
+　　　　　　　　i = i + 1<br>
+　　　　　　Case &quot;'&quot; <span style="color:#009900;">'次の'まで読み飛ばす</span><br>
+　　　　　　　　i = i + 1<br>
+　　　　　　　　Do Until Mid(strCalc, i, 1) = &quot;'&quot;<br>
+　　　　　　　　　　i = i + 1<br>
+　　　　　　　　　　If i &gt;= Len(strCalc) Then MsgBox &quot;数式不正&quot;: Exit Sub<br>
+　　　　　　　　Loop<br>
+　　　　　　　　i = i + 1<br>
+　　　　　　Case &quot;(&quot; <span style="color:#009900;">'関数の引数始まり</span><br>
+　　　　　　　　CntParen = CntParen + 1<br>
+　　　　　　　　If CntParen = 1 Then <span style="color:#009900;">'一番外の関数</span><br>
+　　　　　　　　　　<span style="color:#009900;">'(0)固定で入れる</span><br>
+　　　　　　　　　　OutAray(0) = Mid(strCalc, StartPos, i - StartPos)<br>
+　　　　　　　　　　StartPos = i + 1<br>
+　　　　　　　　End If<br>
+　　　　　　　　i = i + 1<br>
+　　　　　　Case &quot;,&quot;<br>
+　　　　　　　　If CntParen = 1 Then <span style="color:#009900;">'一番外の関数内の引数</span><br>
+　　　　　　　　　　ix = ix + 1<br>
+　　　　　　　　　　OutAray(ix) = Mid(strCalc, StartPos, i - StartPos)<br>
+　　　　　　　　　　OutAray2(ix) = sTag + StartPos - 1<br>
+　　　　　　　　　　StartPos = i + 1<br>
+　　　　　　　　End If<br>
+　　　　　　　　i = i + 1<br>
+　　　　　　Case &quot;)&quot;<br>
+　　　　　　　　CntParen = CntParen - 1<br>
+　　　　　　　　If CntParen = 0 Then <span style="color:#009900;">'一番外の関数が括弧で閉じられた</span><br>
+　　　　　　　　　　ix = ix + 1<br>
+　　　　　　　　　　OutAray(ix) = Mid(strCalc, StartPos, i - StartPos)<br>
+　　　　　　　　　　OutAray2(ix) = getTag(Target) + StartPos - 1<br>
+　　　　　　　　　　StartPos = i + 1<br>
+　　　　　　　　　　If i &lt; Len(strCalc) Then<br>
+　　　　　　　　　　　　<span style="color:#009900;">'関数()の後ろの文字列：ixカウントアップせず</span><br>
+　　　　　　　　　　　　OutAray(ix + 1) = Mid(strCalc, StartPos)<br>
+　　　　　　　　　　　　OutAray2(ix + 1) = getTag(Target) + StartPos - 1<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　　　<span style="color:#009900;">'関数が終わったので出力</span><br>
+　　　　　　　　　　Call PutArray(Target, OutAray, OutAray2, ix)<br>
+　　　　　　　　　　Exit Do<br>
+　　　　　　　　End If<br>
+　　　　　　　　i = i + 1<br>
+　　　　　　Case Else<br>
+　　　　　　　　i = i + 1<br>
+　　　　End Select<br>
+　　　　<span style="color:#009900;">'文字列長を超えたら終了</span><br>
+　　　　If i &gt; Len(strCalc) Then Exit Do<br>
+　　Loop<br>
+　　<br>
+　　<span style="color:#009900;">'数値が文字の「エラーを無視する」</span><br>
+　　Call IgnoreNumberAsText(Target)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'元数式の、選択セルと同一数式部分をハイライト</span><br>
+Public Sub AnalyzeHighlight(ByVal Target As Range)<br>
+　　Application.ScreenUpdating = False<br>
+　　<br>
+　　<span style="color:#009900;">'シート取得しておく</span><br>
+　　Dim sh As Worksheet<br>
+　　Set sh = Target.Worksheet<br>
+　　<br>
+　　<span style="color:#009900;">'元数式の文字色を自動に戻す</span><br>
+　　With sh.Range(oRange).Item(1)<br>
+　　　　.Font.ColorIndex = xlAutomatic<br>
+　　End With<br>
+　　<br>
+　　<span style="color:#009900;">'元数式セルまたはセル値ブランクは無視</span><br>
+　　On Error Resume Next<br>
+　　If Target.Item(1).Address = &quot;$B$1&quot; Or _<br>
+　　　 Target.Item(1).Value = &quot;&quot; Or _<br>
+　　　 Target.Count &gt; 1 Then <span style="color:#009900;">'行・列選択回避</span><br>
+　　　　Application.ScreenUpdating = True<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'元数式の当該数式部分をハイライト：</span><br>
+　　Dim strValue As String<br>
+　　Dim iPos As Integer<br>
+　　Dim i As Integer<br>
+　　strValue = Target.Item(1).Value<br>
+　　<span style="color:#009900;">'同じ文字列があれば全てハイライト2：作業セル作りの参考になるので</span><br>
+　　i = 1<br>
+　　Do<br>
+　　　　iPos = InStr(i, sh.Range(oRange).Value, strValue)<br>
+　　　　If iPos = 0 Then Exit Do<br>
+　　　　With sh.Range(oRange).Item(1)<br>
+　　　　　　.Characters(Start:=iPos, Length:=Len(strValue)).Font.Color = HightLight2<br>
+　　　　End With<br>
+　　　　i = iPos + 1<br>
+　　Loop<br>
+　　<span style="color:#009900;">'当該数式をハイライト1</span><br>
+　　i = getTag(Target)<br>
+　　iPos = InStr(i, sh.Range(oRange).Value, strValue)<br>
+　　If iPos = 0 Then Exit Sub<br>
+　　With sh.Range(oRange).Item(1)<br>
+　　　　.Characters(Start:=iPos, Length:=Len(strValue)).Font.Color = HightLight1<br>
+　　End With<br>
+　　<br>
+　　Application.ScreenUpdating = True<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'関数の引数出力</span><br>
+Private Sub PutArray(ByVal Target As Range, _<br>
+　　　　　　 ByRef OutAray() As String, _<br>
+　　　　　　 ByRef OutAray2() As Integer, _<br>
+　　　　　　 ByVal ix As Integer)<br>
+　　<span style="color:#009900;">'シート取得しておく</span><br>
+　　Dim sh As Worksheet<br>
+　　Set sh = Target.Worksheet<br>
+　　<br>
+　　<span style="color:#009900;">'配列に入っていない場合は抜ける</span><br>
+　　If ix = 0 Then Exit Sub<br>
+　　<span style="color:#009900;">'括弧で始まっている場合は、括弧をとるだけ</span><br>
+　　If OutAray(0) = &quot;&quot; Then<br>
+　　　　Target = OutAray(1)<br>
+　　　　Exit Sub<br>
+　　End If<br>
+　　<span style="color:#009900;">'必要行の追加</span><br>
+　　sh.Rows(Target.Row + 1).Resize(ix).Insert<br>
+　　<span style="color:#009900;">'挿入行の書式クリア</span><br>
+　　With sh.Rows(Target.Row + 1).Resize(ix)<br>
+　　　　.Clear<br>
+　　　　.NumberFormatLocal = &quot;@&quot;<br>
+　　　　.EntireRow.AutoFit<br>
+　　End With<br>
+　　<br>
+　　Dim i As Integer, j As Integer<br>
+　　Dim strFunc As String<br>
+　　<span style="color:#009900;">'「関数構文」より引数名を取得</span><br>
+　　On Error Resume Next<br>
+　　j = WorksheetFunction.Match(GetFuncName(OutAray(0)), _<br>
+　　　　　　　　　　　　　　　　Worksheets(shFunc).Columns(1), 0)<br>
+　　If Err Then j = 1<br>
+　　On Error GoTo 0<br>
+　　<span style="color:#009900;">'配列(0)は関数名、(1)の引数から出力</span><br>
+　　For i = 1 To ix<br>
+　　　　With Target.Offset(i)<br>
+　　　　　　.Value = Worksheets(shFunc).Cells(j, i + 1)<br>
+　　　　　　If .Value = &quot;&quot; Then .Value = Worksheets(shFunc).Cells(1, i + 1)<br>
+　　　　　　.Offset(, 1) = OutAray(i)<br>
+　　　　　　sh.Cells(.Row, ctlCol) = Space(Target.Column) &amp; Target.Column<br>
+　　　　　　Call setTag(sh.Cells(.Row, ctlCol), OutAray2(i))<br>
+　　　　End With<br>
+　　Next<br>
+　　<span style="color:#009900;">'関数外の数式がある場合</span><br>
+　　If OutAray(ix + 1) &lt;&gt; &quot;&quot; Then<br>
+　　　　sh.Rows(Target.Offset(ix + 1).Row).Insert<br>
+　　　　With Target.Offset(ix + 1)<br>
+　　　　　　.Value = &quot;その他&quot;<br>
+　　　　　　.Offset(, 1) = OutAray(ix + 1)<br>
+　　　　　　sh.Cells(.Row, ctlCol) = Space(Target.Column) &amp; Target.Column<br>
+　　　　　　Call setTag(sh.Cells(.Row, ctlCol), OutAray2(ix + 1))<br>
+　　　　End With<br>
+　　End If<br>
+　　<span style="color:#009900;">'処理したセルはBold</span><br>
+　　Target.Font.Bold = True<br>
+　　<span style="color:#009900;">'配列を初期化</span><br>
+　　ix = 0<br>
+　　ReDim OutArray(100)<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'解析結果の表示行の表示・非表示</span><br>
+Private Function ExpComp(ByVal Target As Range, _<br>
+　　　　　　　　　　　　　Optional ByVal IsExpComp As Boolean = True) As Boolean<br>
+　　<span style="color:#009900;">'シート取得しておく</span><br>
+　　Dim sh As Worksheet<br>
+　　Set sh = Target.Worksheet<br>
+　　<br>
+　　<span style="color:#009900;">'行の折り畳み＆展開</span><br>
+　　Dim sRow As Long<br>
+　　Dim eRow As Long<br>
+　　Dim iLevel As Integer<br>
+　　Dim i As Long<br>
+　　<span style="color:#009900;">'自身のネストレベル以上の連続範囲を取得</span><br>
+　　iLevel = sh.Cells(Target.Row, ctlCol)<br>
+　　sRow = Target.Row + 1<br>
+　　i = sRow<br>
+　　Do Until sh.Cells(i, ctlCol) &lt;= iLevel Or sh.Cells(i, ctlCol) = &quot;&quot;<br>
+　　　　eRow = i<br>
+　　　　i = i + 1<br>
+　　Loop<br>
+　　<span style="color:#009900;">'自身のネストレベル以上があれば表示・非表示を切り替え</span><br>
+　　If eRow &gt;= sRow Then<br>
+　　　　If Not IsExpComp Then<br>
+　　　　　　ExpComp = True<br>
+　　　　　　Exit Function<br>
+　　　　End If<br>
+　　　　sh.Range(sh.Rows(sRow), sh.Rows(eRow)).Hidden = _<br>
+　　　　　　Not sh.Range(sh.Rows(sRow), sh.Rows(eRow)).Hidden<br>
+　　　　ExpComp = True<br>
+　　Else<br>
+　　　　ExpComp = False<br>
+　　End If<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'演算子等を除いて関数名の抜き出し</span><br>
+Private Function GetFuncName(ByVal strFunc As String) As String<br>
+　　Dim i As Integer<br>
+　　For i = Len(strFunc) To 1 Step -1<br>
+　　　　<span style="color:#009900;">'関数は&quot;[A-Z]|.&quot;</span><br>
+　　　　If (Mid(UCase(strFunc), i, 1) &gt;= &quot;A&quot; And _<br>
+　　　　　　Mid(UCase(strFunc), i, 1) &lt;= &quot;Z&quot;) Or _<br>
+　　　　　　Mid(strFunc, i, 1) = &quot;.&quot; Then<br>
+　　　　Else<br>
+　　　　　　strFunc = Mid(strFunc, i + 1)<br>
+　　　　　　Exit For<br>
+　　　　End If<br>
+　　Next<br>
+　　GetFuncName = UCase(strFunc)<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'結合セルの行高の自動調整</span><br>
+Private Sub ColumnFit(ByVal sh As Worksheet, _<br>
+　　　　　　　　　　　　ByVal Target As Range)<br>
+　　Dim cWidth As Double <span style="color:#009900;">'列幅：元</span><br>
+　　Dim tWidth As Double <span style="color:#009900;">'列幅：結合セル合計</span><br>
+　　Dim rHeight As Double <span style="color:#009900;">'行高</span><br>
+　　Dim mCount As Integer <span style="color:#009900;">'結合セル数</span><br>
+　　Dim myRng As Range<br>
+　　<span style="color:#009900;">'現在の状態を保存</span><br>
+　　mCount = Target.Item(1).MergeArea.Count<br>
+　　cWidth = sh.Columns(Target.Column).ColumnWidth<br>
+　　For Each myRng In Target.Item(1).MergeArea<br>
+　　　　tWidth = tWidth + sh.Columns(myRng.Column).ColumnWidth<br>
+　　Next<br>
+　　<span style="color:#009900;">'結合解除</span><br>
+　　Target.MergeCells = False<br>
+　　<span style="color:#009900;">'先頭セル幅を結合合計に</span><br>
+　　sh.Columns(Target.Item(1).Column).ColumnWidth = tWidth<br>
+　　<span style="color:#009900;">'行高自動調整</span><br>
+　　sh.Rows(Target.Item(1).Row).AutoFit<br>
+　　<span style="color:#009900;">'自動調整後の行高保存</span><br>
+　　rHeight = sh.Rows(Target.Item(1).Row).rowHeight<br>
+　　<span style="color:#009900;">'先頭セル幅を元に戻す</span><br>
+　　sh.Columns(Target.Item(1).Column).ColumnWidth = cWidth<br>
+　　<span style="color:#009900;">'再結合</span><br>
+　　Target.Item(1).Resize(, mCount).MergeCells = True<br>
+　　<span style="color:#009900;">'調整後の行高に設定</span><br>
+　　sh.Rows(Target.Item(1).Row).rowHeight = rHeight<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'数値が文字の「エラーを無視する」</span><br>
+Private Sub IgnoreNumberAsText(ByVal Target As Range)<br>
+　　Dim rng As Range<br>
+　　For Each rng In Target.Worksheet.UsedRange<br>
+　　　　If rng.Errors.Item(xlNumberAsText).Value Then<br>
+　　　　　　rng.Errors(xlNumberAsText).Ignore = True<br>
+　　　　End If<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'ControlのTagプロパティの代用として</span><br>
+Private Sub setTag(ByVal argRng As Range, ByVal argStr As String)<br>
+　　With argRng.Item(1).Offset(, ctlCol - argRng.Column).Validation<br>
+　　　　.Delete<br>
+　　　　.Add xlValidateInputOnly<br>
+　　　　.ErrorMessage = argStr<br>
+　　End With<br>
+End Sub<br>
+Private Function getTag(ByVal argRng As Range) As Integer<br>
+　　Dim strTag As String<br>
+　　With argRng.Item(1).Offset(, ctlCol - argRng.Column).Validation<br>
+　　　　strTag = .ErrorMessage<br>
+　　End With<br>
+　　If strTag = &quot;&quot; Or strTag = &quot;0&quot; Then strTag = 1<br>
+　　getTag = CInt(strTag)<br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+外部から呼ばれる公開プロシージャーは4つです。<br><div class="br2"><br></div>
+'数式解析結果をクリア<br>
+Public Sub AnalyzeClear()<br><div class="br2"><br></div>
+'数式を一気に全解析<br>
+Public Sub <strong>AnalyzeAllFormula</strong>()<br><div class="br2"><br></div>
+'数式解析メイン処理：一番外側の関数のみ解析<br>
+Public Sub <strong>AnalyzeFormula</strong>(・・・)<br><div class="br2"><br></div>
+'元数式の、選択セルと同一数式部分をハイライト<br>
+Public Sub AnalyzeHighlight(・・・)<br><div class="br2"><br></div>
+<strong>AnalyzeFormula</strong><br>
+これが数式解析の心臓部です。<br>
+ここで、一番外側の関数を引数に分解しています。<br>
+分解結果は、Private Sub <strong>PutArrayでシートに出力</strong>しています。<br><div class="br2"><br></div>
+<strong>AnalyzeAllFormula</strong><br>
+AnalyzeFormulaを繰り返し呼ぶ事で一気に<strong>全解析</strong>するようにしているだけです。<br><div class="br2"><br></div>
+VBAを読むのに必要最低限のコメントは入れましたので、<br>
+VBA内のコメントを頼りにVBAコードを読み解いてください。<br>
+一番分かりづらいとしたら配列の部分だと思います。</div>
+<div class="main-indent">
+<div class="main-indent">Dim OutAray(255) As String<br>
+関数を分解して引数を入れる配列です。<br>
+255というのは、Excel関数の引数の仕様上限数です。<br>
+上限が決まっていて、かつ大きな数字ではないので静的配列にしました。<br>
+とはいえ、そんなにたくさん引数を使っていたとしたら複雑とは別の問題がありますね。<br><div class="br2"><br></div>
+VBA内にも少し詳しくコメント入れましたが、<br>    '引数を入れる配列：(0)関数名、(1)～引数<br>
+    'ixが最後の引数のインデックスになります。<br>
+'ix+1に関数以降（+○）の数式を入れます<br>
+例えば、<br>
+=IF(論理式,真の場合,偽の場合)+B1<br>
+この場合は、<strong>ixが3</strong>になり<br>
+(0)：IF<br>
+(1)：論理式<br>
+(2)：真の場合<br>
+(3)：偽の場合<br>
+(4)：+B1<br>
+このように入ります。<br>
+解析結果としては、<br>
+すぐ下の行に4行挿入して、これらを引数名とともに出力します。<br>
+</div>
+</div>
+<div class="main-indent">下の方のPrivateのプロシージャーには、<br>
+汎用的に使える記述もありますので参考にしてください。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>複雑な計算式を解析した結果の表示</h3>
+<div class="main-indent"><br><img src="image170.jpg" tppabs="https://excel-ubara.com/excelvba5/image170.jpg" width="573" height="359" border="0" alt="VBA 複雑な数式 解析"><br><div class="br2"><br></div>
+B1の数式：<br>
+IF(A1&lt;&quot;A&quot;,VLOOKUP(A1,Sheet2!$A:$C,3,FALSE),<br>
+OFFSET(Sheet3!$A$1,COUNTA(Sheet2!$A:$A),0,1,1))<br><div class="br2"><br></div>
+この数式は掲載用サンプルとして完全にデタラメな数式です。<br>
+この程度の数式なら、ツールを使うまでもないのですが、雰囲気を伝えるためのものです。<br>
+C3セルを選択しているので、B1セルの当該文字列が赤表示になっているのも見て取れるはずです。<br>
+VBA内にコメントを入れましたが、同じ文字列があれば全てハイライトしています。<br>
+これは同一数式が複数存在する場合は、それを作業セルにする時の参考になるという趣旨です。<br><div class="br2"><br></div>
+A列のネストレベルの最大値は4が表示されていますが、これは引数だけなので、<br>
+実際の関数ネストとしては3重ネストということになります。<br>
+これは、列数と同じ数字を列数分のスペースをいれて表示しているだけのものですが、<br>
+解析結果を見るときの参考になると思い入れたものです。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>最後に</h3>
+<div class="main-indent"><br>
+最初に書きましたが、<br>
+作業セル（計算セル）を使い、順序立ててわかるようにしておき、<br>
+そもそもこんなツールが必要ないようにExcelを使うべきというのが基本原則になります。<br><div class="br2"><br></div>
+今回一番感じたのは、一見複雑に見えるものも、<br>
+その成り立ちと自身の思考を、整理・単純化することが大切だということです。<br>
+これはエクセルだけの話ではなく、全てに通じるものだと思います。<br><div class="br2"><br></div>
+※検証テストが不足しているので、バグがあった時ご報告いただければ幸いです。<br>
+　（さすがに実務ではそうそう複雑な数式はないのでテスト材料が不足です）<br>
+また、使ってみた感想などお送りいただければ励みになります。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a>」の記事</h3><p>
+<A href="EXCELVBA230.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA230.html">数独（ナンプレ）を解くVBAに挑戦№1</A><br>
+<A href="EXCELVBA231.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA231.html">数独（ナンプレ）を解くアルゴリズムの要点とパフォーマンスの検証№1</A><br>
+<A href="EXCELVBA248.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA248.html">ナンバーリンク(パズル)を解くVBAに挑戦№1</A><br>
+<A href="EXCELVBA249.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA249.html">ナンバーリンクを解くVBAのパフォーマンス改善№1</A><br>
+<A href="EXCELVBA260.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA260.html">オセロを作りながらマクロVBAを学ぼう</A><br>
+<A href="EXCELVBA265.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA265.html">他ブックへのリンクエラーを探し解除</A><br>
+<span class="strrev">Excelシートの複雑な計算式を解析するVBA</span><br>
+<A href="EXCELVBA282.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA282.html">Excel将棋：マクロVBAの学習用(№1)</A><br>
+<A href="EXCELVBA283.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA283.html">Excel囲碁：万波奈穂先生に捧ぐ</A><br>
+<A href="EXCELVBA284.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA284.html">Excel囲碁：再起動後も続けて打てるように改造</A><br>
+<A href="EXCELVBA285.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA285.html">エクセルVBAで15パズルを作ってみた</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>Excelシートの複雑な計算式を解析するVBA</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>Excelシートの複雑な計算式を解析するVBA</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="EXCELVBA266_2.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA266_2.html" target="_blank">関数構文のサンプル</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

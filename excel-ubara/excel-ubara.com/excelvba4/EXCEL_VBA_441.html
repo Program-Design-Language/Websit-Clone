@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VBAのVariant型について｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Variantデータ型は、他の何らかのデータ型として明示的に宣言されていない変数で、全てのデータ型を入れることができます。Variantデータ型には型宣言文字はありません。Variant型は、特別な値Empty、Error、Nothing、Nullを格納することもできます。">
+  <meta name="keywords" content="VBA,Variant,型について,技術解説,エクセル,Excel,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL_VBA_441.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="VBAのVariant型について｜VBA技術解説" />
+  <meta property="og:description" content="Variantデータ型は、他の何らかのデータ型として明示的に宣言されていない変数で、全てのデータ型を入れることができます。Variantデータ型には型宣言文字はありません。Variant型は、特別な値Empty、Error、Nothing、Nullを格納することもできます。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba4/image3181.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL_VBA_441.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VBAのVariant型について｜VBA技術解説" />
+  <meta name="twitter:description" content="Variantデータ型は、他の何らかのデータ型として明示的に宣言されていない変数で、全てのデータ型を入れることができます。Variantデータ型には型宣言文字はありません。Variant型は、特別な値Empty、Error、Nothing、Nullを格納することもできます。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba4/image3181.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>VBAのVariant型について</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL_VBA_441.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_441.html">
+<span itemprop="name">VBAのVariant型について</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-07-05</span>
+<h2 align="center">VBAのVariant型について</h2><p><br>
+Variantデータ型は、他の何らかのデータ型として明示的に宣言されていない変数で、全てのデータ型を入れることができます。<br>
+Variantデータ型には型宣言文字はありません。<br><div class="br2"><br></div>
+Variant型は、特別な値 Empty、Error、Nothing、Null を格納することもできます。<br>
+ただし、固定長文字列データ型として格納することはできません。<br>
+また、ユーザー定義型を格納することもできません。<br><div class="br2"><br></div>
+Variantデータ型を他の具体的なデータ型の代わりに使用することにより、データをより柔軟に処理できます。<br>
+データ型の基本については以下を参照してください。
+<div class="main-indent"><strong><a href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</a></strong><div class="details">マクロVBA入門者が、まず最初につまずくのが、このDimで変数を宣言することでしょう。変数とは、数値や文字列など（すなわちデータ）を一時的に格納する入れ物 と良く説明されますが、まずはこの考えで良いでしょう。この入れ物には、いろいろなタイプの入れ物があります。</div>
+<strong><a href="../excelvba1/EXCELVBA313.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA313.html">定数宣言のConstと型宣言文字｜VBA入門</a></strong><div class="details">前回は変数を説明しましたが、変数があれば、当然のように定数もあります。変数は値が変わる（変えられる）もの、定数は値が変わらない（変えられない）ものです。定数とは、数値や文字列の代わりに使用される、意味を持たせた名前のことです。</div><br>
+</div>
+<div class="main-indent">
+<h4>目次</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<a href="#sec01">Variant型変数のデータ型を調べる</a><br>
+<a href="#sec01">Variant型変数のメモリアドレス</a><br>
+<a href="#sec01">Variant型どうしの算術演算</a><br>
+<a href="#sec01">Variant型どうしの比較演算</a><br>
+<a href="#sec01">RangeのValueプロパティの比較</a><br>
+<a href="#sec01">ユーザー定義型（Type）とバリアント（Variant）変数</a><br>
+<a href="#sec01">Variant型の配列</a><br>
+<a href="#sec01">配列をVariant型の仮引数に渡す</a><br>
+<a href="#sec01">RangeオブジェクトをVariant型の仮引数に渡す</a><br>
+</div>
+</div></p>
+<h3 id="sec01">Variant型変数のデータ型を調べる</h3>
+<div class="main-indent">Variant型変数を<strong><a href="../excelvba1/EXCELVBA487.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA487.html" target="_blank">ローカルウィンドウ</a></strong>でみると、Variant/の後に実際に入っているデータの型が表示されます。<div class="details">VBE(VisualBasicEditor)は、VBAで使われるコードエディタ、コンパイラ、デバッガ、その他の開発支援ツールが統合された開発環境です。ここではローカルウィンドウの使い方について説明します。ローカルウィンドウの表示 メニュー「表示」→「イミィディエイトウィンドウ」初期設定では、コードウィンドウの下にドッキング表示されます。</div><br>
+<img src="image338.jpg" tppabs="https://excel-ubara.com/excelvba4/image338.jpg" width="428" height="249" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+Variant型変数のデータ型をVBAで判定する場合は、VarType関数またはTypeName関数を使用します。<br><div class="br2"><br></div>
+<strong><a href="../excelvba8/EXCELVBA885.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA885.html" target="_blank">VarType関数</a></strong>は、引数に指定された変数の内部処理形式を表す整数型(Integer)の値を返します。<div class="details">VarType関数は、引数に指定された変数の内部処理形式を表す整数型(Integer)の値を返します。VarType関数 VarType(varname) varname 必ず指定します。引数varnameには、ユーザー定義型の変数を除く、任意のバリアント型(Variant)の変数を指定します。</div>
+<strong><a href="../excelvba8/EXCELVBA884.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA884.html" target="_blank">TypeName関数</a></strong>は、引数で指定された変数に関する情報を文字列で返します。<div class="details">TypeName関数は、引数で指定された変数に関する情報を文字列で返します。TypeName関数 TypeName(varname) varname 必ず指定します。引数varnameには、ユーザー定義型の変数を除く、任意のバリアント型(Variant)の変数を指定します。</div><br>
+バリアント型 (Variant) 変数の初期値はEmptyです。<br>
+変数がEmpty値であるかの判定には、<strong><a href="../excelvba8/EXCELVBA823.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA823.html" target="_blank">IsEmpty関数</a></strong>を使用してください。<div class="details">IsEmpty関数は、変数がEmpty値かどうかを調べ、結果をブール型(True,False)で返します。IsEmpty関数 IsEmpty(expression) expression 必ず指定します。引数expressionには、数式または文字列式を含むバリアント型(Variant)の式を指定します。</div><br>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec02">Variant型変数のメモリアドレス</h3>
+<div class="main-indent">変数のアドレス位置にはデータ型を区別する数値が入っています。<br>
+詳しくは以下を参照してください。</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="EXCEL_VBA_422.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_422.html" target="_blank">VBAにおける変数のメモリアドレスについて</a></strong><div class="details">VBA開発においてメモリアドレスを気にすることはほとんど無いと思います。気になる場合があるとしたら、・String変数の処理が遅い ・Variant変数の処理が遅い ・ByRef,ByValの違い ・WindowsAPI使用時 このような場合に多少は気になる事があるくらいではないでしょうか。</div><br>
+</div>
+</div>
+<h3 id="sec03">Variant型どうしの算術演算</h3>
+<div class="main-indent">Byte、Integer、Long、Singleを格納しているVariant対して算術演算を実行し、結果が元のデータ型の通常の範囲を超えた場合、結果は
+Variant内で次に大きいデータ型に昇格されます。<br>
+ByteはIntegerへ、IntegerはLongへ、LongとSingleはDoubleへ昇格されます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim v1, v2, v3, v4, v5, v6, v7<br>
+v1 = CByte(125)<br>
+v2 = CByte(125)<br>
+v3 = v1 + v2<br>
+v4 = v1 * v2<br>
+v5 = v1 * v2 * 10<br>
+v6 = v1 ^ v2<br>
+v7 = v1 / v2<br>
+Stop</td>
+    </tr>
+  </tbody>
+</table></code></div>
+<img src="image3155.jpg" tppabs="https://excel-ubara.com/excelvba4/image3155.jpg" width="402" height="233" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+Currency、Decimal、Doubleの値が格納されているVariant変数がそれぞれの範囲を超えると、エラーが発生します。<br><div class="br2"><br></div>
+</div>
+<h3 id="sec04">Variant型どうしの比較演算</h3>
+<div class="main-indent">バリアントの基になる型に応じて、式の比較方法または比較の結果が変わります。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td>条件</td>
+      <td>Then</td>
+    </tr>
+    <tr>
+      <td><strong>両方</strong>のバリアント型 (Variant) の式が<strong>数値</strong></td>
+      <td><strong>数値比較</strong>を実行します。</td>
+    </tr>
+    <tr>
+      <td><strong>両方</strong>のバリアント型 (Variant) の式が<strong>文字列</strong></td>
+      <td><strong>文字列比較</strong>を実行します。</td>
+    </tr>
+    <tr>
+      <td>一方のバリアント型 (Variant) の式が<strong>数値</strong>で、もう一方が<strong>文字列</strong></td>
+      <td><strong>数値式は文字列式よりも小</strong>さくなります。</td>
+    </tr>
+    <tr>
+      <td>一方のバリアント型 (Variant) の式が<strong>Empty</strong>で、もう一方は<strong>数値</strong></td>
+      <td><strong>0をEmpty</strong>式として使用して、<strong>数値比較</strong>を実行します。</td>
+    </tr>
+    <tr>
+      <td>一方のバリアント型 (Variant) の式が<strong>Empty</strong>で、もう一方が<strong>文字列</strong></td>
+      <td><strong>長さ0の文字列 (&quot;&quot;) をEmpty</strong>式として使用して、<strong>文字列比較</strong>を実行します。</td>
+    </tr>
+    <tr>
+      <td><strong>両方</strong>のバリアント型 (Variant) の式が<strong>Empty</strong></td>
+      <td><strong>式は等しく</strong>なります。</td>
+    </tr>
+  </tbody>
+</table></div><br>
+最も注意すべき点は、一方が数値で、もう一方が文字列の場合です。<br>
+<strong>数値式は文字列式よりも小さくなります。</strong><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim v1, v2<br>
+      v1 = 123<br>
+      v2 = &quot;120&quot;<br>
+      Debug.Print v1 &lt; v2<br>
+      Debug.Print v1 = v2<br>
+      Debug.Print v1 &gt; v2</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+上記VBAにおいては、実際の数値に関係なく常に、<br>
+True ・・・ 左辺が数値式なのでTrueになります。<br>
+False<br>
+False<br>
+このように数値式は常に小さく判定されます。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec05">RangeのValueプロパティの比較</h3>
+<div class="main-indent">RangeのValueプロパティはVariantです。<br>
+従ってVariantの比較になるので注意が必要です。<br><div class="br2"><br></div>
+<img src="image3163.jpg" tppabs="https://excel-ubara.com/excelvba4/image3163.jpg" width="147" height="114" border="0" alt="VBA マクロ Variant"><br>
+A1は数値、A2は文字列になっています。<br><div class="br2"><br></div>
+<img src="image3172.jpg" tppabs="https://excel-ubara.com/excelvba4/image3172.jpg" width="404" height="106" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim v<br>
+v = &quot;123&quot;<br>
+Debug.Print Range(&quot;A1&quot;).Value = Range(&quot;A2&quot;).Value<br>
+Debug.Print Range(&quot;A1&quot;).Value = v<br>
+Debug.Print Range(&quot;A2&quot;).Value = v</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+数値式は文字列式よりも小さくなりますので、この結果は、<br>False<br>False<br>
+True ・・・ 文字列式どうしの比較<br>
+となります。<br><div class="br2"><br></div>
+つまり、Valueは単純比較できません。<br>
+文字列を数値変換するには、<br>
+<strong><a href="../excelvba8/EXCELVBA878.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA878.html" target="_blank">CLng関数</a></strong><div class="details">CLng関数は、引数をLong型（長整数型）に変換します。CLng関数 CLng(expression) 引数expressionには任意の文字列式または数式を指定します。この引数は必ず指定します。引数がLong型（長整数型）に変換できない場合はエラーとなります。</div>
+<strong><a href="../excelvba8/EXCELVBA875.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA875.html" target="_blank">CDbl関数</a></strong><div class="details">CDbl関数は、引数をDouble型（倍精度浮動小数点数型）に変換します。CDbl関数 CDbl(expression) 引数expressionには任意の文字列式または数式を指定します。この引数は必ず指定します。</div>
+これらを使いますが、そもそも数値に変換できない場合はこれらの関数がエラーとなってしまいます。<br>
+そこで、事前に数値変換可能かを、<strong><a href="../excelvba8/EXCELVBA824.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA824.html" target="_blank">IsNumeric関数</a></strong>を使い判定しておきます。<div class="details">IsNumeric関数は、式が数値として評価できるかどうかを調べ、結果をブール型(True,False)で返します。IsNumeric関数 IsNumeric(expression) expression 必ず指定します。引数expressionには、数式または文字列式を含むバリアント型(Variant)の式を指定します。</div>
+さらに、そもそもエラー値の判定は、<strong><a href="../excelvba8/EXCELVBA894.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA894.html" target="_blank">IsError関数</a></strong>で行う必要があります。<div class="details">引数の式がエラー値かどうかを示すブール型(Boolean)の値を返します。IsError関数は、引数の式がエラーを示す場合にTrueを返します。それ以外の場合は、Falseを返します。IsError関数は、数式がエラーを表しているかどうかを判断するために使用されます。</div><br>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub test()<br>
+      　　Debug.Print CompareValue(Range(&quot;A1&quot;), Range(&quot;A2&quot;))<br>
+End Sub<br><div class="br2"><br></div>
+Function CompareValue(rng1 As Range, rng2 As Range)<br>
+　　<span style="color:#009900;">'エラー値の場合はFalseを返す</span><br>
+　　If IsError(rng1.Value) Or IsError(rng2.Value) Then<br>
+　　　　CompareValue = False<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'両方数値の場合は数値比較する</span><br>
+　　If IsNumeric(rng1.Value) And IsNumeric(rng2.Value) Then<br>
+　　　　If CDbl(rng1.Value) = CDbl(rng2.Value) Then<br>
+　　　　　　CompareValue = True<br>
+　　　　Else<br>
+　　　　　　CompareValue = False<br>
+　　　　End If<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'文字列比較</span><br>
+　　If rng1.Value = rng2.Value Then<br>
+　　　　CompareValue = True<br>
+　　Else<br>
+　　　　CompareValue = False<br>
+　　End If<br>
+End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+<h3 id="sec06">ユーザー定義型（Type）とバリアント（Variant）変数</h3>
+<div class="main-indent">ユーザー定義型をバリアント（Variant）変数に代入するとエラーとなります。<br><div class="br2"><br></div>
+<img src="image3181.jpg" tppabs="https://excel-ubara.com/excelvba4/image3181.jpg" width="544" height="243" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+VBAリファレンスには、<br>
+(Variant 型はユーザー定義型をサポートするようになりました)。<br>
+このように書かれていますが、<br>
+これは、ActiveXプロジェクトやタイプライブラリの構造体の事をさしていると思われます。<br>
+VBA内で定義した構造体を、バリアント（Variant）変数に代入することはできません。<br><div class="br2"><br></div>
+</div>
+<h3 id="sec07">Variant型の配列</h3>
+<div class="main-indent">通常の配列には、同じデータ型しか入れることはできません。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim n(1 To 3) As Long</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+この変数nの各要素には、数値または数値変換可能な文字しか代入できません。<br>
+しかし、Variant型の場合は、任意のデータ型を入れることができます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim n(1 To 3) As Variant<br>
+n(1) = 123<br>
+n(2) = 1.23<br>
+n(3) = &quot;ABC&quot;<br>
+Stop</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<img src="image3221.jpg" tppabs="https://excel-ubara.com/excelvba4/image3221.jpg" width="414" height="186" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3 id="sec08">配列をVariant型の仮引数に渡す</h3>
+<div class="main-indent">配列を引数に指定する場合は、ByRef（参照渡し）が強制されます。<br>
+ByValで配列を指定した場合は、赤字のコンパイルエラーとなります。<br><div class="br2"><br></div>
+<img src="image3241.jpg" tppabs="https://excel-ubara.com/excelvba4/image3241.jpg" width="455" height="52" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+しかし、仮引数をVariantで直接受け取る場合はByValで受け取ることができます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub test()<br>
+　　Dim str(2) As String<br>
+　　str(0) = &quot;A&quot;: str(1) = &quot;B&quot;: str(2) = &quot;C&quot;<br>
+　　Dim v<br>
+　　v = fnc(str)<br>
+　　Stop<br>
+End Sub<br><div class="br2"><br></div>
+Function fnc(ByVal v) As Variant<br>
+　　v(0) = &quot;Z&quot;<br>
+　　fnc = v<br>
+End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+<img src="image3211.jpg" tppabs="https://excel-ubara.com/excelvba4/image3211.jpg" width="428" height="252" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+</div>
+<h3 id="sec09">RangeオブジェクトをVariant型の仮引数に渡す</h3>
+<div class="main-indent">RangeオブジェクトをVariantの仮引数に渡した場合の挙動については注意が必要です。<br><div class="br2"><br></div>
+ByRef、ByVal、どちらで受け取っても受け取った時点ではRangeオブジェクトです。<br>
+しかし、仮引数に何かを代入した時点で違いが出てきます。<br><div class="br2"><br></div>
+ByVal、ByRefの基本については以下を参照してください。</div>
+<div class="main-indent">
+<div class="main-indent"><strong><a href="EXCEL218.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL218.html" target="_blank">値渡し（ByVal）、参照渡し（ByRef）について</a></strong><div class="details">ByValが値渡し、ByRefが参照渡しです。ここまでは、どこにでも書いてあります。しかし、なんとなく理解できるけど、なんとなく理解できない… 結局のところ実際の活用がなかなか出来ない事が多いようです。</div><br>
+</div>
+</div>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample()<br>
+　　Dim rng1 As Range<br>
+　　Dim rng2 As Range<br>
+　　Set rng1 = Range(&quot;A1:B1&quot;)<br>
+　　Set rng2 = Range(&quot;A2:B2&quot;)<br>
+      　　Call sample_sub(rng1, rng2)<br>
+      End Sub<br><div class="br2"><br></div>
+Sub sample_sub(ByRef v1, ByVal v2)<br>
+　　Stop <span style="color:#009900;">'①</span><br>
+　　v1 = 1<br>
+　　v2 = 1<br>
+      　　Stop <span style="color:#009900;">'②</span><br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+<div class="main-indent">
+<h4>①の時点：受け取った直後</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">v1、v2、どちらもRangeオブジェクトとして受け取ります。<br><div class="br2"><br></div>
+<img src="image336.jpg" tppabs="https://excel-ubara.com/excelvba4/image336.jpg" width="373" height="148" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>②の時点：代入した後</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent"><strong>ByRef</strong>で受け取ったv1は、Let代入では<strong>Value</strong>に入ります。<br>
+<strong>ByVal</strong>で受け取ったv2は、Let代入では<strong>変数が置き換わり</strong>ます。<br><div class="br2"><br></div>
+<img src="image337.jpg" tppabs="https://excel-ubara.com/excelvba4/image337.jpg" width="378" height="152" border="0" alt="VBA マクロ Variant"><br><div class="br2"><br></div>
+ただし、当然ではありますが、<br>
+<strong>Set代入した場合は、代入したオブジェクトになります。</strong><br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">
+<h4>Valueの配列で渡したい場合</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">呼び出す時に配列で渡すようにします。<br>
+Call sample_sub(rng1, rng2)<br>
+これを<br>
+Call sample_sub(rng1.Value, rng2.Value)<br>
+このように、Valueプロパティを指定すればValueの配列で渡せます。<br>
+また、<br>
+Call sample_sub((rng1), (rng2))<br>
+このように、()での値評価をすれば、その時点で既定プロパティのValueが取得されるので、Valueの配列で渡せます。<br>
+ただし、実引数にCVar(…)としても配列になりません。<br><div class="br2"><br></div>
+</div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL_VBA_414.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_414.html">手動計算時の注意点と再計算方法</A><br>
+<A href="EXCEL_VBA_417.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_417.html">VBAの用語について：ステートメントとは</A><br>
+<A href="EXCEL_VBA_423.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_423.html">オブジェクト変数とは何か</A><br>
+<A href="EXCEL_VBA_427.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_427.html">VBAの小数以下の演算誤差について</A><br>
+<A href="EXCEL_VBA_428.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_428.html">スピルでVBAの何が変わったか</A><br>
+<A href="EXCEL_VBA_435.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_435.html">CharactersプロパティとCharactersオブジェクト</A><br>
+<A href="EXCEL_VBA_436.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_436.html">ユーザーに絶対に停止させたくない場合のVBA設定</A><br>
+<A href="EXCEL_VBA_439.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_439.html">印刷範囲の設定・印刷範囲のクリア</A><br>
+<A href="EXCEL289.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL289.html">VBAの省略可能な記述について</A><br>
+<span class="strrev">VBAのVariant型について</span><br>
+<A href="EXCEL_VBA_444.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_444.html">VBAのインデントについて</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>VBAのVariant型について</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>VBAのVariant型について</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</a></li><li><a href="../excelvba1/EXCELVBA313.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA313.html">定数宣言のConstと型宣言文字｜VBA入門</a></li><li><a href="../excelvba1/EXCELVBA487.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA487.html" target="_blank">ローカルウィンドウ</a></li><li><a href="../excelvba8/EXCELVBA885.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA885.html" target="_blank">VarType関数</a></li><li><a href="../excelvba8/EXCELVBA884.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA884.html" target="_blank">TypeName関数</a></li><li><a href="../excelvba8/EXCELVBA823.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA823.html" target="_blank">IsEmpty関数</a></li><li><a href="EXCEL_VBA_422.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_422.html" target="_blank">VBAにおける変数のメモリアドレスについて</a></li><li><a href="../excelvba8/EXCELVBA878.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA878.html" target="_blank">CLng関数</a></li><li><a href="../excelvba8/EXCELVBA875.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA875.html" target="_blank">CDbl関数</a></li><li><a href="../excelvba8/EXCELVBA824.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA824.html" target="_blank">IsNumeric関数</a></li><li><a href="../excelvba8/EXCELVBA894.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA894.html" target="_blank">IsError関数</a></li><li><a href="EXCEL218.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL218.html" target="_blank">値渡し<br></a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>数式内の不要なシート名を削除する（HasFormula）｜VBAサンプル集</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="複数のシートにまたがる数式を入力していると、自身のシート名!が数式についてしまいます、この自身のシート名!は不要であり、式を見づらくしてしまいます、この不要なシート名を、VBAで一括削除します。ブックの全シート、全セルを対象として、数式の中から、自身のシート名!を削除するVBAになります。">
+  <meta name="keywords" content="HasFormula,数式内,不要なシート名を削除する,サンプル集,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba5/EXCELVBA250.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="数式内の不要なシート名を削除する（HasFormula）｜VBAサンプル集" />
+  <meta property="og:description" content="複数のシートにまたがる数式を入力していると、自身のシート名!が数式についてしまいます、この自身のシート名!は不要であり、式を見づらくしてしまいます、この不要なシート名を、VBAで一括削除します。ブックの全シート、全セルを対象として、数式の中から、自身のシート名!を削除するVBAになります。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba5/image315.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba5/EXCELVBA250.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="数式内の不要なシート名を削除する（HasFormula）｜VBAサンプル集" />
+  <meta name="twitter:description" content="複数のシートにまたがる数式を入力していると、自身のシート名!が数式についてしまいます、この自身のシート名!は不要であり、式を見づらくしてしまいます、この不要なシート名を、VBAで一括削除します。ブックの全シート、全セルを対象として、数式の中から、自身のシート名!を削除するVBAになります。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba5/image315.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBAサンプル集<br>数式内の不要なシート名を削除する（HasFormula）</h1>ExcelマクロVBAの実用サンプル、エクセルVBA集と解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">
+<span itemprop="name">マクロVBAサンプル集</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCELVBA250.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA250.html">
+<span itemprop="name">数式内の不要なシート名を削除する（HasFormula）</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-04-13</span>
+<h2 align="center">数式内の不要なシート名を削除する（HasFormula）</h2><p><br>
+複数のシートにまたがる数式を入力していると、<strong>自身のシート名!</strong>が数式についてしまいます、<br>
+この<strong>自身のシート名!</strong>は不要であり、式を見づらくしてしまいます、<br>
+この不要なシート名を、マクロVBAで一括削除します。<br><div class="br2"><br></div>
+ブックの全シート、全セルを対象として、<br>
+数式の中から、<strong>自身のシート名!</strong>を削除するマクロVBAになります。<br><div class="br2"><br></div></p>
+<h3>使用されている全セルを巡回</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <TBODY>
+    <tr>
+      <td>Sub sample1()<br>
+　　Dim ws As Worksheet<br>
+　　Dim rng As Range<br>
+　　For Each ws In Worksheets<br>
+　　　　For Each rng In ws.UsedRange<br>
+　　　　　　If rng.HasFormula And _<br>
+　　　　　　　 rng.Formula Like &quot;*&quot; &amp; ws.Name &amp; &quot;!*&quot; Then<br>
+　　　　　　　　rng.Formula = Replace(rng.Formula, ws.Name &amp; &quot;!&quot;, &quot;&quot;)<br>
+　　　　　　End If<br>
+　　　　Next<br>
+　　Next<br>
+End Sub</td>
+    </tr>
+  </TBODY>
+</table></code></div><br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+</div>
+<div class="main-indent">
+<h4>全シートの処理</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">For Each ws In Worksheets<br>
+ここは問題ないと思いますが、ForEachについては以下を参照してください。<br><div class="br2"><br></div>
+<strong><a href="../excelvba1/EXCELVBA359.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA359.html" target="_blank">第59回.コレクション処理（For Each）｜VBA入門</a></strong><div class="details">ForEachは、コレクションの各要素に対して繰り返し処理を実行します。コレクションはオブジェクトの集まりですので、ForEachは、コレクションの中から、個別のオブジェクトを取り出して処理する場合に使用します。コレクションの全ての要素に対しての処理が終わるとループは終了します。</div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>全セルの処理</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">For Each rng In ws.UsedRange<br>
+書き方はいろいろありますが、使用されているセルだけを対象としています。<br><div class="br2"><br></div>
+<strong><a href="../excelvba4/EXCEL222.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL222.html" target="_blank">最終行・最終列の取得方法（End,CurrentRegion,SpecialCells,UsedRange）</a></strong><div class="details">エクセルの表をVBAで扱う時は、データ部分の先頭から最終行までの、開始列から最終列まで処理する事が多いでしょう。開始行や開始列は、ほとんどの場合、見出し行や見出し列の次からになります。単純な話として、１行目に見出しがあれば、２行目から １列目に見出しがあれば、２列目から では、ここで、最終行や最終列は、</div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>数式の判定</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">If rng.<strong>HasFormula</strong> Then<br>
+<strong>Rangeオブジェクト.HasFormula</strong><br>
+数式が設定されている場合は<br>
+Trueが返されますので、これで判定しています。<br><div class="br2"><br></div>
+<strong><a href="../excelvba4/EXCEL237.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL237.html" target="_blank">空白セルを正しく判定する方法（IsEmpty,IsError,HasFormula）</a></strong><div class="details">空白セルの判定は、VBAにおいては頻繁に発生しますが、正しく空白セルを判定する事は以外と難しいものです。そもそも「空白」とはどのような状態なのか… これが、はっきりしない為に何が正しいのかが判然としないことが問題を複雑にしています。以下、A1セルが空白かどうか判定する方法をいくつか紹介します。</div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>自身のシート名<strong>!</strong>を削除</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">rng.<strong>Formula</strong> = Replace(rng.<strong>Formula</strong>, ws.Name &amp; &quot;!&quot;, &quot;&quot;)<br>
+<strong>Rangeオブジェクト.Formula</strong><br>
+これは数式のプロパティですが、この他に<strong><br>
+</strong>FormulaLocal<br>
+FormulaR1C1<br>
+等々があります。<br>
+どれを使用しても構いませんが、<br>
+必ず、左辺と右辺で同じものを使用してください。<br>
+当たり前ではありますが、結構ミスしやすい部分になります。<br><div class="br2"><br></div>
+数式にシート名が含まれているかは、<br>
+<strong><a href="../excelvba8/EXCELVBA819.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA819.html" target="_blank">InStr関数</a></strong><div class="details">Instr関数は、VBAでは頻繁に使われる必須関数で、シート関数のFIND関数と同様機能のVBA関数になります。文字列の中から指定した文字列を先頭から検索し、最初に見つかった文字位置を返す文字列処理関数で、検索文字が見つからなかった場合は0を返します。</div>
+<strong><a href="../excelvba1/EXCELVBA349.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA349.html" target="_blank">Like演算子</a></strong><div class="details">文字列比較において部分一致やパターンマッチングでの文字列比較を行う時に使うのがLike演算子です。Like演算子は、2つの文字列のパターンマッチングを行い、規則に一致しているかどうかの結果をTrue（一致）またはFalse（不一致）で返します。</div>
+どちらでも構いませんが、上記VBAではLike演算子にしてみました。。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">コードも短く理解しやすいVBAだと思います。<br>
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+ただし、計算式の入っていないセルまで巡回しているので、大量データが入っていると処理時間がかかってしまいます。<br>
+そこで、以下では計算式の入っているセルだけを対象にします。<br><div class="br2"><br></div>
+</div>
+<h3>計算式が入っているセルだけ巡回</h3>
+<div class="main-indent">
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample2()<br>
+　　Dim ws As Worksheet<br>
+　　Dim formulaRng As Range<br>
+　　Dim rng As Range<br>
+　　On Error Resume Next<br>
+　　For Each ws In Worksheets<br>
+      　　　　Set formulaRng = ws.Cells.SpecialCells(xlCellTypeFormulas)<br>
+　　　　If Err Then<br>
+　　　　　　Err.Clear<br>
+　　　　Else<br>
+　　　　　　For Each rng In formulaRng<br>
+　　　　　　　　If rng.Formula Like &quot;*&quot; &amp; ws.Name &amp; &quot;!*&quot; Then<br>
+　　　　　　　　　　rng.Formula = Replace(rng.Formula, ws.Name &amp; &quot;!&quot;, &quot;&quot;)<br>
+　　　　　　　　End If<br>
+　　　　　　Next<br>
+　　　　End If<br>
+　　Next<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+先の、「使用されている全セルを巡回」との違いは、<br>Set formulaRng = ws.Cells.SpecialCells(xlCellTypeFormulas)<br>
+これで、数式の入っているセルだけを先に取得している点です。<br><div class="br2"><br></div>
+<strong><a href="../excelvba1/EXCELVBA435.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA435.html" target="_blank">第135回.ジャンプの選択オプション（SpecialCells）｜VBA入門</a></strong><div class="details">数式の入っているセル、定数の入っているセル、条件付き書式の設定されているセル、これらをシート全体やセル範囲の中から一括で取得する方法がVBAにはあります。手動でのジャンプ機能のセル選択をVBAで使うことができます。VBAでは、RangeオブジェクトのSpecialCellsメソッドがこの機能に該当します。</div><br>
+ただし、SpecialCellsは該当するセルが存在しないとエラーになってしまうので、<br><div class="br2"><br></div>
+<img src="image315.jpg" tppabs="https://excel-ubara.com/excelvba5/image315.jpg" width="488" height="242" border="0" alt="VBA マクロ 数式 シート名"><br><div class="br2"><br></div>
+そこで、<strong><a href="../excelvba1/EXCELVBA362.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA362.html" target="_blank">On Error Resume Next</a></strong>で対応しています。<div class="details">「OnErrorResumeNext」ステートメントは、実行時エラーが発生してもマクロVBAを中断せずに、エラーが発生したステートメントの次のステートメントから実行を継続します。マクロVBAは、エラーが発生するとその時点で停止してしまいます。</div><br>
+処理時間はこちらの方が少なくて済みます。<br><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a>」の記事</h3><p>
+<A href="EXCELVBA213.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA213.html">印刷ダイアログを使用する（xlDialogPrint）</A><br>
+<A href="EXCELVBA214.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA214.html">名前定義の一覧と削除（Name）</A><br>
+<A href="EXCELVBA240.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA240.html">シートを名前順に並べ替える</A><br>
+<span class="strrev">数式内の不要なシート名を削除する（HasFormula）</span><br>
+<A href="EXCELVBA258.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA258.html">数式の参照しているセルを取得する</A><br>
+<A href="EXCELVBA262.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA262.html">増殖した条件付き書式を整理統合する</A><br>
+<A href="EXCELVBA263.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA263.html">条件付き書式で変更された書式を取得する</A><br>
+<A href="EXCELVBA272.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA272.html">セル結合/解除でセル値を退避/回復</A><br>
+<A href="EXCELVBA273.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA273.html">セル結合なんて絶対に許さないんだからね</A><br>
+<A href="EXCELVBA274.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA274.html">セルの数式をネスト色分けしてコメント表示</A><br>
+<A href="EXCELVBA277.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA277.html">セル結合して表を見やすくする（非推奨）</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>数式内の不要なシート名を削除する（HasFormula）</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</a></li>
+<li><span class="strrev2"><strong>数式内の不要なシート名を削除する</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelvba1/EXCELVBA359.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA359.html" target="_blank">第59回.コレクション処理<br></a></li><li><a href="../excelvba4/EXCEL222.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL222.html" target="_blank">最終行・最終列の取得方法<br></a></li><li><a href="../excelvba4/EXCEL237.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL237.html" target="_blank">空白セルを正しく判定する方法<br></a></li><li><a href="../excelvba8/EXCELVBA819.html" tppabs="https://excel-ubara.com/excelvba8/EXCELVBA819.html" target="_blank">InStr関数</a></li><li><a href="../excelvba1/EXCELVBA349.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA349.html" target="_blank">Like演算子</a></li><li><a href="../excelvba1/EXCELVBA435.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA435.html" target="_blank">第135回.ジャンプの選択オプション<br></a></li><li><a href="../excelvba1/EXCELVBA362.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA362.html" target="_blank">On Error Resume Next</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

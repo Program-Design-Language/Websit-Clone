@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>オートフィルターを退避回復するVBAクラス｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="シートにオートフィルターが適用されていて、かつ絞り込みされている場合は、VBAでは、何かと注意が必要になります。このような場合、オートフィルターを解除するか、フィルター絞り込みをクリアして対応している事が多くなります。しかし、オートフィルターを解除したり、フィルターをクリアしてしまうと、それまでの絞り込み条件が消えてしまい、">
+  <meta name="keywords" content="VBA,オートフィルターを退避回復するクラス,技術解説,エクセル,Excel,マクロ">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba_class/VBA_CLASS_08.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="オートフィルターを退避回復するVBAクラス｜VBA技術解説" />
+  <meta property="og:description" content="シートにオートフィルターが適用されていて、かつ絞り込みされている場合は、VBAでは、何かと注意が必要になります。このような場合、オートフィルターを解除するか、フィルター絞り込みをクリアして対応している事が多くなります。しかし、オートフィルターを解除したり、フィルターをクリアしてしまうと、それまでの絞り込み条件が消えてしまい、" />
+  <meta property="og:image" content="https://excel-ubara.com/vba_class/image182.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/vba_class/VBA_CLASS_08.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="オートフィルターを退避回復するVBAクラス｜VBA技術解説" />
+  <meta name="twitter:description" content="シートにオートフィルターが適用されていて、かつ絞り込みされている場合は、VBAでは、何かと注意が必要になります。このような場合、オートフィルターを解除するか、フィルター絞り込みをクリアして対応している事が多くなります。しかし、オートフィルターを解除したり、フィルターをクリアしてしまうと、それまでの絞り込み条件が消えてしまい、" />
+  <meta name="twitter:image" content="https://excel-ubara.com/vba_class/image182.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>オートフィルターを退避回復するVBAクラス</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba_class/">
+<span itemprop="name">VBAクラス入門</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="VBA_CLASS_08.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_08.html">
+<span itemprop="name">オートフィルターを退避回復するVBAクラス</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2021-02-03</span>
+<h2 align="center">オートフィルターを退避回復するVBAクラス</h2><br><a href="image1792.jpg" tppabs="https://excel-ubara.com/vba_class/image1792.jpg" target="_blank"><img src="image1792.jpg" tppabs="https://excel-ubara.com/vba_class/image1792.jpg" width="333" height="335" style="float:right;margin: 0px 10px 10px 10px;" border="0" alt="マクロ VBA オートフィルタ"></a><p>シートにオートフィルターが適用されていて、かつ絞り込みされている場合は、<br>マクロVBAでは、何かと注意が必要になります。<br>このような場合、<br>オートフィルターを解除するか、フィルター絞り込みをクリアして対応している事が多くなります。<br><div class="br2"><br></div>
+しかし、オートフィルターを解除したり、フィルターをクリアしてしまうと、<br>
+それまでの絞り込み条件が消えてしまい、元の状態に戻すことができなくなります。<br><div class="br2"><br></div>
+<strong>フィルターによる非表示行があるときのVBA問題点</strong>
+<div class="main-indent">一番よく問題になるのは、最終行の取得方法でしょう。<br>
+Cells(Rows.Count, 1).End(xlUp).Row<br>
+これは、表示されている最終行になりますので、<br>
+非表示行がある場合は、本来の表の最終行は取得できません。<br>
+CurrentRegion等を使う事で、対応するVBAにすることはできます。<br>
+<strong><a href="../excelvba4/EXCEL222.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL222.html" target="_blank">最終行・最終列の取得方法（End,CurrentRegion,SpecialCells,UsedRange）</a></strong><div class="details">エクセルの表をVBAで扱う時は、データ部分の先頭から最終行までの、開始列から最終列まで処理する事が多いでしょう。開始行や開始列は、ほとんどの場合、見出し行や見出し列の次からになります。単純な話として、１行目に見出しがあれば、２行目から １列目に見出しがあれば、２列目から では、ここで、最終行や最終列は、</div><br>
+また、セルのコピーをしている場合の問題点もあるでしょう。<br>
+Copyメソッドでは、フィルターで非表示になっている行はコピーされません。<br><div class="br2"><br></div>
+オートフィルターでの絞り込みがされている場合、<br>
+マクロVBAで使えるテクニックが制限されます、逆の言い方をすれば、よりテクニックが必要になってきます。<br>
+</div><p>
+現実的な対応としては、上で述べたように、<br>
+・オートフィルターを解除<br>
+・フィルター絞り込みをクリア<br>
+・フィルターされていても良いマクロVBAを書く<br>
+このいずれかになるだろうと思います。<br>
+そして、このような対応の方がより良いはずです。<br>
+したがって今回作成のVBAクラスは、<br>
+フィルター、条件付き書式、そしてVBAクラス、さらにDictionaruの学習素材としてお考えいただいたほうが良いかもしれません。<br><div class="br2"><br></div>
+今回のマクロVBAは、 オートフィルターのフィルター条件を退避しておき、後で元に戻せるようにしたVBAクラスになります。<br>
+ただし後に述べるように、完全には元に戻せない場合もありえますのでぜひ最後までお読みください。<br><div class="br2"><br></div></p>
+</p>
+<h3>オートフィルターに関するページ</h3>
+<div class="main-indent">オートフィルターに関するページは以下のように多数ありますので、オートフィルターの基本については以下をお読みください。<br><div class="br2"><br></div>
+<strong><a href="../excelvba1/EXCELVBA389.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA389.html" target="_blank">マクロVBA入門：第89回.オートフィルター（AutoFilter）</a></strong><div class="details">オートフィルタはExcelのデータベースとしての非常に強力な機能を提供してくれています、VBAで、必要なデータだけに絞り込んで他のシートにコピーしたり、不要なデータを一括で削除したりする場合は、とても高速に処理することができます。VBAでオートフィルタを操作するには、以下のメソッド・プロパティおよびオブジェクトを使用します。</div><br>
+<strong><a href="../excelvba2/EXCELVBA018.html" tppabs="https://excel-ubara.com/excelvba2/EXCELVBA018.html" target="_blank">マクロの記録でVBA：第18回.オートフィルタ</a></strong><div class="details">フィルタをやりましょう。まあ、表計算らしい機能ではあります。では、マクロの記録です、データは何でも良いでしょう。１．マクロの記録 ２．フィルタ ３．1のみ選択…たまたま1のデータを入れただけです。４．記録終了 作成れたマクロは、2003の場合は、Selection.AutoFilterSelection.AutoFilterField:=1,</div>
+<strong><a href="../excelvba2/EXCELVBA019.html" tppabs="https://excel-ubara.com/excelvba2/EXCELVBA019.html" target="_blank">マクロの記録でVBA：第19回.オートフィルタ2</a></strong><div class="details">前回の続きで、フィルタをやります。以下の表で説明します。では、マクロの記録です。まずは、日付の絞り込みです。１．マクロの記録 ２．A1を選択 ３．フィルタ ４．2011/6/5のみ選択 ５．記録終了 作成れたマクロは… （コメント行は省略します） 上は、2010or2007でのマクロの記録です。</div><br>
+<strong><a href="../excelvba5/EXCELVBA211.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA211.html" target="_blank">マクロVBAサンプル集：オートフィルター（AutoFilter）</a></strong><div class="details">エクセルでは、定番機能のフィルターです。「Sheet1」のA列でフィルターし、「Sheet2」へコピーします。ごく基本的なフィルターです。フィルターのセル範囲指定は、いろいろな指定が可能です。「連続セル範囲の選択 」も参考にして下さい。</div>
+<strong><a href="../excelvba5/EXCELVBA212.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA212.html" target="_blank">マクロVBAサンプル集：日付のオートフィルタ（AutoFilter）</a></strong><div class="details">とても便利なオートフィルターですが、日付となると、結構大変です。以下の表で説明します。普通は、こんなように指定します。Operator:=xlFilterValues は2007以降で追加された機能です。</div><br>
+<strong><a href="../excelvba4/EXCEL253.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL253.html">オートフィルタ（AutoFilter）の使い方まとめ</a></strong><div class="details">オートフィルタはエクセルの中でもデータ処理において非常に強力なものです、特に大量データの処理には書くことのできない機能となっています。しかし、使い方が難しく、またバージョン違いの影響が大きく、使いずらい物となっていて、問い合わせを受ける事も多いです。</div><br>
+</div>
+<H3>オートフィルターを退避回復するVBAクラスの概要</H3>
+<div class="main-indent">以下の機能を実装します。<br>
+<strong>退避</strong></div>
+<div class="main-indent">
+<div class="main-indent">・ワークシートを指定できる<br>
+・指定シートのオートフィルターの条件を退避（オートフィルター範囲の全列））<br>
+・オートフィルターの絞り込みを解除</div>
+</div>
+<div class="main-indent"><strong>回復</strong></div>
+<div class="main-indent">
+<div class="main-indent">・オートフィルターが解除されている場合はオートフィルターを再適用<br>
+・指定シートのオートフィルターの条件を回復し再絞り込み<br><div class="br2"><br></div>
+</div>
+</div>
+<H3>オートフィルターを退避し回復するクラスのVBAコード</H3>
+<div class="main-indent">クラス名：<strong>clsAutoFilter</strong><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      <span style="color:#009900;">'フィルター構造体</span><br>
+Private Type tFilter<br>
+　　On As Boolean<br>
+　　Count As Long<br>
+　　Criteria1 As Variant<br>
+　　Criteria2 As Variant<br>
+　　Operator As XlAutoFilterOperator<br>
+End Type<br><div class="br2"><br></div>
+<span style="color:#009900;">'対象シート</span><br>
+Private pWs As Worksheet<br><div class="br2"><br></div>
+      <span style="color:#009900;">'フィルター→構造体→配列として退避</span><br>
+Private pFilter() As tFilter<br><div class="br2"><br></div>
+      <span style="color:#009900;">'オートフィルターのアドレス文字列</span><br>
+Private pAutoFilterRange As String<br><div class="br2"><br></div>
+<span style="color:#009900;">'============================================================</span><br>
+<span style="color:#009900;">'　公開プロパティ</span><br>
+<span style="color:#009900;">'============================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'対象シートのプロパティ</span><br>
+Public Property Set Worksheet(ws As Worksheet)<br>
+　　Set pWs = ws<br>
+End Property<br>
+Public Property Get Worksheet() As Worksheet<br>
+　　Set Worksheet = pWs<br>
+End Property<br><div class="br2"><br></div>
+      <span style="color:#009900;">'オートフィルターの既定プロパティをラップ</span><br>
+Public Property Get AutoFilter() As AutoFilter<br>
+　　Set AutoFilter = Me.Worksheet.AutoFilter<br>
+End Property<br>
+Public Property Get AutoFilterMode() As Boolean<br>
+　　AutoFilterMode = Me.Worksheet.AutoFilterMode<br>
+End Property<br>
+Public Property Get FilterMode() As Boolean<br>
+　　If Not Me.AutoFilterMode Then Exit Property<br>
+　　FilterMode = Me.AutoFilter.FilterMode<br>
+End Property<br>
+Public Property Get FiltersCount() As Long<br>
+　　If Me.AutoFilter Is Nothing Then Exit Property<br>
+　　FiltersCount = Me.AutoFilter.Filters.Count<br>
+End Property<br>
+Public Property Get FilterOn(index As Long) As Boolean<br>
+　　If index &lt; UBound(pFilter) Or index &lt; UBound(pFilter) Then Exit Property<br>
+　　FilterOn = pFilter(index).On<br>
+End Property<br><div class="br2"><br></div>
+<span style="color:#009900;">'============================================================</span><br>
+      <span style="color:#009900;">'　クラスの既定イベント</span><br>
+<span style="color:#009900;">'============================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'クラス初期処理：Applicationのプロパティ退避・設定</span><br>
+Private Sub Class_Initialize()<br>
+　　<span style="color:#009900;">'必要ないが形式的に初期化</span><br>
+　　Erase pFilter<br>
+　　pAutoFilterRange = &quot;&quot;<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'クラス終了処理：メモリ解放とApplicationのプロパティ復元</span><br>
+Private Sub Class_Terminate()<br>
+　　Set Me.Worksheet = Nothing<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'============================================================</span><br>
+<span style="color:#009900;">'　公開メソッド</span><br>
+<span style="color:#009900;">'============================================================</span><br><div class="br2"><br></div>
+      <span style="color:#009900;">'オートフィルター退避：エラー時はFalseを返す</span><br>
+Public Sub StoreAutoFilter(ByVal ws As Worksheet)<br>
+　　<span style="color:#009900;">'受け取ったワークシートを退避</span><br>
+　　Set Me.Worksheet = ws<br>
+　　<br>
+　　<span style="color:#009900;">'フィルター未適用は抜ける</span><br>
+　　If Not Me.AutoFilterMode Then Exit Sub<br>
+　　<br>
+      　　<span style="color:#009900;">'オートフィルターがVBAで解除される場合の対処</span><br>
+　　pAutoFilterRange = Me.AutoFilter.Range.Address<br>
+　　<br>
+      　　<span style="color:#009900;">'オートフィルター列数分の処理</span><br>
+　　ReDim pFilter(1 To Me.FiltersCount)<br>
+　　<span style="color:#009900;">'条件退避：日付とアイコンセットを除く</span><br>
+　　Call StoreAutoFilter1<br>
+　　<span style="color:#009900;">'条件退避：アイコンセットのみ</span><br>
+　　Call StoreAutoFilter2<br>
+　　<span style="color:#009900;">'条件退避：残った日付を条件退避</span><br>
+　　Call StoreAutoFilter3<br>
+　　<br>
+　　<span style="color:#009900;">'オプション指定により全データ表示</span><br>
+　　If Me.FilterMode Then Me.Worksheet.ShowAllData<br>
+End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'オートフィルター復元：エラー時はFalseを返す</span><br>
+Public Sub ReStoreAutoFilter(Optional ByVal isAutoFilter As Boolean = True)<br>
+      　　<span style="color:#009900;">'オートフィルターがVBAで解除された場合の対処</span><br>
+　　If Not AutoFilterMode Then<br>
+　　　　If isAutoFilter And pAutoFilterRange &lt;&gt; &quot;&quot; Then<br>
+　　　　　　<span style="color:#009900;">'列数変更なし&amp;起点セルは動いていないことが前提</span><br>
+　　　　　　Me.Worksheet.Range(pAutoFilterRange).AutoFilter<br>
+　　　　Else<br>
+　　　　　　Exit Sub<br>
+　　　　End If<br>
+　　End If<br>
+　　<br>
+      　　<span style="color:#009900;">'オートフィルターの範囲を取得</span><br>
+　　Dim myRange As Range<br>
+　　Set myRange = Me.AutoFilter.Range<br>
+　　<br>
+　　Dim i As Integer, sSplit() As String, v As Variant<br>
+      　　<span style="color:#009900;">'オートフィルター列数分の処理</span><br>
+　　For i = 1 To UBound(pFilter)<br>
+      　　　　<span style="color:#009900;">'フィルター絞り込みされている場合</span><br>
+　　　　If pFilter(i).On Then<br>
+　　　　　　Select Case pFilter(i).Operator<br>
+　　　　　　　　Case xlFilterIcon <span style="color:#009900;">'アイコンセット</span><br>
+　　　　　　　　　　<span style="color:#009900;">'条件付き書式のアイコンセット &amp; LF &amp; 選択インデックス</span><br>
+　　　　　　　　　　sSplit = Split(pFilter(i).Criteria1, vbLf)<br>
+　　　　　　　　　　If sSplit(0) &gt; 0 Then<br>
+　　　　　　　　　　　　<span style="color:#009900;">'ブックのアイコンセットから取得</span><br>
+　　　　　　　　　　　　Set v = Me.Worksheet.Parent.IconSets(sSplit(0))(sSplit(1))<br>
+　　　　　　　　　　　　myRange.AutoFilter Field:=i, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Criteria1:=v, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Operator:=pFilter(i).Operator<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　Case 0 <span style="color:#009900;">'単一値or日付</span><br>
+　　　　　　　　　　If IsEmpty(pFilter(i).Criteria2) Then<br>
+　　　　　　　　　　　　<span style="color:#009900;">'Operator=0をいれるとエラーになる</span><br>
+　　　　　　　　　　　　myRange.AutoFilter Field:=i, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Criteria1:=pFilter(i).Criteria1<br>
+　　　　　　　　　　Else<br>
+　　　　　　　　　　　　<span style="color:#009900;">'これは日付だけの場合</span><br>
+　　　　　　　　　　　　myRange.AutoFilter Field:=i, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Criteria2:=pFilter(i).Criteria2, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Operator:=pFilter(i).Operator<br>
+　　　　　　　　　　End If<br>
+　　　　　　　　Case Else<br>
+　　　　　　　　　　If IsEmpty(pFilter(i).Criteria2) Then<br>
+　　　　　　　　　　　　<span style="color:#009900;">'Criteria1のみ</span><br>
+　　　　　　　　　　　　myRange.AutoFilter Field:=i, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Criteria1:=pFilter(i).Criteria1, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Operator:=pFilter(i).Operator<br>
+　　　　　　　　　　Else<br>
+　　　　　　　　　　　　<span style="color:#009900;">'Criteria1とCriteria2</span><br>
+　　　　　　　　　　　　myRange.AutoFilter Field:=i, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Criteria1:=pFilter(i).Criteria1, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Criteria2:=pFilter(i).Criteria2, _<br>
+　　　　　　　　　　　　　　　　　　　　　 Operator:=pFilter(i).Operator<br>
+　　　　　　　　　　End If<br>
+　　　　　　End Select<br>
+　　　　End If<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'============================================================</span><br>
+<span style="color:#009900;">'　非公開メソッド</span><br>
+<span style="color:#009900;">'============================================================</span><br><div class="br2"><br></div>
+<span style="color:#009900;">'条件退避：日付とアイコンセットを除く</span><br>
+Private Sub StoreAutoFilter1()<br>
+　　Dim wsFilter As Filter, myRange As Range<br>
+　　Dim i As Integer, ix As Long<br>
+　　Dim flgDay As Boolean<br>
+　　For i = 1 To Me.AutoFilter.Filters.Count<br>
+　　　　Set wsFilter = Me.AutoFilter.Filters(i)<br>
+　　　　pFilter(i).On = wsFilter.On<br>
+      　　　　<span style="color:#009900;">'フィルター絞り込みされている場合</span><br>
+　　　　If pFilter(i).On Then<br>
+　　　　　　pFilter(i).Count = wsFilter.Count<br>
+　　　　　　pFilter(i).Operator = wsFilter.Operator<br>
+　　　　　　flgDay = False <span style="color:#009900;">'日付存在フラグ</span><br>
+　　　　　　<span style="color:#009900;">'Operatorごとに処理を分ける</span><br>
+　　　　　　Select Case pFilter(i).Operator<br>
+　　　　　　　　Case xlFilterValues <span style="color:#009900;">'フィルターの値</span><br>
+　　　　　　　　　　Set myRange = Me.AutoFilter.Range.Columns(i)<br>
+　　　　　　　　　　flgDay = existDay(myRange)<br>
+　　　　　　　　　　Select Case pFilter(i).Count<br>
+　　　　　　　　　　　　Case 0<br>
+　　　　　　　　　　　　　　<span style="color:#009900;">'Criteria1,2ともに入っていないという事</span><br>
+　　　　　　　　　　　　Case 1<br>
+　　　　　　　　　　　　　　If flgDay Then<br>
+　　　　　　　　　　　　　　　　<span style="color:#009900;">'日付指定のCriteria2と重複するのでCriteria1配列に</span><br>
+　　　　　　　　　　　　　　　　ReDim pFilter(i).Criteria1(1 To 1)<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1(1) = wsFilter.Criteria1<br>
+　　　　　　　　　　　　　　Else<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1 = wsFilter.Criteria1<br>
+　　　　　　　　　　　　　　End If<br>
+　　　　　　　　　　　　Case 2<br>
+　　　　　　　　　　　　　　If flgDay Then<br>
+　　　　　　　　　　　　　　　　<span style="color:#009900;">'日付指定のCriteria2と重複するのでCriteria1配列に</span><br>
+　　　　　　　　　　　　　　　　ReDim pFilter(i).Criteria1(1 To 2)<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1(1) = wsFilter.Criteria1<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1(2) = wsFilter.Criteria2<br>
+　　　　　　　　　　　　　　Else<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1 = wsFilter.Criteria1<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria2 = wsFilter.Criteria2<br>
+　　　　　　　　　　　　　　End If<br>
+　　　　　　　　　　　　Case Else <span style="color:#009900;">'条件が3以上の場合はCriteria1に配列</span><br>
+　　　　　　　　　　　　　　ReDim pFilter(i).Criteria1(1 To pFilter(i).Count)<br>
+　　　　　　　　　　　　　　For ix = 1 To pFilter(i).Count<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1(ix) = wsFilter.Criteria1(ix)<br>
+　　　　　　　　　　　　　　Next<br>
+　　　　　　　　　　End Select<br>
+　　　　　　　　Case xlFilterCellColor <span style="color:#009900;">'色フィルター</span><br>
+　　　　　　　　　　pFilter(i).Criteria1 = wsFilter.Criteria1.Color<br>
+　　　　　　　　Case xlFilterIcon <span style="color:#009900;">'アイコンセット</span><br>
+　　　　　　　　　　<span style="color:#009900;">'ここではスルー、2回目で退避</span><br>
+　　　　　　　　Case Else<br>
+　　　　　　　　　　<span style="color:#009900;">'Criteria件数ごとに処理を分ける</span><br>
+　　　　　　　　　　Select Case pFilter(i).Count<br>
+　　　　　　　　　　　　Case 0<br>
+　　　　　　　　　　　　　　Stop <span style="color:#009900;">'このパターンがあるか不明</span><br>
+　　　　　　　　　　　　Case 1<br>
+　　　　　　　　　　　　　　pFilter(i).Criteria1 = wsFilter.Criteria1<br>
+　　　　　　　　　　　　Case 2<br>
+　　　　　　　　　　　　　　pFilter(i).Criteria1 = wsFilter.Criteria1<br>
+　　　　　　　　　　　　　　pFilter(i).Criteria2 = wsFilter.Criteria2<br>
+　　　　　　　　　　　　Case Else<br>
+　　　　　　　　　　　　　　<span style="color:#009900;">'ここを通らない予定</span><br>
+　　　　　　　　　　　　　　ReDim pFilter(i).Criteria1(1 To pFilter(i).Count)<br>
+　　　　　　　　　　　　　　For ix = 1 To pFilter(i).Count<br>
+　　　　　　　　　　　　　　　　pFilter(i).Criteria1(ix) = wsFilter.Criteria1(ix)<br>
+　　　　　　　　　　　　　　Next<br>
+　　　　　　　　　　End Select<br>
+　　　　　　End Select<br>
+　　　　　　<span style="color:#009900;">'絞り込み解除：Criteriaが設定and日付以外</span><br>
+　　　　　　If Not (IsEmpty(pFilter(i).Criteria1) And _<br>
+　　　　　　　　　　IsEmpty(pFilter(i).Criteria2)) And _<br>
+　　　　　　　 Not flgDay Then<br>
+　　　　　　　　Me.AutoFilter.Range.AutoFilter Field:=i<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'条件退避：アイコンセットのみ</span><br>
+Private Sub StoreAutoFilter2()<br>
+　　Dim wsFilter As Filter, myRange As Range, i As Integer<br>
+　　For i = 1 To Me.AutoFilter.Filters.Count<br>
+　　　　Set wsFilter = Me.AutoFilter.Filters(i)<br>
+　　　　If Me.AutoFilter.Filters(i).On Then<br>
+　　　　　　If pFilter(i).Operator = xlFilterIcon Then<br>
+　　　　　　　　Set myRange = Me.AutoFilter.Range.Item(i).End(xlDown)<br>
+　　　　　　　　<span style="color:#009900;">'条件付き書式のアイコンセット &amp; LF &amp; 選択インデックス</span><br>
+　　　　　　　　pFilter(i).Criteria1 = getIconSets(myRange) &amp; vbLf &amp; _<br>
+　　　　　　　　　　　　　　　　　　　 wsFilter.Criteria1.index<br>
+　　　　　　　　Me.AutoFilter.Range.AutoFilter Field:=i<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'条件退避：残るのは日付だけなはず</span><br>
+Private Sub StoreAutoFilter3()<br>
+　　Dim myRange As Range, i As Integer<br>
+　　For i = 1 To Me.AutoFilter.Filters.Count<br>
+　　　　If Me.AutoFilter.Filters(i).On Then<br>
+　　　　　　Set myRange = Me.AutoFilter.Range.Columns(i)<br>
+　　　　　　pFilter(i).Criteria2 = getDayFilter(myRange)<br>
+　　　　　　Me.AutoFilter.Range.AutoFilter Field:=i<br>
+　　　　End If<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+<span style="color:#009900;">'フィルター列に日付があるかの確認</span><br>
+Private Function existDay(ByVal argRange As Range) As Variant<br>
+　　Dim i As Long<br>
+　　Dim myRange As Range<br>
+　　Dim tRange As Range<br><div class="br2"><br></div>
+　　<span style="color:#009900;">'フィルター後の表示セルをmyRangeに</span><br>
+　　Set argRange = Intersect(argRange, argRange.Offset(1))<br>
+　　Set myRange = argRange<br>
+　　<br>
+      　　<span style="color:#009900;">'日付の存在確認</span><br>
+　　For Each tRange In myRange<br>
+      　　　　If IsDate(tRange.Value) Then<br>
+      　　　　　　existDay = True<br>
+　　　　　　Exit Function<br>
+　　　　End If<br>
+　　Next<br>
+　　existDay = False<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'日付フィルターの配列作成：表示されている日付から作成</span><br>
+Private Function getDayFilter(ByVal argRange As Range) As Variant<br>
+　　Dim i As Long, iYY As Long, iYM As Long<br>
+　　Dim myRange As Range<br>
+　　Dim tRange As Range<br>
+　　Dim myArray() As String<br>
+　　Dim dicYM As New Dictionary<br>
+　　Dim dicKey As Variant<br>
+　　<br>
+　　<span style="color:#009900;">'フィルター後の表示セルをmyRangeに</span><br>
+　　Set argRange = Intersect(argRange, argRange.Offset(1))<br>
+　　Set myRange = argRange.SpecialCells(xlCellTypeVisible)<br>
+　　<br>
+　　<span style="color:#009900;">'全データの年(yyyy)と年月(yyyymm)をDictionaryに追加</span><br>
+　　For Each tRange In argRange<br>
+　　　　If IsDate(tRange.Value) Then<br>
+　　　　　　iYY = Format(tRange.Value, &quot;yyyy&quot;)<br>
+　　　　　　If Not dicYM.Exists(iYY) Then dicYM.Add iYY, &quot;&quot;<br>
+　　　　　　iYM = Format(tRange.Value, &quot;yyyymm&quot;)<br>
+　　　　　　If Not dicYM.Exists(iYM) Then dicYM.Add iYM, &quot;&quot;<br>
+　　　　End If<br>
+　　Next<br>
+　　<span style="color:#009900;">'非表示行の年(yyyy)と年月(yyyymm)をDictionaryから削除</span><br>
+　　For Each tRange In argRange<br>
+　　　　If tRange.EntireRow.Hidden Then<br>
+　　　　　　If IsDate(tRange.Value) Then<br>
+　　　　　　　　i = Format(tRange.Value, &quot;yyyy&quot;)<br>
+　　　　　　　　If dicYM.Exists(i) Then dicYM.Remove i<br>
+　　　　　　　　i = Format(tRange.Value, &quot;yyyymm&quot;)<br>
+　　　　　　　　If dicYM.Exists(i) Then dicYM.Remove i<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　Next<br>
+　　<span style="color:#009900;">'Dictionaryに年(yyyy)が残っていれば、その年月(yyyymm)は削除</span><br>
+　　For Each dicKey In dicYM<br>
+　　　　If Len(dicKey) &gt; 4 Then<br>
+　　　　　　i = Left(dicKey, 4)<br>
+　　　　　　If dicYM.Exists(i) Then dicYM.Remove dicKey<br>
+　　　　End If<br>
+　　Next<br>
+　　<br>
+　　<span style="color:#009900;">'Dictionaryから年(yyyy)と年月(yyyymm)を配列に入れる</span><br>
+　　i = 0<br>
+　　If dicYM.Count &gt; 0 Then<br>
+　　　　ReDim myArray(dicYM.Count * 2 - 1)<br>
+　　　　For Each dicKey In dicYM.Keys<br>
+　　　　　　If Len(dicKey) = 4 Then<br>
+　　　　　　　　myArray(i) = 0 <span style="color:#009900;">'日付の年</span><br>
+　　　　　　　　myArray(i + 1) = dicKey &amp; &quot;/01/01&quot;<br>
+　　　　　　Else<br>
+　　　　　　　　If Not dicYM.Exists(Left(dicKey, 4)) Then<br>
+　　　　　　　　　　myArray(i) = 1 <span style="color:#009900;">'日付の月</span><br>
+　　　　　　　　　　myArray(i + 1) = Format(dicKey, &quot;00/00&quot;) &amp; &quot;/01&quot;<br>
+　　　　　　　　End If<br>
+　　　　　　End If<br>
+　　　　　　i = i + 2<br>
+　　　　Next<br>
+　　End If<br>
+　　<br>
+　　<span style="color:#009900;">'Dictionaryに無い日付を配列に入れる</span><br>
+　　For Each tRange In myRange<br>
+　　　　If IsDate(tRange.Value) Then<br>
+　　　　　　iYY = Format(tRange.Value, &quot;yyyy&quot;)<br>
+　　　　　　iYM = Format(tRange.Value, &quot;yyyymm&quot;)<br>
+　　　　　　If Not (dicYM.Exists(iYY) Or dicYM.Exists(iYM)) Then<br>
+　　　　　　　　ReDim Preserve myArray(i + 1)<br>
+　　　　　　　　myArray(i) = 2 <span style="color:#009900;">'日付の日</span><br>
+　　　　　　　　myArray(i + 1) = Format(tRange.Value, &quot;yyyy/mm/dd&quot;)<br>
+　　　　　　　　i = i + 2<br>
+　　　　　　End If<br>
+　　　　End If<br>
+　　Next<br>
+　　<br>
+　　getDayFilter = myArray<br>
+　　Set dicYM = Nothing<br>
+End Function<br><div class="br2"><br></div>
+<span style="color:#009900;">'アイコンセットのアイコン取得：セルに表示されているアイコンを取得</span><br>
+Private Function getIconSets(ByVal argRange As Range) As XlFormatConditionType<br>
+　　Dim i As Long<br>
+　　Dim Objs As Object<br>
+　　Set Objs = argRange.FormatConditions<br>
+　　For i = 1 To Objs.Count<br>
+　　　　If Objs(i).Type = XlFormatConditionType.xlIconSets Then<br>
+　　　　　　getIconSets = Objs(i).IconSet.ID<br>
+　　　　　　Exit Function<br>
+　　　　End If<br>
+　　Next<br>
+　　Stop <span style="color:#009900;">'普通はないはず、あるとしても特殊なので対応省略</span><br>
+      End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+「Microsoft Scripting Runtime」を参照設定しています。<br>
+参照設定しない場合は、<br>
+Object型にして、CreateObject(&quot;Scripting.Dictionary&quot;)としてください。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>クラスを利用する標準モジュールのVBAコード</h3>
+<div class="main-indent"><strong>標準モジュール</strong><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Public Sub SampleAutoFilter()<br>
+　　Dim cAutoFilter As New clsAutoFilter<br>
+　　<br>
+　　Call cAutoFilter.StoreAutoFilter(Worksheets(&quot;Sheet1&quot;))<br>
+　　<span style="color:#009900;">'・・・</span><br>
+　　Call cAutoFilter.ReStoreAutoFilter<br>
+　　<br>
+　　Set cAutoFilter = Nothing<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>処理の要点と解説</h3>
+<div class="main-indent">VBAコードについては、コード内コメントを見ながら解読してみてください。<br>
+以下では、一番の難しい部分であるアイコンセットと日付について解説します。<br><div class="br2"><br></div>
+<strong>Operator</strong>の種類</div>
+<div class="main-indent">
+<div class="main-indent"><strong>XlAutoFilterOperator列挙</strong>になります。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>名前</td>
+    <td>値</td>
+    <td>説明</td>
+  </tr>
+  <tr>
+    <td>xland</td>
+    <td align="right">1</td>
+    <td>引数 criteria1 および Criteria2 の論理積</td>
+  </tr>
+  <tr>
+    <td>xlBottom10Items</td>
+    <td align="right">4</td>
+    <td>表示される最低値項目 (引数 criteria1 で指定されているアイテムの数)</td>
+  </tr>
+  <tr>
+    <td>xlBottom10Percent</td>
+    <td align="right">6</td>
+    <td>表示される最低値項目 (引数 criteria1 で指定される割合)</td>
+  </tr>
+  <tr>
+    <td>xlfiltercellcolor</td>
+    <td align="right">8</td>
+    <td>セルの色</td>
+  </tr>
+  <tr>
+    <td>xlfilterdynamic</td>
+    <td align="right">11</td>
+    <td>動的フィルター</td>
+  </tr>
+  <tr>
+    <td>xlfilterfontcolor</td>
+    <td align="right">9</td>
+    <td>フォントの色</td>
+  </tr>
+  <tr>
+    <td>xlfiltericon</td>
+    <td align="right">10</td>
+    <td>フィルター アイコン</td>
+  </tr>
+  <tr>
+    <td>xlfiltervalues</td>
+    <td align="right">7</td>
+    <td>フィルターの値</td>
+  </tr>
+  <tr>
+    <td>xlor</td>
+    <td align="right">2</td>
+    <td>引数 criteria1 または Criteria2 の論理 or</td>
+  </tr>
+  <tr>
+    <td>xlTop10Items</td>
+    <td align="right">3</td>
+    <td>表示される最高値項目 (引数 criteria1 で指定されているアイテムの数)</td>
+  </tr>
+  <tr>
+    <td>xlTop10Percent</td>
+    <td align="right">5</td>
+    <td>表示される最高値項目 (引数 criteria1 で指定される割合)</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent"><strong>アイコンセット</strong>について</div>
+<div class="main-indent">
+<div class="main-indent"><strong>Operator = xlFilterCellColor</strong></div>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="main-indent"><strong>「色フィルター」→「セルの色でフィルター」</strong>になります。<br><div class="br2"><br></div>
+<img src="image1791.jpg" tppabs="https://excel-ubara.com/vba_class/image1791.jpg" width="491" height="504" border="0" alt="マクロ VBA オートフィルタ クラス"><br><div class="br2"><br></div>
+「フォントの色でフィルター」は<br>
+Operator = xrxlfilterfontcolor<br>
+になります。</div>
+<strong>Operator = xlFilterIcon</strong>
+<div class="main-indent"><strong>「色フィルター」→「セルのアイコンでフィルター」</strong>になります。<br><div class="br2"><br></div>
+<img src="image180.jpg" tppabs="https://excel-ubara.com/vba_class/image180.jpg" width="503" height="501" border="0" alt="マクロ VBA オートフィルタ クラス"></div>
+</div>
+</div>
+<div class="main-indent">
+<div class="main-indent"><br>
+選択したアイコンは、FilterのCriteriaに入っていません。<br>
+入っているのはIndex（上から何番目のアイコンを選択したか）だけになります。<br>
+しかし、フィルターに設定するときは、アイコンそのものを指定する必要があります。<br>
+アイコンの情報がプロパティに見当たらないのです。<br>
+そこで、<br>
+そもそもの設定である条件付き書式から取得してくることにしました。<br><div class="br2"><br></div>
+条件付き書式は、行によって違う場合もあり得ます。<br>
+しかし、フィルターで絞り込めるのは1種類だけなので、<br>
+表示されている（残っている）セルの条件付き書式のアイコンセットを取得してきています。<br><div class="br2"><br></div>
+もし、アイコンセットを選択した後、<br>
+他の列で、例えばテキストフィルターで適当な文字を入れて、絞り込み結果が0件となってしまう場合もあります。<br>
+そうなると、表示されているアイコンが無いので、どのセルの情報を取得したらよいかが不明となってしまいます。<br>
+そこで、これに対応するために、<br>
+アイコンセットの条件退避は、他の列の条件クリアした後に行うようにしています。<br>
+これにより、通常はアイコンセットが表示されるようになるので取得できるようになっています。<br>
+</div>
+</div>
+<div class="main-indent"><strong>日付</strong></div>
+<div class="main-indent">
+<div class="main-indent">日付の選択方法はとても複雑な指定が可能となっています。<br><div class="br2"><br></div>
+<img src="image182.jpg" tppabs="https://excel-ubara.com/vba_class/image182.jpg" width="571" height="727" border="0" alt="マクロ VBA クラス オートフィルター"><br><div class="br2"><br></div>
+日付の選択方法が多数ありますが、<br>
+指定方法によっては、アイコンセットと同様にFilterのCriteriaに入っていない状態になります。<br>
+条件が全く取得できない為、表示されている（残っている）セルの日付を取得して、<br>
+以下のように、Criteria2に配列で設定するようにしています。<br>アイコンセットと違い複数の選択ができるので、取得するのはより複雑となっています。<br><div class="br2"><br></div>
+<strong>Criteria2:=Array(数値1, 日付1, 数値2, 日付2, 数値3, 日付3, …)</strong></div>
+<div class="main-indent">
+<div class="main-indent"><strong>数値</strong></div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+  <tbody>
+    <tr>
+      <td align="right">数値</td>
+      <td>意味</td>
+    </tr>
+    <tr>
+      <td align="right">0</td>
+      <td>年を取得</td>
+    </tr>
+    <tr>
+      <td align="right">1</td>
+      <td>月を取得</td>
+    </tr>
+    <tr>
+      <td align="right">2</td>
+      <td>日を取得</td>
+    </tr>
+    <tr>
+      <td align="right">3</td>
+      <td>時を取得</td>
+    </tr>
+    <tr>
+      <td align="right">4</td>
+      <td>分を取得</td>
+    </tr>
+    <tr>
+      <td align="right">5</td>
+      <td>秒を取得</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<div class="main-indent"><strong>日付</strong></div>
+<div class="main-indent">
+<div class="main-indent">日付データ型（&quot;年/月/日&quot;）で指定します。<br>
+0:年の場合、指定した日付の年の全部が条件となります。<br>
+1:月の場合、指定した日付の月の全部が条件となります。</div>
+数値・日付の組み合わせおよび指定順は特に制限はないようです。<br>
+重複していても、フィルターは正しく行われているようでした。<br>
+ただし、今回のマクロVBAでは、年・月・日の指定をしっかりとやってます。<br>
+かなり長いVBAとなってしまいました。<br>
+もっと効率的な方法もありそうですが、フィルターの1条件なのでこれで良しとしました。<br>
+Dictionaryを使った少々難解なVBAとなっていますが、VBA内のコメントを参考に読み解いてみてください。<br><div class="br2"><br></div>
+<strong>※時・分・秒</strong></div>
+<div class="main-indent">
+<div class="main-indent">理屈は年月日と同じようなものですが、組み合わせ数が多くなってしまいますし、<br>
+時分秒のオートフィルターを使っていることはあまりないだろうという事で省略しました。<br>
+私は時分秒でフィルターしたことは無いので、必要であれば挑戦してみてください。<br>
+</div>
+</div>
+<strong>※完全に復元できないパターン</strong>
+<div class="main-indent"><strong>日付列が複数あり、それぞれの列で絞り込んでいる場合</strong></div>
+<div class="main-indent">
+<div class="main-indent">日付列が複数あるときに、それぞれの列で絞り込んでいる場合、<br>
+左側の日付列では、その後ろの日付絞り込みが解除されていないので、全ての日付を取得できません。<br>
+ただし、<br>
+<strong>フィルター再適用後の表示行数に違いはありません</strong>。<br>
+ですが、<br>
+本来のフィルター条件が一部欠落して退避復元されてしまう場合が出てきます。<br>
+これに対応するには、<br>
+当該列以外を全てフィルタークリアしてから取得する必要があります。<br>
+しかし、これを元のシートでこれを行う事はできませんので、<br>
+<strong>シートをコピーしてその先で行う等の工夫が必要</strong>になってきます。<br>
+今回掲示のVBAでは、そこまでの対応はしていません。<br>
+シートをコピーして、他の列のフィルターを解除してから値を取得するようにすれば良いでしょう。<br>
+興味のある方は挑戦してみてください。、</div>
+<strong>その他</strong>
+<div class="main-indent">パターンが複雑なため全てを把握しきれていません<br>
+<strong>想定外も少なからず存在している</strong>と思われます。<br>
+実務的として普通に使うパターン以外については、そもそもどのような指定をするかが把握できない為、<br>
+全ての組み合わせをテストすることが困難となります。<br>
+指定パターンがはっきりすれば、個別対応を組み込むことで対応可能だと思います。<br><div class="br2"><br></div>
+</div>
+</div>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>最後に</h3>
+<div class="main-indent">今回のVBAクラスは、1シートしか対応できません。<br>
+複数シートで使う場合は、シートごとにクラスのインスタンスを作成する必要があります。<br>
+2～3シートくらいならそれでも問題ないかもしれませんが、<br>
+ブックの全シートを対象とするような場合、さすがに面倒になります。<br><div class="br2"><br></div>
+そこで、複数シートでの実装について続編を用意しました。<br>
+<strong><a href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</a></strong><div class="details">ワークシートにオートフィルタが適用されていて、かつ絞り込みされている場合はVBAは何かと面倒になります。そこで、これに対応するために作成したものが、オートフィルタを退避回復するVBAクラス ただし、これはシートが一つしか扱えません。複数シートで使う場合は、シートごとにクラスのインスタンスを作成する必要があります。</div><br>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a>」の記事</h3><p>
+<A href="VBA_CLASS_04.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_04.html">VBAクラスの作り方：列名のプロパティを自動作成する</A><br>
+<A href="VBA_CLASS_05.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_05.html">VBAクラスの作り方：独自Rangeっぽいものを作ってみた</A><br>
+<A href="VBA_CLASS_06.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_06.html">クラスとイベントとマルチプロセス並列処理</A><br>
+<A href="VBA_CLASS_07.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_07.html">クラスとCallByNameとポリモーフィズム(多態性)</A><br>
+<span class="strrev">オートフィルターを退避回復するVBAクラス</span><br>
+<A href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</A><br>
+<A href="VBA_CLASS_10.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_10.html">コレクション（Collection）の並べ替え（Sort）に対応するクラス</A><br>
+<A href="VBA_CLASS_11.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_11.html">VBAクラスのAttributeについて（既定メンバーとFor Each）</A><br>
+<A href="VBA_CLASS_12.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_12.html">VBAクラスを使ったイベント作成（Event,RaiseEvent,WithEvents）</A><br>
+<A href="VBA_CLASS_13.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_13.html">VBAで音楽再生するクラスを作成</A><br>
+<A href="VBA_CLASS_13.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_13.html">VBAで音楽再生するクラスを作成</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>オートフィルターを退避回復するVBAクラス</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</a></li>
+<li><span class="strrev2"><strong>オートフィルターを退避回復するVBAクラス</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelvba4/EXCEL222.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL222.html" target="_blank">最終行・最終列の取得方法<br></a></li><li><a href="../excelvba1/EXCELVBA389.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA389.html" target="_blank">マクロVBA入門：第89回.オートフィルター<br></a></li><li><a href="../excelvba2/EXCELVBA018.html" tppabs="https://excel-ubara.com/excelvba2/EXCELVBA018.html" target="_blank">マクロの記録でVBA：第18回.オートフィルタ</a></li><li><a href="../excelvba2/EXCELVBA019.html" tppabs="https://excel-ubara.com/excelvba2/EXCELVBA019.html" target="_blank">マクロの記録でVBA：第19回.オートフィルタ2</a></li><li><a href="../excelvba5/EXCELVBA211.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA211.html" target="_blank">マクロVBAサンプル集：オートフィルター<br></a></li><li><a href="../excelvba5/EXCELVBA212.html" tppabs="https://excel-ubara.com/excelvba5/EXCELVBA212.html" target="_blank">マクロVBAサンプル集：日付のオートフィルタ<br></a></li><li><a href="../excelvba4/EXCEL253.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL253.html">オートフィルタ<br></a></li><li><a href="VBA_CLASS_09.html" tppabs="https://excel-ubara.com/vba_class/VBA_CLASS_09.html">オートフィルター退避回復クラスを複数シート対応させるVBAクラス</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

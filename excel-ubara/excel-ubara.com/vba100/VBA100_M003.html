@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VBA100本ノック 迷宮編：巡回セル問題｜VBA練習問題</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="方形セル範囲の左上からスタートし黄色中間地点を通過し右下にゴールする最短経路を探索する問題です。いわゆる、巡回セールス問題のエクセル版としてセルを使ったものです。ただし、一度通ったセルは2度通れないという制限がついています。">
+  <meta name="keywords" content="VBA,100本ノック 迷宮編,巡回セル問題,練習問題,エクセル,Excel,マクロ,入門,基礎">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/vba100/VBA100_M003.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="VBA100本ノック 迷宮編：巡回セル問題｜VBA練習問題" />
+  <meta property="og:description" content="方形セル範囲の左上からスタートし黄色中間地点を通過し右下にゴールする最短経路を探索する問題です。いわゆる、巡回セールス問題のエクセル版としてセルを使ったものです。ただし、一度通ったセルは2度通れないという制限がついています。" />
+  <meta property="og:image" content="https://excel-ubara.com/vba100/sample_gif002.gif" />
+  <meta property="og:url" content="https://excel-ubara.com/vba100/VBA100_M003.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VBA100本ノック 迷宮編：巡回セル問題｜VBA練習問題" />
+  <meta name="twitter:description" content="方形セル範囲の左上からスタートし黄色中間地点を通過し右下にゴールする最短経路を探索する問題です。いわゆる、巡回セールス問題のエクセル版としてセルを使ったものです。ただし、一度通ったセルは2度通れないという制限がついています。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/vba100/sample_gif002.gif" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA練習問題<br>VBA100本ノック 迷宮編：巡回セル問題</h1>VBAを100本の練習問題で鍛えます
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">
+<span itemprop="name">マクロVBA入門編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/vba100/">
+<span itemprop="name">VBA100本ノック</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="VBA100_M003.html" tppabs="https://excel-ubara.com/vba100/VBA100_M003.html">
+<span itemprop="name">迷宮編：巡回セル問題</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2021-01-08</span>
+<h2 align="center">VBA100本ノック 迷宮編：巡回セル問題</h2><p><br>
+方形セル範囲の左上からスタートし黄色中間地点を通過し右下にゴールする最短経路を探索する問題です。<br>
+いわゆる、<strong>巡回セールス問題のエクセル版としてセルを使ったものです。</strong><br>ただし、一度通ったセルは2度通れないという制限がついています。<br><div class="br2"><br></div>
+ツイッター連動企画です。<br>
+ツイートでの見やすさを考慮して、ブック・シート指定等を適宜省略しています。<br><div class="br2"><br></div><div class="br2"><br></div></p>
+<h3>出題</h3>
+<div class="main-indent"><a href="javascript:if(confirm('https://twitter.com/yamaoka_ss/status/1339137681419223040  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://twitter.com/yamaoka_ss/status/1339137681419223040'" tppabs="https://twitter.com/yamaoka_ss/status/1339137681419223040" target="_blank">出題ツイートへのリンク</a><br><div class="br2"><br></div>
+#VBA100本ノック 迷宮編<br>
+方形セル範囲の左上(赤)からスタートし右下(赤)に到達します。<br>
+全ての黄色を通過する「最短距離の道順を提示」してください。<br>
+・縦横にのみ進む(斜めはダメ)<br>
+・同じ道は2度通れない、一筆書きで進む。<br>
+経路のうちの1つを回答すれば良い。<br>
+※大きさ・黄色数と配置は任意<br><div class="br2"><br></div>
+<img src="image62.jpg" tppabs="https://excel-ubara.com/vba100/image62.jpg" width="561" height="501" border="0" alt="マクロ VBA 100本ノック 迷宮編"><br><div class="br2"><br></div>
+<img src="image64.jpg" tppabs="https://excel-ubara.com/vba100/image64.jpg" width="564" height="506" border="0" alt="マクロ VBA 100本ノック 迷宮編"><br><div class="br2"><br></div><div class="br2"><br></div>
+ひとまずの完成とします。<br>
+複数の最短経路を表示してみました。<br>
+セル表示はwaitしつつゆっくり表示しています。<br>
+経路探索はこのくらいの数なら一瞬で済んでますが、中継点が増えれば当然時間がかかっていきます。<br>
+探索を効率化した事による探索抜けがあるのか、そのあたりは検証しきれていません。<br><div class="br2"><br></div>
+<img src="sample_gif002.gif" tppabs="https://excel-ubara.com/vba100/sample_gif002.gif" width="1532" height="696" border="0" alt="マクロ VBA 100本ノック 迷宮編"><br><div class="br2"><br></div><div class="br2"><br></div>
+中継点を16個にすると結構時間がかかります。<br>
+これ以上は、さすがにきついかなと思います。<br>
+動画1つ目の経路は袋小路になるパターンでダメ。<br>
+次の経路でゴールできています。<br><div class="br2"><br></div>
+<img src="sample_gif003.gif" tppabs="https://excel-ubara.com/vba100/sample_gif003.gif" width="1390" height="606" border="0" alt="マクロ VBA 100本ノック 迷宮編"><br><div class="br2"><br></div><div class="br2"><br></div>
+少し調整して23秒を16秒くらいにしました。<br>
+そこで性能確認として、ランダムに配置して探索時間（秒数）を計測してみました。<br>
+ムダと思われる探索を省いて速くしているので配置によってかなり差が出ています。<br>
+※配置を残すの忘れた。(泣)<br>
+15の階乗=FACT(15)、えーと、、、<br><div class="br2"><br></div>
+<img src="image69.jpg" tppabs="https://excel-ubara.com/vba100/image69.jpg" width="723" height="465" border="0" alt="マクロ VBA 100本ノック 迷宮編"><br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>頂いた回答</h3>
+<div class="main-indent"><a href="javascript:if(confirm('https://twitter.com/search?lang=ja&q=https%3A%2F%2Ftwitter.com%2Fyamaoka_ss%2Fstatus%2F1344455151407435777&src=typed_query  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://twitter.com/search?lang=ja&q=https%3A%2F%2Ftwitter.com%2Fyamaoka_ss%2Fstatus%2F1344455151407435777&src=typed_query'" tppabs="https://twitter.com/search?lang=ja&q=https%3A%2F%2Ftwitter.com%2Fyamaoka_ss%2Fstatus%2F1344455151407435777&src=typed_query" target="_blank">出題ツイートの引用ツイートでの回答</a><br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>解答VBAコードの解説</h3>
+<div class="main-indent">先のツイート時点から、さらにVBAは改良しました。<br>
+探索漏れがあったのでこれを修正しました。<br>
+配置によっては少し遅くなる場合も出てきましたが、全体としては精度を挙げられたと思います。<br><div class="br2"><br></div>
+最初の画像パターンでも通過順の組み合わせは、11!=39,916,800、まともに全組み合わせを確認していたらかなりの時間がかかります。<br>
+ましてや黄色が15個になると、15!=1,307,674,368,000、これはもう無理です。<br>
+これに対処するには無駄な組み合わせの探索を減らすしかありません。<br><div class="br2"><br></div>
+各区間の距離のマトリックスを作成し、かつ、地点毎の別地点への移動最短距離を出しておきます。<br>
+探索の途中で、未探索部分が最短距離で移動したとしても、そこまで探索した最短距離を超える時はそれ以降の探索を打ち切ります。<br>
+しかし、地点毎の移動最短距離を全ての地点間にしてしまうと、やはり結構な時間がかかります。<br><div class="br2"><br></div>
+左上から右下への移動だという事を考えると、最も多いのは下または右方向への移動だと考えられます。<br>
+そこで、地点毎の移動最短距離の算出時に下または右方向への移動の中の最短距離にしておくことで探索を効率化してみました。<br>
+ただし、これではやはり探索漏れが発生する可能性はあるので、本来の移動最短距離での探索も行えるようにしておきました。<br><div class="br2"><br></div>
+最短経路が出れば、後は道順が交錯しないように進めるかを探すことになります。<br>
+各拠点から次に進む時の方向として、縦→横、横→縦、どちらを選択するかによってその先で経路が交錯してしまいます。<br>
+これも全組み合わせを探すと、2^11とか2^15となってしまい結構な時間がかかります。<br><div class="br2"><br></div>
+この対策として、次の位置と次の次の位置関係によって縦横どちらに進むかを決定するようにしてなるべく早くゴールできるように工夫してみました。<br>
+15×15の中に十数個くらいの拠点なら通過出来る道が結構多い事と、移動先は基本的には近隣である為ほとんどの場合はこれでゴールできるようです。<br><div class="br2"><br></div>
+下に掲載したVBAでは、地点の位置関係のパターンは少ないようですが、これも基本は右下に進むということで全位置関係を網羅しなくても進路に問題は無さそうです。<br>
+また、同じ最短距離数のルートも複数あるので、それのどれかではゴールできているようです。<br><div class="br2"><br></div>
+それでも漏れている可能性があるので、検証も兼ねて各拠点の縦横出発方向の全組み合わせを試して道順を探すVBAも掲載しました。<br><div class="br2"><br></div>
+また、上のツイート時点とはVBAを変更しているので、改めて時間計測したものを最後に掲載しました。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>解答VBAコード</h3>
+<div class="main-indent">以下のVBAコードは結構長くなりました。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Option Explicit<br><div class="br2"><br></div>
+      Const LogLevel = 0 <span style="color:#009900;">'ログ出力：0=なし,1=時間のみ,2=最短ルート,3=探索ルート</span><br>
+      Const WaitTime = 0　<span style="color:#009900;">'アニメ間隔ミリ秒：0でアニメなし</span><br>
+      Const SaveHistory = False <span style="color:#009900;">'True：最短経路を全て表示</span><br>
+      Const Color開始 = vbRed<br>
+      Const Color中間 = vbYellow<br><div class="br2"><br></div>
+      Public ary中間点 As Variant<br>
+      Public dic区間距離 As Dictionary<br>
+      Public col経路 As Collection<br>
+      Public 最短距離 As Long<br><div class="br2"><br></div>
+      <span style="color:#009900;">'**********************************************************************</span><br>
+      <span style="color:#009900;">' メイン処理</span><br>
+      <span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+      Sub main()<br>
+      　　Call 巡回セル問題(ActiveSheet.Range(&quot;A1:O15&quot;))<br>
+      End Sub<br><div class="br2"><br></div>
+      Sub 巡回セル問題(ByVal aRng As Range)<br>
+      　　Dim st As Double: st = Timer<br>
+      　　<br>
+      　　If WaitTime = 0 Then Application.ScreenUpdating = False<br>
+      　　aRng.ClearContents<br>
+      　　If SaveHistory Then<br>
+      　　　　With aRng.Worksheet<br>
+      　　　　　　.Range(Columns(aRng.Columns.Count + 1), .Columns(.Columns.Count)).Clear<br>
+      　　　　End With<br>
+      　　End If<br>
+      　　<br>
+      　　<span style="color:#009900;">'黄色の中継点を取得:スタートからの距離で並べ替え</span><br>
+      　　ary中間点 = get中間点(aRng)<br>
+      　　<br>
+      　　Dim i As Long<br>
+      　　For i = 1 To 2 <span style="color:#009900;">'1=浅い探索,2=深い探索</span><br>
+      　　　　Call writeLog(1, &quot;■レベル&quot; &amp; i &amp; &quot;探索開始&quot;)<br>
+      　　　　<br>
+      　　　　<span style="color:#009900;">'各区間の距離を辞書登録：全区間の全組み合わせ作成</span><br>
+      　　　　Call get区間距離(i)<br>
+      　　　　<br>
+      　　　　<span style="color:#009900;">'基準として初期ary中間点の距離を使用</span><br>
+      　　　　最短距離 = get総距離(ary中間点)<br>
+      　　　　Set col経路 = New Collection<br>
+      　　　　<br>
+      　　　　<span style="color:#009900;">'経路探索：再帰処理</span><br>
+      　　　　Call get経路(ary中間点, LBound(ary中間点) + 1)<br>
+      　　　　<br>
+      　　　　Call writeLog(1, &quot;レベル&quot; &amp; i &amp; &quot;探索時間：&quot; &amp; Timer - st)<br>
+      　　　　<br>
+      　　　　<span style="color:#009900;">'シートへ出力：クロスせずにゴール出来る最短経路を探す</span><br>
+      　　　　If dispRouteOnSheet(aRng, i) Then Exit For<br>
+      　　Next<br>
+      　　<br>
+      　　Call writeLog(1, &quot;レベル&quot; &amp; i &amp; &quot;合計時間：&quot; &amp; Timer - st)<br>
+      　　If WaitTime = 0 Then Application.ScreenUpdating = True<br>
+      End Sub<br><div class="br2"><br></div>
+      Sub writeLog(ByVal aLevel As Long, ByVal aAry, Optional aDistance = &quot;&quot;)<br>
+      　　If aLevel &gt; LogLevel Then Exit Sub<br>
+      　　If Not IsArray(aAry) Then<br>
+      　　　　Debug.Print aAry &amp; aDistance<br>
+      　　　　Exit Sub<br>
+      　　End If<br>
+      　　Dim i As Long, sSplit<br>
+      　　For i = LBound(aAry) To UBound(aAry)<br>
+      　　　　sSplit = Split(aAry(i), &quot;,&quot;)<br>
+      　　　　aAry(i) = Cells(CLng(sSplit(0)), CLng(sSplit(1))).Address(False, False)<br>
+      　　Next<br>
+      　　Debug.Print Join(aAry, &quot;→&quot;) &amp; &quot;=&quot; &amp; aDistance<br>
+      End Sub<br><div class="br2"><br></div>
+      <span style="color:#009900;">'**********************************************************************</span><br>
+      <span style="color:#009900;">' 最短ルート探索</span><br>
+      <span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+      Function get中間点(ByVal aRng As Range) As Variant<br>
+      　　Dim ary中間点<br>
+      　　Dim i As Long, j As Long<br>
+      　　For i = 1 To aRng.Rows.Count<br>
+      　　　　For j = 1 To aRng.Columns.Count<br>
+      　　　　　　If aRng(i, j).Interior.color = Color開始 Or _<br>
+      　　　　　　　 aRng(i, j).Interior.color = Color中間 Then<br>
+      　　　　　　　　If IsEmpty(ary中間点) Then<br>
+      　　　　　　　　　　ReDim ary中間点(0)<br>
+      　　　　　　　　Else<br>
+      　　　　　　　　　　ReDim Preserve ary中間点(UBound(ary中間点) + 1)<br>
+      　　　　　　　　End If<br>
+      　　　　　　　　ary中間点(UBound(ary中間点)) = Format(get距離(&quot;1,1&quot;, i &amp; &quot;,&quot; &amp; j), &quot;00&quot;) &amp; &quot;:&quot; &amp; i &amp; &quot;,&quot; &amp; j<br>
+      　　　　　　End If<br>
+      　　　　Next<br>
+      　　Next<br>
+      　　<br>
+      　　Call sortAry1(ary中間点, LBound(ary中間点) + 1, UBound(ary中間点) - 1)<br>
+      　　For i = LBound(ary中間点) To UBound(ary中間点)<br>
+      　　　　ary中間点(i) = Split(ary中間点(i), &quot;:&quot;)(1)<br>
+      　　Next<br>
+      　　<br>
+      　　get中間点 = ary中間点<br>
+      End Function<br><div class="br2"><br></div>
+      Sub sortAry1(ByRef argAry As Variant, Optional ByVal aStart As Long = -1, Optional aEnd As Long = -1)<br>
+      　　Dim i As Integer, j As Integer, vSwap As Variant<br>
+      　　If aStart &lt; 0 Then aStart = LBound(argAry)<br>
+      　　If aEnd &lt; 0 Then aEnd = UBound(argAry)<br>
+      　　For i = aEnd To aStart Step -1<br>
+      　　　　For j = aStart To i - 1<br>
+      　　　　　　If argAry(j) &gt; argAry(j + 1) Then<br>
+      　　　　　　　　vSwap = argAry(j)<br>
+      　　　　　　　　argAry(j) = argAry(j + 1)<br>
+      　　　　　　　　argAry(j + 1) = vSwap<br>
+      　　　　　　End If<br>
+      　　　　Next<br>
+      　　Next<br>
+      End Sub<br><div class="br2"><br></div>
+Sub get区間距離(ByVal aSearchLevel As Long)<br>
+　　Set dic区間距離 = New Dictionary<br>
+　　Dim i As Long, j As Long, lngDist As Long, minDist As Long<br>
+　　<br>
+　　For i = LBound(ary中間点) To UBound(ary中間点) - 1<br>
+　　　　minDist = 2 ^ 31 - 1<br>
+　　　　For j = LBound(ary中間点) To UBound(ary中間点)<br>
+　　　　　　If i &lt;&gt; j Then<br>
+　　　　　　　　lngDist = get距離(ary中間点(i), ary中間点(j))<br>
+　　　　　　　　dic区間距離(ary中間点(i) &amp; &quot;,&quot; &amp; ary中間点(j)) = lngDist<br>
+　　　　　　　　If lngDist &lt; minDist Then minDist = lngDist<br>
+　　　　　　End If<br>
+　　　　Next<br>
+　　　　dic区間距離(ary中間点(i)) = minDist<br>
+　　Next<br>
+　　If aSearchLevel &lt;&gt; 1 Then Exit Sub<br>
+　　<br>
+　　<span style="color:#009900;">'レベル1の場合は、下または右への移動を基本として算出</span><br>
+　　Dim sSplit1, sSplit2<br>
+　　For i = LBound(ary中間点) To UBound(ary中間点) - 1<br>
+　　　　minDist = 2 ^ 31 - 1<br>
+　　　　For j = LBound(ary中間点) To UBound(ary中間点)<br>
+　　　　　　If i &lt;&gt; j Then<br>
+　　　　　　　　sSplit1 = Split(ary中間点(i), &quot;,&quot;)<br>
+　　　　　　　　sSplit2 = Split(ary中間点(j), &quot;,&quot;)<br>
+　　　　　　　　If CLng(sSplit2(0)) &gt;= CLng(sSplit1(0)) Or _<br>
+　　　　　　　　　 CLng(sSplit2(1)) &gt;= CLng(sSplit1(1)) Then<br>
+　　　　　　　　　　lngDist = get距離(ary中間点(i), ary中間点(j))<br>
+　　　　　　　　　　If lngDist &lt; minDist Then minDist = lngDist<br>
+　　　　　　　　End If<br>
+　　　　　　End If<br>
+　　　　Next<br>
+　　　　dic区間距離(ary中間点(i)) = minDist<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+      Sub get経路(ByRef aAry, ByVal i As Long)<br>
+      　　Dim j As Long, tDistance As Long, sTmp As String<br>
+      　　Dim ary<br>
+      　　If i &lt; UBound(aAry) - 1 Then<br>
+      　　　　If get総距離(aAry, i) &lt;= 最短距離 Then<br>
+      　　　　　　For j = i To UBound(aAry) - 1<br>
+      　　　　　　　　ary = aAry<br>
+      　　　　　　　　sTmp = aAry(i)<br>
+      　　　　　　　　aAry(i) = aAry(j)<br>
+      　　　　　　　　aAry(j) = sTmp<br>
+      　　　　　　　　Call get経路(aAry, i + 1)<br>
+      　　　　　　　　aAry = ary<br>
+      　　　　　　Next<br>
+      　　　　End If<br>
+      　　　　Exit Sub<br>
+      　　End If<br>
+      　　<br>
+      　　tDistance = get総距離(aAry)<br>
+      　　If tDistance &lt;= 最短距離 Then<br>
+      　　　　Call writeLog(3, aAry, tDistance) <span style="color:#009900;">'ログ出力</span><br>
+      　　　　col経路.Add Array(aAry, tDistance)<br>
+      　　　　最短距離 = tDistance<br>
+      　　End If<br>
+      End Sub<br><div class="br2"><br></div>
+      Function get総距離(ByRef aAry, Optional ByVal aLast As Long) As Long<br>
+      　　Dim i As Long, j As Long<br>
+      　　For i = LBound(aAry) To UBound(aAry) - 1<br>
+      　　　　If aLast &gt; 0 And i &gt;= aLast - 1 Then<br>
+      　　　　　　get総距離 = get総距離 + dic区間距離(aAry(i))<br>
+      　　　　Else<br>
+      　　　　　　get総距離 = get総距離 + dic区間距離(aAry(i) &amp; &quot;,&quot; &amp; aAry(i + 1))<br>
+      　　　　End If<br>
+      　　Next<br>
+      End Function<br><div class="br2"><br></div>
+      Function get距離(ByVal a中間点1 As String, ByVal a中間点2 As String)<br>
+      　　Dim k1, k2<br>
+      　　k1 = Split(a中間点1, &quot;,&quot;)<br>
+      　　k2 = Split(a中間点2, &quot;,&quot;)<br>
+      　　get距離 = Abs(k1(0) - k2(0)) + Abs(k1(1) - k2(1))<br>
+      End Function<br><div class="br2"><br></div>
+      <span style="color:#009900;">'**********************************************************************</span><br>
+      <span style="color:#009900;">' 最短ルート出力</span><br>
+      <span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+      Function dispRouteOnSheet(ByVal qRng As Range, aSearchLevel As Long) As Boolean<br>
+      　　Dim i As Long, cnt As Long<br>
+      　　Dim curRoute As Long, minRoute As Long<br>
+      　　<br>
+      　　dispRouteOnSheet = False<br>
+      　　<br>
+      　　Call writeLog(2, &quot;レベル&quot; &amp; aSearchLevel &amp; &quot;最短ルート&quot;)<br>
+      　　<br>
+      　　minRoute = col経路(col経路.Count)(1)<br>
+      　　For i = col経路.Count To 1 Step -1<br>
+      　　　　If SaveHistory Then<br>
+      　　　　　　cnt = cnt + 1<br>
+      　　　　　　If cnt &gt; 1 Then<br>
+      　　　　　　　　qRng.Offset(, qRng.Columns.Count + 1).Resize(, qRng.Columns.Count + 1).EntireColumn.Insert<br>
+      　　　　　　　　qRng.Copy Destination:=qRng.Offset(, qRng.Columns.Count + 1)<br>
+      　　　　　　End If<br>
+      　　　　End If<br>
+      　　　　<br>
+      　　　　qRng.ClearContents<br>
+      　　　　<br>
+      　　　　curRoute = col経路(i)(1)<br>
+      　　　　If setRouteOnCells(qRng, col経路(i)(0)) Then<br>
+      　　　　　　Call writeLog(2, col経路(i)(0), curRoute)<br>
+      　　　　　　dispRouteOnSheet = True<br>
+      　　　　Else<br>
+      　　　　　　If SaveHistory Then cnt = cnt - 1<br>
+      　　　　End If<br>
+      　　　　<br>
+      　　　　If Not SaveHistory And dispRouteOnSheet Then Exit For<br>
+      　　　　<br>
+      　　　　If i = 1 Then Exit For<br>
+      　　　　curRoute = col経路(i - 1)(1)<br>
+      　　　　If (dispRouteOnSheet Or aSearchLevel &lt;= 2) And curRoute &gt; minRoute Then Exit For<br>
+      　　Next<br>
+      　　<br>
+      　　If Not dispRouteOnSheet Then<br>
+      　　　　Call writeLog(2, &quot;レベル&quot; &amp; aSearchLevel &amp; &quot;最短ルートなし&quot;)<br>
+      　　End If<br>
+      End Function<br><div class="br2"><br></div>
+      Function setRouteOnCells(ByVal qRng As Range, ByVal aryRoute) As Boolean<br>
+      　　setRouteOnCells = False<br>
+      　　<br>
+      　　Dim i As Long<br>
+      　　For i = LBound(aryRoute) + 1 To UBound(aryRoute)<br>
+      　　　　<span style="color:#009900;">'区間のセルに1をセツト</span><br>
+      　　　　If Not writeRouteOnCells(qRng, aryRoute, i, 1) Then<br>
+      　　　　　　Exit Function<br>
+      　　　　End If<br>
+      　　Next<br>
+      　　<br>
+      　　setRouteOnCells = True<br>
+      End Function<br><div class="br2"><br></div>
+      Function writeRouteOnCells(ByVal qRng As Range, ByVal aryRoute, ByVal i As Long, ByVal aNum As Long) As Boolean<br>
+      　　Dim i1 As Long, i2 As Long, i3 As Long, i4 As Long<br>
+      　　Dim j1 As Long, j2 As Long, j3 As Long, j4 As Long<br>
+      　　Dim iStep As Long, jStep As Long, iStep2 As Long, jStep2 As Long<br>
+      　　Dim isVertical As Boolean<br>
+      　　<br>
+      　　writeRouteOnCells = False<br>
+      　　<br>
+      　　<span style="color:#009900;">'前回中継点</span><br>
+      　　i1 = Split(aryRoute(i - 1), &quot;,&quot;)(0)<br>
+      　　j1 = Split(aryRoute(i - 1), &quot;,&quot;)(1)<br>
+      　　If i = 1 Then qRng.Cells(i1, j1) = 1: waitWriteCell<br>
+      　　<br>
+      　　<span style="color:#009900;">'今回中継点</span><br>
+      　　i2 = Split(aryRoute(i), &quot;,&quot;)(0)<br>
+      　　j2 = Split(aryRoute(i), &quot;,&quot;)(1)<br>
+      　　<br>
+      　　<span style="color:#009900;">'次の中継点を取得</span><br>
+      　　If i = UBound(aryRoute) Then<br>
+      　　　　i3 = i2: j3 = j2<br>
+      　　Else<br>
+      　　　　i3 = Split(aryRoute(i + 1), &quot;,&quot;)(0)<br>
+      　　　　j3 = Split(aryRoute(i + 1), &quot;,&quot;)(1)<br>
+      　　End If<br>
+      　　<br>
+      　　<span style="color:#009900;">'次の次の中継点を取得</span><br>
+      　　If i &gt;= UBound(aryRoute) - 1 Then<br>
+      　　　　i4 = i3: j4 = j3<br>
+      　　Else<br>
+      　　　　i4 = Split(aryRoute(i + 2), &quot;,&quot;)(0)<br>
+      　　　　j4 = Split(aryRoute(i + 2), &quot;,&quot;)(1)<br>
+      　　End If<br>
+      　　<br>
+      　　<span style="color:#009900;">'今回の移動の設定</span><br>
+      　　iStep = Sgn(i2 - i1): jStep = Sgn(j2 - j1)<br>
+      　　isVertical = Abs(i2 - i1) &gt; Abs(j2 - j1)<br>
+      　　<br>
+      　　<span style="color:#009900;">'次回の移動の設定</span><br>
+      　　iStep2 = Sgn(i3 - i2): jStep2 = Sgn(j3 - j2)<br>
+      　　<br>
+      　　<span style="color:#009900;">'次回の移動との関連で縦横優先を切り替える</span><br>
+      　　Select Case True<br>
+      　　　　Case iStep &gt; 0 And jStep &gt; 0 And iStep2 &lt; 0 And jStep2 &lt; 0<br>
+      　　　　　　isVertical = CBool(j4 &gt; j1)<br>
+      　　　　Case iStep &gt; 0 And jStep &gt; 0 And iStep2 = 0 And jStep2 &lt; 0<br>
+      　　　　　　isVertical = False<br>
+      　　　　Case iStep &gt; 0 And jStep &gt; 0 And iStep2 &lt; 0 And jStep2 = 0<br>
+      　　　　　　isVertical = True<br>
+      　　　　Case iStep &gt; 0 And jStep &gt; 0 And iStep2 &lt; 0 And jStep2 &gt; 0<br>
+      　　　　　　isVertical = True<br>
+      　　　　Case iStep &gt; 0 And jStep &gt; 0 And iStep2 &gt; 0 And jStep2 &lt; 0<br>
+      　　　　　　isVertical = False<br>
+      　　　　　　<br>
+      　　　　Case iStep &gt; 0 And jStep &lt; 0 And iStep2 &lt; 0 And jStep2 &gt; 0<br>
+      　　　　　　isVertical = False<br>
+      　　　　Case iStep &gt; 0 And jStep &lt; 0 And iStep2 &lt; 0 And jStep2 = 0<br>
+      　　　　　　isVertical = True<br>
+      　　　　Case iStep &gt; 0 And jStep &lt; 0 And iStep2 = 0 And jStep2 &gt; 0<br>
+      　　　　　　isVertical = False<br>
+      　　　　<br>
+      　　　　Case iStep &lt; 0 And jStep &gt; 0 And iStep2 &gt; 0 And jStep2 &gt; 0<br>
+      　　　　　　isVertical = True<br>
+      　　　　Case iStep &lt; 0 And jStep &gt; 0 And iStep2 &gt; 0 And jStep2 &lt; 0<br>
+      　　　　　　isVertical = True<br>
+      　　　　Case iStep &lt; 0 And jStep &gt; 0 And iStep2 &gt; 0 And jStep2 = 0<br>
+      　　　　　　isVertical = True<br>
+      　　　　Case iStep &lt; 0 And jStep &gt; 0 And iStep2 = 0 And jStep2 &lt; 0<br>
+      　　　　　　isVertical = False<br>
+      　　　　<br>
+      　　　　Case iStep &lt; 0 And jStep &lt; 0 And iStep2 &gt; 0 And jStep2 &gt; 0<br>
+      　　　　　　isVertical = CBool(i3 &gt; i1)<br>
+      　　　　Case iStep &lt; 0 And jStep &lt; 0 And iStep2 = 0 And jStep2 &gt; 0<br>
+      　　　　　　isVertical = False<br>
+      　　　　Case iStep &lt; 0 And jStep &lt; 0 And iStep2 &gt; 0 And jStep2 = 0<br>
+      　　　　　　isVertical = True<br>
+      　　End Select<br>
+      　　<br>
+      　　If isVertical Then<br>
+      　　　　Do Until i1 = i2<br>
+      　　　　　　i1 = i1 + iStep<br>
+      　　　　　　If qRng.Cells(i1, j1).Interior.color = vbYellow Or _<br>
+      　　　　　　　 qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; Then<br>
+      　　　　　　　　Do While qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; And j1 &lt;&gt; j2<br>
+      　　　　　　　　　　j1 = j1 + jStep<br>
+      　　　　　　　　　　If writeCell(qRng, i1 - iStep, j1, aNum) = False Then Exit Function<br>
+      　　　　　　　　Loop<br>
+      　　　　　　End If<br>
+      　　　　　　If writeCell(qRng, i1, j1, aNum) = False Then Exit Function<br>
+      　　　　Loop<br>
+      　　　　<br>
+      　　　　Do Until j1 = j2<br>
+      　　　　　　j1 = j1 + jStep<br>
+      　　　　　　If qRng.Cells(i1, j1).Interior.color = vbYellow Or _<br>
+      　　　　　　　 qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; Then<br>
+      　　　　　　　　Do While qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; And i1 &lt;&gt; i2<br>
+      　　　　　　　　　　i1 = i1 + iStep<br>
+      　　　　　　　　　　If writeCell(qRng, i1, j1 - jStep, aNum) = False Then Exit Function<br>
+      　　　　　　　　Loop<br>
+      　　　　　　End If<br>
+      　　　　　　If writeCell(qRng, i1, j1, aNum) = False Then Exit Function<br>
+      　　　　Loop<br>
+      　　Else<br>
+      　　　　Do Until j1 = j2<br>
+      　　　　　　j1 = j1 + jStep<br>
+      　　　　　　If qRng.Cells(i1, j1).Interior.color = vbYellow Or _<br>
+      　　　　　　　 qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; Then<br>
+      　　　　　　　　Do While qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; And i1 &lt;&gt; i2<br>
+      　　　　　　　　　　i1 = i1 + iStep<br>
+      　　　　　　　　　　If writeCell(qRng, i1, j1 - jStep, aNum) = False Then Exit Function<br>
+      　　　　　　　　Loop<br>
+      　　　　　　End If<br>
+      　　　　　　If writeCell(qRng, i1, j1, aNum) = False Then Exit Function<br>
+      　　　　Loop<br>
+      　　　　<br>
+      　　　　Do Until i1 = i2<br>
+      　　　　　　i1 = i1 + iStep<br>
+      　　　　　　If qRng.Cells(i1, j1).Interior.color = vbYellow Or _<br>
+      　　　　　　　 qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; Then<br>
+      　　　　　　　　Do While qRng.Cells(i1, j1).Value &lt;&gt; &quot;&quot; And j1 &lt;&gt; j2<br>
+      　　　　　　　　　　j1 = j1 + jStep<br>
+      　　　　　　　　　　If writeCell(qRng, i1 - iStep, j1, aNum) = False Then Exit Function<br>
+      　　　　　　　　Loop<br>
+      　　　　　　End If<br>
+      　　　　　　If writeCell(qRng, i1, j1, aNum) = False Then Exit Function<br>
+      　　　　Loop<br>
+      　　End If<br>
+      　　<br>
+      　　qRng.Cells(i2, j2) = i + 1: waitWriteCell<br>
+      　　writeRouteOnCells = True<br>
+      End Function<br><div class="br2"><br></div>
+      Function writeCell(ByVal qRng As Range, ByVal ii As Long, ByVal jj As Long, _<br>
+      　　　　　　　　　 ByVal aNum As Long) As Boolean<br>
+      　　If ii &lt; 1 Or ii &gt; qRng.Rows.Count Or _<br>
+      　　　 jj &lt; 1 Or jj &gt; qRng.Columns.Count Then Exit Function<br>
+      　　If qRng.Cells(ii, jj).Value &lt;&gt; &quot;&quot; Then Exit Function<br>
+      　　qRng.Cells(ii, jj).Value = aNum<br>
+      　　waitWriteCell<br>
+      　　writeCell = True<br>
+      End Function<br><div class="br2"><br></div>
+      Sub waitWriteCell()<br>
+      　　If WaitTime = 0 Then Exit Sub<br>
+      　　Application.Wait [Now()] + WaitTime / (24&amp; * 60&amp; * 60&amp; * 1000&amp;)<br>
+      End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+移動最短距離の算出時に下または右方向への移動の中の最短距離にした場合に最短距離でゴール出来ない場合がでてきます。<br>
+その場合は、本来の移動最短距離での探索に切り替えて再度探索しています。</div>
+<div class="main-indent">
+<div class="main-indent">ゴールで来た場合でも、それが最短経路ではない可能性があります。<br>
+探索を省略している中により短い経路が含まれている場合もありえるという事です。<br>
+これを考慮するのは全探索することになってしまうので、これはこれで諦めるしかありません。<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent"><br>
+以下は、各拠点の縦横出発方向の全組み合わせを試行する場合のVBAになります。<br>
+さすがに処理時間がかかるので、配列内で試行してゴールできた時にシートに表示しています。<br>
+シートへの表示以外の探索部分は、上のVBAコードと同じになります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td><span style="color:#009900;">'**********************************************************************</span><br>
+<span style="color:#009900;">' 最短ルート出力</span><br>
+<span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+Function dispRouteOnSheet(ByVal qRng As Range, aDepth As Long) As Boolean<br>
+　　Dim i As Long, cnt As Long<br>
+　　Dim curRoute As Long, minRoute As Long<br><div class="br2"><br></div>
+　　dispRouteOnSheet = False<br><div class="br2"><br></div>
+　　Call writeLog(2, &quot;レベル&quot; &amp; aDepth &amp; &quot;最短ルート&quot;)<br><div class="br2"><br></div>
+　　minRoute = col経路(col経路.Count)(1)<br>
+　　For i = col経路.Count To 1 Step -1<br>
+　　　　If SaveHistory Then<br>
+　　　　　　cnt = cnt + 1<br>
+　　　　　　If cnt &gt; 1 Then<br>
+　　　　　　　　qRng.Offset(, qRng.Columns.Count + 1).Resize(, qRng.Columns.Count + 1).EntireColumn.Insert<br>
+　　　　　　　　qRng.Copy Destination:=qRng.Offset(, qRng.Columns.Count + 1)<br>
+　　　　　　End If<br>
+　　　　End If<br><div class="br2"><br></div>
+　　　　curRoute = col経路(i)(1)<br>
+　　　　If setRouteOnCells(qRng, col経路(i)(0)) Then<br>
+　　　　　　Call writeLog(2, col経路(i)(0), curRoute)<br>
+　　　　　　dispRouteOnSheet = True<br>
+　　　　Else<br>
+　　　　　　If SaveHistory Then cnt = cnt - 1<br>
+　　　　End If<br><div class="br2"><br></div>
+　　　　If Not SaveHistory And dispRouteOnSheet Then Exit For<br><div class="br2"><br></div>
+　　　　If i = 1 Then Exit For<br>
+　　　　curRoute = col経路(i - 1)(1)<br>
+　　　　If (dispRouteOnSheet Or aDepth &lt;= 2) And curRoute &gt; minRoute Then Exit For<br>
+　　Next<br><div class="br2"><br></div>
+　　If Not dispRouteOnSheet Then<br>
+　　　　Call writeLog(2, &quot;レベル&quot; &amp; aDepth &amp; &quot;最短ルートなし&quot;)<br>
+　　End If<br>
+End Function<br><div class="br2"><br></div>
+Function setRouteOnCells(ByVal qRng As Range, ByVal aryRoute) As Boolean<br>
+　　Dim i As Long, ix As Long<br>
+　　Dim cnt As Long, tmpBin As String, isVertical As Boolean<br>
+　　Dim qAry(), isGoal As Boolean<br>
+　　<br>
+　　cnt = UBound(aryRoute) - LBound(aryRoute) + 1<br>
+　　For ix = 1 To 2 ^ cnt - 1<br>
+　　　　ReDim qAry(1 To qRng.Rows.Count, 1 To qRng.Columns.Count)<br>
+　　　　Call writeRouteNo(qAry, aryRoute)<br>
+　　　　tmpBin = Dec2Bin(ix, cnt)<br>
+　　　　<br>
+　　　　isGoal = True<br>
+　　　　For i = LBound(aryRoute) + 1 To UBound(aryRoute)<br>
+　　　　　　isVertical = CBool(Mid(tmpBin, i - LBound(aryRoute) + 1, 1))<br><div class="br2"><br></div>
+　　　　　　<span style="color:#009900;">'区間のセルに1をセツト</span><br>
+　　　　　　If Not writeRouteOnCells(qAry, aryRoute, i, isVertical, 1) Then<br>
+　　　　　　　　isGoal = False<br>
+　　　　　　　　Exit For<br>
+　　　　　　End If<br>
+　　　　Next<br>
+　　　　If isGoal Then Exit For<br>
+　　Next<br>
+　　<br>
+　　If isGoal Then qRng.Value = qAry<br>
+　　setRouteOnCells = isGoal<br>
+End Function<br><div class="br2"><br></div>
+Function writeRouteOnCells(ByRef qAry(), ByVal aryRoute, ByVal i As Long, isVertical As Boolean, aNum As Long) As Boolean<br>
+　　Dim i1 As Long, i2 As Long<br>
+　　Dim j1 As Long, j2 As Long<br>
+　　Dim ii As Long, jj As Long, cnt As Long<br>
+　　Dim iStep As Long, jStep As Long<br><div class="br2"><br></div>
+　　writeRouteOnCells = False<br>
+　　<br>
+　　<span style="color:#009900;">'前回中継点</span><br>
+　　i1 = Split(aryRoute(i - 1), &quot;,&quot;)(0)<br>
+　　j1 = Split(aryRoute(i - 1), &quot;,&quot;)(1)<br>
+　　<br>
+　　<span style="color:#009900;">'今回中継点</span><br>
+　　i2 = Split(aryRoute(i), &quot;,&quot;)(0)<br>
+　　j2 = Split(aryRoute(i), &quot;,&quot;)(1)<br>
+　　<br>
+　　<span style="color:#009900;">'今回の移動の設定</span><br>
+　　iStep = Sgn(i2 - i1)<br>
+　　jStep = Sgn(j2 - j1)<br><div class="br2"><br></div>
+　　If isVertical Then<br>
+　　　　Do Until i1 = i2<br>
+　　　　　　i1 = i1 + iStep<br>
+　　　　　　If qAry(i1, j1) &lt;&gt; &quot;&quot; Then<br>
+　　　　　　　　Do While qAry(i1, j1) &lt;&gt; &quot;&quot; And j1 &lt;&gt; j2<br>
+　　　　　　　　　　j1 = j1 + jStep<br>
+　　　　　　　　　　If writeCell(qAry, i1 - iStep, j1, i2, j2, aNum) = False Then Exit Function<br>
+　　　　　　　　Loop<br>
+　　　　　　End If<br>
+　　　　　　If writeCell(qAry, i1, j1, i2, j2, aNum) = False Then Exit Function<br>
+　　　　Loop<br>
+　　　　<br>
+　　　　Do Until j1 = j2<br>
+　　　　　　j1 = j1 + jStep<br>
+　　　　　　If qAry(i1, j1) &lt;&gt; &quot;&quot; Then<br>
+　　　　　　　　Do While qAry(i1, j1) &lt;&gt; &quot;&quot; And i1 &lt;&gt; i2<br>
+　　　　　　　　　　i1 = i1 + iStep<br>
+　　　　　　　　　　If writeCell(qAry, i1, j1 - jStep, i2, j2, aNum) = False Then Exit Function<br>
+　　　　　　　　Loop<br>
+　　　　　　End If<br>
+　　　　　　If writeCell(qAry, i1, j1, i2, j2, aNum) = False Then Exit Function<br>
+　　　　Loop<br>
+　　Else<br>
+　　　　Do Until j1 = j2<br>
+　　　　　　j1 = j1 + jStep<br>
+　　　　　　If qAry(i1, j1) &lt;&gt; &quot;&quot; Then<br>
+　　　　　　　　Do While qAry(i1, j1) &lt;&gt; &quot;&quot; And i1 &lt;&gt; i2<br>
+　　　　　　　　　　i1 = i1 + iStep<br>
+　　　　　　　　　　If writeCell(qAry, i1, j1 - jStep, i2, j2, aNum) = False Then Exit Function<br>
+　　　　　　　　Loop<br>
+　　　　　　End If<br>
+　　　　　　If writeCell(qAry, i1, j1, i2, j2, aNum) = False Then Exit Function<br>
+　　　　Loop<br>
+　　　　<br>
+　　　　Do Until i1 = i2<br>
+　　　　　　i1 = i1 + iStep<br>
+　　　　　　If qAry(i1, j1) &lt;&gt; &quot;&quot; Then<br>
+　　　　　　　　Do While qAry(i1, j1) &lt;&gt; &quot;&quot; And j1 &lt;&gt; j2<br>
+　　　　　　　　　　j1 = j1 + jStep<br>
+　　　　　　　　　　If writeCell(qAry, i1 - iStep, j1, i2, j2, aNum) = False Then Exit Function<br>
+　　　　　　　　Loop<br>
+　　　　　　End If<br>
+　　　　　　If writeCell(qAry, i1, j1, i2, j2, aNum) = False Then Exit Function<br>
+　　　　Loop<br>
+　　End If<br>
+　　<br>
+　　writeRouteOnCells = True<br>
+End Function<br><div class="br2"><br></div>
+Function Dec2Bin(ByVal aNum As Long, aCnt As Long) As String<br>
+　　Dim rtn As String<br>
+　　Dim tNum As Long<br>
+　　Do<br>
+　　　　tNum = aNum \ 2<br>
+　　　　If tNum = 0 Then<br>
+　　　　　　rtn = (aNum Mod 2) &amp; rtn<br>
+　　　　　　Exit Do<br>
+　　　　End If<br>
+　　　　rtn = (aNum Mod 2) &amp; rtn<br>
+　　　　aNum = tNum<br>
+　　Loop<br>
+　　Dec2Bin = Right(String(aCnt, &quot;0&quot;) &amp; rtn, aCnt)<br>
+End Function<br><div class="br2"><br></div>
+Sub writeRouteNo(ByRef qAry(), ByVal aryRoute)<br>
+　　Dim i As Long, i2 As Long, j2 As Long<br>
+　　For i = LBound(aryRoute) To UBound(aryRoute)<br>
+　　　　i2 = Split(aryRoute(i), &quot;,&quot;)(0)<br>
+　　　　j2 = Split(aryRoute(i), &quot;,&quot;)(1)<br>
+　　　　qAry(i2, j2) = i - LBound(aryRoute) + 1<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+Function writeCell(ByRef qAry(), _<br>
+　　　　　　　　　 ByVal i1 As Long, ByVal j1 As Long, _<br>
+　　　　　　　　　 ByVal i2 As Long, ByVal j2 As Long, _<br>
+　　　　　　　　　 ByVal aNum As Long) As Boolean<br>
+　　If i1 &lt; 1 Or i1 &gt; UBound(qAry, 1) Or _<br>
+　　　 j1 &lt; 1 Or j1 &gt; UBound(qAry, 2) Then<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　If qAry(i1, j1) &lt;&gt; &quot;&quot; And (i1 &lt;&gt; i2 Or j1 &lt;&gt; j2) Then<br>
+　　　　Exit Function<br>
+　　End If<br>
+　　qAry(i1, j1) = aNum<br>
+　　writeCell = True<br>
+End Function</td>
+    </tr>
+  </tbody>
+</table></code></div><br><div class="br2"><br></div>
+</div>
+<h3>中間地点数10個～15個での処理時間比較</h3>
+<div class="main-indent">テストに使用したVBAになります。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td><span style="color:#009900;">'**********************************************************************</span><br>
+<span style="color:#009900;">' ランダム配置テスト</span><br>
+<span style="color:#009900;">'**********************************************************************</span><br><div class="br2"><br></div>
+Sub ランダムテスト()<br>
+　　Const cnsTestTimes = 100<br>
+　　Dim ws As Worksheet<br>
+　　Set ws = Worksheets(&quot;ランダムテスト結果&quot;)<br>
+　　Worksheets(&quot;ランダムテスト&quot;).Select<br>
+　　<br>
+　　Dim i As Long, cnsRelayPoint As Long, st As Double<br>
+　　For cnsRelayPoint = 10 To 15<br>
+　　　　For i = 1 To cnsTestTimes<br>
+　　　　　　Application.StatusBar = cnsRelayPoint &amp; &quot;点：&quot; &amp; i &amp; &quot;/&quot; &amp; cnsTestTimes<br>
+　　　　　　Call ランダム配置(cnsRelayPoint)<br>
+　　　　　　DoEvents<br>
+　　　　　　Application.Wait [Now()] + 100 / (24&amp; * 60&amp; * 60&amp; * 1000&amp;)<br>
+　　　　　　DoEvents<br>
+　　　　　　st = Timer<br>
+　　　　　　Call main<br>
+　　　　　　ws.Cells(i + 1, cnsRelayPoint - 8) = Timer - st<br>
+　　　　　　DoEvents<br>
+　　　　　　Application.Wait [Now()] + 1000 / (24&amp; * 60&amp; * 60&amp; * 1000&amp;)<br>
+　　　　　　DoEvents<br>
+　　　　Next<br>
+　　Next<br>
+End Sub<br><div class="br2"><br></div>
+Sub ランダム配置(ByVal aNum As Long)<br>
+　　Dim rng As Range: Set rng = Range(&quot;A1:O15&quot;)<br>
+　　rng.Clear<br>
+　　rng.Item(1).Interior.color = Color開始<br>
+　　rng.Item(rng.Count).Interior.color = Color開始<br>
+　　<br>
+　　Dim i As Long, myNum As Long<br>
+　　Dim myFlag(1 To 225) As Boolean<br>
+　　<br>
+　　Randomize<br>
+　　For i = 1 To aNum<br>
+　　　　Do<br>
+　　　　　　myNum = Int((224 - 2 + 1) * Rnd + 2)<br>
+　　　　Loop Until myFlag(myNum) = False<br>
+　　　　<br>
+　　　　rng.Item(myNum).Interior.color = vbYellow<br>
+　　　　myFlag(myNum) = True<br>
+　　Next i<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+各中間地点数ごとに100回の実行結果になります。<br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>中間地点数</td>
+    <td align="right">10</td>
+    <td align="right">11</td>
+    <td align="right">12</td>
+    <td align="right">13</td>
+    <td align="right">14</td>
+    <td align="right">15</td>
+  </tr>
+  <tr>
+    <td>最小値</td>
+    <td align="right">0.016</td>
+    <td align="right">0.047</td>
+    <td align="right">0.109</td>
+    <td align="right">0.078</td>
+    <td align="right">0.266</td>
+    <td align="right">2.093</td>
+  </tr>
+  <tr>
+    <td>中央値</td>
+    <td align="right">0.094</td>
+    <td align="right">0.422</td>
+    <td align="right">2.207</td>
+    <td align="right">3.176</td>
+    <td align="right">8.718</td>
+    <td align="right">28.026</td>
+  </tr>
+  <tr>
+    <td>平均値</td>
+    <td align="right">0.181</td>
+    <td align="right">0.777</td>
+    <td align="right">3.402</td>
+    <td align="right">7.188</td>
+    <td align="right">16.404</td>
+    <td align="right">52.295</td>
+  </tr>
+  <tr>
+    <td>最大値</td>
+    <td align="right">3.500</td>
+    <td align="right">10.922</td>
+    <td align="right">26.445</td>
+    <td align="right">131.891</td>
+    <td align="right">231.656</td>
+    <td align="right">398.727</td>
+  </tr>
+</tbody>
+</table></div><br>
+16個以上になっても数秒で終わる配置もありますが、配置によっては10分以上かかってしまうので、今回の方法では15個くらいが限界だと考えた方が良さそうです。<br>
+特に等距離に多くの地点が密集しているような配置の場合、結果的に多くの組み合わせを探索することになり時間がかかります。<br><div class="br2"><br></div>
+<img src="image72.jpg" tppabs="https://excel-ubara.com/vba100/image72.jpg" width="441" height="398" border="0" alt="マクロ VBA 100本ノック 迷宮編"><br><div class="br2"><br></div>
+これは、いろいろテストしている過程でたまたま見つけた配置ですが、900秒程かかります。<br>
+実行ログでは最短距離になる経路が44パターン表示されています。<br>
+（ただし実際に道順が交差せずにゴール出来たのは9パターンです。）<br>
+つまり、ほとんどの組み合わせを試行したことになるのでしょう。<br>
+最後まで探索しなければ、どれが最短か分からないので、こういう事になってしまいます。<br>
+この配置なら、人間が目で順に辿っていけば最短距離を探せるような気がします。<br>
+この辺りのアルゴリズムを工夫出来ればより速く最短距離を探せるようになるのですが、それが難しいですね。<br><div class="br2"><br></div>
+もっと地点数が多くなるなら、左上から右下に向かって近隣を探しながら進む方法が良いのではないかと思います。<br>
+ただし、それが最短距離かどうかは分からないです。<br>
+仮に20地点を超えてしまうような場合は、それが最短かどうかを検証する事さえ難しくなってきます。<br><div class="br2"><br></div><div class="br2"><br></div>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</a>」の記事</h3><p>
+<A href="VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">94本目：表範囲からHTMLのtableタグを作成</A><br>
+<A href="VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">95本目：図形のテキストを検索するフォーム作成</A><br>
+<A href="VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">96本目：Accessデータを取得（マスタ結合&amp;抽出）</A><br>
+<A href="VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">97本目：Accessデータを取得（グループ集計）</A><br>
+<A href="VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">98本目：席替えルールが守られているか確認</A><br>
+<A href="VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">99本目：自動席替え（行列と前後左右が全て違うように）</A><br>
+<A href="VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">100本目：WEBから100本ノックのリストを取得</A><br>
+<A href="VBA100_M001.html" tppabs="https://excel-ubara.com/vba100/VBA100_M001.html">魔球編：組み合わせ問題</A><br>
+<A href="VBA100_M002.html" tppabs="https://excel-ubara.com/vba100/VBA100_M002.html">魔球編：閉領域の塗り潰し</A><br>
+<span class="strrev">迷宮編：巡回セル問題</span><br>
+<A href="VBA100_M004.html" tppabs="https://excel-ubara.com/vba100/VBA100_M004.html">魔球編：2桁の最小公倍数</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</a></li>
+<li><span class="strrev2"><strong>迷宮編：巡回セル問題</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</a></li>
+<li><span class="strrev2"><strong>迷宮編：巡回セル問題</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+          
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="../excelvba4/index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>

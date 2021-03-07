@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script data-ad-client="ca-pub-6511020045004282" async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-6511020045004282",
+      enable_page_level_ads: true
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>アクティブシート以外のWindowを設定できるWorksheetView｜VBA技術解説</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VBAの中でも非常に分かりづらいオブジェクトにWindowオブジェクトがあります。Windowオブジェクトは、ブックやシートの見方を変えることのできるものです。Windowオブジェクトの集まりがWindowsコレクションです。">
+  <meta name="keywords" content="Window,WorksheetView,アクティブシート以外,を設定できる,技術解説,エクセル,Excel,マクロ,VBA">
+  <link rel="icon" type="image/x-icon" href="../images/favicon_excel.png">
+  <link rel="stylesheet" href="../css/style.css-20210304.css" tppabs="https://excel-ubara.com/css/style.css?20210304">
+  <link rel="stylesheet" href="../css/slide.css-20210304.css" tppabs="https://excel-ubara.com/css/slide.css?20210304">
+  <link rel="canonical" href="https://excel-ubara.com/excelvba4/EXCEL_VBA_440.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="アクティブシート以外のWindowを設定できるWorksheetView｜VBA技術解説" />
+  <meta property="og:description" content="VBAの中でも非常に分かりづらいオブジェクトにWindowオブジェクトがあります。Windowオブジェクトは、ブックやシートの見方を変えることのできるものです。Windowオブジェクトの集まりがWindowsコレクションです。" />
+  <meta property="og:image" content="https://excel-ubara.com/excelvba4/image3154.jpg" />
+  <meta property="og:url" content="https://excel-ubara.com/excelvba4/EXCEL_VBA_440.html" />
+  <meta property="og:site_name" content="エクセルの神髄" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="アクティブシート以外のWindowを設定できるWorksheetView｜VBA技術解説" />
+  <meta name="twitter:description" content="VBAの中でも非常に分かりづらいオブジェクトにWindowオブジェクトがあります。Windowオブジェクトは、ブックやシートの見方を変えることのできるものです。Windowオブジェクトの集まりがWindowsコレクションです。" />
+  <meta name="twitter:image" content="https://excel-ubara.com/excelvba4/image3154.jpg" />
+  <meta name="twitter:site" content="@yamaoka_ss" />
+  <script src="../../code.jquery.com/jquery-3.3.1.min.js" tppabs="https://code.jquery.com/jquery-3.3.1.min.js" async></script>
+  <script type="text/javascript" src="../js/fix.js" tppabs="https://excel-ubara.com/js/fix.js" async></script>
+  <script type="text/javascript" src="../js/fixmenu_pagetop.js-20210304" tppabs="https://excel-ubara.com/js/fixmenu_pagetop.js?20210304" async></script>
+  <script type="text/javascript" src="../js/CopyDisp.js-20210304" tppabs="https://excel-ubara.com/js/CopyDisp.js?20210304" async></script>
+</head>
+
+<body class="c2">
+  <header>
+    <div class="inner">
+      <p id="logo"><a href="../index.htm" tppabs="https://excel-ubara.com/"><img src="../images/logo.png" tppabs="https://excel-ubara.com/images/logo.png" alt="エクセルの神髄"></a></p>
+      <div id="contact">
+        <h1>VBA技術解説<br>アクティブシート以外のWindowを設定できるWorksheetView</h1>ExcelマクロVBAの問題点と解決策、VBAの技術的解説
+      </div>
+    </div>
+  </header>
+
+  <!--PC用（801px以上端末）メニュー-->
+  <nav id="dropmenu">
+    <ul class="inner">
+      <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">Excel全般<span>Excel</span></a>
+        <ul>
+          <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+          <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+          <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+          <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+          <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+          <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">マクロVBA入門編<span>VBA Beginner</span></a>
+        <ul>
+          <li><a href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</a></li>
+          <li><a href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</a></li>
+          <li><a href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</a></li>
+          <li><a href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</a></li>
+          <li><a href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</a></li>
+          <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+          <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編<span>VBA Advanced</span></a>
+        <ul>
+          <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+          <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+          <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+          <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+          <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+          <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+        </ul>
+      </li>
+      <li><a href="../excel_other.html" tppabs="https://excel-ubara.com/excel_other.html">その他（Excel以外）<span>Other than Excel</span></a>
+        <ul>
+          <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          <li><A href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</A></li>
+          <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+          <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+        </ul>
+      </li>
+      <li><a href="../siteguide.html" tppabs="https://excel-ubara.com/siteguide.html">サイト案内<span>site map</span></a>
+        <ul>
+          <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+          <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+          <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ&nbsp;&nbsp;</A></li>
+          <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">旧トップページ&nbsp;&nbsp;</a></li>
+          <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp;&nbsp;</A></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="pan"><ul itemscope itemtype="http://schema.org/BreadcrumbList">
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../index.htm" tppabs="https://excel-ubara.com/">
+<span itemprop="name">ホーム</span></a>
+<meta itemprop="position" content="1" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">
+<span itemprop="name">マクロVBA応用編</span></a>
+<meta itemprop="position" content="2" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">
+<span itemprop="name">マクロVBA技術解説</span></a>
+<meta itemprop="position" content="3" />
+</li>
+<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+<a itemprop="item" href="EXCEL_VBA_440.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_440.html">
+<span itemprop="name">アクティブシート以外のWindowを設定できるWorksheetView</span></a>
+<meta itemprop="position" content="4" />
+</li>
+</ul></div>
+  <div class="ads1">
+    <center>
+    <script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- yama21 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-6511020045004282"
+        data-ad-slot="1104944574"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    </center>
+  </div>
+
+  <div id="contents" class="inner">
+    <div id="contents-in">
+      <div id="main">
+        <section>
+          <span style="line-height:20px;float:right" align="right">最終更新日：2020-09-05</span>
+<h2 align="center">アクティブシート以外のWindowを設定できるWorksheetView</h2><p><br>
+VBAの中でも非常に分かりづらいオブジェクトにWindowオブジェクトがあります。<br>
+Windowオブジェクトは、ブックやシートの見方を変えることのできるものです。<br><div class="br2"><br></div>
+Windowオブジェクトの集まりがWindowsコレクションです。<br>
+つまり、WindowオブジェクトはWindowsコレクションのメンバーです。<br><div class="br2"><br></div>
+<img src="image3154.jpg" tppabs="https://excel-ubara.com/excelvba4/image3154.jpg" width="817" height="98" border="0" alt="VBA マクロ アクティブシート以外 Window"><br><div class="br2"><br></div>
+WindowsとWindowの基本については以下を参照してください。
+<div class="main-indent"><strong><a href="../excelvba1/EXCELVBA354.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA354.html" target="_blank">Windowsオブジェクト｜VBA入門</a></strong><div class="details">Windowオブジェクトは、ブックやシートの見方を変えることのできるもので、エクセルで「ウインドウ」と表現されているものをマクロVBAで扱う時のオブジェクトになります。エクセルのリボンでは「新しいウインドウ」や「ウインドウ枠」といった言葉で表現されているものです。</div><br>
+</div><p>
+枠線や行列見出しは、どのVBAサンプルを見ても大抵はActiveWindowに対して設定しているはずです。<br>
+これは、ActiveWindowのActiveSheetに対して設定していることになります。<br>
+では、ActiveSheet以外のシートにこれらを設定する方法は無いのでしょうか。<br>
+ここでは、シートをアクティブにすることなく表示(Window)に関する設定を行う方法と、設定可能なプロパティを紹介します。<br><div class="br2"><br></div></p>
+</p>
+<h3>Windowオブジェクトのメソッドとプロパティ</h3>
+<div class="main-indent">まずはWindowオブジェクトについて確認しておきましょう。<br><div class="br2"><br></div>
+※Windowオブジェクトで設定できるのは、そのWindowのアクティブシートだけになります。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>Windowオブジェクトのメソッド</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>名前</td>
+    <td>説明</td>
+  </tr>
+  <tr>
+    <td>Activate</td>
+    <td>ウィンドウを Z オーダーの前面に移動します。</td>
+  </tr>
+  <tr>
+    <td>ActivateNext</td>
+    <td>指定されたウィンドウをアクティブにし、次にそのウィンドウを Z オーダーで一番後ろに移動します。</td>
+  </tr>
+  <tr>
+    <td>ActivatePrevious</td>
+    <td>指定されたウィンドウをアクティブにし、次に Z オーダーで一番後ろにあるウィンドウをアクティブにします。</td>
+  </tr>
+  <tr>
+    <td>Close</td>
+    <td>オブジェクトを閉じます。</td>
+  </tr>
+  <tr>
+    <td>LargeScroll</td>
+    <td>指定されたページ数分だけ、ウィンドウの文字列をスクロールします。</td>
+  </tr>
+  <tr>
+    <td>NewWindow</td>
+    <td>新しいウィンドウ、または指定されたウィンドウのコピーを作成します。</td>
+  </tr>
+  <tr>
+    <td>PointsToScreenPixelsX</td>
+    <td>横方向の長さの値をポイント (ドキュメント座標) からピクセル (画面座標) に変換します。変換された値を長整数型 (Long) の値で返します。</td>
+  </tr>
+  <tr>
+    <td>PointsToScreenPixelsY</td>
+    <td>縦方向の長さの値をポイント (ドキュメント座標) からピクセル (画面座標) に変換します。変換した値を長整数型 (Long) の値で返します。</td>
+  </tr>
+  <tr>
+    <td>PrintOut</td>
+    <td>オブジェクトを印刷します。</td>
+  </tr>
+  <tr>
+    <td>PrintPreview</td>
+    <td>オブジェクトの印刷プレビュー (印刷時のイメージ) を表示します。</td>
+  </tr>
+  <tr>
+    <td>RangeFromPoint</td>
+    <td>画面座標で指定された x と y の位置にある Shape オブジェクト、または Range オブジェクトを返します。指定の座標に図形が存在しない場合は、Nothing を返します。</td>
+  </tr>
+  <tr>
+    <td>ScrollIntoView</td>
+    <td>ドキュメント ウィンドウまたはペインの左上隅、右下隅のどちらかに、指定された四角形領域の内容が表示されるようにドキュメント ウィンドウをスクロールします。表示位置は引数 Start の値で異なります。</td>
+  </tr>
+  <tr>
+    <td>ScrollWorkbookTabs</td>
+    <td>ウィンドウ下部のシート見出しをスクロールします。ただし、ブック内のシートはアクティブな状態に保持されます。</td>
+  </tr>
+  <tr>
+    <td>SmallScroll</td>
+    <td>指定された行数分または列数分だけ、ウィンドウの文字列をスクロールします。</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>Windowオブジェクトのプロパティ</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>名前</td>
+    <td>説明</td>
+  </tr>
+  <tr>
+    <td>ActiveCell</td>
+    <td>最前面に表示されている、アクティブ ウィンドウ (一番手前のウィンドウ) または指定されたウィンドウでのアクティブ セルを表す Range オブジェクトを返します。ウィンドウに表示されているシートがワークシートでないときは、このプロパティは失敗します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>ActiveChart</td>
+    <td>アクティブなグラフ シートまたは埋め込みグラフを表す Chart オブジェクトを返します。埋め込みグラフは、アクティブにされている状態だけではなく、選択されただけの状態でもアクティブと見なされます。アクティブなグラフがないときは、Nothing を返します。</td>
+  </tr>
+  <tr>
+    <td>ActivePane</td>
+    <td>ウィンドウ内のアクティブなペインを表す Pane オブジェクトを取得します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>ActiveSheet</td>
+    <td>作業中のブック、および指定されたウィンドウまたはブックのアクティブ シート (一番手前のシート) を表すオブジェクトを返します。アクティブ シートが存在しないときは Nothing を返します。</td>
+  </tr>
+  <tr>
+    <td>ActiveSheetView</td>
+    <td>指定されたウィンドウでのアクティブ シートの表示モードを表すオブジェクトを返します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Application</td>
+    <td>対象となるオブジェクトが指定されない場合は、Excel アプリケーション (Application オブジェクト) を返します。対象となるオブジェクトが指定された場合は、指定されたオブジェクトを作成した Application オブジェクトを返します。OLE オートメーションを使っていて、オブジェクトのアプリケーションにアクセスするときなどに、このプロパティを使います。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>AutoFilterDateGrouping</td>
+    <td>True に設定すると、データ グループのオート フィルターが指定されたウィンドウに表示されます。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>Caption</td>
+    <td>ドキュメント ウィンドウのタイトル バーに表示される名前を表すバリアント型 (Variant) の値を取得、または設定します。</td>
+  </tr>
+  <tr>
+    <td>Creator</td>
+    <td>現在のオブジェクトが作成されたアプリケーションを示す 32 ビットの整数を取得します。値の取得のみ可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayFormulas</strong></td>
+    <td>True の場合、ウィンドウは数式を表示します。False の場合、数値が表示されます。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayGridlines</strong></td>
+    <td>True の場合、枠線を表示します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayHeadings</strong></td>
+    <td>行と列の両方の見出しを表示する場合は True に設定し、見出しを表示しない場合は False に設定します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>DisplayHorizontalScrollBar</td>
+    <td>True の場合、水平スクロール バーを表示します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayOutline</strong></td>
+    <td>True の場合、アウトライン記号を表示します。値の取得および設定が可能です。ブール型 (Boolean ) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>DisplayRightToLeft</td>
+    <td>True の場合、指定されたウィンドウの表示が右から左の表示方向になります。False の場合、オブジェクトは左から右に表示されます。値の取得のみ可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>DisplayRuler</td>
+    <td>True に設定すると、指定したウィンドウにルーラーが表示されます。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>DisplayVerticalScrollBar</td>
+    <td>True の場合、垂直スクロール バーを表示します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>DisplayWhitespace</td>
+    <td>True に設定すると空白領域が表示されます。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>DisplayWorkbookTabs</td>
+    <td>True の場合、シート見出しを表示します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayZeros</strong></td>
+    <td>True の場合、ゼロ値を表示します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>EnableResize</td>
+    <td>True の場合、ウィンドウの大きさを変更できます。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>FreezePanes</td>
+    <td>True の場合、分割ウィンドウ枠を固定します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>GridlineColor</td>
+    <td>枠線の色を RGB 値で設定します。値の取得および設定が可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>GridlineColorIndex</td>
+    <td>枠線の色を、現在のカラー パレットのインデックス値または定数で設定します。値の取得および設定が可能です。XlColorIndex クラスの定数を使用します。</td>
+  </tr>
+  <tr>
+    <td>Height</td>
+    <td>ウィンドウの高さをポイント単位で表す倍精度浮動小数点型 (Double) の値を取得、または設定します。</td>
+  </tr>
+  <tr>
+    <td>Index</td>
+    <td>類似するオブジェクトのコレクション内でのオブジェクトのインデックス番号を表す長整数型 (Long) の値を返します。</td>
+  </tr>
+  <tr>
+    <td>Left</td>
+    <td>クライアント領域の左端から、ウィンドウの左端までの距離をポイント単位で表す倍精度浮動小数点型 (Double) の値を取得、または設定します。</td>
+  </tr>
+  <tr>
+    <td>OnWindow</td>
+    <td>ウィンドウがアクティブにされたときに実行するプロシージャの名前を設定します。値の取得および設定が可能です。文字列型 (String) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>Panes</td>
+    <td>指定されたウィンドウのすべてのペインを表す Panes コレクションを返します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Parent</td>
+    <td>指定されたオブジェクトの親オブジェクトを取得します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>RangeSelection</td>
+    <td>指定されたウィンドウのワークシートで選択されているセル範囲を表す Range オブジェクトを返します。このオブジェクトはワークシートで描画オブジェクトがアクティブになっていたり、選択されていたりしても返されます。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>ScrollColumn</td>
+    <td>ウィンドウ枠 (ペイン) 内またはウィンドウ内で左端に表示される列の番号を設定します。値の取得および設定が可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>ScrollRow</td>
+    <td>ウィンドウ枠 (ペイン) 内またはウィンドウ内で上端に表示される行の番号を設定します。値の取得および設定が可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>SelectedSheets</td>
+    <td>指定されたウィンドウで選択されているすべてのシートを表す Sheets コレクションを返します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Selection</td>
+    <td>Windows オブジェクトの指定されたウィンドウを返します。</td>
+  </tr>
+  <tr>
+    <td><strong>SheetViews</strong></td>
+    <td>指定されたウィンドウの SheetViews オブジェクトを取得します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Split</td>
+    <td>True の場合、ウィンドウを分割します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>SplitColumn</td>
+    <td>ウィンドウの左右分割位置を示す列数 (垂直分割線の左側にある列の数) を設定します。値の取得および設定が可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>SplitHorizontal</td>
+    <td>ウィンドウの左右分割位置をポイント?(ポイント: 印刷する文字のサイズ (高さ) を指定する基本単位。1 ポイントは、約 0.0353 cm (1/72 インチ) です。)単位で設定します。値の取得および設定が可能です。倍精度浮動小数点型 (Double) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>SplitRow</td>
+    <td>ウィンドウの上下分割位置を示す行数 (水平分割線の上側にある行の数) を設定します。値の取得および設定が可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>SplitVertical</td>
+    <td>ウィンドウの上下分割位置をポイント?(ポイント: 印刷する文字のサイズ (高さ) を指定する基本単位。1 ポイントは、約 0.0353 cm (1/72 インチ) です。)単位で設定します。値の取得および設定が可能です。倍精度浮動小数点型 (Double) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>TabRatio</td>
+    <td>ウィンドウのシート見出し領域と水平スクロール バーの幅の比率を設定します。使用できる比率の範囲は 0 ～ 1 で、既定値は 0.6 です。値の取得および設定が可能です。倍精度浮動小数点型 (Double) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>Top</td>
+    <td>ウィンドウの上端から使用可能領域 (メニュー、固定ツールバー、数式バーの下の領域) の上端までの距離を表す倍精度浮動小数点型 (Double) の値を設定します。値の取得および設定が可能です。</td>
+  </tr>
+  <tr>
+    <td>Type</td>
+    <td>ウィンドウの種類を表す XlWindowType クラスの定数を取得および設定します。</td>
+  </tr>
+  <tr>
+    <td>UsableHeight</td>
+    <td>アプリケーション ウィンドウ領域内で、ウィンドウが使うことのできる範囲の最大限の高さをポイント?(ポイント: 印刷する文字のサイズ (高さ) を指定する基本単位。1 ポイントは、約 0.0353 cm (1/72 インチ) です。)単位で返します。値の取得のみ可能です。倍精度浮動小数点型 (Double) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>UsableWidth</td>
+    <td>アプリケーション ウィンドウ領域内で、ウィンドウが使うことのできる範囲の最大限の幅をポイント?(ポイント: 印刷する文字のサイズ (高さ) を指定する基本単位。1 ポイントは、約 0.0353 cm (1/72 インチ) です。)単位で返します。値の取得のみ可能です。倍精度浮動小数点型 (Double) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>View</td>
+    <td>ウィンドウに表示するビューを設定します。値の取得および設定が可能です。XlWindowView クラスの定数を使用します。</td>
+  </tr>
+  <tr>
+    <td>Visible</td>
+    <td>オブジェクトを表示するかどうかを表すブール型 (Boolean) の値を設定します。値の取得および設定が可能です。</td>
+  </tr>
+  <tr>
+    <td>VisibleRange</td>
+    <td>ウィンドウ内またはウィンドウ枠 (ペイン) 内に表示されているセルの範囲を表す Range オブジェクトを取得します。一部しか表示されていない列や行も対象になります。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Width</td>
+    <td>ウィンドウの幅をポイント単位で表す倍精度浮動小数点型 (Double) の値を取得、または設定します。</td>
+  </tr>
+  <tr>
+    <td>WindowNumber</td>
+    <td>ウィンドウ番号を返します。たとえば、BOOK1.XLS:2 の場合、ウィンドウ名の後に続く 2 がウィンドウ番号になります。通常、最初に開かれるウィンドウ番号は 1 です。値の取得のみ可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>WindowState</td>
+    <td>ウィンドウの状態を設定します。値の取得および設定が可能です。XlWindowState クラスの定数を使用します。</td>
+  </tr>
+  <tr>
+    <td>Zoom</td>
+    <td>ウィンドウの表示サイズを、パーセント単位 (100 は通常の大きさの表示、200 は 2 倍の大きさの表示、など) で表すバリアント型 (Variant) の値を取得、または設定します。</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6991829975"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>アクティブシート以外の表示(Window)に関する設定</h3>
+<div class="main-indent">オブジェクトの階層構造を見ていきましょう。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Dim v1 As Window<br>
+      Set v1 = Windows(1)<br>
+      Dim v2 As SheetViews<br>
+      Set v2 = v1.SheetViews<br>
+      Dim v3 As WorksheetView<br>
+      Set v3 = v2.Item(1) <span style="color:#009900;">'1番目のシート</span></td>
+    </tr>
+  </tbody>
+</table></code></div>
+</div>
+<div class="main-indent">
+<div class="main-indent">Itemは省略可能です。<br>
+また、シート名でも指定できます。<br>
+上記であれば、<br>
+v2(1)<br>
+v2(&quot;シート名&quot;)<br><div class="br2"><br></div>
+</div>
+</div>
+<div class="main-indent">Windows(1)はウィンドウが1つならActiveWindowと同じになります。<br><div class="br2"><br></div>
+Windows(1)<br>
+　┗SheetViews<br>
+　　　┗WorksheetView ・・・ Itemで指定したシート<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<h4>SheetViews</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">指定したウィンドウのシートビュー オブジェクトを返します。<br>
+読み取り専用です。<br>
+<strong>SheetViewsのプロパティ</strong><br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>名前</td>
+  <td>説明</td>
+    </tr>
+  <tr>
+    <td>Application</td>
+    <td>オブジェクト修飾子を指定せずに使用した場合、Microsoft Excel アプリケーションを表すApplication オブジェクトを返します。<br>
+      オブジェクト修飾子を指定した場合、指定したオブジェクトを作成した Application オブジェクトを返します。<br>
+      値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Count</td>
+    <td>コレクションに含まれるオブジェクトの数を返します。値の取得のみ可能です。<br>
+      長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>Creator</td>
+    <td>現在のオブジェクトが作成されたアプリケーションを示す 32 ビットの整数を取得します。<br>
+      値の取得のみ可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>Item</td>
+    <td>ブックでのビューを表す SheetView オブジェクト（WorksheetView）を返します。<br>
+      値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Parent</td>
+    <td>指定されたオブジェクトの親オブジェクトを取得します。<br>
+      値の取得のみ可能です。</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent">
+<h4>WorksheetView</h4>
+</div>
+<div class="main-indent">
+<div class="main-indent">単一のワークシート ビューの動作を定義するオブジェクトです。<br>
+<strong>WorksheetViewのプロパティ</strong><br><div class="br2"><br></div>
+<div class="table-scroll"><table border="1" cellpadding="5">
+<tbody>
+  <tr>
+    <td>名前</td>
+    <td>説明</td>
+  </tr>
+  <tr>
+    <td>Application</td>
+    <td>オブジェクト修飾子を指定せずに使用した場合、Microsoft Excel アプリケーションを表す Application オブジェクトを返します。<br>
+      オブジェクト修飾子を指定した場合、指定したオブジェクトを作成した Application オブジェクトを返します。値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Creator</td>
+    <td>現在のオブジェクトが作成されたアプリケーションを示す 32 ビットの整数を取得します。<br>
+      値の取得のみ可能です。長整数型 (Long) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayFormulas</strong></td>
+    <td>現在のワークシート ビューで数式を表示するか非表示にするかを設定します。<br>
+      値の取得および設定が可能です。<br>
+      ブール型 (Boolean ) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayGridlines</strong></td>
+    <td>True の場合、枠線を表示します。<br>
+      値の取得および設定が可能です。<br>
+      ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayHeadings</strong></td>
+    <td>行と列の両方の見出しを表示する場合はTrueに設定し、見出しを表示しない場合はFalseに設定します。<br>
+      値の取得および設定が可能です。<br>
+      ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayOutline</strong></td>
+    <td>True の場合、アウトライン記号を表示します。<br>
+      値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td><strong>DisplayZeros</strong></td>
+    <td>True の場合、ゼロ値を表示します。<br>
+      値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。</td>
+  </tr>
+  <tr>
+    <td>Parent</td>
+    <td>指定されたオブジェクトの親オブジェクトを取得します。<br>
+      値の取得のみ可能です。</td>
+  </tr>
+  <tr>
+    <td>Sheet</td>
+    <td>指定された WorksheetView オブジェクトのシート名を返します。<br>
+      値の取得のみ可能です。</td>
+  </tr>
+</tbody>
+</table></div><br>
+</div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="7467492230"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>アクティブシート以外の表示(Window)を設定するVBA</h3>
+<div class="main-indent">上記の<strong>WorksheetView</strong>はアクティブシート以外も取得可能です。<br><div class="br2"><br></div>
+<img src="image3162.jpg" tppabs="https://excel-ubara.com/excelvba4/image3162.jpg" width="193" height="128" border="0" alt="VBA マクロ アクティブシート以外 Window"><br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>With Windows(1).SheetViews.Item(1)<br>
+      　　.DisplayFormulas = False<br>
+      　　.DisplayGridlines = False<br>
+      　　.DisplayHeadings = False<br>
+      　　.DisplayOutline = False<br>
+      　　.DisplayZeros = False<br>
+      End With</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+Windows(1)は、通常はActiveWindowで良いでしょう。<br>
+Windows(1)は、ウインドウが1つならActiveWindowと同じになります。<br>
+<br clear="none">
+.Item(1)としているので先頭シートになりますがItemは省略できます。<br>
+SheetViews(1)<br>
+また、シート名で指定できますので、<br>
+先頭シートが&quot;Sheet1&quot;であれば、以下のように書くことが出来ます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>ActiveWindow.SheetViews(&quot;Sheet1&quot;)</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+残念ながら、<strong>WorksheetView</strong>で設定できるものは、Windowオブジェクトのプロパティのごく一部に限られています。<br>
+ですが、シートをアクティブにすることなく設定できるのはとても便利です。<br>
+覚えておけば、場合によっては便利に使える場合もあると思います。<br><div class="br2"><br></div>
+</div>
+<div class="main-indent">
+<div class="ads1">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="5140526405"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div></div><h3>全ウィンドウの全シートのWorksheetViewを設定するVBA</h3>
+<div class="main-indent">全ウィンドウに対して設定することはあまり無いとは思いますが、VBAのサンプルとして掲載しておきます。<br><div class="br2"><br></div>
+<form>
+<input type="button" value="VBAをコピー" onclick="fncVbaCopy(this)">
+</form>
+<div class="table-scroll"><code class="vbacode"><table border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td>Sub sample()<br>
+　　Dim wd As Window<br>
+　　Dim sv As WorksheetView<br>
+　　For Each wd In Application.Windows<br>
+　　　　For Each sv In wd.SheetViews<br>
+　　　　　　With sv<br>
+　　　　　　　　.DisplayFormulas = False<br>
+　　　　　　　　.DisplayGridlines = False<br>
+　　　　　　　　.DisplayHeadings = False<br>
+　　　　　　End With<br>
+　　　　Next<br>
+　　Next<br>
+End Sub</td>
+    </tr>
+  </tbody>
+</table></code></div><br>
+</div>
+
+          
+<HR>
+<div class="ads1">
+<center>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama3 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="8239480723"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="6847508570"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</center>
+</div>
+          <section>
+<br><A name="same"><h3>同じテーマ「<a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a>」の記事</h3><p>
+<A href="EXCEL_VBA_432.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_432.html">VBAでWEBカメラ操作する</A><br>
+<A href="EXCEL_VBA_433.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_433.html">VBAで電光掲示板を作成</A><br>
+<A href="EXCEL_VBA_436.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_436.html">ユーザーに絶対に停止させたくない場合のVBA設定</A><br>
+<A href="EXCEL_VBA_437.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_437.html">列幅・行高をDPI取得しピクセルで指定する</A><br>
+<A href="EXCEL_VBA_438.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_438.html">VBAでWMIの使い方について</A><br>
+<span class="strrev">アクティブシート以外のWindowを設定できるWorksheetView</span><br>
+<A href="EXCEL_VBA_442.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_442.html">LSetとユーザー定義型のコピー（100桁の足し算）</A><br>
+<A href="EXCEL_VBA_443.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_443.html">省略可能なVariant引数の参照不可をラップ関数で利用</A><br>
+<A href="EXCEL_VBA_446.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_446.html">ブックのいろいろな開き方（GetObject,参照設定,アドイン）</A><br>
+<A href="EXCEL_VBA_447.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_447.html">入力規則への貼り付けを禁止する</A><br>
+<A href="EXCEL_VBA_448.html" tppabs="https://excel-ubara.com/excelvba4/EXCEL_VBA_448.html">「Excel 4.0 マクロ」の使い方</A><br></p>
+</A>
+          </section>
+          <section id="new">
+<br><h3><A name="new">新着記事<span class="newicon">NEW</span> </a>・・・<A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧を見る</A></h3><p><A href="../vba100/VBA100_100.html" tppabs="https://excel-ubara.com/vba100/VBA100_100.html">VBA100本ノック 100本目：WEBから100本ノックのリストを取得｜VBA練習問題</A>（3月3日）<br>
+<A href="../vba100/VBA100_099.html" tppabs="https://excel-ubara.com/vba100/VBA100_099.html">VBA100本ノック 99本目：自動席替え（行列と前後左右が全て違うように）｜VBA練習問題</A>（3月2日）<br>
+<A href="../vba100/VBA100_098.html" tppabs="https://excel-ubara.com/vba100/VBA100_098.html">VBA100本ノック 98本目：席替えルールが守られているか確認｜VBA練習問題</A>（3月1日）<br>
+<A href="../vba100/VBA100_097.html" tppabs="https://excel-ubara.com/vba100/VBA100_097.html">VBA100本ノック 97本目：Accessデータを取得（グループ集計）｜VBA練習問題</A>（2月27日）<br>
+<A href="../vba100/VBA100_096.html" tppabs="https://excel-ubara.com/vba100/VBA100_096.html">VBA100本ノック 96本目：Accessデータを取得（マスタ結合&amp;抽出）｜VBA練習問題</A>（2月26日）<br>
+<A href="../vba100/VBA100_095.html" tppabs="https://excel-ubara.com/vba100/VBA100_095.html">VBA100本ノック 95本目：図形のテキストを検索するフォーム作成｜VBA練習問題</A>（2月24日）<br>
+<A href="../vba100/VBA100_094.html" tppabs="https://excel-ubara.com/vba100/VBA100_094.html">VBA100本ノック 94本目：表範囲からHTMLのtableタグを作成｜VBA練習問題</A>（2月23日）<br>
+<A href="../vba100/VBA100_093.html" tppabs="https://excel-ubara.com/vba100/VBA100_093.html">VBA100本ノック 93本目：複数ブックを連結して再分割｜VBA練習問題</A>（2月22日）<br>
+<A href="../vba100/VBA100_092.html" tppabs="https://excel-ubara.com/vba100/VBA100_092.html">VBA100本ノック 92本目：セルの色を16進で返す関数｜VBA練習問題</A>（2月20日）<br>
+<A href="../vba100/VBA100_091.html" tppabs="https://excel-ubara.com/vba100/VBA100_091.html">VBA100本ノック 91本目：時間計算（残業時間の月間合計）｜VBA練習問題</A>（2月19日）<br></p>
+
+          </section>
+          <section id="rank">
+<br><h3><A name="rank">アクセスランキング </a>・・・ <A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">ランキング一覧を見る</A></h3><p>1.<A href="../excelvba1/EXCELVBA318.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA318.html">最終行の取得（End,Rows.Count）｜VBA入門</A><br>2.<A href="../excelvba1/EXCELVBA311.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA311.html">RangeとCellsの使い方｜VBA入門</A><br>3.<A href="../excelvba1/EXCELVBA312.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA312.html">変数宣言のDimとデータ型｜VBA入門</A><br>4.<A href="../excelvba1/EXCELVBA301.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA301.html">マクロって何？VBAって何？｜VBA入門</A><br>5.<A href="../excelvba1/EXCELVBA310.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA310.html">Range以外の指定方法（Cells,Rows,Columns）｜VBA入門</A><br>6.<A href="../excelvba1/EXCELVBA341.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA341.html">セルのコピー&amp;値の貼り付け（PasteSpecial）｜VBA入門</A><br>7.<A href="../excelvba1/EXCELVBA316.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA316.html">繰り返し処理（For Next)｜VBA入門</A><br>8.<A href="../excelvba1/EXCELVBA308.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA308.html">セルに文字を入れるとは（Range,Value）｜VBA入門</A><br>9.<A href="../excelvba1/EXCELVBA304.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA304.html">マクロはどこに書くの（VBEの起動）｜VBA入門</A><br>10.<A href="../excelvba1/EXCELVBA306.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA306.html">とにかく書いてみよう（Sub,End Sub）｜VBA入門</A><br></p>
+          </section>
+<br>
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>アクティブシート以外のWindowを設定できるWorksheetView</strong></span></li>
+</ul></div><br>
+          <strong>このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。</strong><br>
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+<br>
+          <script>
+            (function() {
+              var cx = 'partner-pub-6511020045004282:1071452572';
+              var gcse = document.createElement('script');
+              gcse.type = 'text/javascript';
+              gcse.async = true;
+              gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(gcse, s);
+            })();
+          </script>
+          <gcse:searchbox-only></gcse:searchbox-only>
+<br>
+          記述には細心の注意をしたつもりですが、<br>
+          間違いやご指摘がありましたら、<A href="../query.html" tppabs="https://excel-ubara.com/query.html" target="_blank">「お問い合わせ」</A>からお知らせいただけると幸いです。<br>
+          掲載のVBAコードは動作を保証するものではなく、あくまでVBA学習のサンプルとして掲載しています。<br>
+          掲載のVBAコードは自己責任でご使用ください。万一データ破損等の損害が発生しても責任は負いません。
+        </section>
+      </div> <!--/#main-->
+
+      <div id="sub">
+        <nav>
+          <h2>エクセル全般</h2>
+          <ul class="submenu">
+            <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+            <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+            <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+            <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+            <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+            <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+          </ul>
+          <h2>マクロVBA入門編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+            <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+            <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+            <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+            <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+            <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+            <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+          </ul>
+          <h2>マクロVBA応用編</h2>
+          <ul class="submenu">
+            <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+            <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+            <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+            <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+            <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+            <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+          </ul>
+          <h2>その他（Excel以外）</h2>
+          <ul class="submenu">
+            <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">SQL入門</a></li>
+            <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">スプレッドシート入門</A></li>
+            <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">GAS入門</A></li>
+            <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">Python入門</A></li>
+          </ul>
+          <h2>サイト案内</h2>
+          <ul class="submenu">
+            <li><A href="../EXCELNEW.html" tppabs="https://excel-ubara.com/EXCELNEW.html">新着記事一覧</A></li>
+            <li><A href="../EXCELRANK.html" tppabs="https://excel-ubara.com/EXCELRANK.html">アクセスランキング</A></li>
+            <li><A href="../sitemap.html" tppabs="https://excel-ubara.com/sitemap.html">サイトマップ</A></li>
+            <li><a href="../business/index.htm" tppabs="https://excel-ubara.com/business/">事業案内</a></li>
+            <li><A href="../query.html" tppabs="https://excel-ubara.com/query.html">お問い合わせ&nbsp&nbsp</A></li>
+          </ul>
+        </nav>
+
+        <section>
+          
+<HR>
+<div class="ads1">
+<CENTER>
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- yama22 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="9686142173"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</CENTER>
+</div>
+          
+
+          
+
+          <HR>
+          <div><ul>
+<li><a href="../index.htm" tppabs="https://excel-ubara.com/">ホーム</a></li>
+<li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">マクロVBA応用編</a></li>
+<li><a href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</a></li>
+<li><span class="strrev2"><strong>アクティブシート以外のWindowを設定できるWorksheetView</strong></span></li>
+</ul></div><br>
+          このサイトがお役に立ちましたら「シェア」「Bookmark」をお願いいたします。<br>
+
+          <div class="ninja_onebutton">
+            <script type="text/javascript">
+              //<![CDATA[
+              (function(d){
+              if(typeof(window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2)=='undefined'){
+                  document.write("<sc"+"ript type='text\/javascript' src='\/\/omt.shinobi.jp\/b\/dbb4ddbe09aac6bed0b2564afb27c6f2'><\/sc"+"ript>");
+              }else{
+                  window.NINJA_CO_JP_ONETAG_BUTTON_dbb4ddbe09aac6bed0b2564afb27c6f2.ONETAGButton_Load();}
+              })(document);
+              //]]>
+            </script><span class="ninja_onebutton_hidden" style="display:none;"></span><span style="display:none;" class="ninja_onebutton_hidden"></span>
+          </div>
+          本文下部へ<br>
+          <div class="main-indent">
+            <strong><A href="#same">同じテーマの記事</A></strong><br>
+            <strong><A href="#new">新着記事</A></strong><br>
+            <strong><A href="#rank">アクセスランク</A></strong><br>
+          </div>
+          <div class="ads2">
+            <script>
+              (function() {
+                var cx = 'partner-pub-6511020045004282:1071452572';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only></gcse:searchbox-only>
+          </div>
+<br><nav><h2>おすすめ関連記事</h2><ul class="submenu"><li><a href="../excelvba1/EXCELVBA354.html" tppabs="https://excel-ubara.com/excelvba1/EXCELVBA354.html" target="_blank">Windowsオブジェクト｜VBA入門</a></li></ul></nav>
+          
+
+          
+<HR>
+<div class="ads2">
+<script async src="../../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 新サイド下 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6511020045004282"
+     data-ad-slot="1968934163"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div><br>
+        </section>
+      </div> <!--/#sub-->
+    </div> <!--/#contents-in-->
+  </div> <!--/#contents-->
+
+  <footer>
+    <div id="footermenu" class="inner">
+      <ul>
+        <li><a href="../excel_index.html" tppabs="https://excel-ubara.com/excel_index.html">■Excel全般</a></li>
+        <li><A href="../excel1/index.htm" tppabs="https://excel-ubara.com/excel1/">エクセル入門</A></li>
+        <li><A href="../excel2/index.htm" tppabs="https://excel-ubara.com/excel2/">エクセル基本操作</A></li>
+        <li><A href="../excel3/index.htm" tppabs="https://excel-ubara.com/excel3/">エクセル関数応用</A></li>
+        <li><A href="../excel4/index.htm" tppabs="https://excel-ubara.com/excel4/">エクセル挑戦問題</A></li>
+        <li><A href="../EXCEL/excel_reference.html" tppabs="https://excel-ubara.com/EXCEL/excel_reference.html">Excelリファレンス</A></li>
+        <li><A href="../excel5/index.htm" tppabs="https://excel-ubara.com/excel5/">エクセル雑感</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba1.html" tppabs="https://excel-ubara.com/excel_vba1.html">■マクロVBA入門編</a></li>
+        <li><A href="../excelvba1/index.htm" tppabs="https://excel-ubara.com/excelvba1/">マクロVBA入門</A></li>
+        <li><A href="../excelvba1r/index.htm" tppabs="https://excel-ubara.com/excelvba1r/">マクロVBA再入門</A></li>
+        <li><A href="../excelvba2/index.htm" tppabs="https://excel-ubara.com/excelvba2/">マクロ記録でVBA</A></li>
+        <li><A href="../excelvba9/index.htm" tppabs="https://excel-ubara.com/excelvba9/">マクロVBA練習問題</A></li>
+        <li><A href="../MOS_VBA/index.htm" tppabs="https://excel-ubara.com/MOS_VBA/">VBAエキスパート対策</A></li>
+        <li><A href="../excelvba8/index.htm" tppabs="https://excel-ubara.com/excelvba8/">マクロVBA関数</A></li>
+        <li><A href="../vba100/index.htm" tppabs="https://excel-ubara.com/vba100/">VBA100本ノック</A></li>
+      </ul>
+      <ul>
+        <li><a href="../excel_vba2.html" tppabs="https://excel-ubara.com/excel_vba2.html">■マクロVBA応用編</a></li>
+        <li><A href="../excelvba3/index.htm" tppabs="https://excel-ubara.com/excelvba3/">ユーザーフォーム入門</A></li>
+        <li><A href="../vba_class/index.htm" tppabs="https://excel-ubara.com/vba_class/">VBAクラス入門</A></li>
+        <li><A href="../excelvba5/index.htm" tppabs="https://excel-ubara.com/excelvba5/">マクロVBAサンプル集</A></li>
+        <li><A href="index.htm" tppabs="https://excel-ubara.com/excelvba4/">マクロVBA技術解説</A></li>
+        <li><A href="../excelvba7/index.htm" tppabs="https://excel-ubara.com/excelvba7/">エクセル顧客管理</A></li>
+        <li><A href="../EXCEL/vba_reference.html" tppabs="https://excel-ubara.com/EXCEL/vba_reference.html">VBAリファレンス</A></li>
+      </ul>
+      <ul>
+        <li><A href="../python/index.htm" tppabs="https://excel-ubara.com/python/">■Python入門</A></li>
+        <li><a href="../vba_sql/index.htm" tppabs="https://excel-ubara.com/vba_sql/">■SQL入門</a></li>
+        <li><A href="../spreadsheet1/index.htm" tppabs="https://excel-ubara.com/spreadsheet1/">■スプレッドシート入門</A></li>
+        <li><A href="../apps_script1/index.htm" tppabs="https://excel-ubara.com/apps_script1/">■Google Apps Script入門</A></li>
+        <li><A href="../excel_course/index.htm" tppabs="https://excel-ubara.com/excel_course/">■エクセル講座セミナー</A></li>
+        <li><A href="../business/index.htm" tppabs="https://excel-ubara.com/business/">■事業案内</A></li>
+        <li><A href="../business/sitemap.html" tppabs="https://excel-ubara.com/business/sitemap.html">■サイトマップ</A></li>
+      </ul>
+    </div> <!--/footermenu-->
+    <div id="copyright">
+      <small>エクセルの神髄 ｜ Copyright&copy; 2010 <A href="../index.htm" tppabs="https://excel-ubara.com/">鵜原パソコンソフト研究所</A></small>
+    </div>
+  </footer>
+
+  <p class="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37178461-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+<!--License20150309TPg-->
+</body>
+</html>
