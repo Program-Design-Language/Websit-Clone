@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<!--[if IE 7]>
+<html class="ie ie7 no-js" lang="zh-CN">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8 no-js" lang="zh-CN">
+<![endif]-->
+<!--[if !(IE 7) | !(IE 8)  ]><!-->
+<html class="no-js" lang="zh-CN">
+<!--<![endif]-->
+	<head>
+		<meta charset=UTF-8"UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+        		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="profile"  href="https://gmpg.org/xfn/11" />
+		<link rel="pingback" href="https://www.pstips.net/xmlrpc.php" />
+		<!-- html5shiv for IE8 and less  -->
+		<!--[if lt IE 9]>
+			<script src="wp-content/themes/customizr/assets/front/js/libs/html5.js" tppabs="https://www.pstips.net/wp-content/themes/customizr/assets/front/js/libs/html5.js"></script>
+		<![endif]-->
+		<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<title>Powershell使用管道 &#8211; PowerShell 中文博客</title>
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="PowerShell 中文博客 &raquo; Feed" href="https://www.pstips.net/feed" />
+<link rel="alternate" type="application/rss+xml" title="PowerShell 中文博客 &raquo; 评论Feed" href="https://www.pstips.net/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="PowerShell 中文博客 &raquo; Powershell使用管道评论Feed" href="https://www.pstips.net/using-the-powershell-pipeline.html/feed" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/www.pstips.net\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.3.6"}};
+			!function(e,a,t){var r,n,o,i,p=a.createElement("canvas"),s=p.getContext&&p.getContext("2d");function c(e,t){var a=String.fromCharCode;s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,e),0,0);var r=p.toDataURL();return s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,t),0,0),r===p.toDataURL()}function l(e){if(!s||!s.fillText)return!1;switch(s.textBaseline="top",s.font="600 32px Arial",e){case"flag":return!c([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])&&(!c([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!c([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]));case"emoji":return!c([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340])}return!1}function d(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(i=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},o=0;o<i.length;o++)t.supports[i[o]]=l(i[o]),t.supports.everything=t.supports.everything&&t.supports[i[o]],"flag"!==i[o]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[i[o]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(r=t.source||{}).concatemoji?d(r.concatemoji):r.wpemoji&&r.twemoji&&(d(r.twemoji),d(r.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='tc-gfonts-css'  href="../fonts.googleapis.com/css-family=Squada+One-400-Allerta.css" tppabs="https://fonts.googleapis.com/css?family=Squada+One:400%7CAllerta" type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-library-css'  href="wp-includes/css/dist/block-library/style.min.css-ver=5.3.6.css" tppabs="https://www.pstips.net/wp-includes/css/dist/block-library/style.min.css?ver=5.3.6" type='text/css' media='all' />
+<link rel='stylesheet' id='cwp-style-css'  href="wp-content/plugins/comments-widget-plus/assets/css/cwp.css-ver=5.3.6.css" tppabs="https://www.pstips.net/wp-content/plugins/comments-widget-plus/assets/css/cwp.css?ver=5.3.6" type='text/css' media='all' />
+<link rel='stylesheet' id='dwqa-style-css'  href="wp-content/plugins/dw-question-answer/templates/assets/css/style.css-ver=180720161357.css" tppabs="https://www.pstips.net/wp-content/plugins/dw-question-answer/templates/assets/css/style.css?ver=180720161357" type='text/css' media='all' />
+<link rel='stylesheet' id='dwqa-rtl-css'  href="wp-content/plugins/dw-question-answer/templates/assets/css/rtl.css-ver=180720161357.css" tppabs="https://www.pstips.net/wp-content/plugins/dw-question-answer/templates/assets/css/rtl.css?ver=180720161357" type='text/css' media='all' />
+<link rel='stylesheet' id='ez-icomoon-css'  href="wp-content/plugins/easy-table-of-contents/vendor/icomoon/style.min.css-ver=2.0.11.css" tppabs="https://www.pstips.net/wp-content/plugins/easy-table-of-contents/vendor/icomoon/style.min.css?ver=2.0.11" type='text/css' media='all' />
+<link rel='stylesheet' id='ez-toc-css'  href="wp-content/plugins/easy-table-of-contents/assets/css/screen.min.css-ver=2.0.11.css" tppabs="https://www.pstips.net/wp-content/plugins/easy-table-of-contents/assets/css/screen.min.css?ver=2.0.11" type='text/css' media='all' />
+<style id='ez-toc-inline-css' type='text/css'>
+div#ez-toc-container p.ez-toc-title {font-size: 120%;}div#ez-toc-container p.ez-toc-title {font-weight: 500;}div#ez-toc-container ul li {font-size: 100%;}div#ez-toc-container {background: #fafafa;border: 1px solid #ddd;}div#ez-toc-container p.ez-toc-title {color: #5a5a5a;}div#ez-toc-container ul.ez-toc-list a {color: #0088cc;}div#ez-toc-container ul.ez-toc-list a:hover {color: #0088cc;}div#ez-toc-container ul.ez-toc-list a:visited {color: #0088cc;}
+</style>
+<link rel='stylesheet' id='customizr-fa-css'  href="wp-content/themes/customizr/assets/shared/fonts/fa/css/fontawesome-all.min.css-ver=4.4.0.css" tppabs="https://www.pstips.net/wp-content/themes/customizr/assets/shared/fonts/fa/css/fontawesome-all.min.css?ver=4.4.0" type='text/css' media='all' />
+<link rel='stylesheet' id='customizr-common-css'  href="wp-content/themes/customizr/inc/assets/css/tc_common.min.css-ver=4.4.0.css" tppabs="https://www.pstips.net/wp-content/themes/customizr/inc/assets/css/tc_common.min.css?ver=4.4.0" type='text/css' media='all' />
+<link rel='stylesheet' id='customizr-skin-css'  href="wp-content/themes/customizr/inc/assets/css/blue.min.css-ver=4.4.0.css" tppabs="https://www.pstips.net/wp-content/themes/customizr/inc/assets/css/blue.min.css?ver=4.4.0" type='text/css' media='all' />
+<style id='customizr-skin-inline-css' type='text/css'>
+
+                  .site-title,.site-description,h1,h2,h3,.tc-dropcap {
+                    font-family : 'Squada One';
+                    font-weight : 400;
+                  }
+
+                  body,.navbar .nav>li>a {
+                    font-family : 'Allerta';
+                    font-weight : inherit;
+                  }
+
+            body,.navbar .nav>li>a {
+              font-size : 16px;
+              line-height : 1.6em;
+            }
+table { border-collapse: separate; }
+                           body table { border-collapse: collapse; }
+                          
+.social-links .social-icon:before { content: none } 
+.sticky-enabled .tc-shrink-on .site-logo img {
+    					height:30px!important;width:auto!important
+    				}
+
+    				.sticky-enabled .tc-shrink-on .brand .site-title {
+    					font-size:0.6em;opacity:0.8;line-height:1.2em
+    				}
+
+          .comments-link .tc-comment-bubble {
+            color: #dd3333;
+            border: 2px solid #dd3333;
+          }
+          .comments-link .tc-comment-bubble:before {
+            border-color: #dd3333;
+          }
+        
+.tc-single-post-thumbnail-wrapper .tc-rectangular-thumb {
+          max-height: 250px;
+          height :250px
+        }
+
+        .tc-center-images .tc-single-post-thumbnail-wrapper .tc-rectangular-thumb img {
+          opacity : 0;
+          -webkit-transition: opacity .5s ease-in-out;
+          -moz-transition: opacity .5s ease-in-out;
+          -ms-transition: opacity .5s ease-in-out;
+          -o-transition: opacity .5s ease-in-out;
+          transition: opacity .5s ease-in-out;
+        }
+
+@media (max-width: 480px ){
+.tc-single-post-thumbnail-wrapper .tc-rectangular-thumb {
+            max-height: 200px;
+            height :200px
+          }
+}
+
+.tc-slider-loader-wrapper{ display:none }
+html.js .tc-slider-loader-wrapper { display: block }.no-csstransforms3d .tc-slider-loader-wrapper .tc-img-gif-loader {
+                                                background: url("wp-content/themes/customizr/assets/front/img/slider-loader.gif")/*tpa=https://www.pstips.net/wp-content/themes/customizr/assets/front/img/slider-loader.gif*/ no-repeat center center;
+                                         }.tc-slider-loader-wrapper .tc-css-loader > div { border-color:#08c; }
+</style>
+<link rel='stylesheet' id='customizr-style-css'  href="wp-content/themes/my-customizr/style.css-ver=4.4.0.css" tppabs="https://www.pstips.net/wp-content/themes/my-customizr/style.css?ver=4.4.0" type='text/css' media='all' />
+<link rel='stylesheet' id='fancyboxcss-css'  href="wp-content/themes/customizr/assets/front/js/libs/fancybox/jquery.fancybox-1.3.4.min.css-ver=5.3.6.css" tppabs="https://www.pstips.net/wp-content/themes/customizr/assets/front/js/libs/fancybox/jquery.fancybox-1.3.4.min.css?ver=5.3.6" type='text/css' media='all' />
+<link rel='stylesheet' id='open-social-style-css'  href="wp-content/plugins/open-social/res/main.css-ver=5.3.6.css" tppabs="https://www.pstips.net/wp-content/plugins/open-social/res/main.css?ver=5.3.6" type='text/css' media='all' />
+<script type='text/javascript' src="wp-includes/js/jquery/jquery.js-ver=1.12.4-wp" tppabs="https://www.pstips.net/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp"></script>
+<script type='text/javascript' src="wp-includes/js/jquery/jquery-migrate.min.js-ver=1.4.1" tppabs="https://www.pstips.net/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type='text/javascript' src="wp-content/themes/customizr/assets/front/js/libs/fancybox/jquery.fancybox-1.3.4.min.js-ver=4.4.0" tppabs="https://www.pstips.net/wp-content/themes/customizr/assets/front/js/libs/fancybox/jquery.fancybox-1.3.4.min.js?ver=4.4.0"></script>
+<script type='text/javascript' src="wp-includes/js/underscore.min.js-ver=1.8.3" tppabs="https://www.pstips.net/wp-includes/js/underscore.min.js?ver=1.8.3"></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var TCParams = {"_disabled":[],"FancyBoxState":"1","FancyBoxAutoscale":"1","SliderName":"","SliderDelay":"","SliderHover":"1","centerSliderImg":"1","SmoothScroll":{"Enabled":true,"Options":{"touchpadSupport":false}},"anchorSmoothScroll":"easeOutExpo","anchorSmoothScrollExclude":{"simple":["[class*=edd]",".tc-carousel-control",".carousel-control","[data-toggle=\"modal\"]","[data-toggle=\"dropdown\"]","[data-toggle=\"tooltip\"]","[data-toggle=\"popover\"]","[data-toggle=\"collapse\"]","[data-toggle=\"tab\"]","[data-toggle=\"pill\"]","[class*=upme]","[class*=um-]"],"deep":{"classes":[],"ids":[]}},"ReorderBlocks":"1","centerAllImg":"1","HasComments":"1","LeftSidebarClass":".span3.left.tc-sidebar","RightSidebarClass":".span3.right.tc-sidebar","LoadModernizr":"1","stickyCustomOffset":{"_initial":0,"_scrolling":0,"options":{"_static":true,"_element":""}},"stickyHeader":"","dropdowntoViewport":"","timerOnScrollAllBrowsers":"1","extLinksStyle":"1","extLinksTargetExt":"1","extLinksSkipSelectors":{"classes":["btn","button"],"ids":[]},"dropcapEnabled":"","dropcapWhere":{"post":"1","page":""},"dropcapMinWords":"30","dropcapSkipSelectors":{"tags":["IMG","IFRAME","H1","H2","H3","H4","H5","H6","BLOCKQUOTE","UL","OL"],"classes":["btn","tc-placeholder-wrap"],"id":[]},"imgSmartLoadEnabled":"1","imgSmartLoadOpts":{"parentSelectors":[".article-container",".__before_main_wrapper",".widget-front"],"opts":{"excludeImg":[".tc-holder-img"]}},"imgSmartLoadsForSliders":"","goldenRatio":"https://www.pstips.net/1.618","gridGoldenRatioLimit":"350","isSecondMenuEnabled":"","secondMenuRespSet":"in-sn-before","isParallaxOn":"1","parallaxRatio":"https://www.pstips.net/0.55","pluginCompats":[],"adminAjaxUrl":"https:\/\/www.pstips.net\/wp-admin\/admin-ajax.php","ajaxUrl":"https:\/\/www.pstips.net\/?czrajax=1","frontNonce":{"id":"CZRFrontNonce","handle":"bf0a14bc83"},"isDevMode":"","isModernStyle":"","i18n":{"Permanently dismiss":"\u6c38\u4e45\u5ffd\u7565\u6b64\u63d0\u793a"},"version":"4.4.0","frontNotifications":{"styleSwitcher":{"enabled":false,"content":"","dismissAction":"dismiss_style_switcher_note_front","ajaxUrl":"https:\/\/www.pstips.net\/wp-admin\/admin-ajax.php"}}};
+/* ]]> */
+</script>
+<script type='text/javascript' src="wp-content/themes/customizr/inc/assets/js/tc-scripts.min.js-ver=4.4.0" tppabs="https://www.pstips.net/wp-content/themes/customizr/inc/assets/js/tc-scripts.min.js?ver=4.4.0"></script>
+<script type='text/javascript' src="wp-content/plugins/open-social/res/jquery.qrcode.min.js-ver=5.3.6" tppabs="https://www.pstips.net/wp-content/plugins/open-social/res/jquery.qrcode.min.js?ver=5.3.6"></script>
+<link rel='https://api.w.org/' href='https://www.pstips.net/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.pstips.net/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.pstips.net/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Powershell复制数组' href='https://www.pstips.net/powershell-copying-arrays.html' />
+<link rel='next' title='Powershell对象转换成文本' href='https://www.pstips.net/powershell-converting-objects-into-text.html' />
+<meta name="generator" content="WordPress 5.3.6" />
+<link rel="canonical" href="https://www.pstips.net/using-the-powershell-pipeline.html" />
+<link rel='shortlink' href='https://www.pstips.net/?p=37' />
+<link rel="alternate" type="application/json+oembed" href="https://www.pstips.net/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.pstips.net%2Fusing-the-powershell-pipeline.html" />
+<link rel="alternate" type="text/xml+oembed" href="https://www.pstips.net/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.pstips.net%2Fusing-the-powershell-pipeline.html&#038;format=xml" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "../hm.baidu.com/hm.js-b690a30a7e1bc2fa3f1308c692207866"/*tpa=https://hm.baidu.com/hm.js?b690a30a7e1bc2fa3f1308c692207866*/;
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','../www.google-analytics.com/analytics.js'/*tpa=https://www.google-analytics.com/analytics.js*/,'ga');
+  ga('create', 'UA-34859107-1', 'auto');
+  ga('send', 'pageview');
+</script>
+				<style type="text/css">.cwp-li {overflow: hidden;}.cwp-avatar {float: left;margin-top: .2em;margin-right: 1em;}.cwp-avatar.rounded .avatar{border-radius:50%;}.cwp-avatar.square .avatar{border-radius:0;}.cwp-comment-excerpt {display: block;color:#787878;}</style>
+			</head>
+	
+	<body class="post-template-default single single-post postid-37 single-format-standard wp-embed-responsive tc-fade-hover-links tc-r-sidebar tc-center-images skin-blue customizr-4-4-0-with-child-theme tc-no-sticky-header sticky-disabled tc-regular-menu" >
+            <a class="screen-reader-text skip-link" href="#content">Skip to content</a>
+        
+    <div id="tc-page-wrap" class="">
+
+  		
+  	   	<header class="tc-header clearfix row-fluid tc-tagline-on tc-title-logo-on  tc-shrink-on tc-menu-on logo-left tc-second-menu-in-sn-before-when-mobile">
+  			
+        <div class="brand span3 pull-left">
+        <a class="site-logo" href="index.htm" tppabs="https://www.pstips.net/" aria-label="PowerShell 中文博客 | 收集和分享 Windows PowerShell 相关教程,技术和最新动态"><img src="wp-content/uploads/2013/11/PSTips-Logo.png" tppabs="https://www.pstips.net/wp-content/uploads/2013/11/PSTips-Logo.png" alt="首页"   style="max-width:250px;max-height:100px"  class=" "/></a>        </div> <!-- brand span3 -->
+
+        <div class="container outside"><h2 class="site-description">收集和分享 Windows PowerShell 相关教程,技术和最新动态</h2></div>      	<div class="navbar-wrapper clearfix span9 tc-submenu-fade tc-submenu-move tc-open-on-hover pull-menu-right">
+        	<div class="navbar resp">
+          		<div class="navbar-inner" role="navigation">
+            		<div class="row-fluid">
+              		<div class="social-block span5"><div class="social-links"><a rel="nofollow noopener noreferrer" class="social-icon icon-feed"  title="订阅我的 RSS" aria-label="订阅我的 RSS" href="javascript:if(confirm('https://www.pstips.net/feed/rss  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/feed/rss'" tppabs="http://www.pstips.net/feed/rss"  target="_blank" ><i class="fas fa-rss"></i></a><a rel="nofollow noopener noreferrer" class="social-icon icon-mail"  title="电子邮件" aria-label="电子邮件" href="mailto:mosser@live.cn"  target="_blank" ><i class="fas fa-envelope"></i></a><a rel="nofollow noopener noreferrer" class="social-icon icon-facebook"  title="在Facebook上关注我" aria-label="在Facebook上关注我" href="javascript:if(confirm('https://www.facebook.com/mosser.le  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.facebook.com/mosser.le'" tppabs="https://www.facebook.com/mosser.le"  target="_blank" ><i class="fab fa-facebook"></i></a><a rel="nofollow noopener noreferrer" class="social-icon icon-github"  title="在Github上关注我" aria-label="在Github上关注我" href="javascript:if(confirm('https://github.com/mosserlee/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://github.com/mosserlee/'" tppabs="https://github.com/mosserlee/"  target="_blank" ><i class="fab fa-github"></i></a></div></div><h2 class="span7 inside site-description">收集和分享 Windows PowerShell 相关教程,技术和最新动态</h2><div class="nav-collapse collapse tc-hover-menu-wrapper"><div class="menu-first-menue-container"><ul id="menu-first-menue-2" class="nav tc-hover-menu"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-has-children dropdown menu-item-2628"><a href="index.htm#" tppabs="http://www.pstips.net/#">PowerShell资源 <strong class="caret"></strong></a>
+<ul class="dropdown-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-438"><a href="powershell-online-tutorials.htm" tppabs="https://www.pstips.net/powershell-online-tutorials">PowerShell 在线教程</a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3488"><a href="cat/powershell-视频教程.htm" tppabs="https://www.pstips.net/cat/powershell-%e8%a7%86%e9%a2%91%e6%95%99%e7%a8%8b">PowerShell 视频教程</a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-444"><a href="cat/powershell/powershell-team-blog.htm" tppabs="https://www.pstips.net/cat/powershell/powershell-team-blog">PowerShell团队博客</a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-450"><a href="cat/powershell/powershell-news.htm" tppabs="https://www.pstips.net/cat/powershell/powershell-news">PowerShell 资讯</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2013"><a href="toolbox.html" tppabs="https://www.pstips.net/toolbox.html">开发工具</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children dropdown menu-item-2629"><a href="dwqa-questions.htm" tppabs="https://www.pstips.net/dwqa-questions">PowerShell交流中心 <strong class="caret"></strong></a>
+<ul class="dropdown-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2630"><a href="dwqa-ask-question.htm" tppabs="https://www.pstips.net/dwqa-ask-question">PowerShell在线提问</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7548"><a href="dwqa-questions.htm" tppabs="https://www.pstips.net/dwqa-questions">PowerShell交流中心</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children dropdown menu-item-437"><a href="cat/ebook.htm" tppabs="https://www.pstips.net/cat/ebook">PowerShell 电子书 <strong class="caret"></strong></a>
+<ul class="dropdown-menu">
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-449"><a href="cat/ebook/cn.htm" tppabs="https://www.pstips.net/cat/ebook/cn">中文电子书</a></li>
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-439"><a href="cat/ebook/en.htm" tppabs="https://www.pstips.net/cat/ebook/en">英文电子书</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown menu-item-468"><a href="javascript:if(confirm('https://www.pstips.net/site-online-announce  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/site-online-announce'" tppabs="https://www.pstips.net/site-online-announce.html">关于本站 <strong class="caret"></strong></a>
+<ul class="dropdown-menu">
+	<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-4901"><a href="cat/站内公告.htm" tppabs="https://www.pstips.net/cat/%e7%ab%99%e5%86%85%e5%85%ac%e5%91%8a">站内公告</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown menu-item-719"><a href="javascript:if(confirm('https://www.pstips.net/wp-login.php?redirect_to=https%3A%2F%2Fwww.pstips.net%2Fwp-admin%2Fprofile.php&reauth=1  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/wp-login.php?redirect_to=https%3A%2F%2Fwww.pstips.net%2Fwp-admin%2Fprofile.php&reauth=1'" tppabs="https://www.pstips.net/wp-admin/profile.php">用户中心 <strong class="caret"></strong></a>
+<ul class="dropdown-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3301"><a href="insert-code.htm" tppabs="https://www.pstips.net/insert-code">在博客上贴PowerShell代码</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-post menu-item-5377"><a href="resolve-the-invalid-key-issue-when-reret-password.html" tppabs="https://www.pstips.net/resolve-the-invalid-key-issue-when-reret-password.html">解决QQ邮箱重置密码链接无效的问题</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-720"><a href="wp-login.php.htm" tppabs="https://www.pstips.net/wp-login.php">登陆</a></li>
+</ul></div></div><div class="btn-toggle-nav pull-right"><button type="button" class="btn menu-btn" data-toggle="collapse" data-target=".nav-collapse" title="展开菜单" aria-label="展开菜单"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span> </button><span class="menu-label">主菜单</span></div>          			</div><!-- /.row-fluid -->
+          		</div><!-- /.navbar-inner -->
+        	</div><!-- /.navbar resp -->
+      	</div><!-- /.navbar-wrapper -->
+    	  		</header>
+  		<div id="main-wrapper" class="container">
+
+    <div class="tc-hot-crumble container" role="navigation"><div class="row"><div class="span12"><div class="breadcrumb-trail breadcrumbs"><span class="trail-begin"><a href="index.htm" tppabs="https://www.pstips.net/" title="PowerShell 中文博客" rel="home" class="trail-begin">首页</a></span> <span class="sep">&raquo;</span> <a href="javascript:if(confirm('https://www.pstips.net/cat/powershell  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/cat/powershell'" tppabs="https://www.pstips.net/cat/powershell" title="Powershell">Powershell</a> <span class="sep">&raquo;</span> <span class="trail-end">Powershell使用管道</span></div></div></div></div>
+    <div class="container" role="main">
+        <div class="row column-content-wrapper">
+
+            
+                <div id="content" class="span9 article-container tc-gallery-style">
+
+                    
+                        
+                                                                                    
+                                                                    <article id="post-37" class="row-fluid post-37 post type-post status-publish format-standard category-powershell tag-13 czr-hentry">
+                                                <header class="entry-header">
+          <h1 class="entry-title format-icon">Powershell使用管道 <span class="comments-link"><a href="#tc-comment-title" title="3 评论开启 Powershell使用管道" data-disqus-identifier="javascript:this.page.identifier"><span class="tc-comment-bubble default-bubble">3 </span></a></span></h1><div class="entry-meta"><a href="javascript:if(confirm('https://www.pstips.net/2011/12/14  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/2011/12/14'" tppabs="https://www.pstips.net/2011/12/14" title="下午 8:41" rel="bookmark"><time class="entry-date updated" datetime="14 12月, 2011">2011年12月14日</time></a> &nbsp;在 <a class="" href="javascript:if(confirm('https://www.pstips.net/cat/powershell  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/cat/powershell'" tppabs="https://www.pstips.net/cat/powershell" title="参看所有文章 Powershell"> Powershell </a>&nbsp;标签 <a class="" href="javascript:if(confirm('https://www.pstips.net/tag/%e7%ae%a1%e9%81%93  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/tag/%e7%ae%a1%e9%81%93'" tppabs="https://www.pstips.net/tag/%e7%ae%a1%e9%81%93" title="参看所有文章 管道"> 管道 </a> <span class="by-author"> 来自 <span class="author vcard author_name"><a class="url fn n" href="javascript:if(confirm('https://www.pstips.net/author/mosser  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/author/mosser'" tppabs="https://www.pstips.net/author/mosser" title="参看所有文章 Mooser Lee" rel="author">Mooser Lee</a></span></span> </div><hr class="featurette-divider __before_content">        </header>
+                  <section class="entry-content ">
+              <div id="ez-toc-container" class="ez-toc-v2_0_11 counter-hierarchy counter-numeric">
+<div class="ez-toc-title-container">
+<p class="ez-toc-title">本文目录</p>
+<span class="ez-toc-title-toggle"><a class="ez-toc-pull-right ez-toc-btn ez-toc-btn-xs ez-toc-btn-default ez-toc-toggle"><i class="ez-toc-glyphicon ez-toc-icon-toggle"></i></a></span></div>
+<nav><ul class="ez-toc-list ez-toc-list-level-1"><li class="ez-toc-page-1 ez-toc-heading-level-4"><a class="ez-toc-link ez-toc-heading-1" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%AE%A1%E9%81%93" title="面向对象的管道">面向对象的管道</a></li><li class="ez-toc-page-1 ez-toc-heading-level-4"><a class="ez-toc-link ez-toc-heading-2" href="#%E8%BD%AC%E6%8D%A2%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E7%BB%93%E6%9E%9C%E4%B8%BA%E6%96%87%E6%9C%AC" title="转换命令执行的结果为文本">转换命令执行的结果为文本</a></li><li class="ez-toc-page-1 ez-toc-heading-level-4"><a class="ez-toc-link ez-toc-heading-3" href="#%E7%AE%A1%E9%81%93%E7%9A%84%E5%A4%84%E7%90%86%E6%A8%A1%E5%BC%8F" title="管道的处理模式">管道的处理模式</a></li><li class="ez-toc-page-1 ez-toc-heading-level-4"><a class="ez-toc-link ez-toc-heading-4" href="#%E7%AE%A1%E9%81%93%E5%91%BD%E4%BB%A4%E7%9A%84%E9%98%BB%E5%A1%9E" title="管道命令的阻塞">管道命令的阻塞</a></li></ul></nav></div>
+<div class="ggad"><script async src="../pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" tppabs="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-0030498886267248"
+     data-ad-slot="3992944540"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script></div><p>管道并不是什么新事物，以前的Cmd控制台也有重定向的命令，例如Dir | More可以将结果分屏显示。<br />
+传统的Cmd管道是基于文本的，但是Powershell是基于对象。</p>
+<pre class="PSconsole">PS&gt; ls | Sort-Object -Descending Name | Select-Object Name,Length,LastWriteTime | ConvertTo-Html | Out-File ls.html
+
+PS&gt; Get-Content .ls.html</pre>
+<table>
+<colgroup>
+<col />
+<col />
+<col /> </colgroup>
+<tbody>
+<tr>
+<th>Name</th>
+<th>Length</th>
+<th>LastWriteTime</th>
+</tr>
+<tr>
+<td>test.vbs</td>
+<td>170</td>
+<td>2011/11/28 16:42:03</td>
+</tr>
+<tr>
+<td>test.txt</td>
+<td>242</td>
+<td>2011/11/23 17:37:37</td>
+</tr>
+<tr>
+<td>test.ps1</td>
+<td>140</td>
+<td>2011/12/2 18:47:35</td>
+</tr>
+<tr>
+<td>psdrive.html</td>
+<td>2556</td>
+<td>2011/11/30 16:04:00</td>
+</tr>
+<tr>
+<td>Powershell_Cmdlets.html</td>
+<td>735892</td>
+<td>2011/11/24 17:44:37</td>
+</tr>
+<tr>
+<td>ping.bat</td>
+<td>63</td>
+<td>2011/11/28 15:30:04</td>
+</tr>
+<tr>
+<td>name.html</td>
+<td>7420</td>
+<td>2011/11/24 17:37:28</td>
+</tr>
+<tr>
+<td>myscript</td>
+<td></td>
+<td>2011/11/29 18:21:28</td>
+</tr>
+<tr>
+<td>ls.html</td>
+<td>434</td>
+<td>2011/12/14 11:22:30</td>
+</tr>
+<tr>
+<td>LogoTestConfig.xml</td>
+<td>186</td>
+<td>2011/11/28 11:12:08</td>
+</tr>
+<tr>
+<td>function.ps1</td>
+<td>21466</td>
+<td>2011/11/29 19:23:58</td>
+</tr>
+<tr>
+<td>employee.xml</td>
+<td>556</td>
+<td>2011/11/25 11:20:33</td>
+</tr>
+<tr>
+<td>d.txt</td>
+<td>0</td>
+<td>2011/11/23 17:25:23</td>
+</tr>
+<tr>
+<td>c.txt</td>
+<td>0</td>
+<td>2011/11/23 17:25:23</td>
+</tr>
+<tr>
+<td>b.txt</td>
+<td>0</td>
+<td>2011/11/23 17:25:23</td>
+</tr>
+<tr>
+<td>alias.ps1</td>
+<td>12060</td>
+<td>2011/11/24 20:27:24</td>
+</tr>
+<tr>
+<td>alias</td>
+<td>12060</td>
+<td>2011/11/24 20:26:36</td>
+</tr>
+<tr>
+<td>ABC</td>
+<td></td>
+<td>2011/11/23 17:25:53</td>
+</tr>
+<tr>
+<td>a.txt</td>
+<td>26384</td>
+<td>2011/11/24 20:04:31</td>
+</tr>
+<tr>
+<td>a.html</td>
+<td>67580</td>
+<td>2011/11/24 18:30:13</td>
+</tr>
+</tbody>
+</table>
+<p>首先列出当前目录下的目录和文件，然后根据文件名降序排列，再投影文件名，文件大小，文件的修改时间，转换成Html格式，输出到当前目录的ls.html</p>
+<h4><span class="ez-toc-section" id="%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%AE%A1%E9%81%93"></span>面向对象的管道<span class="ez-toc-section-end"></span></h4>
+<p>上面的例子属于面向对象的管道，每个命令的末尾可以使用新的命令对上个命令的结果做进一步处理，除非管道是以输出命令结束的。就像Sort-Object一样，对文件的列表进行排序，需要告诉它排序的关键字，按照升序还是降序。ls的返回值为一个数组，数组中的每一个元素都是一个对象，对象的每一个属性都可以作为Sort-Object的排序关键字。但是排序时必须指定一个具体的关键字，因为Powershell所传递的对象可能有很多属性。不像普通的文本，对象的信息都是结构化的，因此也使得Powershell的管道变得更加强大和方便。</p>
+<h4><span class="ez-toc-section" id="%E8%BD%AC%E6%8D%A2%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E7%BB%93%E6%9E%9C%E4%B8%BA%E6%96%87%E6%9C%AC"></span>转换命令执行的结果为文本<span class="ez-toc-section-end"></span></h4>
+<p>在执行Powershell命令时，解释器会默认在命令的结尾追加一个管道命令，Out-Default，这样可以将原来的对象结果以文本的形式显示在控制台上，但是并没有将结果进行转换，所以可以继续使用其它管道对对象的结果进行操作，但是一旦使用了诸如ConvertTo-Html这样的命令后，就会将结果转换成固定格式的纯文本。</p>
+<p>常用的对管道结果进一步处理的命令有：</p>
+<p><strong>Compare-Object</strong>: 比较两组对象。<br />
+<strong>ConvertTo-Html</strong>: 将 Microsoft .NET Framework 对象转换为可在 Web 浏览器中显示的 HTML。<br />
+<strong>Export-Clixml</strong>: 创建对象的基于 XML 的表示形式并将其存储在文件中。<br />
+<strong>Export-Csv</strong>: 将 Microsoft .NET Framework 对象转换为一系列以逗号分隔的、长度可变的 (CSV) 字符串，并将这些字符串保存到<br />
+一个 CSV 文件中。<br />
+<strong>ForEach-Object</strong>: 针对每一组输入对象执行操作。<br />
+<strong>Format-List</strong>: 将输出的格式设置为属性列表，其中每个属性均各占一行显示。<br />
+<strong>Format-Table</strong>: 将输出的格式设置为表。<br />
+<strong>Format-Wide</strong>: 将对象的格式设置为只能显示每个对象的一个属性的宽表。<br />
+<strong>Get-Unique</strong>: 从排序列表返回唯一项目。<br />
+<strong>Group-Object</strong>: 指定的属性包含相同值的组对象。<br />
+<strong>Import-Clixml</strong>: 导入 CLIXML 文件，并在 Windows PowerShell 中创建相应的对象。<br />
+<strong>Measure-Object</strong>: 计算对象的数字属性以及字符串对象（如文本文件）中的字符数、单词数和行数。<br />
+<strong>more</strong>: 对结果分屏显示。<br />
+<strong>Out-File</strong>: 将输出发送到文件。<br />
+<strong>Out-Null</strong>: 删除输出，不将其发送到控制台。<br />
+<strong>Out-Printer</strong>: 将输出发送到打印机。<br />
+<strong>Out-String</strong>: 将对象作为一列字符串发送到主机。<br />
+<strong>Select-Object:</strong> 选择一个对象或一组对象的指定属性。它还可以从对象的数组中选择唯一对象，也可以从对象数组的开头或末尾选<br />
+择指定个数的对象。<br />
+<strong>Sort-Object</strong>: 按属性值对象进行排序。<br />
+<strong>Tee-Object</strong>: 将命令输出保存在文件或变量中，并将其显示在控制台中。<br />
+<strong>Where-Object</strong>: 创建控制哪些对象沿着命令管道传递的筛选器。</p>
+<h4><span class="ez-toc-section" id="%E7%AE%A1%E9%81%93%E7%9A%84%E5%A4%84%E7%90%86%E6%A8%A1%E5%BC%8F"></span>管道的处理模式<span class="ez-toc-section-end"></span></h4>
+<p>当我们把许多命名组合成一个管道时，可能会感兴趣每一个命令的执行时是顺序执行还是同时执行？通过管道处理结果实际上是实时的。这就是为什么存在两个管道模式：<br />
+<strong>顺序模式（较慢）：</strong>在顺序模式中管道中同一时间只执行一条命令，只有当前一条命令的所有执行完毕，才会把所有结果交付给下一条 命令。这种模式速度慢并且耗内存，因为必须需要很多次分配空间存储中间结果。<br />
+<strong>流模式（较快）：</strong>流模式会立即执行所有命令，同一时间可能在执行多条命令。前一条命令可能会产生多个结果，但是一旦产生其中一个结果，就会立即交付给下一条命令处理。这样的流模式节省比较节省内存，可能管道的某个任务还在执行，但是已经有部分结果输出了。减少了中间结果的保存。</p>
+<h4><span class="ez-toc-section" id="%E7%AE%A1%E9%81%93%E5%91%BD%E4%BB%A4%E7%9A%84%E9%98%BB%E5%A1%9E"></span>管道命令的阻塞<span class="ez-toc-section-end"></span></h4>
+<p>可以使用Sort-Object对管道的结果进行排序，但是有时候排序可能导致整个操作系统阻塞，因为排序命令的的执行属于顺序模式，必须得上一条命令的结果全部完成，才能排序。<br />
+因此在使用这类命令时，要注意操作对象的大小，和它们需要的内存。例如这条命令：<br />
+Dir C: -recurse | Sort-Object<br />
+-recurse 选项是递归查询子目录，可想而知系统盘的文件和目录有多大。这条命令一旦运行起来，需要等很长很长的时间，甚至可能导致系统崩溃，得重启电脑。你可以在执行这条命令时，打开任务管理器查看Powershell进程的内存占用在以每秒种几十兆的速率增加。<br />
+到底哪些命令可能系统阻塞，要视命令的实现方式以及处理的对象大小决定，例如Sort-object导致阻塞的原因肯定是由于技术实现上采用的是内排序，没有使用外排序。但是象Out-Host -paging 这样的命令属于流出来模式，就一般不会导致系统阻塞。</p>
+<div class='os-share-box'><i onclick="share_button_click('https://connect.qq.com/widget/shareqq/index.html?url=%URL%&title=%TITLE%&summary=%SUMMARY%&pics=%PICS%')" title="分享到 QQ" class="os-icon os-share-qq"><svg aria-hidden="true"><use xlink:href="#os-share-qq"></use></svg></i><i onclick="share_button_click('https://service.weibo.com/share/share.php?url=%URL%&title=%TITLE%&pic=%PICS%&appkey=2071218786&ralateUid=&language=zh_cn&searchPic=true')" title="分享到 微博" class="os-icon os-share-weibo"><svg aria-hidden="true"><use xlink:href="#os-share-weibo"></use></svg></i><i  title="分享到 微信" class="os-icon os-share-wechat"><svg aria-hidden="true"><use xlink:href="#os-share-wechat"></use></svg></i><i onclick="share_button_click('//sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=%URL%&title=%TITLE%&desc=&summary=%SUMMARY%&site=PowerShell 中文博客&pics=%PICS%')" title="分享到 QQ空间" class="os-icon os-share-qqzone"><svg aria-hidden="true"><use xlink:href="#os-share-qqzone"></use></svg></i><i onclick="share_button_click('//www.douban.com/share/service?href=%URL%&name=%TITLE%&text=%SUMMARY%&image=%PIC%')" title="分享到 豆瓣" class="os-icon os-share-douban"><svg aria-hidden="true"><use xlink:href="#os-share-douban"></use></svg></i><i onclick="share_button_click('//note.youdao.com/memory/?url=%URL%&title=%TITLE%&sumary=%SUMMARY%&pic=%PICS%')" title="分享到 有道云笔记" class="os-icon os-share-youdao"><svg aria-hidden="true"><use xlink:href="#os-share-youdao"></use></svg></i><i onclick="share_button_click('//app.yinxiang.com/clip.action?url=%URL%&title=%TITLE%&image=%PICS%')" title="分享到 印象笔记" class="os-icon os-share-evernote"><svg aria-hidden="true"><use xlink:href="#os-share-evernote"></use></svg></i><i onclick="share_button_click('https://www.facebook.com/sharer.php?u=%URL%&t=%TITLE%')" title="分享到 Facebook" class="os-icon os-share-facebook"><svg aria-hidden="true"><use xlink:href="#os-share-facebook"></use></svg></i><i onclick="share_button_click('//twitter.com/home/?status=%TITLE%:%URL%')" title="分享到 Twitter" class="os-icon os-share-twitter"><svg aria-hidden="true"><use xlink:href="#os-share-twitter"></use></svg></i><i onclick="share_button_click('//plus.google.com/share?url=%URL%')" title="分享到 Google+" class="os-icon os-share-google"><svg aria-hidden="true"><use xlink:href="#os-share-google"></use></svg></i><i onclick="share_button_click('//www.reddit.com/submit?url=%URL%&amp;title=%TITLE%')" title="分享到 Reddit" class="os-icon os-share-reddit"><svg aria-hidden="true"><use xlink:href="#os-share-reddit"></use></svg></i></div><div id='os-popup-overlay'></div><div id='os-popup-box' class='os-popup-box'><div id='os-popup-title'><span>×</span><i class="os-icon os-share-wechat"><svg aria-hidden="true"><use xlink:href="#os-share-wechat"></use></svg></i>用微信扫描并分享</div><div id='os-popup-content'></div></div><div id=postcopy><strong>本文链接：</strong> <a rel=”bookmark” href="using-the-powershell-pipeline.html" tppabs="https://www.pstips.net/using-the-powershell-pipeline.html">https://www.pstips.net/using-the-powershell-pipeline.html</a><br/><strong><I>请尊重原作者和编辑的辛勤劳动,欢迎转载,并注明出处!</I></strong></div><div class='yarpp-related'>
+<p><hr/><strong>相关文章推荐：</strong></p><ol>
+<li><a href="powershell-piping-and-routing.html" tppabs="https://www.pstips.net/powershell-piping-and-routing.html" rel="bookmark" title="Powershell管道和重定向">Powershell管道和重定向 </a></li>
+<li><a href="powershell-commands-return-arrays.html" tppabs="https://www.pstips.net/powershell-commands-return-arrays.html" rel="bookmark" title="Powershell命令返回数组">Powershell命令返回数组 </a></li>
+<li><a href="powershell-analyse-and-compare-results.html" tppabs="https://www.pstips.net/powershell-analyse-and-compare-results.html" rel="bookmark" title="Powershell分析和比较管道结果">Powershell分析和比较管道结果 </a></li>
+<li><a href="javascript:if(confirm('https://www.pstips.net/powershell%e5%af%bc%e5%87%ba%e7%ae%a1%e9%81%93%e7%bb%93%e6%9e%9c.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/powershell%e5%af%bc%e5%87%ba%e7%ae%a1%e9%81%93%e7%bb%93%e6%9e%9c.html'" tppabs="https://www.pstips.net/powershell%e5%af%bc%e5%87%ba%e7%ae%a1%e9%81%93%e7%bb%93%e6%9e%9c.html" rel="bookmark" title="Powershell导出管道结果">Powershell导出管道结果 </a></li>
+<li><a href="powershell-extended-type-system-1.html" tppabs="https://www.pstips.net/powershell-extended-type-system-1.html" rel="bookmark" title="Powershell扩展类型系统">Powershell扩展类型系统 </a></li>
+<li><a href="powershell-foreach-object-loop.html" tppabs="https://www.pstips.net/powershell-foreach-object-loop.html" rel="bookmark" title="Powershell ForEach-Object 循环">Powershell ForEach-Object 循环 </a></li>
+<li><a href="powershell-foreach-loop.html" tppabs="https://www.pstips.net/powershell-foreach-loop.html" rel="bookmark" title="Powershell Foreach 循环">Powershell Foreach 循环 </a></li>
+<li><a href="powershell-func-filters-pipeline.html" tppabs="https://www.pstips.net/powershell-func-filters-pipeline.html" rel="bookmark" title="Powershell函数 过滤器 管道">Powershell函数 过滤器 管道 </a></li>
+<li><a href="powershell-create-pipeline-scripts.html" tppabs="https://www.pstips.net/powershell-create-pipeline-scripts.html" rel="bookmark" title="Powershell 创建管道脚本">Powershell 创建管道脚本 </a></li>
+<li><a href="javascript:if(confirm('https://www.pstips.net/psitem-in-powershell-v3.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/psitem-in-powershell-v3.html'" tppabs="https://www.pstips.net/psitem-in-powershell-v3.html" rel="bookmark" title="PowerShell 3.0 中的$PSItem">PowerShell 3.0 中的$PSItem </a></li>
+</ol>
+</div>
+                                      </section><!-- .entry-content -->
+        <footer class="entry-meta"><hr class="featurette-divider"><div class="author-info-wrapper"><div class="author-info"><div class="row-fluid"><div class="comment-avatar author-avatar span2"><img alt='' src="../thirdqq.qlogo.cn/g-b=oidb&k=TF3a1fT5A32KFcYGFVLu3Q&s=100&t=1555746093.jpg" tppabs="https://thirdqq.qlogo.cn/g?b=oidb&k=TF3a1fT5A32KFcYGFVLu3Q&s=100&t=1555746093" srcset='//thirdqq.qlogo.cn/g?b=oidb&#038;k=TF3a1fT5A32KFcYGFVLu3Q&#038;s=100&#038;t=1555746093 2x' class='avatar avatar-100 photo' height='100' width='100' /></div> <div class="author-description span10"><h3>关于 Mooser Lee</h3><div>我是一个Powershell的爱好者，创建了<b>PowerShell中文博客</b>，热衷于Powershell技术的搜集和分享。本站部分内容来源于互联网，不足之处敬请谅解，并欢迎您批评指正。</div><div class="author-link"><a href="javascript:if(confirm('https://www.pstips.net/author/mosser  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/author/mosser'" tppabs="https://www.pstips.net/author/mosser" rel="author">参看所有文章 Mooser Lee <span class="meta-nav">&rarr;</span></a></div></div></div></div></div></footer>                                    </article>
+                                
+                            
+                        
+                    <hr class="featurette-divider __after_loop">
+<div id="comments" class="comments-area" >
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">发表评论 <small><a rel="nofollow" id="cancel-comment-reply-link" href="using-the-powershell-pipeline.html#respond" tppabs="https://www.pstips.net/using-the-powershell-pipeline.html#respond" style="display:none;">取消回复</a></small></h3><form action="https://www.pstips.net/wp-comments-post.php" method="post" id="commentform" class="comment-form"><div class='os-login-box'><i onclick="login_button_click('qq','https://www.pstips.net/index.php','login','')" title="使用 QQ 登录" class="os-icon os-login-qq"><svg aria-hidden="true"><use xlink:href="#os-login-qq"></use></svg></i><i onclick="login_button_click('sina','https://www.pstips.net/index.php','login','')" title="使用 微博 登录" class="os-icon os-login-sina"><svg aria-hidden="true"><use xlink:href="#os-login-sina"></use></svg></i><i onclick="login_button_click('baidu','https://www.pstips.net/index.php','login','')" title="使用 百度 登录" class="os-icon os-login-baidu"><svg aria-hidden="true"><use xlink:href="#os-login-baidu"></use></svg></i><i onclick="login_button_click('github','https://www.pstips.net/index.php','login','')" title="使用 Github 登录" class="os-icon os-login-github"><svg aria-hidden="true"><use xlink:href="#os-login-github"></use></svg></i></div><p class="comment-notes"><span id="email-notes">电子邮件地址不会被公开。</span> 必填项已用<span class="required">*</span>标注</p><p class="comment-form-comment"><label for="comment">评论</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required="required"></textarea></p><p class="comment-form-author"><label for="author">姓名 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" required='required' /></p>
+<p class="comment-form-email"><label for="email">电子邮件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" required='required' /></p>
+<p class="comment-form-url"><label for="url">站点</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<script src="../www.google.com/recaptcha/api.js" tppabs="https://www.google.com/recaptcha/api.js"></script><div class="g-recaptcha" data-sitekey="<?php echo $sitekey; ?>"></div>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="发表评论" /> <input type='hidden' name='comment_post_ID' value='37' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="e2a481092d" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="81"/></p></form>	</div><!-- #respond -->
+	<h2 id="tc-comment-title" class="comments-title">3 条评论 &ldquo;<span>Powershell使用管道</span>&rdquo;</h2>              <ul class="commentlist">
+                        <li class="pingback even thread-even depth-1" id="comment-15328">
+          <article id="comment-15328" class="comment">
+            <p>广播: <a href="javascript:if(confirm('http://wicresoft.azurewebsites.net/2013/03/the-pipeline-has-been-stopped/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://wicresoft.azurewebsites.net/2013/03/the-pipeline-has-been-stopped/'" tppabs="http://wicresoft.azurewebsites.net/2013/03/the-pipeline-has-been-stopped/" rel='external nofollow ugc' class='url'>解决PowerShell 3.0 中Select-Object 引发的The pipeline has been stopped的问题 - SystemCenter 中文社区</a>                            </p>
+          </article>
+        </li><!-- #comment-## -->
+        <li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-17547">
+
+            <article id="comment-17547" class="comment"><div class="row-fluid"><div class="comment-avatar span2"><img alt='' src="../secure.gravatar.com/avatar/e0ff95bade73470d79412100e4db8b6a-s=80&d=monsterid&r=g.png" tppabs="https://secure.gravatar.com/avatar/e0ff95bade73470d79412100e4db8b6a?s=80&d=monsterid&r=g" srcset='https://secure.gravatar.com/avatar/e0ff95bade73470d79412100e4db8b6a?s=160&#038;d=monsterid&#038;r=g 2x' class='avatar avatar-80 photo' height='80' width='80' /></div><div class="span10"><div class="reply btn btn-small"><a rel='nofollow' class='comment-reply-link' href="javascript:if(confirm('https://www.pstips.net/using-the-powershell-pipeline.html?replytocom=17547  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/using-the-powershell-pipeline.html?replytocom=17547#respond'" tppabs="https://www.pstips.net/using-the-powershell-pipeline.html?replytocom=17547#respond" data-commentid="17547" data-postid="37" data-belowelement="comment-17547" data-respondelement="respond" aria-label='回复给Sampson'>回复 <span>&darr;</span></a></div> <header class="comment-meta comment-author vcard"><cite class="fn">Sampson  </cite> <a class="comment-date" href="using-the-powershell-pipeline.html#comment-17547" tppabs="https://www.pstips.net/using-the-powershell-pipeline.html#comment-17547"><time datetime="2017-03-07T20:27:10+08:00">2017年3月7日 于 下午 8:27</time></a></header>  <section class="comment-content comment"><p>请问如何用Powershell查看文件夹的owner属性。Windows 2008自带的powershell好像不能够看。</p>
+</section></div></div></article>          <!-- //#comment-## -->
+        <ul class="children">
+        <li class="comment byuser comment-author-mosser bypostauthor even depth-2" id="li-comment-17548">
+
+            <article id="comment-17548" class="comment"><div class="row-fluid"><div class="comment-avatar span2"><img alt='' src="../thirdqq.qlogo.cn/g-b=oidb&k=TF3a1fT5A32KFcYGFVLu3Q&s=100&t=1555746093.jpg" tppabs="https://thirdqq.qlogo.cn/g?b=oidb&k=TF3a1fT5A32KFcYGFVLu3Q&s=100&t=1555746093" srcset='//thirdqq.qlogo.cn/g?b=oidb&#038;k=TF3a1fT5A32KFcYGFVLu3Q&#038;s=100&#038;t=1555746093 2x' class='avatar avatar-80 photo' height='80' width='80' /></div><div class="span10"><div class="reply btn btn-small"><a rel='nofollow' class='comment-reply-link' href="javascript:if(confirm('https://www.pstips.net/using-the-powershell-pipeline.html?replytocom=17548  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/using-the-powershell-pipeline.html?replytocom=17548#respond'" tppabs="https://www.pstips.net/using-the-powershell-pipeline.html?replytocom=17548#respond" data-commentid="17548" data-postid="37" data-belowelement="comment-17548" data-respondelement="respond" aria-label='回复给Mooser Lee'>回复 <span>&darr;</span></a></div> <header class="comment-meta comment-author vcard"><cite class="fn"><a href="index.htm" tppabs="http://www.pstips.net/" rel='external nofollow ugc' class='url'>Mooser Lee</a> <span> 文章作者</span> </cite> <a class="comment-date" href="using-the-powershell-pipeline.html#comment-17548" tppabs="https://www.pstips.net/using-the-powershell-pipeline.html#comment-17548"><time datetime="2017-03-07T23:33:21+08:00">2017年3月7日 于 下午 11:33</time></a></header>  <section class="comment-content comment"><pre>
+PS D:\> (Get-Item . | Get-Acl).Owner
+NT AUTHORITY\SYSTEM
+</pre>
+</section></div></div></article>          <!-- //#comment-## -->
+        </li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+              </ul><!-- .commentlist -->
+            </div><!-- //#comments .comments-area -->
+
+        
+          <hr class="featurette-divider __after_loop">
+        <nav id="nav-below" class="navigation">
+
+              <h3 class="assistive-text">
+                文章导航              </h3>
+
+              <ul class="pager">
+                                  <li class="previous">
+                    <span class="nav-previous">
+                      <a href="powershell-copying-arrays.html" tppabs="https://www.pstips.net/powershell-copying-arrays.html" rel="prev"><span class="meta-nav">&larr;</span> Powershell复制数组</a>                    </span>
+                  </li>
+                                                  <li class="next">
+                    <span class="nav-next">
+                        <a href="powershell-converting-objects-into-text.html" tppabs="https://www.pstips.net/powershell-converting-objects-into-text.html" rel="next">Powershell对象转换成文本 <span class="meta-nav">&rarr;</span></a>                    </span>
+                  </li>
+                              </ul>
+
+          </nav><!-- //#nav-below .navigation -->
+
+        
+        
+                                   <hr class="featurette-divider tc-mobile-separator">
+                </div><!--.article-container -->
+
+           
+        <div class="span3 right tc-sidebar">
+           <div id="right" class="widget-area" role="complementary">
+              <aside id="search-3" class="widget widget_search"><h3 class="widget-title">  站内搜索</h3><form role="search" method="get" id="searchform" class="searchform" action="https://www.pstips.net/">
+				<div>
+					<label class="screen-reader-text" for="s">搜索：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜索" />
+				</div>
+			</form></aside><aside id="dwqa-latest-question-2" class="widget dwqa-widget dwqa-latest-questions"><h3 class="widget-title">网友求助</h3><div class="dwqa-popular-questions"><ul><li><a href="javascript:if(confirm('https://www.pstips.net/question/18413.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18413.html'" tppabs="https://www.pstips.net/question/18413.html" class="question-title">如何更改文件的默认打开方式通过脚本的形式</a> 提问人 Qetesh, 7月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18388.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18388.html'" tppabs="https://www.pstips.net/question/18388.html" class="question-title">使用system.net.client上传文件时如何获取上传是否成功？</a> 提问人 pwshroad, 7月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18378.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18378.html'" tppabs="https://www.pstips.net/question/18378.html" class="question-title">有一个实施中的项目需求</a> 提问人 万恒, 7月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18369.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18369.html'" tppabs="https://www.pstips.net/question/18369.html" class="question-title">请问如何使用powershell 在outlook中把某个用户的邮箱的邮件导出成.pst 文件</a> 提问人 seahillpass, 8月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18342.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18342.html'" tppabs="https://www.pstips.net/question/18342.html" class="question-title">powershell 如何将字符串编码为GBK</a> 提问人 awang, 8月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18339.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18339.html'" tppabs="https://www.pstips.net/question/18339.html" class="question-title">怎么安装并使用selenium？</a> 提问人 liusheng, 8月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18327.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18327.html'" tppabs="https://www.pstips.net/question/18327.html" class="question-title">输入用户名、密码后，点击登录无效？</a> 提问人 liusheng, 8月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18321.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18321.html'" tppabs="https://www.pstips.net/question/18321.html" class="question-title">如何获取多台远程服务器上的文件内容，并汇总到本地？</a> 提问人 pwshroad, 8月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18297.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18297.html'" tppabs="https://www.pstips.net/question/18297.html" class="question-title">怎样用powershell提取Windows自带应用的安装包</a> 提问人 a0195, 9月 ago.</li><li><a href="javascript:if(confirm('https://www.pstips.net/question/18306.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.pstips.net/question/18306.html'" tppabs="https://www.pstips.net/question/18306.html" class="question-title">如何使用HttpListener构建多线程HTTP轻量级API服务器</a> 提问人 Q1499821613, 9月 ago.</li></ul></div></aside>            </div><!-- //#left or //#right -->
+        </div><!--.tc-sidebar -->
+
+        
+        </div><!--.row -->
+    </div><!-- .container role: main -->
+
+    
+</div><!-- //#main-wrapper -->
+
+  		<!-- FOOTER -->
+  		<footer id="footer" class="">
+  		 					<div class="container footer-widgets ">
+                    <div class="row widget-area" role="complementary">
+												
+							<div id="footer_one" class="span4">
+																															</div><!-- .{$key}_widget_class -->
+
+						
+							<div id="footer_two" class="span4">
+																
+										<aside id="text-6" class="widget widget_text">			<div class="textwidget"><script type="text/javascript" src="../ra.revolvermaps.com/0/0/6.js-i=0t2g9mmsadn&m=1&s=255&c=ff0000&cr1=ffffff&f=georgia&l=0&lx=-420&ly=180" tppabs="https://ra.revolvermaps.com/0/0/6.js?i=0t2g9mmsadn&m=1&s=255&c=ff0000&cr1=ffffff&f=georgia&l=0&lx=-420&ly=180" async="async"></script></div>
+		</aside>
+																							</div><!-- .{$key}_widget_class -->
+
+						
+							<div id="footer_three" class="span4">
+																
+										
+																							</div><!-- .{$key}_widget_class -->
+
+																	</div><!-- .row.widget-area -->
+				</div><!--.footer-widgets -->
+				    				 <div class="colophon">
+			 	<div class="container">
+			 		<div class="row-fluid">
+					    <div class="span3 social-block pull-left"></div>
+<div class="span4 credits">
+ <p> &middot; &copy; 2020 <a href="index.htm" tppabs="https://www.pstips.net/" title="PowerShell 中文博客" rel="bookmark">PowerShell 中文博客</a> &middot; <a href="javascript:if(confirm('http://www.beian.miit.gov.cn/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.beian.miit.gov.cn/'" tppabs="http://www.beian.miit.gov.cn/">[沪ICP备14006567号]</a> &middot;</p>        </div>	      			</div><!-- .row-fluid -->
+	      		</div><!-- .container -->
+	      	</div><!-- .colophon -->
+	    	  		</footer>
+    </div><!-- //#tc-page-wrapper -->
+		<link rel='stylesheet' id='yarppRelatedCss-css'  href="wp-content/plugins/yet-another-related-posts-plugin/style/related.css-ver=5.3.6.css" tppabs="https://www.pstips.net/wp-content/plugins/yet-another-related-posts-plugin/style/related.css?ver=5.3.6" type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var viewsCacheL10n = {"admin_ajax_url":"https:\/\/www.pstips.net\/wp-admin\/admin-ajax.php","post_id":"37"};
+/* ]]> */
+</script>
+<script type='text/javascript' src="wp-content/plugins/wp-postviews/postviews-cache.js-ver=1.68" tppabs="https://www.pstips.net/wp-content/plugins/wp-postviews/postviews-cache.js?ver=1.68"></script>
+<script type='text/javascript' src="wp-includes/js/comment-reply.min.js-ver=5.3.6" tppabs="https://www.pstips.net/wp-includes/js/comment-reply.min.js?ver=5.3.6"></script>
+<script type='text/javascript' src="wp-includes/js/jquery/ui/core.min.js-ver=1.11.4" tppabs="https://www.pstips.net/wp-includes/js/jquery/ui/core.min.js?ver=1.11.4"></script>
+<script type='text/javascript' src="wp-content/themes/customizr/assets/front/js/libs/modernizr.min.js-ver=4.4.0" tppabs="https://www.pstips.net/wp-content/themes/customizr/assets/front/js/libs/modernizr.min.js?ver=4.4.0"></script>
+<script type='text/javascript' src="wp-includes/js/jquery/ui/effect.min.js-ver=1.11.4" tppabs="https://www.pstips.net/wp-includes/js/jquery/ui/effect.min.js?ver=1.11.4"></script>
+<script type='text/javascript' src="wp-content/themes/customizr/assets/front/js/libs/retina.min.js-ver=4.4.0" tppabs="https://www.pstips.net/wp-content/themes/customizr/assets/front/js/libs/retina.min.js?ver=4.4.0"></script>
+<script type='text/javascript' src="wp-content/plugins/open-social/res/iconfont.js-ver=5.3.6" tppabs="https://www.pstips.net/wp-content/plugins/open-social/res/iconfont.js?ver=5.3.6"></script>
+<script type='text/javascript' src="wp-content/plugins/open-social/res/main.js-ver=5.3.6" tppabs="https://www.pstips.net/wp-content/plugins/open-social/res/main.js?ver=5.3.6"></script>
+<script type='text/javascript' src="wp-includes/js/wp-embed.min.js-ver=5.3.6" tppabs="https://www.pstips.net/wp-includes/js/wp-embed.min.js?ver=5.3.6"></script>
+<script type='text/javascript' src="wp-content/plugins/easy-table-of-contents/vendor/smooth-scroll/jquery.smooth-scroll.min.js-ver=2.2.0" tppabs="https://www.pstips.net/wp-content/plugins/easy-table-of-contents/vendor/smooth-scroll/jquery.smooth-scroll.min.js?ver=2.2.0"></script>
+<script type='text/javascript' src="wp-content/plugins/easy-table-of-contents/vendor/js-cookie/js.cookie.min.js-ver=2.2.1" tppabs="https://www.pstips.net/wp-content/plugins/easy-table-of-contents/vendor/js-cookie/js.cookie.min.js?ver=2.2.1"></script>
+<script type='text/javascript' src="wp-content/plugins/easy-table-of-contents/vendor/sticky-kit/jquery.sticky-kit.min.js-ver=1.9.2" tppabs="https://www.pstips.net/wp-content/plugins/easy-table-of-contents/vendor/sticky-kit/jquery.sticky-kit.min.js?ver=1.9.2"></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var ezTOC = {"smooth_scroll":"1","visibility_hide_by_default":"","width":"auto","scroll_offset":"30"};
+/* ]]> */
+</script>
+<script type='text/javascript' src="wp-content/plugins/easy-table-of-contents/assets/js/front.min.js-ver=2.0.11-1588819693" tppabs="https://www.pstips.net/wp-content/plugins/easy-table-of-contents/assets/js/front.min.js?ver=2.0.11-1588819693"></script>
+<script async="async" type='text/javascript' src="wp-content/plugins/akismet/_inc/form.js-ver=4.1.7" tppabs="https://www.pstips.net/wp-content/plugins/akismet/_inc/form.js?ver=4.1.7"></script>
+<div id="tc-footer-btt-wrapper" class="tc-btt-wrapper right"><i class="btt-arrow"></i></div>	</body>
+	</html>
