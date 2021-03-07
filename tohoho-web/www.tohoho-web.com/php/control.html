@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PHP - 制御構文 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>PHP - 制御構文</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/php/index.html">PHP</a> &gt;
+制御構文
+
+<h4 id="condition">条件式</h4>
+<div class=i>
+<p>if (...), while (...) などには、真(true)か偽(false)かを示す条件式を記述します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+if (<em>$count &gt; 10</em>) {
+    echo "BIG\n";
+}
+</pre>
+<p>下記のものは、偽(false)とみなされます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+if (<em>false</em>) { ... }                 // boolean型のfalse
+if (<em>0</em>) { ... }                     // integer型の0
+if (<em>0.0</em>) { ... }                   // float(double)型の0.0
+if (<em>""</em>) { ... }                    // 空の文字列
+if (<em>"0"</em>) { ... }                   // 文字列 "0"
+if (<em>array()</em>) { ... }               // 要素数が0個の配列
+if (<em>null</em>) { ... }                  // 特殊変数null
+if (<em>$aaa</em>) { ... }                  // 未定義の変数
+</pre>
+<p>文字列を比較する際には、== を用いると暗黙の型変換により正確な比較ができなくなるため、厳密比較の === を用いるのが鉄則です。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+if ("100" <em>==</em> "100.0") { ... }      // 真(true)になってしまう
+if ("100" <em>==</em> "10e1") { ... }       // 真(true)になってしまう
+if ("100" <em>==</em> "0100") { ... }       // 真(true)になってしまう
+if ("100" <em>===</em> "100.0") { ... }      // 偽(false)になる
+if ("100" <em>===</em> "10e1") { ... }       // 偽(false)になる
+if ("100" <em>===</em> "0100") { ... }       // 偽(false)になる
+</pre>
+</div>
+
+<h4 id="if">もし～ならば(if, else, elseif, else if)</h4>
+<div class=i>
+<p><b>if</b> は「もし」を意味します。(...) の中に記述した式が真であれば、{ ... } の中の処理を実行します。下記の例では、$var の値が 10より大きければ BIG を表示します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>if ($var &gt; 10) {</em>
+    echo "BIG\n";
+<em>}</em>
+</pre>
+<p><b>else</b> は「さもなくば」を意味します。下記の例では、$var が 10より大きければ BIG を、さもなくば SMALL を表示します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+if ($var &gt; 10) {
+    echo "BIG\n";
+} <em>else</em> {
+    echo "SMALL\n";
+}
+</pre>
+<p><b>elseif</b> は「さもなくばもし」を意味します。下記の例では、$var が 10より大きければ BIG を、10と等しければ NORMAL を、さもなくば SMALL を表示します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+if ($var &gt; 10) {
+    echo "BIG\n";
+} <em>elseif</em> ($var == 10) {
+    echo "NORMAL\n";
+} else {
+    echo "SMALL\n";
+}
+</pre>
+<p><b>else if</b> も elseif と同じ意味を持ちます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+if ($var &gt; 10) {
+    echo "BIG\n";
+} <em>else if</em> ($var == 10) {
+    echo "NORMAL\n";
+} else {
+    echo "SMALL\n";
+}
+</pre>
+</div>
+
+<h4 id="while">～のあいだ(while)</h4>
+<div class=i>
+<p><b>while</b> は「～の間」を意味します。$i の値が 10よりも小さい間、$i の値を表示します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$i = 0;
+<em>while ($i &lt; 10) {</em>
+    echo "$i\n";
+    $i++;
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="dowhile">～のあいだ(do while)</h4>
+<div class=i>
+<p><b>do while</b> は「～を実行する(～の間)」を意味します。$i の値が 10よりも小さい間、$i の値を表示します。条件を満たしていなくても最低 1回はループ処理が実行される点が while文と異なります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$i = 0;
+<em>do {</em>
+    echo "$i\n";
+    $i++;
+<em>} while ($i &lt; 10);</em>
+</pre>
+</div>
+
+<h4 id="for">～のあいだ(for)</h4>
+<div class=i>
+<p><b>for</b> も「～の間」を意味します。$i に 0 を代入し、$i の値が 10より小さい間、$i の値を加算(インクリメント)しながら、ループ処理を実行します。下記の例は、echo処理を10回繰り返します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>for ($i = 0; $i &lt; 10; $i++) {</em>
+    echo "$i\n";
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="foreach">配列処理(foreach)</h4>
+<div class=i>
+<p><b>foreach</b> (配列 <b>as</b> 変数) は配列の個々の要素に対して変数に要素を代入しながら処理を実行します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$color_list = array("Red", "Green", "Blue");
+<em>foreach ($color_list as $color) {</em>
+    echo "$color\n";                        // Red, Green, Blue が表示される
+<em>}</em>
+</pre>
+<p>文字列を添え字とする配列の場合は次のようにします。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$array = array(
+    "Sun" =&gt; "Sunday",
+    "Mon" =&gt; "Monday",
+    "Tue" =&gt; "Tuesday",
+);
+<em>foreach ($array as $key =&gt; $value) {</em>
+    echo "$key = $value\n";
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="break">ループを抜ける(break)</h4>
+<div class=i>
+<p><b>break</b> は for、foreach、while、do などのループ処理を抜けます。下記の例では、$i が 5の時に forループを抜けます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+for ($i = 0; $i &lt; 10; $i++) {
+    if ($i == 5) {
+        <em>break;</em>
+    }
+}
+</pre>
+</div>
+
+<h4 id="continue">ループ処理をスキップする(continue)</h4>
+<div class=i>
+<p><b>continue</b> は for、foreach、while、do などにおいて、残りのループ処理をスキップします。次の例では、$i が 5の時のみ、echo を実行しません。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+for ($i = 0; $i &lt; 10; $i++) {
+    if ($i == 5) {
+        <em>continue;</em>
+    }
+    echo "$i";     // $i が 3の時は実行されない
+}
+</pre>
+</div>
+
+<h4 id="switch">スイッチ(switch, case, default)</h4>
+<div class=i>
+<p><b>switch</b>, <b>case</b> は、値によって処理を振り分けます。次の例では、$day の値が "Sun" の時は "Sunday"、"Mon" の時は "Monday"、"Tue" の時は "Tuesday"、さもなくば "Unknown" を表示します。<b>default</b> には、どの値にもマッチしなかった場合の処理を記述します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$day = "Sun";
+<em>switch ($day) {</em>
+    <em>case "Sun":</em>
+        echo "Sunday\n";
+        <em>break;</em>
+    <em>case "Mon":</em>
+        echo "Monday\n";
+        <em>break;</em>
+    <em>case "Tue":</em>
+        echo "Tuesday\n";
+        <em>break;</em>
+    <em>default:</em>
+        echo "Unknown\n";
+        <em>break;</em>
+<em>}</em>
+</pre>
+<p>break文が無い場合、次の条件の式まで実行されます。下記の例では、$day が "Mon" の時は "Monday" が表示されますが、"Sun" の時は "Sunday" と "Monday" が表示されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$day = "Sun";
+switch ($day) {
+    case "Sun":
+        echo "Sunday\n";
+                            <em>// break; が無い</em>
+    case "Mon":
+        echo "Monday\n";
+        break;
+    default:
+        echo "Unknown\n";
+        break;
+}
+</pre>
+</div>
+
+<h4 id="endx">end～構文(endif, endwhite...)</h4>
+<div class=i>
+<p>if (...) { ... }, while (...) { ... } などの構文を、コロン(:)と endif; などを用いて下記の様に記述することもできます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>if ($n == 1):</em>
+    // ...
+<em>elseif ($n == 2):</em>
+    // ...
+<em>else:</em>
+    // ...
+<em>endif;</em>
+</pre>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>while ($n == 1):</em>
+    // ...
+<em>endwhile;</em>
+</pre>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>for ($i = 0; $i &lt; 10; $i++):</em>
+    // ...
+<em>endfor;</em>
+</pre>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>foreach ($array as $val):</em>
+    // ...
+<em>endforeach;</em>
+</pre>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>switch ($n):</em>
+    // ...
+<em>endswitch;</em>
+</pre>
+</div>
+
+<h4 id="require">外部ファイル読み込み(require, require_once)</h4>
+<div class=i>
+<p><b>require</b> は指定したファイルを読み込み、PHPファイルとして実行します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>require</em> 'sample.php';
+</pre>
+<p><b>require_once</b> も指定したファイルを読み込みますが、同じファイル名を指定した場合、最初の 1回だけ読み込まれる点が異なります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>require_once</em> 'sample.php';    // 読み込まれる
+require_once 'sample.php';    // 2回目なので読み込まれない
+</pre>
+</div>
+
+<h4 id="include">外部ファイル読み込み(include, include_once)</h4>
+<div class=i>
+<p><b>include</b>, <b>include_once</b> も require, require_once と同様に外部ファイルを読み込みますが、読み込みに失敗した場合、require, require_once の場合は E_COMPILE_ERROR エラーが発生しますが、include, include_once の場合は E_WARNING 警告のみが発行されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>include</em> 'common.php';
+<em>include_once</em> 'sample.php';
+</pre>
+</div>
+
+<h4 id="goto">ジャンプ(goto)</h4>
+<div class=i>
+<p><b>goto</b> を用いて、プログラム上の指定したラベルの位置にジャンプすることができます。多重のループから抜ける場合などに使用されます。下記の例では、$i, $j がいずれも 50の時にループを抜けて、end: ラベルの位置にジャンプします。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+    for ($i = 0; $i &lt; 100; $i++) {
+        for ($j = 0; $j &lt; 100; $j++) {
+            if ($i == 50 &amp;&amp; $j == 50) {
+                <em>goto end;</em>
+            }
+        }
+    }
+<em>end:</em>
+    echo "i = $i, j = $j\n";
+</pre>
+</div>
+
+<h4 id="exception">例外(Exception, throw, try, catch, finally)</h4>
+<div class=i>
+<p><b>throw</b> は、エラーが発生した際に例外(<b>Exception</b>)を投げます。例外が throw されると、関数やメソッドの残りの処理はスキップされます。<b>try</b> { ... } <b>catch</b> の構文は、{ ... } の中、もしくは、{ ... } から呼び出された関数やメソッドの中で投げられた例外を受け取ります。例外を受け取ると、try { ... } の処理はスキップされ、catch() { ... } の処理が実行されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+
+function divide($x, $y) {
+    echo "divide(START)\n";
+    if ($y == 0) {
+        // $y が 0 の場合、例外を throwして残りの処理をスキップする
+        <em>throw</em> new Exception("Divided by zero.");
+    }
+    echo "divide(END)\n";  // 例外がthrowされるとこの行以降は実行されない
+    return $x / $y;
+}
+
+<em>try {</em>
+    echo "Debug1\n";
+    echo divide(8, 0) . "\n";
+    echo "Debug2\n";                  // 例外がthrowされるとこの行は実行されない
+<em>} catch (Exception $e) {</em>
+    echo "ERROR: " . $e-&gt;getMessage() . "\n";
+<em>}</em>
+</pre>
+<p>PHP5.5 以降では、<b>finally</b> がサポートされました。final ブロックは、例外の有無に関わらず必ず実行されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+try {
+    echo divide(8, 0) . "\n";
+} catch (Exception $e) {
+    echo "ERROR: " . $e-&gt;getMessage() . "\n";
+} <em>finally</em> {
+    echo "FINALLY\n";         // 例外の有無に関わらず必ず実行される
+}
+</pre>
+<p>Exception のサブクラスを作成することで、例外の種別を拡張することができます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyException1 extends Exception {
+}
+
+class <em>MyException2</em> extends Exception {
+}
+
+try {
+    throw new <em>MyException2</em>("MyException2");
+} catch (MyException1 $e) {
+    echo "MyException1\n";             // 実行されない
+} catch (<em>MyException2</em> $e) {
+    echo "MyException2\n";             // 実行される
+} catch (Exception $e) { // 親クラス例外はサブクラスより後ろに記述する
+    echo "Exception\n";                // 実行されない
+}
+</pre>
+</div>
+
+<h4 id="exit">プログラムの終了(exit, die)</h4>
+<div class=i>
+<p><b>exit()</b> や <b>die()</b> は、プログラムを終了させます。引数にはプログラムの終了コードを指定します。通常は、正常時は 0、異常時は 0 以外の値を指定します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+echo "AAA\n";
+<em>exit(1);</em>
+echo "BBB\n";      // プログラムが終了するので、この行は実行されない
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2013 杜甫々</div>
+<div>初版：2013年5月12日、最終更新：2013年5月12日</div>
+<div>http://www.tohoho-web.com/php/control.html</div>
+</body>
+</html>

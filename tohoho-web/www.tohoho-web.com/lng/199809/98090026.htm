@@ -1,0 +1,189 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>桁数を揃えるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>桁数を揃えるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090025.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090025.htm">[前に]</a>
+<a href="98090027.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090027.htm">[次に]</a>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/09/08(火) 23:35:21</span><br>
+また、ちょっと質問させて頂きます。<br>
+<br>
+例えばデータファイルの中に<br>
+<br>
+123<br>
+72<br>
+5<br>
+234<br>
+<br>
+とこのように、一行ずつの数値が入っていたとします。<br>
+これを綺麗に「３桁」にして並べようと思っているのです。<br>
+<br>
+元々３桁になっているのは、そのまま表示されるとして<br>
+７２と５を「072」「005」と、このように<br>
+足りない桁は「０」を入れるようにして表示したいのです。<br>
+<br>
+open(IN,'number.dat');<br>
+$bbb = &lt;IN&gt;;<br>
+close(IN);<br>
+<br>
+@aa = split(//,$bbb);<br>
+<br>
+while ($#aa &lt; 3) {@aa = (0,@aa);}<br>
+<br>
+foreach $min (@aa) {print "$min";}<br>
+<br>
+このように、書籍などを参考にして組んで見たのですが<br>
+どうもこのプログラムでは反応せず<br>
+「０００」と表示されるだけになってしまいます。<br>
+<br>
+このことで、何か良い方法がありましたら<br>
+教えて下さい。　よろしくお願いします。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/09/09(水) 00:53:33</span><br>
+printf("%03d", $bbb)ですね。(^_^)<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/09/09(水) 01:00:35</span><br>
+普通は、close(IN); の後で、<br>
+printf( "%03d", $bbb );<br>
+とすると思います。<br>
+<br>
+ところで、元のスクリプトは、<br>
+while ($#aa &lt; 2) {@aa = (0,@aa);}<br>
+としてもダメですか？<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/09/09(水) 01:01:47</span><br>
+ありゃ、すいません、またやってしまいました(^^;<br>
+しかも、7分くらいのタイムラグがありますね(^^;;;;<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/09/09(水) 12:05:53</span><br>
+とほほさん、mmさん、ご返答ありがとうございました。<br>
+あの一文を入れたら、３桁で表示ができました。<br>
+<br>
+<font color="#CC8000">&gt;while ($#aa &lt; 2) {@aa = (0,@aa);}</font><br>
+<br>
+そのようにしても、二桁になるだけで、特に他に変化は見られませんでした。<br>
+<br>
+教えて頂いた一文を入れたのですが<br>
+これ一桁の場合は良いのですが、二桁や三桁の場合<br>
+先頭の一桁だけ認識してしまいます。<br>
+<br>
+open(IN, 'number.dat');<br>
+@bbb = &lt;IN&gt;;<br>
+<br>
+foreach $min (@bbb) {<br>
+	($aaa) = split(//, $min);<br>
+<br>
+	printf ("%03d", $aaa);<br>
+	print "\n";<br>
+}<br>
+<br>
+close(IN);<br>
+<br>
+このプログラムを使ってみると<br>
+<br>
+123<br>
+72<br>
+<br>
+という場合、「001」「007」となってしまいます。<br>
+<br>
+「printf」は、いじりようが無いみたいで<br>
+昨日書いた「while」文などを使っても、うまく組むことが出来ませんでした。<br>
+<br>
+度々すみませんが、良い方法がありましたら<br>
+ご返答をお願いします。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/09/09(水) 14:52:56</span><br>
+解決しました(^^<br>
+<br>
+($aaa) = split(//, $min);を外して<br>
+<br>
+printf ("%03d", $aaa);を<br>
+printf ("%03d", $min);に変更したら<br>
+左に０が並んで、３桁表示が出来ました。<br>
+<br>
+いろいろとありがとうございました。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/09(水) 19:38:32</span><br>
+まだ、ちょっと、聞きたいことがあります。<br>
+<br>
+例えばフォームから入力された数値に対して<br>
+足りない桁数の場合に「０」を付けたい場合に<br>
+どう表記すれば良いのか、教えて頂きたいのです。<br>
+<br>
+$sec = ("%02d", $sec);<br>
+<br>
+と言うような、表記は有り得るでしょうか？<br>
+上記の問題に対して、これをやってみたのですが<br>
+全く無反応でして・・・。<br>
+<br>
+「if」に組み込んで見ても<br>
+表記されないか、めちゃくちゃな文字が表示されるだけでした。<br>
+<br>
+このことで、出来ましたらご返答をお願いします。<br>
+<br>
+解決したと思ったのに・・・何か解決すると別な問題が発生する。<br>
+これがプログラムなのか・・・う～ん。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/09/09(水) 21:13:42</span><br>
+$sec = sprintf("%02d", $sec);<br>
+では？<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/09/09(水) 22:19:29</span><br>
+<font color="#CC8000">&gt;&gt;while ($#aa &lt; 2) {@aa = (0,@aa);}</font><br>
+<font color="#CC8000">&gt;そのようにしても、二桁になるだけで、特に他に変化は見られませんでした。</font><br>
+<br>
+なんで？　と思ったら、改行がくっついていたんですね。<br>
+@bbb = &lt;IN&gt;; した後は、chop @bbb; しておきましょう。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/10(木) 00:00:56</span><br>
+<span class=resolv>[[解決]]</span><br>
+mmさん、いろいろとありがとうございます。<br>
+お蔭様で、私の考えていた形にすることが出来ました。<br>
+<br>
+<font color="#CC8000">&gt;@bbb = &lt;IN&gt;; した後は、chop @bbb; しておきましょう。</font><br>
+<br>
+これは、まだ成功していません。<br>
+多分、私の組み方に問題があると思うので<br>
+もう少しいろいろ試してみます。<br>
+<br>
+本当に、ありがとうございました(^^<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/09/10(木) 00:54:22</span><br>
+あっ、chop は考え方の問題で、プログラムとしては、<br>
+必ずchop が必要であるということではありませんです。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/10(木) 02:22:07</span><br>
+<font color="#CC8000">&gt;必ずchop が必要であるということではありませんです。</font><br>
+<br>
+そうなんですか。<br>
+さっきも試したのですが、何故か実行されなかったのです。<br>
+<br>
+正直言って、私はプログラムの組み方が理解出来ていないので（涙）<br>
+<br>
+継続は力なりの言葉を胸に、がんばろ。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090025.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090025.htm">[前に]</a>
+<a href="98090027.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090027.htm">[次に]</a>
+</body>
+</html>

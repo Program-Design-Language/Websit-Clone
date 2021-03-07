@@ -1,0 +1,87 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>PERLのパターン照合 =~ は日本語を扱えない？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>PERLのパターン照合 =~ は日本語を扱えない？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199806/index.htm">[上に]</a>
+<a href="98060062.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060062.htm">[前に]</a>
+<a href="98060064.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060064.htm">[次に]</a>
+<hr>
+<span class=name>ピンプ</span>
+<span class=email><a href="mailto:k-ozaki@annie.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/06/25(木) 23:19:08</span><br>
+perlで名前登録ページを作っているのですが、現在登録されてる<br>
+名前が再度登録されないように、名前が存在するかどうか確認して<br>
+から登録を行いたいのですが、どうもパターン照合でエラーが出る<br>
+ようです。<br>
+実際には、下のように、<br>
+<br>
+sub check_name {<br>
+&nbsp;&nbsp;open(OUT,"$HOME/.jnames");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;while(&lt;OUT&gt;) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($_ =~ /$in{'name'}/){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;existing_name;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;close(OUT);<br>
+}<br>
+<br>
+という感じなんですが。日本語をこれに渡すとエラーがでます。<br>
+これと同じような処理をするにはどう書けばいいのでしょうか？<br>
+<br>
+<font color="#CC8000">&gt;&gt; perl -v</font><br>
+perl version 5.004_04 built for i386-freebsd<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/06/25(木) 23:39:03</span><br>
+スクリプトがEUCで書いてあるなら、<br>
+　open(OUT,"nkf -e &lt; $HOME/.jnames |");<br>
+などと、入力をEUCに変換したらどうなりますか？<br>
+<br>
+スクリプトがJISならnkf -jかな(ためしてません)。<br>
+<br>
+<br>
+ところで、普通はOUTっていったら書き込み用じゃないですかね。<br>
+<hr>
+<span class=name>ピンプ</span>
+<span class=email><a href="mailto:k-ozaki@annie.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/06/26(金) 08:55:53</span><br>
+一応スクリプト、.jnamesファイルともにJIS何ですが、<br>
+nkfでパイプしてみたらエラーは出なくなりましたが、<br>
+チェック自体を行なってくれなくなりました・・・・<br>
+<br>
+ごめんなさい、PERL初心者なんで ＜OUT<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/26(金) 10:48:42</span><br>
+if ($_ =~ /$in{'name'}/)<br>
+の部分に問題があります。$in{'name'} が展開されたときに<br>
+正規表現の特殊文字が含まれていると、それが解釈<br>
+されてしまいます。<br>
+<br>
+if ($_ =~ /\Q$in{'name'}\E/) { ... } # \Qから\Eまでの記号をエスケープ<br>
+とするか、あるいは<br>
+if (index($_, $in{'name'}) &gt;= 0) # サブ文字列のチェック<br>
+とするのはどうでしょうか。<br>
+<br>
+でも、単に同じ文字かどうかのチェックなら、<br>
+if ($_ eq $in{'name'}) { ... }<br>
+のように eq 十分でしょう。<br>
+<hr>
+<span class=name>ピンプ</span>
+<span class=url><a href="javascript:if(confirm('http://www.tohoho-web.com/lng/199806/moji19.gif  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ｲｻｿﾉﾓﾃ, ｻﾅﾆ愠ﾋﾏﾂﾔﾘ, ｻ鍗ｿｼｴｽｫﾍ｣ﾖｹ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.tohoho-web.com/lng/199806/moji19.gif'" tppabs="http://www.tohoho-web.com/lng/199806/k-ozaki@annie.ne.jp">[HomePage]</a></span>
+<span class=time>1998/07/01(水) 15:32:16</span><br>
+<span class=resolv>[[解決]]</span><br>
+moさんどうもありがとうございました。<br>
+index関数を使って上手くできました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199806/index.htm">[上に]</a>
+<a href="98060062.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060062.htm">[前に]</a>
+<a href="98060064.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060064.htm">[次に]</a>
+</body>
+</html>

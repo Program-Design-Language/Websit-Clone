@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CGIの設置方法 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>CGIの設置方法</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwcgi.htm" tppabs="http://www.tohoho-web.com/wwwcgi.htm">とほほのCGI入門</a> &gt;
+CGIの設置方法
+
+<h4 id="Mokuji">目次</h4>
+<ul>
+<li><a href="#CgiReadme">プロバイダが用意した説明書を読む</a></li>
+<li><a href="#CgiPerl">perlのパス名を調べる</a></li>
+<li><a href="#CgiScript">CGIスクリプトを作成する</a></li>
+<li><a href="#CgiHtaccess">.htaccessを設定する</a></li>
+<li><a href="#CgiFtp">CGIスクリプトを転送する</a></li>
+<li><a href="#CgiPermission">CGIのパーミッションを変更する</a></li>
+<li><a href="#CgiCall">CGIを呼び出す</a></li>
+</ul>
+
+<h4 id="CgiReadme">プロバイダが用意した説明書を読む</h4>
+<div class=i>
+<p>プロバイダが用意している「CGI設置の手順」があれば必ずこれを読んでください。CGI の設置方法はプロバイダによって異なるので、これを読んで置かないと非常に悩むことになります。CGI を全くサポートしていないプロバイダもあります。プロバイダ固有の注意事項の例として次のものがあります。</p>
+<ul>
+<li>プロバイダが用意したCGIしか利用できない。</li>
+<li>CGIスクリプトの拡張子は .cgi でなくてはならない。</li>
+<li>CGIスクリプトを置いたフォルダに .htaccess を設置しなくてはならない。</li>
+<li>CGIスクリプトを設置するディレクトリが決められている。</li>
+<li>CGIスクリプトは別のサーバーに設置しなくてはならない。</li>
+<li>CGIスクリプト設置後、プロバイダにメールを送らなくてはならない。</li>
+<li>CGIスクリプトに引数を渡すことができない。</li>
+</ul>
+</div>
+
+<h4 id="CgiPerl">perlのパス名を調べる</h4>
+<div class=i>
+<p>ここでは、perl を用いたCGIの設置方法について述べますので、まず、perl のパス名(置かれている場所)を調べてください。私が加入している BIGLOBE では /usr/local/bin/perl となっています。他のプロバイダでは /usr/bin/perl だったり、/usr/local/bin/perl だったりするようです。CGI をサポートしているプロバイダであれば、perl のパス名くらいは説明していると思いますので、プロバイダ提供の説明書を参照してください。</p>
+</div>
+
+<h4 id="CgiScript">CGIスクリプトを作成する</h4>
+<div class=i>
+<p>[メモ帳] などのテキストエディタで次のようなテキストファイルを作成し、test1.cgi というファイル名で保存してください。これが CGI スクリプトと呼ばれるプログラムとなります。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+#!/usr/local/bin/perl
+
+print "Content-type: text/html\n";
+print "\n";
+print "&lt;html&gt;\n";
+print "&lt;head&gt;\n";
+print "&lt;title&gt;テスト&lt;/title&gt;\n";
+print "&lt;/head&gt;\n";
+print "&lt;body&gt;\n";
+print "これはCGIのテストです。\n";
+print "&lt;/body&gt;\n";
+print "&lt;/html&gt;\n";
+</pre>
+<p>1行目の #! の後にはperlのパス名を記述します。#! の前には空行や空白文字を入れないようにしてください。</p>
+<p>print "..."; というperlの構文の中なので、&lt;body&gt;タグなどで使用するダブルクォーテーション(")は、\" と記述する必要があります。</p>
+<p>Windowsの[メモ帳]で test1.cgi を保存しようとすると、test1.cgi.txt となってしまう場合は、[ファイル]-[名前をつけて保存] で test1.cgi ではなく、"test1.cgi" のように、ダブルクォーテーションで囲って保存してみてください。</p>
+<p>ファイルを編集する際に、test1.cgi ファイルをダブルクリックしても駄目なときは、メモ帳の [ファイル]-[開く] で [ファイルの種類] を [すべてのファイル(*.*)] にして test1.cgi を選択するか、test1.cgi ファイルを [メモ帳] のアイコンにドラッグドロップしてみてください。</p>
+</div>
+
+<h4 id="CgiHtaccess">.htaccessを設定する</h4>
+<div class=i>
+<p>RIMNETなど一部のプロバイダ(NCSA httpdやApacheを利用しているサーバ)では、CGIを動作させるために CGIスクリプトと同じディレクトリ(フォルダ)に .htaccess というファイルを用意しなくてはなりません。 .htaccessの中身は次のように記述します。すでに .htaccess というファイルが設置されている場合は、そのファイルに次の行を追加するようにしてください。(すでに追加されている場合もあります。)</p>
+<div class="tab">.htaccess</div>
+<pre class=c2>
+AddType application/x-httpd-cgi .cgi
+</pre>
+<p>.htaccessの最後の行の後ろで改行しておくのを忘れないようにしてください。この改行を忘れると、.htaccess ファイルが正常に機能しません。</p>
+<p>.htaccess.txt になってしまう場合は、前述同様、".htaccess" で保存してください。</p>
+</div>
+
+<h4 id="CgiFtp">CGIスクリプトを転送する</h4>
+<div class=i>
+<p>CGIスクリプトを、FFFTP や WS_FTP や Fetch などのFTPソフトでサーバーに転送します。 .htaccess が必要な場合は、これもあわせて転送します。この時、改行コードが適切なものになるように、[テキストモード]や[ASCIIモード]で転送するようにしてください。(→「<a href="wwwxx011.htm" tppabs="http://www.tohoho-web.com/wwwxx011.htm">改行コードについて</a>」)</p>
+</div>
+
+<h4 id="CgiPermission">CGIのパーミッションを変更する</h4>
+<div class=i>
+<p>サーバーがUNIXの場合は(現在は多くのサーバーがUNIXです。)、CGIスクリプトのファイルのパーミッションを変更する必要があります。「<a href="wwwxx012.htm" tppabs="http://www.tohoho-web.com/wwwxx012.htm">パーミッションを変更するには</a>」を参照して、CGIスクリプトのパーミッションを 755 (rwxr-xr-x) に変更してください。</p>
+</div>
+
+<h4 id="CgiCall">CGIを呼び出す</h4>
+<div class=i>
+<p>サーバーに転送したCGIスクリプトを、通常のHTMLファイルと同様に、例えば次のようなURLを指定してブラウザから呼び出してください。「これはCGIのテストです。」と表示されれば、設置は完了です。</p>
+<p>#!/usr/local/bin/perl や、print "..." などのCGIスクリプトがそのまま見えてしまう場合は、サーバーがCGIをサポートしていないか、.htaccess ファイルの設置が必要であるなどを意味しています。</p>
+<p>サーバー上に設置して、http://～ で始まるURLで呼び出さないとCGIは動作しませんので注意してください。動作しない時は「<a href="wwwcgi4.htm#CgiCheckList" tppabs="http://www.tohoho-web.com/wwwcgi4.htm#CgiCheckList">CGIスクリプト作成時の注意</a>」を参照してください。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1996-1999 杜甫々</div>
+<div>1999年7月18日</div>
+<div>http://www.tohoho-web.com/wwwcgi2.htm</div>
+</body>
+</html>
+

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>MySQL/MariaDBレプリケーション - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>MySQL/MariaDBレプリケーション</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="mysql.html" tppabs="http://www.tohoho-web.com/ex/mysql.html">MySQL/MariaDB</a> &gt;
+MySQL/MariaDBレプリケーション
+
+<h4>レプリケーションとは</h4>
+<div class="i">
+<p>MySQL/MariaDB マスタサーバの DB を 2台目, 3台目のスレーブに配布する仕組みです。マスタは読み書きが可能。スレーブは読み込みのみ可能です。読み込みに利用するサーバ台数を増やして負荷分散したり、マスタに障害が発生した際のリカバリサーバとして利用することができます。おおよそ、下記の流れで動作します。</p>
+<ol>
+<li>マスタはマスタのバイナリログに処理の内容を記録する。
+<li>スレーブ側のI/Oスレッドが、マスタからバイナリログを取得する。
+<li>スレーブ側のSQLスレッドが、取得したバイナリログをスレーブ側DBに反映する。
+</ol>
+</div>
+
+<h4>前提</H4>
+<div class="i">
+<p>下記の前提で手順を説明します。</p>
+<ul>
+<li>マスタのIPアドレス: 192.168.1.2
+<li>スレーブのIPアドレス: 192.168.1.3
+<li>マスタのサーバID: 1
+<li>スレーブのサーバID: 2
+<li>rootパスワード: root9999
+<li>レプリケーション用ユーザ名: repl
+<li>レプリケーション用パスワード: repl9999
+</ul>
+</div>
+
+<h4>マスタ側の設定</H4>
+<div class="i">
+<p>my.cnf に下記の設定をしておきます。</p>
+<pre class="dos">
+[mysqld]
+<em>server-id = 1</em>
+<em>log-bin</em>
+</pre>
+<p>レプリケーションが使用するユーザを作成します。</p>
+<pre class="dos">
+mysql&gt; CREATE USER 'repl'@'192.168.1.3' IDENTIFIED BY 'repl9999';
+mysql&gt; GRANT REPLICATION SLAVE ON *.* TO 'repl'@'192.168.1.3';
+</pre>
+<p>データベースをバックアップします。対象とるデータベースのエンジンは InnoDB で、ダンプ中に CREATE TABLE, ALTER TABLE, DROP TABLE などの操作は行われないようにしてください。</p>
+<pre class="dos">
+# mysqldump -u root -proot9999 --all-databases \
+  --flush-logs --single-transaction --master-data=2 &gt; master.db
+</pre>
+</div>
+
+<h4>スレーブ側の設定</H4>
+<div class="i">
+<p>my.cnf に下記の設定をしておきます。server-id では、関係するサーバ群で一意となる数値を指定してください。スレーブ動作中にスレーブDBへの書き込みが発生してしまうとレプリケーションがエラー停止してしまうので、read_only により誤更新を防ぎます。</p>
+<pre class="dos">
+[mysqld]
+<em>server-id=2</em>
+<em>log-bin</em>
+<em>read_only</em>
+</pre>
+<p>バックアップをスレーブにリストアします。</p>
+<pre class="dos">
+# mysql -u root -proot9999 &gt; master.db
+</pre>
+<p>マスタからバックアップファイルを取得し、バイナリログ名とポジション番号を調べます。</p>
+<pre class="dos">
+# grep "CHANGE MASTER TO" master.db
+-- CHANGE MASTER TO MASTER_LOG_FILE='<em>mariadb-bin.000005</em>', MASTER_LOG_POS=<em>1277</em>;
+</pre>
+<p>スレーブの設定を行います。</p>
+<pre class="dos">
+mysql&gt; CHANGE MASTER TO
+-&gt; MASTER_HOST='192.168.1.2',
+-&gt; MASTER_PORT=3306,
+-&gt; MASTER_USER='repl',
+-&gt; MASTER_PASSWORD='repl9999',
+-&gt; MASTER_LOG_FILE='<em>mariadb-bin.000005</em>',
+-&gt; MASTER_LOG_POS=<em>1277</em>;
+</pre>
+<p>スレーブを開始します。</p>
+<pre class="dos">
+mysql&gt; START SLAVE;
+</pre>
+</div>
+
+<h4>マスタからスレーブにフェイルオーバーする</h4>
+<h5>◆ マスタ側の作業</h5>
+<div class="i">
+<p>全テーブルをREAD LOCKし、書き込みプロセスが残っていないことを確認します。system userのプロセスは残っていて構いません。また、マスタ側のバイナリファイル名とポジション番号を確認します。</p>
+<pre class="dos">
+mysql&gt; FLUSH TABLES WITH READ LOCK;
+mysql&gt; SHOW PROCESSLIST;
+mysql&gt; SHOW MASTER STATUS;
++-------------------+----------+--------------+------------------+
+| File              | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++-------------------+----------+--------------+------------------+
+| mysqld-bin.000001 |     1583 |              |                  |
++-------------------+----------+--------------+------------------+
+</pre>
+<p>DBをロックしたまま、別の端末からマスタを停止します。</p>
+<pre class="dos">
+# systemctl stop mariadb
+</pre>
+</div>
+
+<h5>◆ スレーブ側の作業</h5>
+<div class="i">
+<p>スレーブ側の状況を確認します。</p>
+<pre class="dos">
+mysql&gt; SHOW SLAVE STATUS\G
+ Slave_IO_State: Reconnecting ...      <span class="cm">再接続しようとしている</span>
+ Slave_IO_Running: Connecting ...      <span class="cm">I/Oスレッドは接続しようとしている</span>
+ Slave_SQL_Running: Yes                <span class="cm">SQLスレッドは正常動作している</span>
+ Exec_Master_Log_Pos: 1583 ...         <span class="cm">最後に書き込んだポジション番号</span>
+ Last_IO_Errno: 2003                   <span class="cm">最後に発生したI/Oエラーの番号</span>
+ Last_IO_Error: error reconnecting ... <span class="cm">最後に発生したI/Oエラーの内容</span>
+</pre>
+<p>スレーブをI/Oスレッド、SQLスレッドの順に停止し、マスタ情報をリセットします。</p>
+<pre class="dos">
+mysql&gt; STOP SLAVE IO_THREAD;
+mysql&gt; STOP SLAVE SQL_THREAD;
+mysql&gt; RESET MASTER;
+</pre>
+<p>my.cnf の read_only をコメントアウトします。</p>
+<pre class="dos">
+[mysqld]
+server-id = 2
+log-bin
+<em># read_only</em>
+</pre>
+<p>MariaDBをマスタとして再起動します。</p>
+<pre class="dos">
+# systemctl restart mariadb
+</pre>
+</div>
+
+<h4>Dockerを用いた検証手順</h4>
+<div class="i">
+<p>Dockerを用いて検証した手順を下記に示します。</p>
+<h5>◆Dockerネットワークを作成する</h5>
+<pre class="c" style="font-size:80%">
+# docker network create --subnet 192.168.1.0/24 local_net
+</pre>
+
+<h5>◆マスタ側を設定する</h5>
+<pre class="c" style="font-size:80%">
+# mkdir ~/maria1
+# docker volume create maria1
+# docker run -d --name maria1 -h maria1 --net local_net -e MYSQL_ROOT_PASSWORD=root9999 -v maria1:/var/lib/mysql mariadb
+# docker exec -it maria1 mysql -u root -proot9999
+ ※ コンテナ起動後、ログインできるようになるまで、下記エラーでしばらく時間がかかることがある
+ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+ ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
+mysql&gt; CREATE USER 'repl'@'192.168.1.0/255.255.255.0'  IDENTIFIED BY 'repl9999';
+mysql&gt; GRANT REPLICATION SLAVE ON *.* TO 'repl'@'192.168.1.0/255.255.255.0';
+mysql&gt; QUIT
+# docker cp maria1:/etc/mysql ~/maria1
+# sed -i 's/\[mysqld\]/\[mysqld\]\nserver-id = 1\nlog-bin/' ~/maria1/mysql/my.cnf
+# docker rm -fv maria1
+# docker run -d --name maria1 -h maria1 --net local_net -v maria1:/var/lib/mysql -v ~/maria1/mysql:/etc/mysql mariadb
+# docker exec -it maria1 mysql -u root -proot9999
+mysql&gt; create database sample;
+mysql&gt; use sample;
+mysql&gt; create table users ( id int, name varchar(30) );
+mysql&gt; insert into users ( id, name ) values ( 1, 'Yamada' );
+mysql&gt; insert into users ( id, name ) values ( 2, 'Suzuki' );
+mysql&gt; QUIT
+# docker exec -it maria1 mysqldump -u root -proot9999 --all-databases --single-transaction --master-data=2 &gt; ~/maria1/maria1.db
+</pre>
+
+<h5>◆スレーブ側を設定する</h5>
+<pre class="c" style="font-size:80%">
+# mkdir ~/maria2
+# docker volume create maria2
+# docker run -d --name maria2 -h maria2 --net local_net -e MYSQL_ROOT_PASSWORD=root9999 -v maria2:/var/lib/mysql mariadb
+# docker exec -it maria2 mysql -u root -proot9999
+  ※エラーとなる場合はしばらく待つ
+mysql&gt; QUIT
+# docker cp ~/maria1/maria1.db maria2:/tmp
+# docker exec -it maria2 /bin/bash
+(コンテナの中で)
+# mysql -u root -proot9999 &lt; /tmp/maria1.db
+# exit
+# docker cp maria2:/etc/mysql ~/maria2
+# sed -i 's/\[mysqld\]/\[mysqld\]\nserver-id = 2\nlog-bin\nread_only/' ~/maria2/mysql/my.cnf
+# docker rm -fv maria2
+# docker run -d --name maria2 -h maria2 --net local_net -v maria2:/var/lib/mysql -v ~/maria2/mysql:/etc/mysql mariadb
+# docker inspect maria1 | grep IPAddress
+  "IPAddress": "<em>192.168.1.2</em>",
+# grep 'CHANGE MASTER TO MASTER_LOG_FILE' ~/maria1/maria1.db
+  -- CHANGE MASTER TO MASTER_LOG_FILE='<em>mysqld-bin.000001</em>', MASTER_LOG_POS=<em>1010</em>;
+# docker exec -it maria2 mysql -u root -proot9999
+mysql&gt; CHANGE MASTER TO
+ -&gt; MASTER_HOST='<em>192.168.1.2</em>',
+ -&gt; MASTER_PORT=3306,
+ -&gt; MASTER_USER='repl',
+ -&gt; MASTER_PASSWORD='repl9999',
+ -&gt; MASTER_LOG_FILE='<em>mysqld-bin.000001</em>',
+ -&gt; MASTER_LOG_POS=<em>1010</em>;
+mysql&gt; START SLAVE;
+mysql&gt; QUIT
+</pre>
+
+<h5>◆マスタでデータを更新する</h5>
+<pre class="c" style="font-size:80%">
+# docker exec -it maria1 mysql -u root -proot9999 sample
+mysql&gt; insert into users ( id, name ) values ( 3, 'Takeda' );
+mysql&gt; QUIT
+</pre>
+
+<h5>◆スレーブに反映されているか確認する</h5>
+<pre class="c" style="font-size:80%">
+# docker exec -it maria2 mysql -u root -proot9999 sample
+mysql&gt; select * from sample.users;
+mysql&gt; QUIT
+</pre>
+
+<h5>◆フェイルオーバーする(マスタ側)</h5>
+<pre class="c" style="font-size:80%">
+# docker exec -it maria1 mysql -u root -proot9999
+mysql&gt; FLUSH TABLES WITH READ LOCK;
+mysql&gt; SHOW PROCESSLIST;
+mysql&gt; SHOW MASTER STATUS;
++-------------------+----------+--------------+------------------+
+| File              | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++-------------------+----------+--------------+------------------+
+| mysqld-bin.000001 |     1583 |              |                  |
++-------------------+----------+--------------+------------------+
+(DBをロックしたまま、別の端末から)
+# docker stop maria1
+</pre>
+
+<h5>◆フェイルオーバーする(スレーブ側)</h5>
+<pre class="c" style="font-size:80%">
+# docker exec -it maria2 mysql -u root -proot9999
+mysql&gt; SHOW SLAVE STATUS\G
+  Slave_IO_State: Reconnecting ...      再接続しようとしている
+  Slave_IO_Running: Connecting ... 接続しようとしている
+  Slave_SQL_Running: Yes
+  Exec_Master_Log_Pos: 1583 ... 最後に書き込んだポジション番号(マスタと合致していればよい)
+  Last_IO_Errno: 2003 ... 最後に発生したI/Oエラーの番号
+  Last_IO_Error: error reconnecting ... 最後に発生したI/Oエラーの内容
+mysql&gt; STOP SLAVE IO_THREAD;
+mysql&gt; STOP SLAVE SQL_THREAD;
+mysql&gt; RESET MASTER;
+mysql&gt; QUIT
+# sed -i 's/#*read_only/#read_only/' ~/maria2/mysql/my.cnf
+# docker restart maria2
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年12月8日 最終更新:2019年12月8日</div>
+<div>http://www.tohoho-web.com/ex/mysql-replication.html</div>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Blobを用いて分割読み込みする - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Blobを用いて分割読み込みする</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+Blobを用いて分割読み込みする
+
+<h4>概要</h4>
+<div class=i>
+<ul>
+<li>Blob は Binary Large OBject の略です。
+<li>JavaScript の Blob は HTML5 関連仕様である <a href="../html5/file_api.html" tppabs="http://www.tohoho-web.com/html5/file_api.html">File API</a> で定義されています。
+<li>File API によるファイル読み込みや、fetch() によるサーバから非同期通信で、データを読み出す際に利用されます。
+<li>File API の File クラスは Blob のサブクラスとして実装されています。
+<li>slice() を用いることにより、巨大なファイルや、巨大なデータ通信を、分割して逐次読み込みすることが可能です。
+</ul>
+</div>
+
+<h4>ファイルを一括読み込みするサンプル</h4>
+<div class=i>
+<p>File API を用いてファイルを一括読み込みする例を下記に示します。読み込んだファイルの内容は開発ツールのコンソールに表示されます。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;
+&lt;input type="file" id="file1"&gt;
+&lt;button id="btn1"&gt;OK&lt;/button&gt;
+&lt;/div&gt;
+&lt;script&gt;
+document.getElementById("btn1").addEventListener("click", function(e) {
+  var files = document.getElementById("file1").files;
+  for (var i = 0; i &lt; files.length; i++) {
+    var file = files[i];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      console.log("------onload------");
+      console.log("state=" + e.target.readyState);
+      console.log("length=" + e.target.result.length);
+      console.log("data=" + e.target.result);
+    }
+    reader.onerror = function(e) {
+      console.log("error=" + e.target.error.name);
+    }
+    reader.readAsText(file, "utf-8");
+  }
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div>
+<input type="file" id="file1">
+<button id="btn1">OK</button>
+</div>
+<script>
+document.getElementById("btn1").addEventListener("click", function(e) {
+  var files = document.getElementById("file1").files;
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      console.log("------onload------");
+      console.log("state=" + e.target.readyState);
+      console.log("length=" + e.target.result.length);
+      console.log("data=" + e.target.result);
+    }
+    reader.onerror = function(e) {
+      console.log("error=" + e.target.error.name);
+    }
+    reader.readAsText(file, "utf-8");
+  }
+});
+</script>
+</div>
+</div>
+
+<h4>ファイルを分割読み込みするサンプル</h4>
+<div class=i>
+<p>slice() を用いることで、分割読み込みすることが可能となります。分割読み込みの際には、下記の様な関数を用意しておくと便利です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function readBlobAsText(blob, size, callback) {
+  var offset = 0;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    callback(e.target.readyState, e.target.result);
+    if (offset < blob.size) {
+      slice = blob.slice(offset, offset + size, blob.type);
+      offset += size;
+      reader.readAsText(slice, "utf-8");
+    }
+  }
+  reader.onerror = function(e) {
+    console.log("error=" + e.target.error.name);
+  }
+  slice = blob.slice(offset, offset + size, blob.type);
+  offset += size;
+  reader.readAsText(slice, "utf-8");
+}  
+</pre>
+<p>上記を用いて、ファイルを 10バイトずつ分割読み込みする例を下記に示します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;
+&lt;input type="file" id="file2"&gt;
+&lt;button id="btn2"&gt;OK&lt;/button&gt;
+&lt;/div&gt;
+&lt;script&gt;
+document.getElementById("btn2").addEventListener("click", function(e) {
+  var files = document.getElementById("file2").files;
+  for (var i = 0; i &lt; files.length; i++) {
+    readBlobAsText(files[i], 10, function(state, data) {
+      console.log("------onload------");
+      console.log("state=" + state);
+      console.log("length=" + data.length);
+      console.log("data=" + data);
+    });
+  }
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div>
+<input type="file" id="file2">
+<button id="btn2">OK</button>
+</div>
+<script>
+function readBlobAsText(blob, size, callback) {
+  var offset = 0;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    callback(e.target.readyState, e.target.result);
+    if (offset < blob.size) {
+      slice = blob.slice(offset, offset + size, blob.type);
+      offset += size;
+      reader.readAsText(slice, "utf-8");
+    }
+  }
+  reader.onerror = function(e) {
+    console.log("error=" + e.target.error.name);
+  }
+  slice = blob.slice(offset, offset + size, blob.type);
+  offset += size;
+  reader.readAsText(slice, "utf-8");
+}
+
+document.getElementById("btn2").addEventListener("click", function(e) {
+  var files = document.getElementById("file2").files;
+  for (var i = 0; i < files.length; i++) {
+    readBlobAsText(files[i], 10, function(state, data) {
+      console.log("------onload------");
+      console.log("state=" + state);
+      console.log("length=" + data.length);
+      console.log("data=" + data);
+    });
+  }
+});
+</script>
+</div>
+</div>
+
+<h4>HTTPリソースを分割読み込みするサンプル</h4>
+<div class=i>
+<p>fetch() と Blob を組み合わせることで、http://～ や https://～ で始まるリモートのリソースを分割読み込みすることが可能です。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;input type="text" id="file3" value="http://www.tohoho-web.com/index.htm"&gt;
+&lt;button id="btn3"&gt;OK&lt;/button&gt;
+&lt;script&gt;
+document.getElementById("btn3").addEventListener("click", function(e) {
+  var url = document.getElementById("file3").value;
+  window.fetch(url)
+    .then(function(response) {
+      return response.blob();
+    })
+    .then(function(blob) {
+      readBlobAsText(blob, 1024, function(state, data) {
+        console.log("------onread------");
+        console.log("state=" + state);
+        console.log("length=" + data.length);
+        console.log("data=" + data);
+    });
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<input type="text" id="file3" value="http://www.tohoho-web.com/index.htm" style="width:400px">
+<button id="btn3">OK</button>
+<script>
+document.getElementById("btn3").addEventListener("click", function(e) {
+  var url = document.getElementById("file3").value;
+  window.fetch(url)
+    .then(function(response) {
+      return response.blob();
+    })
+    .then(function(blob) {
+      readBlobAsText(blob, 1024, function(state, data) {
+        console.log("------onread------");
+        console.log("state=" + state);
+        console.log("length=" + data.length);
+        console.log("data=" + data);
+    });
+  });
+});
+</script>
+</div>
+</div>
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年5月6日 最終更新:2018年5月6日</div>
+<div>http://www.tohoho-web.com/tech/blob-slice.html</div>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>aspで異なるフレームにページを再表示させるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>aspで異なるフレームにページを再表示させるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120054.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120054.htm">[前に]</a>
+<a href="98120056.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120056.htm">[次に]</a>
+<hr>
+<span class=name>BlueTree</span>
+<span class=email><a href="mailto:kaori@wsd.csk-inet.or.jp">[E-Mail]</a></span>
+<span class=time>1998/12/09(水) 11:13:32</span><br>
+aspで開発しているのですが、行き詰まってしまいました。<br>
+<br>
+異なるフレームに引数を渡してページを再表示させたいと思っています。<br>
+具体的に述べますと、<br>
+例えば上下にHEADとBODYというフレームをわけて、<br>
+HEADのほうにはHEAD.ASPを読み込み、<br>
+BODYの方では、BODY.ASPを読み込むようにします。<br>
+BODY.ASPでは、ＤＢにアクセスしてその値を表示させるとします。<br>
+ＤＢの値の一部をHEADの方にも表示させたいので、<br>
+引数を渡して、HEADのフレームにHEAD.ASPを再表示させたいのですが、<br>
+異なるフレームにページを読み込ませる方法がわかりません。<br>
+TARGETみたいなことを指定したりすることができるのでしょうか？<br>
+どなたかご存知のかた、教えて下さい。<br>
+宜しくお願いします。<br>
+<hr>
+<span class=name>ゆうこ</span>
+<span class=time>1998/12/10(木) 09:19:51</span><br>
+こんにちは。<br>
+うちでは、始めにフレームをこんな感じでつくって、<br>
+---------------------<br>
+&lt;FRAMESET ROWS="50,*"&gt;<br>
+&nbsp;&nbsp;&lt;FRAME SRC="Dummy.asp" NAME="HEAD"&gt;<br>
+&nbsp;&nbsp;&lt;FRAME SRC="BODY.asp" NAME="BODY"&gt;<br>
+&lt;/FRAMESET&gt;<br>
+---------------------<br>
+ダミーページと下のページを表示させ、<br>
+BODY.aspの中で、<br>
+---------------------<br>
+&lt;HEAD&gt;<br>
+&nbsp;&nbsp;&lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&nbsp;&nbsp;// Window ロード時<br>
+&nbsp;&nbsp;function Window_OnLoad() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.frmHEAD.submit();<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+。。。<br>
+&lt;FORM NAME="frmHEAD" ACTION="HEAD.asp" TARGET="HEAD"&gt;<br>
+&nbsp;&nbsp;&lt;INPUT TYPE="hidden" NAME="XXX" VALUE="***"&gt;<br>
+&lt;/FORM&gt;<br>
+---------------------<br>
+としてます。<br>
+<hr>
+<span class=name>BlueTree</span>
+<span class=time>1998/12/10(木) 14:04:21</span><br>
+ゆうこさん、ありがとうございます。<br>
+非常に助かります！これで問題が解決できます。<br>
+&lt;FORM&gt;でTARGET指定できるとは知りませんでした。<br>
+<br>
+ただ、ちょっとお聞きしたいのですが、JavaScriptの<br>
+Window_OnLoad()はどういうタイミングでよばれるのですか？<br>
+どこかでこの関数を呼ぶコードを書かなくていいのですか？<br>
+試したところうまく行かなかったので、<br>
+呼び出ししていないからかなと思って&lt;body&gt;タグにonLoad="Window_OnLoad()"<br>
+と書いてみたらうまく行きました。<br>
+でも、ゆうこさんがなさっていたのはきっとわざわざ&lt;body&gt;タグに<br>
+書かなくてもいいやり方なんだと思うのですが、<br>
+その辺を少し説明していただけませんか？<br>
+<hr>
+<span class=name>ゆうこ</span>
+<span class=time>1998/12/10(木) 15:31:09</span><br>
+<span class=resolv>[[解決]]</span><br>
+ごめんなさ～い。抜けてました。<br>
+BlueTreeさんがなさったとおり、<br>
+&lt;BODY onLoad="Window_OnLoad()"&gt;が正解です。<br>
+<hr>
+<span class=name>BlueTree</span>
+<span class=time>1998/12/10(木) 16:33:25</span><br>
+<span class=resolv>[[解決]]</span><br>
+そうでしたか。わかりました。<br>
+ちなみに発見したのですが、submitで送ると、<br>
+ブラウザの戻るボタンで戻った場合<br>
+dummy.aspの方の表示がなされてしまうので、<br>
+JavaScriptの記述で<br>
+------------------------------------------<br>
+var p_XXX = document.frmHEAD.XXX.value;<br>
+parent.HEAD.location.replace("HEAD.asp?YYY=" + p_XXX );<br>
+------------------------------------------<br>
+と記述してみました。<br>
+いずれにせよ、解決してほっとしました。<br>
+ゆうこさん、ありがとうございます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120054.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120054.htm">[前に]</a>
+<a href="98120056.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120056.htm">[次に]</a>
+</body>
+</html>

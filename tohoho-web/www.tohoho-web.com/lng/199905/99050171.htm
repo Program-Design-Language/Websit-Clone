@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CGIからの出力を特定フレームに表示するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CGIからの出力を特定フレームに表示するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050170.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050170.htm">[前に]</a>
+<a href="99050172.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050172.htm">[次に]</a>
+<hr>
+<span class=name>ひろ</span>
+<span class=email><a href="mailto:hirotugu@ca2.so-net.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/27(木) 20:03:05</span><br>
+Ａ，Ｂ２つのフレームがあります。<br>
+Ｂのボタンを押すとＡのFORMにあるデータをSubmitし、CGIからの<br>
+戻りをＢのフレームに表示するページを作ったのですが、新しい<br>
+ウィンドウが立ち上がってしまい、Ｂのフレームに表示されません。<br>
+<br>
+&lt;frameset rows="10%,90%" frameborder=0 border=0 bordercolor="#FFFFFF"&gt;<br>
+&nbsp;&nbsp;&lt;frame src="○○.html" name="A" scrolling="no"&gt;<br>
+&nbsp;&nbsp;&lt;frame src="△△.html" name="B"&gt;<br>
+&lt;/frameset&gt;<br>
+<br>
+AのFORMは、こんな感じ<br>
+&lt;form method="POST" name="Data" target="B"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:<br>
+<br>
+Bからのactionの指定は、こんな感じ<br>
+&lt;input type='button' value='送信'<br>
+&nbsp;&nbsp;onclick='top.frames[0].document.Data.action="cgi-bin/send.cgi";<br>
+&nbsp;&nbsp;top.frames[0].document.Data.submit();'&gt;<br>
+<br>
+どうしてＢのフレームに表示されないのでしょうか？<br>
+<br>
+<hr>
+<span class=name>ひろ</span>
+<span class=email><a href="mailto:hirotugu@ca2.so-net.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/27(木) 20:05:07</span><br>
+すいません、間違いがありました。<br>
+<font color="#CC8000">&gt; &lt;input type='button' value='送信'</font><br>
+<font color="#CC8000">&gt; onclick='top.frames[0].document.Data.action="cgi-bin/send.cgi";</font><br>
+<font color="#CC8000">&gt; top.frames[0].document.Data.submit();'&gt;</font><br>
+<br>
+top.frames[0].document.A.submit();<br>
+<br>
+でした。<br>
+<br>
+<hr>
+<span class=name>ひろ</span>
+<span class=email><a href="mailto:hirotugu@ca2.so-net.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/30(日) 08:34:17</span><br>
+<span class=resolv>[[解決]]</span><br>
+自身で解決する事ができました。<br>
+<br>
+<font color="#CC8000">&gt; &lt;input type='button' value='送信'</font><br>
+<font color="#CC8000">&gt; onclick='top.frames[0].document.A.action="cgi-bin/send.cgi;</font><br>
+<font color="#CC8000">&gt; top.frames[0].document.A.submit();'&gt;</font><br>
+<br>
+上記のJavaScriptの部分を別funictionにしてフレームＡに置き<br>
+、targetを指定する様にしたら上手く表示する様になりました。<br>
+<br>
+function Send() {<br>
+&nbsp;&nbsp;document.A.action="cgi-bin/send.cgi";<br>
+&nbsp;&nbsp;document.A.target=top.frames[1].name;<br>
+&nbsp;&nbsp;document.Data.submit();<br>
+}<br>
+<br>
+NCで作成していたのですが、フレーム名は表示が変わるたび<br>
+（Ｂフレームを分割し場合等）フレーム名が変わってしまう<br>
+様です．<br>
+<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050170.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050170.htm">[前に]</a>
+<a href="99050172.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050172.htm">[次に]</a>
+</body>
+</html>

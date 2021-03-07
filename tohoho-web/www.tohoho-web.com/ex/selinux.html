@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほのSELinux入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>とほほのSELinux入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+とほほのSELinux入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">SELinuxとは</a>
+<li><a href="#dac_mac">DACとMAC</a>
+<li><a href="#start">SELinuxの有効化・無効化</a>
+<li><a href="#httpd">ApacheでSELinuxを試してみる</a>
+<li><a href="#selinux_policies">SELinuxポリシー</a>
+<li><a href="#context">コンテキスト</a>
+<li><a href="#file_labeling">ファイルのラベリング</a>
+<li><a href="#av_rule">Access Vectorルール</a>
+<li><a href="#domain_transition">ドメイン遷移</a>
+<li><a href="#port_labeling">ポートのラベリング</a>
+<li><a href="#attribute">アトリビュート</a>
+<li><a href="#selinux_bool">SELinuxブール値</a>
+<li><a href="#rbac">RBAC(Role Based Access Control)</a>
+<li><a href="#mcs">MCS(Multi Category Security)</a>
+<li><a href="#mls">MLS(Multi Level Security)</a>
+<li><a href="#silent_deny">サイレント拒否</a>
+<li><a href="#httpd_cgi">ApacheでCGIを動かしてみる</a>
+<li><a href="#other_solutions">その他の解決</a>
+<li><a href="#commands">関連コマンド</a>
+  <ul>
+  <li><a href="#getenforce_setenforce">getenforce/setenforceコマンド</a>
+  <li><a href="#sestatus">sestatusコマンド</a>
+  <li><a href="#ausearch">ausearchコマンド</a>
+  <li><a href="#audit2why">audit2whyコマンド</a>
+  <li><a href="#audit2allow">audit2allowコマンド</a>
+  <li><a href="#seinfo">seinfoコマンド</a>
+  <li><a href="#chcon">chconコマンド</a>
+  <li><a href="#findconf">findconコマンド</a>
+  <li><a href="#restorecon">restoreconコマンド</a>
+  <li><a href="#runcon">runconコマンド</a>
+  <li><a href="#getsebool_setsebool">getsebool/setseboolコマンド</a>
+  <li><a href="#semanage">semanageコマンド</a>
+  <li><a href="#other_commands">その他コマンド</a>
+  </ul>
+<li><a href="#links">リンク</a>
+
+</ul>
+</div>
+
+<h4 id="about">SELinuxとは</h4>
+<div class="i">
+<ul>
+<li>Security-Enhanced Linux の略です。
+<li>Linux のセキュリティをより強固なものにするため、米国国歌安全保障局(NSA)によって開発されました。
+<li>Fedora, Red Hat Enterprise Linux, CentOS では標準で有効化されています。
+<li>有効化しておくと色々動かないものが多く、仕様も難解で立ち入ることが難しく、つい、無効化してしまうことも多いですが、たとえ侵入されて root 権限を乗っ取られても重要なデータを守ることができる技術として、利用が増えています。
+</ul>
+</div>
+
+<h4 id="dac_mac">DACとMAC</h4>
+<div class="i">
+<p>通常のユーザ(root, ...)、グループ(wheel, ...)、パーミッション(rwx---)でアクセス制御するレベルを <b>任意アクセス制御</b> (<b>DAC</b>:Discretionary Access Control) と呼びます。root 権限を乗っ取られてしまうと、すべての操作を実行可能となってしまいます。これに対し、<b>SELinux</b> は <b>強制アクセス制御</b> (<b>MAC</b>:Mandatory Access Control) レベルのアクセス制御を実現します。たとえ httpd 経由で root 権限が乗っ取られたとしても、httpd に与えられた httpd ドメインの範囲の操作しか実行することができず、被害を最小限に抑えることができます。</p>
+</div>
+
+<h4 id="start">SELinuxの有効化・無効化</h4>
+<div class="i">
+<p>SELinux の有効化状態を調べるには <b>getenforce</b> コマンドを使用します。</p>
+<pre class="c">
+# getenforce
+</pre>
+<ul>
+<li><b>Enforcing</b>：検知して拒絶する
+<li><b>Permissive</b>：検知してログに書き込むが、拒絶まではしない
+<li><b>Disabled</b>：無効。検知も拒絶もしない
+</ul>
+<p>SELinux の有効化状態を一時的に切り替えるには <b>setenforce</b> コマンドを使用します。OS を再起動すると元の状態に戻ります。</p>
+<pre class="c">
+# setenforce 0		<span class="cm"># 一時的にpermissiveモードに変更</span>
+# setenforce 1		<span class="cm"># 一時的にenforcingモードに変更</span>
+</pre>
+<p>恒常的に変更するには <b>/etc/selinux/config</b> を書き換えて OS を再起動します。<b>/etc/sysconfig/selinux</b> を編集と紹介されてたりしますが、これは /etc/selinux/config へのシンボリックリンクです。sed -i で書き換えるとシンボリックリンクが外れてしまうので注意が必要です。</p>
+<pre class="c">
+# vi /etc/selinux/config
+SELINUX=enforcing
+# reboot
+</pre>
+</div>
+
+<h4 id="httpd">ApacheでSELinuxを試してみる</h4>
+<div class="i">
+<p>まず、Apacheをインストールして index.html を取得してみます。</p>
+<pre class="c">
+# yum -y install httpd
+# echo "Hello" > /var/www/html/index.html
+# systemctl start httpd
+# curl http://localhost/index.html
+<em>Hello</em>					<span class="cm"># 正常に取得できた</span>
+</pre>
+<p>ここで一度SELinuxの遮断を無効化しておきます。</p>
+<pre class="c">
+# setenforce 0		<span class="cm"># 遮断を無効化する</span>
+</pre>
+<p>次に、/var/www の代わりに /var/www2 で試してみます。</p>
+<pre class="c">
+# mkdir -p /var/www2/html
+# echo "Hello" > /var/www2/html/index.html
+# vi /etc/httpd/conf/httpd.conf
+DocumentRoot "/var/<em>www2</em>/html"
+&lt;Directory "/var/<em>www2</em>"&gt;
+  :
+&lt;/Directory&gt;
+&lt;Directory "/var/<em>www2</em>/html"&gt;
+  :
+&lt;/Directory&gt;
+# systemctl restart httpd
+# curl http://localhost/index.html
+<em>Hello</em>					<span class="cm"># 正常に取得できた</span>
+</pre>
+<p>これも正常に取得できると思います。次に SELinux の遮断を有効化して試してみます。</p>
+<pre class="c">
+# <em>setenforce 1</em>		<span class="cm"># 遮断を有効化する</span>
+# curl http://localhost/index.html
+&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;<em>403 Forbidden</em>&lt;/title&gt;	<span class="cm"># 遮断された</span>
+   :
+</pre>
+<p>今度は 403 エラーになりました。監査ログを見てみると下記の様なログが出力されています。</p>
+<pre class="c">
+# grep denied /var/log/audit/audit.log | tail -1
+type=AVC msg=audit(1610898951.138:247): avc:  denied  { getattr } for
+  pid=2544 comm="httpd" path="/var/www2/html/index.html" dev="dm-0" ino=157772
+  scontext=system_u:system_r:httpd_t:s0
+  tcontext=unconfined_u:object_r:var_t:s0
+  tclass=file
+</pre>
+<p>ps コマンドに -Z オプションをつけてみると、httpd プロセスに下記の情報が付与されているのがわかります。</p>
+<pre class="c">
+# ps -ef<em>Z</em> | grep httpd
+<em>system_u:system_r:httpd_t:s0</em>  apache 2544 2543 0 00:46 ? 00:00:00 /usr/sbin/httpd -DFOREGROUND
+</pre>
+<p>ls コマンドに -Z オプションをつけてみると、/var/www や /var/www2 に下記の情報が付与されていることがわかります。</p>
+<pre class="c">
+# ls -ld<em>Z</em> /var/www*
+drwxr-xr-x. root root <em>system_u:object_r:httpd_sys_content_t:s0</em> /var/www
+drwxr-xr-x. root root <em>unconfined_u:object_r:var_t:s0</em>           /var/www2
+</pre>
+<p>説明は後回しにして、/var/www2 にも /var/www と同じタイプ(*_t)を設定して試してみましょう。</p>
+<pre class="c">
+# chcon -R -t <em>httpd_sys_content_t</em> /var/www2
+# ls -ldZ /var/www*
+drwxr-xr-x. root root system_u:object_r:<em>httpd_sys_content_t</em>:s0     /var/www
+drwxr-xr-x. root root unconfined_u:object_r:<em>httpd_sys_content_t</em>:s0 /var/www2
+# curl http://localhost/index.html
+<em>Hello</em>
+</pre>
+<p>今度は正常に取得できました。ただし、これは一時的な設定で、恒常的に設定するには後で説明する手順が必要です。</p>
+</div>
+
+<h4 id="selinux_policies">SELinuxポリシー</h4>
+<div class="i">
+<p>SELinuxポリシーは主に下記のルールから構成されます。</p>
+<ul>
+<li><b>ラベリング</b>：どのリソースに、どのコンテキスト(タイプ、ラベル)を割り当てるか
+<li><b>TE</b> (Type Enforcement)：ドメイン/タイプ(*_t)ベースのアクセス制御
+  <ul>
+  <li><b>Access Vectorルール</b>：どのドメインが、どのタイプに対して何ができるか
+  <li><b>ドメイン遷移</b>：どのプロセスに、どのコンテキスト(ドメイン)を割り当てるか
+  <li><b>SELinuxブール値</b>：AVルールをグルーピングして一括on/offできるようにしたもの
+  </ul>
+<li><b>RBAC</b> (Role Based Access Control）：ロール(*_r)ベースのアクセス制御
+<li><b>MCS</b> (Mucti Category Security)：カテゴリ(c*)ベースのアクセス制御。主にコンテナで使用
+<li><b>MLS</b> (Multi Level Security))：レベル(s*, c*)ベースのアクセス制御。国防・軍事レベルの案件で使用
+</ul>
+</div>
+
+<h4 id="context">コンテキスト</h4>
+<div class="i">
+<p>ps や ls コマンドに -Z オプションをつけて表示される下記の様な情報を <b>コンテキスト</b> または <b>ラベル</b> と呼びます。<b>プロセス</b> のコンテキストを <b>ソースコンテキスト</b>、ファイルやソケットなどの <b>リソース</b> のコンテキストを <b>ターゲットコンテキスト</b> と呼びます。</p>
+<pre class="c">
+# ps -efZ | grep httpd
+<em>system_u:system_r:httpd_t:s0</em>    root      2543     1  0 00:46 ?        00:00:00 /usr/sbin/httpd -DFOREGROUND
+# ls -ldZ /var/www
+drwxr-xr-x. root root <em>system_u:object_r:httpd_sys_content_t:s0</em> /var/www
+</pre>
+<p>コンテキストは下記の形式をしています。<b>*_u</b> は <b>SELinuxユーザーー</b>、<b>*_r</b> は <b>ロール</b>、<b>*_t</b> はプロセスの場合は <b>ドメイン</b>、リソースの場合は <b>タイプ</b> と呼びます。最後に s* や c* などの <b>レベル</b>(<b>レンジ</b>) が並びます。</p>
+<pre class="c">
+<i>selinux_user</i>(*_u) <b>:</b> <i>selinux_role</i>(*_r) <b>:</b> <i>domain/type</i>(*_t) <b>:</b> <i>level</i>(s*,c*)
+</pre>
+</div>
+
+<h4 id="file_labeling">ファイルのラベリング</h4>
+<div class="i">
+<p><b>ファイルのラベリング</b> は例えば「どのパス名にマッチするファイルに対しては、どのコンテキスト(ラベル)を割り当てるか」を定義します。<b>semanage</b> コマンドでその一覧を見ることができます。</p>
+<pre class="c">
+# yum -y install policycoreutils-python		<span class="cm"># CentOS 7</span>
+# dnf -y install policycoreutils-python-utils	<span class="cm"># CentOS 8</span>
+# semanage fcontext -l | grep /var/www		<span class="cm"># ファイルコンテキストに対するルール一覧</span>
+/var/www(/.*)?  all files  system_u:object_r:httpd_sys_content_t:s0
+</pre>
+<p>コンテキストを一時的に変更するには <b>chcon</b> コマンドを使用しますが、パッケージをアップデートしたりすると変更前のコンテキストに戻ってしまうことがあります。</p>
+<pre class="c">
+# chcon -R -t httpd_sys_content_t /var/www2
+</pre>
+<p>コンテキストを永続的に設定するには、まず、ラベリングルールを定義します。</p>
+<pre class="c">
+# semanage fcontext -a -t httpd_sys_content_t "/var/www2(/.*)?"
+# grep httpd_sys_content_t /etc/selinux/targeted/contexts/files/file_contexts.local
+</pre>
+<p>その後、上記のラベリングルールに従い、<b>restorecon</b> コマンドでファイルやディレクトリのコンテキストを一括再設定(リストア)します。</p>
+<pre class="c">
+# restorecon -R -v /var/www2
+</pre>
+<p><b>chcon</b> で後戻りできない変更を行ってしまい、<b>restorecon</b> も動かせない状況に陥った時のリカバリ策として、<b>/.autorelabel</b> という名前のファイルを作成しておくと、OS 再起動時に全ファイルのコンテキストをラベリングルールに従ってリストアしてくれます。</p>
+<pre class="c">
+# touch /.autorelabel
+</pre>
+</div>
+
+<h4 id="av_rule">Access Vectorルール</h4>
+<div class="i">
+<p><b>Access Vectorルール</b> は <b>AVルール</b> とも呼ばれます。「どのドメインが、どのタイプに対して、どのクラスの場合に、どんなパーミッションを、どうするか」を定義します。ルールが存在しない場合や、(たとえallowが設定されていても)強制拒絶されている場合は拒絶されます。Access Vectorルールがキャッシュされたものを <b>AVC</b>(Access Vector Cache)と呼びます。</p>
+<ul>
+<li><b>ドメイン</b>：プロセスのドメイン。ps -Z で表示。HTTPDドメイン(httpd_t) など。
+<li><b>タイプ</b>：リソースのタイプ。ls -Z 等で表示。HTTPシステムコンテンツタイプ(httpd_sys_content_t) など。
+<li><b>クラス</b>：リソースの種別。ファイル(file)、ディレクトリ(dir)、ソケット(socket)など。
+<li><b>パーミッション</b>：読み込み(read), 書き込み(write), 実行(execute)、属性取得(getattr)など。
+<li><b>どうする</b>：許可する(allow)、ログ有り許可(auditallow)、ログ無し拒絶(dontaudit)、強制拒絶(neverallow)の4種。
+</ul>
+<p>クラスとパーミッションの一覧を表示するには <b>seinfo</b> コマンドを使用します。</p>
+<pre class="c">
+# yum -y install setools-console
+# <em>seinfo -c -x</em>
+file
+   read
+   write
+   execute
+     :
+dir
+   read
+   write
+     :
+</pre>
+<p>Access Vectorルールの一覧を表示するには <b>sesarch</b> コマンドを使用します。CentOS 7 の時点で10万を超えるルールが定義されています。下記の file の行により、「httpd_t ドメインのプロセスが、httpd_sys_content_t タイプで、file クラスのリソースに対して、read 等のパーミッションが、allow されている」ことが分かります。 </p>
+<pre class="c">
+# yum -y install setools-console
+# <em>sesearch --allow | grep httpd_t | grep httpd_sys_content_t</em>
+   allow httpd_t httpd_sys_content_t : lnk_file { read getattr } ;
+   allow httpd_t httpd_sys_content_t : dir { ioctl read getattr lock search open } ;
+   allow httpd_t httpd_sys_content_t : file { ioctl read getattr lock map open } ;
+   allow httpd_t httpd_sys_content_t : dir { ioctl read write getattr lock add_name remove_name search open } ;
+</pre>
+<p>上記で出てきた監査ログを見ても、「httpd_t ドメインのプロセス(ソース)が、var_t タイプで、file クラスのリソース(ターゲット)に対して、getattr パーミッションが、denied」されていることが分かります。</p>
+<pre class="c">
+# tail /var/log/audit/audit.log
+type=AVC msg=audit(1610898951.138:247): avc:  <em>denied</em>  { <em>getattr</em> } for
+  pid=2544 comm="httpd" path="/var/www2/html/index.html" dev="dm-0" ino=157772
+  scontext=system_u:system_r:<em>httpd_t</em>:s0
+  tcontext=unconfined_u:object_r:<em>var_t</em>:s0
+  tclass=<em>file</em>
+</pre>
+</div>
+
+<h4 id="domain_transition">ドメイン遷移</h4>
+<div class="i">
+<p><b>ドメイン遷移</b> は、「どのドメインのプロセスが、どのタイプのファイルを実行すると、どのドメインとしてプロセス起動するか」を定義します。<b>sesearch</b> コマンドでルールの一覧を表示することができます。下記のルールは、init_t ドメインのプロセスが、httpd_exec_t タイプのファイルを起動すると、httpd_t ドメインを割り当てることを意味しています。</p>
+<pre class="c">
+# <em>sesearch --type | grep httpd_exec_t</em>
+   type_transition init_t httpd_exec_t : process httpd_t;
+</pre>
+<p>systemd プロセス、/usr/sbin/httpd ファイル、httpd プロセスのドメイン・タイプを確認すると、上記のルールに合致していることが分かります。</p>
+<pre class="c">
+# ps -efZ | grep systemd
+system_u:system_r:<em>init_t</em>:s0 root 1  0  0 00:39 ? 00:00:04 /usr/lib/systemd/systemd ...
+# ls -lZ /usr/sbin/httpd
+-rwxr-xr-x. root root system_u:object_r:<em>httpd_exec_t</em>:s0 /usr/sbin/httpd
+# ps -efZ | grep httpd
+system_u:system_r:<em>httpd_t</em>:s0 root 2543  1  0 00:46 ? 00:00:00 /usr/sbin/httpd -DFOREGROUND
+</pre>
+<p>/usr/sbin/httpd を systemctl からではなく直接起動してしまうと、init_t ドメインからの起動ではなくなるため、httpd_t ではなく、危険な unconfined_t ドメインで起動してしまいますので注意してください。</p>
+<pre class="c">
+# /usr/sbin/httpd -DFORGROUND
+# ps -efZ | grep httpd
+unconfined_u:unconfined_r:<em>unconfined_t</em>:s0-s0:c0.c1023 root 9978 1  0 00:26 ? 00:00:00 /usr/sbin/httpd -DFORGROUND
+</pre>
+</div>
+
+<h4 id="port_labeling">ポートのラベリング</h4>
+<div class="i">
+<p>httpd が使用する TCP/UDPポートは、http_port_tタイプ(違いがよくわからないけど http_cache_port_t でもOK)である必要があります。登録済ポート以外を使用する場合は <b>semanage port -a|-m</b> コマンドでルールを追加します。</p>
+<pre class="c">
+# semanage port -l | grep http			<span class="cm"># ポートに関するルールを表示</span>
+http_cache_port_t   tcp    8080, 8118, 8123, 10001-10010
+http_port_t         tcp    80, 81, 443, 488, 8008, 8009, 8443, 9000
+# semanage port -a -t http_port_t -p tcp 8888	<span class="cm"># http_port_tに8888を追加</span>
+# semanage port -m -t http_port_t -p tcp 5000	<span class="cm"># 他サービスで定義済みの場合は-mで追加</span>
+# semanage port -d -t http_port_t -p tcp 5000	<span class="cm"># http_port_tから8888を削除</span>
+</pre>
+</div>
+
+<h4 id="attribute">アトリビュート</h4>
+<div class="i">
+<p>稀に <b>*_t</b> ではなく <b>*_type</b> という名前が使用されます。これは <b>アトリビュート</b> と呼ばれるドメイン／タイプのグループです。</p>
+<pre class="c">
+# sesearch --allow | grep httpd_script_type | head
+   allow httpd_script_type fonts_cache_t : lnk_file { read getattr } ;
+   allow httpd_script_type nscd_var_run_t : file map ;
+   allow httpd_script_type public_content_t : dir { ioctl read getattr lock search open } ;
+   allow httpd_script_type fonts_cache_t : dir { ioctl read getattr lock search open } ;
+</pre>
+<p>アトリビュートの中に具体的にはどんなドメイン／タイプが含まれているかは <b>seinfo</b> コマンドで確認できます。</p>
+<pre class="c">
+# seinfo --attribute=httpd_script_type -x
+   httpd_script_type
+      httpd_sys_script_t
+      httpd_user_script_t
+      apcupsd_cgi_script_t
+</pre>
+</div>
+
+<h4 id="selinux_bool">SELinuxブール値</h4>
+<div class="i">
+<p>SELinux の機能を簡単に利用するために、一部のルールは on/off の切り替えだけで制御できるようになっています。<b>getsebool</b> コマンドは SELinuxブール値の一覧を表示します。</p>
+<pre class="c">
+# getsebool -a | grep httpd
+httpd_anon_write --> off
+httpd_builtin_scripting --> on
+httpd_can_check_spam --> off
+httpd_can_connect_ftp --> off
+httpd_can_connect_ldap --> off
+httpd_can_connect_mythtv --> off
+httpd_can_connect_zabbix --> off
+</pre>
+<p><b>setsebool</b> コマンドは SELinuxブール値を変更します。</p>
+<pre class="c">
+# setsebool -P httpd_builtin_scripting off
+</pre>
+<p><b>search -b</b> コマンドは SELinuxブール値が実際にはどんなルールの組み合わせから構成されているかを表示します。最初の1文字目は <b>E</b>(現在有効)、<b>D</b>(現在無効)、2文字目は <b>T</b>(onの時に有効)、<b>F</b>(offの時に有効) を意味します。</p>
+<pre class="c">
+# sesearch -b httpd_builtin_scripting -AC
+ET allow httpd_t dirsrvadmin_ra_content_t : lnk_file { read getattr } ; [ httpd_builtin_scripting ]
+ET allow httpd_t httpd_user_ra_content_t : lnk_file { read getattr } ; [ httpd_builtin_scripting ]
+    :
+</pre>
+<p>httpd に関するブール値には下記などがあります。</p>
+<pre class="c">
+# semanage boolean -l | grep httpd_
+httpd_can_network_connect     スクリプトやモジュールからのネットワーク接続を許可
+httpd_execmem                 スクリプトやモジュールからのexecmem/execstack実行を許可
+httpd_builtin_scripting       組み込みスクリプト(一般的に PHP)の使用を許可
+httpd_can_network_memcache    memcachedへの接続を許可
+httpd_can_connect_ldap        LDAPへの接続を許可
+httpd_can_network_connect_db  DBへの接続を許可
+httpd_verify_dns              NSレコードのクエリーを許可
+httpd_can_sendmail            メールの送信を許可
+httpd_enable_cgi              CGIを許可
+httpd_ssi_exec                SSIを許可
+httpd_enable_ftp_server       FTPサーバーとして動作することを許可
+httpd_can_connect_ftp         FTPクライアントとして動作することを許可
+httpd_can_network_relay       リレーとして動作することを許可
+httpd_enable_homedirs         ホームディレクトリーへのアクセスを許可
+httpd_read_user_content       ユーザーコンテンツを読み取ることを許可
+httpd_use_cifs                CIFSへのアクセスを許可
+httpd_use_nfs                 NFSへのアクセスを許可
+httpd_use_fusefs              FuseFSへのアクセスを許可
+httpd_anon_write              httpdからの匿名書き込みを許可
+httpd_sys_script_anon_write   スクリプトからの匿名書き込みを許可
+httpd_dbus_sssd               D-Bus 経由の sssd 通信を許可
+     :
+</pre>
+</div>
+
+<h4 id="rbac">RBAC(Role Based Access Control)</h4>
+<div class="i">
+<p><b>RBAC</b> (Role Based Access Control) では、root ユーザや wheel グループよりも細かなロール管理を行います。まず、自分のロールを表示するには <b>id -Z</b> を使用します。<b>*_r</b> がロールで、<b>unconfined_r</b> は特に制限がかけられていない強いロールです。</p>
+<pre class="c">
+# id -Z
+unconfined_u:<em>unconfined_r</em>:unconfined_t:s0-s0:c0.c1023
+</pre>
+<p>ログイン時のユーザのロールを調べるには <b>semanage login</b> コマンドを使用します。下記のルールにより、root や一般ユーザ(__default__)の SELinuxユーザーは <b>unconfined_u</b> になることがわかります。</p>
+<pre class="c">
+# semanage login -l
+Login Name           SELinux User         MLS/MCS Range        Service
+
+__default__          unconfined_u         s0-s0:c0.c1023       *
+root                 unconfined_u         s0-s0:c0.c1023       *
+system_u             system_u             s0-s0:c0.c1023       *
+</pre>
+<p>SELinuxユーザーの一覧は <b>seinfo -u</b> コマンドで表示できます。</p>
+<pre class="c">
+# seinfo -u
+   unconfined_u	... 特に制限無し
+   system_u	... システムで利用。ユーザには割り当てない
+   sysadm_u	... システム管理者
+   staff_u	... スタッフ管理者
+   user_u	... 一般ユーザ。su/sudo禁止
+   guest_u	... ゲスト。自作コマンドの起動不可。ネットワークアクセス不可
+</pre>
+<p>ロールの一覧は <b>seinfo -r</b> コマンドで表示できます。</p>
+<pre class="c">
+# seinfo -r
+   unconfined_r	... 特に制限なし
+   system_r	... システム管理者ロール(ユーザには割り当てない)
+   sysadm_r	... システム管理者ロール
+   secadm_r	... SELinux管理者ロール
+   webadm_r	... Web管理者ロール
+   auditadm_r	... 監査管理者ロール
+   dbadm_r	... DB管理者ロール
+   logadm_r	... ログ管理者ロール
+   staff_r	... スタッフロール
+   user_r	... 一般ユーザロール
+   guest_r	... ゲストロール
+</pre>
+<p>ロールとドメイン/タイプの関係は <b>seinfo -r</b><i>role</i> <b>-x</b> コマンドで表示できます。</p>
+<pre class="c">
+# seinfo -rwebadm_r -x
+   webadm_r
+      Dominated Roles:
+         webadm_r
+      Types:
+         webadm_t
+</pre>
+<p>SELinuxユーザーが保持できるロールの一覧は <b>semanage user -l</b> コマンドで表示できます。</p>
+<pre class="c">
+# semanage user -l
+   :
+unconfined_u    user       s0         s0-s0:c0.c1023           system_r unconfined_r
+</pre>
+<p>ログインユーザに対応する SELinuxユーザーを設定するには <b>useradd -Z</b> や <b>semanage login -a</b> コマンドを使用します。SELinux ユーザは新たにログインした時に割り当てられます。su - でユーザを変更した時には割り当てられません。</p>
+<pre class="c">
+# useradd -Z guest_u suzuki			<span class="cm"># 新規ユーザに割り当てる</span>
+# semanage login -a -s guest_u yamada		<span class="cm"># 既存ユーザに割り当てる</span>
+</pre>
+<p>高度なセキュリティを求めるシステムでは、root や一般ユーザ(__default__)の SELinuxユーザーを unconfined_u から user_u に降格させ、代わりに、システム管理者、SELinux管理者、Web管理者などのロールとユーザを個別に作成したりするようです。一般ユーザ(__default__)の SELinuxユーザーを user_u に降格させるには下記のコマンドを実行します。</p>
+<pre class="c">
+# /usr/sbin/semanage login -m -S targeted -s user_u -r s0 __default__
+</pre>
+</div>
+
+<h4 id="mcs">MCS(Multi Category Security)</h4>
+<div class="i">
+<p>ユーザやリソースに <b>カテゴリ</b> (c*) の概念を設定し、カテゴリ毎のアクセス権を制御します。部署別にアクセス範囲を制御したい場合に利用できますが、現在では Docker や OpenShift などのコンテナの権限管理に使用されているケースが大半のようです。詳細は下記などを参照してください。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.atmarkit.co.jp/fsecurity/rensai/selinux06/selinux01.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.atmarkit.co.jp/fsecurity/rensai/selinux06/selinux01.html'" tppabs="https://www.atmarkit.co.jp/fsecurity/rensai/selinux06/selinux01.html">SELinuxの最新動向(第6回)</a> (by ITメディア)
+</ul>
+</div>
+
+<h4 id="mls">MLS(Multi Level Security)</h4>
+<div class="i">
+<p><b>MCS</b> に加えて <b>センシビティ</b> (感度) (s*) の概念を加え、レベルに応じたアクセス件を制御します。課長、部長といった役職クラス別にアクセス権を制御したい場合に利用します。軍事関連など、最重要機密を扱うプロジェクトでの利用例があります。利用する際は <b>/etc/selinux/config</b> で <b>SELINUXTYPE=mls</b> を設定します。詳細は下記などを参照してください。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.atmarkit.co.jp/fsecurity/rensai/selinux07/selinux01.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.atmarkit.co.jp/fsecurity/rensai/selinux07/selinux01.html'" tppabs="https://www.atmarkit.co.jp/fsecurity/rensai/selinux07/selinux01.html">SELinuxの最新動向(第7回)</a> (by ITメディア)
+</ul>
+</div>
+
+<h4 id="silent_deny">サイレント拒否</h4>
+<div class="i">
+<p><b>dontaudit</b> ルールはサイレント拒否とも呼ばれ、監査ログ(audit.log)にもロギングされないため、何故か動かない原因を探る際にルールで拒否されていても気づかないことがあります。<b>semodule -DB</b> コマンドでサイレント拒否を無効化することにより確認が楽になります。</p>
+<pre class="c">
+# seinfo		<span class="cm"># サイレント拒否が何個あるか確認する(Dontaudit項目)</span>
+# sesearch --dontaudit	<span class="cm"># サイレント拒否の一覧を表示する</span>
+# semodule -DB		<span class="cm"># サイレント拒否を無効化する(ロギングするようになる)</span>
+# semodule -B		<span class="cm"># サイレント拒否を有効化する(再度ロギングしなくなる)</span>
+</pre>
+</div>
+
+<h4 id="httpd_cgi">ApacheでCGIを動かしてみる</h4>
+<div class="i">
+<p>では、Apache で CGI を動作させる練習をしてみましょう。別のターミナルで audit.log を監視しておきます。</p>
+<pre class="c">
+# tail -f /var/log/audit/audit.log | grep denied
+</pre>
+<pre class="c">
+# mkdir /var/www2/cgi-bin				<span class="cm"># CGIディレクトリを用意</span>
+# cat &gt; /var/www2/cgi-bin/test.cgi &lt;&lt;EOF		<span class="cm"># CGIコマンドを用意</span>
+#!/bin/bash
+echo "Content-Type: text/plain"
+echo ""
+echo "Hello CGI"
+EOF
+# chmod 755 /var/www2/cgi-bin/test.cgi
+# vi /etc/httpd/conf/httpd.conf				<span class="cm"># httpd.confを修正</span>
+ScriptAlias /cgi-bin/ "/var/<em>www2</em>/cgi-bin/"
+&lt;Directory "/var/<em>www2</em>/cgi-bin"&gt;
+   :
+&lt;/Directory&gt;
+# systemctl restart httpd				<span class="cm"># httpdを再起動</span>
+# curl http://localhost/cgi-bin/test.cgi
+&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;<em>500</em> Internal Server Error&lt;/title&gt;		<span class="cm"># 500エラー</span>
+</pre>
+<p>500エラーになりましたが、audit.log には何も出力されません。試しにサイレント拒否を無効化してみます。</p>
+<pre class="c">
+# semodule -DB
+# curl http://localhost/cgi-bin/test.cgi
+&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;<em>500</em> Internal Server Error&lt;/title&gt;		<span class="cm"># 500エラー</span>
+</pre>
+<p>今度は audit.log に下記が記録されます。</p>
+<pre class="c">
+type=AVC msg=audit(1611466427.143:141):
+  avc:  <em>denied</em>  { execute } for  pid=1213 comm="httpd"
+  name="test.cgi" dev="dm-0" ino=143894
+  scontext=system_u:system_r:httpd_t:s0
+  tcontext=unconfined_u:object_r:httpd_sys_content_t:s0
+  tclass=file permissive=0
+</pre>
+<p>上記のログを audit2allow に食わせてみます。</p>
+<pre class="c">
+# grep denied /var/log/audit/audit.log | grep test.cgi | tail -1 | audit2allow
+#============= httpd_t ==============
+#!!!! This avc can be allowed using the boolean 'httpd_unified'
+allow httpd_t httpd_sys_content_t:file execute;
+</pre>
+<p>上記から、httpd_t ドメインが httpd_sys_content_t タイプに対する execute パーミッションを与えるか、ブーリアン値の httpd_unfied を on にすればよいことが分かりますが、少し危険です。もう少し調べてみます。</p>
+<pre class="c">
+# sesearch --allow | grep httpd_t | grep execute
+   allow httpd_t httpd_sys_script_exec_t : file { ioctl read getattr map execute execute_no_trans open } ;
+     :
+</pre>
+<p>httpd_t ドメインは、httpd_sys_script_exec_t タイプに対してであれば execute パーミッションを持っていることが分かりました。確かに、/var/www/cgi-bin にも httpd_sys_script_exec_t が設定されています。</p>
+<pre class="c">
+# ls -ldZ /var/www/cgi-bin
+drwxr-xr-x. root root system_u:object_r:httpd_sys_script_exec_t:s0 /var/www/cgi-bin
+</pre>
+<p>/var/www2/cgi-bin も httpd_sys_script_exec_t タイプにして試してみます。</p>
+<pre class="c">
+# chcon -R -t httpd_sys_script_exec_t /var/www2/cgi-bin
+# curl http://localhost/cgi-bin/test.cgi
+Hello CGI
+</pre>
+<p>うまく動いたのでこのルールを永続化しておきます。また、サイレント拒否も元に戻しておきます。</p>
+<pre class="c">
+# semanage fcontext -a -t httpd_sys_script_exec_t "/var/www2/cgi-bin(/.*)?"
+# restorecon -R -v /var/www2/cgi-bin
+# semodule -B
+</pre>
+</div>
+
+<h4 id="other_solutions">その他の解決</h4>
+<div class="i">
+<p>Docker の -v で永続ボリュームをコンテナに割り当てたけどコンテナから書き込みができない場合：</p>
+<pre class="c">
+# chcon -R -t container_file_t /var/mnt
+# docker run -d -it --name centos7 -v /var/mnt:/var/mnt centos:7
+</pre>
+</div>
+
+<h4 id="commands">関連コマンド</h4>
+<div class="i">
+<p>SELinux に関連するコマンドを下記に示します。見つからない場合は「yum provides コマンド名」でどのパッケージに含まれているか調べて yum/dnf でインストールしてください。下記では、主な使用例、主なオプションのみを記載しています。詳細は man コマンドでコマンドマニュアルを参照してください。</p>
+</div>
+
+<h5 id="getenforce_setenforce">getenforce/setenforceコマンド</h5>
+<div class="i">
+<p>SELinux の有効化・無効化状態を表示・設定します。</p>
+<pre class="c">
+# getenforce		<span class="cm"># SELinuxの有効化・無効化状態を表示する</span>
+# setenforce 0		<span class="cm"># SELinuxを一時的にPermissiveモードにする</span>
+# setenforce 1		<span class="cm"># SELinuxを一時的にEnforcingモードにする</span>
+</pre>
+</div>
+
+<h5 id="sestatus">sestatusコマンド</h5>
+<div class="i">
+<p>SELinux に関するステータス情報を表示します。</p>
+<pre class="c">
+# yum -y install policycoreutils
+# sestatus
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Max kernel policy version:      28
+</pre>
+</div>
+
+<h5 id="ausearch">ausearchコマンド</h5>
+<div class="i">
+<p>audit.log の内容を検索表示します。</p>
+<pre class="c">
+# ausearch -m avc -sv no --start yesterday
+time-&gt;Sat Jan 23 01:19:01 2021
+type=SYSCALL msg=audit(1611332341.719:407): arch=c000003e syscall=49 success=no ...
+type=AVC msg=audit(1611332341.719:407): avc: denied { name_bind } for pid=2983 comm="httpd" src=5000 ...
+</pre>
+</div>
+
+<h5 id="audit2why">audit2whyコマンド</h5>
+<div class="i">
+<p>audit.log から拒否の原因を提示します。可能であれば対処法も示します。</p>
+<pre class="c">
+# yum -y install policycoreutils-python
+# grep denied /var/log/audit/audit.log | tail -10 | audit2why
+type=AVC msg=audit(1611332212.337:398): avc: denied  { name_bind } for pid=2931 comm="httpd" src=8888 ...
+        Was caused by:
+        The boolean nis_enabled was set incorrectly.
+        Description:
+        Allow system to run with NIS
+        Allow access by executing:
+        # setsebool -P nis_enabled 1
+</pre>
+</div>
+
+<h5 id="audit2allow">audit2allowコマンド</h5>
+<div class="i">
+<p>audit.log から拒否を回避すべき allow ルールを提示します。ただし、提示されたルールを鵜呑みに許可してしまうことは危険です。</p>
+<pre class="c">
+# yum -y install policycoreutils-python
+# grep denied /var/log/audit/audit.log | tail -10 | audit2allow
+#============= httpd_t ==============
+#!!!! WARNING: 'var_t' is a base type.
+allow httpd_t var_t:file getattr;
+</pre>
+</div>
+
+<h5 id="seinfo">seinfoコマンド</h5>
+<div class="i">
+<p>SELinux に関する様々な情報を表示します。</p>
+<pre class="c">
+# yum -y install setools-console
+# seinfo			<span class="cm"># 基本情報を表示</span>
+# seinfo -c			<span class="cm"># クラス(file等)の一覧を表示</span>
+# seinfo -c[<i>class</i>] -x		<span class="cm"># クラス(file等)とパーミッション(read等)の一覧を表示</span>
+# seinfo -u			<span class="cm"># SELinuxユーザーの一覧を表示</span>
+# seinfo -r[<i>user</i>] -x		<span class="cm"># SELinuxユーザーとロールの一覧を表示</span>
+# seinfo -r			<span class="cm"># ロールの一覧を表示</span>
+# seinfo -r[<i>role</i>] -x		<span class="cm"># ロールとドメイン/タイプ一覧を表示</span>
+# seinfo -t			<span class="cm"># ドメイン/タイプの一覧を表示</span>
+# seinfo -t[<i>type</i>] -x		<span class="cm"># ドメイン/タイプとアトリビュートの一覧を表示</span>
+# seinfo -a			<span class="cm"># アトリビュートの一覧を表示</span>
+# seinfo -a[<i>attr</i>] -x		<span class="cm"># アトリビュートとタイプの一覧を表示</span>
+# seinfo -b [-x]		<span class="cm"># SELinuxブール値(とその値)の一覧を表示</span>
+</pre>
+</div>
+
+<h5 id="chcon">chconコマンド</h5>
+<div class="i">
+<p>ファイルやディレクトリのコンテキストを一時的に変更します。<b>-R</b> オプションは再帰的に変更します。一時的変更なので、パッケージの追加・更新、<b>restorecon</b> や <b>/.autorelabel</b> により元に戻ることがあります。</p>
+<pre class="c">
+# chcon [-R] [-u <i>user</i>] [-r <i>rule</i>] [-t <i>type</i>] [-l <i>level</i>] <i>file</i>...
+</pre>
+</div>
+
+<h5 id="findconf">findconコマンド</h5>
+<div class="i">
+<p>指定したコンテキストに合致するファイルやディレクトリを検索します。</p>
+<pre class="c">
+# yum -y install setools-console
+# findcon [-u <i>user</i>] [-r <i>role</i>] [-t <i>type</i>] [-m <i>level</i>] <i>dir</i>...
+</pre>
+</div>
+
+<h5 id="restorecon">restoreconコマンド</h5>
+<div class="i">
+<p>ルールに従ってファイルやディレクトリのコンテキストを再設定(リストア)します。<b>-R</b> は再帰的、<b>-v</b> は変更状況を表示、<b>-n</b> は変更せずにチェックのみ行います。</p>
+<pre class="c">
+# yum -y install policycoreutils
+# restorecon [-R] [-v] [-n] <i>file</i>...
+</pre>
+</div>
+
+<h5 id="runcon">runconコマンド</h5>
+<div class="i">
+<p>指定したコンテキストでコマンドを起動します。</p>
+<pre class="c">
+# runcon [-u <i>user</i>] [-r <i>rule</i>] [-t <i>domain</i>] [-l <i>level</i>] command arg...
+</pre>
+</div>
+
+<h5 id="getsebool_setsebool">getsebool/setseboolコマンド</h5>
+<div class="i">
+<p>SELinuxブール値を表示・設定します。</p>
+<pre class="c">
+# yum -y install libselinux-utils
+# getsebool -a
+# setsebool -P <i>bool</i> on|off
+</pre>
+</div>
+
+<h5 id="semanage">semanageコマンド</h5>
+<div class="i">
+<p>SELinuxポリシーに関する追加・一覧・変更・削除などの管理を行います。</p>
+<pre class="c">
+# yum -y install policycoreutils-python
+# semanage user -l				<span class="cm"># SELinuxユーザーの一覧を表示</span>
+# semanage user -a -R <i>role</i> <i>user</i>			<span class="cm"># SELinuxユーザーを追加</span>
+# semanage user -m -R <i>role</i> <i>user</i>			<span class="cm"># SELinuxユーザーを変更</span>
+# semanage user -d <i>user</i>				<span class="cm"># SELinuxユーザーを削除</span>
+# semanage port -l				<span class="cm"># ポートの一覧を表示</span>
+# semanage port -a -t <i>type</i> -p <i>proto</i> <i>port</i>	<span class="cm"># タイプに新規ポート番号を追加</span>
+# semanage port -m -t <i>type</i> -p <i>proto</i> <i>port</i>	<span class="cm"># タイプに既存ポート番号を追加</span>
+# semanage port -d -t <i>type</i> -p <i>proto</i> <i>port</i>	<span class="cm"># タイプからポートを削除</span>
+# semanage fcontext -l				<span class="cm"># ファイルラベリングルールの一覧を表示</span>
+# semanage fcontext -a -t <i>type</i> <i>path</i>		<span class="cm"># ファイルラベリングルールを追加</span>
+# semanage fcontext -d -t <i>type</i> <i>path</i>		<span class="cm"># ファイルラベリングルールを削除</span>
+</pre>
+</div>
+
+<h5 id="other_commands">その他コマンド</h5>
+<div class="i">
+<ul>
+<li><b>sepolicy</b>：SELinuxポリシー調査ツール
+<li><b>semodule</b>：SELinuxモジュール(ローカル)のインストール/アンインストール
+<li><b>matchpathcon</b>：ファイルに正しいSELinuxコンテキストが設定されているか確認する
+<li><b>newrole</b>：別のロールでシェルを起動する
+<li><b>sechecker</b>：SELinuxポリシーチェックツール
+<li><b>secon</b>：SELinuxコンテキストの一覧を表示
+<li><b>sediff</b>：SELinuxポリシー差分比較ツール
+<li><b>setroubleshootd</b>：SELinuxトラブルシュートデーモン
+<li><b>restorecond</b>：ファイル作成時に自動的にコンテキストを設定するデーモン
+</ul>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/8/html-single/using_selinux/index  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/8/html-single/using_selinux/index'" tppabs="https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/8/html-single/using_selinux/index">SELINUX の使用</a> (by Red Hat)(日本語)</li>
+<li><a target="_top" href="javascript:if(confirm('https://docs.fedoraproject.org/ja-JP/Fedora/19/html-single/Security_Guide/index.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.fedoraproject.org/ja-JP/Fedora/19/html-single/Security_Guide/index.html#idm139691608006208'" tppabs="https://docs.fedoraproject.org/ja-JP/Fedora/19/html-single/Security_Guide/index.html#idm139691608006208">第9章 SELinux</a>(by Fedora)(日本語)</li>
+<li><a target="_top" href="javascript:if(confirm('https://selinuxproject.org/page/Category:Notebook  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://selinuxproject.org/page/Category:Notebook'" tppabs="https://selinuxproject.org/page/Category:Notebook">The SELinux Notebool</a> (by SELinux Project)(英語)</li>
+</ul>
+</div>
+
+<!--
+●https://blog.fenrir-inc.com/jp/2016/09/selinux.html
+・ポリシーモジュール：RPMパッケージとして配布されるルール群
+・sepolicyコマンドでテンプレートを作成
+　# touch boltzmessenger
+　# sepolicy generate -application -n boltzmessenger_gateway boltzmessenger 
+●https://www.linuxmania.jp/selinux_introduction_1.html
+・SELinuxポリシーファイル
+　・ポリシーモジュール(システム) ... バイナリ。パッケージ配布者が配布
+　・ポリシーモジュール(ローカル) ... システム管理者が変更
+　・メタファイル
+●http://www.yam-web.net/selinux/index.html
+・新しいタイプとポリシーモジュールの作成
+・マクロを利用したteファイルの記述
+・新しいドメインの導入
+●https://www.nic.ad.jp/ja/materials/iw/2017/proceedings/d1/d1-3-moriwaka-1.pdf
+・SELinux有効化の流れ
+　・permissiveにする
+　・audit.logを確認する
+　・audit2allowやsetroubleshootdで問題の解決策を知る
+　・問題を解決する
+　・audit.logに警告が出なくなったらenforcing
+# semanage permissive -a httpd_t
+# semanage permissive -d httpd_t
+# semodule -l | grep permissive
+●https://thinkit.co.jp/article/13296
+・teファイル
+・ポリシーモジュールの作り方
+-->
+
+<hr>
+<div>Copyright (C) 2021 杜甫々</div>
+<div>初版:2021年1月24日 最終更新:2021年1月24日</div>
+<div>http://www.tohoho-web.com/ex/selinux.html</div>
+</body>
+</html>

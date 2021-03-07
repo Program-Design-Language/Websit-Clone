@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ファイルの日付比較用文字列</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ファイルの日付比較用文字列</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199811/index.htm">[上に]</a>
+<a href="98110122.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110122.htm">[前に]</a>
+<a href="98110124.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110124.htm">[次に]</a>
+<hr>
+<span class=name>omi</span>
+<span class=time>1998/11/30(月) 16:44:47</span><br>
+一般にホームページは、必要なファイルをダウンロードしておいて、オフラインで見ると<br>
+サーバにアクセスしない分、ブラウザの動きが早くなります。<br>
+そこで、<br>
+閲覧が予想されるファイルを自動でダウンロードする機能に、<br>
+先回、行った日時を Cookie に保存しておいて cgi に渡せば、<br>
+更新したファイルだけをロードするのでスマートになります。<br>
+特にラウンジはたくさんのファイルがあるので選別したくなります。<br>
+<br>
+その日時を得る方法を、おたずねしたいのです。　あー疲れた。<br>
+<br>
+以下が考えたコードですが、どうもスマートでないし、<br>
+2000 年の年始に、真っ青(@_@)になる気がします。<br>
+もっと簡単な日時文字列を得る関数はないんでしょうか？。<br>
+よろしく、お願いします。<br>
+<br>
+<br>
+nd = new Date();<br>
+y = nd.getYear(); if (y&lt;50){ y +=2000;} else if (y&lt;1950){ y+=1900;}<br>
+time = y+t2(nd.getMonth()+1)+t2(nd.getDate())+t2(nd.getHours())+t2(nd.getMinutes());<br>
+setCookie('preLoadlastTime', time );<br>
+function t2 ( a ){ return((a&gt;9)? String(a) : '0'+String(a)) ;}<br>
+<br>
+( $s, $min, $hour, $mday, $mon, $year, $w, $a, $b )= localtime((stat(IN))[9]);<br>
+if ( $year &lt; $year50 ) { $year +=2000;} else { $year +=1900;}<br>
+$dt = sprintf ("%d%02d%02d%02d%02d", $year,$mon+1,$mday,$hour,$min );<br>
+<hr>
+<span class=name>Tiot</span>
+<span class=time>1998/11/30(月) 17:59:53</span><br>
+クッキーはよく分からないので、その部分はとばして、時間を求める部分だけ。<br>
+<font color="#CC8000">&gt; y = nd.getYear(); if (y&lt;50){ y +=2000;} else if (y&lt;1950){ y+=1900;}</font><br>
+これは、<br>
+y = nd.getYear(); if (y &lt; 1900) {y += 1900;}<br>
+じゃないとまずいんじゃないかな？perlの方も。<br>
+たしか、2000年以降が4桁表示で、それ以前が2桁表示だとおもったので（まちがってたら、ごめんなさい）。<br>
+<br>
+単に、更新日時を比較するだけならば、<br>
+1970年1月1日0時0分0秒(GMT)からの秒数(ミリ秒単位)を比較した方が簡単。<br>
+<br>
+*JavaScript cf.)<a href="../../js/date.htm" tppabs="http://www.tohoho-web.com/js/date.htm">http://www.tohoho-web.com/js/date.htm</a><br>
+nd = new Date();<br>
+time = nd.getTime();<br>
+<br>
+*perl cf.)<a href="../../wwwperl2.htm#stat" tppabs="http://www.tohoho-web.com/wwwperl2.htm#stat">http://www.tohoho-web.com/wwwperl2.htm#stat</a><br>
+$time = (stat("FILE"))[9];<br>
+<br>
+これで単純に大小を比較すればよいかと。<br>
+ちょっと自信がないので、もし間違ってたらどなたか突っ込んで下さい。<br>
+（とくに、perlの方がふにゃふにゃかも）<br>
+<hr>
+<span class=name>omi</span>
+<span class=time>1998/11/30(月) 22:34:38</span><br>
+確かに (y&lt;1950) には意味がありませんね。<br>
+<br>
+私の JPerl.exe(98/01/06 23:52)は、2001年のファイルの $yearを、<br>
+101 で返してきました。<br>
+だから、単に $year += 1900; で良いんでしょうね。<br>
+<br>
+ファイルの日付比較は、stat("FILE"))[9]; に000を付けて<br>
+nd.getTime(); と比較すれば十分だったですね。<br>
+<br>
+これが、2000年問題かぁ、クリアできるかなー、と思っていたのですが、<br>
+丸一日費やしたのにそれ以前の問題だったんですね。<br>
+Tiotさん、ありがとうございました。<br>
+<hr>
+<span class=name>omi</span>
+<span class=time>1998/11/30(月) 22:35:20</span><br>
+<span class=resolv>[[解決]]</span><br>
+忘れてた<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199811/index.htm">[上に]</a>
+<a href="98110122.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110122.htm">[前に]</a>
+<a href="98110124.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110124.htm">[次に]</a>
+</body>
+</html>

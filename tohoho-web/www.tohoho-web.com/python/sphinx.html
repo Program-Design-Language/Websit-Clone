@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのPython入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのPython入門 - Sphinx</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/python/index.html">Python入門</a> &gt;
+Sphinx
+
+<h4>Sphinxとは</h4>
+<div class="i">
+<ul>
+<li>元々は Python のソースコードに記述された pydoc コメントを整形するツールとして開発されました。
+<li>現在では Python ドキュメントに限らず、あらゆるドキュメント作成ツールとしても利用されています。
+<li>reStructuredText という軽量マークアップ言語を使用します。拡張子は *.rst です。
+<li>単一HTML、複数HTML、LaTeX、PDF、プレインテキストなどの出力フォーマットをサポートします。
+<li>Python プログラムのマニュアル化は、*.py ファイルを *.rst に変換し、これをビルドします。
+<li>本ページでは、2019年10月20日時点の最新版 Sphinx 2.2.0 をベースに説明します。
+</ul>
+</div>
+
+<h4>検証環境</h4>
+<div class="i">
+<ul>
+<li>OS: CentOS 7.6
+<li>Python: 3.6
+<li>Sphinx: 2.2.0
+</ul>
+</div>
+
+<h4>Sphinxをインストールする</h4>
+<div class="i">
+<p>pip を用いてインストールします。make も必要です。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# yum install -y make
+# pip3 install sphinx
+</pre>
+</div>
+
+<h4>静的コンテンツをドキュメント化する</h4>
+<div class="i">
+<p>まずは、.rst ファイルのみを使用した静的なドキュメントを作成してみます。sphinx-quickstart を用いてプロジェクトを作成してください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ mkdir work
+$ cd work
+$ sphinx-quickstart
+&gt; Separate source and build directories (y/n) [n]: y
+&gt; Project name: テストドキュメント
+&gt; Author name(s): 山田太郎
+&gt; Project release []: 1.0.0
+&gt; Project language [en]: ja
+</pre>
+<p>下記のコンテンツファイル(*.rst)を作成してください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ mkdir -p ./source/test
+$ vi ./source/test/test1.rst
+$ vi ./source/test/test2.rst
+</pre>
+<div class="title-tab">./source/test/test1.rst</div>
+<pre class="c2">
+******************************
+Sphinxサンプル1
+******************************
+これはSphixのサンプルです。
+</pre>
+<div class="title-tab">./source/test/test2.rst</div>
+<pre class="c2">
+******************************
+Sphinxサンプル2
+******************************
+これはSphixのサンプルです。
+</pre>
+<p>作成したコンテンツファイルを index.rst に登録してください。</p>
+<div class="title-tab">./source/index.rst</div>
+<pre class="c2">
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   <em>/test/test1</em>
+   <em>/test/test2</em>
+</pre>
+<p>make html で複数HTMLファイル形式にビルドします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ make html
+$ ls -l ./build/html/
+</pre>
+<p>./build/html/ ディレクトリ配下に HTML ファイルが生成されます。これをブラウザで開くと、生成されたドキュメントを表示することができます。</p>
+</div>
+
+<!--
+rm -rf /var/www/html/*
+cp -rf build/html/* /var/www/html/
+http://192.168.56.101/
+-->
+
+<h4>複数HTML以外の形式にビルドする</h4>
+<div class="i">
+<p>単一HTMLフォーマットでビルドするには、html の代わりに singlehtml などのフォーマット名を指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ make singlehtml
+$ ls -l ./build/singlehtml/
+</pre>
+<p>生成可能なフォーマットの一覧は make help を参照してください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ make help
+</pre>
+</div>
+
+<h4>テーマを変更する</h4>
+<div class="i">
+<p>conf.py を編集して再ビルドすることでテーマを変更することができます。</p>
+<div class="title-tab">./source/conf.py</div>
+<pre class="c2">
+html_theme = '<em>pyramid</em>'
+</pre>
+<p>標準テーマの他に、テーマを追加インストールして使用することもできます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip3 install sphinx_rtd_theme
+</pre>
+<div class="title-tab">./source/conf.py</div>
+<pre class="c2">
+html_theme = '<em>sphinx_rtd_theme</em>'
+</pre>
+<p>指定可能なテーマの一覧は下記などを参照してください。</p>
+<ul>
+<li><a href="javascript:if(confirm('https://sphinx-users.jp/cookbook/changetheme/index.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://sphinx-users.jp/cookbook/changetheme/index.html'" tppabs="https://sphinx-users.jp/cookbook/changetheme/index.html">https://sphinx-users.jp/cookbook/changetheme/index.html</a>
+</ul>
+</div>
+
+<h4>Pythonドキュメントを組み込む</h4>
+<div class="i">
+<p>Python の docstring を組み込むために、./source/conf.py に設定を行います。sys.path には conf.py から見た、Python ソースファイルの格納先を指定します。</p>
+<div class="title-tab">./source/conf.py</div>
+<pre class="c2">
+<span class="cm"># コメントインして Python ソースファイルのディレクトリを参照する</span>
+import os
+import sys
+sys.path.insert(0, os.path.abspath(<em>'../src/'</em>))
+  :
+<span class="cm"># 必要な拡張機能を読み込む</span>
+extensions = [
+    <em>'sphinx.ext.autodoc',</em>
+    <em>'sphinx.ext.napoleon',</em>
+]
+</pre>
+<p>対象とするPythonソースコードを作成します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ mkdir ./src
+$ vi ./src/test3.py
+</pre>
+<div class="title-tab">./src/test3.py</div>
+<pre class="c2">
+class Test3Class:
+    """テスト3クラス
+    """
+
+    def add(self, x, y):
+        """値Xと値Yの和を求める
+
+        Args:
+            x (int): 値X
+            y (int): 値Y
+
+        Returns:
+            int: 値Xと値Yの和
+        """
+        return x + y
+</pre>
+<p>index.rst に test3 を追加します。</p>
+<div class="title-tab">./source/index.rst</div>
+<pre class="c2">
+   /test/test1
+   /test/test2
+   <em>test3</em>
+</pre>
+<p>sphinx-apidoc を用いて modules.rst と test3.rst を生成します。これらのファイルは必要最低限の情報のみを含みます。実際に docstring からコメントを抽出する作業はビルド時に行います。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ sphinx-apidoc -f -o ./source/ ./src
+$ make html
+</pre>
+<p>./build/html/ 配下に test3.py のマニュアルを含む HTML ファイル群が生成されます。</p>
+</div>
+
+<hr>
+<div>Copyright(C) 2019 杜甫々</div>
+<div>初版：2019年10月20日、最終更新：2019年10月20日</div>
+<div>http://www.tohoho-web.com/python/sphinx.htm</div>
+</body>
+</html>

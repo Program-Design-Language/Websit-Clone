@@ -1,0 +1,95 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ＬＡＮ上でＣＧＩを利用してアクセスログを得るには</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ＬＡＮ上でＣＧＩを利用してアクセスログを得るには</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060210.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060210.htm">[前に]</a>
+<a href="99060212.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060212.htm">[次に]</a>
+<hr>
+<span class=name>しょう</span>
+<span class=email><a href="mailto:d-kusunoki@cba.ntt-me.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/22(火) 11:47:42</span><br>
+ＬＡＮ上でＣＧＩを利用してアクセスログを取ろうとしても、全員のドメイン名やＩＰが同じであるため誰がアクセスしたのかわかりません。<br>
+チャット機能などでログっている人を確認するために個別の情報が得たいのですがどうすればいいのでしょうか？<br>
+<hr>
+<span class=name>ジムシー</span>
+<span class=time>1999/06/22(火) 13:45:07</span><br>
+<font color="#CC8000">&gt;ＬＡＮ上でＣＧＩを利用してアクセスログを取ろうとしても、</font><br>
+<font color="#CC8000">&gt;全員のドメイン名やＩＰが同じであるため....</font><br>
+<br>
+ＬＡＮ接続時にドメイン名が重複する事はあっても、<br>
+同一ＩＰアドレスで、同時にネットワークにログインする事は出来ません。<br>
+（先に接続していた端末がはじかれます。）<br>
+もしモバイル端末等の理由で、共通のＩＰアドレス、<br>
+共通のコンピュータ名を複数の端末に設定し、<br>
+不特定のユーザが利用しているので有れば、<br>
+ログインアカウントの情報をＤＮＳから取得出来無くはないのですが、<br>
+セキュリティの問題も絡みますので、ＤＮＳ管理者に相談してみることを勧めます。<br>
+（共通のログインアカウントを配布していればそれも無理ですが...）<br>
+<hr>
+<span class=name>しょう</span>
+<span class=email><a href="mailto:d-kusunoki@cba.ntt-me.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/23(水) 10:55:37</span><br>
+ＲＥＳありがとうございます。<br>
+以前の記事を読んでいて同じようなＬＡＮの設定での質問があり、1日有効のcookieを食わせるといった解決法が掲載されていました。<br>
+ところが、その「1日有効のcookieを食わせる」という方法がよくわかりません。ＣＧＩの本などで基本的なことは説明されているようなのですが・・・<br>
+簡単なソースなどありましたら教えていただけないでしょうか？<br>
+<hr>
+<span class=name>ジムシー</span>
+<span class=time>1999/06/23(水) 18:22:44</span><br>
+以下サンプルソースです。<br>
+－－－－－－－－－－－－－－－－－－－－－－－－－－－<br>
+#&nbsp;&nbsp;/// 保存期間セット ///<br>
+$sub_A = (??*24*60*60);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#←??に有効期間をセット。当日のみなら０をセット<br>
+<br>
+#&nbsp;&nbsp;/// 要求日時計算 ///<br>
+$ENV{'TZ'} = "GMT";<br>
+($secg,$ming,$hourg,$mdayg,$mong,$yearg,$wdayg,$ydayg,$isdstg) = localtime(time + $sub_A);<br>
+ if ($yearg &lt; 10) { $yearg = "0$yearg"; }<br>
+ if ($secg&nbsp;&nbsp;&lt; 10) { $secg&nbsp;&nbsp;= "0$secg";&nbsp;&nbsp;}<br>
+ if ($ming&nbsp;&nbsp;&lt; 10) { $ming&nbsp;&nbsp;= "0$ming";&nbsp;&nbsp;}<br>
+ if ($hourg &lt; 10) { $hourg = "0$hourg"; }<br>
+ if ($mdayg &lt; 10) { $mdayg = "0$mdayg"; }<br>
+$youbi = ('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday')[$wdayg];<br>
+<br>
+if ($yearg &lt; 99){$yearg += 2000;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else {$yearg += 1900;}<br>
+<br>
+$month = ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')[$mong];<br>
+<br>
+#&nbsp;&nbsp;/// クッキー保存期間日セット ///<br>
+$sub_gmt = "$youbi, $mdayg\-$month\-yearg $hourg:$ming:$secg GMT";<br>
+<br>
+#&nbsp;&nbsp;/// クッキー保存処理 ///<br>
+print "Set-Cookie: $xxxx=$yyyy; expires=$sub_gmt\n";<br>
+# $xxxx:クッキーにつけるユニークな名称<br>
+# $yyyy:クッキーにセットするデータ<br>
+－－－－－－－－－－－－－－－－－－－－－－－－<br>
+あと下記ページ当たりを覗いて見ると、詳しい解説が有るので参考になるでしょ。<br>
+<a href="../../wwwcook.htm" tppabs="http://www.tohoho-web.com/wwwcook.htm">http://www.tohoho-web.com/wwwcook.htm</a><br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1999/06/23(水) 22:43:50</span><br>
+これは、社内のLANで、みんながプロキシサーバーを経由してアクセス<br>
+しているため、ログ上にはプロキシサーバーのIPアドレスしか記録され<br>
+ない・・・というケースでしょうか。この場合、プロキシサーバーのロ<br>
+グ情報を見るのが一番確実です。<br>
+<br>
+あとは、チャットログイン時に、自分の名前をちゃんと入力してもらう<br>
+か・・<br>
+<br>
+Cookieのみでは、例えば、Ａさんがチャットに最初にログインした時に<br>
+「CHAT356」というユーザーIDを割り振る。以降、Ａさんがチャットに<br>
+再ログインする時には、「CHAT356」さんがログインしたことがわかる。<br>
+しかし、Ａさんが、実際は誰なのかは、どうやってもわからない・・・<br>
+というような運用になります。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060210.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060210.htm">[前に]</a>
+<a href="99060212.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060212.htm">[次に]</a>
+</body>
+</html>

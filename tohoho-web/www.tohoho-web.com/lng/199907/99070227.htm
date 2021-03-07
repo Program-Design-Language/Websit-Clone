@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>flockの前に、open(OUT,"&gt;outfile.txt")がダメな理由</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>flockの前に、open(OUT,"&gt;outfile.txt")がダメな理由</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070226.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070226.htm">[前に]</a>
+<a href="99070228.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070228.htm">[次に]</a>
+<hr>
+<span class=name>ＫＡＮ</span>
+<span class=time>1999/07/21(水) 23:51:51</span><br>
+open(OUT,"&gt;outfile.txt");<br>
+flock(OUT,2);<br>
+は、ロックする前にファイルサイズを０にしてしまうので良くな<br>
+いと、こちらに書いてありますが、なぜいけないのでしょうか。<br>
+他のプロセスはどうせ読み書きできないですし・・・。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1999/07/22(木) 04:47:09</span><br>
+　　open(OUT, "&gt; outfile.txt");<br>
+　　flock(OUT, 2);<br>
+という処理は、内部的には<br>
+　(1) outfile.txtをオープンする。<br>
+　(2) outfile.txtの内容を0にする。<br>
+　(3) outfile.txtに書き込みロックをかける<br>
+という処理を行います。ここで、他のプロセスが、(2)と(3)の処理の間に<br>
+　(a) outfile.txtをオープンする。<br>
+　(b) outfile.txtの内容を読み出す。<br>
+ってことをやってしまう可能性があるので、まずいです。<br>
+<hr>
+<span class=name>ＫＡＮ</span>
+<span class=time>1999/07/22(木) 08:36:00</span><br>
+<span class=resolv>[[解決]]</span><br>
+　納得できました。<br>
+　御回答、どうも有り難うございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070226.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070226.htm">[前に]</a>
+<a href="99070228.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070228.htm">[次に]</a>
+</body>
+</html>

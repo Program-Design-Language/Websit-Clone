@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほのPromise入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのPromise入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+とほほのPromise入門
+
+<h4 id="whatid">Promiseとは</h4>
+<div class=i>
+<p>Promise は、JavaScript や Node.js において、非同期処理のコールバック関数をエレガントに記述するための仕組みです。英語の promise は、「制約」、「保障」などの意味を持ちます。Promise は、Chrome 63, Firefox 58, Safari 11.1, Edge 18, Node.js 4.* から利用可能です。IE11 ではサポートされていません。</p>
+</div>
+
+<h4 id="callback_hell">コールバック地獄</h4>
+<div class=i>
+<p>JavaScript や Node.js では、ブロックする(処理が終わるまで待ち合わせる)関数よりも、非同期関数(処理の完了を待たず、処理が完了した時点でコールバック関数が呼び出される)の方が多様されます。ここで、例えば、膨大な演算(実は単に元の数を2倍するだけ)を行う非同期関数 aFunc1() があるとします。下記は、100の2倍を求める非同期関数の使用例です。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+<span class="cm">// 引数を2倍にする非同期関数</span>
+function aFunc1(data, callback) {
+    setTimeout(function() {
+        callback(data * 2);
+    }, Math.random() * 1000);
+}
+</pre>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_callback() {
+    <span class="cm">// 非同期関数を用いて100の2倍を求める</span>
+    aFunc1(100, function(value) {
+        console.log(value);      <span class="comment">// =&gt; 200</span>
+    });
+}
+</pre>
+<p>単純に非同期関数を1回だけ呼び出すのであれば、上記で問題ありませんが、1回目で得られた値を用いて、aFunc1() を2度、3度呼び出そうとすると、下記の様な実装になります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_callback_hell() {
+    aFunc1(100, function(data) {
+        console.log(data);                  <span class="comment">// =&gt; 200</span>
+        aFunc1(data, function(data) {
+            console.log(data);              <span class="comment">// =&gt; 400</span>
+            aFunc1(data, function(data) {
+                console.log(data);          <span class="comment">// =&gt; 800</span>
+            });
+        });
+    });
+}
+</pre>
+<p>呼び出す回数に比例してコールバックのネストが深くなります。これを、「コールバック地獄」と呼びます。</p>
+</div>
+
+<h4 id="timing-problem">タイミング問題</h4>
+<div class=i>
+<p>非同期関数はまた、処理の順序を制御できないという問題も含みます。下記の例では、100の2倍、200の2倍、400の2倍を求めようとしたにも関わらず、処理結果は 200, 400, 800 だったり、800, 200, 400 など、結果処理が順不同となるという問題があります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_timing_problem() {
+    aFunc1(100, function(data) {
+        console.log(data);      <span class="comment">// =&gt; 200</span>
+    });
+    aFunc1(200, function(data) {
+        console.log(data);      <span class="comment">// =&gt; 400</span>
+    });
+    aFunc1(400, function(data) {
+        console.log(data);      <span class="comment">// =&gt; 800</span>
+    });
+}
+</pre>
+</div>
+
+<h4 id="promise">Promiseによる解決</h4>
+<div class=i>
+<p>これらの問題を解決するために考案されたのが Promise です。Promise は、約束、誓約、保証などの意味を持ちます。Promise は、待機(pending)、成功(fulfilled)、失敗(rejected)の3値を持つオブジェクトです。前述の非同期関数 aFunc1() を Promise を用いて書き直すと下記の様になります。処理を行う関数を引数とした Promise オブジェクトを返却するように修正します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function aFunc2(data) {
+    return <em>new Promise(function(callback)</em> {
+        setTimeout(function() {
+            callback(data * 2);
+        }, Math.random() * 1000);
+    });
+}
+</pre>
+<p>Promise オブジェクトは then(ok_callback, ng_callback) というメソッドを持ちます。then() は、Promise が成功または失敗になるまで処理を受け流し、成功時に ok_callback を、失敗時に ng_callback をコールバック関数として呼び出します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_promise() {
+    aFunc2(100).<em>then(function(data) {</em>
+        console.log(data);      <span class="comment">// =&gt; 200</span>
+    <em>});</em>
+}
+</pre>
+<p>アロー関数を用いると、次のようにも記述できます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_promise2() {
+    aFunc2(100).<em>then((data) =&gt; {</em>
+        console.log(data);      <span class="comment">// =&gt; 200</span>
+    <em>});</em>
+}
+</pre>
+<p>さらに処理を継続するには、下記の様にします。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_promise3() {
+    aFunc2(100).then((data) =&gt; {
+        console.log(data);      <span class="comment">// =&gt; 200</span>
+        <em>return aFunc2(data);</em>
+    })
+    <em>.then((data) =&gt; {</em>
+        console.log(data);      <span class="comment">// =&gt; 400</span>
+        <em>return aFunc2(data);</em>
+    })
+    <em>.then((data) =&gt; {</em>
+        console.log(data);      <span class="comment">// =&gt; 800</span>
+    <em>});</em>
+}
+</pre>
+</div>
+
+<h4 id="error">エラー処理</h4>
+<div class=i>
+<p>Promise のエラー処理について考察します。下記は、約 30% の確率でエラーとなる Promise 非同期関数です。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function aFunc3(data) {
+    return new Promise(function(okCallback, ngCallback) {
+        setTimeout(function() {
+            <em>if (Math.random() &lt; 0.30) {
+                ngCallback(new Error('ERROR!'));
+            } else {</em>
+                okCallback(data * 2);
+            }
+        }, Math.random() * 1000);
+    });
+}
+</pre>
+<p>.then() は第一引数に成功時のコールバック関数、第二引数に失敗時のコールバック関数を指定します。エラーを考慮した呼び出し元は下記の様になります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_reject() {
+    aFunc3(100).then(
+        (data) =&gt; { console.log(data); },    <span class="comment">// 成功時の処理</span>
+        <em>(e) =&gt; { console.log(e); }</em>           <span class="comment">// 失敗時の処理</span>
+    );
+}
+</pre>
+<p>上記は、下記の様に記述することもできます。.catch(ng_callback) は、.then(undefined, ng_callback) と同じ意味を持ちます。Promise は一度エラーが発生すると、最初に ng_callback 関数が指定されるまで、then 処理をスキップします。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_catch() {
+    aFunc3(100).then((data) =&gt; {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) =&gt; {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) =&gt; {
+        console.log(data);
+    })
+    <em>.catch((e) =&gt; {
+        console.log(e);
+    });</em>
+}
+</pre>
+</div>
+
+<h4 id="error_with_throw">throwを伴うエラー処理</h4>
+<div class=i>
+<p>.catch() はまた、処理中に発生した throw をキャッチすることもできます。下記の例では、aFunc3() 内部で発生したエラーや、2番目の処理で発生した例外を .catch() が受け止めます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_catch_with_throw() {
+    aFunc3(100).then((data) =&gt; {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) =&gt; {
+        console.log(data);
+        <em>throw new Error('ERROR!!!');</em>
+    })
+    .then((data) =&gt; {
+        console.log(data);
+    })
+    <em>.catch((e) =&gt; {
+        console.log(e);
+    });</em>
+}
+</pre>
+</div>
+
+<h4 id="finally">Finally</h4>
+<div class=i>
+<p>.catch() の後ろに .then() を加えることで、成功時にも、失敗時にも常に実行される Finally のような処理を追加することができます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_finally() {
+    aFunc3(100).then((data) =&gt; {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) =&gt; {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) =&gt; {
+        console.log(data);
+    })
+    .catch((e) =&gt; {
+        console.log(e);
+    })
+    <em>.then(() =&gt; {
+        console.log('*** Finally ***');
+    });</em>
+}
+</pre>
+<p><a href="../js/what.htm#es2018" tppabs="http://www.tohoho-web.com/js/what.htm#es2018">ES2018(ES9)</a> では、.finally() がサポートされました。</p>
+<pre class="c2">
+function sample_finally2() {
+    aFunc3(100).then((data) => {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) => {
+        console.log(data);
+        return aFunc3(data);
+    })
+    .then((data) => {
+        console.log(data);
+    })
+    .catch((e) => {
+        console.log("catch");
+        console.log(e);
+    })
+    <em>.finally(() => {
+        console.log('*** Finally ***');
+    });</em>
+}
+</pre>
+</div>
+
+<h4 id="promise-all">すべてのタスクが完了したら(Promise.all())</h4>
+<div class=i>
+<p>Promise.all() は配列で指定されたすべての Promise タスクを待ち合わせ、すべてのタスクが完了した時点で .then() のコールバック関数を呼び出します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function taskA() {
+    return new Promise((callback) =&gt; {
+        console.log("taskA start.");
+        setTimeout(function() {
+            console.log("taskA end.");
+            callback();
+        }, Math.random() * 3000);
+    });
+}
+function taskB() {
+    return new Promise((callback) =&gt; {
+        console.log("taskB start.");
+        setTimeout(function() {
+            console.log("taskB end.");
+            callback();
+        }, Math.random() * 3000);
+    });
+}
+function sample_all() {
+    p1 = taskA();
+    p2 = taskB();
+    <em>Promise.all([p1, p2]).then(() =&gt; {
+        console.log("taskA and taskB are finished.");
+    });</em>
+}
+</pre>
+</div>
+
+<h4 id="promise-race">いずれかのタスクが完了したら(Promise.race())</h4>
+<div class=i>
+<p>Promise.race() は配列で指定された Promise タスクを待ち合わせ、いずれかひとつのタスクが完了した時点で、.then() のコールバック関数を呼び出します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+function sample_race() {
+    p1 = taskA();
+    p2 = taskB();
+    <em>Promise.race([p1, p2]).then(() =&gt; {
+        console.log("taskA or task B is finished.");
+    });</em>
+}
+</pre>
+</div>
+
+<h4 id="promise-allSettled">すべてのタスクが成功・失敗に関わらず完了したら(Promise.allSettled())</h4>
+<div class="i">
+<p><a href="#promise-all">Promise.all()</a> では、指定したタスクのいずれか一つがエラーになるとそこで待ち合わせを完了してしまいますが、<a href="javascript:if(confirm('http://div.wifi-cloud.jp/redir/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://div.wifi-cloud.jp/redir/#es2020'" tppabs="http://www.tohoho-web.com/ex/what.htm#es2020">ES2020</a> でサポートされた <b>Promise.allSettled()</b> を用いると、タスクがエラーとなっても、すべてのタスクが成功終了するか、エラー終了するまで、処理を待ち合わせることが可能となります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+p1 = Promise.resolve("OK1");
+p2 = Promise.reject("NG2");
+p3 = Promise.resolve("OK3");
+<em>Promise.allSettled(</em>[p1, p2, p3]<em>)</em>.then(
+   resolveList => resolveList.forEach(res => console.log(res)),
+   rejectList  => rejectList.forEach(rej => console.log(rej))
+);
+<span class="cm">// =&gt; <i>{status: "fulfilled", value: "OK1"}</i></span>
+<span class="cm">// =&gt; <i>{status: "rejected", reason: "NG2"}</i></span>
+<span class="cm">// =&gt; <i>{status: "fulfilled", value: "OK3"}</i></span>
+</pre>
+</div>
+
+<h4 id="async-await">非同期関数を同期関数っぽく呼び出す(async/await)</h4>
+<div class=i>
+<p><a href="../js/what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES2017</a> では、Promise に加え、async/await がサポートされました。こちらも、Internet Explorer を除く大半のモダンブラウザで利用可能です。async と await を用いることで、Promise に対応した非同期関数を、同期関数の様に呼び出すことが可能となります。同期関数の様に呼び出したい非同期関数を呼び出す際に await をつけます。await を呼び出す関数に async をつけます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+<em>async</em> function sample_async_await() {
+    var val = 100;
+    val = <em>await</em> aFunc2(val);
+    console.log(val);                    <span class="cm">// 200</span>
+    val = <em>await</em> aFunc2(val);
+    console.log(val);                    <span class="cm">// 400</span>
+    val = <em>await</em> aFunc2(val);
+    console.log(val);                    <span class="cm">// 800</span>
+}
+</pre>
+<p>エラー処理に対応するコードは下記の様になります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+async function sample_async_await_with_catch() {
+    var val = 100;
+    <em>try {</em>
+        val = await aFunc3(val);
+        console.log(val);
+        val = await aFunc3(val);
+        console.log(val);
+        val = await aFunc3(val);
+        console.log(val);
+    <em>} catch (e) {</em>
+        console.log(e);
+    <em>}</em>
+}
+</pre>
+</div>
+
+<h4 id="for-await-of">for await ... of ...</h4>
+<div class="i">
+<p><a href="../js/what.htm#es2018" tppabs="http://www.tohoho-web.com/js/what.htm#es2018">ES2018(ES9)</a> では、非同期なイテラブルオブジェクトに対して、for await (... of ...) でループを回せるようになりました。例えば、サーバからデータを1件ずつ読み込む非同期処理を、同期処理の様に for ループで記述することが可能となります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class="c2">
+var asyncIterableObject = {
+  [Symbol.asyncIterator]() {
+    return {
+      count: 0,
+      next() {
+        return new Promise((callback) =&gt; {
+          setTimeout(() =&gt; {
+            callback({
+              value: this.count,
+              done: (this.count &lt; 5) ? false : true,
+            })
+            this.count++;
+          }, Math.random() * 1000);
+        });
+      }
+    };
+  }
+};
+
+async function for_await_of() {
+   <em>for await</em> (num <em>of</em> asyncIterableObject) {
+     console.log(num);                      <span class="cm">// 0, 1, 2, 3, 4</span>
+   }
+};
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2019-2020 杜甫々</div>
+<div>初版:2019年2月11日 最終更新:2020年12月27日</div>
+<div>http://www.tohoho-web.com/ex/promise.html</div>
+</body>
+</html>

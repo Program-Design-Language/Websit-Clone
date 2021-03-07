@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CGIから送信するメールのヘッダに日本語を用いるには - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>CGIから送信するメールのヘッダに日本語を用いるには</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+CGIから送信するメールのヘッダに日本語を用いるには
+
+<h4>CGIから送信するメールのヘッダに日本語を用いるには</h4>
+<div class=i>
+<p>CGIスクリプトから送信する電子メールのヘッダに日本語を用いるには、漢字コードを次のような形式に変換してやる必要があります。（EUCやシフトJISでもちゃんと届いて読める場合もありますが、電子メールの規約上は変換が必要です。）</p>
+<pre class=c>
+Subject: =?iso-2022-jp?B?GyRCJEgkWyRbGyhK?=
+</pre>
+<p>これは、日本語を一度JISコードに変換し、それを、BASE64という形式でエンコードし、前後に =?iso-2022-jp?B? と ?= をつけたものです。BASE64エンコードは、3バイト分のバイトコードを、6ビットずつの4つのコードに分割し、この6ビットを A～Z、a～z、0～9、+、/ の表示可能コードに振り分けるものです。perlスクリプトで、このエンコードを行う方法を次に示します。</p>
+<p>jcode.pl は下記のページから入手できます。</p>
+<ul>
+<li><a href="javascript:if(confirm('ftp://ftp.iij.ad.jp/pub/IIJ/dist/utashiro/perl/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='ftp://ftp.iij.ad.jp/pub/IIJ/dist/utashiro/perl/'" tppabs="ftp://ftp.iij.ad.jp/pub/IIJ/dist/utashiro/perl/">ftp://ftp.iij.ad.jp/pub/IIJ/dist/utashiro/perl/</a></li>
+</ul>
+<pre class=c>
+require "jcode.pl";
+
+$xx = "とほほ";
+$xx = &amp;mail64encode($xx);
+print "$xx\n";
+
+sub mail64encode {
+  local($xx) = $_[0];
+  &amp;jcode'convert(*xx, "jis");
+  $xx =~ s/\x1b\x28\x42/\x1b\x28\x4a/g; # 不要かも
+  $xx = &amp;base64encode($xx);
+  return("=?iso-2022-jp?B?$xx?=\n");
+}
+
+sub base64encode {
+  local($base) = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+               . "abcdefghijklmnopqrstuvwxyz"
+               . "0123456789+/";
+  local($xx, $yy, $zz, $i);
+  $xx = unpack("B*", $_[0]);
+  for ($i = 0; $yy = substr($xx, $i, 6); $i += 6) {
+    $zz .= substr($base, ord(pack("B*", "00" . $yy)), 1);
+    if (length($yy) == 2) {
+      $zz .= "==";
+    } elsif (length($yy) == 4) {
+      $zz .= "=";
+    }
+  }
+  return($zz);
+}
+</pre>
+</div>
+<hr>
+<div>Copyright (C) 1996-1998 杜甫々</div>
+<div>1998年5月24日</div>
+<div>http://www.tohoho-web.com/wwwxx006.htm</div>
+</body>
+</html>
+

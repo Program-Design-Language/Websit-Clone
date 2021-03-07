@@ -1,0 +1,117 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>document.write();の中に&lt;script　language = "javascript"&gt;を入れるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>document.write();の中に&lt;script　language = "javascript"&gt;を入れるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060135.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060135.htm">[前に]</a>
+<a href="99060137.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060137.htm">[次に]</a>
+<hr>
+<span class=name>rain</span>
+<span class=email><a href="mailto:kazuseki@system.hitachi.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/15(火) 15:29:56</span><br>
+&lt;script language = "javascript"&gt;<br>
+&nbsp;&nbsp;function controll(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;var popup = window.open('','cotroll','toolbar=no...');<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.open();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&lt;html&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&lt;head&gt;&lt;title&gt;画面２&lt;/title&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&nbsp;&nbsp;&lt;script language = 'javascript'&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&nbsp;&nbsp;～ scriptの内容 ～&nbsp;&nbsp;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&nbsp;&nbsp;&lt;/script&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&lt;/head&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&lt;body&gt;&lt;/body&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.write("&lt;/html&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;popup.document.close();"<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;location.href = "../../画面１変更.htm";<br>
+&nbsp;&nbsp;controll();<br>
+&lt;/script&gt;<br>
+のような新規画面で[script]を使うプログラムを作りたいのですが、<br>
+[script]の中に[script]を入れることは出来ないのでしょうか？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/15(火) 15:50:35</span><br>
+これは「こんなスクリプトを作ってみたけど思うように動作しなかった」と捉えていいのですか？<br>
+もしそうなら，どんな動作になったか（エラーメッセージなど）を書いてくれないと，判断に<br>
+苦しみます。<br>
+<br>
+ただ，スクリプトを見て気になる点がいくつか。<br>
+<br>
+1. location.hrefの次の関数は間違いなく呼び出されてますか？<br>
+　→関数にalertなどを入れて確認<br>
+2.SCRIPT内に「&lt;/」を直接書くことは薦められません。<br>
+　詳しくは，このとほほさんのサイトのJavaScriptに関するところにも<br>
+　解説があったと思います。<br>
+<hr>
+<span class=name>rain</span>
+<span class=time>1999/06/15(火) 17:00:47</span><br>
+すいませんでした。<br>
+思うように動かなかったのです<br>
+実際は、ＣＧＩでＨＴＭＬのコーディングを吐き出しているという形式のプログラムです。<br>
+新規で「open」したウィンドウのスクリプト内から、別のページに飛ぶ(リモコン画面)のようなものを作りたいのです。<br>
+「location」については、呼び出せているようです。<br>
+現状のままで実行するとエラーが、「unterminated string literal」とあるので、終了文字がないのかも<br>
+と思い、忠告の「&lt;/」を修正してみると、<br>
+エラーは出なくなるのですが、「document.write()」中の「script」が記入されていないために<br>
+リンクしようとした場合に、エラーが起こってしまう。<br>
+「script」以外のところは、正常に「document.write()」されています。<br>
+なぜなのでしょうか？<br>
+ちなみにテストは、ＮＮ４．０４です。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/15(火) 17:43:57</span><br>
+試しに簡単なHTML書いてテストしてみましたが，問題なく動作しましたが。<br>
+<font color="#CC8000">&gt;unterminated string literal</font><br>
+もしかしてdocument.close();のあとの「”」のせいってことはないですか？<br>
+＃単純な打ち損ねだと思って触れてなかったのですが。<br>
+<br>
+一応テストしたのも載せときますね。<br>
+<br>
+&lt;html&gt;&lt;head&gt;&lt;title&gt;タイトル&lt;/title&gt;<br>
+&lt;/head&gt;<br>
+&lt;body&gt;<br>
+&lt;script language="javascript"&gt;<br>
+function func(){<br>
+var popup=window.open('');<br>
+popup.document.write('&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;TITLE&lt;\/TITLE&gt;');<br>
+popup.document.write('&lt;SCRIPT language="javascript"&gt;');<br>
+popup.document.write('function func2(){alert("hoge");}');<br>
+popup.document.write('&lt;\/script&gt;&lt;\/HEAD&gt;&lt;BODY&gt;');<br>
+popup.document.write('&lt;a href="#" onClick="func2();return false;"&gt;aaa&lt;\/a&gt;');<br>
+popup.document.write('&lt;\/BODY&gt;&lt;\/HTML&gt;');<br>
+popup.document.close();<br>
+}<br>
+&lt;/script&gt;<br>
+&lt;a href="#" onClick="func();return false;"&gt;aaa&lt;/a&gt;<br>
+&lt;/body&gt;&lt;/html&gt;<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/15(火) 18:01:35</span><br>
+言い忘れてましたが，上のサンプルはMac+NN3で確認しました。<br>
+<br>
+それと<br>
+<font color="#CC8000">&gt;unterminated string literal</font><br>
+ですが，これから判断すると「閉じられてない文字列」があったわけですよね？<br>
+<br>
+もしかして<br>
+<font color="#CC8000">&gt;～SCRIPTの内容～</font><br>
+の中での「"」や「'」の扱いに原因があるのでは？<br>
+いちばん外側のが「"」ですから内部では基本的に「'」を使い，必要に応じて「\"」を<br>
+使わなければならないのですが，そこには問題ないですか？<br>
+<hr>
+<span class=name>rain</span>
+<span class=time>1999/06/15(火) 18:43:10</span><br>
+<span class=resolv>[[解決]]</span><br>
+どうやら、おっしゃる通り「”」や「’」のせいでした。<br>
+きれいなプログラムにしなければ、とつくづく思いました。<br>
+ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060135.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060135.htm">[前に]</a>
+<a href="99060137.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060137.htm">[次に]</a>
+</body>
+</html>

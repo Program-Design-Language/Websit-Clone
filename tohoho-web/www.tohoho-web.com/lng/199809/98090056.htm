@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>JavaScriptのWindow.に別のウィンドウを指定するには</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>JavaScriptのWindow.に別のウィンドウを指定するには</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090055.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090055.htm">[前に]</a>
+<a href="98090057.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090057.htm">[次に]</a>
+<hr>
+<span class=name>うーりえ</span>
+<span class=email><a href="mailto:U-rie@angel.sakuramail.com">[E-Mail]</a></span>
+<span class=time>1998/09/17(木) 03:57:23</span><br>
+『window指定にopen()関数の戻り値を用いる？』の続き、というか仕切直しです。<br>
+<br>
+JavaScriptにおいて実行先ウィンドウを指定するには<br>
+window.top.frame1.○○とか<br>
+window.parent.opener.○○とか指定しますよね？<br>
+openerでは開かれた子ウィンドウから親ウィンドウを指定できますが<br>
+逆に親ウィンドウ、もしくは別の子ウィンドウから<br>
+特定のウィンドウを指定するにはどうしたら良いのでしょうか。<br>
+<br>
+質問に至った状況は次の通りです。<br>
+１．ＨＰ入室の時、トップページでwindow.open()により<br>
+　　自動的に小窓（子ウィンドウ）が開くようになっています。<br>
+２．ＨＰの中で、その子ウィンドウに別の内容を表示させます。<br>
+３．その人が何らかの理由で再びトップページから入ってきたとき<br>
+　　子ウィンドウを閉じてあるか、開いたままかをif(window.closed)で判定し<br>
+　　前に開いたもの（ＨＰ内で内容が変わっている）がある場合には<br>
+　　window.open()を回避して初期の内容に戻らないようにしたい。<br>
+ということです。<br>
+<br>
+子ウィンドウの指定にはopen()の戻り値が使えるとのことですが<br>
+ver newWin = open("","test")の後に<br>
+newWin.closedとかnewWin.nameとかやっても<br>
+どうしてもその前に指定した子ウィンドウが開いてしまいます。<br>
+子ウィンドウを開かないための判定という目的上<br>
+それでは支離滅裂なのです・・・・<br>
+<br>
+ウィンドウを開いてしまうことなく特定のウィンドウを指定する方法が<br>
+何かありましたらお教え下さい。<br>
+例えばver newWin = open("","test")としても<br>
+newWinに戻り値が入るだけで<br>
+ウィンドウは開かないようにする（open()自体は実行されない）方法とか・・・あれば<br>
+<hr>
+<span class=name>うーりえ</span>
+<span class=time>1998/09/17(木) 04:02:47</span><br>
+上記のコメント内、verはvarです<br>
+間違えましたm(__)m<br>
+<hr>
+<span class=name>Masa</span>
+<span class=email><a href="mailto:mfujita@kz.tsukuba.ac.jp">[E-Mail]</a></span>
+<span class=time>1998/09/17(木) 05:07:01</span><br>
+open()を実行したら必ずウィンドウに「なにか」してしまうので、<br>
+document.refererを使って、自分のページから帰ってきた場合は<br>
+open()を実行しない、というif文にしてはどうでしょうか。<br>
+<hr>
+<span class=name>うーりえ</span>
+<span class=time>1998/09/17(木) 06:41:51</span><br>
+<font color="#CC8000">＞Ｍａｓａさん</font><br>
+実は再びトップから入った場合、<br>
+ＨＰの構成上、open()実行時には<br>
+かならず『自分のページから帰ってきた』ことになってしまうのです・・<br>
+せっかく智慧を下さったのに申し訳ありません。<br>
+<br>
+しかしなんとか自力で解決しました。<br>
+<br>
+初期に開いたものをウィンドウ名「A」内容「1.html」とすると<br>
+ＨＰ内で小窓の内容を変える際に<br>
+まず「A」にclose()を持ったhtmlを送って「A」を自動的に閉じさせ、<br>
+同時に新たにウィンドウ名「B」を開きます。<br>
+<br>
+このとき、直接新しい内容「2.html」を開かせず<br>
+「B」にはもともとの「A」内容「1.html」をサイズ0のフレームにして含ませて<br>
+新たなフレーム名「C」に目的の内容「2.html」を表示させました。<br>
+<br>
+こうすることで、再度入室されてもフレーム「A」が再表示されるだけで<br>
+自らウィンドウ「B」を消さない限り状態が維持されるようになりました。<br>
+なんとも理屈が複雑で自分でも大変ですが・・・（＾＾；<br>
+<br>
+ともかく３日間に渡る苦悩は解決しました。<br>
+<br>
+ただ、表題の『window.に別のウィンドウを指定するには』は<br>
+いまだ興味があります。<br>
+これが出来ると他の部分でもかなり役立つので、<br>
+もうしばらく皆さんの智慧を待ちたいと思います。<br>
+<hr>
+<span class=name>うーりえ</span>
+<span class=time>1998/09/17(木) 06:49:16</span><br>
+上のだけでは説明不足ですね。<br>
+<br>
+実はウィンドウ名「A」というのはＢＧＭの為のウィンドウなのです。<br>
+それの内容を途中でＢＧＭパネル＋ＨＰの内容に変えて<br>
+小窓だけで独立して表示できるコーナーを作りたかったのでした。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090055.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090055.htm">[前に]</a>
+<a href="98090057.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090057.htm">[次に]</a>
+</body>
+</html>

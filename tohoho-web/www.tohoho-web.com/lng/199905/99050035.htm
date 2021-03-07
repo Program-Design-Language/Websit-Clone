@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>JavaScriptのMath.random()の仕様について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>JavaScriptのMath.random()の仕様について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050034.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050034.htm">[前に]</a>
+<a href="99050036.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050036.htm">[次に]</a>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=email><a href="mailto:sakurai-ne@idp.hitachi-medical.co.jp">[E-Mail]</a></span>
+<span class=time>1999/05/11(火) 16:15:16</span><br>
+とほほさんのリファレンスによると、Math.random()は、<br>
+”乱数(0～1)。”となってます。<br>
+これにちょっと疑問を感じたので調査してみました。<br>
+その結果・・・<br>
+<br>
+ネットスケープ（英語）では、<br>
+　”between 0 and 1.（０と１との間の数）”<br>
+となってました。from～toではなくbetweenを使っている事から、<br>
+０も１も含まない、と考えるのが正しいのではないでしょうか。<br>
+（ちなみに、私は英語はからっきしですので(^_^;)）<br>
+<br>
+マイクロソフトでは、<br>
+　”0 ～ 1 の範囲内の値をとります (0 および 1 も含まれます)”<br>
+と、明記されておりました。<br>
+<br>
+他のリファレンスサイト（一撃必殺）では、<br>
+　”0から1未満の乱数を発生させます。”<br>
+となってました。<br>
+<br>
+実際に使用した感じでは”０から１未満”が正しいように思えますが、<br>
+本当の所はどうなのでしょう？<br>
+誰かがあってる、間違ってるや、実はメーカやバージョンで違う、<br>
+など、知っている方がおりましたら、教えてください。<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/05/13(木) 10:21:28</span><br>
+独学JavaScriptの作者の本では<br>
+「０から１の実数を発生させます」<br>
+とあります。その後に続くサンプル説明で<br>
+「最初の値が０の時は～」とあるので０は含まれているようです。<br>
+見た感じでは１も含まれているような気がします。<br>
+<br>
+英語のbetweenは<br>
+A |←このあいだ→| B<br>
+ではなくて<br>
+| A ←このあいだ→ B |<br>
+という気がします。<br>
+choose&nbsp;&nbsp;between A and Bなら「AかBか」だし。<br>
+歯磨き粉のCM見てると歯の間だけを指している感じですが<br>
+ホントは歯も含まれるだろう、とかそんな感じ。（何なんだ）<br>
+<br>
+ですが、今周りのプログラマに聞いたらみんな口を揃えて<br>
+「１を超えない小数を返す」とゆってます。<br>
+つまり０を含んで１未満の小数だそうです。<br>
+理由は、<br>
+「ここ１０年そんなプログラムは見てない」とか<br>
+「処理の仕方が変わるからやらないだろう」とか<br>
+「０があるなら１入れると処理が出来ない」とか。<br>
+...意味はわかりませんが...。<br>
+<br>
+使っている感じでは私も「０以上１未満」ととらえてました。<br>
+IEとNNとかWinとMacで処理が違っていたらやだなあ。<br>
+<hr>
+<span class=name>maeda</span>
+<span class=email><a href="mailto:maeda@octnet.co.jp">[E-Mail]</a></span>
+<span class=time>1999/05/13(木) 14:32:20</span><br>
+C言語にせよ、BASICにせよ、乱数発生は「０以上１未満」という仕様<br>
+になっています。JavaScriptの設計者がよっぽどのひねくれ者でもな<br>
+い限り、これと同じなのではないでしょうか？<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/05/13(木) 16:57:33</span><br>
+　JavaScriptでどういう値を取るかは存じ上げませんが、私もmaedaさんと同意見です。<br>
+<br>
+　ちなみに一般的に乱数発生が「０以上１未満」となっているのは、例えばｍ～ｎの数値を<br>
+ランダムに発生させたいとき、ＢＡＳＩＣなら<br>
+　　　　ＲＮＤ（１）＊（ｍ－ｎ＋１）＋ｎ<br>
+とする訳ですが、乱数発生で１が出るとなると、これがわずかな確率でｍ＋１になる場合も<br>
+あり都合が悪くなってしまうわけです。これが０以上１未満なら、ｍ～ｎが等確率で出ます。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/05/13(木) 16:58:57</span><br>
+みんこさん、ありがとうございます。betweenの件は了解しました。<br>
+＃あれって歯ブラシでしたよね？まあどうでもいいか。(^_^;)<br>
+<br>
+私自身プログラマですので、普通の考えでは「０以上１未満」<br>
+というのは分かるのですが・・・<br>
+乱数発生アルゴリズムについて調べてみた所、パソコンの最大値<br>
+（２の３２乗）個数の乱数を発生させようとした場合、<br>
+計算上０＜＝ｒｎｄ＜＝１となってしまう事が判明しました。<br>
+０～（２の３２乗）－１の乱数を、２の３２乗で割れないから、<br>
+というだけですが・・・（２回以上割り算を繰り返せば不可能では無いですが）<br>
+<br>
+まあ、仮に１も含むとしましょう。その場合、<br>
+a = Math.floor(Math.random() * 10)<br>
+とした場合、０～９の各数値の発生確率は、約１／１０程で、<br>
+１０の発生確率だけが１／（２の３２乗）となってしまいます。<br>
+そんな確率では、”１”が含まれない感じがするのも無理ないですけど・・・<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/05/13(木) 17:00:13</span><br>
+　あ、正確にはｍ～ｎの整数で、<br>
+　　　　ＩＮＴ（ＲＮＤ（１）＊（ｍ－ｎ＋１）＋ｎ）<br>
+ですね。（ちなみに子供の頃やったＭＳＸＢＡＳＩＣの話なので、Ｎ８８ＢＡＳＩＣでは<br>
+違うかもしれないけど…ま、細かい事はいいでしょう。）<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/05/13(木) 17:02:45</span><br>
+　あ、みんこさんへの解説だったけど、元の質問者の方がより詳しく精密に<br>
+解説してくださってますね。無責任官庁さん、失礼しました。<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/05/13(木) 18:18:44</span><br>
+え～と。<br>
+頭の弱い私にみなさんが親切に教えて下さっているという感じです。ありがたいことです。<br>
+（てゆーかプログラムの基礎なんて見たことも聞いたことも。）<br>
+<br>
+なんとなくみなさんが言っていることは分かりました。<br>
+で、本題について、確率だけでいえば、出る訳ですね、１が。<br>
+ということはマイクロソフトが正しいんでしょうか。<br>
+ネットスケープも同じ事言っているわけですしね。（多分）<br>
+（それはつまり JavaScriptの設計者がひねくれものだと...？）<br>
+<br>
+後ろのプログラマさんたちは<br>
+「１０年以上前の、プログラム言語がまだ方言だらけだった頃、<br>
+そういうのもあったなあ」といっています。その仲間なんでしょうか。<br>
+（ただうちの中でもJSやってるのは基礎知識の一切ない私だけなんですね。これってどうよ。）<br>
+<hr>
+<span class=name>maeda</span>
+<span class=email><a href="mailto:maeda@octnet.co.jp">[E-Mail]</a></span>
+<span class=time>1999/05/13(木) 18:39:28</span><br>
+乱数発生で１が出る確率について<br>
+<br>
+・数学的思考<br>
+「確率的には存在する」<br>
+<br>
+・化学的思考<br>
+「あ～、そんなのちっちゃいちっちゃい、無視無視」<br>
+<br>
+・博打的思考<br>
+「可能性がある以上、出るか出ないかの２分の１」<br>
+<br>
+・・・後はプログラマの感性次第ですねぇ（笑）。<br>
+ちなみに、私は２番目のやつです。<br>
+<hr>
+<span class=name>roland</span>
+<span class=email><a href="mailto:roland@po.jah.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/14(金) 00:43:37</span><br>
+私はどれかっていうと「数学的思考」なので、例えば<br>
+　var num = 5;<br>
+　var R = Math.floor(Math.random() * num * 1000) % num;<br>
+って感じで５が出ないように逃げてみたり（＾＾；<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/05/14(金) 10:24:24</span><br>
+<span class=resolv>[[解決]]</span><br>
+色々調べてみた結果、ブラウザのメーカ・バージョンによって、<br>
+アルゴリズムもそれぞれ違う事が分かりました。<br>
+”０～１”ってだけでも怪しいのにこれでは・・・(-_-;)<br>
+（ＮＮ３とＮＮ４だけでも、かなり違うらしい）<br>
+<br>
+結局の所、「自分で乱数発生ルーチンを作る」がベスト、<br>
+という結論に達しました。<br>
+皆さん、いろいろご意見ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050034.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050034.htm">[前に]</a>
+<a href="99050036.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050036.htm">[次に]</a>
+</body>
+</html>

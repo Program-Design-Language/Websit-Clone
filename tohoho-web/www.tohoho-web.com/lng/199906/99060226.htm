@@ -1,0 +1,169 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>METHOD=POSTで設定したフォームの情報が文字化けしないようにするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>METHOD=POSTで設定したフォームの情報が文字化けしないようにするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060225.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060225.htm">[前に]</a>
+<a href="99060227.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060227.htm">[次に]</a>
+<hr>
+<span class=name>猫田</span>
+<span class=url><a href="javascript:if(confirm('http://www.tohoho-web.com/lng/199906/98011400.htm  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ｲｻｿﾉﾓﾃ, ｻﾅﾆ愠ﾋﾏﾂﾔﾘ, ｻ鍗ｿｼｴｽｫﾍ｣ﾖｹ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.tohoho-web.com/lng/199906/98011400.htm'" tppabs="http://www.tohoho-web.com/lng/199906/thrones@3web.ne.jp">[HomePage]</a></span>
+<span class=time>1999/06/23(水) 18:47:00</span><br>
+フォームで入力された情報を取り出すCGIについて質問です。METHOD=POSTで設定したフォームのテキストエリアに大量の文字（全角で400字以上のデータ）を入力してCGIを呼び出し、標準入力に返される値を参照すると時々一部が文字化けすることがどうしてでしょうか？入力する文字数が多いほど化ける確立が高くなります。全角で400～600文字のときは100回に一回程度の頻度ですが、1500文字で試したところほぼ50％の確立で一部が文字化けします。<br>
+<hr>
+<span class=name>PTAN</span>
+<span class=time>1999/06/23(水) 18:53:42</span><br>
+何という言語で、ＣＧＩを作って、どういったデコードしているのか<br>
+書かないと、答えようがないと思いますが。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/23(水) 21:13:46</span><br>
+ついでに、具体的な化け方も示して貰えると手掛かりになるかと。<br>
+<hr>
+<span class=name>猫田</span>
+<span class=email><a href="mailto:thrones@tky2.3web.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/23(水) 23:40:33</span><br>
+使用言語はPerlです。試したCGIを引用します。<br>
+<br>
+#!/usr/bin/perl<br>
+<br>
+$| = 1;<br>
+<br>
+read(STDIN, $buf, $ENV{'CONTENT_LENGTH'});<br>
+$buffer = $buf;&nbsp;&nbsp;&nbsp;#比較のためにデコードしていない状態のデータを$bufferに代入<br>
+####デコード処理開始####<br>
+@pairs = split(/&amp;/, $buf);<br>
+foreach $item (@pairs){<br>
+	($key, $value) = split(/=/, $item);<br>
+	$key =~ tr/+/ /;<br>
+	$key =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;<br>
+	$value =~ tr/+/ /;<br>
+	$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;<br>
+	$FORM{$key} = $value;<br>
+}<br>
+####デコード処理終了####<br>
+print &lt;&lt;FIRST_PART;<br>
+Content-type: text/html<br>
+<br>
+&lt;HTML&gt;<br>
+	&lt;HEAD&gt;<br>
+		&lt;META HTTP-EQUIV="Content-Type" Content="text/html; charset=shift-jis"&gt;&lt;/META&gt;<br>
+	&lt;/HEAD&gt;<br>
+	&lt;BODY&gt;<br>
+FIRST_PART<br>
+foreach $n (sort keys %FORM){<br>
+	print($n.":$FORM{$n}&lt;BR&gt;\n");&nbsp;&nbsp;&nbsp;#デコードしたデータを表示<br>
+}<br>
+print $buffer;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#デコード前のデータを表示<br>
+print "&lt;/BODY&gt;&lt;/HTML&gt;";<br>
+<br>
+文字化けが発生するときはデコード前のデータの16進数の表示もおかしくなっています。よってデコード方法が間違っているとは思えません。<br>
+<br>
+上記の現象はＣＧＩが設置してあるサーバとＬＡＮ経由で接続している環境で確認しましたが、今、家からダイアルアップで接続して問題のＣＧＩを起動してみると全く文字化けしません。全角で8892文字のデータを入力しても全然大丈夫でした。ＬＡＮ経由でＣＧＩを呼んだのがよくなかったんでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/24(木) 00:29:28</span><br>
+そのperlはEUCしか扱えないのでは?<br>
+SJISには `\'(0x5c)などが含まれてますから、SJIS非対応の<br>
+perlでデータを読んで print "$_" で書き出すだけで化けます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/24(木) 00:41:37</span><br>
+<font color="#CC8000">&gt; perlでデータを読んで print "$_" で書き出すだけで化けます。</font><br>
+あ、嘘。これじゃ化けない。SJISでスクリプトを書くと、<br>
+&nbsp;&nbsp;print "ソフト";<br>
+とすると<br>
+　ャtト<br>
+と表示される、ってこと。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/06/24(木) 02:16:12</span><br>
+ブラウザがFORMで日本語文字を送るとき、どのような場合に<br>
+JISとShift-JISとEUC(Unicodeも?)のいずれのコードが使われるのか、<br>
+って問題は解決してましたっけ？＞回答者の皆さま<br>
+<br>
+猫田さんのスクリプトは、ブラウザがShift-JISで送信する<br>
+ってことが前提になってるようですが、これが違うコードに<br>
+なってるってことはないでしょうか？<br>
+<br>
+<font color="#CC8000">&gt;文字化けが発生するときはデコード前のデータの16進数の表示も</font><br>
+<font color="#CC8000">&gt;おかしくなっています。</font><br>
+この16進の内容（ごく一部でいいです）を書いて頂けると、<br>
+直ぐに分かると思います。%1Bが混じっていれば、JISコードで<br>
+送信されてます。<br>
+<hr>
+<span class=name>猫田</span>
+<span class=time>1999/06/24(木) 09:29:48</span><br>
+テキストエリアに「テストです。」という文字列を300個入力して<br>
+ＣＧＩを呼び出したところ５回目で文字化けが発生しました。<br>
+以下にデコード前とデコード後のデータを示します。<br>
+－－－－－－－－－－－－－－－－－－－－－－－－－－－－<br>
+デコード前→デコード後<br>
+%83e%83X%83g%82%C5%82%B7%81B→テストです。<br>
+%83e%83X%83g%82%C5%82%B7%B→テストです%B<br>
+－－－－－－－－－－－－－－－－－－－－－－－－－－－－<br>
+文字化けしたのは１箇所のみです。<br>
+<br>
+それと、ダイアルアップで接続してＣＧＩを起動してもやっぱり<br>
+文字化けしてました。<br>
+<hr>
+<span class=name>徳明</span>
+<span class=time>1999/06/24(木) 12:23:49</span><br>
+コードはちゃんとシフトJISで送られているようですね。<br>
+でも、shift-jis は shift_jis が正しかったような。<br>
+それと、shift_jisで書き出すのであれば、jcode.plなどを用いて<br>
+シフトJISに変換してから書き出すのがよいと思う。<br>
+でも、デコード前から化けているのだとすると、ブラウザの<br>
+バグである可能性が高そう・・・<br>
+<hr>
+<span class=name>猫田</span>
+<span class=time>1999/06/24(木) 16:45:53</span><br>
+ブラウザのバグですか。ＩＥ4.01とＮＣ4.5でテストしてみましたが<br>
+両方ともたまに一部のデータが文字化けしました。<br>
+とほほさんの「wwwboard.cgi」でも実験してみましたが、同様に<br>
+大量のデータを入力するとたまに一部が化けて表示されました。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/06/25(金) 01:12:36</span><br>
+FORMやCGIのcharsetを外してみては…<br>
+と思っていたのですが、とほほさんの「wwwboard.cgi」でも<br>
+ダメってことは、文字コードの問題ではないんですね。<br>
+<br>
+となると、ブラウザの&lt;TEXTAREA&gt;の編集バッファのサイズに<br>
+制限があるのかな…？<br>
+<br>
+行バッファの制限なら、改行の問題かも…<br>
+テスト用の文字列には、改行は入ってないのでしょうか？<br>
+もし、入ってないのなら、適当に改行を入れてみて、<br>
+もう一度試してみるとか…<br>
+<hr>
+<span class=name>PTAN</span>
+<span class=time>1999/06/25(金) 09:24:38</span><br>
+<font color="#CC8000">&gt; ブラウザのバグですか。ＩＥ4.01とＮＣ4.5でテストしてみましたが</font><br>
+<font color="#CC8000">&gt; 両方ともたまに一部のデータが文字化けしました。</font><br>
+<br>
+となると、ブラウザが原因とはいいにくそうですね。<br>
+もしかして、Ｗｅｂサーバが正しくＣＧＩにデータを渡していないとか、<br>
+間のネットワークがおかしいとか...???<br>
+とりあえず、同一のＣＧＩを別のＷｅｂサーバで試してみてはどうでしょう。AN HTTPDとか。<br>
+<hr>
+<span class=name>猫田</span>
+<span class=time>1999/06/25(金) 10:51:08</span><br>
+<span class=resolv>[[解決]]</span><br>
+改行が入ったテストデータでもうまくいきませんでした。<br>
+でも、AN HTTPDで試してみたら大丈夫でした。全角で6144文字の<br>
+データで100回テストして、一度も文字化けがでませんでした。<br>
+Ｗｅｂサーバが悪かったみたいですね。サーバの管理人の人に<br>
+聞いてみます。みなさんいろいろとありがとうございました。<br>
+また何かありましたらお世話になると思いますのでそのときは<br>
+よろしくおねがいします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060225.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060225.htm">[前に]</a>
+<a href="99060227.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060227.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ファイルの一行目を読み飛ばすには？？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ファイルの一行目を読み飛ばすには？？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060029.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060029.htm">[前に]</a>
+<a href="99060031.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060031.htm">[次に]</a>
+<hr>
+<span class=name>■</span>
+<span class=time>1999/06/04(金) 03:59:38</span><br>
+#!/usr/bin/perl<br>
+<br>
+$subjectfile = './bbs.dat';<br>
+open(DATA,$subjectfile);<br>
+while (&lt;DATA&gt;){<br>
+chop;<br>
+($date,$fname,$email,$value,$subject,$res,$cnt) = split(/,/);<br>
+print "$subject\n";<br>
+last if ++$i&gt;=20;}<br>
+close(DATA);<br>
+<br>
+というスクリプトなのですが、これを改造してログの一行目を<br>
+読まないようにしたいです。<br>
+	@lines = &lt;DATA&gt;;<br>
+とやってログを全部読み込んでから<br>
+	shift(@lines);<br>
+とすればいけそうなのですが、これだとメモリ食っちゃうとの事なので<br>
+なにか良い方法があれば教えてください。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/04(金) 04:29:28</span><br>
+案1:<br>
+　open(IN,"hoge");<br>
+　&lt;IN&gt;;<br>
+　while (&lt;IN&gt;){<br>
+<br>
+案2: 案1の書き方が気持ち悪ければこちらをどうぞ。ソース読む人にとっても、<br>
+　　　$dummyに代入というのはわかりやすいかも。<br>
+　open(IN,"hoge");<br>
+　$dummy = &lt;IN&gt;;<br>
+　while (&lt;IN&gt;){<br>
+<br>
+案3: フラグを使う。既にカウンタとして $iを使ってるから、<br>
+　　　それと統合するのがいいかもね。<br>
+　open(IN,"hoge");<br>
+　$flg = 1;<br>
+　while (&lt;IN&gt;){<br>
+　　next unless $i++;<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/04(金) 04:33:18</span><br>
+ごめん。案3は<br>
+<font color="#CC8000">&gt; $flg = 1;</font><br>
+$i=0 ね。<br>
+<hr>
+<span class=name>■</span>
+<span class=time>1999/06/04(金) 12:05:01</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございます！<br>
+案１をいただきました！<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060029.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060029.htm">[前に]</a>
+<a href="99060031.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060031.htm">[次に]</a>
+</body>
+</html>

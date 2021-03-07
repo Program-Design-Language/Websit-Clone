@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>改行について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>改行について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060098.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060098.htm">[前に]</a>
+<a href="99060100.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060100.htm">[次に]</a>
+<hr>
+<span class=name>テキスト</span>
+<span class=time>1999/06/10(木) 01:46:09</span><br>
+練習でテキストに書き込む掲示板を作ったのですが、<br>
+コメント欄に改行して文章を書くと、<br>
+文章が１つおきに表示されちゃいます。<br>
+２度も改行するのはなぜでしょうか？？<br>
+スクリプトです↓<br>
+#!/usr/bin/perl<br>
+<br>
+require './cgi-lib.pl';		# cgi-lib.plの場所<br>
+&amp;ReadParse;<br>
+### --- 基本設定 --- ###<br>
+$title = "テキスト掲示板";<br>
+$logfile = './txt.txt';<br>
+$tempfile = "temp";<br>
+$method = 'POST';<br>
+### --- メイン処理 --- ###<br>
+	&amp;form_decode;<br>
+	if ($mode eq "move") { &amp;resist; }<br>
+	&amp;html_log;<br>
+### --- 入力 --- ###<br>
+sub html_log {<br>
+	# ヘッダを出力<br>
+	&amp;header;<br>
+		print "&lt;b&gt;$title&lt;/b&gt;\n";;<br>
+	print "&lt;form action=\"$script\" method=$method&gt;\n";<br>
+	print "&lt;input type=hidden name=mode value=\"move\"&gt;\n";<br>
+	print "名前：&lt;input type=text name=name&gt;&lt;input type=submit value=\"投稿する\"&gt;\n";<br>
+	print "&lt;br&gt;コメント：&lt;br&gt;&lt;textarea name=comment rows=5 cols=60 wrap=off&gt;&lt;/textarea&gt;\n";<br>
+	print "&lt;/form&gt;\n";<br>
+	&amp;footer;<br>
+	exit;<br>
+}<br>
+### --- 処理 --- ###<br>
+sub resist {<br>
+open(TMP,"&gt;$tempfile");<br>
+print TMP "-------------------------------------\n";<br>
+print TMP "名前：$name\n";<br>
+print TMP "-------------------------------------\n";<br>
+print TMP "$comment\n";<br>
+print TMP "-------------------------------------\n";<br>
+open(DATA,$logfile);<br>
+@DATA=&lt;DATA&gt;;<br>
+for ($i=0; $i&lt;50; $i++) {<br>
+print TMP $DATA[$i];<br>
+}<br>
+close(DATA);<br>
+close(TMP);<br>
+<br>
+rename($tempfile,$logfile);<br>
+<br>
+	&amp;header;<br>
+	print "&lt;b&gt;書き込み完了&lt;/b&gt;&lt;br&gt;\n";<br>
+	print "&lt;META http-equiv\=Refresh<br>
+content=0;URL=txt.txt&gt;\n";<br>
+	&amp;footer;<br>
+	exit;<br>
+}<br>
+<br>
+### --- フォームからのデータ処理 --- ###<br>
+sub form_decode {<br>
+	$mode = $in{'mode'};<br>
+	$name = $in{'name'};<br>
+	$comment = $in{'comment'};<br>
+}<br>
+<br>
+### --- HTMLのヘッダー --- ###<br>
+sub header {<br>
+	print "Content-type: text/html\n\n";<br>
+	print "&lt;html&gt;\n&lt;head&gt;\n";<br>
+	print "&lt;META HTTP-EQUIV=\"Content-type\" CONTENT=<br>
+\"text/html; charset=x-sjis\"&gt;\n";<br>
+	print "&lt;title&gt;$title&lt;/title&gt;&lt;/head&gt;\n";<br>
+	print "&lt;body&gt;\n";<br>
+}<br>
+### --- HTMLのフッター --- ###<br>
+sub footer {<br>
+print "&lt;/body&gt;&lt;/html&gt;\n";<br>
+}<br>
+<hr>
+<span class=name>sekita</span>
+<span class=email><a href="mailto:t_sekita@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/06/10(木) 12:40:13</span><br>
+多分、ＵＮＩＸとＷＩＮＤＯＷＳの改行文字のちがいからではないでしょうか？<br>
+ＷＩＮ：　"\r\n"<br>
+ＵＮＩＸ："\n"<br>
+のためにＷＩＮで書いた文字をそのままＵＮＩＸにコピーすると<br>
+\rも改行とみなされ１行おきになってしまいます。<br>
+<hr>
+<span class=name>exon</span>
+<span class=time>1999/06/15(火) 06:46:05</span><br>
+cgi-lib.pl　をイジって　改行コードを統一するようにしたほうがいいかも。<br>
+\r\n --&gt; \n<br>
+\r&nbsp;&nbsp;&nbsp;&nbsp;--&gt; \n<br>
+<br>
+改行コードを&lt;BR&gt;タグに置換えたほうが、ログファイルにうまく記録できますけどね。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060098.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060098.htm">[前に]</a>
+<a href="99060100.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060100.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>更新日を別のファイルに表示</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>更新日を別のファイルに表示</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050169.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050169.htm">[前に]</a>
+<a href="99050171.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050171.htm">[次に]</a>
+<hr>
+<span class=name>くらっかぁ</span>
+<span class=time>1999/05/27(木) 18:24:01</span><br>
+JavaScriptでファイルの最終更新日を取得できると思うのですが、<br>
+a.htmの最終更新日をb.htmに表示させることはできるでしょうか。<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>ちゃわ</span>
+<span class=email><a href="mailto:chawanya@fix-inc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/05/27(木) 18:37:00</span><br>
+a.htmの最終更新日・・・ということは、サーバー側のファイルなので、<br>
+サーバーでプログラムを実行する必要があります。<br>
+ＣＧＩだと可能ですけど・・・。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/27(木) 18:51:18</span><br>
+フレームを使えばJavaScriptでも可能かと。<br>
+<br>
+&lt;frameset cols="0,*"&gt;<br>
+&lt;frame name="A" src="a.html"&gt;<br>
+&lt;frame name="B" src="b.html"&gt;<br>
+&lt;/frameset&gt;<br>
+<br>
+で、b.htmlの方で<br>
+top.A.document.lastModified を参照する。<br>
+<br>
+もっとも、SSIが使えるならそちらを使った方が簡単ですが。<br>
+<a href="../../wwwssi.htm#Flastmod" tppabs="http://www.tohoho-web.com/wwwssi.htm#Flastmod">http://www.tohoho-web.com/wwwssi.htm#Flastmod</a><br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/27(木) 20:55:06</span><br>
+追記。<br>
+上記の方法、ローカルでは出来ますが、サーバに置いた場合、<br>
+サーバが Last-Modified ヘッダを返してくれないと使えないようです<br>
+（最終更新日時が取れない）。<br>
+＃手元の MS Peer Web Serverでは返してくれたけど・・・<br>
+<br>
+例えば、NCで、右クリック→情報を表示、で最終更新日時が「不明」となってたら、<br>
+JavaScriptからは最終更新日時は取得できない（らしい）。<br>
+<hr>
+<span class=name>くらっかぁ</span>
+<span class=time>1999/05/28(金) 16:07:47</span><br>
+ありがとうございました。<br>
+あと、SSIで得た数値をJavaScriptで使うと言うのはできますか？<br>
+今日の日付と比較して、３日以内なら文字の色を変える・・・、<br>
+とかやりたいのですが。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/28(金) 16:31:46</span><br>
+&lt;!--#config timefmt="%b %d,%Y %X"--&gt;<br>
+dd = new Date('&lt;!--#flastmod file="hoge"--&gt;');<br>
+<br>
+こんな感じでしょうか（試してないけど）。<br>
+<br>
+<a href="../../js/date.htm" tppabs="http://www.tohoho-web.com/js/date.htm">http://www.tohoho-web.com/js/date.htm</a><br>
+<br>
+<hr>
+<span class=name>くらっかぁ</span>
+<span class=time>1999/05/29(土) 13:15:47</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございました。<br>
+ひとまずできました。でも、あまり効率のいい方法とは思えないので、<br>
+配列とforでファイルの数だけ同じ処理を繰り返して、msg[0]などに<br>
+代入していこうと考えたのですが、<br>
+msg[0]などに、文字とかを後から代入ってできないのでしょうか。<br>
+最初の質問からかなりそれてしまいましたがよろしくお願いします。<br>
+<hr>
+<span class=name>くらっかぁ</span>
+<span class=time>1999/05/29(土) 13:17:07</span><br>
+だぁあ！　間違って解決をチェックしてしまいました。<br>
+すみません。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/29(土) 14:15:32</span><br>
+<font color="#CC8000">&gt;msg[0]などに、文字とかを後から代入ってできないのでしょうか。</font><br>
+意味がよく分かりませんが、文字列を追加するのなら<br>
+<br>
+msg[0] += "hoge";<br>
+<br>
+で出来ます。<br>
+ところでSSIはサーバからクライアントにデータ(HTML)が渡される時に<br>
+展開されるので、<br>
+for (i = 0 ; i &lt;= 9 ; i ++){<br>
+dd[i] = new Date('&lt;!--#flastmod file="'+filename[i]+'"--&gt;');<br>
+}<br>
+なんてやっても駄目ですよ。<br>
+<hr>
+<span class=name>くらっかぁ</span>
+<span class=time>1999/05/29(土) 16:36:36</span><br>
+dt = new Array(n);<br>
+dd = new Array(n);<br>
+dt[0] = new Date('&lt;!--#flastmod file="***.htm"--&gt;');<br>
+dd[0] = "";<br>
+...<br>
+のあと、<br>
+y[0] = dt.getYear();<br>
+...<br>
+for (i = 0 ; i &lt;= n ; i ++){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dd[i] = y[i]+"月"+...;<br>
+}<br>
+document.write(dd[0]);<br>
+みたいな感じにしたいなぁ、と思うのですが・・・。<br>
+バカな質問ばかりですみません。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050169.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050169.htm">[前に]</a>
+<a href="99050171.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050171.htm">[次に]</a>
+</body>
+</html>

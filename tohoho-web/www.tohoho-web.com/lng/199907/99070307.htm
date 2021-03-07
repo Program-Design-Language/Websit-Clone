@@ -1,0 +1,52 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>wwwcount.cgi Ver3.02でホストを取得するには</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>wwwcount.cgi Ver3.02でホストを取得するには</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070306.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070306.htm">[前に]</a>
+<a href="99070308.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070308.htm">[次に]</a>
+<hr>
+<span class=name>さる</span>
+<span class=time>1999/07/29(木) 02:46:58</span><br>
+wwwcount.cgi Ver3.02を使って、アクセスログをメール送信<br>
+しているのですが、サーバーのperlのパージョンが上がってから<br>
+ホスト名が全く表示されずIPアドレスだけが表示されるようになりました。<br>
+これはバージョンの違いでどうにもならないのでしょうか？。<br>
+ちなみにperlのversionは5.004です。IPだけだと調べたい時に<br>
+とっても不便というか手間です。<br>
+<hr>
+<span class=name>ひ***</span>
+<span class=time>1999/07/29(木) 04:21:59</span><br>
+<font color="#CC8000">&gt;サーバーのperlのパージョンが上がってから</font><br>
+Perlのバージョンが上がったからではありません。<br>
+HTTPdの設定を変えたからです。<br>
+...まぁそれはいいんですが。<br>
+<br>
+<a href="../../wwwperl2.htm#gethostbyaddr" tppabs="http://www.tohoho-web.com/wwwperl2.htm#gethostbyaddr">http://www.tohoho-web.com/wwwperl2.htm#gethostbyaddr</a><br>
+を参考にして、３２７行目の<br>
+if ($ENV{'REMOTE_HOST'} ne $ENV{'REMOTE_ADDR'}) {<br>
+	print(OUT "HOST&nbsp;&nbsp;= [ $ENV{'REMOTE_HOST'} ]\n");<br>
+}<br>
+を以下のように書き換えてみてください。<br>
+<br>
+$host = gethostbyaddr(pack("C4", split(/\./, $ENV{'REMOTE_ADDR'})), 2);<br>
+print(OUT "HOST&nbsp;&nbsp;= [ $host ]\n");<br>
+<br>
+デフォルトでは、$host は使われていませんが、<br>
+あなたが改造をして $host を使っていたら、変数名を任意で変えて下さい。<br>
+<hr>
+<span class=name>さる</span>
+<span class=time>1999/07/30(金) 01:26:04</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうごじぇーました。<br>
+解決しました。とっても助かりました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070306.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070306.htm">[前に]</a>
+<a href="99070308.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070308.htm">[次に]</a>
+</body>
+</html>

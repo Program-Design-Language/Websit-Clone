@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>データバインド機能 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<style>
+.table1 { border-collapse: collapse; }
+.table1 td { border: 1px solid gray; }
+</style>
+</head>
+<body>
+<h2>データバインド機能</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+データバインド機能
+
+<div class="caution">
+データバインド機能は、Internet Explorer 11 で廃止されました。代わりに <a href="ex/shadow-dom.html" tppabs="http://www.tohoho-web.com/ex/shadow-dom.html">Shadow DOM</a> などを利用してください。(2018年1月7日追記)
+</div>
+
+<h4>データバインドとは</h4>
+<div class=i>
+<p>データバインドとは、CSVファイル（カンマで区切られた値ファイル）に記述されたデータを簡単に、Webページに表示したりする機能です。Internet Explorer 4.0 からサポートされています。</p>
+<ul>
+<li><a href="javascript:if(confirm('https://msdn.microsoft.com/library/docker_start.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://msdn.microsoft.com/library/docker_start.html'" tppabs="https://msdn.microsoft.com/library/bg182625(v=vs.85).aspx">https://msdn.microsoft.com/library/bg182625(v=vs.85).aspx</a>
+</ul>
+</div>
+
+<h4>CSVファイルの先頭行を表示する</h4>
+<div class=i>
+<p>まず、以下の内容のファイル（test1.csv）を作成してください。</p>
+<pre class=c>
+<em>Tanaka,19,Tokyo
+Hamada,32,Osaka
+Suzuki,26,Chiba</em>
+</pre>
+<p>また、次の内容の HTML ファイル（test1.htm）を作成してください。</p>
+<pre class=c>
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;データバインド&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+
+<em>&lt;object id="ID1" classid="clsid:333C7BC4-460F-11D0-BC04-0080C7055A83"&gt;
+&lt;param name="DataURL" value="test1.csv"&gt;
+&lt;/object&gt;</em>
+
+<em>&lt;span datasrc="#ID1" datafld="Column1"&gt;&lt;/span&gt;</em> /
+<em>&lt;span datasrc="#ID1" datafld="Column2"&gt;&lt;/span&gt;</em> /
+<em>&lt;span datasrc="#ID1" datafld="Column3"&gt;&lt;/span&gt;</em>
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>IE4.0 以降のブラウザで test1.htm を表示すると、CSV ファイルの内容が Web ページに割り当てられて次のように表示されます。これがデータバインド機能です。</p>
+<pre class=c>
+Tanaka / 19 / Tokyo
+</pre>
+<p>&lt;span datasrc="ID1" datafld="Column1"&gt; は、ID1 で示されるデータソースから、１番目のカラム（Column1）を読みとって表示することを意味します。データソースは &lt;object&gt; で test1.csv ファイルから読み取るように定義されています。classid は何も考えず、このまま記述してください。</p>
+</div>
+
+<h4>JavaScript で次を表示する</h4>
+<div class=i>
+<p>test1.htm に次のような記述を加えてみてください。それぞれのボタンを押すことで、表示する行を変更することができます。</p>
+<pre class=c>
+<em>&lt;button onclick="ID1.recordset.MoveFirst()"&gt;最初&lt;/button&gt;
+&lt;button onclick="ID1.recordset.MoveLast()"&gt;最後&lt;/button&gt;
+&lt;button onclick="ID1.recordset.MovePrevious()"&gt;前&lt;/button&gt;
+&lt;button onclick="ID1.recordset.MoveNext()"&gt;次&lt;/button&gt;</em>
+</pre>
+</div>
+
+<h4>CSVファイルをテーブル形式に表示する</h4>
+<div class=i>
+<p>CSV ファイルをテーブル形式に表示することもできます。test1.htm ファイルを次のように修正してください。</p>
+<pre class=c>
+&lt;style&gt;
+.table1 { border-collapse: collapse; }
+.table1 td { border: 1px solid gray; }
+&lt;/style&gt;
+
+&lt;object id="ID1" classid="clsid:333C7BC4-460F-11D0-BC04-0080C7055A83"&gt;
+&lt;param name="DataURL" value="test1.csv"&gt;
+&lt;/object&gt;
+
+<em>&lt;table datasrc="#ID1" class="table1"&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span datafld="Column1"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span datafld="Column2"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span datafld="Column3"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;</em>
+</pre>
+<p>次のように表示されます。</p>
+<div class=c>
+<table class="table1">
+<tr><td>Tanaka</td><td>19</td><td>Tokyo</td></tr>
+<tr><td>Hamada</td><td>32</td><td>Osaka</td></tr>
+<tr><td>Suzuki</td><td>26</td><td>Chiba</td></tr>
+</table>
+</div>
+</div>
+
+<h4>列に名前をつける</h4>
+<div class=i>
+<p>UseHeader を指定することで、CSV ファイルの先頭行をヘッダ（列名）として扱うことができます。</p>
+<pre class=c>
+<em>NAME,AGE,ADDR</em>
+Tanaka,19,Tokyo
+Hamada,32,Osaka
+Suzuki,26,Chiba
+</pre>
+<p>test1.htm ファイルを次のように修正してください。</p>
+<pre class=c>
+&lt;object id="ID1" classid="clsid:333C7BC4-460F-11D0-BC04-0080C7055A83"&gt;
+&lt;param name="DataURL" value="test1.csv"&gt;
+<em>&lt;param name="UseHeader" value="true"&gt;</em>
+&lt;/object&gt;
+
+&lt;table datasrc="#ID1" border=1&gt;
+<em>&lt;thead&gt;&lt;tr&gt;&lt;th&gt;名前&lt;/th&gt;&lt;th&gt;年齢&lt;/th&gt;&lt;th&gt;住所&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</em>
+&lt;tr&gt;
+&lt;td&gt;&lt;span datafld="<em>NAME</em>"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span datafld="<em>AGE</em>"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span datafld="<em>ADDR</em>"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+</div>
+
+<h4>JavaScript でソートする</h4>
+<div class=i>
+<p>JavaScript を用いてテーブルのデータをダイナミックに操作することもできます。下記の例では、項目名の部分をクリックするとその列で値をソートします。</p>
+<pre class=c>
+&lt;table datasrc="#ID1" border=1&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th <em>onclick="ID1.Sort='NAME'; ID1.Reset();"</em>&gt;名前&lt;/th&gt;
+&lt;th <em>onclick="ID1.Sort='AGE'; ID1.Reset();"</em>&gt;年齢&lt;/th&gt;
+&lt;th <em>onclick="ID1.Sort='ADDR'; ID1.Reset();"</em>&gt;住所&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span datafld="NAME"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span datafld="AGE"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span datafld="ADDR"&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+</div>
+
+<h4>次ページ、前ページをサポートする</h4>
+<div class=i>
+<p>件数が増えてくると、次のようにして、一度に10行づつ表示することもできます。</p>
+<pre class=c>
+<em>&lt;button onclick="T1.previousPage()"&gt;前ページ&lt;/button&gt;
+&lt;button onclick="T1.nextPage()"&gt;次ページ&lt;/button&gt;</em>
+
+&lt;table datasrc="#ID1" border=1 <em>id="T1" datapagesize=10</em>&gt;
+</pre>
+</div>
+
+<h4>データソースのパラメータ</h4>
+<div class=i>
+<p>&lt;param name="<em>属性名</em>" value="<em>値</em>"&gt; や、JavaScript の <em>識別子.属性名</em> = <em>値</em> で指定できる属性には以下のものがあります。</p>
+<ul>
+<li><b>DataURL</b> - データファイルのURL。
+<li><b>UseHeader</b> - データ先頭行をヘッダ（列名）と見なす場合に true。
+<li><b>FieldDelim</b> - フィールドの区切り文字。省略時はカンマ（,）。
+<li><b>RowDelim</b> - 行の区切り文字。省略時は改行。
+<li><b>EscapeChar</b> - エスケープに用いる文字。（例：value="\"）
+<li><b>TextQualifier</b> - データを囲む文字。省略時はダブルクォート（"）。
+<li><b>CharSet</b> - キャラクタセット情報。（例：value="Shift_JIS"）
+<li><b>Language</b> - 言語情報。
+<li><b>Sort</b> - 指定した列でソートする。"-列名" とすると逆順にソート。
+<li><b>Filter</b> - 条件。（例：value="AGE&amp;gt;20"）
+<li><b>CaseSensitive</b> - 大文字小文字を区別する場合に true。
+<li><b>AppendData</b> - データを追加する。
+</ul>
+</div>
+
+<h4>参考文献</h4>
+<div class=i>
+<ul>
+<li>Microsoft MSDN Online<br>
+<a href="javascript:if(confirm('http://www.microsoft.com/japan/developer/library/jpisdk/dhtml/content/docker_exec.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.microsoft.com/japan/developer/library/jpisdk/dhtml/content/docker_exec.html'" tppabs="http://www.microsoft.com/japan/developer/library/jpisdk/dhtml/content/data_binding.htm" target="_top">http://www.microsoft.com/japan/developer/library/jpisdk/dhtml/content/data_binding.htm</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2001-2017 杜甫々</div>
+<div>初版：2001年6月3日、最終更新：2017年3月20日</div>
+<div>http://www.tohoho-web.com/wwwxx085.htm</div>
+</body>
+</html>

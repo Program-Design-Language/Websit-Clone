@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>画像をマウスで動かす - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script>
+var obj;
+var offsetX;
+var offsetY;
+
+function doInit() {
+  if (document.layers /* Netscape Communicator 4.* */) {
+    objlist = document.layers;
+  } else if (document.all /* Internet Explorer 5.* */) {
+    objlist = document.all.tags("SPAN");
+  } else if (document.getElementsByTagName /* Netscape 6 */) {
+    objlist = document.getElementsByTagName("SPAN");
+  } else {
+    return;
+  }
+  for (i = 0; i < objlist.length; i++) {
+    if (document.layers) {
+      objlist[i].captureEvents(Event.MOUSEDOWN);
+    }
+    objlist[i].onmousedown = onMouseDown;
+  }
+  if (document.layers) {
+    document.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+  }
+  document.onmousemove = onMouseMove;
+  document.onmouseup = onMouseUp;
+}
+function onMouseDown(e) {
+  obj = this;
+  if (document.layers) {
+    offsetX = e.layerX;
+    offsetY = e.layerY;
+  } else if (document.all) {
+    offsetX = event.offsetX + 2;
+    offsetY = event.offsetY + 2;
+  } else if (obj.getElementsByTagName) {
+    offsetX = e.pageX - parseInt(obj.style.left);
+    offsetY = e.pageY - parseInt(obj.style.top);
+  }
+  return false;
+}
+function onMouseMove(e) {
+  if (!obj) {
+    return true;
+  }
+  if (document.layers) {
+    obj.pageX = e.pageX - offsetX;
+    obj.pageY = e.pageY - offsetY;
+  } else if (document.all) {
+    obj.style.pixelLeft = event.clientX - offsetX + document.body.scrollLeft;
+    obj.style.pixelTop = event.clientY - offsetY + document.body.scrollTop;
+  } else if (obj.getElementsByTagName) {
+    obj.style.left = (e.pageX - offsetX) + "px";
+    obj.style.top = (e.pageY - offsetY) + "px";
+  }
+  return false;
+}
+function onMouseUp(e) {
+  obj = null;
+}
+</script>
+</head>
+<body onload="doInit()">
+<h2>画像をマウスで動かす</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+画像をマウスで動かす
+
+<h4>説明</h4>
+<div class=i>
+<p>ダイナミックHTMLを用いて、画面上の画像をマウスで動かすテクニックを紹介します。Internet Explorer 4.0 以上、Netscape Communicator 4.0 以上、Netscape 6 に対応しています。</p>
+</div>
+
+<h4>実例</h4>
+<br>
+<br>
+<br>
+<br>
+<br>
+<span style="position:absolute; top:330px; left:100px; width:80px;">
+<img src="image/mame.gif" tppabs="http://www.tohoho-web.com/image/mame.gif" width=80 height=80 alt="AAA">
+</span>
+<br>
+<span style="position:absolute; top:330px; left:200px; width:80px;">
+<img src="image/popase.gif" tppabs="http://www.tohoho-web.com/image/popase.gif" width=80 height=80 alt="BBB">
+</span>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<h4>ソースコード</h4>
+<div class=i>
+<pre class=c>
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;テスト&lt;/title&gt;
+&lt;script&gt;
+var obj;
+var offsetX;
+var offsetY;
+
+function doInit() {
+   if (document.layers /* Netscape Communicator 4.* */) {
+      objlist = document.layers;
+   } else if (document.all /* Internet Explorer 5.* */) {
+      objlist = document.all.tags("SPAN");
+   } else if (document.getElementsByTagName /* Netscape 6 */) {
+      objlist = document.getElementsByTagName("SPAN");
+   } else {
+      return;
+   }
+   for (i = 0; i &lt; objlist.length; i++) {
+      if (document.layers) {
+         objlist[i].captureEvents(Event.MOUSEDOWN);
+      }
+      objlist[i].onmousedown = onMouseDown;
+   }
+   if (document.layers) {
+      document.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+   }
+   document.onmousemove = onMouseMove;
+   document.onmouseup = onMouseUp;
+}
+function onMouseDown(e) {
+   obj = this;
+   if (document.layers) {
+      offsetX = e.layerX;
+      offsetY = e.layerY;
+   } else if (document.all) {
+      offsetX = event.offsetX + 2;
+      offsetY = event.offsetY + 2;
+   } else if (obj.getElementsByTagName) {
+      offsetX = e.pageX - parseInt(obj.style.left);
+      offsetY = e.pageY - parseInt(obj.style.top);
+   }
+   return false;
+}
+function onMouseMove(e) {
+   if (!obj) {
+      return true;
+   }
+   if (document.layers) {
+      obj.pageX = e.pageX - offsetX;
+      obj.pageY = e.pageY - offsetY;
+   } else if (document.all) {
+      obj.style.left = event.clientX - offsetX + document.body.scrollLeft;
+      obj.style.top = event.clientY - offsetY + document.body.scrollTop;
+   } else if (obj.getElementsByTagName) {
+      obj.style.left = e.pageX - offsetX;
+      obj.style.top = e.pageY - offsetY;
+   }
+   return false;
+}
+function onMouseUp(e) {
+   obj = null;
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="doInit()"&gt;
+
+&lt;span style="position:absolute; top:100px; left:100px; width:80px;"&gt;
+&lt;img src="aaa.gif" width=80 height=80 alt="AAA"&gt;
+&lt;/span&gt;
+
+&lt;span style="position:absolute; top:100px; left:200px; width:80px;"&gt;
+&lt;img src="bbb.gif" width=80 height=80 alt="BBB"&gt;
+&lt;/span&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>画像を増やしたいときは、画像を &lt;span style="position:absolute; top:～; left:～; width:～"&gt;～&lt;/span&gt; で囲んでください。</p>
+</div>
+
+<h4>動作確認</h4>
+<div class=i>
+<p>IE4.0/5.0(Win)、IE5.0(Mac)、Netscape 4.01/4.73/6(Win)、Netscape 4.7(Mac) で動作確認しています。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1997-2001 杜甫々</div>
+<div>初版：1997年9月14日、最終更新：2001年10月27日</div>
+<div>http://www.tohoho-web.com/wwwxx002.htm</div>
+</body>
+</html>

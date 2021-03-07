@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>クラス（Class） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>クラス（Class）</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="object.htm" tppabs="http://www.tohoho-web.com/js/object.htm">[prev]</a>
+<a href="regexp.htm" tppabs="http://www.tohoho-web.com/js/regexp.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#class">class</a>,
+<a href="#constructor">constructore()</a>,
+<a href="#delete">delete</a>,
+<a href="#extends">extends</a>,
+<a href="#getter_setter">get</a>,
+<a href="#new">new</a>,
+<a href="#prototype">prototype</a>,
+<a href="#getter_setter">set</a>,
+<a href="#static">static</a>,
+<a href="#super">super</a>
+</div>
+
+<h4 id="class">クラスを定義する(class)</h4>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES6(ES2015)</a> から、JavaScript でも C++, PHP, Python などの言語と似た class 定義が可能となりました。下記では、Animal という名前のクラスを定義しています。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+<em>class</em> Animal {
+}
+</pre>
+<p>インスタンスを作成するには <code id="new">new</code> を用います。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+var o1 = <em>new</em> Animal();
+</pre>
+<p>インスタンスを削除するには <code id="delete">delete</code> を用います。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+<em>delete</em> o1;
+</pre>
+</div>
+
+<h4 id="constructor">コンストラクタ(constructor)</h4>
+<div class=i>
+<p><b>constructor()</b> は、オブジェクトを生成する際に初期化関数として呼ばれるメソッドを定義します。下記の例では、オブジェクト生成時に種別(type)引数を渡し、オブジェクト内部のメンバ変数(this.type)に記録しています。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  <em>constructor(type) {
+    this.type = type;
+  }</em>
+}
+
+var o1 = new Animal("Cat");
+console.log(o1.type);         <span class="cm">// =&gt; Cat</span>
+</pre>
+</div>
+
+<h4 id="method">メソッド</h4>
+<div class=i>
+<p>クラス定義の中では、メソッドを定義することができます。メンバ関数は、オブジェクト.メンバ関数名() の形式で呼び出します。メソッドを定義する際は、<b>function</b> は不要です。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  <em>setType(type) {</em>
+    this.type = type;
+  <em>}</em>
+  <em>getType() {</em>
+    return this.type;
+  <em>}</em>
+}
+
+var o1 = new Animal();
+o1.<em>setType("Cat")</em>;
+console.log(o1.<em>getType()</em>);     <span class="cm">// =&gt; Cat</span>
+</pre>
+</div>
+
+<h4 id="static">スタティックメソッド(static)</h4>
+<div class=i>
+<p><b>static</b> は、スタティックメソッドを定義します。スタティック関数は、オブジェクトを生成しなくても、クラス名.スタティック関数名() で呼び出すことができるメソッドです。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  <em>static</em> hello() {
+    console.log("Hello!");
+  }
+}
+
+Animal.hello();    <span class="cm">// =&gt; Hello!</span>
+</pre>
+</div>
+
+<h4 id="getter_setter">ゲッター(<span id="get">getter</span>)とセッター(<span id="set">setter</span>)</h4>
+<div class=i>
+<p><b>get</b> はゲッター(getter)、<b>set</b> はセッター(setter)を定義します。ゲッター・セッターは、クラス利用者に対してはプロパティ(属性)のように簡単に代入や参照ができ、かつ、クラス開発者にとっては、代入・参照の際にメソッドがコールされ、代入・参照時にログを記録したり複雑な内部処理を実行することが可能となります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  <em>get</em> type() {
+    console.log("get:" + this._type);
+    return this._type;
+  }
+  <em>set</em> type(arg) {
+    console.log("set:" + arg);
+    this._type = arg;
+  }
+}
+
+var o1 = new Animal();
+<em>o1.type = "Cat"</em>;         <span class="cm">// setter メソッドが呼ばれる</span>
+console.log(<em>o1.type</em>);    <span class="cm">// getter メソッドが呼ばれる</span>
+</pre>
+</div>
+
+<h4 id="prototype">プロトタイプ(prototype)</h4>
+<div class=i>
+<p><b>prototype</b> を用いて、定義済のクラスに変数やメソッドを追加することができます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+}
+<em>Animal.prototype.type</em> = "Unknown";
+<em>Animal.prototype.hello</em> = function() {
+  console.log("Hello!");
+}
+
+var o1 = new Animal();
+console.log(o1.type);
+o1.hello();
+</pre>
+</div>
+
+<h4 id="extends">継承(extends)</h4>
+<div class=i>
+<p>クラスは継承することができます。継承元をスーパークラス(親クラス)、継承先をサブクラス(子クラス)と呼びます。Animal クラスを親クラスとして、Cat という子クラスを定義するには <b>extends</b> を用いて次のようにします。子クラスでは、親クラスのメソッドや変数を継承することができます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  hello1() {
+    console.log("Hello!");
+  }
+}
+
+class Cat <em>extends Animal</em> {
+  hello2() {
+    console.log("Hello Hello!");
+  }
+}
+
+var o1 = new Cat();
+o1.hello1();             <span class="cm">// =&gt; Hello!</span>
+o1.hello2();             <span class="cm">// =&gt; Hello Hello!</span>
+</pre>
+</div>
+
+<h4 id="super">親クラス(super)</h4>
+<div class=i>
+<p><b>super()</b> は親のコンストラクタを呼び出します。super() は最初に使用する this よりも先に呼び出す必要があります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  constructor(type) {
+    this.type = type;
+  }
+}
+
+class Cat extends Animal {
+  constructor(name) {
+    <em>super("Cat");</em>
+    this.name = name;
+  }
+}
+
+var o1 = new Cat("Mii-chan");
+console.log(o1.type);        <span class="cm">// =&gt; Cat</span>
+console.log(o1.name);        <span class="cm">// =&gt; Mii-chan</span>
+</pre>
+<p>子クラスのコンストラクタを省略すると、子クラス作成時の引数を使用して親クラスのコンストラクタが自動的に呼び出されます。これは、constructor(...args) { super(...args); } と同じ動作となります。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+class Cat extends Animal {
+  <em>// constructor(...args) { super(...args); }</em>
+}
+
+var o1 = new Cat("Mii-chan");
+console.log(o1.name);        <span class="cm">// =&gt; Mii-chan</span>
+</pre>
+<p>下記の様にして、親クラスのメソッドを呼び出すこともできます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+class Animal {
+  hello() {
+    console.log("Hello!");
+  }
+}
+
+class Cat extends Animal {
+  hello() {
+    <em>super.hello();</em>
+  }
+}
+
+var o1 = new Cat();
+o1.hello();          <span class="cm">// =&gt; Hello!</span>
+</pre>
+</div>
+
+<h4 id="class_expression">クラス式</h4>
+<div class=i>
+<p>下記の様にクラス式を用いて、クラス名を持たない匿名クラスを作成することができます。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+var o1 = class {
+  constructor() {
+    this.type = "Cat";
+  }
+};
+console.log(o1.type);     <span class="cm">// =&gt; Cat</span>
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="object.htm" tppabs="http://www.tohoho-web.com/js/object.htm">[prev]</a>
+<a href="regexp.htm" tppabs="http://www.tohoho-web.com/js/regexp.htm">[next]</a>
+<div>Copyright (C) 2017-2020 杜甫々</div>
+<div>改訂版初版：2017年12月17日、最終更新：2020年2月7日</div>
+<div>http://www.tohoho-web.com/js/class.htm</div>
+</body>
+</html>

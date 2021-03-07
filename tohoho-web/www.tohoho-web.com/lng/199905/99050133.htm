@@ -1,0 +1,282 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>掲示板で引用文の色を変えるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>掲示板で引用文の色を変えるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050132.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050132.htm">[前に]</a>
+<a href="99050134.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050134.htm">[次に]</a>
+<hr>
+<span class=name>yb</span>
+<span class=time>1999/05/24(月) 16:01:06</span><br>
+いつもこのラウンジで勉強させてもらっています。<br>
+新ラウンジでは、引用文の色が変わるようになりましたが、<br>
+とほほさんの掲示板で、引用文の色を変えるにはどうすれば<br>
+良いのでしょう？<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1999/05/24(月) 23:08:58</span><br>
+下記の、「s/^(&amp;gt;...」の行を追加してみてください。<br>
+<br>
+while (&lt;IN&gt;) {<br>
+&nbsp;&nbsp;&nbsp;s/^(&amp;gt;.*$)/&lt;FONT COLOR=green&gt;&lt;I&gt;$1&lt;\/I&gt;&lt;\/FONT&gt;/;<br>
+&nbsp;&nbsp;&nbsp;print;<br>
+}<br>
+<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/05/25(火) 00:05:00</span><br>
+<font color="#CC8000">&gt;とほほさんの掲示板で、引用文の色を変えるには</font><br>
+と仰ってるんで、とほほさんの方法では、第１行目の引用行が<br>
+うまく変わりませんね（笑い）<br>
+応急措置としては、<br>
+$allow_html = 0;<br>
+と設定してあるとして、283行目あたりの該当個所に<br>
+s/^(&lt;BR&gt;)?(&amp;gt;.*$)/$1&lt;FONT COLOR=green&gt;&lt;I&gt;$2&lt;\/I&gt;&lt;\/FONT&gt;/;<br>
+を挿入してみて下さい。<br>
+<br>
+<hr>
+<span class=name>ひゅどる</span>
+<span class=time>1999/05/25(火) 00:27:16</span><br>
+こんな話題の時にしか入れないから(笑<br>
+とりあえず、２０９行目の<br>
+print OUT "&lt;BR&gt;$FORM{'MESSAGE'}\n";<br>
+を、<br>
+<br>
+$message = $FORM{'MESSAGE'};<br>
+$message = &amp;ChangeColors($message, '&amp;gt;|＞', '#00ff00', 0, 1);<br>
+print OUT "&lt;BR&gt;$message\n";<br>
+にして、文末に以下のサブルーチンを入れる。<br>
+<br>
+sub ChangeColors {<br>
+	local($msgs, $char, $color, $bold, $italic) = @_;<br>
+	local($bs, $be, $is, $ie);<br>
+	if($bold)	{ $bs = '&lt;b&gt;';	$be = '&lt;/b&gt;'; }<br>
+	if($italic)	{ $is = '&lt;i&gt;';	$ie = '&lt;/i&gt;'; }<br>
+	$cs = "&lt;font color=$color&gt;";	$ce = '&lt;/font&gt;';<br>
+	if ($msgs =~ m/$char/) {<br>
+		$msgs =~ s/^($char)([^\n]*)/$bs$is$cs$1$2$ce$ie$be/g;<br>
+		$msgs =~ s/(\s)($char)([^\n]*)/$1$bs$is$cs$2$3$ce$ie$be/g;<br>
+		$msgs =~ s/(　)($char)([^\n]*)/$1$bs$is$cs$2$3$ce$ie$be/g;<br>
+	}<br>
+	return $msgs;<br>
+}<br>
+<br>
+コレを使えば、２つ目の引数さえ変えれば<br>
+「＠」だろうが「♪」だろうがなんでもいけます。<br>
+おまけに太字、斜体も選択可！（＾＾<br>
+# 太字、斜体はスタイルシート使えって言われそぅだけどまぁいぃや(笑<br>
+<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/05/25(火) 01:52:00</span><br>
+ひゅどるさんのスクリプトでちょっと気になった点です。<br>
+<br>
+"&lt;font color=$color&gt;" は "&lt;font color=\"$color\"&gt;" の方がよいと<br>
+思います。<br>
+<br>
+サブルーチン内で、<br>
+$char =~ s/([\+\*\.\?\^\$\[\-\]\|\(\)\\])/\\$1/g;<br>
+としておかないと、<br>
+&amp;ChangeColors($message, 'ー', '#00ff00', 0, 1);<br>
+等とした場合に、実行時エラーになったり変換できないことがあります。<br>
+<br>
+$message = '＞ABC ＞DEF　＞GHI';<br>
+の場合にタグが入れ子になるのは仕様でしょうか？<br>
+<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/05/25(火) 01:59:35</span><br>
+<font color="#CC8000">&gt;$char =~ s/([\+\*\.\?\^\$\[\-\]\|\(\)\\])/\\$1/g;</font><br>
+は、文字コードがShift-JISの場合です。<br>
+<hr>
+<span class=name>ひゅどる</span>
+<span class=time>1999/05/25(火) 12:19:57</span><br>
+ありゃりゃ（＾＾；<br>
+こりゃどーも　＞mmさん<br>
+<br>
+まずは自己レス。<br>
+２０９行目じゃ遅いですね。（改行が反映されないから）<br>
+１９８行目位にさし込んどきましょう。<br>
+# Write current message.　の直後ですね。<br>
+<br>
+んで...。<br>
+ひゅどるは普段から&lt;font color=#000000&gt;って書いてました(^^ゞ<br>
+でも正しい書き方じゃないみたいですね。　直しておきます。<br>
+<br>
+「ー」は使ったことが無かったんで、知りませんでした。<br>
+今やってみたらエラーになりました。<br>
+ところが今度は「&amp;gt;|＞」や「#|＃」には気付いてくれませんでした（ＴДＴ<br>
+<br>
+最後のは仕様でもなんでもありません。　気付かなかっただけです（－－；<br>
+<br>
+sub ChangeColors {<br>
+	local($msgs, $char, $color, $bold, $italic) = @_;<br>
+	local($bs, $be, $is, $ie);<br>
+	if($bold)	{ $bs = '&lt;b&gt;';	$be = '&lt;/b&gt;'; }<br>
+	if($italic)	{ $is = '&lt;i&gt;';	$ie = '&lt;/i&gt;'; }<br>
+	$cs = "&lt;font color=\"$color\"&gt;";	$ce = '&lt;/font&gt;';<br>
+<br>
+#　よくわかってないんでまだ保留。<br>
+#	$char =~ s/([\+\*\.\?\^\$\[\-\]\|\(\)\\])/\\$1/g;<br>
+<br>
+	if ($msgs =~ m/$char/) {<br>
+		$msgs =~ s/^($char)([^\n]*)/$bs$is$cs$1$2$ce$ie$be/g;<br>
+		$msgs =~ s/(\n+\ *)($char)([^\n]*)/$1$bs$is$cs$2$3$ce$ie$be/g;<br>
+		$msgs =~ s/(\n+　*)($char)([^\n]*)/$1$bs$is$cs$2$3$ce$ie$be/g;<br>
+	}<br>
+	return $msgs;<br>
+}<br>
+<br>
+まだ直しようがあるみたい。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/05/25(火) 13:20:12</span><br>
+そうか、$message = $FORM{'MESSAGE'}; だから改行も入って<br>
+いるんですね。<br>
+だとすると、<br>
+<font color="#CC8000">&gt;$msgs =~ s/^($char)([^\n]*)/$bs$is$cs$1$2$ce$ie$be/g;</font><br>
+は、/g が付いてるから、各行頭という意味でしょうか。<br>
+そうであれば、perl4なら、<br>
+$* = 1;<br>
+$msgs =~ s/^($char)([^\n]*)/$bs$is$cs$1$2$ce$ie$be/g;<br>
+$* = 0;<br>
+perl5なら、<br>
+$msgs =~ s/^($char)([^\n]*)/$bs$is$cs$1$2$ce$ie$be/mg;<br>
+とする必要があります。<br>
+<br>
+<font color="#CC8000">&gt;#　よくわかってないんでまだ保留。</font><br>
+<font color="#CC8000">&gt;# $char =~ s/([\+\*\.\?\^\$\[\-\]\|\(\)\\])/\\$1/g;</font><br>
+出典を書き忘れました(^^;<br>
+このラウンジのソースの検索の部分から引っ張って来ました。<br>
+<br>
+Shift-JISの場合に、「ー―‐／＋－±ゼソゾタボポマ」など<br>
+や「啓充深措端納票房蚕十申貼能表暴予禄転脳評望余…」など<br>
+の若干の漢字で、第２バイトが正規表現のメタキャラクタに<br>
+該当するので問題になります。<br>
+（「&amp;gt;|＞」や「#|＃」は問題ありません）<br>
+<br>
+そうそう、Shift-JISの場合と書きましたが、これに限らず、<br>
+半角のメタキャラクタ自身を指定した場合は、同様に<br>
+エスケープする必要がありますね。<br>
+<br>
+<hr>
+<span class=name>ひゅどる</span>
+<span class=time>1999/05/25(火) 23:04:11</span><br>
+お手間をかけました（＾＾；<br>
+<br>
+sub ChangeColors {<br>
+	local($msgs, $char, $color, $bold, $italic) = @_;<br>
+	local($bs, $be, $is, $ie);<br>
+	if($bold)	{ $bs = '&lt;b&gt;';	$be = '&lt;/b&gt;'; }<br>
+	if($italic)	{ $is = '&lt;i&gt;';	$ie = '&lt;/i&gt;'; }<br>
+	$cs = "&lt;font color=\"$color\"&gt;";	$ce = '&lt;/font&gt;';<br>
+<br>
+	$char =~ s/([\+\*\.\?\^\$\[\-\]\|\(\)\\])/\\$1/g;<br>
+	if ($msgs =~ m/$char/) {<br>
+		$msgs =~ s/^(\ *)($char)([^\n]*)/$1$bs$is$cs$2$3$ce$ie$be/mg;<br>
+		$msgs =~ s/^((　)*)($char)([^\n]*)/$1$bs$is$cs$3$4$ce$ie$be/mg;<br>
+	}<br>
+	return $msgs;<br>
+}<br>
+<br>
+<font color="#CC8000">&gt;ところが今度は「&amp;gt;|＞」や「#|＃」には気付いてくれませんでした（ＴДＴ</font><br>
+マッチしなかった理由は「\|」ってしていたために、<br>
+「&amp;gt;|＞」という文字列にしかマッチしなかったからです。<br>
+だから「｜」は使えなくなりました（＾＾；<br>
+$message = &amp;ChangeColors($message, '&amp;gt;', '#00ff00', 0, 1);<br>
+$message = &amp;ChangeColors($message, '＞'&nbsp;&nbsp;, '#00ff00', 0, 1);<br>
+で同様の結果を得られるはずです。<br>
+<br>
+<font color="#CC8000">&gt;&gt;$msgs =~ s/^($char)([^\n]*)/$bs$is$cs$1$2$ce$ie$be/g;</font><br>
+<font color="#CC8000">&gt;は、/g が付いてるから、各行頭という意味でしょうか。</font><br>
+そぅいぅ意味ではありませんでした（＾＾；<br>
+御指摘感謝致します。m(_~_)m<br>
+<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/05/26(水) 01:22:27</span><br>
+<font color="#CC8000">&gt;マッチしなかった理由は「\|」ってしていたために、</font><br>
+<font color="#CC8000">&gt;「&amp;gt;|＞」という文字列にしかマッチしなかったからです。</font><br>
+なるほど、確かにそうですね。それをすっかり忘れてました(^^;<br>
+<br>
+ところで、↓じゃダメ？<br>
+ChangeColors(\$message,'#ff0000','&lt;I&gt;&lt;B&gt;','&lt;/B&gt;&lt;/I&gt;','&amp;gt;','＞');<br>
+sub ChangeColors {<br>
+my($msg, $color, $in, $out, @char) = @_;<br>
+foreach (@char) { s/[-+*.?^\$[\]|()\\]/\\$&amp;/g; }<br>
+my($char) = join('|', @char);<br>
+$$msg =~ s%^(( |　)*)($char)(.*)%$1$in&lt;font color="$color"&gt;$3$4&lt;/font&gt;$out%mg;<br>
+}<br>
+<br>
+ということで、ybさん、お分かり頂けましたでしょうか？<br>
+とほほさんと私の先のモノが表示の色だけを変えるやり方で、<br>
+ひゅどるさんのは、データ自体を書き換えるやり方です。<br>
+<br>
+<hr>
+<span class=name>yb</span>
+<span class=time>1999/05/26(水) 11:25:43</span><br>
+とほほさん、mmさん、ひゅどるさん、ありがとうございました。<br>
+ひゅどるさんのがうまく動かなかった（私が悪いんだと思いますが）ので<br>
+mmさんの方法で出来ました。<br>
+<br>
+ところで、掲示板のデータが<br>
+－－－－－－－－－－<br>
+&lt;BR&gt;&amp;gt;てすと&lt;BR&gt;<br>
+あういえお<br>
+－－－－－－－－－－<br>
+の場合は良いのですが、改造した掲示板のデータが<br>
+－－－－－－－－－－<br>
+&lt;BR&gt;&amp;gt;てすと&lt;BR&gt;あういえお<br>
+－－－－－－－－－－<br>
+となっている場合に、全文の色が変わってしまいます。(^^ゞ<br>
+しばらく考えたのですが、初心者の私にはわかりません。<br>
+何か方法はありますでしょうか？<br>
+<hr>
+<span class=name>ひゅどる</span>
+<span class=time>1999/05/26(水) 15:40:14</span><br>
+<font color="#CC8000">&gt;ひゅどるさんのがうまく動かなかった（私が悪いんだと思いますが）ので</font><br>
+ありゃ（＾＾；<br>
+たぶん改行コードかな？<br>
+ひゅどるの場合は改行コードは\nに統一してたんで。<br>
+mmさんの掲示板から頂いた方法では、<br>
+# 改行コードの統一。 (\r\n\n:IE3.01+Mac, \n:Lynx, \r:NN+Mac)<br>
+$value =~ s/\r\n\n|\r\n|[\r\n]/\n/g;<br>
+<br>
+ところで、データが１行の場合ではうまくいかないのは、<br>
+s/^(&lt;BR&gt;)?(&amp;gt;.*)(&lt;BR&gt;)/$1&lt;FONT COLOR=green&gt;&lt;I&gt;$2&lt;\/I&gt;&lt;\/FONT&gt;$3/g;<br>
+でうまくいかないですかね？<br>
+<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/05/26(水) 23:43:06</span><br>
+&lt;BR&gt;が行の区切り文字であって、他にはタグが混じるおそれがないなら、<br>
+s/&lt;BR&gt;(&amp;gt;[^&lt;]*)/&lt;BR&gt;&lt;FONT COLOR=green&gt;&lt;I&gt;$1&lt;\/I&gt;&lt;\/FONT&gt;/g;<br>
+でいいと思います。<br>
+末尾にも&lt;BR&gt;が付くなら、perl5の最小マッチや先読みも使えるかな…<br>
+<br>
+<font color="#CC8000">&gt;$value =~ s/\r\n\n|\r\n|[\r\n]/\n/g;</font><br>
+フォームで送られて来る改行の種類は、このラウンジで教わった<br>
+貴重な財産です（笑い）<br>
+<br>
+<hr>
+<span class=name>yb</span>
+<span class=time>1999/05/27(木) 12:02:25</span><br>
+ひゅどるさん、mmさん、ありがとうございました。<br>
+<br>
+<font color="#CC8000">&gt;s/&lt;BR&gt;(&amp;gt;[^&lt;]*)/&lt;BR&gt;&lt;FONT COLOR=green&gt;&lt;I&gt;$1&lt;\/I&gt;&lt;\/FONT&gt;/g;</font><br>
+これで解決しました。m(__)m<br>
+<br>
+s/&lt;BR&gt;(&amp;gt;[^&lt;]*)/&lt;BR&gt;&lt;FONT COLOR=green&gt;&lt;I&gt;$1&lt;\/I&gt;&lt;\/FONT&gt;/g;<br>
+s/&lt;BR&gt;(&gt;[^&lt;]*)/&lt;BR&gt;&lt;FONT COLOR=green&gt;&lt;I&gt;$1&lt;\/I&gt;&lt;\/FONT&gt;/g;<br>
+s/&lt;BR&gt;(＞[^&lt;]*)/&lt;BR&gt;&lt;FONT COLOR=green&gt;&lt;I&gt;$1&lt;\/I&gt;&lt;\/FONT&gt;/g;<br>
+って3行並べました。(^^ゞ<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050132.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050132.htm">[前に]</a>
+<a href="99050134.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050134.htm">[次に]</a>
+</body>
+</html>

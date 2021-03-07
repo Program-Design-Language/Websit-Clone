@@ -1,0 +1,279 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>NN3のJavaScriptバグについて</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>NN3のJavaScriptバグについて</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040108.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040108.htm">[前に]</a>
+<a href="99040110.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040110.htm">[次に]</a>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/04/16(金) 00:34:10</span><br>
+どなたか知っている方がいましたらお教えください。<br>
+以下のソースの時、Win版ネットスケープ３(3.01)ではスクリプトが<br>
+バグって"文字列"が表示できません。それだけならいいのですが、<br>
+文字列でもない画像でもない表示がでてしまいます。<br>
+<br>
+TABLEが一つならいいのですが、２つ以上のときに起こるようです。<br>
+document.write("文字列&lt;" +"BR&gt;");としてもダメでした。<br>
+<br>
+この現象を回避する方法をご存知のかた、またはこの問題に関する<br>
+情報を知っている方がいましたら、何でもいいので教えてください。<br>
+<br>
+&lt;html&gt;&lt;body&gt;<br>
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;<br>
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;<br>
+<br>
+&lt;script language=javascript&gt;<br>
+&lt;!--<br>
+document.write("文字列&lt;BR&gt;");<br>
+//--&gt;<br>
+&lt;/script&gt;<br>
+<br>
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;<br>
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;<br>
+&lt;/body&gt;&lt;/html&gt;<br>
+他のバージョンだと起こらないとか、MacやUNIXでは起こらないとかでも<br>
+かまいません。<br>
+また、この現象を確認できた方のブラウザバージョンとOsを教えてもらえ<br>
+れば幸いです。<br>
+よろしくお願いいたします。<br>
+<hr>
+<span class=name>おぱく堂</span>
+<span class=time>1999/04/16(金) 01:02:03</span><br>
+そういえば、自分もかつてそのバグ(?)に出会ったことあります。<br>
+環境は Win95＋NN3.01でした。<br>
+document.write('&lt;tr&gt;&lt;td&gt;文字列&lt;/td&gt;&lt;/tr&gt;')とか、一列まるごと<br>
+でやって大丈夫だったような記憶がありますが、それが本当に正しい<br>
+解決策だったのかどうかは分かりません。確実じゃなくてごめんなさい。<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/16(金) 09:29:22</span><br>
+まあほんとう。<br>
+今色々やって遊んでます。MacNN3.01です。<br>
+<br>
+テーブルタグではさむと<br>
+document以降がまるまる出力されて、その後に<br>
+本来出て欲しい表示も出ます。<br>
+document.write("文字列&lt;BR&gt;"); 文字列<br>
+こんなかんじで。<br>
+<br>
+テーブル丸ごとか<br>
+最初の&lt;table&gt;だけ外に出して&lt;tr&gt;以降のタグを<br>
+スクリプトに突っ込んだらちゃんと出ます。<br>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/04/16(金) 15:43:08</span><br>
+おぱく堂さん、みんこさんありがとうございます。<br>
+＃う～むMac+NN3.01でも起こるのかぁ。<br>
+<br>
+お二人のおっしゃるとおりテーブルとかを丸ごとスクリプトで書き<br>
+出すと問題無く表示されるのですが、事情があってテーブルが深く<br>
+ネストしている部分で使用したいので回避方法を探しています。<br>
+<br>
+&lt;NOSCRIPT&gt;も併用して使うので、スクリプトOFFの場合も考慮した<br>
+いのです。<br>
+<br>
+<br>
+引き続き情報をお待ちしています。<br>
+みなさまよろしくお願いいたします。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/04/16(金) 16:00:54</span><br>
+スクリプトを別ファイルにしたら、ちゃんと出るようですけど。<br>
+（当方はＷｉｎ＋ＮＮ３で確認）<br>
+↓こんな感じで。<br>
+-----ＨＴＭＬ-----<br>
+&lt;html&gt;&lt;body&gt;<br>
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;<br>
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;<br>
+&lt;script language="JavaScript" src="test.js"&gt;<br>
+&lt;/script&gt;<br>
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;<br>
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;<br>
+&lt;/body&gt;&lt;/html&gt;<br>
+------------------------<br>
+------test.js-----------<br>
+document.write("文字列&lt;BR&gt;");<br>
+------------------------<br>
+<br>
+いかが？<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/16(金) 16:15:47</span><br>
+どれどれ。おお。<br>
+<br>
+<font color="#CC8000">＞無責任官庁たいらーさん</font><br>
+MacNNでもちゃんと表示できました。<br>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/04/16(金) 16:52:04</span><br>
+なるほど！外部ファイルとは気が付きませんでした！<br>
+無責任官庁さんありがとうございます。<br>
+NN3では回避できました。<br>
+<br>
+....ところがいろいろ調べていたら今度はWIN95+IE3で以下の状況<br>
+でブラウザ落ちします....(T_T)<br>
+<br>
+####### test.html ##########<br>
+&lt;html&gt;&lt;body&gt;<br>
+&lt;script language="JavaScript" src="test.js"&gt;&lt;/script&gt;<br>
+&lt;/body&gt;&lt;/html&gt;<br>
+####### test.html ##########<br>
+<br>
+####### test.js ##########<br>
+document.write("スクリプト文字列&lt;BR&gt;");<br>
+####### test.js ##########<br>
+<br>
+他のマシンにIE3が無いのでマシンのせいなのか、ブラウザのバグ<br>
+なのかは不明ですが。<br>
+IE3とNN3に足を引っ張られる...<br>
+こちらを起てるとあちらが起たずです。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/04/16(金) 18:07:00</span><br>
+う～ムカつくなぁ～ＩＥ３のヤツめ～(&gt;_&lt;)/<br>
+とりあえず、理由はともかく以下のようにしたら、<br>
+ＩＥ３・ＮＮ３いずれも表示できました。<br>
+-----------------ＨＴＭＬ--------------------<br>
+&lt;html&gt;<br>
+&lt;body&gt;<br>
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;<br>
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;<br>
+&lt;script language="JavaScript1.1" src="test.js"&gt;<br>
+&lt;/script&gt;<br>
+&lt;script language="JavaScript"&gt;<br>
+&lt;!--<br>
+	document.write("あああ");<br>
+//--&gt;<br>
+&lt;/script&gt;<br>
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;<br>
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;<br>
+&lt;/body&gt;<br>
+&lt;/html&gt;<br>
+------------------------------------------<br>
+(test.jsの中身は一緒っす)<br>
+------------------------------------------<br>
+JavaScript1.1はＩＥ３は認識しないので、JavaScriptとある所<br>
+を処理します。<br>
+（ＩＥ３は、src="～"を認識しないのよ）<br>
+ただ、このままだとＩＥ３以外のブラウザは、両方とも処理してしまうので、<br>
+"JavaScript"の中で、ＩＥ３の時だけ出力するようにしたら良いでしょう。<br>
+"JavaScript1.1"を処理したあとだと、何故かＮＮ３もまともに<br>
+なってしまいます。(T_T)<br>
+<br>
+・・・にしても・・・<br>
+なんか、もっとイイ方法ないのかなぁ・・・(T_T)<br>
+これが私の限界です。<br>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/04/16(金) 19:39:25</span><br>
+無責任官庁さんありがとうございます。<br>
+う～ん....この方法だとIE3とNN3と4以降とさらに&lt;NOSCRIPT&gt;と..<br>
+非常に複雑になってしまいますね。<br>
+<br>
+<font color="#CC8000">&gt;なんか、もっとイイ方法ないのかなぁ・・・</font><br>
+テーブル内に記述するタグの量が多いので、残念ながらちょっと<br>
+現実的でないです。<br>
+外部スクリプトのアイディアありがとうございました。<br>
+<br>
+最初のスクリプトでのエラーが発生する環境を知りたいので、<br>
+もう少しこのまま情報をお待ちしています。<br>
+みなさまよろしくお願いします。<br>
+<hr>
+<span class=name>る</span>
+<span class=time>1999/04/16(金) 23:01:02</span><br>
+&lt;script language="JavaScript" src="test.js"&gt;<br>
+&lt;!--<br>
+document.write("文字列");<br>
+//--&gt;<br>
+&lt;/script&gt;<br>
+------------------------------------<br>
+でいいのでは無いでしょうか～<br>
+<br>
+src属性に対応してるUAはsrcを記述すると、<br>
+&lt;script&gt;&lt;/script&gt;の間を無視すると思いましたけど？<br>
+<br>
+&lt;NOSCRIPT&gt;ってIE3xは対応してないみたいでし。<br>
+どっとはらい<br>
+<hr>
+<span class=name>akko</span>
+<span class=time>1999/04/17(土) 05:33:09</span><br>
+私が使ってるmac版のnn3.01では、<br>
+jsファイルの記述そのものが<br>
+画面にばばっと表示され、そこで立ち往生しますよ。<br>
+<br>
+あれ？と思ってブラウザを再インストールしてみたけど<br>
+同じでした。<br>
+それでしかたなく分岐スクリプトを書いています。<br>
+当然表示が遅いです.....<br>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/04/17(土) 13:24:50</span><br>
+るさんありがとうございます。<br>
+<font color="#CC8000">&gt; &lt;script&gt;&lt;/script&gt;の間を無視すると思いましたけど？</font><br>
+IE3だと&lt;script src="test.js"&gt;を指定すると&lt;script&gt;タグ内での<br>
+document.write("文字列");の行も無視されますので同じ内容を２つ<br>
+しなければならないです。<br>
+これをするならブラウザを区別した方が早いかも知れません。<br>
+<br>
+<font color="#CC8000">&gt;&lt;NOSCRIPT&gt;ってIE3xは対応してないみたいでし。</font><br>
+っていうよりIE3の場合JavaScriptの止めかたが不明です。(^^;<br>
+<br>
+<br>
+akkoさん<br>
+みんこさんと同じ環境のようですね、これはOSのバージョンの違い<br>
+から来るのでしょうか。<br>
+ご報告感謝します。<br>
+<br>
+もうちょっと状況を追いつめました。<br>
+document.write("文字列&lt;BR&gt;");<br>
+この様にタグを含めると画面がバグります。<br>
+とくに'&gt;'が原因のようです。<br>
+<font color="#CC8000">&gt;（ＩＥ３は、src="～"を認識しないのよ）</font><br>
+と有りますが、面白い事に外部ファイルのソースによって、落ちたり<br>
+無視したりするようです。<br>
+さらに外部ソース内に'&gt;'が出現すると落ちるのを確認しました。<br>
+他の方の参考までに。<br>
+<br>
+しつこいですが、もう少しだけ情報をお待ちしています。<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>る</span>
+<span class=time>1999/04/17(土) 21:05:10</span><br>
+&lt;script language="JavaScript"&gt;<br>
+&lt;!--<br>
+document.open();<br>
+document.write("文字列&lt;br&gt;");<br>
+document.close();<br>
+//--&gt;<br>
+&lt;/script&gt;<br>
+----------------------------------<br>
+て、感じで<br>
+開いて閉じる様にしてみては如何でしょう？<br>
+意外にこれでイケるケースが在るようですが....<br>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/04/19(月) 12:20:09</span><br>
+<span class=resolv>[[解決]]</span><br>
+るさん度々ありがとうございました。<br>
+各ブラウザでの挙動は、外部ファイルを使っても使わなくても<br>
+各種動作にかなりのバラツキが有りました。<br>
+<br>
+また、何かのバグを取り繕う方法では、各種ブラウザのコードを<br>
+別々に用意せねばならず、なかなかうまく行きませんでした。<br>
+２重テーブルの中での挙動は非常に不可解でした。<br>
+<br>
+何よりMac+NN3.1で発生する事が分かったのは大きな事でした。<br>
+皆さんのアイディア、ご助言ありがとうございました。<br>
+この場を提供していただいた、とほほさんにも感謝しています。<br>
+ここで一応解決とさせていただきます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040108.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040108.htm">[前に]</a>
+<a href="99040110.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040110.htm">[次に]</a>
+</body>
+</html>

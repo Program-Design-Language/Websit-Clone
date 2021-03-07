@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>メール送信フォーム設置法 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>mailto:を利用する方法</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwmail.htm" tppabs="http://www.tohoho-web.com/wwwmail.htm">メール送信フォーム設置法</a> &gt;
+mailto:を利用する方法
+<h4 id="About">概要</h4>
+<div class=i>
+<p>mailto: によるメール送信フォームは、HTML さえ書ければ誰でも簡単に設置することができます。</p>
+<p>しかし、送られてくるメールは %82%A0 のように符号化（エンコード）されていますので、これを適切に解読（デコード）してやる必要があります。</p>
+<p>また、送信時の動作はブラウザの種類やバージョン、設定状況によって異なったり、メール送信ソフトがインストールされていない場合は、せっかく入力項目に一生懸命入力したのに、送信ボタンを押したら送信失敗、入力した内容が水の泡・・・となるケースも多いようです。</p>
+<p>可能であれば、次章のCGIを用いた方法にするか、それが無理なら、「この送信フォームは mailto: を用いています。mailto: による送信が不可能な場合は直接○○にメールを・・・」などのように、注意書きをしておくことをオススメします。</p>
+</div>
+
+<h4 id="Install">設置するには</h4>
+<div class=i>
+<p>HTML文書中に次のような記述をしてください。method="POST" を忘れないで指定してください。mailto: の後ろのメールアドレスは自分のメールアドレスに書き換えてください。</p>
+<pre class=c>
+&lt;form method="POST"
+      action="mailto:foo@xxx.yyy.zzz"&gt;
+&lt;div&gt;名前: &lt;input type=text name="NAME" size=20&gt;&lt;/div&gt;
+&lt;div&gt;感想: &lt;input type="text" name="MSG" size=20&gt;&lt;/div&gt;
+&lt;input type="submit" value="  送信  "&gt;
+&lt;input type="reset"  value="  取消  "&gt;
+&lt;/form&gt;
+</pre>
+<p>(↑)これを表示するとこう(↓)なります。</p>
+<div class=c>
+<form method="POST" action="#">
+<div>名前: <input type="text" name="NAME" size=20></div>
+<div>感想: <input type="text" name="MSG" size=20></div>
+<input type="submit" value="  送信  ">
+<input type="reset"  value="  取消  ">
+</form>
+</div>
+<p>&lt;form&gt;～&lt;/form&gt; がひとつのフォームとなります。フォームについての詳細は「<a href="html/index.htm" tppabs="http://www.tohoho-web.com/html/index.htm">HTMLリファレンス</a>」を参照してください。type="reset" のボタンを押すと、入力したデータがクリアされます。type="submit" のボタンを押すと、&lt;input ...&gt;で入力したデータが mailto:～ のメールアドレスに送信されます。</p>
+</div>
+
+<h4 id="Decode">メッセージをデコードするには</h4>
+<div class=i>
+<p>mailto:で送信されたメッセージは、通常、次のようにエンコードされた状態で送信されます。</p>
+<pre class=c>
+TESTMSG=%82%A0%82%A2%82%A4
+</pre>
+<p>&lt;form enctype="text/plain" ....&gt; のように enctype 属性をつけておくとエンコードされないテキストのまま送信することができますが、メールの経路によっては文字化けしたり、別の形式にエンコードされてしまったりすることがあります。(この方法は「シフトJIS送信」という掟破りの方法になりますので、あまりお勧めできません。)</p>
+<p>エンコードされた文字列をデコード(読めるように)するには、次のようなツールを用います。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://mtlab.ecn.fpu.ac.jp/ClipDecoder/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://mtlab.ecn.fpu.ac.jp/ClipDecoder/'" tppabs="http://mtlab.ecn.fpu.ac.jp/ClipDecoder/" target="_top">ClipDecoder</a>(Win, Mac)</li>
+<li><a href="javascript:if(confirm('http://moe.moe.gr.jp/freesoft/sound.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://moe.moe.gr.jp/freesoft/sound.htm'" tppabs="http://moe.moe.gr.jp/freesoft/formdec.html" target="_top">FormDec</a>(Win)</li>
+<li><a href="javascript:if(confirm('http://www.tocka.com/products/svg  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tocka.com/products/svg'" tppabs="http://www.tocka.com/products/fdec097.html" target="_top">FormDecoder</a>(Win)</li>
+<li><a href="javascript:if(confirm('http://www.vector.co.jp/soft/win95/net/table.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.vector.co.jp/soft/win95/net/table.htm'" tppabs="http://www.vector.co.jp/soft/win95/net/se072640.html" target="_top">FormReader</a>(Win)</li>
+</ul>
+<p>あまり便利ではありませんが、次のような JavaScript を記述した簡単な自作Webページでデコードすることもできます。（ただし、最近のInternet Explorerでは、漢字コードにUnicodeを使用しているため、うまく動作しないようです。）</p>
+<pre class=c>
+&lt;form&gt;
+&lt;input type="text" name="t1"&gt;
+&lt;input type="button" value="変換→"
+onclick="this.form.t2.value=unescape(this.form.t1.value)"&gt;
+&lt;input type="text" name="t2"&gt;
+&lt;/form&gt;
+</pre>
+<form action="#">
+<input type=text name=t1 value="%82%A0%82%A2%82%A4" size=20><br>
+<input type=button value="↓変換↓" onclick="this.form.t2.value=unescape(this.form.t1.value)"><br>
+<input type=text name=t2 size=20>
+</form>
+</div>
+
+<h4 id="Multi">あて先を複数指定するには</h4>
+<div class=i>
+<p>メールのあて先を複数指定するには、メールアドレスをスペースで区切って複数記述します。</p>
+<pre class=c>
+&lt;form method="POST"
+  action="mailto:foo1@xxx.yyy.zzz foo2@xxx.yyy.zzz"&gt;
+  :
+&lt;/form&gt;
+</pre>
+<p>次のように指定する方法もあります。</p>
+<pre class=c>
+&lt;form method="POST"
+  action="mailto:foo1@xxx.yyy.zzz?To=foo2@xxx.yyy.zzz"&gt;
+   :
+&lt;/form&gt;
+</pre>
+<p>ただし、これらの記述は、そのページからメールを送信する人の環境に依存しますので、自分の環境でうまくいったとしても、送信者の環境ではうまくいかないケースがありますので、注意してください。</p>
+</div>
+
+<h4 id="Subject">サブジェクトを指定するには</h4>
+<div class=i>
+<p>以下のようにすることで、メールのサブジェクトを指定することもできます。（対応していないブラウザもありあす。）</p>
+<pre class=c>
+&lt;form method="POST"
+   action="mailto:foo@xxx.yyy.zzz?subject=TEST_MAIL"&gt;
+    :
+&lt;/form&gt;
+</pre>
+<p>「TEST_MAIL」の部分には好きなサブジェクトを指定することができます。スペースを用いる場合はエンコードされた %20 を用いて「TEST%20MAIL」のように記述してください。英文を用いるのが無難ですが、直接日本語を用いてもうまくいくケースもあるようです。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1997-2003 杜甫々</div>
+<div>初版：2002年5月18日、最終更新：2003年3月21日</div>
+<div>http://www.tohoho-web.com/wwwmail1.htm</div>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>正規表現（RegExp） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>正規表現（RegExp）</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="object.htm" tppabs="http://www.tohoho-web.com/js/object.htm">[prev]</a>
+<a href="json.htm" tppabs="http://www.tohoho-web.com/js/json.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#dn">$<i>n</i></a>,
+<a href="#lm">$&amp;</a>,
+<a href="#lc">$`</a>,
+<a href="#rc">$'</a>,
+<a href="#lp">$+</a>,
+<a href="#ip">$_</a>,
+<a href="#newRegExp2">/.../</a>,
+<a href="#compile">compile()</a>,
+<a href="#exec">exec()</a>,
+<a href="#flags">flags</a>,
+<a href="#global">global</a>,
+<a href="#ignoreCase">ignoreCase</a>,
+<a href="#input">input</a>,
+<a href="#lastIndex">lastIndex</a>,
+<a href="#lastMatch">lastMatch</a>,
+<a href="#lastParen">lastParen</a>,
+<a href="#leftContext">leftContext</a>,
+<a href="#match">match()</a>,
+<a href="#multiline">multiline</a>,
+<a href="#newRegExp">RegExp()</a>,
+<a href="#rightContext">rightContext</a>,
+<a href="#source">source</a>,
+<a href="#sticky">sticky</a>,
+<a href="#test">test()</a>,
+<a href="#unicode">unicode</a>
+</div>
+
+<h4 id="RegExp">正規表現オブジェクト</h4>
+
+<h5 id="newRegExp">◆ <i>regexp</i> = new RegExp(<i>patern</i>[, <i>flags</i>])</h5>
+<div class=i>
+<p>正規表現オブジェクトを生成します。正規表現オブジェクトは、文字列のパターンマッチングを行う際に用いられます。次の例は、<a href="#match">match()</a> を用いて文字列 str が "DEF" という文字列を含んでいるかどうかを検査します。<i>flags</i> の詳細は <a href="#RegFlags">フラグ</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+str = "ABCDEFG";
+re = <em>new RegExp("DEF", "ig")</em>;
+console.log(re.test(str));         <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="newRegExp2">◆ <i>regexp</i> = /<i>pattern</i>/<i>flags</i></h5>
+<div class=i>
+<p>new RegExp() の代わりに、次のように生成することもできます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+str = "ABCDEF";
+re = <em>/DEF/ig</em>;
+console.log(re.test(str));         <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h4 id="Matching">マッチング</h4>
+
+<h5 id="exec">◆ <i>regexp</i>.exec(<i>str</i>)</h5>
+<h5 id="match">◆ <i>str</i>.match(<i>regexp</i>)</h5>
+<div class=i>
+<p>マッチングを行い、マッチした部分文字列（g フラグ指定時は配列）を返します。exec() で <i>str</i> を省略した場合は、RegExp.<a href="#input">input</a> で指定された文字列に対してマッチングを行います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+re = /[0-9]+/;
+console.log(re.<em>exec("abc123")</em>);         <span class="cm">// =&gt; 123</span>
+console.log("abc123".<em>match(re)</em>);        <span class="cm">// =&gt; 123</span>
+</pre>
+</div>
+
+<h5 id="test">◆ <i>regexp</i>.test(<i>str</i>)</h5>
+<div class=i>
+<p>マッチングを行い、マッチしたかどうかを真偽値で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+re = /[0-9]+/;
+console.log(re.<em>test("abc123")</em>);        <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="compile">◆ <i>regexp</i>.compile(<i>patern</i>[, <i>flag</i>]) (非推奨)</h5>
+<div class=i>
+<p>高速化のために、正規表現をあらかじめ内部表現形式にコンパイルするのに用いられていました。現在では使用されていません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+re = new RegExp("");
+re.<em>compile("[0-9]+")</em>;
+for (i = 0; i &lt; 1000; i++) {
+  if (str.match(re)) {
+    :
+  }
+}
+</pre>
+</div>
+
+<h5 id="matchAll">◆ <i>str</i>.matchAll(<i>regexp</i>)</h5>
+<div class="i">
+<p><a href="what.htm#es2020" tppabs="http://www.tohoho-web.com/js/what.htm#es2020">ES2020</a> で追加された新しい機能で、文字列 <i>str</i> の中から <i>regexp</i> にマッチするものをリスト(正確にはイテレーター)で返却します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+for (var m of "2020-12-31".<em>matchAll(</em>/[0-9]+/g<em>)</em>) {
+  console.log(m);
+}
+<span class="cm">// =&gt; <i>["2020", index: 0, input: "2020-12-31", groups: undefined]</i></span>
+<span class="cm">// =&gt; <i>["12", index: 5, input: "2020-12-31", groups: undefined]</i></span>
+<span class="cm">// =&gt; <i>["31", index: 8, input: "2020-12-31", groups: undefined]</i></span>
+</pre>
+</div>
+
+<h4 id="Expression">正規表現の文法</h4>
+<div class=i>
+<p>正規表現では、次のようなマッチング表現を用いることができます。</p>
+<table class="tb1">
+<tr class=h>
+<th>正規表現</th>
+<th>意味</th>
+</tr>
+<tr><td><i>x</i></td><td><i>x</i>という文字。</td></tr>
+<tr><td><i>xyz</i></td><td><i>x</i>, <i>y</i>, <i>z</i> がこの順番で出現する場合にマッチ。</td></tr>
+<tr><td>[<i>xyz</i>]</td><td><i>x</i>、<i>y</i>、<i>z</i>のいずれか1文字。</td></tr>
+<tr><td>[<i>x</i>-<i>z</i>]</td><td><i>x</i>～<i>z</i>までのいずれか1文字。</td></tr>
+<tr><td>[^<i>xyz</i>]</td><td><i>x</i>、<i>y</i>、<i>z</i>のいずれでもない任意の1文字</td></tr>
+<tr><td>.</td><td>任意の1文字。Line Feed(\n), Carriage Return(\r), Line Separator(\u2028), Paragraph Separator(\u2029) を除く任意の1文字。</td></tr>
+<tr><td><i>abc</i>|<i>xyz</i></td><td><i>abc</i> または <i>xyz</i>。</td></tr>
+<tr><td>^<i>x</i></td><td><i>x</i>で始まる文字列</td></tr>
+<tr><td><i>x</i>$</td><td><i>x</i>で終わる文字列</td></tr>
+<tr><td><i>x</i>*</td><td>0文字以上の<i>x</i>。最大マッチング。</td></tr>
+<tr><td><i>x</i>+</td><td>1文字以上の<i>x</i>。最大マッチング。</td></tr>
+<tr><td><i>x</i>?</td><td>0文字または1文字の<i>x</i>。最大マッチング。</td></tr>
+<tr><td><i>x</i>{<i>n</i>}</td><td><i>n</i>個の<i>x</i>。最大マッチング。</td></tr>
+<tr><td><i>x</i>{<i>n</i>,}</td><td><i>n</i>個以上の<i>x</i>。最大マッチング。</td></tr>
+<tr><td><i>x</i>{<i>n</i>,<i>m</i>}</td><td><i>n</i>個～<i>m</i>個の<i>x</i>。最大マッチング。</td></tr>
+<tr><td><i>x</i>*?</td><td>0文字以上のA。最少マッチング。</td></tr>
+<tr><td><i>x</i>+?</td><td>1文字以上のA。最少マッチング。</td></tr>
+<tr><td><i>x</i>??</td><td>0文字または1文字の<i>x</i>。最少マッチング。</td></tr>
+<tr><td><i>x</i>{<i>n</i>}?</td><td><i>n</i>個の<i>x</i>。最少マッチング。</td></tr>
+<tr><td><i>x</i>{<i>n</i>,}?</td><td><i>n</i>個以上の<i>x</i>。最少マッチング。</td></tr>
+<tr><td><i>x</i>{<i>n</i>,<i>m</i>}?</td><td><i>n</i>個～<i>m</i>個の<i>x</i>。最少マッチング。</td></tr>
+<tr><td>[\b]</td><td>バックスペース</td></tr>
+<tr><td>(?:<i>x</i>)</td><td><i>x</i>という文字。ただし、$1...$<i>n</i> の参照から除外される。</td></tr>
+<tr><td><i>x</i>(?=<i>y</i>)</td><td><i>x</i> に続いて <i>y</i> が現れる場合、<i>x</i> にマッチ</td></tr>
+<tr><td><i>x</i>(?!<i>y</i>)</td><td><i>x</i> に続いて <i>y</i> が現れない場合、<i>x</i> にマッチ</td></tr>
+<tr><td class="nowrap">(?&lt;=<i>x</i>)y</td><td><i>x</i> に続いて <i>y</i> が現れる場合、<i>y</i> にマッチ。(ES2018～)</td></tr>
+<tr><td class="nowrap">(?&lt;!<i>x</i>)y</td><td><i>x</i> に続いて <i>y</i> が現れない場合、<i>y</i> にマッチ。(ES2018～)</td></tr>
+</table>
+<p>バックスラッシュ（\）に続く文字は特別な意味を持ちます。</p>
+<table class="tb1">
+<tr class=h>
+<th>表現</th>
+<th>意味</th>
+</tr>
+<tr><td>\0</td><td>NUL 文字。</td></tr>
+<tr><td>\b</td><td>単語の区切り文字。</td></tr>
+<tr><td>\B</td><td>\b以外の文字</td></tr>
+<tr><td>\c<i>X</i></td><td>Ctrl-<i>X</i>。<i>X</i> には A-Z の何れかの文字が入る。</td></tr>
+<tr><td>\d</td><td>半角数字。[0-9]と同じ。</td></tr>
+<tr><td>\D</td><td>\d 以外の文字。[^0-9]と同じ。</td></tr>
+<tr><td>\f</td><td>改ページ(FF:Form-feed)。</td></tr>
+<tr><td>\n</td><td>改行文字(LF:Line feed)。</td></tr>
+<tr><td>\r</td><td>復帰文字(CR:Carriage return)。</td></tr>
+<tr><td>\s</td><td>1文字の区切り文字。空白文字( )、改ページ(\f)、改行(\n)、ラインフィード(\r)、タブ文字(\r)、垂直タブ(\v)、No-break space(\u00a0)、Ogham space mark(\u1680)、Mongolian vowel separator(\u180e)、Xxx Quad(\u2000-\u2001)、Xxx Space(\u2002-\u200a)、Line separator(\u2028)、Paragraph separator(\u2029)、Narrow no-break space(\u202f)、Medium mathematical space(\u205f)、全角スペース(\u3000)、BOM(\ufeff) いずれかの 1文字。[ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff] と同じ。</td></tr>
+<tr><td>\S</td><td>\s以外の1文字</td></tr>
+<tr><td>\t</td><td>水平タブ(HT:Horozontal tab)。</td></tr>
+<tr><td>\v</td><td>垂直タブ(VT:Vertical tab)。</td></tr>
+<tr><td>\w</td><td>アンダーバー(_)を含む半角英数文字。[A-Za-z0-9_]と同じ。</td></tr>
+<tr><td>\W</td><td>\w以外の文字。[^A-Za-z0-9_]と同じ。</td></tr>
+<tr><td>\<i>n</i></td><td><i>n</i>番目の (...) にマッチした文字列</td></tr>
+<tr><td>\o<i>hhh</i></td><td>8進数で <i>hhh</i> の文字。(非推奨)</td></tr>
+<tr><td>\x<i>hh</i></td><td>16進数で <i>hh</i> の文字</td></tr>
+<tr><td>\u<i>hhhh</i></td><td>UTF-16 Unicode文字。</td></tr>
+<tr><td>\u{<i>hhhh</i>}</td><td>g フラグ指定時のみ利用可能。非サロゲートペア領域の UTF-16 Unicode文字。</td></tr>
+<tr><td>\u{<i>hhhhh</i>}</td><td>g フラグ指定時のみ利用可能。サロゲートペア領域の UTF-16 Unicode文字。</td></tr>
+<tr><td>\p{<i>property</i>}</td><td>Unicodeで、Binaryプロパティに <i>propety</i> を持つ文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\p{gc=<i>property</i>}</td><td>Unicodeで、General_Category に <i>propety</i> を持つ文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\p{sc=<i>property</i>}</td><td>Unicodeで、Script が <i>propety</i> にマッチする文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\p{scx=<i>property</i>}</td><td>Unicodeで、Script_Extensions が <i>propety</i> にマッチする文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\P{<i>property</i>}</td><td>Unicodeで、Binaryプロパティに <i>propety</i> を持たない文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\P{gc=<i>property</i>}</td><td>Unicodeで、General_Category に <i>propety</i> を持たない文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\P{sc=<i>property</i>}</td><td>Unicodeで、Script が <i>propety</i> にマッチしない文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\P{scx=<i>property</i>}</td><td>Unicodeで、Script_Extensions が <i>propety</i> にマッチしない文字。(要 uフラグ) (ES2018～)</td></tr>
+<tr><td>\その他</td><td>その他の文字自身</td></tr>
+</table>
+<p>\p{...} は <a href="what.htm#es2018" tppabs="http://www.tohoho-web.com/js/what.htm#es2018">ES2018(ES9)</a> で追加された機能で、例えばひらがなににマッチする文字は \p{sc=Hiragana} と指定します。</p>
+</div>
+
+<h4 id="RegFlags">フラグ</h4>
+<div class=i>
+<p>RegExp() の第2引数や /.../ の後ろに記述する i、g、m などのフラグは下記のような意味を持ちます。i と g の両方を指定する時は ig と指定します。</p>
+<table class="tb1">
+<tr class=h><th>フラグ</th><th>フラグ名</th><th>意味</th></tr>
+<tr><td>g</td><td>global</td><td>2番目、3番目... にマッチする部分も検索する</td></tr>
+<tr><td>i</td><td>ignoreCase</td><td>大文字・小文字を区別しない</td></tr>
+<tr><td>m</td><td>multiline</td><td>複数行に対して検索する</td></tr>
+<tr><td>u</td><td>unicode</td><td>Unicodeのサロゲーションペア文字も1文字として扱う</td></tr>
+<tr><td>y</td><td>sticky</td><td>lastIndex で指定した位置からのみ検索する</td></tr>
+<tr><td>s</td><td>dotAll</td><td>ピリオド(.)が CR, LF, U+2028, U+2029 を含め、すべての文字にマッチする (ES2018～)</td></tr>
+</table>
+<p>g フラグを指定すると最初にマッチした部分に加え、2番目、3番目...にマッチした部分も配列として返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+res = "12:34:56".match(/\d+/<em>g</em>);
+console.log(res.length);     <span class="cm">// =&gt; 3</span>
+console.log(res[0]);         <span class="cm">// =&gt; "12"</span>
+console.log(res[1]);         <span class="cm">// =&gt; "34"</span>
+console.log(res[2]);         <span class="cm">// =&gt; "56"</span>
+</pre>
+<p>g フラグによるマッチングは、<a href="#lastIndex">lastIndex</a> 番目以降の文字に対して行われます。下記の様に、ループ処理することも可能です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var str = "A123 A456 A789";
+var re = /A[0-9]+/<em>g</em>;
+while (re.exec(str)) {
+  console.log(re.lastIndex);         <span class="cm">// =&gt; 4, 9, 14</span>
+  console.log(RegExp.lastMatch);     <span class="cm">// =&gt; "A123", "A456", "A789"</span>
+}
+</pre>
+<p>i フラグを指定すると大文字小文字を区別しなくなります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+"abc".match(/ABC/)     <span class="cm">// マッチしない</span>
+"abc".match(/ABC/<em>i</em>)    <span class="cm">// マッチする</span>;
+</pre>
+<p>m を指定すると、行頭（^）や行末（$）のマッチングが文字列の先頭・末尾だけではなく、各行の行頭・行末にもマッチするようになります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+"123\n456\n789".match(/^456/)        <span class="cm">// マッチしない</span>
+"123\n456\n789".match(/^456/<em>m</em>)       <span class="cm">// マッチする</span>
+</pre>
+<p>u を指定すると、U+10000 以上のサロゲーションペア領域の文字に対しても、1文字とみなすようになります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+"🍔".match(/^.$/)         <span class="cm">// 2文字とみなすのでマッチしない</span>
+"🍔".match(/^.$/<em>u</em>)        <span class="cm">// マッチする</span>
+</pre>
+<p>y を指定すると、lastIndex の位置からから先頭マッチングします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+reg = /A/<em>y</em>;
+reg.lastIndex = 0; console.log(reg.test("A1A2A3"));        <span class="cm">// =&gt; true</span>
+reg.lastIndex = 1; console.log(reg.test("A1A2A3"));        <span class="cm">// =&gt; false</span>
+reg.lastIndex = 2; console.log(reg.test("A1A2A3"));        <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="flags">◆ <i>regexp</i>.flags</h5>
+<div class=i>
+<p>フラグを示す文字列を返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+re = /DEF/gi;
+console.log(re.<em>flags</em>);       <span class="cm">// =&gt; "gi"</span>
+</pre>
+</div>
+
+<h5 id="global">◆ <i>regexp</i>.global</h5>
+<h5 id="ignoreCase">◆ <i>regexp</i>.ignoreCase</h5>
+<h5 id="multiline">◆ <i>regexp</i>.multiline</h5>
+<h5 id="unicode">◆ <i>regexp</i>.unicode</h5>
+<h5 id="sticky">◆ <i>regexp</i>.sticky</h5>
+<div class=i>
+<p>global は g フラグ、ignoreCase は i フラグ、multiline は m フラグ、unicode は u フラグ、sticky は y フラグが指定されているか否かを返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+re = /DEF/gi;
+console.log(re.<em>global</em>);       <span class="cm">// =&gt; true</span>
+console.log(re.<em>ignoreCase</em>);   <span class="cm">// =&gt; true</span>
+console.log(re.<em>multiline</em>);    <span class="cm">// =&gt; false</span>
+console.log(re.<em>unicode</em>);      <span class="cm">// =&gt; false</span>
+console.log(re.<em>sticky</em>);       <span class="cm">// =&gt; false</span>
+</pre>
+</div>
+
+<h4 id="Result">マッチングの結果</h4>
+
+<h5 id="source">◆ <i>regexp</i>.source</h5>
+<div class=i>
+<p>RegExp() の第一引数や /.../ で指定したパターン文字列を返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+reg = /[a-z]+/i;
+console.log(reg.<em>source</em>);        <span class="cm">// =&gt; "[a-z]+"</span>
+</pre>
+</div>
+
+<h5 id="lastIndex">◆ <i>regexp</i>.lastIndex</h5>
+<div class=i>
+<p>g フラグが有効な場合に利用可能で、<a href="#test">test()</a> や <a href="#exec">exec()</a> でマッチした部分の次の位置を返します。最初の文字の位置を 0 とします。再度 test() や exec() を行うと、lastIndex の位置を先頭としてマッチングを行います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var re = /123/g;
+var str = 'abc123def';
+re.test(str);
+console.log(re.<em>lastIndex</em>);   <span class="cm">// =&gt; 6</span>
+</pre>
+</div>
+
+<h5 id="dollar">◆ RegExp.$<i>記号</i> (非推奨)</h5>
+<div class=i>
+<p>RegExp.$<i>記号</i> の形式は、それぞれ以下の意味を持ちますが、現在では非推奨です。</p>
+<table class="tb1">
+<tr class=h>
+<th>表現</th>
+<th>意味</th>
+</tr>
+<tr><td>RegExp.$<i>n</i></td><td><i>n</i>番目の括弧に対応する文字列。下記参照。</td></tr>
+<tr><td>RegExp.$&amp;</td><td>RegExp.lastMatch と同意。</td></tr>
+<tr><td>RegExp.$`</td><td>RegExp.leftContext と同意。</td></tr>
+<tr><td>RegExp.$&quot;</td><td>RegExp.rightContext と同意。</td></tr>
+<tr><td>RegExp.$+</td><td>RegExp.lastParen と同意。</td></tr>
+<tr><td>RegExp.$_</td><td>RegExp.input と同意。</td></tr>
+<tr><td>RegExp.$*</td><td>RegExp.multiline と同意。</td></tr>
+</table>
+</div>
+
+<h5 id="dn">◆ RegExp.$<i>n</i> (非推奨)</h5>
+<div class=i>
+<p>正規表現内に (...) を指定すると、RegExp.$<i>n</i> で (...) に対応する部分を取り出すことができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+"12:34:56".match(/(\d+):(\d+):(\d+)/);
+console.log(RegExp.<em>$1</em>);   <span class="cm">// =&gt; 12</span>
+console.log(RegExp.<em>$2</em>);   <span class="cm">// =&gt; 34</span>
+console.log(RegExp.<em>$3</em>);   <span class="cm">// =&gt; 56</span>
+</pre>
+</div>
+
+<h5 id="lastMatch">◆ RegExp.lastMatch (非推奨)</h5>
+<h5 id="leftContext">◆ RegExp.leftContext (非推奨)</h5>
+<h5 id="rightContext">◆ RegExp.rightContext (非推奨)</h5>
+<h5 id="lastParen">◆ RegExp.lastParen (非推奨)</h5>
+<div class=i>
+<p>直前のマッチングにおいて、lastMatch は最後にマッチした文字列、leftContext はマッチした部分よりも左側の文字列、rightContext は右側の文字列、lastParen は最後の (...) に対応する文字列を返します。lastMatch、leftContext、rightContext、lastParen はそれぞれ、<b id="lm">$&amp;</b>、<b id="lc">$`</b>、<b id="rc">$'</b>、<b id="lp">$+</b> の省略形を用いることもできます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+"abc123def".match(/(123)/);
+console.log(RegExp.<em>lastMatch</em>);    <span class="cm">// =&gt; 123</span>
+console.log(RegExp.<em>leftContext</em>);  <span class="cm">// =&gt; abc</span>
+console.log(RegExp.<em>rightContext</em>); <span class="cm">// =&gt; def</span>
+console.log(RegExp.<em>lastParen</em>);    <span class="cm">// =&gt; 123</span>
+</pre>
+</div>
+
+<h5 id="input">◆ RegExp.input (非推奨)</h5>
+<div class=i>
+<p>最後にマッチした際に、マッチングの対象とした文字列を示します。<b id="ip">$_</b> と同義です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var re = /123/g;
+re.test("abc123def");
+console.log(RegExp.<em>input</em>);         <span class="cm">// =&gt; "abc123def"</span>
+re.test("abc456def");              <span class="cm">// マッチしないので index は変化しない</span>
+console.log(RegExp.<em>input</em>);         <span class="cm">// =&gt; "abc123def"</span>
+</pre>
+</div>
+
+<h5 id="namedCaptureGroups">◆ 名前付きキャプチャグループ</h5>
+<div class=i>
+<p><a href="what.htm#es2018" tppabs="http://www.tohoho-web.com/js/what.htm#es2018">ES2018(ES9)</a> で追加された機能で、正規表現のマッチング時に (?&lt;名前&gt;パターン) の様に記述しておくと、マッチングの戻り値の groups.名前 でマッチした文字列を参照できるようになります。フラグとして u が必要です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var str = "2019年12月31日";
+var result = str.match(/(<em>?&lt;year&gt;</em>\d+)年(<em>?&lt;month&gt;</em>\d+)月(<em>?&lt;day&gt;</em>\d+)日/u);
+console.log(result.<em>groups</em>.year);      <span class="cm">// 2019</span>
+console.log(result.<em>groups</em>.month);     <span class="cm">// 12</span>
+console.log(result.<em>groups</em>.day);       <span class="cm">// 31</span>
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="object.htm" tppabs="http://www.tohoho-web.com/js/object.htm">[prev]</a>
+<a href="json.htm" tppabs="http://www.tohoho-web.com/js/json.htm">[next]</a>
+<div>Copyright (C) 1996-2019 杜甫々</div>
+<div>改訂版初版：2001年6月11日、最終更新：2019年3月24日</div>
+<div>http://www.tohoho-web.com/js/regexp.htm</div>
+</body>
+</html>

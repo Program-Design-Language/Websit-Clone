@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>httpmailでZIPを使わず、LHAにする方法をおしえて。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>httpmailでZIPを使わず、LHAにする方法をおしえて。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199808/index.htm">[上に]</a>
+<a href="98080060.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080060.htm">[前に]</a>
+<a href="98080062.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080062.htm">[次に]</a>
+<hr>
+<span class=name>RYU</span>
+<span class=time>1998/08/28(金) 03:20:49</span><br>
+httpmailでZIPを使わず、LHAにしたいんですが、いまいちUNIXのLHAの引数がわかりません。教えてください。UNIXのZIPはLhasaでは解凍できませんよね？だから、LHAに変えたいんです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/08/28(金) 03:33:29</span><br>
+httpmailってどんなものか知らないですけど、<br>
+　% lha a archive.lha file1 file2 file3 ...<br>
+でどうでしょうか。<br>
+<hr>
+<span class=name>satoshi</span>
+<span class=time>1998/08/28(金) 06:42:34</span><br>
+ここは一般的・公的な掲示板なので、唐突に「httpmail」と言っても<br>
+ほとんどすべての人には意味不明でしょう。私の作っているCGIの質<br>
+疑の場としてここを勝手に借用させてもらっているのですが、<br>
+<br>
+「ここにこういうCGIがあるのですが、それでこういうことをするに<br>
+はどうしたらいいのか」という聞き方をなさればよろしかろうと。<br>
+<br>
+httpmail.plの<br>
+<br>
+sub sending {<br>
+	local $0 = 'httpmail.cgi (sending)';<br>
+	my $msize = $_[0];<br>
+	# ページ（一枚又はアーカイブ）を一時的に入れておく<br>
+	my $mass = '';<br>
+<br>
+	if ($gotten &gt; 1) {<br>
+		$filename = 'httpmail.zip';<br>
+		unless (open(BODY,"cd $body_dir_base; $zip -rq - . |")) {<br>
+		# Xを付けないとUNZIP32.DLL ver 0,7,6,0は落ちるかな？？？<br>
+#		$filename = 'httpmail.tgz';<br>
+#		unless (open(BODY,"cd $body_dir_base; $tar -zcf - . |")) {<br>
+#		$filename = 'httpmail.lzh';<br>
+#		unless (open(BODY,"cd $body_dir_base; lha a - . |")) {<br>
+<br>
+となっている箇所に対して、行頭の「#」を加除して<br>
+<br>
+	if ($gotten &gt; 1) {<br>
+#		$filename = 'httpmail.zip';<br>
+#		unless (open(BODY,"cd $body_dir_base; $zip -rq - . |")) {<br>
+		# Xを付けないとUNZIP32.DLL ver 0,7,6,0は落ちるかな？？？<br>
+#		$filename = 'httpmail.tgz';<br>
+#		unless (open(BODY,"cd $body_dir_base; $tar -zcf - . |")) {<br>
+		$filename = 'httpmail.lzh';<br>
+		unless (open(BODY,"cd $body_dir_base; lha a - . |")) {<br>
+<br>
+へと変更すればlhaを使うようになります。#を、取るだけでなく付け<br>
+るのも忘れないように。<br>
+<br>
+でもファイル名にゴミが付くのでいい感じではありません。実害はな<br>
+いかもしれませんが。<br>
+<br>
+UNIXのzipをlhasaで解凍できないというのは知りませんでした。少し<br>
+実験してみよう。<br>
+<br>
+<hr>
+<span class=name>satoshi</span>
+<span class=time>1998/08/28(金) 06:43:25</span><br>
+あれまタブが見えなくなってしまったので<br>
+ソースの方を見てください。<br>
+<hr>
+<span class=name>RYU</span>
+<span class=time>1998/08/29(土) 04:45:00</span><br>
+<span class=resolv>[[解決]]</span><br>
+いろいろすいませんでした。<br>
+上記の部分だけではログの圧縮がLHAでできませんでしたが、<br>
+httpmailの最新版の標準アーカイバをLHAにしてくださったことで<br>
+完全に解決しました。<br>
+ありがとうございます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199808/index.htm">[上に]</a>
+<a href="98080060.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080060.htm">[前に]</a>
+<a href="98080062.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080062.htm">[次に]</a>
+</body>
+</html>

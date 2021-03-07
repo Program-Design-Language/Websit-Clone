@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Symbol - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>Symbol</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="json.htm" tppabs="http://www.tohoho-web.com/js/json.htm">[prev]</a>
+<a href="window.htm" tppabs="http://www.tohoho-web.com/js/window.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#asyncIterator">asyncIterator</a>,
+<a href="#description">description</a>,
+<a href="#hasInstance">hasInstance</a>,
+<a href="#isConcatSpreadable">isConcatSpreadable</a>,
+<a href="#iterator">iterator</a>,
+<a href="#keyFor">keyFor()</a>,
+<a href="#length">length</a>,
+<a href="#match">match</a>,
+<a href="#prototype">prototype</a>,
+<a href="#replace">replace</a>,
+<a href="#search">search</a>,
+<a href="#split">split</a>,
+<a href="#symbol">Symbol()</a>,
+<a href="#toPrimitive">toPrimitive</a>,
+<a href="#toStringTag">toStringTag</a>,
+<a href="#unscopables">unscopables</a>
+</div>
+
+<h4 id="symbol-type">シンボル</h4>
+<div class="i">
+<p>シンボル(Symbol)は、<a href="what.htm#es2015" tppabs="http://www.tohoho-web.com/js/what.htm#es2015">ES2015(ES6)</a> で追加された新たなプリミティブ型です。</p>
+</div>
+
+<h5 id="symbol">◆ Symbol(<span class="nb">[<i>description</i>]</span>)</h5>
+<div class="i">
+<p>シンボルを作成します。<i>description</i> にはデバッグの際にシンボルを見分けるための文字列を指定します。new は使用しません。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+const sym1 = <em>Symbol()</em>;
+const sym2 = <em>Symbol("foo")</em>;
+</pre>
+<p><i>description</i> に同じ名前を指定しても、Symbol() は毎回新しいオブジェクトを生成します。下記の実行結果は false となります。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+const sym1 = Symbol("foo");
+const sym2 = Symbol("foo");
+console.log(sym1 === sym2);     <span class="cm">// =&gt; false</span>
+</pre>
+<p>シンボルは辞書のキーとして使用することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+const sym1 = Symbol("foo");
+const sym2 = Symbol("baa");
+var obj = {
+    <em>[sym1]</em>: "Yamada",
+    <em>[sym2]</em>: function() {
+        console.log(this[sym1]);
+    }
+}
+obj[sym2]();      <span class="cm">// =&gt; "Yamada"</span>
+</pre>
+</div>
+
+<h4 id="useful">シンボルの使い道</h4>
+<div class="i">
+<p>シンボルは互換性を維持したまま、オブジェクトに新たな機能やプロパティを追加するために考案されました。例えば、ES2015(ES6) で追加された for ... of ... 構文は、オブジェクトのイテレータメソッドを呼び出します。イテレータメソッドを iterator() としてしまうと、すでに iterator() という名前のメソッドを独自実装しているプログラムに影響を与えてしまいます。PHP では、__ で始まるメソッドは将来の言語拡張で利用される可能性があると明示しているので、__iterator() とすればよいのですが、JavaScript ではそのようなルールを決めていなかったため、シンボルを用いて [Symbol.iterator]() とあらわすようにしました。</p>
+<p>JavaScript の仕様追加によって作成されたシンボルは 「<a href="#well-kwnown-symbol">Well-knownシンボル</a>」 として定義されます。</p>
+<p>自己開発しているオブジェクトでシンボルを利用するケースはほとんど無いのですが、下記の様に、標準オブジェクト String に hello() メソッドを追加する場合など、メソッドをシンボルで識別することにより、メソッド名の重複を気にすることなく、拡張が可能となります。</p>
+<div class="tab">JavaScript (hello1.js)</div>
+<pre class="c2">
+const hello = Symbol("hello");
+String.prototype[hello] = function() { console.log("Hello " + this); }
+export { hello as default };
+</pre>
+<div class="tab">JavaScript (hello2.js)</div>
+<pre class="c2">
+const hello = Symbol("hello");
+String.prototype[hello] = function() { console.log("Hello " + this + "!!!"); }
+export { hello as default };
+</pre>
+<div class="tab">JavaScript (sample.js)</div>
+<pre class="c2">
+import hello1 from "./hello1.js";
+import hello2 from "./hello2.js";
+"Tanaka"[hello1]();    <span class="cm">// =&gt; "Hello Tanaka"</span>
+"Tanaka"[hello2]();    <span class="cm">// =&gt; "Hello Tanaka!!!"</span>
+</pre>
+<div class="tab">HTML</div>
+<pre class="c2">
+&lt;script type="module" src="sample.js"&gt;&lt;/script&gt;
+</pre>
+</div>
+
+<h4 id="property">プロパティ</h4>
+
+<h5 id="length">◆ Symbol.length</h5>
+<div class="i">
+<p>常に 0 を返します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+console.log(Symbol.<em>length</em>);     <span class="cm">// =&gt; 0</span>
+</pre>
+</div>
+
+<h5 id="prototype">◆ Symbol.prototype</h5>
+<div class="i">
+<p>シンボルのプロトタイプを返します。</p>
+</div>
+
+<h5 id="description">◆ <i>symbol</i>.description</h5>
+<div class="i">
+<p>シンボルの <i>description</i> を取得します。<a href="what.htm#es2019" tppabs="http://www.tohoho-web.com/js/what.htm#es2019">ES2019(ES10)</a> で追加されました。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+const sym1 = Symbol("foo");
+console.log(sym1.<em>description</em>);     <span class="cm">// =&gt; "foo"</span>
+</pre>
+</div>
+
+<h4 id="method">メソッド</h4>
+
+<h5 id="for">◆ Symbol.for(<i>key</i>)</h5>
+<div class="i">
+<p><i>key</i> で識別されるグローバルシンボルを生成します。<i>key</i> に対応するグローバルシンボルがすでに存在する場合はそれを返します。下記の例は true となります。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+const sym1 = Symbol.<em>for("foo")</em>;
+const sym2 = Symbol.<em>for("foo")</em>;
+console.log(sym1 === sym2);     <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="keyFor">◆ Symbol.keyFor(<i>sym</i>)</h5>
+<div class="i">
+<p>グローバルシンボル <i>sym</i> を引数とし、グローバルシンボルのキーを取得します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+const sym1 = Symbol.for("foo");
+console.log(Symbol.keyFor(sym1));     <span class="cm">// =&gt; "foo"</span>
+</pre>
+</div>
+
+<h4 id="well-known-symbol">Well-knownシンボル</h4>
+
+<h5 id="iterator">◆ Symbol.iterator</h5>
+<div class="i">
+<p><a href="statement.htm#for_of" tppabs="http://www.tohoho-web.com/js/statement.htm#for_of">for ... of ...</a> で参照されるイテレータメソッドを指定するシンボルです。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+class MyClass {
+    constructor(name) {
+        this.name = name;
+    }
+    <em>*[Symbol.iterator]()</em> {
+        for (var i = 0; i &lt; this.name.length; i++) {
+            yield this.name.charAt(i);
+        }
+    }
+}
+var obj = new MyClass("Yamada");
+for (o of obj) {
+    console.log(o);    <span class="cm">// =&gt; "Y", "a", "m", "a", "d", "a"</span>
+}
+</pre>
+</div>
+
+<h5 id="asyncIterator">◆ Symbol.asyncIterator</h5>
+<div class="i">
+<p>for await of で呼び出される非同期のイテレータメソッドを指定します。</p>
+</div>
+
+<h5 id="match">◆ Symbol.match</h5>
+<div class="i">
+<p><a href="string.htm#startsWith" tppabs="http://www.tohoho-web.com/js/string.htm#startsWith"><i>string</i>.startsWith()</a>, <a href="string.htm#endsWith" tppabs="http://www.tohoho-web.com/js/string.htm#endsWith"><i>string</i>.endsWith()</a>, <a href="string.htm#includes" tppabs="http://www.tohoho-web.com/js/string.htm#includes"><i>string</i>.includes()</a> メソッドは、引数が正規表現の場合に TypeError を返しますが、Symbol.match が flase に設定されたオブジェクトは、正規表現とはみなされなくなります。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+var re1 = /foo/;
+var re2 = /baa/;
+re1<em>[Symbol.match]</em> = false;
+console.log("/foo/".startsWith(re1));   <span class="cm">// =&gt; true</span>
+console.log("/baa/".startsWith(re2));   <span class="cm">// =&gt; TypeError</span>
+</pre>
+</div>
+
+<h5 id="replace">◆ Symbol.replace</h5>
+<div class="i">
+<p><a href="string.htm#replace" tppabs="http://www.tohoho-web.com/js/string.htm#replace"><i>string</i>.replace()</a> から呼び出されるリプレースメソッドを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+var upper = {};
+upper<em>[Symbol.replace]</em> = (str) =&gt; str.toUpperCase();
+console.log('xyz'.replace(upper));
+</pre>
+</div>
+
+<h5 id="search">◆ Symbol.search</h5>
+<div class="i">
+<p><a href="string.htm#search" tppabs="http://www.tohoho-web.com/js/string.htm#search"><i>string</i>.search()</a> から呼び出されるサーチメソッドを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+var mysearch = {searchStr: "Y"};
+mysearch<em>[Symbol.search]</em> = (target) =&gt; target.search(this.searchStr);
+console.log("XYZ".search(mysearch));   <span class="cm">// =&gt; 1</span>
+</pre>
+</div>
+
+<h5 id="split">◆ Symbol.split</h5>
+<div class="i">
+<p><a href="string.htm#split" tppabs="http://www.tohoho-web.com/js/string.htm#split"><i>string</i>.split()</a> から呼び出されるスプリットメソッドを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+var mysplit = {delimiter: "/"};
+mysplit<em>[Symbol.split]</em> = (target) =&gt; target.split(this.delimiter);
+console.log("2019/12/01".split(mysplit));   <span class="cm">// =&gt; ["2019", "12", "01]</span>
+</pre>
+</div>
+
+<h5 id="hasInstance">◆ Symbol.hasInstance</h5>
+<div class="i">
+<p><a href="operator.htm#instanceof" tppabs="http://www.tohoho-web.com/js/operator.htm#instanceof">instanceof</a> から呼び出される判定メソッドを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+class MyArray {
+    static <em>[Symbol.hasInstance]</em>(instance) {
+        return Array.isArray(instance);
+    }
+}
+console.log([] instanceof MyArray);     <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="isConcatSpreadable">◆ Symbol.isConcatSpreadable</h5>
+<div class="i">
+<p><a href="array.htm#concat" tppabs="http://www.tohoho-web.com/js/array.htm#concat"><i>array</i>.concat()</a> において、オブジェクトが concat() のための平坦化が可能か否かを示します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+var arr1 = ["A", "B", "C"];
+var arr2 = [3, 4, 5]
+console.log(arr1.concat(arr2));     <span class="cm">// =&gt; ["A", "B", "C", 3, 4, 5]</span>
+arr2<em>[Symbol.isConcatSpreadable]</em> = false;
+console.log(arr1.concat(arr2));     <span class="cm">// =&gt; ["A", "B", "C", [3, 4, 5]]</span>
+</pre>
+</div>
+
+<h5 id="unscopables">◆ Symbol.unscopables</h5>
+<div class="i">
+<p><a href="statement.htm#with" tppabs="http://www.tohoho-web.com/js/statement.htm#with">with</a> において、オブジェクトのプロパティがスコープ対象になるか否かを指定します。下記の場合、foo は対象、baa は非対象となります。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+var obj = {foo: 1, baa: 2};
+obj<em>[Symbol.unscopables]</em> = {foo: false, baa: true};
+with (obj) {
+    console.log(foo);     <span class="cm">// =&gt; 1</span>
+    console.log(baa);     <span class="cm">// =&gt; ReferenceError</span>
+}
+</pre>
+</div>
+
+<h5 id="species">◆ Symbol.species</h5>
+<div class="i">
+<p>オブジェクトのデフォルトコンストラクタを指定します。下記の例で、Symbol.species を指定しない場合は、.map() メソッドはデフォルトコンストラクタである MyClass オブジェクトを返却しますが、species を Array のコンストラクタで上書きすることにより、MyArray オブジェクトではなく、Array オブジェクトを返却するようになります。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+class MyArray extends Array {
+    static get <em>[Symbol.species]</em>() { return Array; }
+}
+let arr1 = new MyArray(1, 2, 3);
+let arr2 = arr1.map((x) => x * 2);
+console.log(arr1);     <span class="cm">// =&gt; MyArray(1, 2, 3)</span>
+console.log(arr2);     <span class="cm">// =&gt; Array(1, 2, 3)</span>
+</pre>
+</div>
+
+<h5 id="toPrimitive">◆ Symbol.toPrimitive</h5>
+<div class="i">
+<p>オブジェクトをプリミティブ値に変換するための変換メソッドを指定します。<i>hint</i> には、"default", "string", "number" いずれかの値が入ります。
+<div class="tab">JavaScript</div>
+<pre class="c2">
+class MyClass {
+    constructor(str) {
+        this.value = str;
+    }
+    <em>[Symbol.toPrimitive]</em>(hint) {
+        if (hint == "string") {
+            return String(this.value);
+        } else if (hint == "number") {
+            return Number(this.value);
+        } else {
+            return this.value;
+        }
+    }
+}
+var obj = new MyClass("123");
+console.log("" + obj);         <span class="cm">// =&gt; hint == "default"</span>
+console.log(`${obj}`);         <span class="cm">// =&gt; hint == "string"</span>
+console.log(+obj);             <span class="cm">// =&gt; hint == "number"</span>
+</pre>
+</div>
+
+<h5 id="toStringTag">◆ Symbol.toStringTag</h5>
+<div class="i">
+<p><a href="object.htm#toString" tppabs="http://www.tohoho-web.com/js/object.htm#toString">Object.prototype.toString()</a> で参照されるオブジェクトの説明文字列を指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class="c2">
+class MyClass {
+    get <em>[Symbol.toStringTag]</em>() {
+        return "MyClass";
+    }
+}
+var obj = new MyClass();
+console.log(Object.prototype.toString.call(obj));    <span class="cm">// =&gt; "[object MyClass]"</span>
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="json.htm" tppabs="http://www.tohoho-web.com/js/json.htm">[prev]</a>
+<a href="window.htm" tppabs="http://www.tohoho-web.com/js/window.htm">[next]</a>
+<div>Copyright (C) 2019 杜甫々</div
+><div>改訂版初版：2019年12月1日、最終更新：2019年12月1日</div>
+<div>http://www.tohoho-web.com/js/symbol.htm</div>
+</body>
+</html>

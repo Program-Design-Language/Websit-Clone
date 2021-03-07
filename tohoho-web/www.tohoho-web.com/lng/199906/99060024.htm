@@ -1,0 +1,166 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>この文あってますか？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>この文あってますか？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060023.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060023.htm">[前に]</a>
+<a href="99060025.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060025.htm">[次に]</a>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/03(木) 16:04:01</span><br>
+ボタンを押したとき、テーブルの行の背景色が黄色なら、<br>
+白にして他のテキストにフォーカスをセットし、<br>
+それ以外は、一番上の行の背景色を黄色にする処理を<br>
+作成したのですが、それ以外の場合がうまくいきません。<br>
+スクリプトを載せますので、おかしなところがあれば教えてください。<br>
+<br>
+&lt;script language="javascript"&gt;<br>
+&lt;!--<br>
+function idou(){<br>
+<br>
+for(i=0;i&lt;parent.No2.document.all.length;i++){<br>
+if((parent.No2.document.all[i].tagName=='TD')&amp;&amp;(parent.No2.document.all[i].parentElement.style.backgroundColor=='yellow')){<br>
+parent.No2.document.all[i].parentElement.style.backgroundColor='white';<br>
+<br>
+parent.No1.document.FORM1.RNen.focus();<br>
+}<br>
+<br>
+else{<br>
+if((parent.No2.document.all[0].tagName=='TD')&amp;&amp;(parent.No2.document.all[0].className=='sentaku')){<br>
+parent.No2.document.all[0].parentElement.style.backgroundColor='yellow';<br>
+}<br>
+}<br>
+}<br>
+}<br>
+// --&gt;<br>
+&lt;/script&gt;<br>
+<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/03(木) 16:38:20</span><br>
+全体像が見えないので，何ともいいがたいのですが，おそらくは<br>
+else以下のdocument.allの引数が[0]になってることがいちばん<br>
+の原因でしょう。これは[i]の間違いでは？<br>
+<br>
+それが単なるミスタイプであれば，同じくelse以下の条件の<br>
+.className=='sentaku'の意味が気になります。<br>
+<br>
+どういうときにこれが成り立つようプログラミングしてるかは<br>
+判りませんが，やりたいことから推測すると，この条件が両方の<br>
+if文に必要か，両方ともに不要のどちらかではないですか？<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/03(木) 16:56:06</span><br>
+else以下のdocument.allの引数が[0]<br>
+これは一番上の行にしたいからこのように書いたのですが・・・<br>
+やっぱり駄目ですか。<br>
+<br>
+className=='sentaku'はテーブルがいくつもあるので<br>
+クラスをつけてそのテーブルのみ対応するようにしています。<br>
+<br>
+className=='sentaku'を消してやっても駄目ですし、<br>
+引数を[i]にしても駄目なので困っていたのです。<br>
+改めてアドバイスお願いします。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/03(木) 18:36:02</span><br>
+if文の条件式の中がdocument.all[0]だから，ループの回数だけまったく同じ処理（常に[0]でチェック）してますよね？<br>
+こういう処理が出てくるのは，明らかに違和感を感じるもので指摘しましたが。<br>
+＃やるなら，条件式の中は[i]でチェックします。条件を満たした<br>
+＃ときに'yellow'にするelementの引数は0でもかまいませんが。<br>
+<br>
+ただ，<br>
+parent.No2.document.all[0].parentElement.style.backgroundColor='yellow';<br>
+だけを実行したときに本当に「一番上の行の背景色を黄色にする処理」が<br>
+出来ていますか？<br>
+これだと常に，document.all[0].parentElementに当たるものが変わるだけでは？<br>
+もしclassNameが'sentaku'のTABLEを対象にするのなら引数は0ではない可能性もあるかと。<br>
+<br>
+あと考え方としてもちょっと変なことをしているような・・・。<br>
+要はforループですべてのオブジェクトをチェックして，背景色が黄色のTDが<br>
+あれば白になおしてフォーカスを移動し，「背景色が黄色のTDが一つもなけれ<br>
+ば」どっか（いちばん上ですか？）の背景色を黄色に変えたい，ということ<br>
+なのですよね？<br>
+<br>
+だったら「背景色が黄色のTDが一つもない」ことは，全部のオブジェクトをチェックした<br>
+後でしか判らないわけで。こういう場合は「フラグを立てる」，for文の前に例えば<br>
+hogehoge = false;<br>
+なんて変数を作っておき，forループ内で１つ目のif文の条件を満たしたら，hogehogeを<br>
+trueにしてやり（２つ目のif文はいらない），ループを出た後にこのhogehogeがfalse<br>
+なら「背景が黄色のTDは一つもなかった」というわけで，それなりの処理をしてやる，<br>
+という感じのアルゴリズムにすればよいかと。<br>
+<br>
+＃ソースを示せば早いんだろうけど，手元の環境はMac+NN3ですし確認ができない。<br>
+＃それにそれでは，いつまでたっても学習できないかもしれませんから。<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/04(金) 12:40:10</span><br>
+背景色を変えることはできたが、<br>
+全行黄色に変わってしまう。<br>
+１行だけ色を変えることができない。<br>
+なにか良い方法ありませんか？<br>
+<br>
+flag=false;<br>
+for(i=0;i&lt;parent.No2.document.all.length;i++){<br>
+if((parent.No2.document.all[i].tagName=='TD')&amp;&amp;(parent.No2.document.all[i].parentElement.style.backgroundColor=='yellow')){<br>
+parent.No2.document.all[i].parentElement.style.backgroundColor='white';<br>
+<br>
+parent.No1.document.FORM1.RNen.focus();<br>
+flag=true;<br>
+}<br>
+}<br>
+if(flag==false){<br>
+for(i=0;i&lt;parent.No2.document.all.length;i++){<br>
+if((parent.No2.document.all[i].tagName=='TD')&amp;&amp;(parent.No2.document.all[i].className=='sentaku')){<br>
+parent.No2.document.all[i].parentElement.style.backgroundColor='yellow';<br>
+}<br>
+}<br>
+}<br>
+}<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/04(金) 13:32:02</span><br>
+２回目のループでは，'sakusei'の'TD'ならすべてifの条件を満たしますよね？<br>
+色を変えたいのが最初の行だけなのですから，そのための条件が必要でしょう。<br>
+ここでもフラグを立てておくのが有効です。<br>
+<br>
+考え方としては前回同様にflag2=falseというのを２回目のループ前において，<br>
+ループ内の条件式に「flag2=falseなら」という条件を追加し，条件を満たせば<br>
+flag2=trueにする，というやり方で「一応動作する」ようにはなるでしょう。<br>
+<br>
+けど，このやり方だと同じ範囲をカバーするループを２回も行うわけで，きれいな<br>
+プログラムとはいえないと思います。<br>
+そこでフラグの応用として，１つ目のループの中で「sentakuの最初の行の引数」<br>
+も得るようにしてみてはどうでしょう。<br>
+１つ目のループのflag=falseの次にflag_2=-1というのを付け，<br>
+ループの中に「'sentaku'かつ'TD'かつflag_2=-1のとき，flag_2=iにする」<br>
+というif文を追加。<br>
+ループの外ではflag=falseならall[flag_2]を書き換えるようにするわけです。<br>
+flag_2を最初-1にしてるのは，検出されても出てこないような数値にしてる<br>
+だけです。<br>
+<br>
+ただ，まぁもとから'sentaku'の最初の行の引数が完全に固定されてるなら，何も<br>
+それを検出するためのルーチンは不要なのです。<br>
+<br>
+＃個人的にはもっと全体を見通したプログラミングをする方がいいと思う・・・。<br>
+＃こういった値はどうせ他のルーチンでも使い回すのでしょうし，グローバルな変数に<br>
+＃しておく方が。<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/04(金) 14:12:30</span><br>
+<span class=resolv>[[解決]]</span><br>
+Tmbさん、ありがとうございました。<br>
+無事解決できました。<br>
+また困ったことがあったら助けてください。<br>
+よろしくお願いします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060023.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060023.htm">[前に]</a>
+<a href="99060025.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060025.htm">[次に]</a>
+</body>
+</html>

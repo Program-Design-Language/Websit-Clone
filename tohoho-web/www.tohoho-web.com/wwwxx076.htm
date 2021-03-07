@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ファイル名省略時の動作について - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>ファイル名省略時の動作について</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+ファイル名省略時の動作について
+
+<h4>ファイル名省略時の動作について</h4>
+<div class=i>
+<p>下記の2つのアドレスにアクセスすると、同じ内容のページが表示されます。</p>
+<ul>
+<li><a href="index.htm" tppabs="http://www.tohoho-web.com/">http://www.tohoho-web.com/</a></li>
+<li><a href="index-1.htm" tppabs="http://www.tohoho-web.com/index.htm">http://www.tohoho-web.com/index.htm</a></li>
+</ul>
+<p>これは、ファイル名（上記の場合は index.htm ）を省略した場合は、そのフォルダの中にある index.html や index.htm を探して、これを表示するという Web サーバーの機能によって実現されています。</p>
+</div>
+
+<h4>index.html と index.htm どちらが先か？</h4>
+<div class=i>
+<p>index.html と index.htm どちらが優先されるかは、Web サーバーの設定によって異なります。index.html → index.htm の順番が多いとは思いますが、設定によっては、index.html しか探さない場合もあります。Microsoft の IIS の初期の設定では、index.html や index.htm ではなく、default.htm を探します。設定を変更すれば、hajimeni.html を表示させることも可能です。どのファイルも探さず、ファイル名を省略すると常にエラーを返す設定もあります。</p>
+</div>
+
+<h4>省略するべきか省略しないべきか</h4>
+<div class=i>
+<p>アドレスを公開したりリンクしたりするときに、index.html や index.htm を省略した方がよいか、省略しない方がよいかの議論があります。</p>
+<p>ホームページのアドレスを公開する場合は、短い、覚え易いなどの理由から省略している人が多いようです。もちろん、省略しないアドレスも間違いではありません。</p>
+<pre class=c>
+○ http://～/
+○ http://～/index.html
+</pre>
+<p>「トップに戻る」などのリンクの場合は、メリットとデメリットがあります。例えば、http://～/ からアクセスしてきたユーザーが下層のページにとび、「トップに戻る」のリンクから http://～/index.html のページに戻る場合、http://～/ と http://～/index.html はアドレスが異なるため別ページであると認識され、ブラウザのキャッシュ機能が有効に働きません。</p>
+<pre class=c>
+△ http://～/index.html     <small>※ キャッシュが非効率になることも</small>
+</pre>
+<p>かと言って index.html を省略すると、自前のパソコンでの作成時など、http://～ で始まらないアドレスでページにアクセスした時に index.html を探す機能が働かず、ファイルの一覧が表示されてしまったりします。</p>
+<pre class=c>
+△ http://～/     <small>※ ローカル環境でindex.htmlにジャンプできない</small>
+</pre>
+<p>私の場合、公開アドレスはやはり短くしたいので公開は省略形を、リンクはダウンロード版もあるので省略しない方法を選択していますが、皆さんはいかがでしょうか。</p>
+</div>
+
+<h4>Apache の設定</h4>
+<div class=i>
+<p>httpd.conf ファイル（管理者のみ変更可能）に、下記の記述を行うことにより、index.html → index.htm の順で探すことを指示できます。変更後は Apache の再起動が必要です。</p>
+<pre class=c>
+DirectoryIndex index.html index.htm
+</pre>
+<p>index.html も index.htm も見つからなかったときに、そのフォルダの中のファイルの一覧を表示させるには、以下の記述を行います。</p>
+<pre class=c>
+Options Indexes
+</pre>
+<p>httpd.conf の AllowOverride で <s>FileInfo</s> Options が指定されていれば、上記の記述を各フォルダの .htaccess ファイルで指定することも可能です。</p>
+<pre class=c>
+AllowOverride Options
+</pre>
+<p>※ FileInfo → Options に誤記修正（2003.3.2）</p>
+</div>
+
+<h4>AN HTTPD の設定</h4>
+<div class=i>
+<p>AN HTTPD（Ver1.28d）では、[オプション]-[一般] でオプションダイアログを表示し、[一般]-[デフォルトインデックス] で省略時のファイル名を、[表示/インデックス] で省略時にファイルの一覧表示を許可するかどうかを指定します。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 2001 杜甫々</div>
+<div>2001年2月25日</div>
+<div>http://www.tohoho-web.com/wwwxx076.htm</div>
+</body>
+</html>

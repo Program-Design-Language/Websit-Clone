@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Perlのパターンマッチングについて</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Perlのパターンマッチングについて</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199806/index.htm">[上に]</a>
+<a href="98060007.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060007.htm">[前に]</a>
+<a href="98060009.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060009.htm">[次に]</a>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1998/06/03(水) 13:36:05</span><br>
+アホみたいな質問で、しかも具体的すぎて申し訳ないんですが、<br>
+少々教えていただきたい事があります。<br>
+<br>
+Perlのパターンマッチングなんですが、例えば・・・・。<br>
+$str = "abcdefabcdef"<br>
+という文字列があったとします。この時に・・・・。<br>
+「この中から「b」で始まり「e」で終わる文字列を抜き出して、その文字列を置換したい」<br>
+というような場合、いったいどうすれば良いのでしょうか？<br>
+<br>
+「$str =~ s/～」を使うような気はしてるんですが、<br>
+「ただ「b」で始まり「e」で終わる文字列」と言っても、<br>
+この場合だと置換対象になる文字列は、<br>
+「bcde」と「bcdefabcde」の2通りが考えられると思うんです。<br>
+そのへんの区別の方法なんかがわかれば嬉しいんですが・・・・。<br>
+<br>
+誰か教えていただけないでしょうか。<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/03(水) 14:49:18</span><br>
+このサンプルを参考にしてみてください。<br>
+<br>
+$str = "abcdefabcdefabcdef";<br>
+$x = $y = $z = $str;<br>
+<br>
+# 最長マッチ<br>
+$x =~ s/b.*e/XXX/;<br>
+<br>
+# 最短マッチ<br>
+$y =~ s/b[^e]*e/XXX/;<br>
+<br>
+# 2 個分にマッチ。<br>
+$z =~ s/b([^e]*e){2}/XXX/;<br>
+<br>
+print "x=$x\n";<br>
+print "y=$y\n";<br>
+print "z=$z\n";<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/03(水) 15:10:30</span><br>
+捕捉です。<br>
+一般的な正規表現で使われる '*' は最長マッチですが、perl5 で拡張された<br>
+'*?' を用いることで最短マッチが利用できます。<br>
+上記例で、<br>
+<br>
+# 最短マッチ<br>
+$y =~ s/b.*?e/XXX/;<br>
+<br>
+としても同じことです。<br>
+この最短マッチがあることで、正規表現がかなり強力になります。<br>
+HTML のコメントにマッチする正規表現<br>
+("&lt;!--" で始まって、最初に "--&gt;" があらわれるところまで)<br>
+にマッチするパターンを考えると実感すると思いますが、<br>
+最短マッチを用いないで記述するのは至難の技です。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/06/04(木) 00:33:14</span><br>
+さらに補足。<br>
+<br>
+regexpがマッチするときの基本原則は<br>
+　1. 最も左にあるもの<br>
+　2. 最長なもの<br>
+です。1は2に優先します。<br>
+<br>
+　"ABABB" =~ m/A.*B/;<br>
+→　 "ABABB"にマッチ (ABでもABBではない。最長でないから)<br>
+　"ABABB" =~ m/AB+/;<br>
+→　 最初の"AB"にマッチ (ABBの中の"AB"ではない。最左でないから)<br>
+<br>
+というわけでございます。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/06/04(木) 02:16:50</span><br>
+ついでに哺足。<br>
+<br>
+最左最長が原則でいいのですが、<br>
+たとえば、| が入ると、ちょっとややこしくなります。<br>
+（昔、これでしくじったことがあります(^^;）<br>
+<br>
+"ABABB" =~ m/AB|A.*B/;<br>
+→　 最初の"AB"にマッチ（最長ではなく、| の左が優先）<br>
+"ABABB" =~ m/BA|A.*B/;<br>
+→　 "ABABB"にマッチ（最左が優先）<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1998/06/04(木) 13:36:45</span><br>
+<span class=resolv>[[解決]]</span><br>
+回答だけでなく、いろいろな補足までしていただいてありがとうございました。<br>
+ヘタな参考書より断然わかりやすかったです。<br>
+おかげで自分のやりたい事が何とかできました。<br>
+<br>
+これからも精進していきます。みなさんありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199806/index.htm">[上に]</a>
+<a href="98060007.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060007.htm">[前に]</a>
+<a href="98060009.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060009.htm">[次に]</a>
+</body>
+</html>

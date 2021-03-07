@@ -1,0 +1,76 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>いたずら防止のためのプログラムを作ったのですが動きません。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>いたずら防止のためのプログラムを作ったのですが動きません。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070221.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070221.htm">[前に]</a>
+<a href="99070223.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070223.htm">[次に]</a>
+<hr>
+<span class=name>じゃじゃまるっこ</span>
+<span class=time>1999/07/21(水) 18:41:16</span><br>
+Perl初心者です。毎回アクセスしてくるIPをすべてファイルに保存して、訪問してきたIPがそのファイルのなかのIPと何回マッチしたか（つまりそのIPの今までの訪問回数）を調べて、２０回以上の訪問があれば強制終了させるというプログラムを作ったのですが、動きません…。私なりに頑張ったつもりですが、どうか助けてください。どこがいけないのでしょうか。Windowsでやってます。<br>
+$addr = $ENV{'REMOTE_ADDR'};<br>
+$bad_count = 0;<br>
+open (IPIN,"&gt;&gt;$get_ip");<br>
+print IPIN "$k:$addr\n";&nbsp;&nbsp;&nbsp;#$Kはほかで計算しているカウントです<br>
+close(IPIN);<br>
+<br>
+open(GET_IP,"$get_ip");<br>
+while(&lt;GET_IP&gt;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;while(/^\d:$\n/){<br>
+	($no,$ip) = split(/:/);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%ip_list{$no} = $ip;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for $ip_list (@no) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($ip_list eq $addr) { $bad_count++; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($bad_count &gt; 20){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;CgiError("非常事態!入力エラー発生!!!!");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit;<br>
+ }&nbsp;&nbsp;}&nbsp;&nbsp;}<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/21(水) 18:52:28</span><br>
+<font color="#CC8000">&gt; 動きません…。</font><br>
+動かないとは? サーバエラー? 20回以上アクセスしても弾けない?<br>
+<br>
+<font color="#CC8000">&gt; print IPIN "$k:$addr\n"; #$Kはほかで計算しているカウントです</font><br>
+$kってのは何? その$addrの訪問回数? なら、ファイル中に<br>
+　2:10.0.0.1<br>
+　5:10.0.0.1<br>
+などと同じエントリが重複することはないわけね? だとしたら以下のコードで<br>
+どうでしょう。<br>
+<br>
+open(GET_IP,"$get_ip");<br>
+while(&lt;GET_IP&gt;){<br>
+　if (/^\d+:$/){<br>
+　　($no,$ip) = split(/:/);<br>
+　　$ip_list{$ip} = $no;<br>
+　}<br>
+}<br>
+if( $ip_list{$addr} &gt; 20 ){<br>
+　&amp;CgiError("非常事態!入力エラー発生!!!!");<br>
+　exit;<br>
+}<br>
+<br>
+実際に動かしてません。動作の保証はしません。そのつもりで。<br>
+<hr>
+<span class=name>じゃじゃまるっこ</span>
+<span class=time>1999/07/22(木) 08:54:46</span><br>
+さっそくお返事ありがどうございます。エラーが出るっていうのは、（アンケートCGIを作っているのですが）submitボタンを押して送ってもIEで、"ページが表示されません"なんて出てきて、にっちもさっちもいかない状態ばかりです。Netscapeでもそうです。B-Cus さんのプログラムを試してみたのですが、やはりうまくいきません。ちなみに、$kはそのページにデータを入れてくれた全ての訪問者数を、前のルーチンでカウントしたものです。ですからファイルには<br>
+&nbsp;&nbsp;1:10.0.0.6<br>
+　2:10.0.0.1<br>
+&nbsp;&nbsp;3:10.0.0.7<br>
+&nbsp;&nbsp;4:10.0.0.6<br>
+　5:10.0.0.1<br>
+なんてこともあり、上の例だと10.0.0.1が２回訪問してきているので、あと18回きたらexitさせる、というプログラムなのです。<br>
+うーーむ。うまく説明できたかどうか…(+_+)<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070221.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070221.htm">[前に]</a>
+<a href="99070223.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070223.htm">[次に]</a>
+</body>
+</html>

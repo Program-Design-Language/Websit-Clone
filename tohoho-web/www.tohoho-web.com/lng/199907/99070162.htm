@@ -1,0 +1,315 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>画像を数値で置き換える方法</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>画像を数値で置き換える方法</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070161.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070161.htm">[前に]</a>
+<a href="99070163.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070163.htm">[次に]</a>
+<hr>
+<span class=name>ピコ</span>
+<span class=time>1999/07/16(金) 00:03:34</span><br>
+ちょっとした画像を表示したいと思っているのですが、<br>
+gif画像を取り込むのではなく、00、ffなどのデータでperlスクリプトの中に書いているのをどこかで見たことがあります。<br>
+これはどのようにすれば、できるのでしょうか。<br>
+変換法みたいなものがあれば教えて下さい。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/16(金) 00:07:01</span><br>
+事前に画像ファイルを読んで<br>
+　s/(.)/sprintf("%%%02lX",unpack("C",$1))/eg;<br>
+でテキストに変換しておいて、実行時は<br>
+　s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;<br>
+でバイナリに戻せばいいんでない? 試してないけど。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/07/16(金) 01:42:29</span><br>
+Base64（メールの添付によく使われる方式）でエンコード、という手も。<br>
+<br>
+MIME::Base64 モジュールか、<br>
+mime_pls ( <a href="javascript:if(confirm('http://www.cc.rim.or.jp/~ikuta/mime_pls/  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.cc.rim.or.jp/~ikuta/mime_pls/'" tppabs="http://www.cc.rim.or.jp/~ikuta/mime_pls/">http://www.cc.rim.or.jp/~ikuta/mime_pls/</a> )<br>
+を使うと簡単です。<br>
+<br>
+＃Perlスクリプトの中に書いておくのと、ファイルにしておくのでは<br>
+＃どっちが効率いいのかは知りませんが。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/07/16(金) 03:40:19</span><br>
+ちょっと実験してみました。<br>
+<br>
+１．URLエンコード、デコード<br>
+s/(.)/sprintf("%%%02X",unpack("C",$1))/eg;<br>
+で、エンコード<br>
+s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;<br>
+で、デコード。<br>
+<br>
+２．Base64URLエンコード、デコード<br>
+MIME::Base64 モジュールを使用。<br>
+<br>
+12KBのGIF画像をテキストに変換したものをPerlスクリプト内に記述して<br>
+変数に格納、それをデコードしてバイナリファイルに書き出す、という<br>
+スクリプトをそれぞれ Benchmark モジュールでベンチを取りました。<br>
+<br>
+（結果）<br>
+<br>
+１．の方法<br>
+バイナリ1バイトをエンコードすると3バイトになるので、<br>
+サイズが3倍になります。また、改行コードが入らないので<br>
+テキストエディタで扱いにくいです。<br>
+＃エンコード時に一定サイズごとに改行を挟めばいいかも知れない。<br>
+<br>
+デコードが遅いです。<br>
+<font color="#CC8000">&gt; s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;</font><br>
+これでデコードすると、1000回ループで<br>
+156 wallclock secs (156.81 usr +&nbsp;&nbsp;0.00 sys = 156.81 CPU)<br>
+<br>
+<font color="#CC8000">&gt; s/%([0-9a-fA-F][0-9a-fA-F])/chr(hex($1))/eg;</font><br>
+これで<br>
+138 wallclock secs (137.70 usr +&nbsp;&nbsp;0.00 sys = 137.70 CPU)<br>
+でした。<br>
+＃システム時間が0.00なのは、OSのキャッシュが効いていて<br>
+＃ディスクアクセスをしていないからだと思います。<br>
+<br>
+２．の方法<br>
+サイズは4/3に増えます。<br>
+76文字ごとに改行が入るので扱いやすいです。<br>
+デコードは、<br>
+decode_base64($data);<br>
+で、1000回ループで<br>
+4 wallclock secs ( 3.84 usr +&nbsp;&nbsp;0.00 sys =&nbsp;&nbsp;3.84 CPU)<br>
+でした。<br>
+１．の方法よりも30倍以上程度高速です。<br>
+<br>
+＃上記時間は K6-2(400), 128MB, Win95, Perl 5.005_3で測定しました。<br>
+<br>
+つーことで、Base64の方がお勧めかと。長文失礼。<br>
+<hr>
+<span class=name>ピコ</span>
+<span class=time>1999/07/17(土) 06:57:39</span><br>
+ありがとうございます。<br>
+画像ファイルが小さいことと、別ファイルを用意する手間を省きたいという<br>
+理由から、１の方法でやってみました。<br>
+以下の方法では、エンコードしたデータファイル($log)を呼び出し、デコード処理して保存しているのですが、<br>
+この$log2ファイルを呼び出してprint "&lt;img src=$log2&gt;";とすると確かに表示されました。<br>
+<br>
+open(IN,"$log") || &amp;error;<br>
+@IN = &lt;IN&gt;;<br>
+close(IN);<br>
+<br>
+foreach (@IN) {<br>
+$_ =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;<br>
+push (@new_data,$_);<br>
+}<br>
+open(LOG2,"&gt;&gt;$log2") || &amp;error;<br>
+print LOG2 @new_data ;<br>
+close(LOG2);<br>
+<br>
+<br>
+しかし、@new_dataから直接画面に表示する方法が、まだよく分からないでいます。<br>
+<br>
+@data = (<br>
+"47","49","46","38","39","61","16","00","0a","00","b3","02","00","00","00","00","ff","d6","00","ff",<br>
+"ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff","ff",<br>
+中略<br>
+"22","00","3b");<br>
+<br>
+print "Content-type: image/gif\n\n";<br>
+foreach (@data) { $data = pack('C*',hex($_)); print $data; }<br>
+exit;<br>
+<br>
+のようにしているプログラムを見かけたので、試してみましたが、<br>
+どうもうまくいきません。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/17(土) 07:49:05</span><br>
+逆。<br>
+<br>
+それは画像ファイルの中の %xx を探してデコードしようとしてるだけ。<br>
+普通画像の中にそういうコードはないから、何も変換してないわけ。<br>
+その結果が表示できるのは当然。<br>
+<br>
+事前に<br>
+　open(IN,"image.gif") || die;<br>
+　while (read(IN,$_,10)){<br>
+　　s/(.|\n)/sprintf("%%%02lX",unpack("C",$1))/eg;<br>
+　　print "$_\n";<br>
+　}<br>
+　close(IN);<br>
+とすると、<br>
+　%47%49%46%38%39%61%17%00%16%00<br>
+　%C4%00%00%2C%11%0D%4E%11%07%6F<br>
+　%15%07%72%26%1A%52%28%21%64%37<br>
+　%30%67%43%3D%62%5B%5A%91%1A%07<br>
+　…略…<br>
+という出力が得られるでしょ?<br>
+<br>
+それをスクリプト中に貼るわけ。<br>
+　$data=&lt;&lt;END;<br>
+　%47%49%46%38%39%61%17%00%16%00<br>
+　%C4%00%00%2C%11%0D%4E%11%07%6F<br>
+　…略…<br>
+　END<br>
+てな感じ。<br>
+<br>
+で、<br>
+　print "Content-type: image/gif\n\n";<br>
+　foreach (split("\n",$data)) {<br>
+　　s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;<br>
+　　print $_;<br>
+　}<br>
+とするとデコードして画像が出力される、と。<br>
+<br>
+# ところで<br>
+#　　s/(.)/sprintf("%%%02lX",unpack("C",$1))/eg;<br>
+# だと . が \n にマッチしないんですが、何か対策あります?<br>
+# バイナリを扱ってると、\nを特別扱いしてほしくないので。<br>
+<br>
+全体を通して、改行コードの扱いに注意してください。<br>
+<br>
+これで大体の考え方がわかったら MIME版に挑戦してみては。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/17(土) 07:54:25</span><br>
+<font color="#CC8000">&gt; #　　s/(.)/sprintf("%%%02lX",unpack("C",$1))/eg;</font><br>
+<font color="#CC8000">&gt; # だと . が \n にマッチしないんですが、何か対策あります?</font><br>
+s/(.)/sprintf("%%%02lX",unpack("C",$1))/egs でうまくいきました<br>
+(最後のsフラグね)。<br>
+<hr>
+<span class=name>ピコ</span>
+<span class=time>1999/07/18(日) 00:10:22</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございます。うまくいきました。<br>
+1kのファイルをエンコードすると、やはり3kぐらいになりましたが、<br>
+さほど表示に時間はかからなかったので、この方法でいきたいと思います。<br>
+大きなファイルを扱う状況になったら、Base64にチャレンジしてみます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/18(日) 00:21:03</span><br>
+まぁ一応デコード部を<br>
+　foreach ( split("\n",$data) ) {<br>
+　　s/(..)/pack("C",hex($1))/eg;&nbsp;&nbsp;# %を無くしたのでデータの互換性はないよ。<br>
+　　print $_;<br>
+　}<br>
+にでもしときんさい。ちーとは速くなるでっしゃろ。計ってないけど。<br>
+<br>
+エンコード部は1度しか使わないからどーでもいいけど、気になるなら<br>
+　while (read(IN,$_,30)){<br>
+　　foreach ( split("",$_) ){<br>
+　　　$data .= sprintf("%02lX",unpack("C",$_));<br>
+　　}<br>
+　　print "$data\n";<br>
+　}<br>
+とかね。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/07/18(日) 15:31:20</span><br>
+もう解決しちゃってますが…<br>
+CGIのperl スクリプトにバイナリデータを直接貼り付ける話ですよね。<br>
+<br>
+小さいGIF画像なら、スクリプト内に、<br>
+　print "";<br>
+と書いておいて、エディタで "" 内にGIFファイルを直接読み込み、<br>
+改行とか \ とか " や $,@ などを手で \x0a とかに適当に書き換えても<br>
+大した手間ではないような気もしますが…<br>
+これなら、デコードの必要もないですし。<br>
+<br>
+バイナリデータが大きい場合は、Windows環境なら↓みたいな感じかな…<br>
+<br>
+open(GIF, "hoge.gif") || die;<br>
+open(FH, "&gt;hoge.cgi") || die;<br>
+binmode(GIF);<br>
+$gif = join('',&lt;GIF&gt;);<br>
+close(GIF);<br>
+@lines = ();<br>
+$gif =~ s/.{1,100}/push(@lines,$&amp;)/esg;<br>
+print FH "print \"Content-type: image/gif\\n\\n\";\n";<br>
+print FH "print ";<br>
+foreach (@lines) {<br>
+	s/["\$\@\\]|[\x81-\x9f\xe0-\xfc][\x41-\x5b\x5d-\x7e\x80-\xfc]|[\x00-\x1f\x7f-\xa0\xe0-\xff]/length($&amp;)&gt;1?$&amp;:sprintf("\\x%02X",unpack("C",$&amp;))/esg;<br>
+	print FH "\"$_\" .\n";<br>
+}<br>
+print FH "\"\";\n";<br>
+close(FH);<br>
+<hr>
+<span class=name>ピコ</span>
+<span class=time>1999/07/18(日) 21:35:36</span><br>
+<font color="#CC8000">&gt;小さいGIF画像なら、エディタで "" 内にGIFファイルを直接</font><br>
+<font color="#CC8000">&gt;読み込み、改行とか \ とか " や $,@ などを手で \x0a とかに</font><br>
+<font color="#CC8000">&gt;適当に書き換えても大した手間ではないような気もしますが…</font><br>
+<br>
+そういうことってできるんですか？<br>
+ためしにmmさんの方法でやってみましたが、<br>
+変な漢字や半角かなが出てきてしまいました。<br>
+<br>
+<font color="#CC8000">&gt;Windows環境なら↓みたいな感じかな…</font><br>
+というのは、AN HTTPDのようなものを使ってローカルで<br>
+作るということかな？？<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/07/18(日) 23:31:11</span><br>
+<font color="#CC8000">&gt;そういうことってできるんですか？</font><br>
+できるハズですが、バイナリを扱えなかったり、\rと\nを区別できないエディタ<br>
+の場合はムツカしいかも知れません…メモ帳ではムリかな？<br>
+<br>
+<font color="#CC8000">&gt;というのは、AN HTTPDのようなものを使ってローカルで作るということかな？？</font><br>
+上のスクリプトを hoge.gif と同じフォルダに置いて、perl for Win32 で実行すれば、<br>
+hoge.cgi が作成されるので、ここから適当にカットアンドペーストすればよいという<br>
+ことです。<br>
+<hr>
+<span class=name>ピコ</span>
+<span class=time>1999/07/19(月) 00:20:50</span><br>
+解決済みマークを付けているので、このまま続けて書くのは<br>
+心苦しいのですが……<br>
+<br>
+久しぶりにAN HTTPDを起動してみましたが、やはり、<br>
+print "Content-type: image/gif\n\n";<br>
+print "GIF89a\x0F\x00\x13\x00\x83\x00\x00\x00\x003\x1B\x1BJ77`TTw血、ゥゥサナナメ矣\xE8……<br>
+みたいになります。<br>
+使い方がまちがっているのかも。<br>
+<br>
+エディタはQXなのですが、直接編集することはできますか？<br>
+\x0aのようなコードはどこで調べれば良いのでしょうか。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/07/19(月) 02:41:17</span><br>
+<font color="#CC8000">&gt;使い方がまちがっているのかも。</font><br>
+hoge.cgi の中身がそのようになったのであれば、使い方は間違ってはいません。<br>
+<br>
+説明が後になってしまいましたが、私の方法は、画像データを %47%49%46… のように<br>
+エンコードする代わりに、\x47\x49\x46… のようにエンコードして、<br>
+これを "" で囲むことにより、perlのコンパイル時にデコードさせるように<br>
+しているに過ぎないのです。<br>
+ただ、このままだと画像データのバイト数が4倍に増加するので、<br>
+Windowsのエディタで普通に編集可能な印字可能文字は、エンコードせずにそのまま<br>
+にしています。このため、アスキー文字の他に漢字や半角カナも混ざるのです。<br>
+<br>
+AN HTTPDを起動されたのなら、ブラウザでこの hoge.cgi を呼び出してみれば、<br>
+hoge.gif の画像が表示されるハズなのですが…<br>
+<br>
+これがうまく表示できたなら、hoge.cgi の内容をピコさんのperlスクリプトの<br>
+適当な場所にコピーすればいいと思います。<br>
+<br>
+<font color="#CC8000">&gt;エディタはQXなのですが、直接編集することはできますか？</font><br>
+直接編集は、かなりきわどい操作が必要で、ある程度こういうことに慣れた<br>
+人でないと難しいと思います。<br>
+残念ながら、私はQXというエディタは知らないので、この件はパスさせて下さい。<br>
+<br>
+<font color="#CC8000">&gt;\x0aのようなコードはどこで調べれば良いのでしょうか。</font><br>
+えっと、アスキーコード表などを見れば分かると思いますが…そういうコトではないのかな？<br>
+<hr>
+<span class=name>ピコ</span>
+<span class=time>1999/07/19(月) 23:41:02</span><br>
+<span class=resolv>[[解決]]</span><br>
+hoge.cgiを起動するというところで勘違いしていました。<br>
+無事表示されました。<br>
+直接編集は、もう少し勉強してからにしたいと思います。<br>
+ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070161.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070161.htm">[前に]</a>
+<a href="99070163.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070163.htm">[次に]</a>
+</body>
+</html>

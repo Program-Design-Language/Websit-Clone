@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのjQuery入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<link rel="stylesheet" href="jquery.css" tppabs="http://www.tohoho-web.com/js/jquery/jquery.css">
+</head>
+<body>
+<h2>jQuery入門</h2>
+<a href="../../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/jquery/index.htm">jQuery</a> &gt;
+Callbacks Object
+
+<h4>Callbacks Object</h4>
+
+<h5 id="callbacks">◆ $.Callbacks([<i>flags</i>]) <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトを生成します。コールバックオブジェクトには add() でコールバック関数を追加し、fire() で呼び出します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function fn1(value) {
+    alert("fn1:" + value);
+}
+function fn2(value) {
+    alert("fn2:" + value);
+}
+var cb1 = <em>$.Callbacks()</em>;
+cb1.add(fn1);
+cb1.add(fn2);
+cb1.fire("Hello!");   <span class="comment">// Call fn1("Hello!") and fn2("Hello!")</span>
+</pre>
+<p><i>flags</i> にはオプション文字列を空白で区切って指定します。<b>once</b> は一度のみ fire() することが可能です。<b>memory</b> は add() の際に最後に fire() した引数で add() したコールバックを呼び出します。<b>unique</b> は同じ関数を2回以上重複して add() できないよう制限します。<b>stopOnFalse</b> はコールバック関数が false を返した時点で残りのコールバック関数の呼び出しをスキップします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = <em>$.Callbacks("unique stopOnFalse")</em>;
+</pre>
+</div>
+
+<h5 id="add">◆ <i>callbacks</i>.add() <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトにコールバック関数を追加します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function fn1(value) {
+    alert("fn1:" + value);
+}
+var cb1 = $.Callbacks();
+cb1.<em>add(fn1)</em>;
+</pre>
+</div>
+
+<h5 id="remove">◆ <i>callbacks</i>.remove(<i>callbacks</i>) <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトからコールバック関数を削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.add(fn2);
+cb1.<em>remove(fn2)</em>;
+</pre>
+</div>
+
+<h5 id="empty">◆ <i>callbacks</i>.empty() <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトからすべてのコールバック関数を削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.add(fn2);
+cb1.add(fn3);
+cb1.<em>empty()</em>;
+</pre>
+</div>
+
+<h5 id="has">◆ <i>callbacks</i>.has([<i>callback</i>]) <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクト中にコールバック関数が追加されているか否かを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.add(fn2);
+if (cb1.<em>has(fn2)</em>) { alert("Included!"); }
+</pre>
+</div>
+
+<h5 id="fire">◆ <i>callbacks</i>.fire(<i>arguments</i>) <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトに登録されたコールバック関数を呼び出します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function fn1(arg1, arg2) {
+    alert("fn1:" + arg1 + ":" + arg2);
+}
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.<em>fire("Hello!", "Bye!")</em>;
+</pre>
+</div>
+
+<h5 id="fireWith">◆ <i>callbacks</i>.fireWith([<i>context</i>][, <i>args</i>]) <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバック関数内で this で参照される要素を <i>context</i> に指定してコールバック関数を呼び出します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function fn1(arg1, arg2) {
+    alert("fn1:" + $(this).attr("id") + ":" + arg1 + ":" + arg2);
+}
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.<em>fireWith($("#d1"), ["Hello!", "Bye!"])</em>;
+</pre>
+</div>
+
+<h5 id="fired">◆ <i>callbacks</i>.fired() <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトが一度でも fire()/fireWith() されたか否かを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.fire();
+if (cb1.<em>fired()</em>) { alert("Called"); }
+</pre>
+</div>
+
+<h5 id="disable">◆ <i>callbacks</i>.disable() <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトを無効状態にします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.fire();                  <span class="comment">// 呼び出せます</span>
+cb1.<em>disable()</em>;
+cb1.fire();                  <span class="comment">// 呼び出しが無視されます</span>
+</pre>
+</div>
+
+<h5 id="disabled">◆ <i>callbacks</i>.disabled() <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトが無効状態にあるかを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.disable();
+if (cb1.<em>disabled()</em>) { alert("Disabled!"); }
+</pre>
+</div>
+
+<h5 id="lock">◆ <i>callbacks</i>.lock() <u>(1.7)</u></h5>
+<div class=i>
+<p>fire() / fireWith() による呼び出しを無効化します。ただし、<b>memory</b> が指定されていた場合は、add() による呼び出しは行われます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function fn1(arg) { $("#log").append("fn1 : " + arg + "&lt;br&gt;"); }
+function fn2(arg) { $("#log").append("fn2 : " + arg + "&lt;br&gt;"); }
+var cb1 = $.Callbacks("memory");
+cb1.add(fn1);
+cb1.fire("Fire1");
+cb1.<em>lock()</em>;
+cb1.fire("Fire2");    <span class="comment">// 呼ばれない</span>
+cb1.add(fn2);         <span class="comment">// fn2("Fire2") が呼ばれる</span>
+</pre>
+</div>
+
+<h5 id="locked">◆ <i>callbacks</i>.locked() <u>(1.7)</u></h5>
+<div class=i>
+<p>コールバックオブジェクトがロック状態にあるかを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var cb1 = $.Callbacks();
+cb1.add(fn1);
+cb1.lock();
+if (cb1.<em>locked()</em>) { alert("Locked!"); }
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2013-2019 杜甫々</div>
+<div>初版：2013年2月3日、最終更新：2019年5月5日</div>
+<div>http://www.tohoho-web.com/js/jquery/callbacks.htm</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CGIスクリプトをデバッグするには？ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>CGIスクリプトをデバッグするには？</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwcgi.htm" tppabs="http://www.tohoho-web.com/wwwcgi.htm">とほほのCGI入門</a> &gt;
+CGIスクリプトをデバッグするには？
+
+<h4>はじめに</h4>
+<div class=i>
+<p>デバッグとは、プログラムのバグ（誤動作の原因）を取り除くことを言います。ここでは、どうしてもCGIスクリプトが動かない場合（サーバーエラーになってしまう場合）の、デバッグを方法をいくつか紹介します。</p>
+</div>
+
+<h4>Perlで動くか確認する</h4>
+<div class=i>
+<p>マシンで Perl を使用可能な場合は、コマンドライン（Windowsの場合は MS-DOSプロンプト）で実行確認してみましょう。期待通りのHTML文書が表示されていればOKです。（test.cgi は、作成したCGIスクリプトのファイル名です。）</p>
+<div class="tab">コマンドライン</div>
+<pre class=c2>
+perl test.cgi
+</pre>
+<p>オプション -wc を用いることで、より詳細なシンタックス（構文）チェックを行うことができます。</p>
+<div class="tab">コマンドライン</div>
+<pre class=c2>
+perl -wc test.cgi
+</pre>
+</div>
+
+<h4>Webサーバのエラーログを確認する</h4>
+<div class=i>
+<p>Webサーバのエラーログ（/var/log/apache/error_logなど）を確認できる場合は確認してみましょう。何かヒントになるメッセージが書き込まれているかもしれません。</p>
+</div>
+
+<h4>デバッグ文を挿入してみる</h4>
+<div class=i>
+<p>サーバ上でしかデバッグができない場合は、CGIスクリプトの2行目（1行目は perl のパス名だと思うので）に、以下の文章を挿入してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+print "Content-type: text/html\n\nOK.\n"; exit(1);
+</pre>
+<p>この状態でブラウザからCGIを呼び出して「OK.」が表示されれば、CGIの設定は正常です。これでもサーバーエラーになってしまう場合は、以下のような原因が考えられます。</p>
+<ul>
+<li>CGIスクリプトの設置場所が誤っている。</li>
+<li>プロバイダやサーバーがCGIを動かす設定になっていない。</li>
+<li>スクリプトの改行コードが異なる。（→ <a href="wwwxx011.htm" tppabs="http://www.tohoho-web.com/wwwxx011.htm">改行コードについて</a>）</li>
+<li>スクリプトのパーミッションが異なる。（→ <a href="wwwxx012.htm" tppabs="http://www.tohoho-web.com/wwwxx012.htm">パーミッションを変更するには</a>）</li>
+</ul>
+<p>「OK.」が表示された場合、上記で追加した行を10行目あたりに移動して、再度ブラウザから呼び出してください。これで「OK.」が表示されれば、1行目から10行目の間に記述されたスクリプトは正常に動作していることがわかります。</p>
+<p>10行目に追記した行を50行目に移動し、「OK.」だったら100行目あたりに、エラーだったら25行目あたりに移動して、スクリプトの「どの部分」でエラーが発生しているかを見つけていきます。</p>
+<p>たとえば下記の例で、26行目に挿入した時は「OK.」が表示されたのに、28行目に挿入するとサーバーエラーとなる場合、27行目が「怪しい」行となります。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+<span class="gray">25:</span> print "&lt;h1&gt;テスト&lt;/h1&gt;\n";
+<span class="gray">26:</span>
+<span class="gray">27:</span> print "&lt;a href="test.html"&gt;TEST&lt;/a&gt;\n";
+<span class="gray">28:</span>
+<span class="gray">29:</span> print "&lt;table&gt;\n";
+</pre>
+<p>この場合（あくまで上記の場合は・・・ですが）、27行目の " を \" に、つまり、27行目を次のように修正すれば、動くようになるかもしれません。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+<span class="gray">27:</span> print "&lt;a href=\"test.html\"&gt;TEST&lt;/a&gt;\n";
+</pre>
+</div>
+
+<h4>変数を表示させてみる</h4>
+<div class=i>
+<p>上記と同じように、スクリプトの2行目に下記の行を追加してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+print "Content-type: text/html\n\n";
+</pre>
+<p>また、スクリプトの適当な個所で下記の例に示す行を追加してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+print "DEBUG: XXX=$FORM{'XXX'}&lt;br&gt;\n";
+</pre>
+<p>これにより、その時点における変数の値を表示させることもできます。</p>
+</div>
+
+<h4>大胆なデバッグ方法</h4>
+<div class=i>
+<p>あと、サーバにアップロードしたCGIを大胆にデバッグする方法を紹介していただきました。まず、スクリプトの1行目（1行目が #! ではじまっている場合は2行目）に下記の行を挿入してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+eval {
+</pre>
+<p>また、スクリプトの一番最後に以下の行を追加してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+};
+if ($@) {
+    print "Content-type: text/html\n\n";
+    print "&lt;title&gt;ERROR&lt;/title&gt;\n";
+    print "ERROR = $@\n";
+}
+</pre>
+<p>これにより、うまくいけば、スクリプトをすべて実行評価し、致命的なエラーがある場合に、eval { ... }; を抜けてエラーメッセージを表示します。eval { ... } の後のセミコロン( ; )を忘れないようにしてください。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 2000 杜甫々</div>
+<div>初版：2000年4月7日、最終更新：2000年6月2日</div>
+<div>http://www.tohoho-web.com/wwwcgi7.htm</div>
+</body>
+</html>

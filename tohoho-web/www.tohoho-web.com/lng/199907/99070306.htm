@@ -1,0 +1,230 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>読み込んだ配列の表示方法</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>読み込んだ配列の表示方法</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070305.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070305.htm">[前に]</a>
+<a href="99070307.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070307.htm">[次に]</a>
+<hr>
+<span class=name>高井</span>
+<span class=time>1999/07/29(木) 02:23:20</span><br>
+$num ='01';&amp;ree;<br>
+$num ='02';&amp;ree;<br>
+$num ='03';&amp;ree;<br>
+$num ='04';&amp;ree;<br>
+$num ='05';&amp;ree;<br>
+<br>
+sub ree {<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;open (OUT "./$num/hozo.dat") || die"error\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$line = &lt;OUT&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;close(OUT);<br>
+<br>
+print "$line";<br>
+}<br>
+<br>
+上記のような形で$numを　ここでは５まで書きましたが<br>
+実際は99番程読みこんで表示しています。<br>
+<br>
+この場合001～１００まで全て読み込んだ後に一気に表示<br>
+されますが、上から順に徐々に表示させるには<br>
+どのような方法があるかご教授下さい<br>
+<br>
+宜しくお願いします。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/07/29(木) 02:53:04</span><br>
+<font color="#CC8000">＞この場合001～１００まで全て読み込んだ後に一気に表示</font><br>
+<font color="#CC8000">＞されますが、</font><br>
+それは出力をバッファリングしている（デフォルト）からでは。<br>
+$| = 1;<br>
+をスクリプトの頭に追加しましょう。<br>
+<br>
+ちなみに、私なら以下のように書きますが。<br>
+<br>
+for(1..99){<br>
+$dir = sprintf("%02d", $_);<br>
+open(IN, "./$dir/hozo.dat") || die"error\n";<br>
+$line = &lt;IN&gt;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#一行目しか読み込まれないけど<br>
+close IN;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#それで良いんですか？<br>
+print $line;<br>
+}<br>
+<hr>
+<span class=name>文月</span>
+<span class=time>1999/07/29(木) 07:38:43</span><br>
+<font color="#CC8000">＞上から順に徐々に表示させるには</font><br>
+タイムラグを持たせるということでしょうか？<br>
+sleep関数を使えば、いいんじゃない？<br>
+sleep EXPR # EXPRは秒数。指定しないととんでもないことになる。。(^^;;;<br>
+<br>
+# 外してるかな？(^^;;;;<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/29(木) 12:38:43</span><br>
+<font color="#CC8000">&gt; $| = 1;</font><br>
+でなくて、WWWサーバがバッファリングしてるという意味でない?<br>
+ここの検索CGIなんかはprintした分だけ順に表示されるよね。うちでは<br>
+どうしてもそうはならないので、僕も教えてほしいっす。<br>
+<hr>
+<span class=name>高井</span>
+<span class=time>1999/07/29(木) 17:04:32</span><br>
+<font color="#CC8000">＞ふじさん。ご教授ありがとうございます。</font><br>
+<br>
+早速今試した直後なのですが、<br>
+この時間帯は軽いせいか、私の書いた方法でも<br>
+$｜=1;を付け加えて書いても表示は一気にされます（笑）。<br>
+99番程でもテレホ帯になると、一気に表示されるまで待ち時間が<br>
+気になるので、徐々に表示出来ればスムーズだなぁ。。　と思い<br>
+質問させて頂きました。<br>
+<br>
+#! /usr/local/bin/perl<br>
+<br>
+$｜= 1;<br>
+<br>
+print "Content-type: text/html\n\n";<br>
+<br>
+for(1..99){<br>
+$dir = sprintf("%02d", $_);<br>
+open(IN, "./$dir/hozo.dat") || die"error\n";<br>
+$line = &lt;IN&gt;; #一行分だけ保存しているので一行読み込めれば良いです。<br>
+close IN; #随分とすっきりとしたスクリプトをご丁重に書いて頂きありがとうございます。<br>
+print $line;　#早速ふじさん仕様に変更したいと思います。<br>
+}<br>
+<br>
+<font color="#CC8000">＞文月さん</font><br>
+　ありがとうございます。<br>
+　そちらの方法も是非試させて貰います。<br>
+　色んな手法が勉強できてタメになります。<br>
+<br>
+<font color="#CC8000">&gt;B-cusさん</font><br>
+<font color="#CC8000">＞ここの検索CGIなんかはprintした分だけ順に表示されるよね。</font><br>
+　　　↑そうなんです。　私が行いたい事はこのような<br>
+　　　　 表示方法です。<br>
+　　　　<br>
+説明不足な点が有りましたらお許し下さい。<br>
+また、テレホ後にそれぞれの結果をご報告したいと思います。<br>
+　<br>
+　　<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/29(木) 23:41:15</span><br>
+うそ。ごめん。<br>
+<font color="#CC8000">&gt; $|=1;</font><br>
+は、これはこれで正しい解決策です。perlのバッファリングを<br>
+OFFにしてるわけで。<br>
+<br>
+ただ、それに加えてWWWサーバ側でもバッファリングしている場合も<br>
+あるってことを言いたかったです。<br>
+<br>
+ので、$|=1 だけでOKな場合もありますが、ダメな場合もあります(うちのサーバ)。<br>
+Apacheでもダメなところはダメなようです。設定の問題かもしれませんが<br>
+よくわかりません。で、ダメな場合はNPHを使います。これならうちでも<br>
+うまくいきました。<br>
+# <a href="../../wwwcgi4.htm#NphScript" tppabs="http://www.tohoho-web.com/wwwcgi4.htm#NphScript">http://www.tohoho-web.com/wwwcgi4.htm#NphScript</a><br>
+<br>
+当然ですが、出力するのはブラウザ側で少しずつ順に表示できるような<br>
+構造でないといけません。適当に改行(&lt;BR&gt;)を入れるとか、&lt;TABLE&gt;で囲まないとか。<br>
+<hr>
+<span class=name>高井</span>
+<span class=time>1999/07/29(木) 23:43:29</span><br>
+テレホ帯で上記のスクリプト実行結果を報告します。<br>
+<br>
+$｜= 1;<br>
+<br>
+を挿入したスクリプトを動かしてみましたが<br>
+やはり表示は徐々にではなく、一気にされました。<br>
+<br>
+ちょっと気になったもので、読み込む配列を従来の01～99　から<br>
+01～500に増やして実行した所、徐々に表示されました。<br>
+<br>
+読み込む配列（データ量）が問題なのですかね？<br>
+<br>
+少々、もう少し幾つかのパターンを試してみます。<br>
+何か気になる部分がありましたらまた報告させて頂きます。<br>
+<hr>
+<span class=name>高井</span>
+<span class=time>1999/07/29(木) 23:50:11</span><br>
+投稿記事を書いてる間にB-cusさんの投稿がありました。<br>
+有り難うございます。<br>
+早速そちらの手法も試させて頂きます。<br>
+<br>
+情報が足りなくて済みませんでした。<br>
+私の使用している環境は、Apache&nbsp;&nbsp;perl5 です。<br>
+<br>
+<font color="#CC8000">＞当然ですが、出力するのはブラウザ側で少しずつ順に表示できるような</font><br>
+<font color="#CC8000">＞構造でないといけません。適当に改行(&lt;BR&gt;)を入れるとか、&lt;TABLE&gt;で囲まないとか。</font><br>
+print $line;　　<br>
+print $line&lt;BR&gt;;<br>
+print $line&lt;P&gt;;<br>
+<br>
+等で試してみましたが、別段変わりはありませんでしたが<br>
+もう少しガンガン細かい所を変更しながらテストします。<br>
+<br>
+また、ご報告させて頂きます。<br>
+情報不足・説明不足な点がありましたらお許し下さい<br>
+ご指摘頂ければ幸いです。<br>
+<hr>
+<span class=name>高井</span>
+<span class=time>1999/07/30(金) 00:13:06</span><br>
+うわーー　　成功しました　大感激です。<br>
+見事に徐々に表示されましたー　気持ちよすぎますー<br>
+<br>
+私の最初のスクリプトを大幅にふじさん仕様に変更し<br>
+B-cusさんから押しえて頂いたnph-にしてみたところ<br>
+見事に徐々に上から段々と表示されました。<br>
+<br>
+でも、nph-。。　これって凄いですね。。　これでサーバへの負荷も<br>
+軽減されるならば、徐々に表示させる目的とは別に<br>
+使用しているＣＧＩスクリプト全てに適用しようと思います。<br>
+<br>
+最終的にはこのようにしました。<br>
+<br>
+#! /usr/local/bin/perl<br>
+<br>
+print "HTTP/1.0 200 OK\n";<br>
+$| = 1;<br>
+<br>
+for(1..99){<br>
+$dir = sprintf("%02d", $_);<br>
+open(IN, "./$dir/hozo.dat") || die"error\n";<br>
+$line = &lt;IN&gt;;<br>
+close IN;<br>
+print $line&lt;BR&gt;;<br>
+}<br>
+<br>
+色々とどうも有り難うございました。<br>
+大変助かると共に勉強になりました。<br>
+<hr>
+<span class=name>高井</span>
+<span class=time>1999/07/30(金) 00:13:48</span><br>
+<span class=resolv>[[解決]]</span><br>
+度々済みません。　解決マークを入れ忘れていました。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/30(金) 00:20:41</span><br>
+<font color="#CC8000">&gt; 徐々に表示させる目的とは別に使用しているＣＧＩスクリプト</font><br>
+<font color="#CC8000">&gt; 全てに適用しようと思います。</font><br>
+バッファリングというのは、速度向上、データ量軽減のために<br>
+行われているので、必要ないなら使うべきではないと思います。<br>
+<br>
+なお、実際にデータ量がこれだけ増える、これだけ遅くなる<br>
+というのは測ってません。誰か調べて。<br>
+<br>
+<font color="#CC8000">&gt; print "HTTP/1.0 200 OK\n";</font><br>
+Content-type は必要ないんでしたっけ?<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/30(金) 00:24:26</span><br>
+追加。あと、NPHを使うということはサーバの付けるヘッダがないわけで、<br>
+それなりの出力を自分でしといた方がいいと思います。<br>
+Server,Date,Last-Modified,Content-Lengthなど。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070305.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070305.htm">[前に]</a>
+<a href="99070307.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070307.htm">[次に]</a>
+</body>
+</html>

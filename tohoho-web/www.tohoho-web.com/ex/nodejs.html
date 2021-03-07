@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Node.js入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Node.js入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Node.jsメモ
+
+<h4>目次</h4>
+<div class=i>
+<ul>
+<li><a href="#whatis">Node.js とは</a>
+<li><a href="#history">歴史</a>
+<li><a href="#techlist">JavaScript関連技術</a>
+<li><a href="#install">インストール</a>
+<li><a href="#hello_console">Hello world (コンソール版)</a>
+<li><a href="#hello_web">Hello World (Web版)</a>
+<li><a href="#no_break">コンソールに改行無しで書き出す</a>
+<li><a href="#get_client_info">クライアントからの情報を得る</a>
+<li><a href="#app_folder">アプリケーションフォルダを作成する</a>
+<li><a href="#install_package">アプリケーションフォルダにパッケージをインストールする</a>
+<li><a href="#get_get_params">GET パラメータを受け取る</a>
+<li><a href="#get_post_data">POST データを受け取る</a>
+<li><a href="#express">Express で GET POST を処理する</a>
+<li><a href="#get_post_data_by_express">Express で POST データを受け取る</a>
+<li><a href="#ejs">EJS テンプレートエンジンを用いる</a>
+<li><a href="#read_file">ファイルをノンブロッキングで読み出す</a>
+<li><a href="#make_module">モジュールを作成する</a>
+<li><a href="#template_leteral">文字列中の変数を展開する</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="whatis">Node.js とは</h4>
+<div class=i>
+<ul>
+<li>サーバーサイドの JavaScript 実行環境。
+<li>Google V8 JavaScript エンジンを使用しており、高速。
+<li>Linux サーバにインストールして使用することが多いが、macOS 版や、Windows 版もある。
+<li>npm (Node Package Manager) と呼ばれるパッケージ管理システムを同梱。
+<li>ノンブロッキングI/O と イベントループ アーキテクチャにより、10K問題 (クライアント1万台レベルになると性能が極端に悪化する問題) に対応。
+<li>通信やファイルの読み書きをノンブロッキングI/Oで処理するため、スレッドが I/O 待ちになる頻度が少なく、効率的。
+<li>クライアントからパケットを読み込む、ファイルの次のブロックを読み出すなどすべてがイベント処理で実装されている。
+<li>基本的にはシングルスレッドだが、内部では暗号化などの重い処理を複数スレッドで処理。
+<li>基本的にはシングルプロセスだが、JavaScript から fork() を呼び出すことで、マルチプロセスも可能。
+<li>ライセンスは MITライセンス。商用利用可能。
+<li>長期サポートの LTS(Long Term Support)版と、非LTS版がある。
+<li>今のところ、v6, v8 等の偶数系は LTS 版。v7, v9 等の奇数系は非 LTS 版。
+<li>現在の最新版は v9 系だが、2018年中頃にはサポート終了。v8 系は、LTS 版のため、2019年12月までサポート継続。
+<li>Node.js 上のフレームワークとして、Express, Meteor, Sails, Koa, LoobBack などがある。
+<li>MEAN(MongoDB＋Express＋AngularJS＋Node.js)と呼ばれる構成で利用されることも多い。
+<li>HTTP 通信のみでなく、TCP や UDP 通信も可能。
+<li>WebSocker サーバとして利用されることも多い。
+<li>比較的小規模で、高パフォーマンスを要求されるプロジェクトでの利用が多い。
+<li>AWS Lambda, PayPal, Walmart, Uber など大量アクセス領域で利用されている。
+<li>非互換強化を含むバージョンアップがあり、仕様の安定期に入るには、もう少しだけかかりそう。
+</ul>
+<p>本書では現時点で最新の LTS 版である v8.9.4 をベースに説明します。</p>
+</div>
+
+<h4 id="history">歴史</h4>
+<div class=i>
+<ul>
+<li>2009年 ?月、カリフォルニア州のライアン・ダール(Ryan Dahl)氏、Node.js の開発に着手。
+<li>2011年 8月、Dahl 氏、Node.js 初期公開バージョン 0.1.14 をリリース。
+<li>2012年 ?月、Joyent 社、Node.js 開発支援を開始。Dahl 氏も Joyent 社の社員に。
+<li>2012年 1月、BDFL(優しい終身の独裁者)の時代を終え、開発リーダが Dahl 氏から Isaac Z. Schlueter 氏に変更。
+<li>2014年 ?月、開発リーダが、Schlueter 氏から TJ Fontaine 氏に変更。
+<li>2014年 ?月、Node.js Core の開発が停滞しはじめ、一部の推進者が新団体 Node Forward を設立。
+<li>2015年 1月、Node Forward、 Node.js の fork 版である io.js 1.0 をリリース。
+<li>2015年 2月、Joyent 社、Node.js Foundation 設立をアナウンス。
+<li>2015年 5月、Node Forward、io.js 2.0 をリリース。
+<li>2015年 5月、io.js も Node.js Foundation への統合を選択。
+<li>2015年 7月、Joyent 社、Node.js Foundation を設立。
+<li>2015年 8月、Node Forward、io.js 3.0 をリリース。
+<li>2015年 9月、Node.js と io.js の最初の統合版 Node.js 4.0 をリリース。
+<li>2015年10月、Node.js 5.0 をリリース。
+<li>2016年 4月、Node.js 6.0 をリリース。
+<li>2016年 7月、韓国 Samsung 社が、Joyent 社を買収。
+<li>2016年10月、Node.js 7.0 をリリース。
+<li>2017年 5月、Node.js 8.0 をリリース。
+<li>2017年10月、Node.js 9.0 をリリース。
+</ul>
+</div>
+
+<h4 id="techlist">JavaScript関連技術</h4>
+<div class=i>
+<p>JavaScript/Node.js 関連技術を下記で紹介しています。
+<ul>
+<li><a href="jstech.html" tppabs="http://www.tohoho-web.com/ex/jstech.html">JavaScript 関連技術</a>
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<p>Node.js はバージョンの変動が激しく、バージョンを上げたり戻したりすることがよくあります。CentOS/RHEL 標準の yum や、Ubuntu/Debian 標準の apt-get でインストールするよりも、nvm, nodebrew, n などの、Node.js 用パッケージ管理を用いてインストールする方がおすすめです。</p>
+</div>
+
+<h5>yum の場合 (CentOS)</h5>
+<div class=i>
+<p>CentOS のシステム領域に、特権モードでインストールします。インストールされるバージョンは少し古いものになります。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+# yum -y install epel-release     <span class="cm">EPEL リポジトリ情報をインストールする</span>
+# yum -y install nodejs           <span class="cm">Node.js をインストールする</span>
+# yum -y install npm              <span class="cm">npm をインストールする</span>
+</pre>
+</div>
+
+<h5>apt-get の場合 (Ubuntu)</h5>
+<div class=i>
+<p>Ubuntu のシステム領域に、特権モードでインストールします。インストールされるバージョンは少し古いものになります。標準だと nodejs コマンドとしてインストールされるため、update-alternatives を用いて nodejs を node に変更します。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ sudo apt-get update               <span class="cm">必要に応じてパッケージをアップデートする</span>
+$ sudo apt-get install nodejs       <span class="cm">Node.js をインストールする</span>
+$ sudo apt-get install npm          <span class="cm">npm をインストールする</span>
+$ sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+</pre>
+</div>
+
+<h5 id="nvm">nvm の場合 (CentOS/Ubuntu)</h5>
+<div class=i>
+<p>個人のホームディレクトリ配下に複数のバージョンをインストールします。環境変数で使用するバージョンを切り替えます。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ git clone https://github.com/creationix/nvm.git ~/.nvm
+$ source ~/.nvm/nvm.sh
+$ nvm ls-remote             <span class="cm">インストール可能なバージョンの一覧を表示する</span>
+$ nvm install v8.9.4        <span class="cm">最新の LTS 版をインストール</span>
+$ nvm install v9.3.0        <span class="cm">最新版をインストール</span>
+$ nvm ls                    <span class="cm">インストールされているバージョンの一覧を表示する</span>
+$ nvm use v8.9.4            <span class="cm">一時的に v8.9.4 を使用する(再ログイン時にはデフォルトに戻る)</span>
+$ nvm alias default v8.9.4  <span class="cm">デフォルトを v8.9.4 に切り替える</span>
+</pre>
+<p>再ログイン時にも nvm を有効にするために、~/.bash_profile に下記を追記しておきます。</p>
+<div class="tab">~/.bash_profile</div>
+<pre class=c2>
+if [ -s ~/.nvm/nvm.sh ]; then
+  source ~/.nvm/nvm.sh
+fi
+</pre>
+</div>
+
+<h5 id="nodebrew">nodebrew の場合 (CentOS/Ubuntu)</h5>
+<div class=i>
+<p>個人のホームディレクトリ配下に複数のバージョンをインストールします。シンボリックリンクで使用するバージョンを切り替えます。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ curl -L git.io/nodebrew | perl - setup
+$ echo 'export PATH=$HOME/.nodebrew/current/bin:$PATH' &gt;&gt; ~/.bashrc
+$ source ~/.bashrc
+$ nodebrew ls-remote                <span class="cm">インストール可能なバージョンの一覧を表示する</span>
+$ nodebrew install-binary v8.9.4    <span class="cm">最新の LTS 版をインストール</span>
+$ nodebrew install-binary v9.3.0    <span class="cm">最新版をインストール</span>
+$ nodebrew ls                       <span class="cm">インストールされているバージョンの一覧を表示する</span>
+$ nodebrew use v8.9.4               <span class="cm">v8.9.4 を使用する</span>
+</pre>
+</div>
+
+<h5 id="n">n の場合 (Ubuntu)</h5>
+<div class=i>
+<p>Ubuntu の場合、n を推奨するサイトが多いようです。まず、n をインストールするために apt-get で nodejs と npm をインストールし、npm で n をインストールした後、apt-get でインストールした nodejs と npm は削除します。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ sudo apt-get update               <span class="cm">必要に応じてアップデートする</span>
+$ sudo apt-get install -y nodejs    <span class="cm">nodejs をインストールする</span>
+$ sudo apt-get install -y npm       <span class="cm">npm をインストールする</span>
+$ sudo npm cache clean              <span class="cm">npm のキャッシュをクリアする</span>
+$ sudo npm install -g n             <span class="cm">npm で n をインストールする</span>
+$ sudo n 8.9.4                      <span class="cm">n で Node.js v8.9.4 をインストールする</span>
+$ sudo n 9.3.0                      <span class="cm">n で Node.js v9.3.0 に切り替える</span>
+$ sudo n 8.9.4                      <span class="cm">v8.9.4 に戻す</span>
+$ sudo apt-get purge -y nodejs npm  <span class="cm">apt-get でインストールした nodejs と npm をアンインストールする</span>
+</pre>
+</div>
+
+<h5>PPA の場合 (Ubuntu)</h5>
+<div class=i>
+<p>PPA(Personal Package Archive) は、NodeSource が管理するモジュールをインストールします。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ sudo apt-get update               <span class="cm">必要に応じてパッケージをアップデートする</span>
+$ sudo add-apt-repository ppa:chris-lea/node.js   <span class="cm">PPA をインストールする</span>
+$ curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -  <span class="cm">9.x リポジトリ情報をインストール</span>
+$ sudo apt-get install -y nodejs    <span class="cm">Node.js をインストールする</span>
+</pre>
+</div>
+
+<h4 id="hello_console">Hello world (コンソール版)</h4>
+<div class="i">
+<p>まずは、おきまりの Hello world から。$ は一般ユーザの、# は特権ユーザのプロンプトを示します。</p>
+<div class="tab">sample1.js</div>
+<pre class=c2>
+<em>console.log("Hello world!");</em>
+</pre>
+<div class="tab">Console</div>
+<pre class=c2>
+$ node sample1.js
+Hello world!
+</pre>
+</div>
+
+<h4 id="hello_web">Hello World (Web版)</h4>
+<div class=i>
+<p>Web サーバとして動作させる場合のサンプルがこちら。</p>
+<div class="tab">sample2.js</div>
+<pre class=c2>
+var http = <em>require('http')</em>;
+var server = http.<em>createServer(function(req, res)</em> {
+  res.write("Hello world!\n");
+  res.end();
+}).<em>listen(8080);</em>
+</pre>
+<p>まず、サーバを起動する。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ node sample2.js
+</pre>
+<p>別の端末から、Node.js を呼び出す。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ curl http://127.0.0.1:8080/
+Hello world!
+</pre>
+</div>
+
+<h4 id="no_break">コンソールに改行無しで書き出す</h4>
+<div class=i>
+<div class="tab">Node.js</div>
+<pre class=c2>
+<em>process.stdout.write("Hello")</em>;
+</pre>
+</div>
+
+<h4 id="get_client_info">クライアントからの情報を得る</h4>
+<div class=i>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var http = require('http');
+var server = http.createServer(function(req, res) {
+  console.log("URL: " + <em>req.url</em>);
+  console.log("Method: " + <em>req.method</em>);
+  console.log("Header[Content-Type]: " + <em>req.headers['content-type']</em>);
+  res.end();
+}).listen(8080);
+</pre>
+</div>
+
+<h4 id="app_folder">アプリケーションフォルダを作成する</h4>
+<div class=i>
+<div class="tab">Console</div>
+<pre class=c2>
+$ mkdir ~/myapp
+$ cd ~/myapp
+$ <em>npm init</em>
+(略)
+name: (myapp) <span class="cm">[Enter]</span>
+version: (1.0.0) <span class="cm">[Enter]</span>
+description: <span class="cm">[Enter]</span>
+entry point: (index.js) <span class="cm">[Enter]</span>
+test command: <span class="cm">[Enter]</span>
+git repository: <span class="cm">[Enter]</span>
+keywords: <span class="cm">[Enter]</span>
+author: <span class="cm">[Enter]</span>
+license: (ISC) <span class="cm">[Enter]</span>
+(略)
+Is this ok? (yes) <span class="cm">yes</span>
+$ ls -l
+total 4
+-rw-rw-r--. 1 taro taro 201  Jan  3 22:54 package.json
+</pre>
+</div>
+
+<h4 id="install_package">アプリケーションフォルダにパッケージをインストールする</h4>
+<div class=i>
+<p>例として jquery パッケージをインストールします。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ cd ~/myapp
+$ <em>npm install jquery</em>
+$ ls -l
+total 4
+drwxrwxr-x. 3 taro taro  19  Jan  3 22:56 node_modules
+-rw-rw-r--. 1 taro taro 290  Jan  3 22:54 package-lock.json
+-rw-rw-r--. 1 taro taro 201  Jan  3 22:54 package.json
+$ ls -l ./node_modules
+total 4
+drwxrwxr-x. 5 taro taro 4096 Jan  3 22:56 jquery
+$
+</pre>
+<p>--save オプションを用いると、インストールしたパッケージ情報を package.json ファイルに書き込みます。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ npm install jquery <em>--save</em>
+</pre>
+</div>
+
+<h4 id="get_get_params">GET パラメータを受け取る</h4>
+<div class=i>
+<p>GET のパラメータは req.url で受け取れますが、url モジュールを用いてこれをパースすることができます。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var http = require('http');
+var url = <em>require('url')</em>;
+
+var server = http.createServer(function(req, res) {
+  var url_parse = <em>url.parse(req.url, true)</em>;
+  console.log(url_parse);
+  res.end();
+}).listen(8080);
+</pre>
+<div class="tab">クライアント側</div>
+<pre class=c2>
+$ curl -X GET http://localhost:8080/test?name=Taro
+</pre>
+<div class="tab">サーバ側</div>
+<pre class=c2>
+$ node app.js
+Url {
+  protocol: null,
+  slashes: null,
+  auth: null,
+  host: null,
+  port: null,
+  hostname: null,
+  hash: null,
+  search: '?name=Taro',
+  query: { name: 'Taro' },
+  pathname: '/test',
+  path: '/test?name=Taro',
+  href: '/test?name=Taro' }
+</pre>
+</div>
+
+<h4 id="get_post_data">POST データを受け取る</h4>
+<div class=i>
+<p>on() はイベントハンドラを登録します。下記の例では、オブジェクト req に対して data 受信のイベント発生時に断片データ(chunk)を受け取り、body 変数に連結しておき、受信完了の end イベント発生時に、その内容をコンソールに書き出します。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var http = require('http');
+
+var server = http.createServer(function(req, res) {
+  if (req.method == 'POST') {
+    var body = '';
+    <em>req.on('data'</em>, function(chunk) {
+        body += chunk;
+    });
+    <em>req.on('end'</em>, function() {
+      console.log(body);
+      res.end();
+    });
+  }
+}).listen(8080);
+</pre>
+<div class="tab">クライアント側</div>
+<pre class=c2>
+$ curl -X POST -d 'name=Taro' http://localhost:8080/test
+</pre>
+<div class="tab">サーバ</div>
+<pre class=c2>
+$ node app.js
+name=Taro
+</pre>
+</div>
+
+<h4 id="express">Express で GET POST を処理する</h4>
+<div class=i>
+<p>まず、express モジュールをインストールします。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ cd ~/myapp            <span class="cm">作成済のアプリケーションフォルダに移動</span>
+$ npm install express   <span class="cm">Express パッケージをインストール</span>
+</pre>
+<p>サーバプログラムを用意します。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var express = require('express');
+var app = express();
+app.listen(8080);
+
+app.get('/test1', function(req, res) {
+  res.send('TEST1\n');
+});
+
+app.post('/test2', function(req, res) {
+  res.send('TEST2\n');
+});
+</pre>
+<p>クライアントから呼び出します。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+$ curl -X GET http://localhost:8080/test1
+TEST1
+$ curl -X POST http://localhost:8080/test2
+TEST2
+</pre>
+</div>
+
+<h4 id="get_post_data_by_express">Express で POST データを受け取る</h4>
+<div class=i>
+<p>Express で POST データを受け取る方法は、バージョンによってかなり変動しています。Node.js 4.0 以降では body-parser モジュールを使用します。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+// <span class="cm">古い書き方(1): bodyDecorder時代</span>
+app.use(express.<em>bodyDecoder()</em>);
+
+// <span class="cm">古い書き方(2): bodyParser時代</span>
+app.use(express.<em>bodyParser()</em>);
+
+// <span class="cm">古い書き方(3): urlencoded時代</span>
+app.use(express.<em>urlencoded()</em>);
+app.use(express.json());
+
+// <span class="cm">現時点の新しい書き方: body-parser時代</span>
+var express = require('express');
+var app = express();
+var bodyParser = require('<em>body-parser</em>');
+app.use(bodyParser.urlencoded({ extended: false });
+</pre>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.npmjs.com/package/body-parser  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.npmjs.com/package/body-parser'" tppabs="https://www.npmjs.com/package/body-parser">https://www.npmjs.com/package/body-parser</a>
+</ul>
+</div>
+
+<h5>RAW データを受け取る</h5>
+<div class=i>
+<p>raw() を用いて POST データをバイナリデータとして受け取ります。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.<em>raw({ type:'*/*' })</em>);
+
+app.post('/', function(req, res) {
+  console.log(req.body);
+  res.end();
+});
+app.listen(8080);
+</pre>
+<div class="tab">クライアント側</div>
+<pre class=c2>
+$ curl -X POST -d 'Hello' http://localhost:8080/
+</pre>
+</div>
+
+<h5>TEXT データを受け取る</h5>
+<div class=i>
+<p>text() を用いて POST データをテキストデータとして受け取ります。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.<em>text({ type:'*/*' })</em>);
+
+app.post('/', function(req, res) {
+  console.log(req.body);
+  res.end();
+});
+app.listen(8080);
+</pre>
+<div class="tab">クライアント側</div>
+<pre class=c2>
+$ curl -X POST -d 'Hello' http://localhost:8080/
+</pre>
+</div>
+
+<h5>FORM データを受け取る</h5>
+<div class=i>
+<p>urlencoded() を用いて POST された FORM データを受け取ります。デコーダとして、extended:true の場合は qs ライブラリを、extended:false の場合は querystring ライブラリを使用します。デフォルトは true です。qs ライブラリの場合は、name[1]=Taro, name[2]=Jiro などの配列も解釈してくれます。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.<em>urlencoded({extended:true}))</em>;
+
+app.post('/', function(req, res) {
+  for (key in req.body) {
+    console.log(key, '=', req.body[key]);
+  }
+  res.end();
+});
+app.listen(8080);
+</pre>
+<div class="tab">クライアント側</div>
+<pre class=c2>
+$ curl -X POST -d 'name[1]=Yamada&amp;name[2]=Taro&amp;age=36' http://localhost:8080/
+</pre>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.npmjs.com/package/qs  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.npmjs.com/package/qs#readme'" tppabs="https://www.npmjs.com/package/qs#readme">https://www.npmjs.com/package/qs#readme</a>
+</ul>
+</div>
+
+<h5>JSON データを受け取る</h5>
+<div class=i>
+<p>json() を用いて JSON データを受け取ります。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.<em>json()</em>);
+
+app.post('/', function(req, res) {
+  for (key in req.body) {
+    console.log(key, '=', req.body[key]);
+  }
+  res.end();
+});
+app.listen(8080);
+</pre>
+<div class="tab">クライアント側</div>
+<pre class=c2>
+$ curl -X POST \
+  -H 'Content-Type: application/json' \
+  -d '{"name":["Yamada","Taro"],"Age":36}' \
+  http://localhost:8080/
+</pre>
+</div>
+
+<h4 id="ejs">EJS テンプレートエンジンを用いる</h4>
+<div class=i>
+<p>EJS(Effective JavaScript templating) を用いて、HTML テンプレートなどに変数を埋め込むことが可能となります。まず、ejs をインストールします。</p>
+<div class="tab">Console</div>
+<pre class=c2>
+$ cd ~/myapp
+$ npm install ejs --save
+</pre>
+<p>views フォルダを作成し、その下に test.ejs ファイルを作成します。</p>
+<div class="tab">views/test.ejs</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;&lt;%=title %&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;&lt;%=title %&gt;&lt;/h1&gt;
+&lt;p&gt;&lt;%-content %&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>シンプルにレンダリングするには下記の様に用います。</p>
+<div class="tab">app.js</div>
+<pre class=c2>
+var fs = require('fs');
+var ejs = <em>require('ejs')</em>;
+var template = fs.readFileSync('./views/test.ejs', 'utf8');
+
+var buf = ejs.<em>render</em>(template, {
+  title: "EJS Sample Code",
+  content: "This is EJS Sample..."
+});
+console.log(buf);
+</pre>
+<p>app.engine() を用いて標準レンダリングエンジンに指定することもできます。</p>
+<div class="tab">app.js</div>
+<pre class=c2>
+var express = require('express');
+var app = express();
+var ejs = require('ejs');
+<em>app.engine('ejs', ejs.renderFile);</em>
+app.get('/', function(req, res) {
+  res.<em>render</em>('test.ejs', {
+    title: "EJS Sample Code",
+    content: "This is EJS Sample..."
+  });
+});
+app.listen(8080);
+</pre>
+<p>テンプレートでは下記の記法を使用できます。&lt;%= の場合は &lt; などの文字が &amp;lt; に置換されます。%lt;%- の場合は置換されません。&lt;% スクリプトはレンダリング時にサーバー側で実行されます。</p>
+<div class="tab">テンプレート</div>
+<pre class=c2>
+<em>&lt;%=</em><span class="cm">変数名(HTMLエンコードあり)</span> <em>%&gt;</em>
+<em>&lt;%-</em><span class="cm">変数名(HTMLエンコードなし)</span> <em>%&gt;</em>
+<em>&lt;% </em><span class="cm">スクリプト</span> <em>%&gt;</em>
+<em>&lt;%#</em> <span class="cm">コメント</span> <em>%&gt;</em>
+<em>&lt;%% </em>  <span class="cm">'&lt;%' を文字列として表示したい場合に使用</span>
+<em> %&gt;</em>   <span class="cm">通常の閉じタグ</span>
+<em>-%&gt;</em>   <span class="cm">後続する改行や空白文字を削除(トリム)する</span>
+</pre>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://ejs.co/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://ejs.co/'" tppabs="http://ejs.co/">http://ejs.co/</a>
+</ul>
+</div>
+
+<h4 id="read_file">ファイルをノンブロッキングで読み出す</h4>
+<div class=i>
+<div class="tab">Node.js</div>
+<pre class=c2>
+var fs = <em>require("js")</em>;
+
+fs.<em>readFile("./data.dat", "utf8", function(err, data)</em> {
+  console.log(data);
+});
+</pre>
+</div>
+
+<h4 id="make_module">モジュールを作成する</h4>
+<div class=i>
+<p>exports を用いて、モジュールを作成することができます。</p>
+<div class="tab">mymod.js</div>
+<pre class=c2>
+<em>exports</em>.hello = function() {
+  return "Hello!";
+}
+</pre>
+<div class="tab">app.js</div>
+<pre class=c2>
+var mymod = require(<em>'./mymod'</em>);
+console.log(mymod.hello());
+</pre>
+<p>モジュール名が / で始まる場合は絶対パス、./ で始まる場合は相対パス、その他の場合は (2)コアモジュール(module.exports._buildinLibs)、(2)module.paths 配列、(3)環境変数 NODE_PATH の順番で探索します。拡張子(.js) は省略可能です。フォルダ名を指定した場合はその配下の index.js を読み込みます。index.js のファイル名は package.json の "main" パラメータで変更可能です。</p>
+</div>
+
+<h4 id="template_leteral">文字列中の変数を展開する</h4>
+<div class=i>
+<p>ES6(ES2015) で導入された Template Literal にも対応しており、バッククォート(`) 文字列の中で、${変数名} を展開することが可能です。</p>
+<div class="tab">Node.js</div>
+<pre class=c2>
+const PORT = 8080;
+console.log(`localhost:${PORT}`);
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class=i>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://nodejs.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://nodejs.org/'" tppabs="https://nodejs.org/">https://nodejs.org/</a>
+<li><a target="_top" href="javascript:if(confirm('https://nodejs.org/api/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://nodejs.org/api/'" tppabs="https://nodejs.org/api/">https://nodejs.org/api/</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2016-2018 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2018年1月7日</div>
+<div>http://www.tohoho-web.com/ex/nodejs.html</div>
+</body>
+</html>
+

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのjQuery入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<link rel="stylesheet" href="jquery.css" tppabs="http://www.tohoho-web.com/js/jquery/jquery.css">
+</head>
+<body>
+<h2>jQuery入門</h2>
+<a href="../../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/jquery/index.htm">jQuery</a> &gt;
+Deferred
+
+<h4>Deferred</h4>
+
+<h5 id="Deferred">◆ $.Deferred() <u>(1.5)</u></h5>
+<div class=i>
+<p>Deferred(延期された)オブジェクトは、未解決(pending)、解決(resolved)、棄却(rejected) のいずれかの状態を持つオブジェクトです。生成時は未解決(pending)の状態で、解決(resolved)または棄却(rejected)された時に何らかのアクションを起こしたい場合に利用されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var df = <em>$.Deferred()</em>;                            <span class="comment">// Deferredオブジェクトを生成する</span>
+df.<em>done(</em>function() { console.log("Done!"); });          <span class="comment">// 解決されたらDone!を表示する</span>
+df.<em>fail(</em>function() { console.log("Fail!"); });          <span class="comment">// 棄却されたらFail!を表示する</span>
+setTimeout(function() { df.<em>resolve()</em>; }, 3000);   <span class="comment">// Deferredオブジェクトを3秒後に解決状態にする</span>
+</pre>
+<p>done() や fail() も Deferredオブジェクトを返却するので、下記の様にも記述できます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var df = $.Deferred();
+df.<em>done(</em>function() { console.log("Done!"); })
+  .<em>fail(</em>function() { console.log("Fail!"); });
+</pre>
+<p>$.get(), $.load(), $.ajax() などの Ajax関数が返却する jqXHRオブジェクトも、Deferredオブジェクトとして扱うことができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var df = <em>$.get("xx2.htm")</em>;
+df.done(function() { console.log("Done!"); })
+  .fail(function() { console.log("Fail!"); });
+</pre>
+<p>$.when() を用いて、複数の非同期処理がすべて完了するのを待って、次のアクションを実行することが可能となります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>var df1 = $.get("xx.htm", function(data) {</em>   <span class="comment">// 非同期処理1(Ajax)</span>
+    console.log("DF1");
+});
+<em>var df2 = $.Deferred();</em>                      <span class="comment">// 非同期処理2(Animation)</span>
+$("#box").animate({ width:"100px", height:"100px" }, 3000, function() {
+    console.log("DF2");
+    df2.resolve();
+});
+<em>var df3 = $.Deferred();</em>                      <span class="comment">// 非同期処理3(Timeout)</span>
+setTimeout(function() {
+    console.log("DF3");
+    df3.resolve();
+}, 1000);
+<em>$.when(df1, df2, df3)</em>   <span class="comment">// 非同期処理1,2,3すべてが完了したら COMPLETE! を表示する</span>
+    .done(function() { console.log("COMPLETE!"); })
+    .fail(function() { console.log("FAIL"); });
+</pre>
+</div>
+
+<h5 id="resolve">◆ <i>deferred</i>.resolve([<i>args</i>]) <u>(1.5)</u></h5>
+<h5 id="resolveWith">◆ <i>deferred</i>.resolveWith(<i>context</i>[, <i>args</i>]) <u>(1.5)</u></h5>
+<div class=i>
+<p>Deferredオブジェクトを解決(resolved)状態にします。<i>args</i> には、done() や then() で指定するコールバック関数への引数を指定します。<i>context</i> には、コールバック関数で $(this) として参照されるコンテキストを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+df.<em>resolve(arg1, arg2, arg3)</em>;
+</pre>
+</div>
+
+<h5 id="reject">◆ <i>deferred</i>.reject([<i>args</i>]) <u>(1.5)</u></h5>
+<h5 id="rejectWith">◆ <i>deferred</i>.rejectWith(<i>context</i>[, <i>args</i>]) <u>(1.5)</u></h5>
+<div class=i>
+<p>Deferredオブジェクトを棄却(rejected)状態にします。<i>args</i> には、fail() や then() で指定するコールバック関数への引数を指定します。<i>context</i> には、コールバック関数で $(this) として参照されるコンテキストを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+df.<em>reject(arg1, arg2, arg3)</em>;
+</pre>
+</div>
+
+<h5 id="notify">◆ <i>deferred</i>.notify([<i>args</i>]) <u>(1.5)</u></h5>
+<h5 id="notifyWith">◆ <i>deferred</i>.notifyWith(<i>context</i>[, <i>args</i>]) <u>(1.5)</u></h5>
+<div class=i>
+<p>Deferredオブジェクトの状態を通知します。通知した際、Deferredオブジェクトの状態がまだ未解決(pending)の状態であれば、progress()で設定したコールバックが呼ばれます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+df.<em>notify(arg1, arg2, arg3)</em>;
+</pre>
+</div>
+
+<h5 id="done">◆ <i>deferred</i>.done(<i>callback(data, textStatus, jqXHR)</i>[, <i>callback</i>]) <u>(1.5)</u></h5>
+<h5 id="fail">◆ <i>deferred</i>.fail(<i>callback(jqXHR, textStatus, errorThrowed)</i>[, <i>callback</i>]) <u>(1.5)</u></h5>
+<h5 id="progress">◆ <i>deferred</i>.progress(<i>callback(...args)</i>[, <i>callback</i>]) <u>(1.7)</u></h5>
+<h5 id="always">◆ <i>deferred</i>.always(<i>callback(data_or_jqHXR, textStatus, jqXHR_or_errorThrowed)</i>[, <i>callback</i>]) <u>(1.6)</u></h5>
+<div class=i>
+<p>done()には Deferredオブジェクトが解決(resolved)状態になった時、fail() は棄却(rejected)状態になった時、progress() はオブジェクトが未解決(pending)の状態であるとnotify()によって通知された時、always() は解決(resolved)/棄却(rejected)いずれかの状態になった時に呼び出すコールバック関数を指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var df = $.Deferred();
+df.<em>done(</em>function(data, textStatus, jqXHR) {
+    console.log("Done!");
+  }<em>)</em>
+  .<em>fail(</em>function(jqXHR, textStatus, errorThrowed) {
+    console.log("Fail!");
+  }<em>)</em>
+  .<em>progress(</em>function(...args) {
+    console.log("Progress!");
+  }<em>)</em>
+  .<em>always(</em>function(data_or_jqXHR, textStatus, jqXHR_or_errorThrowed) {
+    console.log("Always!");
+  }<em>)</em>;
+</pre>
+</div>
+
+<h5 id="then">◆ <i>deferred</i>.then(<i>doneCallback</i>, <i>failCallback</i>) <u>(1.5/廃止:1.8)</u></h5>
+<h5>◆ <i>deferred</i>.then(<i>doneCallback</i>, <i>failCallback</i>[, <i>progressCallback</i>]) <u>(1.7/廃止:1.8)</u></h5>
+<h5>◆ <i>deferred</i>.then(<i>doneCallback</i>[, <i>failCallback</i>][, <i>progressCallback</i>]) <u>(1.8)</u></h5>
+<div class=i>
+<p>done(), fail(), progress() のコールバックを一度に指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var df = $.Deferred();
+df.<em>then(</em>
+    function() { console.log("Done!"); },
+    function() { console.log("Fail!"); },
+    function() { console.log("Progress!"); }
+<em>);</em>
+</pre>
+</div>
+
+<h5 id="catch">◆ <i>deferred</i>.catch(<i>callback(...args)</i>) <u>(3.0)</u></h5>
+<p>Deferredオブジェクトが棄却(rejected)状態になった時に呼び出すコールバック関数を指定します。fail() とほぼ同等のものですが、引数の形式、および、JavaScript の最新仕様に合わせて若干処理が異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.get('test.html')
+.fail(jqXHR, textStatus, errorThrowed) {
+  ...
+})
+<em>.catch(function(...args)</em> {
+  const [jqXHR, textStatus, errorThrowed] = args;
+  ...
+<em>})</em>;
+</pre>
+
+<h5 id="isResolved">◆ <i>deferred</i>.isResolved() <u>(1.5)</u></h5>
+<h5 id="isRejected">◆ <i>deferred</i>.isRejected() <u>(1.5)</u></h5>
+<div class=i>
+<p>Deferredオブジェクトが解決(resolved)状態にあるか、棄却(rejected)状態にあるか確認します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+if (df.<em>isResolved()</em>) { ... }
+if (df.<em>isRejected()</em>) { ... }
+</pre>
+</div>
+
+<h5 id="state">◆ <i>deferred</i>.state() <u>(1.7)</u></h5>
+<div class=i>
+<p>Deferredオブジェクトの状態を "pending", "resolved", "rejected" のいずれかで返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log("status = " + df.<em>state()</em>);
+</pre>
+</div>
+
+<h5 id="promise">◆ <i>deferred</i>.promise([<i>target</i>]) <u>(1.5)</u></h5>
+<div class=i>
+<p>Deferredオブジェクトを参照する Promiseオブジェクトを生成します。Promiseオブジェクトは Deferredオブジェクトとほぼ同様の動作をしますが、resolve(), resolveWith(), reject(), rejectWith(), notify(), notifyWith() メソッドを呼び出せない点のみが異なります。関数の戻り値に Deferredオブジェクトの代わりに Promiseオブジェクトを返すことで、Deferredオブジェクトの状態が外部から勝手に変更されないように隠蔽します。<i>target</i> を指定した場合、新規に Primiseオブジェクトを生成する代わりに、<i>target</i>オブジェクトに Promiseオブジェクトの機能を付加します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<span class="comment">// キッチンタイマーを作成する</span>
+function KitchenTimer(sec) {
+    this.timer = sec;
+    this.intervalId = null;
+    <em>this.deferred = $.Deferred();</em>
+
+    <span class="comment">// 100ms毎にカウントダウンする</span>
+    this.countdown = function() {
+        this.timer -= 100;
+        <em>this.deferred.notify();</em>   <span class="comment">// 100ms毎に progress() のコールバックを呼び出す</span>
+        if (this.timer &lt;= 0) {
+            clearInterval(this.intervalId);
+            <em>this.deferred.resolve();</em>  <span class="comment">// 完了したら解決(resolved)状態にする</span>
+        }
+    };
+
+    <span class="comment">// カウントダウンを開始する</span>
+    this.start = function() {
+        this.intervalId = setInterval(this.countdown.bind(this), 100);
+    };
+
+    <em>this.deferred.promise(this);</em>
+    return this;
+}
+
+var timer = new KitchenTimer(3000);
+timer.<em>done(function() { console.log("Done!"); });</em>
+timer.<em>progress(function() { console.log("."); });</em>
+timer.start();
+</pre>
+</div>
+
+<h5 id="promise2">◆ <i>obj</i>.promise([<i>queueName</i>][, <i>target</i>]) <u>(1.6)</u></h5>
+<div class=i>
+<p>すべてのアクションが完了するのを監視するための Promiseオブジェクトを生成し、返します。<i>queueName</i> にはキュー名を指定します。省略するとアニメーション用のキュー fx が参照されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").fadeOut(3000).fadeIn(3000);
+$("#d1").<em>promise()</em>.done(function() {
+    console.log("Complete!");
+});
+</pre>
+</div>
+
+<h5 id="pipe">◆ <i>deferred</i>.pipe([<i>doneCallback</i>][, <i>failCallback</i>]) <u>(1.6/廃止:1.8)</u></h5>
+<h5>◆ <i>deferred</i>.pipe([<i>doneCallback</i>][, <i>failCallback</i>][, <i>progressCallback</i>]) <u>(1.7/廃止:1.8)</u></h5>
+<div class=i>
+<p>then() と同様、完了時、エラー発生時のコールバック関数を指定しますが、jQuery 1.8 で廃止されました。代わりに <a href="#then">then()</a> を使用してください。</p>
+</div>
+
+<h5 id="when">◆ $.when(<i>deferreds</i>) <u>(1.5)</u></h5>
+<div class=i>
+<p>複数の Deferredオブジェクトを監視し、すべてが解決(resolved)状態になった場合に done() のコールバックを呼び出します。一つでも棄却状態になると fail() のコールバックを呼び出します。詳細は <a href="#Deferred">$.Deferred()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$.when(df1, df2, df3)</em>   <span class="comment">// 非同期処理1,2,3すべてが完了したら COMPLETE! を表示する</span>
+    .done(function() { console.log("COMPLETE!"); })
+    .fail(function() { console.log("FAIL"); });
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2013-2019 杜甫々</div>
+<div>初版：2013年2月3日、最終更新：2019年5月5日</div>
+<div>http://www.tohoho-web.com/js/jquery/deferred.htm</div>
+</body>
+</html>

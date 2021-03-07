@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HTML5 - オフラインWebアプリケーション - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>HTML5 - オフラインWebアプリケーション</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/html5/index.html">HTML5</a> &gt;
+オフラインWebアプリケーション
+
+<div class="warning">
+このページで紹介している Offline Web Application は、現在ではあまり使用されていません。代わりに Service Worker が使用されています。
+</div>
+
+<h4>オフラインWebアプリケーションとは</h4>
+<div class=i>
+<p>オフラインWebアプリケーション(Offline Web Applications)は、HTML, CSS, JavaScript, 画像等のファイルをパソコンや端末側にキャッシュさせておき、ネットに接続されていないオフライン状態でも、Web アプリケーションの実行を可能にする技術です。下記の文書で仕様が検討されています。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/offline-webapps/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/offline-webapps/'" tppabs="https://www.w3.org/TR/offline-webapps/">https://www.w3.org/TR/offline-webapps/</a>
+</ul>
+<p>下記のブラウザでサポートされています。</p>
+<ul>
+<li>Internet Explorer 10(β)
+<li>Firefox 3.5
+<li>Google Chrome 4.0
+<li>Opera 10.6
+<li>Safari 4.0
+</ul>
+</div>
+
+<h4>サンプル</h4>
+<div class=i>
+<p>実際のサンプルがこちらです。2つの数字を合計して結果を表示する Webアプリケーションです。LANケーブルを PC から抜くなどして、ネットに接続できない状態でも、利用することができます。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://www.tohoho-web.com/html5/u.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/html5/u.htm'" tppabs="http://www.tohoho-web.com/html5/offline_sample.html">オフラインWebアプリケーションサンプル</a>
+</ul>
+</div>
+
+<h4>作成方法</h4>
+<div class=i>
+<p>下記の 4つのファイルを作成します。</p>
+<ul>
+<li>offline_sample.html
+<li>offline_sample.manifest
+<li>offline_sample.js
+<li>.htaccess
+</ul>
+<p>offline_sample.html はごく普通のHTMLファイルですが、htmlタグに <b>manifest="offline_sample.manifest"</b> 属性を追記します。</p>
+<div class="title-tab">offline_sample.html</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html manifest="<em>offline_sample.manifest</em>"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;HTML5 Offline Web Application Sample&lt;/title&gt;
+    &lt;script src="<em>offline_sample.js</em>"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body onload="showVersion()"&gt;
+    &lt;h1&gt;オフラインWebアプリケーションサンプル&lt;/h1&gt;
+    &lt;hr&gt;
+    &lt;p&gt;簡単な足し算を行います。&lt;/p&gt;
+    &lt;input id="x" type="text" value="5"&gt; ＋
+    &lt;input id="y" type="text" value="6"&gt;
+    &lt;button onclick="doCalc()"&gt;＝&lt;/button&gt;
+    &lt;input id="z" type="text"&gt;
+    &lt;hr&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>offline_sample.manifest にはオフライン状態に備えてキャッシュさせたいファイルなどを(<b>UTF-8で</b>)記述します。</p>
+<div class="title-tab">offline_sample.manifest</div>
+<pre class=c2>
+CACHE MANIFEST
+# Version 1.1
+CACHE:
+offline_sample.html
+offline_sample.js
+</pre>
+<p>offline_sample.js は、ごく普通のJavaScriptファイルです。</p>
+<div class="title-tab">offline_sample.js</div>
+<pre class=c2>
+function doCalc() {
+    var x = document.getElementById('x');
+    var y = document.getElementById('y');
+    var z = document.getElementById('z');
+    z.value = Number(x.value) + Number(y.value);
+}
+</pre>
+<p>*.manifest ファイルのタイプを <b>text/cache-manifest</b> に設定するため、.htaccess に下記を記載します。アップロード先のフォルダにすでに .htaccess ファイルが存在する場合は、その末尾に追記してください。.htaccess が許可されていない場合は、httpd.conf ファイルに追記します。Webサーバが Apache で無い場合や、設定の権限が無い場合は、Webサーバの管理者に相談してください。</p>
+<div class="title-tab">.htaccess</div>
+<pre class=c2>
+AddType text/cache-manifest .manifest
+</pre>
+</div>
+
+<h4>Manifestファイル</h4>
+<div class=i>
+<p>Manifestファイルのサンプルを下記に示します。</p>
+<pre class=c>
+<em>CACHE MANIFEST</em>
+# V1.1
+
+<em>CACHE:</em>
+index.html
+js/sample1.js
+js/sample2.js
+css/sample1.css
+css/sample2.css
+img/sample1.gif
+img/sample2.gif
+
+<em>NETWORK:</em>
+cgi/sample1.cgi
+cgi/sample2.cgi
+api/sample1.php
+api/sample2.php
+
+<em>FALLBACK:</em>
+error.html
+</pre>
+<table class="tb1">
+ <tr><th>キーワード</th><th>説明</th></tr>
+ <tr>
+  <td style="white-space:nowrap"><b>CACHE MANIFEST</b></td>
+  <td>このファイルがキャッシュマニフェストであることを宣言します。必ずファイルの1行目に記述しなくてはなりません。</td>
+ </tr>
+ <tr>
+  <td style="white-space:nowrap"><b># コメント...</b></td>
+  <td><b>#</b> で始まる行はコメントです。アプリケーションを更新するために、バージョン番号を記載しておくのが通例です。</td>
+ </tr>
+ <tr>
+  <td style="white-space:nowrap"><b>CACHE:</b></td>
+  <td>CACHEセクションとして、キャッシュさせたいURLの一覧を記述します。CACHEセクションは省略できませんが、CACHEがデフォルトセクションのため、CACHE:キーワードは省略可能です。</td>
+ </tr>
+ <tr>
+  <td style="white-space:nowrap"><b>NETWORK:</b></td>
+  <td>NETWORKセクションとして、キャッシュせず、常にサーバにアクセスすべきURLの一覧を記述します。NETWORKセクションは省略可能です。</td>
+ </tr>
+ <tr>
+  <td style="white-space:nowrap"><b>FALLBACK:</b></td>
+  <td>FALLBACKセクションとして、キャッシュが存在しない場合に代替として表示するファイルを記述します。FALLBACKセクションは省略可能です。</td>
+ </tr>
+</table>
+</div>
+
+<h4>アプリケーションの更新</h4>
+<div class=i>
+<p>アプリケーションを更新した際は、更新したファイルをアップロードすると共に、Manifestファイルに対しても、コメントのバージョン番号などを1文字書き換えます。この場合、下記のブラウザ動作によって更新ファイルが再ダウンロードされます。</p>
+<ul>
+<li>HTMLファイルに manifest の記載があれば、Manifest ファイルをダウンロードする。
+<li>Manifest に記載されたキャッシュすべきファイルをダウンロードしてキャッシュする。
+<li>ブラウザを再起動しても、キャッシュされたファイルでアプリケーションを実行する。
+<li>ページが再描画されると、manifest ファイルのみ、再ダウンロードを試みる。
+<li>ダウンロードが失敗した場合は、キャッシュファイルのみでアプリケーションを実行する。
+<li>ダウンロードが成功し、内容が1文字でも変更されていれば、個々のファイルの更新をチェックし、更新されているファイルを再ダウンロードする。
+</ul>
+</div>
+
+<h4>ブラウザ毎の関連操作</h4>
+<h5>◆ キャッシュの確認</h5>
+<div class=i>
+<ul>
+<li>IE9: 未サポート
+<li>Firefox 12: アドレス欄に <b>about:cache</b> を入力。
+<li>Chrome 18: アドレス欄に <b>chrome://appcache-internals</b> を入力。
+<li>Opera 11.6: 不明
+<li>Safari 5.1.5: 不明
+</ul>
+</div>
+<h5>◆ キャッシュの削除</h5>
+<div class=i>
+<ul>
+<li>IE9: [ツール]→[閲覧の履歴の削除]
+<li>Firefox 12: [ツール]→[最新の履歴を消去]
+<li>Chrome 18: [ツール]→[設定]→[高度な設定]→[閲覧履歴データの消去]
+<li>Opera 11.6: [メニュー]→[設定]→[設定]→[詳細設定]→[履歴]→[今すぐ削除する]
+<li>Safari 5.1.5: [メニュー]→[設定]→[プライバシー]→[すべてのWebサイトデータを削除]
+</ul>
+</div>
+<h5>◆ オンラインモード、オフラインモードの切り替え</h5>
+<div class=i>
+<ul>
+<li>IE9: [ファイル]→[オフライン作業]
+<li>Firefox 12: [ファイル]→[オフライン作業]
+<li>Chrome 18: 不明
+<li>Opera 11.6: [メニュー]→[設定]→[オフライン作業]
+<li>Ssfari 5.1.5: 不明
+</ul>
+</div>
+
+<h4>API</h4>
+<div class=i>
+<p><b>navigator</b> オブジェクトの <b>onLine</b> 属性で、現在オンラインか否かを判断することができます。実際にネットに接続しているかではなく、ブラウザが [オフラインモード] に切り替えられているか否かを判断します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+if (<em>navigator.onLine</em> == true) {
+    alert("On line!");
+} else {
+    alert("Off line");
+}
+</pre>
+<p>bodyオブジェクト等に、online, offlineイベントを設定できるようになりました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+document.body.addEventListener("<em>online</em>", function() {
+    alert("オンラインに切り替わりました");
+});
+document.body.addEventListener("<em>offline</em>", function() {
+    alert("オフラインに切り替わりました");
+});
+</pre>
+<p>ローカルストレージアクセスと組み合わせることで、オフライン作業中のデータをローカルストレージに保存することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>localStorage[</em>"sampleData"<em>]</em> = "Sample Data";
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class=i>
+<ul>
+<li>W3C: <a href="javascript:if(confirm('http://www.w3.org/TR/offline-webapps/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.w3.org/TR/offline-webapps/'" tppabs="http://www.w3.org/TR/offline-webapps/">http://www.w3.org/TR/offline-webapps/</a>
+<li>IE: <a href="javascript:if(confirm('http://msdn.microsoft.com/en-us/library/v.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://msdn.microsoft.com/en-us/library/v.htm'" tppabs="http://msdn.microsoft.com/en-us/library/hh673545(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/hh673545(v=vs.85).aspx</a>
+<li>Firefox(日): <a href="javascript:if(confirm('https://developer.mozilla.org/ja/w.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://developer.mozilla.org/ja/w.htm'" tppabs="https://developer.mozilla.org/ja/Offline_resources_in_Firefox">https://developer.mozilla.org/ja/Offline_resources_in_Firefox</a>
+<li>Firefox(英): <a href="javascript:if(confirm('https://developer.mozilla.org/en/w.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://developer.mozilla.org/en/w.htm'" tppabs="https://developer.mozilla.org/en/Offline_resources_in_Firefox">https://developer.mozilla.org/en/Offline_resources_in_Firefox</a>
+<li>Opera: <a href="javascript:if(confirm('http://jp.opera.com/docs/specs/presto2.10/offlinewebapps/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://jp.opera.com/docs/specs/presto2.10/offlinewebapps/'" tppabs="http://jp.opera.com/docs/specs/presto2.10/offlinewebapps/">http://jp.opera.com/docs/specs/presto2.10/offlinewebapps/</a> (Presto 2.10=Opera11.6)
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2012 杜甫々</div>
+<div>初版：2012年5月6日、最終更新：2012年5月6日</div>
+<div>http://www.tohoho-web.com/html5/offline.html</div>
+</body>
+</html>

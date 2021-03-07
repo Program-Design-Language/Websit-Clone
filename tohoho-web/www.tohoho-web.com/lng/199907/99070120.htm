@@ -1,0 +1,141 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>FRAME SRCで指定したCGIに引数を付けてPOSTで送信することができますか？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>FRAME SRCで指定したCGIに引数を付けてPOSTで送信することができますか？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070119.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070119.htm">[前に]</a>
+<a href="99070121.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070121.htm">[次に]</a>
+<hr>
+<span class=name>ＡＢＣくん</span>
+<span class=email><a href="mailto:leppard@z2.zzz.or.jp">[E-Mail]</a></span>
+<span class=time>1999/07/12(月) 18:08:27</span><br>
+例えば<br>
+&lt;FRAME SRC="/bin/aaa.cgi?key=1" NAME="fr1"&gt;<br>
+&lt;FRAME SRC="/bin/bbb.cgi?key=2" NAME="fr2"&gt;<br>
+<br>
+とした時に、keyの値をQUERY_STRINGからではなく標準入力から<br>
+取りたいんですけど、その様なことは可能なのでしょうか？<br>
+<hr>
+<span class=name>ST</span>
+<span class=time>1999/07/12(月) 20:06:10</span><br>
+通常のHTMLタグでは無理だと思います。<br>
+一番近いのはJavaScriptを使って<br>
+document.forms[0].submit();<br>
+とでもすることでしょうか。<br>
+<br>
+別々のhtmlファイルを呼び出し，そこから新たにCGIをPOSTで呼び出す，といった形になろうかと思います。<br>
+<hr>
+<span class=name>ＡＢＣくん</span>
+<span class=email><a href="mailto:leppard@z2.zzz.or.jp">[E-Mail]</a></span>
+<span class=time>1999/07/13(火) 13:42:06</span><br>
+ご返事ありがとうございます。<br>
+やはりそれしかありませんか。<br>
+フレーム画面の前の画面で入力された情報をそのフレーム<br>
+によって２つに分かれている画面（２つのＣＧＩ）の両方にわたさなくてはだめなんです。<br>
+GETを用いるときのQUERY_STRINGに最大何バイトはいるか<br>
+わかればGETでの送信でも良いんですけど、<br>
+ちょっとPOSTじゃないと心配なんですよね。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/07/13(火) 14:45:19</span><br>
+・単一の画面（フォーム）からＣＧＩ処理。その結果をフレームで出力するが<br>
+　フレーム内の二つの画面とも最初ＣＧＩの結果から出力したい。<br>
+<br>
+と、いう事でいいんですよね。<br>
+最初のＣＧＩ処理の時に、サーバー上にテンポラリ（一時）ファイルを<br>
+作るのはどうでしょう。<br>
+恐らくフレームをＣＧＩで出力すると思いますので、<br>
+最初のＣＧＩでファイルを作成して・・・<br>
+<br>
+&lt;FRAME SRC="/cgi-bin/hoge.cgi?990713134206.tmp" NAME="frame1"&gt;<br>
+&lt;FRAME SRC="/cgi-bin/fuga.cgi?990713134206.tmp" NAME="frame2"&gt;<br>
+<br>
+なんて感じで、テンポラリファイルの名称を次のＣＧＩに渡すとか・・・<br>
+（990713134206.tmpってのがファイル名のつもりね）<br>
+ファイル名の付け方や、処理がかぶった時、ファイルの後始末とかでちょっと<br>
+悩むかもしれませんが、まあこれならサイズの心配はいらないですし(^_^;)<br>
+<br>
+あまり現実的ではなかったかな・・・？<br>
+<hr>
+<span class=name>ＡＢＣくん</span>
+<span class=email><a href="mailto:leppard@z2.zzz.or.jp">[E-Mail]</a></span>
+<span class=time>1999/07/14(水) 12:04:59</span><br>
+ご返事ありがとうございます。<br>
+テンポラリファイルはチラッと考えました。<br>
+ご指摘の通りファイルの後始末などいろいろと<br>
+考えることが多くなりそうですし違うところで時間がかかっちゃいますよね。<br>
+今つくってる物がどのくらいのアクセスがあるものなのか<br>
+まだわからないのでその方法はちょっと危険なんです<br>
+（某会社のイントラネットで動くシステム）<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/07/14(水) 13:58:16</span><br>
+＜すみません、ちょっと長文になります＞<br>
+<br>
+えっと・・・<br>
+私も勉強がてら、考えてみました。<br>
+ＳＴさんの考えを基本にしてやる方法です。<br>
+まず、データを渡す側のＣＧＩですが、以下のようなＨＴＭＬを出力します。<br>
+<br>
+&lt;html&gt;&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;<br>
+&lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&lt;!--<br>
+function datawrite(obj,cgin){<br>
+formtag="&lt;form method=post action='/cgi-bin/" + cgin + "' name=form1&gt;"<br>
+obj.document.write(formtag);<br>
+obj.document.write("&lt;input type=hidden name='a' value='1'&gt;");<br>
+obj.document.write("&lt;input type=hidden name='b' value='2'&gt;");<br>
+//ここに、渡したいデータの分だけ ↑のように、<br>
+//formのinputタグの形式で文を生成する<br>
+obj.document.write("&lt;/form&gt;");<br>
+}<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+&lt;FRAMESET COLS="50%,*"&gt;<br>
+ &lt;FRAME src="frame1.html" NAME="A"&gt;<br>
+ &lt;FRAME src="frame2.html" NAME="B"&gt;<br>
+&lt;/FRAMESET&gt;<br>
+&lt;/html&gt;<br>
+<br>
+そんで、frame1.htmlの内容は、以下の通り<br>
+<br>
+&lt;html&gt;&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;<br>
+&lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&lt;!--<br>
+parent.datawrite(this,'aaa.cgi');<br>
+this.document.close();<br>
+this.document.form1.submit();<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+&lt;/body&gt;&lt;/html&gt;<br>
+<br>
+frame2.htmlは上記内容とほぼ同じで、'aaa.cgi'ってのが違うだけの<br>
+ファイルを作っておきます。<br>
+<br>
+これなら、frame1.html,frame2.htmlは固定で置いておけば良いだけですし、<br>
+渡したいデータをＰＯＳＴで好きなだけ渡せますが。<br>
+ちょっと回りくどい方法なのでアレかもしれませんが・・・。<br>
+レスポンスも・・・その環境でやってみないコトには分かりません・・・。<br>
+(^_^;)<br>
+<hr>
+<span class=name>ＡＢＣくん</span>
+<span class=email><a href="mailto:leppard@z2.zzz.or.jp">[E-Mail]</a></span>
+<span class=time>1999/07/14(水) 18:54:46</span><br>
+<span class=resolv>[[解決]]</span><br>
+教えていただいた方法で、つくってみたところ・・できました！！！<br>
+<br>
+FRAME作成部分のＨＴＭＬにもこのように<br>
+JavaScriptを書くことができたんですね。<br>
+非常に勉強になりました。<br>
+<br>
+ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070119.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070119.htm">[前に]</a>
+<a href="99070121.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070121.htm">[次に]</a>
+</body>
+</html>

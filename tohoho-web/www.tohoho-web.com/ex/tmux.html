@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>tmux入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>tmux入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+tmux入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">tmuxとは</a>
+<li><a href="#install">インストール</a>
+<li><a href="#run-exit">セッション操作</a>
+<li><a href="#window">ウィンドウ操作</a>
+<li><a href="#pane">ペイン操作</a>
+<li><a href="#copy">コピー操作</a>
+<li><a href="#other">その他の操作</a>
+<li><a href="#customize">カスタマイズ</a>
+</ul>
+</div>
+
+<h4 id="about">tmuxとは</h4>
+<div class="i">
+<ul>
+<li>ターミナルマルチプレクサ(Terminal Multiplexer) の略です。
+<li>Linux 系のターミナル画面を複数のセッション、ウィンドウ、ペインに分割して利用することができます。
+<li>ひとつのターミナルは複数のセッションを持つことができます。
+<li>ひとつのセッションは複数のウィンドウを持つことができます。
+<li>ひとつのウィンドウは複数のペインを持つことができます。
+<li>ターミナルを終了してもセッションは維持されます。コマンドを実行して翌日の朝結果を確認しようとしたら SSH ログアウトしてしまっていたという悲劇を避けることができます。
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">// CentOS 7</span>
+# yum install -y tmux
+
+<span class="cm">// Ubuntu</span>
+# sudo apt install tmux
+</pre>
+<p>ただし、yum でインストールされるのは 1.8 という古いバージョンなので、最新版(2.9)をインストールするには次のようにします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# curl -kLO https://github.com/tmux/tmux/releases/download/2.9/tmux-2.9.tar.gz
+# yum -y install gcc libevent-devel ncurses-devel
+# tar -zxvf tmux-2.9.tar.gz
+# cd tmux-2.9
+# ./configure
+# make
+# make install
+</pre>
+</div>
+
+<h4 id="run-exit">セッション操作</h4>
+<div class="i">
+<p>ひとつのターミナルから複数のセッションを作成することができます。ターミナルを閉じてもセッションは維持されます。セッション実行中は画面の下部に緑のステータスバーが表示されます。</p>
+<table class="tb1">
+ <tr><th>コマンド</th><th>説明</th></tr>
+ <tr><td>tmux</td><td>セッションを起動</td></tr>
+ <tr><td>tmux new -s 名前</td><td>名前付きセッションを起動</td></tr>
+ <tr><td>exit</td><td>セッションを終了</td></tr>
+ <tr><td>Ctrl-b d</td><td>セッションを一時的に中断してメインに戻る (Detach)</td></tr>
+ <tr><td>tmux a</td><td>中断していたセッションに戻る (Attach)</td></tr>
+ <tr><td>tmux a -t 名前</td><td>中断していた名前付きセッションに戻る</td></tr>
+ <tr><td>Ctrl-b s</td><td>セッションの一覧を表示</td></tr>
+ <tr><td>tmux list-sessions</td><td>セッションの一覧を表示</td></tr>
+ <tr><td>tmux kill-session -t 名前</td><td>指定したセッションを終了</td></tr>
+</table>
+</div>
+
+<h4 id="window">ウィンドウ操作</h4>
+<div class="i">
+<p>ひとつのセッションの中で複数のウィンドウを作成し、切り替えながら作業することができます。ウィンドウの一覧は画面下部のステータスバーに 「数字:ウィンドウ名」で表示されます。</p>
+<table class="tb1">
+ <tr><th>コマンド</th><th>説明</th></tr>
+ <tr><td>Ctrl-b c</td><td>新規ウィンドウを作成 (Create)</td></tr>
+ <tr><td>Ctrl-b 数字</td><td>数字で指定したウィンドウに移動</td></tr>
+ <tr><td>Ctrl-b n</td><td>次のウィンドウに移動 (Next)</td></tr>
+ <tr><td>Ctrl-b p</td><td>前のウィンドウに移動 (Prev)</td></tr>
+ <tr><td>Ctrl-b l</td><td>以前のウィンドウに移動 (Last)</td></tr>
+ <tr><td>Ctrl-b w</td><td>ウィンドウの一覧を表示 (Window)</td></tr>
+ <tr><td>Ctrl-b ,</td><td>ウィンドウ名を変更</td></tr>
+ <tr><td>Ctrl-b '</td><td>ウィンドウ番号を指定して移動</td></tr>
+ <tr><td>Ctrl-b .</td><td>ウィンドウ番号を変更</td></tr>
+ <tr><td>Ctrl-b &amp;</td><td>ウィンドウ名を終了 (確認付き)</td></tr>
+ <tr><td>exit</td><td>ウィンドウを終了</td></tr>
+</table>
+</div>
+
+<h4 id="pane">ペイン操作</h4>
+<div class="i">
+<p>ひとつのウィンドウをさらに上下左右のペインに分割して操作することができます。</p>
+<table class="tb1">
+ <tr><th>コマンド</th><th>説明</th></tr>
+ <tr><td>Ctrl-b "</td><td>上下にペインを分割</td></tr>
+ <tr><td>Ctrl-b %</td><td>左右にペインを分割</td></tr>
+ <tr><td>Ctrl-b 矢印</td><td>ペインを移動</td></tr>
+ <tr><td>Ctrl-b o</td><td>次のペインに移動</td></tr>
+ <tr><td>Ctrl-b ;</td><td>以前のペインに移動</td></tr>
+ <tr><td>Ctrl-b q</td><td>ペイン番号を表示</td></tr>
+ <tr><td>Ctrl-b {</td><td>ペイン順序を前方向に入れ替え</td></tr>
+ <tr><td>Ctrl-b }</td><td>ペイン順序を後方向に入れ替え</td></tr>
+ <tr><td>Ctrl-b z</td><td>ペインを最大化・復帰</td></tr>
+ <tr><td>Ctrl-b SPACE</td><td>ペインのレイアウトを変更</td></tr>
+ <tr><td>Ctrl-b t</td><td>ペインに時計を表示 (q で終了)</td></tr>
+ <tr><td>Ctrl-b !</td><td>ペインをウィンドウ化</td></tr>
+ <tr><td>Ctrl-b x</td><td>ペインを終了(確認有り)</td></tr>
+ <tr><td>exit</td><td>ペインを終了</td></tr>
+</table>
+</div>
+
+<h4 id="copy">コピー操作</h4>
+<div class="i">
+<p>コピーモードを使用して画面上の文字をコピー・ペーストすることができます。デフォルトは Emacs 風のキーバインドですが、~/.tmux.conf に set-window-option -g mode-keys vi を追記して vi モードで使用するのがお勧めです。コピーモード中は画面の右上に選択文字数が黄色く表示されます。</p>
+<table class="tb1">
+ <tr><th>コマンド</th><th>説明</th></tr>
+ <tr><td>Ctrl-b [</td><td>コピーモードを開始する</td></tr>
+ <tr><td>h</td><td>カーソルを左に移動する</td></tr>
+ <tr><td>j</td><td>カーソルを下に移動する</td></tr>
+ <tr><td>k</td><td>カーソルを上に移動する</td></tr>
+ <tr><td>l</td><td>カーソルを右に移動する</td></tr>
+ <tr><td>SPACE</td><td>コピー選択を開始する</td></tr>
+ <tr><td>ENTER</td><td>コピー選択を終了してコピーバッファに格納し、コピーモードを終了する</td></tr>
+ <tr><td>Ctrl-b ]</td><td>コピーした内容を貼り付ける</td></tr>
+ <tr><td>v</td><td>矩形モードを切り替える</td></tr>
+ <tr><td>q</td><td>コピーモードを途中で終了する</td></tr>
+ <tr><td>Ctrl-u</td><td>スクロールアップ</td></tr>
+ <tr><td>Ctrl-d</td><td>スクロールダウン</td></tr>
+ <tr><td>Ctrl-b</td><td>ページアップ</td></tr>
+ <tr><td>Ctrl-f</td><td>ページダウン</td></tr>
+</table>
+</div>
+
+<h4 id="other">その他の操作</h4>
+<div class="i">
+<table class="tb1">
+ <tr><th>コマンド</th><th>説明</th></tr>
+ <tr><td>Ctrl-b ?</td><td>キーバインドの一覧を表示 (q で戻る)</td></tr>
+ <tr><td>Ctrl-b :</td><td>コマンド入力モード (list-windowsなど)</td></tr>
+</table>
+</div>
+
+<h4 id="customize">カスタマイズ</h4>
+<div class="i">
+<p>~/.tmux.conf ファイルで tmux の挙動をカスタマイズすることができます。</p>
+<div class="title-tab">.tmux.conf</div>
+<pre class="c2">
+<span class="cm"># Prefix(Ctrl-b)をCtrl-jに変更する</span>
+unbind-key C-b
+set-option -g prefix C-j
+bind-key C-j send-prefix
+
+<span class="cm"># ペインの開始番号を 0 から 1 に変更する</span>
+set-option -g base-index 1
+
+<span class="cm"># マウスでウィンドウ・ペインの切り替えやリサイズを可能にする</span>
+set-option -g mouse on                    <span class="cm"># tmux 2.1以降</span>
+# set-option -g mode-mouse on               <span class="cm"># tmux 2.0以前</span>
+# set-option -g mouse-select-window on      <span class="cm"># tmux 2.0以前</span>
+# set-option -g mouse-select-pane on        <span class="cm"># tmux 2.0以前</span>
+# set-option -g mouse-resize-pane on        <span class="cm"># tmux 2.0以前</span>
+
+<span class="cm"># ステータスバーの背景色を変更する</span>
+set-option -g status-bg "colour255"
+
+<span class="cm"># コピーモードのキー操作をviライクにする</span>
+set-window-option -g mode-keys vi
+
+<span class="cm"># コピーした際にWindowsのクリップボードにも転送する (yum install -y xsel)</span>
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "xsel -bi"
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2020-2021 杜甫々</div>
+<div>初版：2020年4月26日、最終更新：2021年2月28日</div>
+<div>http://www.tohoho-web.com/ex/tmux.html</div>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Dockerfileによるビルド - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Dockerfileによるビルド</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+Dockerfileによるビルド
+
+<h4 id="dockerfile">Dockerfileとは</h4>
+<div class="i">
+<p>Dockerfile により、ベースとなるイメージを元に必要なパッケージやファイルをインストールし、新たなイメージを作成する作業を自動化することができます。下記の例では、centos:7 イメージをベースとして、Apache (httpd) をインストールし、新たなイメージを作成します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# mkdir ./work
+# cd ./work
+# cat &gt; <em>Dockerfile</em> &lt;&lt;EOF
+FROM centos:7
+RUN yum install -y httpd
+CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
+EOF
+# docker build -t my-app:latest .
+# docker images
+</pre>
+<p>Dockerfile では以下のコマンドを使用できます。</p>
+<ul>
+<li><a href="#from">FROM</a> ... ベースとなるイメージ
+<li><a href="#run">RUN</a> ... docker build 時に実行するコマンド
+<li><a href="#cmd">CMD</a> ... docker run 時に実行するコマンド
+<li><a href="#entrypoint">ENTRYPOINT</a> ... docker run 時に実行するコマンド
+<li><a href="#maintainer">MAINTAINER</a> ... 作者情報
+<li><a href="#label">LABEL</a> ... ラベル情報(メタデータ)
+<li><a href="#expose">EXPOSE</a> ... 公開ポート番号
+<li><a href="#env">ENV</a> ... 環境変数
+<li><a href="#arg">ARG</a> ... 一時変数
+<li><a href="#copy">COPY</a> ... ホストからコンテナへのファイルコピー
+<li><a href="#add">ADD</a> ... ホストからコンテナへのファイルコピー
+<li><a href="#volume">VOLUME</a> ... ボリューム
+<li><a href="#user">USER</a> ... 実行ユーザ
+<li><a href="#shell">SHELL</a> ... シェル指定
+<li><a href="#workdir">WORKDIR</a> ... ワークディレクトリ
+<li><a href="#onbuild">ONBUILD</a> ... ビルド時に実行するコマンド
+<li><a href="#stopsignal">STOPSIGNAL</a> ... コンテナ終了時に送信されるシグナル
+<li><a href="#healthcheck">HEALTHCHECK</a> ... ヘルスチェック
+</ul>
+</div>
+
+<h4 id="from">FROM</h4>
+<div class="i">
+<p>ベースとなるイメージを指定します。Dockerfile の先頭に必ず必要です。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>FROM</em> centos:7
+</pre>
+<p>タグを省略すると :latest が指定されたとみなします。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>FROM</em> centos
+</pre>
+<p>タグの代わりに @ でダイジェストを指定することもできます。ダイジェストは docker images --digests で表示されます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>FROM</em> centos@sha256:a799dd8a2ded4a83484bbae769d97655392b3f86533ceb7dd96bbac929809f3c
+</pre>
+</div>
+
+<h4 id="run">RUN</h4>
+<div class="i">
+<p>ビルド時に実行するコマンドを指定します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>RUN</em> yum install -y httpd
+</pre>
+<p>コマンドの呼び出しは 「シェル形式」 と 「exec形式」 の2つの形式があります。シェル形式の場合は /bin/sh -c (Windows では cmd /S /C) にコマンド文字列が渡され、echo などのシェルコマンドの実行や、環境変数の展開などが可能となります。exec形式は直接そのコマンドが実行されます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+RUN yum install -y httpd                <span class="cm">シェル形式</span>
+RUN ["yum", "install", "-y", "httpd"]   <span class="cm">exec形式</span>
+</pre>
+<p>exec形式でバックスラッシュ(\)を使用する際は二重に記述する必要があります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+RUN ["C:\\windows\\system32\\tasklist.exe"]
+</pre>
+<p>RUN が実行される度にイメージのレイヤが増えるため、コマンドを &amp;&amp; や ; で連結し、複数のコマンドをひとつの RUN にまとめて記述することが推奨されています。(最近の Docker では無理に連結しなくても後でレイヤを削減できるとも聞いたのですが未調査)</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+RUN yum update -y &amp;&amp; \
+    yum install -y httpd &amp;&amp; \
+    wget http://download.exeample.com/centos7/app-1.2.3.tar.gz
+</pre>
+</div>
+
+<h4 id="cmd">CMD</h4>
+<div class="i">
+<p>docker run 時に実行するコマンド、または docker run 時に実行する ENTRYPOINT コマンドの引数を指定します。CMD もまた、シェル形式と exec形式があります。シェル形式の場合、シェル機能を利用できる反面、PID=1 のプロセスが /bin/sh -c となり、docker stop を行っても SIGTERM を受け取るのは /bin/sh となり、コマンドがシグナルを受け取ることができないデメリットがあります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>CMD</em> ["/usr/sbin/httpd", "-DGOREGROUND"]    <span class="cm">exec形式(推奨)</span>
+<em>CMD</em> /usr/sbin/httpd -DFOREGROUND           <span class="cm">シェル形式</span>
+<em>CMD</em> ["param1", "param2"]                   <span class="cm">ENTRYPOINT の引数</span>
+</pre>
+</div>
+
+<h4 id="entrypoint">ENTRYPOINT</h4>
+<div class="i">
+<p>docker run 時に実行するコマンドをシェル形式、またはexec形式で指定します。CMD と似てますが、「--entrypoint オプション &gt; ENTRYPOINT &gt; run引数 &gt; CMD」の優先度があります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>ENTRYPOINT</em> ["/bin/cmd", "arg1", "arg2"]    <span class="cm">exec形式</span>
+<em>ENTRYPOINT</em> /bin/cmd arg1 arg2              <span class="cm">シェル形式</span>
+</pre>
+<p>ENTRYPOINT と CMD が exec形式で指定された場合、docker run を引数無しで実行すると ENTRYPOINT＋CMD が、引数有りで実行すると ENTRYPOINT＋run引数が実行されます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+ENTRYPOINT ["/bin/cmd", "arg1", "arg2"]
+CMD ["arg3", "arg4"]
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run image1                 <span class="cm">/bin/cmd arg1 arg2 arg3 arg4 が実行される</span>
+# docker run image1 arg5 arg6       <span class="cm">/bin/cmd arg1 arg2 arg5 arg6 が実行される</span>
+</pre>
+<p>CMD のみの場合は、CMD の第一引数がコマンドとみなされます。docker run の引数により上書きされます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+CMD ["/bin/cmd", "arg1", "arg2"]
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run image1                       <span class="cm">/bin/cmd arg1 arg2 が実行される</span>
+# docker run image1 /bin/cmd2 arg3 arg4   <span class="cm">/bin/cmd2 arg3 arg4 が実行される</span>
+</pre>
+<p>ENTRYPOINT のみの場合は、ENTRYPOINT＋run引数が実行されます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+ENTRYPOINT ["/bin/cmd", "arg1", "arg2"]
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run image1                 <span class="cm">/bin/cmd arg1 arg2 が実行される</span>
+# docker run image1 arg3 arg4       <span class="cm">/bin/cmd arg1 arg2 arg3 arg4 が実行される</span>
+</pre>
+<p>アルゴリズムとしては、① --entrypoint オプションが指定されていれば、--entrypoint オプション値で ENTRYPOINT 配列を置換する。② docker run に引数が指定されていれば、run引数で CMD 配列を置換する。③ ENTRYPOINT 配列に CMD 配列をアペンドする。④ できあがった配列をコマンド＋引数として実行する。といった流れになります。</p>
+</div>
+
+<h4 id="maintainer">MAINTAINER (非推奨)</h4>
+<div class="i">
+<p>イメージの作者を指定します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>MAINTAINER</em> yamada &lt;yamada@example.com&gt;
+</pre>
+<p>Docker 1.13 以降は MAINTAINER は非推奨となり、代わりに LABEL を使用することが推奨されています。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+LABEL maintainer="yamada &lt;yamada@example.com&gt;
+</pre>
+</div>
+
+<h4 id="label">LABEL</h4>
+<div class="i">
+<p>イメージに、ベンダ名、作者名、バージョン情報などのラベル情報(メタデータ)を設定します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>LABEL</em> com.example.vendor="ACME Incorporated"
+<em>LABEL</em> com.example.label-with-value="foo"
+<em>LABEL</em> version="1.0"
+</pre>
+<p>LABEL を呼び出すたびにイメージのレイヤが増えるため、ひとつにまとめて設定することが推奨されています。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+LABEL com.example.vendor="ACME Incorporated" \
+      com.example.label-with-value="foo" \
+      version="1.0"
+</pre>
+</div>
+
+<h4 id="expose">EXPOSE</h4>
+<div class="i">
+<p>指定したポート番号をコンテナが公開することを Docker に伝えます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>EXPOSE</em> 80
+</pre>
+</div>
+
+<h4 id="env">ENV</h4>
+<div class="i">
+<p>環境変数を指定します。レイヤが増えないように可能な限り1行で記述します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>ENV</em> DB_HOST="192.168.2.201" \
+    DB_PORT="3306" \
+    DB_USER="myapp" \
+    DB_PASSWD="ZbGc7#adG87GBfVC" \
+    DB_DATABASE="sample"
+</pre>
+</div>
+
+<h4 id="arg">ARG</h4>
+<div class="i">
+<p>Dockerfile 内で使用できる変数を指定します。ENV による環境変数がコマンドやコマンドのサブプロセスに引き継がれるのに対し、ARG による変数は Dockerfile の中のみで使用できます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>ARG user=unknown</em>
+RUN echo $user                 <span class="cm">=&gt; unknwon</span>
+</pre>
+<p>docker build の --build-arg オプションで値を指定することも可能です。この場合、unknown は、--build-arg オプションが指定されなかった場合のデフォルト値になります。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker build -t myapp <em>--build-arg user=tanaka</em> .
+
+ARG user=unknown
+RUN echo $user                 <span class="cm">=&gt; tanaka</span>
+</div>
+
+<h4 id="copy">COPY</h4>
+<div class="i">
+<p>ホストからコンテナイメージにファイルやディレクトリをコピーします。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>COPY</em> ./file1.conf /etc/file .conf    <span class="cm">ファイルをファイルにコピー</span>
+<em>COPY</em> ./file2.conf /etc               <span class="cm">ファイルをディレクトリ配下にコピー</span>
+<em>COPY</em> ./my-app /opt/my-app            <span class="cm">ディレクトリをディレクトリにコピー</span>
+</pre>
+</div>
+
+<h4 id="add">ADD</h4>
+<div class="i">
+<p>ホストからコンテナイメージにファイルやディレクトリをコピーします。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>ADD</em> ./file1.conf /etc/file1.conf    <span class="cm">ファイルをファイルにコピー</span>
+<em>ADD</em> ./file2.conf /etc               <span class="cm">ファイルをディレクトリ配下にコピー</span>
+<em>ADD</em> ./my-app /opt/my-app            <span class="cm">ディレクトリをディレクトリにコピー</span>
+</pre>
+<p>COPY とは異なり、転送元に .tar.gz などの圧縮ファイルを指定すると自動的に展開してコピーすることができます。また、http:// や https:// で始まる URL を指定することもできます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+ADD <em>./my-app.tar.gz</em> /opt
+ADD <em>http://www.example.com/file1.txt</em> /etc/file1.txt
+</pre>
+</div>
+
+<h4 id="volume">VOLUME</h4>
+<div class="i">
+<p>コンテナ起動時に永続ボリュームを割り当てます。永続ボリュームはホスト側の /var/lib/docker/volumes などに作成されます。docker run の -v オプションでは 「-v ボリューム名:マウントポイント」 でボリューム名を指定することができましたが、VOLUME ではマウントポイントしか指定することはできず、名前付きボリュームを割り当てることはできません。VOLUME でマウントしたボリュームは、df コマンドに -a オプションをつけないと表示されないことがあります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>VOLUME</em> /var/disk1 /var/disk2 /var/disk3
+</pre>
+</div>
+
+<h4 id="user">USER</h4>
+<div class="i">
+<p>RUN, CMD, ENTRYPOINT, docker run, exec で実行するコンテナプロセスの実行ユーザをユーザIDまたはユーザ名で指定します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>USER</em> apache
+CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
+</pre>
+</div>
+
+<h5 id="shell">SHELL</h5>
+<div class="i">
+<p>RUN, CMD, ENTRYPOINT 等をシェル形式で記述する際に使用されるシェルを指定します。デフォルトは、Linux の場合 ["/bin/sh", "-c"]、Windows の場合 ["cmd", "/S", "/C"] となります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>SHELL</em> ["powershell", "-command"]
+RUN Write-Host hello
+</pre>
+</div>
+
+<h4 id="workdir">WORKDIR</h4>
+<div class="i">
+<p>RUN, CMD, ENTRYPOINT, COPY, ADD, docker run, exec で実行するコンテナプロセスのワークディレクトリを指定します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>WORKDIR</em> /tmp
+</pre>
+<p>複数記述すると直前の WORKDIR が有効となります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>WORKDIR</em> /tmp
+RUN pwd                     <span class="cm">/tmp</span>
+<em>WORKDIR</em> /var
+RUN pwd                     <span class="cm">/var</span>
+</pre>
+<p>環境変数を展開することもできます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+ENV BASE_DIR=/opt/myapp
+WORKDIR <em>$BASE_DIR</em>/tmp
+</div>
+
+<h4 id="onbuild">ONBUILD</h4>
+<div class="i">
+<p>作成したイメージをベースに、さらに別のイメージをビルドする際に実行するコマンドを指定します。コマンドには、RUN や COPY など、Dockerfile で使用可能なコマンドを指定します。最低限必要なベースイメージを用意し、評価環境用、本番環境用それぞれのサブイメージを作成する際に便利です。まずは、下記の Dockerfile から myapp イメージを作成します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+FROM centos:7
+<em>ONBUILD</em> RUN echo "This is onbuild message."
+CMD ["/bin/bash"]
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker build -t myapp:latest .
+</pre>
+<p>さらに、下記の Dockerfile から myapp2 イメージをビルドすると、ビルドした時点で ONBUILD に指定したコマンドが実行されます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+FROM myapp:latest
+CMD ["/bin/bash"]
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker build -t myapp2:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/2 : FROM myapp:latest
+# Executing 1 build trigger
+ ---&gt; Running in 52814619c700
+<em>This is onbuild message.</em>
+Removing intermediate container 52814619c700
+ ---&gt; 76b3c36312f7
+Step 2/2 : CMD ["/bin/bash"]
+ ---&gt; Running in f6a6cb3745de
+Removing intermediate container f6a6cb3745de
+ ---&gt; d1680fc167bf
+Successfully built d1680fc167bf
+Successfully tagged myapp2:latest
+</pre>
+</div>
+
+<h4 id="stopsignal">STOPSIGNAL</h4>
+<div class="i">
+<p>docker stop を実行した際にコンテナプロセスに送信されるシグナルを指定します。下記を記述しておくと、docker stop を実行した際に SIGTERM の代わりに SIGINT が送られるようになります。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+<em>STOPSIGNAL</em> SIGINT
+</pre>
+</div>
+
+<h4 id="healthcheck">HEALTHCHECK</h4>
+<div class="i">
+<p>コンテナ内で定期的にヘルスチェックコマンドを実行し、コンテナの稼働状況を監視します。オプションには <b>--interval</b>=インターバル(デフォルト:30s)、<b>--timeout</b>=タイムアウト時間(デフォルト:30s)、<b>--retries</b>=リトライ回数(デフォルト:3) を指定できます。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+FROM centos:7
+RUN yum install -y httpd
+RUN echo '&lt;h1&gt;OK&lt;/h1&gt;' > /var/www/html/index.html
+<em>HEALTHCHECK</em> --interval=10s --timeout=5s CMD curl -sf http://localhost/ || exit 1
+CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker build -t myapp .
+# docker run -d --name cont1 myapp
+# docker inspect cont1
+</pre>
+<p>上記のヘルスチェックを仕込んだコンテナを起動すると、インターバル毎にヘルスチェックコマンドを実行します。実行結果は docker inspect で確認できます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker inspect cont1
+    (略)
+    "Health": {
+        "Status": "healthy",
+        "FailingStreak": 0,
+        "Log": [
+            {
+                "Start": "2019-09-04T20:08:18.820425313+09:00",
+                "End": "2019-09-04T20:08:19.245683023+09:00",
+                "ExitCode": 0,
+                "Output": "&lt;h1&gt;OK&lt;/h1&gt;\n"
+            },
+        ]
+    }
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class="i">
+<ul>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/3-14.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/3-14.html'" tppabs="http://docs.docker.jp/engine/reference/builder.html">http://docs.docker.jp/engine/reference/builder.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年9月1日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/dockerfile.html</div>
+</body>
+</html>

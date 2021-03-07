@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>パスワードでアクセス制限するには - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>パスワードでアクセス制限するには</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+パスワードでアクセス制限するには
+
+<p>特定の人にだけ見せたいページを作成するノウハウを紹介します。</p>
+<h4>秘密のURLをパスワードにする方法</h4>
+<div class=i>
+<p>特定の人にのみファイル名やフォルダ名を教えることでパスワードの代わりにします。例えば、HIMITSU.html というページをこっそり作っておいて、どのページからもリンクを張らず、特定の人にだけそのURLを教えるという方法です。URLを直接入力させるのが嫌なら、次のようなフォームから入力させる手もあります。</p>
+<pre class=c>
+&lt;form onsubmit="document.location.href=this.PW.value + '.html'; return false"&gt;
+&lt;input type="password" name="PW"&gt;
+&lt;input type="submit" value="OK"&gt;
+&lt;/form&gt;
+</pre>
+</div>
+
+<h4>WEBサーバーのチェック機能を用いる方法(Apache)</h4>
+<div class=i>
+<p>WEBサーバーが NCSA httpd や Apache の場合でかつ、プロバイダが .htaccess の使用を有効にしている場合は、以下に述べる方法でパスワードチェックすることができます。</p>
+<p>ここでは、http://www.xxx.zzz/~tanaka/himitsu/ で始まるURLに対してアクセスするとユーザー名とパスワードを求め、tarou 君は ta-ro-u というパスワードで、hanako さんは ha-na-ko というパスワードでアクセスできるようにするための設置例を示します。</p>
+<p>まず、himitsu ディレクトリの下に .htaccess というファイルを設置してください。内容は次のようにしてください。FTPでファイル転送する場合は必ずテキストモードで転送してください。</p>
+<pre class=c>
+AuthType Basic
+AuthName HimitsuPage
+AuthUserFile /home/tanaka/.htpasswd
+Require user tarou
+Require user hanako
+</pre>
+<p><b>AuthType</b>には Basic を指定してください。</p>
+<p><b>AuthName</b>にはパスワード入力ダイアログに表示される適当な文字列(英字)を指定してください。</p>
+<p><b>AuthUserFile</b>には、次で説明する .htpasswd ファイルのパス名を記述してください。セキュリティ確保のため、サーバー上の絶対パス名(→<a href="wwwunix.htm" tppabs="http://www.tohoho-web.com/wwwunix.htm">UNIX入門</a>参照)で記述しなくてはなりません。絶対パス名はURLでのパス名とは異なりますので注意してください。絶対パス名が解らない場合はプロバイダに問い合わせてください。</p>
+<p><b>Require</b>には、パスワードをチェックする際のユーザー名(半角文字)を列挙します。「user tarou」の代わりに「valid-user」と記述すると、AuthUserFileで指定したファイルに記述されたすべてのユーザーを指定したことになります。</p>
+<p>次に、.htaccess とはどこか別のディレクトリに .htpasswd という名前のファイルを設置してください。可能であれば、ブラウザから絶対にアクセスできない場所（public_html ディレクトリの外など）に置くのが望ましいです。内容は次のようにしてください。FTPでファイル転送する場合は必ずテキストモードで転送してください。</p>
+<pre class=c>
+tarou:2TZwLPP6fQYm2
+hanako:rV8onP8a3xyeQ
+</pre>
+<p>ユーザー名とコロン( : )の後には、暗号化されたパスワードを記述します。暗号化されたパスワードを得るには、NCSA httpd や Apache に添付されている htpasswd コマンドを用いたり、Windows用フリーソフト、<a href="javascript:if(confirm('http://www.st.rim.or.jp/~nakata/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.st.rim.or.jp/~nakata/'" tppabs="http://www.st.rim.or.jp/~nakata/" target="_top">An HTTPD</a>の、[Options]→[General]→[AccessControl]→[User/Password]→[Add]を用いる方法があります。</p>
+<p>以上で設置は完了です。ここでは、各ディレクトリに対するアクセス権を設定する方法について述べましたが、サーバーの管理者であれば、サーバーコンフィグレーションファイルにより、もっと厳重にパスワード制限することができます。サーバーのマニュアルを参照してください。</p>
+<p>また、前述同様、.htaccess ファイルに以下のような記述を行うことにより、特定のホストからしかアクセスできないような制限をかけることも可能です。</p>
+<pre class=c>
+Order deny,allow
+Deny from all
+Allow from xxx.or.jp
+</pre>
+<p><b>order</b>行は、次に続く行のうち、deny行、allow行の順番で評価することを意味します。order行を省略した場合は、deny、allowの順で評価されます。</p>
+<p><b>deny</b>行は、アクセスを禁止するホストを記述します。allはすべてのホストを意味します。</p>
+<p><b>allow</b>行は、例外として xxx.or.jp で始まるホストからのアクセスを許可しています。DNSによる名前解決ができない場合はIPアドレスを指定することも可能です。</p>
+</div>
+
+<h4>WEBサーバーのチェック機能を用いる方法(IIS)</h4>
+<div class=i>
+<p>私もWindows NTのIISについてはよく知らないのですが、Windowsのアカウントとリンクさせたユーザ名で各ページのパスワードチェックを行う方法があります。詳細はIISのマニュアルを参照してください。</p>
+</div>
+
+<h4>パスワードチェックを行う場合の注意</h4>
+<div class=i>
+<p>人様のパスワードを預かる場合、セキュリティには充分注意してください。多くの人は同じパスワードを使いまわしています。あなたの管理している人様のパスワードが第三者に漏れた場合、それは、あなたのサービスが不正使用されるだけでなく、人様の他のサービス（例えば従量課金接続）までもが不正使用される可能性があることに注意してください。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1996-1999 杜甫々</div>
+<div>http://www.tohoho-web.com/wwwxx007.htm</div>
+</body>
+</html>
+

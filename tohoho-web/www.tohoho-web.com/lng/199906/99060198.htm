@@ -1,0 +1,112 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>エレメント名に変数を使えますか？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>エレメント名に変数を使えますか？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060197.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060197.htm">[前に]</a>
+<a href="99060199.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060199.htm">[次に]</a>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/21(月) 11:10:46</span><br>
+フレームがNo1,No2,No3の３つあり<br>
+No1のテキストなどで onclick="Kasoru=this.name" と設定し、<br>
+No3のボタンを押すと<br>
+KASORU=parent.No1.Kasoru<br>
+alert(KASORU)<br>
+parent.No1.document.FORM1.KASORU.focus();<br>
+としたいのですが、うまくいきません。<br>
+エレメント名に変数は使えないのでしょうか？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/21(月) 11:50:05</span><br>
+直接使うことはできないと思います。<br>
+この場合evalを使って<br>
+KASORU=eval("parent.No1.document.FORM1"+Kasoru)<br>
+とする手もありますが，個人的にはあまりevalは好きなやり方ではないです。<br>
+<br>
+それと変数名の大文字小文字がいくら区別されるからと言って，それで<br>
+使い分けるのはいかがなものかと。<br>
+<br>
+例えばonClick="NowObj=this"とオブジェクトそのものを渡し，<br>
+No3で<br>
+NowObjName=NowObj.name<br>
+とする方がきれいに思います。<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/21(月) 13:54:56</span><br>
+<font color="#CC8000">&gt;KASORU=eval("parent.No1.document.FORM1"+Kasoru)</font><br>
+としてもできませんでした。<br>
+また、オブジェクトそのものを渡しても結局駄目でした。<br>
+どうしたらよいでしょうか。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/21(月) 14:10:40</span><br>
+あ，失礼。<br>
+<font color="#CC8000">&gt;KASORU=eval("parent.No1.document.FORM1"+Kasoru)</font><br>
+のFORM1の後にピリオドが抜けてました。<br>
+<br>
+あと，この場合KASORUはオブジェクト自体ですから，指定する<br>
+ときには<br>
+<font color="#CC8000">&gt;parent.No1.document.FORM1.KASORU.focus()</font><br>
+ではなく<br>
+KASORU.focus()<br>
+といった具合で使いますが，そこはどうしてますか？<br>
+オブジェクトそのものを渡す場合も同様，NewObj.focus()という<br>
+使い方になりますが。<br>
+<br>
+ちなみに以下が確認に用いたスクリプトです。NN3で作ったので細部の仕様は<br>
+異なりますが，オブジェクトの引き渡しの部分を参考にしてみてください。<br>
+<br>
+&lt;script language="javascript"&gt;<br>
+function func(){<br>
+alert(NowObj.name);<br>
+NowObj.value="Hi";<br>
+}<br>
+&lt;/script&gt;<br>
+&lt;form name="form1"&gt;<br>
+&lt;input type="text" name="text1" onChange="NowObj=this"&gt;<br>
+&lt;/form&gt;<br>
+&lt;form name="form2"&gt;<br>
+&lt;input type="button" name="button2" onClick="func()" value="2"&gt;<br>
+&lt;/form&gt;<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/21(月) 15:01:41</span><br>
+<span class=resolv>[[解決]]</span><br>
+Tmbさんありがとうございます。<br>
+無事解決しました。<br>
+以下のようになりました。<br>
+<br>
+&lt;input type="text" name="text1" onClick="NowObj=this"&gt;//parent.No1にて<br>
+&lt;input type="button" name="button1" onClick="iti()" value="1"&gt;//parent.No3にて<br>
+<br>
+//parent.No3にて<br>
+function iti(){<br>
+NowObjName=parent.No1.NowObj.name<br>
+if(NowObjName==''){<br>
+alert("NoFocus")<br>
+}<br>
+else{<br>
+alert(NowObjName)<br>
+parent.No1.NowObj.focus();<br>
+}<br>
+}<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/21(月) 15:09:34</span><br>
+あ，そうか。フレーム付きだから<br>
+<font color="#CC8000">&gt;NowObj.name</font><br>
+ではなくて<br>
+<font color="#CC8000">&gt;NowObjName=parent.No1.NowObj.name</font><br>
+という形でしたね。失礼しました (^^;<br>
+何にせよ，うまくいってよかったです。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060197.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060197.htm">[前に]</a>
+<a href="99060199.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060199.htm">[次に]</a>
+</body>
+</html>

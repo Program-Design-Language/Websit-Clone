@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Django入門 (settings.py) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Django入門 (settings.py)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/django/index.html">Django入門</a> &gt;
+settings.py
+
+<h4 id="settings">settings.py</h4>
+<div class=i>
+<p>settings.py で定義する主なパラメータについて説明します。詳細は下記のリファレンスを参照してください。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://docs.djangoproject.com/ja/2.2/ref/settings/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.djangoproject.com/ja/2.2/ref/settings/'" tppabs="https://docs.djangoproject.com/ja/2.2/ref/settings/">https://docs.djangoproject.com/ja/2.2/ref/settings/</a>
+</ul>
+</div>
+
+<h5 id="BASE_DIR">BASE_DIR</h5>
+<div class=i>
+<p>プロジェクトのベースフォルダを示します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+</pre>
+</div>
+
+<h5 id="SECRET_KEY">SECRET_KEY</h5>
+<div class=i>
+<p>暗号化やハッシュ化で用いられる秘密鍵を指定します。プロジェクト外に公開しないでください。manage.py startproject でプロジェクトを作成する際に、ランダムな値が設定されます。ロードバランサ配下に複数の Django サーバを配置する際には、同じ値を指定してください。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+SECRET_KEY = 'pej^q2ql$$#bzg#crh6k_9(p=%p)&6x(kwh@nos&=!$ej&60fh'
+</pre>
+</div>
+
+<h5 id="DEBUG">DEBUG</h5>
+<div class=i>
+<p>デバッグモードの有効(True)、無効(False)を指定します。デバッグモードではエラー発生時にブラウザにエラーの詳細情報を表示します。また、実行した SQL クエリをすべてメモリ上に記憶したり、キャッシュを無効にしたりなど、速度やリソースを犠牲にしてデバッグ向けにカスタマイズされた状態で動作します。API, KEY, PASS, SECRET, SIGNATURE, TOKEN などの秘密にすべきキーワードを含む値は表示されませんが、攻撃に有益な情報を与えてしまうため、本番環境では DEBUG に True を指定してはなりません。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+DEBUG = True
+</pre>
+</div>
+
+<h5 id="ALLOWED_HOSTS">ALLOWED_HOSTS</h5>
+<div class=i>
+<p>サーバが受理するサーバアドレスを指定します。クライアントから送られてきた Host: ヘッダの値と比較され、一致しない場合は 400 エラーを返します。'*' を指定することもできますが、この値を正確に記述することは「Hostヘッダインジェクション攻撃」に対して有効です。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+ALLOWED_HOSTS = ['www.example.com',]
+</pre>
+</div>
+
+<h5 id="INSTALLED_APPS">INSTALLED_APPS</h5>
+<div class=i>
+<p>アプリケーションの一覧を定義します。データベースのマイグレーションファイル作成の際などに利用されます。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+INSTALLED_APPS = [
+    'books.apps.BooksConfig',
+    'django.contrib.admin',
+       :
+]
+</pre>
+</div>
+
+<h5 id="MIDDLEWARE">MIDDLEWARE</h5>
+<div class=i>
+<p>ミドルウェアの一覧を定義します。Django は、HTTP 要求を受け取ったり、HTTP 応答を返却する際に、ここで定義したミドルウェアを順次実行します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+        :
+]
+</pre>
+</div>
+
+<h5 id="ROOT_URLCONF">ROOT_URLCONF</h5>
+<div class=i>
+<p>ルートの urls.py を指定します。下記の例では、BASE_DIR 配下の ./config/urls.py を示します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+ROOT_URLCONF = 'config.urls'
+</pre>
+</div>
+
+<h5 id="TEMPLATES">TEMPLATES</h5>
+<div class=i>
+<p>テンプレートに関する定義を行います。BACKEND はテンプレートエンジン、DIRS はテンプレートを探す対象のフォルダリスト、APP_DIRS はアプリケーションフォルダ配下を探すか否かのフラグ、OPTIONS には各種オプション情報を定義します。context_processors は、テンプレートで参照可能な変数を生成するプロセッサ群です。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+</pre>
+</div>
+
+<h5 id="WSGI_APPLICATION">WSGI_APPLICATION</h5>
+<div class=i>
+<p>WSGI のアプリケーションを指定します。下記は ./config/wsgi.py の中の application を示しています。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+WSGI_APPLICATION = 'config.wsgi.application'
+</pre>
+</div>
+
+<h5 id="DATABASES">DATABASES</h5>
+<div class=i>
+<p>データベースに関する定義を行います。SQLite3, MySQL(MariaDB), PostgreSQL, Oracle などを利用可能です。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+</pre>
+</div>
+
+<h5 id="AUTH_PASSWORD_VALIDATORS">AUTH_PASSWORD_VALIDATORS</h5>
+<div class=i>
+<p>パスワードのバリデーションルールを指定します。下記では、ユーザ名と似たパスワード、パスワード長、よくあるパスワード、数値のみのパスワードをチェックしています。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+]
+</pre>
+</div>
+
+<h5 id="LANGUAGE_CODE">LANGUAGE_CODE</h5>
+<div class=i>
+<p>デフォルトの言語を指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+LANGUAGE_CODE = 'ja'
+</pre>
+</div>
+
+<h5 id="LANGUAGES">LANGUAGES</h5>
+<div class=i>
+<p>言語選択の選択肢として表示する言語を指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+LANGUAGES = [
+    ('ja', _('Japanese')),
+    ('en', _('English')),
+]
+</pre>
+</div>
+
+<h5 id="LOCALE_PATHS">LOCALE_PATHS</h5>
+<div class=i>
+<p>ロケール情報を格納するフォルダ名を指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
+</pre>
+</div>
+
+<h5 id="TIME_ZONE">TIME_ZONE</h5>
+<div class=i>
+<p>デフォルトのタイムゾーンを指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+TIME_ZONE = 'Asia/Tokyo'
+</pre>
+</div>
+
+<h5 id="USE_I18N">USE_I18N</h5>
+<div class=i>
+<p>多言語化機能を有効にするか否かを指定します。I18N は internationalisation の略です。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+USE_I18N = True
+</pre>
+</div>
+
+<h5 id="USE_L10N">USE_L10N</h5>
+<div class=i>
+<p>日付フォーマットなどのローカライゼーション機能を有効にするか否かを指定します。L10N は localization の略です。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+USE_L10N = True
+</pre>
+</div>
+
+<h5 id="USE_TZ">USE_TZ</h5>
+<div class=i>
+<p>タイムゾーン変換機能を有効にするか否かを指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+USE_TZ = True
+</pre>
+</div>
+
+<h5 id="STATIC_URL">STATIC_URL</h5>
+<div class=i>
+<p>スタティックファイルの URL を指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+STATIC_URL = '/static/'
+</pre>
+</div>
+
+<h5 id="STATICFILES_DIRS">STATICFILES_DIRS</h5>
+<div class=i>
+<p>スタティックファイルが格納されるディレクトリを指定します。</p>
+<div class="tab">settings.py</div>
+<pre class=c2>
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年7月15日 最終更新:2019年7月15日</div>
+<div>http://www.tohoho-web.com/django/settings.html</div>
+</body>
+</html>

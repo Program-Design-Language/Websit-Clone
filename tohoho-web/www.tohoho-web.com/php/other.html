@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PHP入門 - その他 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>PHP入門 - その他</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/php/index.html">PHP入門</a> &gt;
+その他
+
+<h4 id="eval">文字列をPHPスクリプトとして実行する(eval)</h4>
+<div class=i>
+<p><b>eval()</b> は引数で指定した文字列を、PHPスクリプトとみなして実行します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$str = 'echo "Hello!\n";';
+<em>eval($str);</em>
+</pre>
+</div>
+
+<h4 id="halt_compiler">スクリプトの末尾にデータを埋め込む</h4>
+<div class=i>
+<p><b>__halt_compiler()</b>は、PHPスクリプトの解釈(コンパイル)を中止します。PHPスクリプトの末尾にデータを埋め込む際に利用されます。末尾データの先頭は、<b>__COMPILER_HALT_OFFSET__</b> で参照できます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$fp = fopen(__FILE__, "r");
+fseek($fp, <em>__COMPILER_HALT_OFFSET__</em>);
+echo stream_get_contents($fp);                    // ABCDEFG...が出力される
+
+<em>__halt_compiler();</em>ABCDEFG
+HIJKLMN
+</pre>
+</div>
+
+<h4 id="namespace">名前空間(namespace)</h4>
+<div class=i>
+<p>PHP5.3 で名前空間の機能が追加されました。例えば、下記のファイル構成で、A社が作成した foo ライブラリと、B社が作成した bar ライブラリでクラス名や関数名が重複していると、test.php からこれらを使用することができません。</p>
+<div class="tab">フォルダ階層</div>
+<pre class=c2>
+<img src="../image/file.png" tppabs="http://www.tohoho-web.com/image/file.png" alt="ファイル"> test.php
+<img src="../image/folder.png" tppabs="http://www.tohoho-web.com/image/folder.png" alt="フォルダ"> lib
+&nbsp;&nbsp;&nbsp;<img src="../image/file.png" tppabs="http://www.tohoho-web.com/image/file.png" alt="ファイル"> foo.php
+&nbsp;&nbsp;&nbsp;<img src="../image/file.png" tppabs="http://www.tohoho-web.com/image/file.png" alt="ファイル"> bar.php
+</pre>
+<p>この問題を解決するため、<b>namespace</b> を用いて名前空間を指定します。foo.php、bar.php を下記の様に作成します。lib と foo の間はバックスラッシュ(\)です。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>namespace lib\foo;</em>
+class MyClass { function __construct() { echo "MyClass of foo\n"; } }
+function MyFunction() { echo "MyFunction of foo\n"; }
+const MyConst = "MyConst of foo\n";
+</pre>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>namespace lib\bar;</em>
+class MyClass { function __construct() { echo "MyClass of bar\n"; } }
+function MyFunction() { echo "MyFunction of bar\n"; }
+const MyConst = "MyConst of bar\n";
+</pre>
+<p>こうすると、MyClass, MyFunction, MyConst などの名称は、lib\foo\MyClass, lib\foo\MyFunction, lib\foo\MyConst などのように参照することが可能となります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+require "lib/foo.php";
+require "lib/bar.php";
+$obj1 = new <em>lib\foo\MyClass();</em>
+$obj2 = new <em>lib\bar\MyClass();</em>
+<em>lib\foo\MyFunction();</em>
+<em>lib\bar\MyFunction();</em>
+echo <em>lib\foo\MyConst;</em>
+echo <em>lib\bar\MyConst;</em>
+</pre>
+<p><b>use</b> <b>as</b> を用いることで、名前空間に別名をつけることができます。下記の例では、lib\foo に対して foolib という別名をつけています。as 以降は省略可能です。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+require "lib/foo.php";
+require "lib/bar.php";
+<em>use lib\foo as foolib;</em>
+<em>use lib\bar;</em>           // use lib\bar as bar; と解釈される
+
+$obj1 = new <em>foolib</em>\MyClass();
+<em>foolib</em>\MyFunction();
+echo <em>foolib</em>\MyConst;
+
+$obj2 = new <em>bar</em>\MyClass();
+<em>bar</em>\MyFunction();
+echo <em>bar</em>\MyConst;
+</pre>
+<p>namespace { ... } の形式で名前空間を指定することもできます。名前を省略するとグローバル名前空間となります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>namespace lib\foo</em> {
+    function func() { echo "lib\\foo\\func()\n"; }
+}
+<em>namespace lib\bar</em> {
+    function func() { echo "lib\\bar\\func()\n"; }
+}
+<em>namespace</em> {
+    lib\foo\func();
+    lib\bar\func();
+}
+</pre>
+<p><b>namespace</b>, <b>__NAMESPACE__</b> は、現在の名前空間を示します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+namespace lib\foo {
+    function func() { echo "lib\\foo\\func()\n"; }
+}
+namespace lib\bar {
+    function func() { echo "lib\\bar\\func()\n"; }
+}
+namespace lib {
+    <em>namespace</em>\foo\func();      // lib\foo\func()
+    <em>namespace</em>\bar\func();      // lib\bar\func()
+    echo <em>__NAMESPACE__</em>;        // lib
+}
+</pre>
+</div>
+
+<h4 id="declare">宣言(declare)</h4>
+<div class=i>
+<p><b>declare</b> は、プログラム全般に関わる宣言を指定します。下記の2つの記述方法があります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>declare(ticks=1) {</em>
+    // この箇所に記述したプログラムに対して有効
+<em>}</em>
+
+<em>declare(ticks=1);</em>
+// ファイルの末尾までのプログラムに対して有効
+</pre>
+<p><b>ticks</b>=<i>N</i> は、処理系が <i>N</i>個の命令を実行する毎に、<b>register_tick_function()</b> で指定した関数を実行します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>declare(ticks=10);</em>
+<em>register_tick_function(</em>function() { echo "X"; });
+
+for ($i = 0; $i &lt; 100; $i++) {
+    echo "o";                  // ooooXooooXooooXooooX....と表示される
+}
+</pre>
+<p><b>encoding</b> は、スクリプトのエンコーディングを指定します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+<em>declare(encoding='UTF-8');</em>
+
+// UTF-8で記述されたプログラム...
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2013 杜甫々</div>
+<div>初版：2013年5月12日、最終更新：2013年5月12日</div>
+<div>http://www.tohoho-web.com/php/other.html</div>
+</body>
+</html>

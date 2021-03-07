@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Docker images/rmi/history/commit/tag/build/trustコマンド - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Docker images/rmi/history/commit/tag/build/trustコマンド</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+<a href="command.html" tppabs="http://www.tohoho-web.com/docker/command.html">コマンド</a> &gt;
+docker images/rmi/history/commit/tag/build/trust
+
+<h4 id="images">docker images</h4>
+<div class="i">
+<p>ダウンロード済みのイメージの一覧を表示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker images</em>
+REPOSITORY    TAG           IMAGE ID         CREATED         SIZE
+httpd         latest        7d85cc3b2d80     10 days ago     154MB
+centos        7             9f38484d220f     5 months ago    202MB
+</pre>
+<p><b>-f</b> (<b>--filter</b>)オプションは、フィルタリングを行います。フィルタには dangling, label, before, since を指定できます。</p>
+<p><b>-f dangling=true</b> は、docker build 時に一時的に作成される様な不要なイメージ (&lt;none&gt;) のみを表示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker images <em>-f dangling=true</em>
+</pre>
+<p>定期的に不要なイメージを削除するには、下記を実行すると便利です。&lt;none&gt; であっても、使用中のイメージは削除されません。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker rmi $(docker images -f "dangling=true" -q)
+</pre>
+<p><b>-f label=...</b> は、ラベルによりフィルタリングします。下記は、org.label-schema.vendor ラベルが CentOS であるものを表示します。ラベルの一覧は「docker inspect イメージ名」で調べられます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker images <em>-f label=org.label-schema.vendor=CentOS</em>
+</pre>
+<p><b>-f before=...</b> は、指定したイメージよりも古いもの、<b>-f since=...</b> は、指定したイメージよりも新しいものを表示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker images <em>-f before=image3</em>
+# docker images <em>-f since=image3</em>
+</pre>
+<p>その他、下記のオプションを使用可能です。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>-a</b>, <b>--all</b>         全てのイメージを表示する
+<b>--digests</b>         ダイジェストを表示する
+<b>--format</b> <i>string</i>   指定したフォーマットで表示する
+<b>--no-trunc</b>        表示を省略しない
+<b>-q</b>, <b>--quiet</b>       イメージIDのみを表示する
+</pre>
+</div>
+
+<h4 id="rmi">docker rmi</h4>
+<div class="i">
+<p>イメージを削除します。イメージ名またはイメージIDを指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker rmi</em> image1
+# <em>docker rmi</em> 99c1098d5884
+</pre>
+<p>下記のオプションを使用可能です。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>-f</b>, <b>--force</b>   イメージが使用中であっても強制的に削除します。
+<b>--no-prune</b>    タグ付けされていない親イメージは削除しない
+</pre>
+</div>
+
+<h4 id="history">docker history</h4>
+<div class="i">
+<p>イメージのヒストリ情報を表示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker history</em> image1
+IMAGE           CREATED         CREATED BY                                      SIZE        COMMENT
+1e220c2b7e2a    12 hours ago    /bin/bash                                       576MB
+9f38484d220f    5 months ago    /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+&lt;missing&gt;       5 months ago    /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0B
+&lt;missing&gt;       5 months ago    /bin/sh -c #(nop) ADD file:074f2c974463ab38c…   202MB
+</pre>
+<p>下記のオプションを使用可能です。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>--format</b> <i>format</i>    フォーマットを指定する
+<b>-H</b>, <b>--human</b>        サイズと日付を人が読みやすい書式で表示
+<b>--no-trunc</b>         表示を省略しない
+<b>-q</b>, <b>--quiet</b>        イメージIDのみを表示する
+</pre>
+</div>
+
+<h4 id="commit">docker commit</h4>
+<div class="i">
+<p>コンテナからイメージを作成します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker commit</em> cont1 image1:latest
+</pre>
+<p><b>-c</b> (<b>--change</b>)オプションは、イメージ作成時に追加の Dockerfile コマンドを指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker commit <em>-c 'CMD ["/usr/sbin/httpd", "-DFOREGROUND"]'</em> cont1 image1:latest
+</pre>
+<p>他には、下記のオプションを指定できます。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>-a</b>, <b>--author</b> <i>string</i>     作者を指定
+<b>-m</b>, <b>--message</b> <i>string</i>    historyで表示されるコメントを追加
+<b>-p</b>, <b>--pause</b>             コミット中にコンテナを一時停止(pause)する
+</pre>
+</div>
+
+<h4 id="tag">docker tag</h4>
+<div class="i">
+<p>イメージにタグ付けします。タグ名は最大128文字のアンダースコア(_)、ピリオド(.)、スラッシュ(-)を含む半角英数字です。ピリオド(.)やスラッシュ(-)で始まることはできません。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker tag</em> my-app my-app:1.2.3
+</pre>
+<p>Docker Hub に push できる形式でタグ付けします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker tag my-app ${DOCKER_ID}/my-app
+</pre>
+<p>AWS ECR に push できる形式でタグ付けします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# export AWS_ACCOUNT_ID=...
+# export AWS_REGION=...
+# docker tag my-app ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-app:latest
+</pre>
+<p>ローカルレジストリに push できる形式でタグ付けします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker tag my-app local-registry.example.com:5000/my-app:latest
+</pre>
+</div>
+
+<h4 id="build">docker build</h4>
+<div class="i">
+<p>Dockerfile からイメージを作成します。詳細は <a href="dockerfile.html" tppabs="http://www.tohoho-web.com/docker/dockerfile.html">Dockerfile</a> を参照してください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# cat &gt; Dockerfile &lt;&lt;EOF
+FROM centos:7
+RUN yum install -y httpd
+CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
+EOF
+# <em>docker build</em> -t my-app:latest .
+# docker images
+</pre>
+<p>下記のオプションを指定できます。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>--add-host</b> <i>list</i>           ホスト名とIPアドレスのマッピングを追加
+<b>--build-arg</b> <i>list</i>          ビルド時の変数を設定
+<b>--cache-from</b> <i>strings</i>      キャッシュソースとして利用するイメージ
+<b>--cgroup-parent</b> <i>string</i>    コンテナ用のオプショナルな親cgroup
+<b>--compress</b>                ビルドコンテキストをgzip圧縮
+<b>--cpu-period</b> <i>int</i>          CPU CFS (Completely Fair Scheduler)間隔の上限
+<b>--cpu-quota</b> <i>int</i>           CPU CFS (Completely Fair Scheduler)クォータの上限
+<b>-c</b>, <b>--cpu-shares</b> <i>int</i>      CPU共有時の優先度 (デフォルト:1024)
+<b>--cpuset-cpus</b> <i>string</i>      実行時のCPU上限 (0-3, 0,1)
+<b>--cpuset-mems</b> <i>string</i>      実行時のメモリ上限 (0-3, 0,1)
+<b>--disable-content-trust</b>   イメージの検証をスキップ (デフォルト:true)
+<b>-f</b>, <b>--file</b> <i>string</i>         Dockerfileのパス名 (デフォルト:'<i>PATH</i>/Dockerfile')
+<b>--force-rm</b>                常に一時的作業用コンテナを削除
+<b>--iidfile</b> <i>string</i>          イメージIDをファイルに記入
+<b>--isolation</b> <i>string</i>        コンテナの隔離技術
+<b>--label</b> <i>list</i>              イメージにラベル(メタデータ)を設定
+<b>-m</b>, <b>--memory</b> <i>bytes</i>        メモリ上限を指定 (例:512M)
+<b>--memory-swap</b> <i>bytes</i>       メモリSwap上限 ('-1'は制限しない)
+<b>--network</b> <i>string</i>          ビルド中に使用するネットワークモード (デフォルト:default)
+<b>--no-cache</b>                イメージ作成時にキャッシュを使用しない
+<b>--pull</b>                    常に最新イメージのpullを試みる
+<b>-q</b>, <b>--quiet</b>               作成時の途中経過を表示しない
+<b>--rm</b>                      作成に使用した一時的コンテナを削除 (デフォルト:true)
+<b>--security-opt</b> <i>strings</i>    セキュリティオプション
+<b>--shm-size</b> <i>bytes</i>          /dev/shmのサイズ
+<b>-t</b>, <b>--tag</b> <i>list</i>            イメージ名:タグ名を指定 (例:my-app:1.2.3)
+<b>--target</b> <i>string</i>           マルチステージにおいて中間イメージにタグをつける
+<b>--ulimit</b> <i>ulimit</i>           Ulimitオプション (デフォルト:[])
+</pre>
+</div>
+
+<h4 id="trust">docker trust</h4>
+<div class="i">
+(未稿)
+</div>
+
+<h4>リンク</h4>
+<div class="i">
+<ul>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/images.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/images.html'" tppabs="http://docs.docker.jp/engine/reference/commandline/images.html">http://docs.docker.jp/engine/reference/commandline/images.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/vue-devtools  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/vue-devtools'" tppabs="http://docs.docker.jp/engine/reference/commandline/rmi.html">http://docs.docker.jp/engine/reference/commandline/rmi.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/installation.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/installation.html'" tppabs="http://docs.docker.jp/engine/reference/commandline/history.html">http://docs.docker.jp/engine/reference/commandline/history.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/blog-post_25.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/blog-post_25.html'" tppabs="http://docs.docker.jp/engine/reference/commandline/commit.html">http://docs.docker.jp/engine/reference/commandline/commit.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/amp?hl=JA  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/amp?hl=JA'" tppabs="http://docs.docker.jp/engine/reference/commandline/tag.html">http://docs.docker.jp/engine/reference/commandline/tag.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/?format=websites  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/?format=websites'" tppabs="http://docs.docker.jp/engine/reference/commandline/build.html">http://docs.docker.jp/engine/reference/commandline/build.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/wwwcgi1.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/wwwcgi1.htm'" tppabs="http://docs.docker.jp/engine/reference/commandline/trust.html">http://docs.docker.jp/engine/reference/commandline/trust.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年9月1日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/docker_images.html</div>
+</body>
+</html>

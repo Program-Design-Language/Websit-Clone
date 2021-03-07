@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ボタンの表面の名前を変える</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ボタンの表面の名前を変える</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070270.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070270.htm">[前に]</a>
+<a href="99070272.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070272.htm">[次に]</a>
+<hr>
+<span class=name>雪</span>
+<span class=time>1999/07/26(月) 15:54:24</span><br>
+index.htmで、<br>
+&lt;FRAMESET ROWS="30%,*" border=3&gt;<br>
+&lt;FRAME NORESIZE SRC="head.html" name="HEAD" SCROLLING="no"&gt;<br>
+&lt;FRAME NORESIZE SRC="main.html" name="MAIN"&gt;<br>
+&lt;/FRAMESET&gt;<br>
+と設定し、head.htmlで、<br>
+&lt;INPUT type=radio name="rd" checked&gt;ラジオ１&lt;/TD&gt;<br>
+&lt;INPUT type=radio name="rd"&gt;ラジオ２&lt;/TD&gt;<br>
+というラジオボタンを作り、<br>
+&lt;input type="button" value="ボタン"<br>
+onClick="parent.MAIN.location.href='./main.html'"&gt;<br>
+という押したらMAINフレームの中を変えるボタンを作り、<br>
+main.htmlにボタンを作りました。<br>
+head.htmlのラジオボタンのチェックによって、<br>
+main.htmlの中で作ったボタンの表面の名前を変えたいのですが、<br>
+main.htmlを呼ぶ前は何もせず、<br>
+main.htmlを呼んだ後なら処理するようにするには、<br>
+JavaScriptで、どのようにしたらよいですか？<br>
+（長くなってごめんなさい）<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/07/26(月) 16:49:12</span><br>
+いまいち意図をつかめてるか自信はないのですが，<br>
+<font color="#CC8000">&gt; &lt;FRAME NORESIZE SRC="main.html" name="MAIN"&gt;</font><br>
+このMAINというフレームに表示されてるページのURLによって，ボタンを押したときの<br>
+動作を振り分けたい，ということでしょうか？<br>
+<br>
+＃質問だとどっちも同じなもんで混乱してますけど。<br>
+<br>
+もしそうであれば<br>
+if (parent.MAIN.document.location.href == [URL名（フルパスで）] ){<br>
+parent.MAIN.document.[フォーム名].[ボタン名].value = "hogehoge";<br>
+}<br>
+という感じでいけると思いますが・・・。<br>
+<hr>
+<span class=name>雪</span>
+<span class=time>1999/07/26(月) 18:18:26</span><br>
+すみません。名前を変えるのを忘れてました。<br>
+ボタンを押したときに呼び出されるのは、<br>
+main2.htmlということにします。<br>
+それで、大体そういうことだと思いますが、<br>
+ラジオボタンをチェックするたびに、main2.htmlが<br>
+呼び出されている常態かを調べ、呼び出されていれば、<br>
+main2.htmlのボタンのvalueを変えるという動作をしたいのです。<br>
+if (parent.MAIN.document.location.href == ///F|/TEST/main2.html) {<br>
+parent.MAIN.document.[フォーム名].[ボタン名].value = "hogehoge";<br>
+}<br>
+というようにTmbさんの言うようにやってみたのですが、<br>
+うんともすんとも言いません。<br>
+フルパスが間違っているのでしょうか？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/07/26(月) 18:28:09</span><br>
+説明が足りなかったようです。フルパス名は'ないし"で囲ってください。<br>
+またフォーム名，ボタン名についてはmain2.htmlで書き換えるボタンのものを使ってください。<br>
+<br>
+それから念のために，<br>
+alert(parent.MAIN.document.location.href);<br>
+という一文をif文の前などに付けて，フルパス名をチェックしてみるとよいと思います。<br>
+main2.htmlを呼び出した後に実行して，アラートボックスに表示されるものをif文に<br>
+書けばよいわけですので。<br>
+<br>
+あと，もちろんフルパス名はサーバーにアップロードした場合には変化しますので注意して<br>
+下さい。念のため。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/07/26(月) 18:47:52</span><br>
+<font color="#CC8000">&gt; フルパス名はサーバーにアップロードした場合には変化しますので</font><br>
+if (parent.MAIN.document.location.href.lastIndexOf('ファイル名') != -1)<br>
+とかで対応できないかな？<br>
+フルパスより信頼性が劣るけど・・・<br>
+<br>
+<font color="#CC8000">&gt; main2.htmlが呼び出されている常態かを調べ、</font><br>
+これだけならhead.html内で寝ているフラグを<br>
+main2.htmlのonLoadで立てるというのはどうでしょう<br>
+<hr>
+<span class=name>雪</span>
+<span class=time>1999/07/26(月) 19:02:00</span><br>
+alertで見たところ、<br>
+file;///F|/test/main2.htmlと表示されたので<br>
+フルパスのところを<br>
+///F|/test/main2.html<br>
+と書いたのですが、<br>
+何も起こりません。間違ってますか？<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/07/26(月) 19:32:32</span><br>
+<font color="#CC8000">&gt; file;///F|/test/main2.htmlと表示されたので</font><br>
+;(セミコロン)じゃなくて:(コロン)<br>
+<br>
+フルパスのところを<br>
+file:///F|/test/main2.html<br>
+と記述しましょう。<br>
+<br>
+フルパスはブラウザでmain2.htmlを開いて<br>
+URL欄を全てコピーすれば確実に拾えるんじゃないですか？<br>
+<hr>
+<span class=name>雪</span>
+<span class=time>1999/07/28(水) 17:02:47</span><br>
+ファイルのフルパスの中に英数字以外が入っていると、<br>
+出来ないんですね。そこでちょっと引っかかってましたが、<br>
+ファイルを英数字のフォルダに移したら出来ました。<br>
+ありがとう。<br>
+<hr>
+<span class=name>雪</span>
+<span class=time>1999/07/28(水) 17:03:45</span><br>
+<span class=resolv>[[解決]]</span><br>
+チェックするの忘れてました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070270.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070270.htm">[前に]</a>
+<a href="99070272.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070272.htm">[次に]</a>
+</body>
+</html>

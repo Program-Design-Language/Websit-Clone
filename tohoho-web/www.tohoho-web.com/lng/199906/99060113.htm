@@ -1,0 +1,121 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>MULTIPLEってどうやって使うんですか?</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>MULTIPLEってどうやって使うんですか?</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060112.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060112.htm">[前に]</a>
+<a href="99060114.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060114.htm">[次に]</a>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/11(金) 23:26:34</span><br>
+フォームのセレクトタグで、複数選択を可能にするMULTIPLEってありますよね？あれはどうやって使うのでしょうか?<br>
+一度、どういう風に値が送られてくるのか調べようとしたのですが、下のようにしてフォームから受け取った値を見ると、最後に選択した値のみが入ってました。<br>
+&lt;select name=... multiple&gt;<br>
+&lt;option value=...&gt;<br>
+&lt;option value=...&gt;<br>
+&lt;option value=...&gt;<br>
+&lt;/select&gt;<br>
+<br>
+MULTIPLE、、って一体どうやって使えばいいのでしょうか?<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/12(土) 00:13:41</span><br>
+選択肢の中からひとつ選ぶだけです。ラジオボタンやmultipleなしの&lt;select&gt;と同じ。<br>
+<br>
+複数選択はcheckboxの方法しか私は知りません。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/12(土) 00:18:25</span><br>
+あっ、、そうなんですか？<br>
+でも、、タグの説明には、MULTIPLEを使うと複数選択が可能になる、、って書いてあるんですが、、。<br>
+どういう意味なのでしょうか?<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/12(土) 00:52:18</span><br>
+勘違いしてました(^^;。動きはcheckboxと同様です。<br>
+&lt;select name="number" multiple&gt;<br>
+&lt;option value=&gt;1<br>
+&lt;option value=2&gt;2<br>
+&lt;option value=3&gt;3<br>
+&lt;option value=4&gt;4<br>
+&lt;option value=8&gt;5<br>
+&lt;/select&gt;<br>
+を、getするとわかりますが、<br>
+?number=1&amp;exel=3<br>
+となります。ので、処理的にうまいことやらないと、最後の値しか<br>
+はいらなくなります。私は値が複数合った場合、配列を作ってそこにぶちこんでます。<br>
+（ここらへんの処理ってみなさん具体的にどういうスクリプトにしてるんでしょう？）<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/12(土) 00:54:30</span><br>
+訂正<br>
+<font color="#CC8000">&gt;×?number=1&amp;exel=3</font><br>
+ ○?number=1&amp;number=3<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/12(土) 00:56:43</span><br>
+再訂正<br>
+<font color="#CC8000">&gt;×&lt;option value=&gt;1</font><br>
+ ○&lt;option value=1&gt;1<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/12(土) 01:03:59</span><br>
+<span class=resolv>[[解決]]</span><br>
+なるほど。<br>
+わかりました。<br>
+要するにGetを処理するときと同じような処理をしたらいいんですね。<br>
+、、でもNAMEが全部いっしょだから、、、、んん、、？？<br>
+、、やってみます。^^;<br>
+<br>
+どうもありがとうございました。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/12(土) 01:11:08</span><br>
+if ($ENV{'REQUEST_METHOD'} eq "POST")<br>
+{<br>
+	read(STDIN, $query_string, $ENV{'CONTENT_LENGTH'});<br>
+	@a = split(/&amp;/, $query_string);<br>
+	foreach $x (@a) {<br>
+		($name, $value) = split(/=/, $x);<br>
+		$value =~ tr/+/ /;<br>
+		$value =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C", hex($1))/eg;<br>
+		$value =~ s/&amp;/&amp;amp;/g;<br>
+		$value =~ s/"/&amp;quot;/g;<br>
+		push(@$name, $value);<br>
+	}<br>
+}<br>
+<br>
+こんな感じの処理であってますでしょうか？^^;<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/12(土) 01:16:04</span><br>
+<font color="#CC8000">&gt; こんな感じの処理であってますでしょうか？^^;</font><br>
+さてね…UAによっては<br>
+　?number=1&amp;3<br>
+を送ってきたりなんかしちゃったりして(未確認)。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/12(土) 01:31:04</span><br>
+値がちゃんと渡されていることを確認できました。<br>
+どうもありがとうございました。<br>
+<br>
+<font color="#CC8000">＞…UAによっては</font><br>
+、、UA、、というのは何でしょうか?（すいません。馬鹿な質問をして…。）<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/12(土) 01:52:11</span><br>
+<font color="#CC8000">&gt;?number=1&amp;3</font><br>
+クエリーがUAに依存する一例だとは思うんですが、仮にこんなふうだったら、&amp;の意味って・・・<br>
+<br>
+<font color="#CC8000">&gt;、、UA、、というのは何でしょうか?</font><br>
+UserAgent（このばあい、たいていWebClient）のことでしょう。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060112.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060112.htm">[前に]</a>
+<a href="99060114.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060114.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのPython入門 - パッケージとモジュール - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのPython入門 - パッケージとモジュール</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/python/index.html">Python入門</a> &gt;
+パッケージとモジュール
+
+<h4 id="module">モジュール(module)</h4>
+<div class=i>
+<p>ひとつのスクリプトファイルはモジュールとして扱うことができます。モジュールは <b>import</b>文で読み込みます。読み込んだモジュールのクラス、関数、変数は、「モジュール名.識別子」で参照することができます。</p>
+<div class="title-tab">mymod.py</div>
+<pre class=c2>
+def myfunc():
+    print "Hello!"
+</pre>
+<div class="title-tab">mytest.py</div>
+<pre class=c2>
+<em>import mymod</em>
+
+<em>mymod.myfunc()</em>                      #=&gt; Hello!
+</pre>
+<p>モジュールの冒頭には、"""...""" で <a href="variables.html#docstring" tppabs="http://www.tohoho-web.com/python/variables.html#docstring">ドキュメントストリング</a> を記述することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+# coding: utf-8
+<em>"""A sample module"""</em>
+(略)
+</pre>
+</div>
+
+<h4 id="package">パッケージ(package)</h4>
+<div class=i>
+<p>複数のモジュールをまとめてパッケージとして扱うことができます。パッケージは、__init__.py という名前のファイルを持つフォルダ、モジュールは .py ファイルです。__init__.py にはパッケージの初期化処理を記述します。なければ空でかまいません。下記の例では、mypack1パッケージの中に mypack2パッケージがあり、mypack2パッケージの中に mymod.pyモジュールが配置されています。</p>
+<div class="tab">フォルダ構成</div>
+<pre class=c2>
+<img src="../image/folder.png" tppabs="http://www.tohoho-web.com/image/folder.png" alt="フォルダ">mypack1/
+  <img src="../image/file.png" tppabs="http://www.tohoho-web.com/image/file.png" alt="ファイル">__init__.py
+  <img src="../image/folder.png" tppabs="http://www.tohoho-web.com/image/folder.png" alt="フォルダ">mypack2/
+    <img src="../image/file.png" tppabs="http://www.tohoho-web.com/image/file.png" alt="ファイル">__init__.py
+    <img src="../image/folder.png" tppabs="http://www.tohoho-web.com/image/folder.png" alt="フォルダ">mymod.py
+</pre>
+</div>
+
+<h4 id="import">インポート(import)</h4>
+<div class=i>
+<p>パッケージの中からモジュールや識別子(クラス、関数、変数...)をインポートするには下記の様にします。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+# import [パッケージ.]モジュール
+<em>import mypack1.mypack2.mymod</em>
+mypack1.mypack2.mymod.myfunc()
+
+# from パッケージ import モジュール
+<em>from mypack1.mypack2 import mymod</em>
+mymod.myfunc()
+
+# from パッケージ import *
+<em>from mypack1.mypack2 import *</em>                # __all__の設定が必要
+mymod.myfunc()
+
+# from [パッケージ.]モジュール import 識別子
+<em>from mypack1.mypack2.mymod import myfunc</em>
+myfunc()
+
+# from [パッケージ.]モジュール import *
+<em>from mypack1.mypack2.mymod import *</em>
+myfunc()
+</pre>
+<p>上記の例で「from パッケージ import *」の形式を用いるには、mypack2 パッケージの __init__.py ファイルに読み込み対象のモジュールリストを __all__ に定義しておく必要があります。</p>
+<div class="title-tab">__init__.py</div>
+<pre class=c2>
+__all__ = ["mymod"]
+</pre>
+<p>読み込むモジュールや識別子を複数記述することもできます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+import <em>mypack1.mypack2.mymod1, mypack1.mypack2.mymod2</em>
+from mypack1.mypack2 import <em>mymod, mymod2</em>
+from mypack1.mypack2 import <em>(mymod, mymod2)</em>
+from mypack1.mypack2.mymod import <em>myfunc1, myfunc2</em>
+from mypack1.mypack2.mymod import <em>(myfunc1, myfunc2)</em>
+</pre>
+<p>読み込んだモジュール名や識別子に別名をつけることができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+import mypack1.mypack2.mymod <em>as mymod1</em>
+<em>mymod1.</em>myfunc()
+
+from mypack1.mypack2 import mymod <em>as mymod2</em>
+<em>mymod2.</em>myfunc()
+
+from mypack1.mypack2.mymod import myfunc <em>as myfunc1</em>
+<em>myfunc1()</em>
+</pre>
+<p>from には、. や .. を用いて、パッケージを相対的に指示することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+from <em>.</em> import mymod              # このパッケージから mymodモジュールをインポートする
+from <em>..</em> import mymod             # ひとつ上の階層のパッケージから mymodモジュールをインポートする
+from <em>...</em> import mymod            # ふたつ上の階層のパッケージから mymodモジュールをインポートする
+from <em>...mypack4</em> import mymod     # ふたつ上の階層のmypack4パッケージから mymodモジュールをインポートする
+</pre>
+</div>
+
+<h4 id="__package__">パッケージ名(__package__)</h4>
+<div class=i>
+<p><b>__package__</b> は、現在のパッケージ名を示します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>print __package__</em>
+</pre>
+</div>
+
+<h4 id="__file__">ファイル名(__file__)</h4>
+<div class=i>
+<p><b>__file__</b> は、現在のファイル名を示します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>print __file__</em>
+</pre>
+</div>
+
+<h4 id="__name__">モジュール名(__name__)</h4>
+<div class=i>
+<p><b>__name__</b> は、現在のモジュール名を示します。スクリプトとして起動されたメインモジュールの場合は <b>__main__</b> という名前が設定されます。下記の例は、ファイルが python コマンドから直接起動された場合のみ実行する処理を記載しています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>if __name__ == "__main__":</em>
+    test()
+</pre>
+</div>
+
+<h4 id="__builtin__">ビルトインモジュール(__builtin__)</h4>
+<div class=i>
+<p><b>__builtin__</b> は、open() などのビルトインオブジェクトを包含する仮想的なモジュールを示します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>import __builtin__</em>
+
+for line in <em>__builtin__</em>.open("test.txt"):
+    print line
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2014 杜甫々</div>
+<div>初版：2014年12月30日、最終更新：2014年12月30日</div>
+<div>http://www.tohoho-web.com/python/types.html</div>
+</body>
+</html>
+

@@ -1,0 +1,205 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>jcode.plやnkfを使わないで漢字コード変換をするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>jcode.plやnkfを使わないで漢字コード変換をするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050115.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050115.htm">[前に]</a>
+<a href="99050117.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050117.htm">[次に]</a>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/20(木) 16:09:34</span><br>
+SSIを利用してアクセスのたびに挨拶文をかえるスクリプトを<br>
+作っています．挨拶文をいれたファイルを読み込んでランダムに<br>
+表示するのですが，そのときに文字列を置換することもあり，<br>
+挨拶文ファイルもスクリプトファイルもeucで処理しています．<br>
+すると，埋め込むHTMLファイルはJISコードなので，<br>
+当然その挨拶文だけ文字化けしてしまうのですが，<br>
+文字化けを防ぐ方法はありますでしょうか？<br>
+<br>
+「こんなのjcode.plかnkfをつかえば簡単だ」と思われるかも<br>
+しれませんが，設置するサーバではnkfは使えず，また，<br>
+jcode.plがなぜか取り込めません．<br>
+＃require 'jcode.pl';と書いたところでスクリプトを終了<br>
+するらしいけれど，shellが使えないので詳細は不明です<br>
+<br>
+そのスクリプトは他のサーバでは問題なく動作しています．<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/20(木) 16:43:26</span><br>
+<font color="#CC8000">＞＃require 'jcode.pl';</font><br>
+実際のコードでは頭の#はついてないですよね？<br>
+#以降はコメントだって事くらい知ってますよね？<br>
+それからSSIで起動する処理の中での相対パスの指定は、<br>
+スクリプトのあるディレクトリからのパスじゃなく、<br>
+SSIを埋め込んでるHTMLのあるディレクトリからのパスになるらしい？？（よく知りません(^^;）<br>
+<br>
+あと文字化けを防ぐ方法としてはHTMLをEUCにしちゃうってのはどうでしょうか？<br>
+FTPでアップするときにEUCに指定するだけだから、簡単だと思いますけど。<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/20(木) 17:04:23</span><br>
+<font color="#CC8000">&gt;＞＃require 'jcode.pl';</font><br>
+<font color="#CC8000">&gt;実際のコードでは頭の#はついてないですよね？</font><br>
+もちろんついていません．<br>
+＃しかもここの＃は全角です．いくらそそっかしくてもそんなへまは<br>
+＃しません．<br>
+<br>
+また，ここではrequire 'jcode.pl';と書いていますが，<br>
+実際は絶対パスで指定しています．相対パスで指定しても(./jcode.plなど)<br>
+症状は変わりません．本当に#でコメントアウトすると，文字化けしますが動作します．jcode.plを取り込むと表示すらしません．<br>
+ちなみにperlのバージョンは5.003らしいです．<br>
+<br>
+<font color="#CC8000">&gt;あと文字化けを防ぐ方法としてはHTMLをEUCにしちゃうってのはどうでしょうか？</font><br>
+どうしても方法がないのなら，この方法を採用しますが，<br>
+せいぜい数十文字のことでeucにするのも何なので，<br>
+あまり使いたくないテです．(^^;)<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/20(木) 17:12:20</span><br>
+<font color="#CC8000">&gt; それからSSIで起動する処理の中での相対パスの指定は、</font><br>
+<font color="#CC8000">&gt; スクリプトのあるディレクトリからのパスじゃなく、</font><br>
+<font color="#CC8000">&gt; SSIを埋め込んでるHTMLのあるディレクトリからのパスになるらしい？？</font><br>
+<br>
+少なくとも apacheではそうなります。<br>
+# &lt;!--#exec cmd="...."--&gt; が解釈/実行される時点では、カレントディレクトリが<br>
+# そのHTMLの置いてあるディレクトリになっている、というべきでしょうか。<br>
+<br>
+<font color="#CC8000">&gt; require 'jcode.pl';</font><br>
+<br>
+@INCのパスが通ってないだけじゃなくて?<br>
+HTMLと同じ場所に jcode.plを置いて、<br>
+　require './jcode.pl';<br>
+としてもダメですか?<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/20(木) 17:13:42</span><br>
+説明不足だったので補足します．<br>
+<font color="#CC8000">&gt;本当に#でコメントアウトすると，文字化けしますが動作します．&gt;jcode.plを取り込むと表示すらしません．</font><br>
+jcode.plをとりこんだところで，それ以降の処理がまったく<br>
+行われません．シェルが使えないので，どのように終了しているのか<br>
+エラーがあればどのように落ちているのかも確認ができないのです．<br>
+しかも，ほかのサーバでは，jcode.plをいれてもいれなくても，<br>
+jcode.plを入れなければ文字化けする以外は同じように動作するので，<br>
+原因や解決法がつかめないでいるのです．<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/20(木) 17:22:11</span><br>
+あ、絶対パスで書いてもダメってことは、@INCの問題じゃないのかも…。<br>
+<br>
+　#!/usr/local/bin/perl<br>
+　$|=1;<br>
+　print "Content-type: text/plain\n\n";<br>
+　open(PERL,"/usr/local/bin/perl -e 'require \'/home/hoge/jcode.pl\';' 2&gt;&amp;1|");<br>
+　print &lt;PERL&gt;;<br>
+<br>
+これを使うと、jcode.plが見つからないのか、jcode.plが<br>
+parse errorになってるのかわかるはずです。<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/20(木) 17:33:58</span><br>
+requireしてる所で以上終了してるなら、jcode.plが見つからない可能性が高いです。<br>
+<br>
+require 'jcode.pl'; この文を<br>
+↓<br>
+eval("require 'jcode.pl'");<br>
+print $@;<br>
+<br>
+って書き換えて試してみてください。<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/21(金) 00:14:40</span><br>
+B-Cusさんのスクリプトを試したところ，以下のような出力がでました．<br>
+どうなればよいのかよく分からなかったので，そのままのせておきます．<br>
+なお，この例ではjcode.plを相対パス(./jcode.pl)で指定しています．<br>
+<br>
+Content-type: text/plain Warning: Use of "require" without parens is ambiguous<br>
+at -e line 1. Search pattern not terminated at -e line 1.<br>
+<br>
+また，なえさんの示した方法を用いたところ，require以降の<br>
+スクリプトを実行するようになりました．$@には何も入って<br>
+いない様でした．これは絶対パスでも相対パスでも同じでした．<br>
+-----------<br>
+$codef = "/usr/hogehoge/miyu/jcode.pl";<br>
+if( -e $codef ){<br>
+ print $codef; #check用．実行時には表示された<br>
+ eval("require '$codef'");<br>
+ print $@;<br>
+}<br>
+---------<br>
+この例では<br>
+コード変換用の関数<br>
+&amp;jcode'convert(*value,'jis');<br>
+以降の行が実行されずに落ちてしまい，当初の<br>
+目的が達成できないままです．<br>
+<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/21(金) 01:25:20</span><br>
+$@に何も入ってなかったのならrequireは成功してると言うことなのになぜ？<br>
+うー、あと考えられることは～．．．．．．．．<br>
+jcode.plファイル壊れてないですか？<br>
+もしくは漢字コードがEUCになってないとか？<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/21(金) 01:32:23</span><br>
+って、jcode.plは全角文字使ってないから漢字コードは関係ないですね。<br>
+あとは、改行コードだけど、FTPでアップするときちゃんとASCIIモードでアップしてますよね？<br>
+<br>
+<br>
+ところで関係ないけど、ユーザーディレクトリが/usr/配下にあるなんて、変わったディレクトリ構成してるんですね。<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/05/21(金) 13:13:32</span><br>
+perl5003はバグが有るって聞いたような記憶が...<br>
+あいまいな記憶ですが(^^;<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/21(金) 13:18:50</span><br>
+<span class=resolv>[[解決]]</span><br>
+<font color="#CC8000">&gt;jcode.plファイル壊れてないですか？</font><br>
+<br>
+このラウンジに質問する前に確認したとき，<br>
+手元にあるファイルとサーバにあげたファイルと比較して容量も<br>
+変わっていないし，改行コードもUNIX形式になっていたので<br>
+壊れていないと判断したのですが，<br>
+改めて，正常に動作しているサーバにあげていたjcode.plと<br>
+比較すると明らかに容量が違っていて，大元のjcode.pl自体が<br>
+壊れていたようです．<br>
+<br>
+家に帰らないと確認できませんが，おそらくjcode.plを正常なものに<br>
+更新するとうまくいくものと思われます．一応，「解決」マークをチェックしておきます．<br>
+なえさん，B-Cusさん，どうもありがとうございました．<br>
+<br>
+<font color="#CC8000">&gt;ところで関係ないけど、ユーザーディレクトリが/usr/配下にあるなんて、変わったディレクトリ構成してるんですね。</font><br>
+ですね．(^^;) apacheのディレクトリにユーザのwwwディレクトリを<br>
+作っていて(ってどこかバレバレですね)，それをユーザディレクトリ<br>
+からシンボリックリンクを貼っているのだと思います．<br>
+(あくまで推測:-)プロバイダは教えてくれない)<br>
+wwwディレクトリ以外のところには(自分のホームディレクトリでさえも)書き込めないようになっています．<br>
+<br>
+<hr>
+<span class=name>よもぎ</span>
+<span class=time>1999/05/23(日) 23:49:30</span><br>
+jcode.plが壊れている可能性もあるかもしれませんが，perl<br>
+がjperlになっていませんでしょうか？<br>
+<br>
+そうだとするとエラーが出る可能性があります．<br>
+<a href="javascript:if(confirm('http://www.att.or.jp/perl/97111900.htm  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.att.or.jp/perl/97111900.htm'" tppabs="http://www.att.or.jp/perl/unixperl.html">http://www.att.or.jp/perl/unixperl.html</a><br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/24(月) 01:18:47</span><br>
+<font color="#CC8000">&gt;家に帰らないと確認できませんが，おそらくjcode.plを正常なものに</font><br>
+<font color="#CC8000">&gt;更新するとうまくいくものと思われます．</font><br>
+<br>
+どんぴしゃりでした．改めてjcode.plを入手してputしたところ<br>
+正常に機能しました．<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050115.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050115.htm">[前に]</a>
+<a href="99050117.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050117.htm">[次に]</a>
+</body>
+</html>

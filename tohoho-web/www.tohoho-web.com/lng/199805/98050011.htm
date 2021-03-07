@@ -1,0 +1,138 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>JavaScriptでcheckboxの値を取得する時に、propatiesエラーが出るんですが・・・</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>JavaScriptでcheckboxの値を取得する時に、propatiesエラーが出るんですが・・・</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199805/index.htm">[上に]</a>
+<a href="98050010.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050010.htm">[前に]</a>
+<a href="98050012.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050012.htm">[次に]</a>
+<hr>
+<span class=name>とこ</span>
+<span class=time>1998/05/08(金) 13:20:54</span><br>
+はじめまして。よろしくお願いいたします。<br>
+<br>
+JavaScriptでcheckboxのvalueを取得するプログラムを作ってみました。<br>
+----------------------------------------------------------------------<br>
+&lt;HTML&gt;<br>
+&lt;HEAD&gt;<br>
+<br>
+&lt;SCRIPT language="JavaScript"&gt;<br>
+var TestValue="";<br>
+function checktest() {<br>
+	for (i=0;i&lt;2;i++) {<br>
+		if (document.forms[0].test[i].checked == true) {<br>
+			TestValue += document.forms[0].test[i].value;<br>
+		}<br>
+	}<br>
+	window.alert(TestValue);<br>
+}<br>
+&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;BODY&gt;<br>
+&lt;FORM&gt;<br>
+&lt;input type="checkbox" name="test" value="test1"&gt;test1&lt;br&gt;<br>
+&lt;input type="checkbox" name="test" value="test2"&gt;test2&lt;br&gt;<br>
+&lt;input type="button" value="test" onclick="checktest()"&gt;<br>
+&lt;/FORM&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+----------------------------------------------------------------------<br>
+<br>
+この時、checkboxが２個以上あれば何も問題なく動いてくれるのですが、<br>
+checkboxが１つの時（for (i=0;i&lt;1;i++)の時に）、<br>
+「document.forms[0].test[i] has no properties.」と言われてしまいます。<br>
+ただ、for (i=0;i&lt;1;i++)でも、checkboxが2個以上あれば問題なく動くんです。<br>
+<br>
+なぜでしょう？なぜかしら？<br>
+<hr>
+<span class=name>omi</span>
+<span class=email><a href="mailto:omi@07.alphatec.or.jp">[E-Mail]</a></span>
+<span class=time>1998/05/08(金) 22:59:04</span><br>
+動かない原因は、不明ですが、<br>
+test[i] を elements[i]に替えると動かないでしょうか。<br>
+<hr>
+<span class=name>いいづか</span>
+<span class=email><a href="mailto:http://www.releenet.co.jp/siizuka/">[E-Mail]</a></span>
+<span class=url><a href="javascript:if(confirm('http://www.tohoho-web.com/lng/199805/jiscode.html  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ｲｻｿﾉﾓﾃ, ｻﾅﾆ愠ﾋﾏﾂﾔﾘ, ｻ鍗ｿｼｴｽｫﾍ｣ﾖｹ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.tohoho-web.com/lng/199805/jiscode.html'" tppabs="http://www.tohoho-web.com/lng/199805/siizuka@apollo.releenet.co.jp">[HomePage]</a></span>
+<span class=time>1998/05/10(日) 03:04:38</span><br>
+チェックボックス test が２つ以上ある場合は配列として扱えますが、<br>
+ひとつしかない場合は配列にはなりません。そのため、<br>
+<br>
+　　if (document.forms[0].test.checked == true) {<br>
+<br>
+というような構文にする必要があります。<br>
+<br>
+「CGIなどがチェックボックスを生成するので、１つかもしれないし<br>
+２つ以上かもしれない」場合のコーディングをしてみました。<br>
+よろしければご参考まで。なお、ネストを表現するため、<br>
+タブの代わりに全角スペースを使っています。貼り付けてテスト<br>
+するときは、全角スペースはタブかスペースにしてくださいね。<br>
+<br>
+------------------------------------------------------------<br>
+&lt;HTML&gt;<br>
+&lt;HEAD&gt;<br>
+<br>
+&lt;SCRIPT language="JavaScript"&gt;<br>
+&lt;!--/////////////　checklist()　修正版　//////////////////////////<br>
+function checktest() {<br>
+　　TestValue="";<br>
+<br>
+　　// フォーム f の全エレメントを対象として検証を行う。<br>
+　　// エレメントの数は不定なので、定数ではなくelements.length<br>
+　　// を使用したほうがいいと思う。<br>
+<br>
+　　for (i = 0; i &lt; document.f.elements.length; i++ ) {<br>
+<br>
+　　　　// エレメントがチェックボックスの時に処理を行う。<br>
+　　　　if (document.f.elements[i].type == "checkbox" ) {<br>
+<br>
+　　　　　　// チェックボックスがONの時はその値を設定する。<br>
+　　　　　　if (document.f.elements[i].checked == true) {<br>
+　　　　　　　　TestValue += document.f.elements[i].value;<br>
+　　　　　　}<br>
+　　　　}<br>
+　　}<br>
+　　document.f.result.value = TestValue;　　// 設定結果の表示<br>
+}<br>
+//--&gt;<br>
+&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;BODY&gt;<br>
+<br>
+&lt;!--問題のフォーム --&gt;<br>
+&lt;FORM name=f&gt;&lt;!-- フォームには名前を付けたほうがいいです。　--&gt;<br>
+<br>
+&lt;!--------チェックボックスを増減してみてください。------------&gt;<br>
+&lt;!--------JavaScriptの変更は不要です。------------------------&gt;<br>
+&lt;input type="checkbox" name="test" value="test1"&gt;test1<br>
+&lt;input type="checkbox" name="test" value="test2"&gt;test2<br>
+&lt;!--------ここまでですよ--------------------------------------&gt;<br>
+<br>
+&lt;P&gt;結果表示エリア：&lt;input type="text" name="result"&gt;&lt;/P&gt;<br>
+&lt;input type="button" value="test" onclick="checktest()"&gt;<br>
+&lt;/FORM&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+<hr>
+<span class=name>とこ</span>
+<span class=time>1998/05/11(月) 09:34:04</span><br>
+<span class=resolv>[[解決]]</span><br>
+omiさん、いいづかさん、ありがとうございました<br>
+ばっちし動きましたです！！<br>
+<br>
+<font color="#CC8000">＞チェックボックス test が２つ以上ある場合は配列として扱えますが、</font><br>
+<font color="#CC8000">＞ひとつしかない場合は配列にはなりません。</font><br>
+とは、知らなかったです。<br>
+勉強不足ですね、、、。<br>
+<br>
+ありがとうございました。<br>
+今後ともよろしくお願いいたします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199805/index.htm">[上に]</a>
+<a href="98050010.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050010.htm">[前に]</a>
+<a href="98050012.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050012.htm">[次に]</a>
+</body>
+</html>

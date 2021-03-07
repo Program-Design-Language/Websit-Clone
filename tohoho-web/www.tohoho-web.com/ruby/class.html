@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ruby入門 - クラス - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Ruby入門 - クラス</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/ruby/index.html">Ruby入門</a> &gt;
+クラス
+
+<h4 id="Class">クラス(class)</h4>
+<div class=i>
+<div class="title-tab">文法</div>
+<pre class=c2>
+<b>class</b> <i>class_name</i> [ <b>&lt;</b> <i>super_class</i> ]
+  <i>expression</i>...
+[<b>rescue</b> [<i>error_type</i>, ...] [<b>=&gt;</b> <i>evar</i>] [<b>then</b>]
+  <i>expression</i>...]...
+[<b>else</b>
+  <i>expression</i>...]...
+[<b>ensure</b>
+  <i>expression</i>...]
+<b>end</b>
+</pre>
+<p><b>class</b> は<b>クラス</b> を定義します。クラス名は英大文字で始まります。下記の例は MyClass クラスを定義しています。MyClass クラスはインスタンス変数 @name を持ちます。また、メソッドとして @name に値を設定する setName() と、@name の値を参照する getName() を持ちます。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+<em>class MyClass</em>
+  @name = ""
+  def setName(str)
+    @name = str
+  end
+  def getName
+    return @name
+  end
+<em>end</em>
+</pre>
+</div>
+
+<h4 id="new">オブジェクトの生成(new)</h4>
+<div class=i>
+<p><b>new</b> 演算子でオブジェクトを生成し、setName() メソッドを呼び出して名前を設定し、getName() メソッドでその値を参照しています。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+obj = MyClass.<em>new</em>
+obj.<em>setName("Tanaka")</em>
+puts obj.<em>getName</em>
+</pre>
+</div>
+
+<h4 id="extends">継承(&lt;)</h4>
+<div class=i>
+<p><b>&lt;</b> はクラスを継承する際の親クラス(スーパークラス)を指定します。下記の例で、MyMember2クラスは、MyMemberクラスを継承するサブクラスとして定義されています。MyMember2クラスは、MyMemberクラスが持つ $nameプロパティ、setName()メソッド、getName()メソッドを引き継ぎ、加えて、$addrプロパティ、setAddr()メソッド、getAddr()メソッドを持ちます。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+class MyMember
+  @name = ""
+  def setName(str)
+    @name = str
+  end
+  def getName
+    return @name
+  end
+end
+
+class MyMember2 <em>&lt; MyMember</em>
+  @addr = ""
+  def setAddr(str)
+    @addr = str
+  end
+  def getAddr
+    return @addr
+  end
+end
+
+obj = MyMember2.new
+obj.setName("Tanaka")
+obj.setAddr("Tokyo")
+puts obj.getName
+puts obj.getAddr
+</pre>
+<p>スーパークラスを省略した場合は、<b>Object</b> クラスのサブクラスとして作成されます。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+class MyClass          # class MyClass <em>&lt; Object</em> と同義
+end
+</pre>
+</div>
+
+<h4 id="nest">クラスのネスト</h4>
+<div class=i>
+<p>クラスをネスト(入れ子)にすることができます。外側クラスと内側クラスに継承関係はありませんが、いくつかのクラスをグルーピングする際に役立ちます。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+<em>class Foo</em>
+  <em>class Bar</em>
+  end
+end
+
+obj = <em>Foo::Bar.new</em>
+</pre>
+</div>
+
+<h4 id="expand">クラスの拡張</h4>
+<div class=i>
+<p>下記の様にして、すでに作成済みのクラスに対して、メソッドや変数などを追加(上書き)することができます。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+<em>class MyClass</em>        # クラスを定義
+  <em>def hello</em>
+    puts "Hello!"
+  end
+end
+
+<em>class MyClass</em>        # 同盟のクラスを定義
+  <em>def hello</em>          # 既存のメソッドを上書き
+    puts "HELLO!!!"
+  end
+  <em>def bye</em>            # 既存クラスにメソッドを追加
+    puts "Bye!"
+  end
+end
+</pre>
+</div>
+
+<h4 id="specific_class">特異クラス(&lt;&lt;)</h4>
+<div class=i>
+<div class="title-tab">文法</div>
+<pre class=c2>
+<b>class</b> <b>&lt;&lt;</b> <i>instance</i>
+  <i>expression</i>...
+[<b>rescue</b> [<i>error_type</i>, ...] [<b>=&gt;</b> <i>evar</i>] [<b>then</b>]
+  <i>expression</i>...]...
+[<b>else</b>
+  <i>expression</i>...]...
+[<b>ensure</b>
+  <i>expression</i>...]
+<b>end</b>
+</pre>
+<p><b>&lt;&lt;</b> を用いて、すでに作成済みのオブジェクトに対して、一時的に新たなメソッド等を追加定義することができます。下記の例では、Fooクラスのオブジェクト obj に対して新たなメソッド hello を追加定義しています。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+class Foo
+end
+
+obj = Foo.new
+
+class <em>&lt;&lt; obj</em>
+  def hello
+    puts "Hello!"
+  end
+end
+
+obj.hello
+</pre>
+</div>
+
+<h4 id="module">モジュール(module)</h4>
+<div class=i>
+<div class="title-tab">文法</div>
+<pre class=c2>
+<b>module</b> <i>module_name</i>
+  <i>expression</i>...
+[<b>rescue</b> [<i>error_type</i>, ...] [<b>=&gt;</b> <i>evar</i>] [<b>then</b>]
+  <i>expression</i>...]...
+[<b>else</b>
+  <i>expression</i>...]...
+[<b>ensure</b>
+  <i>expression</i>...]
+<b>end</b>
+</pre>
+<p><b>module</b> はモジュールを定義します。モジュールはクラスと似ていますが、それ自体ではインスタンスを生成せず、インスタンス変数も持ちません。代わりに、他のクラスにインクルード(<b>include</b>)されて使用されます。これにより、様々なクラスにモジュールの機能を取り込むことができます。</p>
+<div class="tab">Ruby</div>
+<pre class=c2>
+<em>module Foo</em>            # Fooモジュールを定義
+  def add(x, y)
+    return x + y
+  end
+<em>end</em>
+
+class Bar
+  <em>include Foo</em>         # Fooモジュールを取り込む
+end
+
+obj = Bar.new         # Barのインスタンスであっても
+puts obj.add(3, 5)    # Fooモジュールのメソッドadd()を利用できる
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2014 杜甫々</div>
+<div>初版：2014年12月30日、最終更新：2014年12月30日</div>
+<div>http://www.tohoho-web.com/ruby/class.html</div>
+</body>
+</html>
+

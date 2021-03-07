@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>オブジェクト（Object） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>オブジェクト（Object）</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="function.htm" tppabs="http://www.tohoho-web.com/js/function.htm">[prev]</a>
+<a href="class.htm" tppabs="http://www.tohoho-web.com/js/class.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#newObject2">{ ... }</a>,
+<a href="#eval">assign()</a>,
+<a href="#constructor">constructor</a>,
+<a href="#create">create()</a>,
+<a href="#defineProperty">defineProperty()</a>,
+<a href="#defineProperties">defineProperties()</a>,
+<a href="#entries">entries()</a>,
+<a href="#freeze">freeze()</a>,
+<a href="#fromEntries">fromEntries()</a>,
+<a href="#getter_setter">get</a>,
+<a href="#getOwnPropertyDescriptor">getOwnPropertyDescriptor()</a>,
+<a href="#getOwnPropertyDescriptors">getOwnPropertyDescriptors()</a>,
+<a href="#getOwnPropertyNames">getOwnPropertyNames()</a>,
+<a href="#getOwnPropertySymbols">getOwnPropertySymbols()</a>,
+<a href="#getPrototypeOf">getPrototypeOf()</a>,
+<a href="#hasOwnProperty">hasOwnProperty()</a>,
+<a href="#is">is()</a>,
+<a href="#isExtensible">isExtensible()</a>,
+<a href="#isFrozen">isFrozen()</a>,
+<a href="#isPrototypeOf">isPrototypeOf()</a>,
+<a href="#isSealed">isSealed()</a>,
+<a href="#keys">keys()</a>,
+<a href="#newObject">Object()</a>,
+<a href="#preventExtensions">preventExtensions()</a>,
+<a href="#propertyIsEnumerable">propertyIsEnumerable()</a>,
+<a href="#__proto__">__proto__</a>,
+<a href="#prototype">prototype</a>,
+<a href="#seal">seal()</a>,
+<a href="#getter_setter">set</a>,
+<a href="#setPrototypeOf">setPrototypeOf()</a>,
+<a href="#toLocaleString">toLocaleString()</a>,
+<a href="#toSource">toSource()</a>,
+<a href="#toString">toString()</a>,
+<a href="#valueOf">valueOf()</a>,
+<a href="#values">values()</a>
+</div>
+
+<h4 id="whatis">オブジェクトとは</h4>
+<div class=i>
+Object は、Number, String, Boolean, Date などのオブジェクトの親(祖先)となるオブジェクトで、Object が持つメソッドやプロパティは、すべての子孫オブジェクトで使用可能です。
+</div>
+
+<h4 id="create_object">オブジェクトを作成する</h4>
+<div class=i>
+<p>オブジェクトを作成するには、new Object() を用いる、{ ... } を用いる、Object.create() を用いるの3通りの方式があります。</p>
+</div>
+
+<h5 id="newObject">◆ <i>obj</i> = new Object(<span class="nb">[<i>value</i>]</span>)</h5>
+<div class=i>
+<p>少し古い書き方です。<b id="new">new</b> を用いてオブジェクトを生成します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = <em>new Object()</em>;
+var obj1 = new Object(false);       <span class="cm">// new Boolean(false) と同じ</span>
+var obj2 = new Object(12.3);        <span class="cm">// new Number(12.3) と同じ</span>
+var obj3 = new Object("ABC");       <span class="cm">// new String("ABC") と同じ</span>
+</pre>
+</div>
+
+<h5 id="newObject2">◆ <i>obj</i> = { <i>key1</i>: <i>value1</i>, <i>key2</i>: <i>value2</i>, ... }</h5>
+<div class=i>
+<p>ECMAScript でサポートされた書き方で、最近ではほとんどの場合、この書き方を用います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = <em>{}</em>;
+</pre>
+<p>下記の様に、オブジェクトのプロパティを定義することもできます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>var obj = {
+  width: 160,
+  height: 120
+}</em>;
+console.log(obj.width);   <span class="cm">// =&gt; 160</span>
+console.log(obj.height);  <span class="cm">// =&gt; 120</span>
+</pre>
+<p id="last_comma"><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES5</a> では、末尾のプロパティの最後にカンマ(,)を記述してもエラーとならなくなりました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {
+  width: 160,
+  height: 120<em>,</em>  <span class="cm">// ES5 以降であればエラーとならない</span>
+};
+</pre>
+</div>
+
+<h5 id="create">◆ Object.create(<span class="nb"><i>prototype</i>[, <i>properties</i>]</span>)</h5>
+<div class=i>
+<p>親のプロトタイプを継承して、子のオブジェクトに設定することができます。<a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES5.1</a> から追加された機能で、Chrome, Firefox, Safari, IE9以降で利用可能です。<i>properties</i> の詳細は <a href="#defineProperties">defineProperties</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<span class="cm">// 親オブジェクトを作成する</span>
+function parentObj() {};
+parentObj.prototype.width = 160;
+parentObj.prototype.height = 120;
+
+<span class="cm">// 子オブジェクトを作成する</span>
+function childObj() {}
+childObj.prototype = <em>Object.create(parentObj.prototype)</em>;
+console.log(childObj.prototype);
+
+<span class="cm">// なにも継承しない純粋なオブジェクトを作成する</span>
+var obj = <em>Object.create(null)</em>;
+</pre>
+</div>
+
+<h4 id="Prototype">プロトタイプ</h4>
+<div class=i>
+<p>プロトタイプは、子オブジェクトやサブクラスに継承されるプロパティやメソッドの集合です。</p>
+</div>
+
+<h5 id="prototype">◆ Object.prototype</h5>
+<div class=i>
+<p>オブジェクトのプロトタイプを示します。このオブジェクトタイプに新しいプロパティを定義したり、継承するメソッドをオーバライドしたりする際に用いられます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<span class="cm">// プロパティを追加する</span>
+<em>Date.prototype.tzname</em> = "(unknown)";
+var date1 = new Date();
+console.log(date1.tzname);
+
+<span class="cm">// メソッドをオーバーライドする</span>
+<em>Date.prototype.toString</em> = function() {
+  return(this.getFullYear() + "年" + (this.getMonth() + 1) + "月" + this.getDate() + "日"
+       + this.getHours() + "時" + this.getMinutes() + "分" + this.getSeconds() + "秒");
+}
+var date2 = new Date();
+console.log(date2.toString());      <span class="cm">// =&gt; 2019年3月24日16時31分12秒</span>
+
+<span class="cm">// プロトタイプを継承するオブジェクトを作成する</span>
+var date3 = Object.create(<em>Date.prototype</em>);
+</pre>
+</div>
+
+<h5 id="getPrototypeOf">◆ Object.getPrototypeOf(<i>obj</i>)</h5>
+<div class=i>
+<p>指定したオブジェクトの、プロトタイプを返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var proto = {x:100, y:200};
+var obj = Object.create(proto);
+var proto2 = <em>Object.getPrototypeOf(obj)</em>;
+console.log(proto2);           <span class="cm">// =&gt; {x:100, y:200}</span>
+</pre>
+</div>
+
+<h5 id="setPrototypeOf">◆ Object.setPrototypeOf(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトのプロトタイプを設定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var proto = {
+  hello: function() { console.log("Hello!!"); }
+}
+var obj = {x:100, y:200};
+<em>Object.setPrototypeOf(obj, proto)</em>;
+console.log(obj);              <span class="cm">// =&gt; {x:100, y:200}</span>
+obj.hello();                   <span class="cm">// =&gt; Hello!!</span>
+</pre>
+</div>
+
+<h5 id="isPrototypeOf">◆ <i>obj1</i>.isPrototypeOf(<i>obj2</i>)</h5>
+<div class=i>
+<p><i>obj2</i> のプロトタイプが、<i>obj1</i> のプロトタイプに由来しているものか否かを調べます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function obj1() {}
+const obj2 = new obj1();
+console.log(obj1.prototype.<em>isPrototypeOf(obj2)</em>);  <span class="cm">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="__proto__">◆ <i>obj</i>.__proto__ (非推奨)</h5>
+<div class=i>
+<p>オブジェクトのプロトタイプを返します。互換性を保つために残されていますが非推奨の機能です。代わりに <a href="#getPrototypeOf">getPrototypeOf()</a>, <a href="#setPrototypeOf">setPrototypeOf()</a> を使用してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x:100, y:200};
+console.log(<em>obj.__proto__</em>);    <span class="cm">// =&gt; {constructor: function Object() { ... }, ...}</span>
+</pre>
+</div>
+
+<h4 id="ObjProperty">プロパティ</h4>
+<div class=i>
+</div>
+
+<h5 id="keys">◆ Object.keys(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトが持つ、列挙可能なプロパティの名前の配列を返します。列挙不可のものも併せて取得するには <a href="#getOwnPropertyNames">getOwnPropertyNames()</a> を用います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x:100, y:200};
+console.log(<em>Object.keys(obj)</em>);       <span class="cm">// =&gt; ["x", "y"]</span>
+</pre>
+</div>
+
+<h5 id="values">◆ Object.values(<i>obj</i>)</h5>
+<div class=i>
+<p><a href="what.htm#es2017" tppabs="http://www.tohoho-web.com/js/what.htm#es2017">ES2017(ES8)</a> で追加された機能で、オブジェクトが持つ、列挙可能なプロパティの値の配列を返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x:100, y:200};
+console.log(<em>Object.values(obj)</em>);      <span class="cm">// =&gt; [100, 200]</span>
+</pre>
+</div>
+
+<h5 id="entries">◆ Object.entries(<i>obj</i>)</h5>
+<div class=i>
+<p><a href="what.htm#es2017" tppabs="http://www.tohoho-web.com/js/what.htm#es2017">ES2017(ES8)</a> で追加された機能で、オブジェクトのプロパティに対して、[key, value] の配列を返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x:100, y:200};
+console.log(<em>Object.entries(obj)</em>);     <span class="cm">// =&gt; [["x",100], ["y":200]]</span>
+</pre>
+</div>
+
+<h5 id="fromEntries">◆ Object.fromEntries(<i>obj</i>)</h5>
+<div class=i>
+<p><a href="what.htm#es2019" tppabs="http://www.tohoho-web.com/js/what.htm#es2019">ES2019(ES10)</a> で追加された機能で、[key, value] の配列をオブジェクトに変換します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = <em>Object.fromEntries([["x", 100], ["y", 200]])</em>;
+console.log(obj);             <span class="cm">// =&gt; {x: 100, y: 200}</span>
+</pre>
+</div>
+
+<h5 id="getOwnPropertyNames">◆ Object.getOwnPropertyNames(<i>obj</i>)</h5>
+<div class=i>
+<p>指定したオブジェクトの、列挙可能なプロパティ名のリストを返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x: 100, y: 200, z: 300};
+var names = <em>Object.getOwnPropertyNames(obj)</em>;
+console.log(names);           <span class="cm">// =&gt; ["x", "y", "z"]</span>
+</pre>
+</div>
+
+<h5 id="getOwnPropertySymbols">◆ Object.getOwnPropertySymbols(<i>obj</i>)</h5>
+<div class=i>
+<p>指定したオブジェクトの、列挙可能なシンボルのリストを返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {}
+obj[Symbol('x')] = 100;
+obj[Symbol('y')] = 200;
+var symbols = <em>Object.getOwnPropertySymbols(obj)</em>;
+console.log(symbols);        <span class="cm">// =&gt; [Symbol(x), Symbol(y)]</span>
+</pre>
+</div>
+
+<h5 id="hasOwnProperty">◆ <i>obj</i>.hasOwnProperty(<i>propertyName</i>)</h5>
+<div class=i>
+<p>オブジェクトが <i>propertyName</i> で指定した名前の属性を、自身のプロパティとして持っているかを調べます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = Object.create({x:100});
+obj['y'] = 200;
+console.log(obj.x);                     <span class="cm">// =&gt; 100</span>
+console.log(obj.y);                     <span class="cm">// =&gt; 200</span>
+console.log(<em>obj.hasOwnProperty('x')</em>);   <span class="cm">// =&gt; 継承したプロパティなので false</span>
+console.log(<em>obj.hasOwnProperty('y')</em>);   <span class="cm">// =&gt; 自身のプロパティなので true</span>
+</pre>
+</div>
+
+<h5 id="propertyIsEnumerable">◆ <i>obj</i>.propertyIsEnumerable(<i>prop</i>)</h5>
+<div class=i>
+<p><i>prop</i> で指定したプロパティが列挙可能か否かを返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var arr = ["x", "y"];
+console.log(<em>arr.propertyIsEnumerable(0)</em>);          <span class="cm">// =&gt; true</span>
+console.log(<em>arr.propertyIsEnumerable('length')</em>);   <span class="cm">// =&gt; false</span>
+
+var obj = {};
+Object.defineProperty(obj, 'x', {enumerable: true});
+Object.defineProperty(obj, 'y', {enumerable: false});
+console.log(<em>obj.propertyIsEnumerable('x')</em>);        <span class="cm">// =&gt; true</span>
+console.log(<em>obj.propertyIsEnumerable('y')</em>);        <span class="cm">// =&gt; false</span>
+</pre>
+</div>
+
+<h4 id="Property-descriptor">プロパティ記述子</h4>
+
+<h5 id="defineProperty">◆ Object.defineProperty(<span class="nb"><i>obj</i>, <i>property</i>, <i>descriptor</i></span>)</h5>
+<div class=i>
+<p><i>obj</i> のプロパティ値、および、プロパティ記述子を設定・変更します。<i>obj</i> にはオブジェクト、<i>prop</i> にはプロパティ名または Symbol、<i>description</i> にプロパティ記述子を指定します。プロパティ記述子には下記の属性を指定します。</p>
+<p><b>value</b> にはプロパティの値を指定します。省略した場合は undefined となります。get, set と同時に指定することはできません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {};
+Object.defineProperty(obj, 'a', { <em>value: 100</em> });
+console.log(obj.a);                   <span class="cm">// =&gt; 100</span>
+</pre>
+<p><b>writable</b> にはプロパティの値を上書きできるか否かを true または false で指定します。省略時は false となります。get, set と同時に指定することはできません。下記の例では、obj.a = 200 を実行していますが、上書きが禁止されているため、値は 100 のままとなります。<a href="basic.htm#strict" tppabs="http://www.tohoho-web.com/js/basic.htm#strict">ストリクトモード</a> の時には TypeError となります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+'use strict';
+var obj = {};
+Object.defineProperty(obj, 'a', { value: 100, <em>writable: false</em> });
+obj.a = 200;                          <span class="cm">// TypeError</span>
+</pre>
+<p><b>configurable</b> にはプロパティ記述子を変更できるか否かを true または false で指定します。省略時は false となります。下記の例ではプロパティ記述子の変更が禁止されているため、writable を true に変更しようとすると TypeError となります。writable の false を true に変更することは禁止されますが、true を false に変更することは禁止されません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+Object.defineProperty(obj, 'a', { writable: false, <em>configurable: false</em> });
+Object.defineProperty(obj, 'a', { writable: true });                   <span class="cm">// TypeError</span>
+</pre>
+<p><b>enumerable</b> には for ... in や Object.keys() などで列挙されるか否かを true または false で指定します。省略時は false となります。下記の例では、b は列挙が禁止されているため、a のみが列挙されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+Object.defineProperty(obj, "a", { value: 100, <em>enumerable: true</em> });
+Object.defineProperty(obj, "b", { value: 200, <em>enumerable: false</em> });
+for (var prop in obj) {
+  console.log(prop);      <span class="cm">// =&gt; a</span>
+}
+</pre>
+<p><b>get</b>, <b>set</b> には、プロパティに対するゲッター関数、セッター関数を指定します。value, writable と同時に指定することはできません。下記の例では、プロパティに値を設定したり、値を取得する度にコンソールにログを出力します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+Object.defineProperty(obj, 'a', {
+  <em>get() { console.log("get:" + a); return a; },</em>
+  <em>set(value) { console.log("set:" + value); a = value; }</em>
+});
+obj.a = 100;                <span class="cm">// =&gt; set:100</span>
+var n = obj.a;              <span class="cm">// =&gt; get:100</span>
+</pre>
+</div>
+
+<h5 id="defineProperties">◆ Object.defineProperties(<i>obj</i>, <i>properties</i>)</h5>
+<div class=i>
+<p>複数のプロパティを同時に指定します。詳細は <a href="#defineProperty">defineProperty()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {};
+Object.<em>defineProperties(</em>obj, {
+  a: { value: 100, writable: true },
+  b: { value: 200, writable: true },
+});
+</pre>
+</div>
+
+<h5 id="getOwnPropertyDescriptor">◆ Object.getOwnPropertyDescriptor(<i>obj</i>, <i>prop</i>)</h5>
+<div class=i>
+<p>指定したオブジェクトのプロパティの、プロパティ記述子を取得します。プロパティ記述子の詳細は <a href="#defineProperty">defineProperty()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = { a: 100 };
+var desc = <em>Object.getOwnPropertyDescriptor(obj, 'a')</em>;
+console.log(desc.value);
+console.log(desc.writable);
+console.log(desc.configurable);
+console.log(desc.enumerable);
+</pre>
+</div>
+
+<h5 id="getOwnPropertyDescriptors">◆ Object.getOwnPropertyDescriptors(<i>obj</i>)</h5>
+<div class=i>
+<p><a href="what.htm#es2017" tppabs="http://www.tohoho-web.com/js/what.htm#es2017">ES2017(ES8)</a> で追加された機能で、指定したオブジェクトの、列挙可能なすべてのプロパティについて、プロパティ記述子を取得します。プロパティ記述子の詳細は <a href="#defineProperty">defineProperty()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = { a: 100 };
+var descs = <em>Object.getOwnPropertyDescriptors(obj)</em>;
+console.log(descs);    <span class="cm">// =&gt; {a: {value: 100, writable: true, ...}}</span>
+</pre>
+</div>
+
+<h4 id="Freeze-Seal-etc">凍結・封印・拡張禁止</h4>
+<div class=i>
+<p>オブジェクトは、凍結・封印・拡張禁止することができます。また、<a href="#Property-descriptor">プロパティ記述子</a> の設定により個々のプロパティを値変更不可・設定変更不可にすることもできます。それぞれの関係をまとめると下記の様になります。拡張とはプロパティを追加すること、削除とはプロパティを削除すること、設定変更とは <a href="#defineProperty">defineProperty()</a> などでプロパティ記述子を制限が緩い方向に変更すること、値変更とは代入などによりプロパティの値を変更することを示します。</p>
+<table class="tb1">
+<tr><th>種別</th><th>拡張</th><th>削除</th><th>設定変更</th><th>値変更</th></tr>
+<tr><td>凍結(freeze)</td><td>×</td><td>×</td><td>×</td><td>×</td></tr>
+<tr><td>封印(seal)</td><td>×</td><td>×</td><td>○</td><td>○</td></tr>
+<tr><td>拡張禁止(preventExtensions)</td><td>×</td><td>○</td><td>○</td><td>○</td></tr>
+<tr><td>値変更不可(writable:false)</td><td>○</td><td>○</td><td>○</td><td>×</td></tr>
+<tr><td>設定変更不可(configurable:false)</td><td>○</td><td>○</td><td>×</td><td>○</td></tr>
+</table>
+</div>
+
+<h5 id="freeze">◆ Object.freeze(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトを凍結します。拡張、削除、設定変更、値変更が禁止されます。禁止された操作を行おうとすると、通常モードでは無視され、<a href="basic.htm" tppabs="http://www.tohoho-web.com/js/basic.htm">ストリクトモード</a> では TypeError が発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+'use strict';
+var obj = { a: 100, b: 200 };
+<em>Object.freeze(obj);</em>
+obj.a = 300;             <span class="cm">// =&gt; TypeError</span>
+</pre>
+</div>
+
+<h5 id="seal">◆ Object.seal(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトを封印します。拡張、削除が禁止されます。設定変更、値変更は禁止されません。禁止された操作を行おうとすると、通常モードでは無視され、<a href="basic.htm" tppabs="http://www.tohoho-web.com/js/basic.htm">ストリクトモード</a> では TypeError が発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+'use strict';
+var obj = {x:100, y:200};
+<em>Object.seal(obj)</em>;
+obj['z'] = 300;                <span class="cm">// =&gt; TypeError</span>
+delete obj.x;                  <span class="cm">// =&gt; TypeError</span>
+</pre>
+</div>
+
+<h5 id="preventExtensions">◆ Object.preventExtensions(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトを拡張禁止にします。削除、設定変更、値変更は禁止されません。禁止された操作を行おうとすると、通常モードでは無視され、<a href="basic.htm" tppabs="http://www.tohoho-web.com/js/basic.htm">ストリクトモード</a> では TypeError が発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+'use strict';
+var obj = {x:100, y:200};
+<em>Object.preventExtensions(obj)</em>;
+obj['z'] = 300;                <span class="cm">// =&gt; TypeError</span>
+</pre>
+</div>
+
+<h5 id="isFrozen">◆ Object.isFrozen(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトが凍結されているか否かを返します。オブジェクトは <a href="#freeze">freeze()</a>により凍結されます。プロパティをひとつも持たない場合や、プロパティがすべて変更不可(writable:false)、かつ、設定変更不可(configurable:false)であれば、<a href="#seal">seal()</a>, <a href="#preventExtensions">preventExtensions()</a> によっても凍結状態となります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {};
+console.log(<em>Object.isFrozen(obj)</em>);    <span class="cm">// =&gt; true</span>
+Object.freeze(obj);
+console.log(<em>Object.isFrozen(obj)</em>);    <span class="cm">// =&gt; false</span>
+</pre>
+</div>
+
+<h5 id="isSealed">◆ Object.isSealed(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトが封印されているか否かを返します。オブジェクトは <a href="#freeze">freeze()</a> や <a href="#seal">seal()</a> により封印されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {};
+console.log(<em>Object.isSealed(obj)</em>);    <span class="cm">// =&gt; true</span>
+Object.seal(obj);
+console.log(<em>Object.isSealed(obj)</em>);    <span class="cm">// =&gt; false</span>
+</pre>
+</div>
+
+<h5 id="isExtensible">◆ Object.isExtensible(<i>obj</i>)</h5>
+<div class=i>
+<p>オブジェクトが拡張可能であるか否かを返します。オブジェクトは <a href="#freeze">freeze()</a>, <a href="#seal">seal()</a>, <a href="#preventExtensions">preventExtensions()</a> により拡張不可となります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {};
+console.log(<em>Object.isExtensible(obj)</em>);    <span class="cm">// =&gt; true</span>
+Object.freeze(obj);
+console.log(<em>Object.isExtensible(obj)</em>);    <span class="cm">// =&gt; false</span>
+</pre>
+</div>
+
+<h4 id="string">文字列への変換</h4>
+
+<h5 id="toString">◆ <i>object</i>.toString()</h5>
+<div class=i>
+<p>オブジェクトを文字列に変換する際に用いられます。オブジェクトの種類や JavaScript のバージョンによって文字列のフォーマットは異なります。このメソッドは、オブジェクトを文字列に変換する必要がある時に暗黙的に呼ばれます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var date = new Date();
+console.log(<em>date.toString()</em>);        <span class="cm">// =&gt; Sun Mar 24 2019 14:02:41 GMT+0900 (日本標準時)</span>
+</pre>
+</div>
+
+<h5 id="toLocaleString">◆ <i>obj</i>.toLocaleString()</h5>
+<div class=i>
+<p>オブジェクトを文字列に変換します。Object では toLocaleString() は toString() と同等ですが、Date などのサブクラスでは、toLocaleString() をオーバーライドすることで、言語依存の文字列に変換することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var date = new Date();
+console.log(<em>date.toLocaleString()</em>);  <span class="cm">// =&gt; 2019/3/24 14:02:41</span>
+</pre>
+</div>
+
+<h5 id="toSource">◆ <i>object</i>.toSource() (非推奨)</h5>
+<div class=i>
+<p>オブジェクトの中身の値を得ます。toString()だと [object Object] としか表示されなかったところを、({x:100, y:200}) などのように、オブジェクトのプロパティまで文字列化することができます。Netscape Navigator 4.5 や Firefox でサポートされていますが、他の多くのブラウザではサポートされていません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x:100, y:200};
+console.log(obj.toString());  <span class="cm">// =&gt; [object Object]</span>
+console.log(obj.toSource());  <span class="cm">// =&gt; ({x:100, y:200})</span>
+</pre>
+</div>
+
+<h4 id="Other">その他</h4>
+
+<h5 id="constructor">◆ <i>obj</i>.constructor</h5>
+<div class=i>
+<p>オブジェクトのコンストラクタへの参照を返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x:100, y:200};
+console.log(<em>obj.constructor</em>);    <span class="cm">// =&gt; function Object() { ... }</span>
+</pre>
+</div>
+
+<h5 id="eval">◆ Object.assign(<span class="nb"><i>target</i>, <i>obj1</i>, <i>obj2</i>, ...</span>)</h5>
+<div class=i>
+<p><i>target</i> オブジェクトに、<i>obj1</i>, <i>obj2</i>, ... オブジェクトが持つプロパティをコピーします。<a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES2015(ES6)</a> で追加された機能で、Chrome, Firefox, Safari, Edge ではサポートされていますが、IE11 ではサポートしていません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var target = { a: 1, b: 2 }
+var obj1 = { c: 3, d: 4 }
+var obj2 = { e: 5, f: 6 }
+Object.assign(target, obj1, obj2);
+console.log(target);     <span class="cm">// =&gt; {a: 1, b: 2, c: 3, d: 4, e: 5, f: 6}</span>
+</pre>
+</div>
+
+<h5 id="is">◆ Object.is(<i>value1</i>, <i>value2</i>)</h5>
+<div class=i>
+<p><i>value1</i> と <i>value2</i> を比較し、同一であれば true、異なるものであれば false を返します。<a href="operator.htm#comparison" tppabs="http://www.tohoho-web.com/js/operator.htm#comparison">===</a> による比較とほぼ同じ結果を返しますが、-0 と +0、Number.Nan と NaN を別物とみなす点が異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>Object.is(123, "123")</em>;       <span class="cm">// =&gt; false</span>
+<em>Object.is(-0, +0)</em>;           <span class="cm">// =&gt; false</span>
+</pre>
+</div>
+
+<h5 id="valueOf">◆ <i>obj</i>.valueOf()</h5>
+<div class=i>
+<p>オブジェクトのプリミティブな値を返します。Number などのサブクラスでは、valueOf() をオーバーライドすることで、Number オブジェクトからプリミティブな数値を取り出します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var num = new Number(12.345);
+console.log(num);            <span class="cm">// =&gt; Number {12.345}</span>
+console.log(<em>num.valueOf()</em>);  <span class="cm">// =&gt; 12.345</span>
+</pre>
+</div>
+
+<h4 id="getter_setter">ゲッターとセッター</h4>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES5</a> では、プロパティに設定した時、参照した時に関数を呼び出す、ゲッター(getter)とセッター(setter)がサポートされました。下記の例では、name プロパティに値を設定したり、値を参照したりする際に、ゲッター関数、セッター関数が呼び出され、コンソールにログを出力します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var user = {
+  _name: '',
+  <em>set</em> name(name) {      <span class="cm">// setter関数</span>
+    console.log("Set name : " + name);
+    this._name = name;
+  },
+  <em>get</em> name() {          <span class="cm">// getter関数</span>
+    console.log("Get name : " + this._name);
+    return this._name;
+  }
+}
+user.name = "Tanaka";   <span class="cm">// =&gt; Set name : Tanaka</span>
+name = user.name;       <span class="cm">// =&gt; Get name : Tanaka</span>
+</pre>
+</div>
+
+<h4 id="spread_rest">スプレッド構文とレスト構文</h4>
+<div class=i>
+<p><a href="what.htm#es2018" tppabs="http://www.tohoho-web.com/js/what.htm#es2018">ES2018(ES9)</a> では、オブジェクトに対するレスト構文とスプレッド構文がサポートされました。</p>
+
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj1 = {x: 200, y: 300};
+var obj2 = {w: 400, h: 500};
+
+var obj3 = {<em>...obj1, ...obj2</em>};              <span class="cm">// スプレッド構文</span>
+console.log(obj3);                          <span class="cm">// {x: 200, y: 300, w: 400, h: 500}</span>
+
+var { x, y, <em>...rest</em> } = obj3;               <span class="cm">// レスト構文</span>
+console.log(rest);                          <span class="cm">// {w: 400, h: 500}</span>
+</pre>
+</div>
+
+<h4 id="defClass">クラスを定義する</h4>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES2015(ES6)</a> より古い JavaScript では <a href="class.htm" tppabs="http://www.tohoho-web.com/js/class.htm">class</a> による <b id="class">クラス</b> 定義がサポートされておらず、代わりに <a href="function.htm" tppabs="http://www.tohoho-web.com/js/function.htm">function</a> を用いてクラスを擬似的に定義していました。下記では、Person というクラスを定義しています。これは name と age を属性（<b id="property">プロパティ</b>）として持ち、toString() を動作（<b id="method">メソッド</b>）として持ちます。toString() は、すべてのクラスに共通な toString() メソッドを上書き（<b id="override">オーバーライド</b>）するものです。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+  this.toString = function() {
+    return (this.name + "(" + this.age + ")");
+  }
+}
+</pre>
+<p>Person() 関数は Person クラスの生成関数（<b id="constructor2">コンストラクタ</b>）として扱われます。Person オブジェクトの実体（<b id="instance">インスタンス</b>）を生成するには new 演算子を用います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var p1 = new Person("Suzuki", 26);
+console.log(p1.name);         <span class="cm">// =&gt; Suzuki</span>
+console.log(p1.toString());   <span class="cm">// =&gt; Suzuki(26)</span>
+</pre>
+</div>
+
+<h4 id="inheritClass">クラスを継承する</h4>
+<div class=i>
+<p><a href="function.htm#call" tppabs="http://www.tohoho-web.com/js/function.htm#call">call()</a> や <a href="function.htm#apply" tppabs="http://www.tohoho-web.com/js/function.htm#apply">apply()</a> を用いて、Person のサブクラス Person2 や Person3 を作成することができます。引数固定の場合は call()、可変個引数の場合は apply() を用います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function Person2(name, age, email) {
+  this.email = email;
+  <em>Person.call(this, name, age)</em>;
+}
+var p2 = new Person2("Suzuki", 26, "suzuki@example.com");
+console.log(p2.name);
+console.log(p2.age);
+console.log(p2.email);
+
+function Person3(/* ..., email */) {
+  var args = [].slice.call(arguments);
+  this.email = args.pop();
+  <em>Person.apply(this, args)</em>;
+}
+var p3 = new Person3("Suzuki", 26, "suzuki@example.com");
+console.log(p3.email);
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="function.htm" tppabs="http://www.tohoho-web.com/js/function.htm">[prev]</a>
+<a href="class.htm" tppabs="http://www.tohoho-web.com/js/class.htm">[next]</a>
+<div>Copyright (C) 1996-2019 杜甫々</div>
+<div>改訂版初版：2001年5月20日、最終更新：2019年3月24日</div>
+<div>http://www.tohoho-web.com/js/object.htm</div>
+</body>
+</html>

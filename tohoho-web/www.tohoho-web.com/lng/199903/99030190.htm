@@ -1,0 +1,221 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>選択リストの項目を削除のするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>選択リストの項目を削除のするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030189.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030189.htm">[前に]</a>
+<a href="99030191.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030191.htm">[次に]</a>
+<hr>
+<span class=name>TOM</span>
+<span class=email><a href="mailto:toma@akira.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/03/31(水) 11:31:46</span><br>
+選択リストから項目を選択して（複数可）、削除ボタンが押されたら<br>
+削除するといった処理で作りたいのですが<br>
+<br>
+選択された項目に<br>
+document.formname.selectname[i].value = ""<br>
+document.formname.selectname[i].text = ""<br>
+としてから<br>
+document.formname.selectname.length = document.formname.selectname.length - 選択された分<br>
+<br>
+こんな感じでやったのですがうまくいきません。<br>
+どうやればいいのでしょうか？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/03/31(水) 12:06:46</span><br>
+上のやり方だとlengthを減らすところで，チェックされていたかどうかに関わらず<br>
+最後から（選択数）個が削除されてしまうからだと思います。<br>
+例えばいちばん上の項目を選んでいたら，その項目は選択可能な空白になり，<br>
+選んでもいなかった最後の項目が消える。<br>
+解決するためにはソートして，選択された項目のvalue, textを末尾に<br>
+持っていくようにしないといけないような気がします。selectedもクリアする。<br>
+＃他にいい方法が思いつかない。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/03/31(水) 13:22:21</span><br>
+IE4やNN4以上ならdeleteで対応できるのかな？<br>
+<br>
+<a href="../../js/statement.htm#delete" tppabs="http://www.tohoho-web.com/js/statement.htm#delete">http://www.tohoho-web.com/js/statement.htm#delete</a><br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/03/31(水) 13:52:03</span><br>
+面白そうだったのでdeleteを使わない例で組んでみました。コメントなしで恐縮ですが<br>
+解析して参考にしてくだされば。<br>
+あ，引数としてselectを渡してselectnameで受けてますのでご注意。<br>
+<br>
+function func(selectname){<br>
+DelCount = 0;<br>
+WritePos = 0;<br>
+　for (i = 0; i &lt; selectname.length; i++){<br>
+　　if (selectname.options[i].selected == true){<br>
+　　DelCount++;<br>
+　　selectname.options[i].selected = false;<br>
+　　} else {<br>
+　　selectname.options[WritePos].text = selectname.options[i].text;<br>
+　　selectname.options[WritePos].value = selectname.options[i].value;<br>
+　　WritePos++;<br>
+　　}<br>
+　}<br>
+selectname.length=selectname.length - DelCount;<br>
+}<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/03/31(水) 14:06:55</span><br>
+補足訂正<br>
+<font color="#CC8000">&gt;　　selectname.options[WritePos].text = selectname.options[i].text;</font><br>
+<font color="#CC8000">&gt;　　selectname.options[WritePos].value = selectname.options[i].value;</font><br>
+selectname.options[WritePos] = selectname.options[i];<br>
+の一行で十分でしたね。<br>
+＃うん，なかなかエレガント。<br>
+<hr>
+<span class=name>VW</span>
+<span class=time>1999/03/31(水) 16:53:48</span><br>
+たったいまラウンジのCGIをつかわせてもらいました。<br>
+とても便利ですね 情報を記入できるし、また<br>
+ラウンジのCGIの中では記入された特定のメッセージを削除することも<br>
+できます。 参考までに<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/03/31(水) 19:34:16</span><br>
+えっと，&lt;SELECT&gt;とJavaScriptの・・・話ですよね＞＞TOMさん<br>
+<br>
+そういや，上のソースですがもっと短くできましたね。ループ抜けた時点での<br>
+WritePosがそのままselectname.lengthと同じのはずだから（最後に++<br>
+されて），DelCountなんて変数を作る必要もなくて。<br>
+そうするとif文もtrueでなくfalseの場合(!selectname...)で書いて，if文を抜けた後に必ず<br>
+selectedをfalseにすれば・・・。<br>
+あと，それからこの場合は等価だけど，厳密にはi = 0からのスタートでは<br>
+なくて i = WritePos からでしたね。あらかじめWritePos = selectedIndex<br>
+にしておく手もあったなぁ。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/01(木) 12:35:23</span><br>
+エレガント対決です（笑）<br>
+<br>
+function func(selectname){<br>
+for (i = selectname.length; i &gt; 0; i--){<br>
+selectname.options[selectname.selectedIndex] = null;<br>
+}<br>
+}<br>
+<br>
+引数はTmbさんと同じです。動作保証をしていないのが欠点（←オイオイ）<br>
+<br>
+あと勝手に質問なんですけど<br>
+<font color="#CC8000">&gt; あらかじめWritePos = selectedIndexにしておく手もあったなぁ。</font><br>
+これは複数選択された場合、selectedIndexが最小値を返すからですよね。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/01(木) 13:27:33</span><br>
+<font color="#CC8000">&gt;for (i = selectname.length; i &gt; 0; i--){</font><br>
+<font color="#CC8000">&gt;selectname.options[selectname.selectedIndex] = null;</font><br>
+<br>
+うわーっ，これはやられた (^^)　まさかこの手があったとは。<br>
+NN3.0でばっちり動作しました。この勝負，僕の完敗です。<br>
+＃よーし，次こそは。＜＜こりないやつ（笑）<br>
+<br>
+<font color="#CC8000">&gt;・・・selectedIndexが最小値を返すから・・・</font><br>
+その通りです。でも全ての項目が非選択のときの例外指定がもしかしたら<br>
+必要だったかも（自分のは確認してないのです (^^;）<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/01(木) 13:44:03</span><br>
+ささやかな反撃（笑）<br>
+<br>
+非選択のときのselectedIndexは-1を返すようです（いつものようにNN3で確認）<br>
+そこでforの代わりに<br>
+while (selectname.selectedIndex != -1) {<br>
+で回していくとループ回数が減ってスピードアップ・・・って<br>
+何百項目もなけりゃ変わらないか (^^;;;<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/01(木) 14:26:52</span><br>
+わ～い、と喜んだのも束の間<br>
+IE4と5でエラーが出ちゃいました。<br>
+エラーが出ても動作はちゃんとしてたので気付かんかった。<br>
+＃わかり難いよIE5のエラーメッセージ<br>
+<br>
+エラー回避版はコチラ<br>
+function func(selectname){<br>
+for (i = selectname.length; i &gt; 0; i--){<br>
+if(selectname.selectedIndex != -1){<br>
+selectname.options[selectname.selectedIndex] = null;<br>
+}<br>
+}<br>
+}<br>
+<br>
+こうすると何故かエラーが出ません。<br>
+しかしエレガントさに欠けてしまったので<br>
+この勝負は引き分けでどうでしょう？Tmbさん。<br>
+<br>
+＃質問者さんそっちのけでチャット状態ですね<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/01(木) 14:36:41</span><br>
+whileループの方でもエラーでますか？<br>
+<br>
+元のたこすけさんのアルゴリズムで気になったのは，選択されてた項目が<br>
+すべて消された後，selectedIndexが-1になったとき，options[-1]を<br>
+nullにする，という命令が出ることです。NNではこれは無視されるみたい<br>
+なので問題ないのですが，IEでエラーになるのはそこらへんの問題では<br>
+ないでしょうかね？<br>
+<br>
+while文の場合はdo～whileと違って，最初から条件がfalseなら，<br>
+ステートメントを１回も実行せずにループを抜けるみたいなので，<br>
+実はこの問題（というかNNでは単に「気持悪い」だけなんだけど）も<br>
+回避できると思っていたのですが。<br>
+＃まさかwhileの仕様まで違うなんてことはないよね？<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/01(木) 14:39:07</span><br>
+失礼、さっきの発言を書いたのはTmbさんの反撃の前でした。<br>
+＃ラウンジ常駐なものでして (^^;;<br>
+<font color="#CC8000">&gt; while (selectname.selectedIndex != -1) {</font><br>
+これを早速頂いて<br>
+<br>
+エレガントに復活版はコチラ<br>
+function func(selectname){<br>
+while (selectname.selectedIndex != -1) {<br>
+selectname.options[selectname.selectedIndex] = null;<br>
+}<br>
+}<br>
+<br>
+いや～、人様のスクリプトを盗むのは気持ちが良いな～（←外道）<br>
+Tmbさんが居なければ作れなかったので、勝負は無効にしましょう<br>
+＃ていうかこのままだと確実に負けそうなので・・・（笑）<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/01(木) 14:42:35</span><br>
+度々失礼、言い訳ですが<br>
+<font color="#CC8000">&gt; たこすけ 1999/04/01(木) 14:39:07</font><br>
+この書き込みは<br>
+<font color="#CC8000">&gt; Tmb 1999/04/01(木) 14:36:41</font><br>
+これ以前に書きました。<br>
+<br>
+<font color="#CC8000">&gt; whileループの方でもエラーでますか？</font><br>
+でません。でません。全然でません。<br>
+＃私の完敗で～す。（涙）<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/01(木) 15:26:05</span><br>
+<font color="#CC8000">&gt;&gt;whileループで・・・</font><br>
+エラー出なくて安心しました（笑）　僕の方も書き込むタイミングが早すぎました。<br>
+<br>
+<font color="#CC8000">&gt;エレガントに復活版・・・</font><br>
+いやぁ，美しくなったなぁ。あれがたった２行のステートメントでいけるなんて。<br>
+しかし，ホントoption = null というのは目から鱗でした。こんな使い途があった<br>
+なんて知らなかった。<br>
+というわけで，もし僕の最初のスクリプトを参考にして使っているなら，できれば<br>
+たこすけさんの復活版にしてください＞TOMさん<br>
+<br>
+＃これだけきれいなのがあると，効率の悪いスクリプトを紹介したのが恥ずかしい<br>
+＃のです (^^;;;;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030189.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030189.htm">[前に]</a>
+<a href="99030191.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030191.htm">[次に]</a>
+</body>
+</html>

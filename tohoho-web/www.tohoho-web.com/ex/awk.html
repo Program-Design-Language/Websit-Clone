@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほのAWK入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>とほほのAWK入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+とほほのAWK入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#what">AWKとは</a>
+<li><a href="#hello_world">Hello world</a>
+<li><a href="#simple_sample">簡単な利用例</a>
+<li><a href="#run">実行方法</a>
+<li><a href="#records_and_fields">レコードとフィールド</a>
+<li><a href="#basic_syntax">基本文法</a>
+<li><a href="#pattern">パターン</a>
+  <ul>
+  <li><a href="#action">アクション</a>
+  <li><a href="#comments">コメント</a>
+  </ul>
+<li><a href="#operators">演算子</a>
+<li><a href="#array">配列</a>
+  <ul>
+  <li><a href="#multi_array">多次元配列</a>
+  <li><a href="#array_of_array">配列の配列</a>
+  </ul>
+<li>入出力
+  <ul>
+  <li><a href="#print">print文</a>
+  <li><a href="#printf">printf文</a>
+  <li><a href="#redirect">リダイレクト</a>
+  <li><a href="#getline">getline文</a>
+  </ul>
+<li>制御構文
+  <ul>
+  <li><a href="#if-statement">if文</a>
+  <li><a href="#while-statement">while文</a>
+  <li><a href="#do-while-statement">do-while文</a>
+  <li><a href="#for-statement">for文</a>
+  <li><a href="#switch-statement">switch文</a>
+  <li><a href="#break-statement">break文</a>
+  <li><a href="#continue-statement">continue文</a>
+  <li><a href="#next-statement">next文</a>
+  <li><a href="#nextfile-statement">nextfile文</a>
+  <li><a href="#exit-statement">exit文</a>
+  </ul>
+<li><a href="#functions">関数</a>
+<li><a href="#regexp">正規表現</a>
+<li><a href="#include">インクルード(@include)</a>
+<li><a href="#load">ライブラリロード(@load)</a>
+<li><a href="#namespace">ネームスペース(@namespace)</a>
+<li><a href="#command_line">コマンドラインオプション</a>
+<li><a href="#built-in_variables">ビルトイン変数</a>
+<li><a href="#built-in_functions">ビルトイン関数</a>
+<li><a href="#library_functions">ライブラリ関数</a>
+<li><a href="#environments">環境変数</a>
+<li><a href="#network_access">ネットワークアクセス</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="what">AWKとは</h4>
+<div class="i">
+<ul>
+<li>「オーク」と呼びます。
+<li>開発者の Aho(エイホ)さん、Weinberger(ワインバーガー)さん、Kernighan(カーニハン)さんの頭文字から名前付けされました。
+<li>Linux(というかUnix)で古くから(1997年～)サポートされているスクリプト言語です。
+<li>Perl(1987年)、Python(1989年)、Ruby(1993年)、PHP(1995年)、JavaScript(1995年)に比べても最古参です。
+<li>元々はプログラミング言語というよりは、sed や grep の高機能なツールとして開発されました。
+<li>簡単な行ベースのテキストファイルを処理するのに適しています。
+<li>大半の Linux にはデフォルトでインストールされています。
+<li>実装としては、CentOS 系では高機能な GNU版の gawk、Ubuntu 系ではシンプル・高速な mawk を採用しています。
+<li>gawk は「グォーク」「ジーオーク」などと読むそうですが、私は昔のアニメを思い出しながら「ガウォーク」と読んでしまいます。
+<li>このページでは gawk 4.2 の機能を中心に説明します。
+</ul>
+</div>
+
+<h4 id="hello_world">Hello world</h4>
+<div class="i">
+<p>Hello world を表示するプログラムは次のようになります。拡張子は特に決まりはありません。</p>
+<pre class="c">
+{ print "Hello world!" }
+</pre>
+<p>AWK は <b>grep</b> や <b>sed</b> のようなフィルタコマンドとして実装されているため、何らかの入力が必要です。下記の様に実行します。</p>
+<pre class="c">
+$ echo | awk -f hello.awk
+</pre>
+<p>下記のように、コマンドラインにプログラムを直接指定する方式もよく利用されます。</p>
+<pre class="c">
+$ echo | awk '{ print "Hello world!" }'
+</pre>
+</div>
+
+<h4 id="simple_sample">簡単な利用例</h4>
+<div class="i">
+<p>簡単な利用例をいくつか紹介します。ちょっとした便利ツールとして重宝できそうってことがわかるかと思います。</p>
+<pre class="c">
+<span class="cm"># ls -l の結果から所有者とグループとファイル名だけを表示する</span>
+$ ls -l | awk '{ print $3, $4, $9 }'
+yamada yamada hello.awk
+yamada yamada sample.awk
+
+<span class="cm"># ファイル名がhello.awkのものだけ表示する</span>
+$ ls -l | awk '$9=="hello.awk" { print $3, $4, $9 }'
+yamada yamada hello.awk
+
+<span class="cm"># /etc/passwdを:をデリミタとしてユーザ名とホームディレクトリのみを表示する</span>
+$ cat /etc/passwd | awk -F: '{ print $1, $6 }'
+root /root
+bin /bin
+
+<span class="cm"># /etc/passwdのユーザ名とホームディレクトリを整形して表示する</span>
+cat /etc/passwd | awk -F: '{ printf("%-8s %s\n", $1, $6) }'
+root    /root
+bin     /bin
+
+<span class="cm"># df実行結果から2行目以降の第2カラムの合計を表示する</span>
+$ df | awk 'NR&gt;=2 {z+=$2}; END {print z}'
+31097704
+</pre>
+</div>
+
+<h4 id="run">実行方法</h4>
+<div class="i">
+<p>プログラムはコマンドラインに直接指定するか、-f でプログラムファイル名を指定します。入力ファイルは標準入力、または引数としてファイル名を渡します。</p>
+<pre class="c">
+$ cat data.txt | awk <em>'{ print $1, $2 }'</em>		<span class="cm"># プログラムを直接指定</span>
+$ cat data.txt | awk <em>-f sample.awk</em>		<span class="cm"># プログラムファイルで指定</span>
+$ awk -f sample.awk <em>data1.txt data2.txt</em>		<span class="cm"># 入力データを引数で指定</span>
+</pre>
+<p>プログラムファイルの先頭を #!/usr/bin/awk -f とすることで、プログラムファイルをコマンドとして直接実行することができます。</p>
+<pre class="c">
+<em>#!/usr/bin/awk -f</em>
+{ print $1, $8 }
+</pre>
+<pre class="c">
+$ chmod 755 sample.awk
+$ ps -ef | <em>./sample.awk</em>
+</pre>
+</div>
+
+<h4 id="records_and_fields">レコードとフィールド</h4>
+<div class="i">
+<p>入力データはレコードとフィールドに分割されます。レコードは行、フィールドは空白文字で区切られたカラムに相当します。レコードとフィールドの区切り文字は <a href="#built-in_variables">ビルトイン変数</a> <b>RS</b> と <b>FS</b> で変更することができます。</p>
+<pre class="c">
+<i>field1</i>  <i>field2</i>  <i>field3</i>		<span class="cm"># <i>record1</i></span>
+<i>field1</i>  <i>field2</i>  <i>field3</i>		<span class="cm"># <i>record2</i></span>
+<i>field1</i>  <i>field2</i>  <i>field3</i>		<span class="cm"># <i>record3</i></span>
+</pre>
+<p>レコード全体は <b>$0</b>、フィールドは <b>$1</b>, <b>$2</b>, <b>$3</b>, ... で参照することができます。</p>
+<pre class="c">
+{ print <em>$0</em> }			<span class="cm"># レコード全体を表示</span>
+{ print <em>$1</em>, <em>$2</em>, <em>$3</em> }		<span class="cm"># 第1、第2、第3フィールドを表示</span>
+</pre>
+</div>
+
+<h4 id="basic_syntax">基本文法</h4>
+<div class="i">
+<p>基本的な構文は下記の様になります。標準入力、または、引数で指定されたファイルを読み込み、パターンにマッチした行に対してアクションを実行します。</p>
+<pre class="c">
+<i>pattern1</i> { <i>action1</i> }	<span class="cm"># <i>pattern1</i>にマッチしたら<i>action1</i>を実行</span>
+<i>pattern2</i> { <i>action2</i> }	<span class="cm"># <i>pattern2</i>にマッチしたら<i>action2</i>を実行</span>
+    :
+</pre>
+<p><i>pattern</i> を省略するとすべての行に対して <i>action</i> を行います。</p>
+<pre class="c">
+{ <i>action</i> }		<span class="cm"># すべての行に対して<i>action</i>を実行</span>
+</pre>
+<p>{ <i>action</i> } を省略すると、{ print $0 } (その行を表示する)をアクションとして実行します。</p>
+<pre class="c">
+/ABC/			<span class="cm"># /ABC/ { print $0 } と同じ</span>
+</pre>
+</div>
+
+<h4 id="pattern">パターン</h4>
+<div class="i">
+<p>パターンには /.../ で正規表現を記述できます。</p>
+<pre class="c">
+<em>/ABC/</em> { ... }			<span class="cm"># レコードの中にABCという文字列が含まれていればマッチ</span>
+</pre>
+<p>if (...) 文の ... に記述するような条件式を記述することもできます。</p>
+<pre class="c">
+<em>$1 == "ABC"</em> { ... }		<span class="cm"># 第1フィールドがABCであればマッチ</span>
+</pre>
+<p>条件式で正規表現を使用することもできます。<b>~</b> は正規表現にマッチしたらという演算子です。</p>
+<pre class="c">
+<em>$1 ~ /^#/</em> { ... }		<span class="cm"># 第1フィールド先頭が#で始まっていたらマッチ</span>
+</pre>
+<p>条件1, 条件2 を記述した場合、条件1が真になる行から、条件2が真になる行までマッチします。</p>
+<pre class="c">
+$1=="START"<em>,</em> $1=="END" { ... }	<span class="cm"># 第1フィールドがSTARTである行から、ENDである行までマッチ</span>
+</pre>
+<p><b>BEGIN</b>, <b>END</b> はプログラムの一番最初と一番最後にアクションを実行します。</p>
+<pre class="c">
+<em>BEGIN</em> { ... }			<span class="cm"># 最初に1度だけアクションを実行</span>
+<em>END</em> { ... }			<span class="cm"># 最後に1度だけアクションを実行</span>
+</pre>
+<p><b>BEGINFILE</b>, <b>ENDFILE</b> は各入力ファイルの開始時と終了時にアクションを実行します。</p>
+<pre class="c">
+<em>BEGIN</em> { ... }			<span class="cm"># 最初に1度だけアクションを実行</span>
+<em>END</em> { ... }			<span class="cm"># 最後に1度だけアクションを実行</span>
+</pre>
+</div>
+
+<h4 id="action">アクション</h4>
+<div class="i">
+<p>アクションには、print で値を出力したり、if, while などで制御したりなど、通常のスクリプト言語と同様の処理を記述することができます。</p>
+<pre class="c">
+{
+    if ($1 == "D") {			<span class="cm"># 第1フィールドの値が"D"であれば</span>
+        print $2, $3			<span class="cm"># 第2、第3フィールドの値を出力する</span>
+    }
+}
+</pre>
+<p>セミコロン(;)を使用すると、1行に複数の文を記述することができます。</p>
+<pre class="c">
+{
+    a = 1<em>;</em> b = <em>2</em>; c = 3<em>;</em>
+    print a, b, c
+}
+</pre>
+</div>
+
+<h4 id="comments">コメント</h4>
+<div class="i">
+<p><b>#</b> から行末まではコメントです。</p>
+<pre class="c">
+<em># Comment...</em>
+{
+    print "Hello "       <em># Comment...</em>
+    print "world!"       <em># Comment...</em>
+}
+</pre>
+</div>
+
+<h4 id="operators">演算子</h4>
+<div class="i">
+<p>下記の演算子を使用できます。</p>
+<pre class="c">
+<em>(</em>...<em>)</em>			<span class="cm"># グルーピング</span>
+<em>$</em><i>num</i>			<span class="cm"># 第<i>n</i>フィールドの値</span>
+
+<em>+</em><i>num</i>			<span class="cm"># プラス(正数)</span>
+<em>-</em><i>num</i>			<span class="cm"># マイナス(負数)</span>
+
+<i>expr1</i> <em>+</em> <i>expr2</i>		<span class="cm"># 加算</span>
+<i>expr1</i> <em>-</em> <i>expr2</i>		<span class="cm"># 減算</span>
+<i>expr1</i> <em>*</em> <i>expr2</i>		<span class="cm"># 乗算</span>
+<i>expr1</i> <em>/</em> <i>expr2</i>		<span class="cm"># 除算</span>
+<i>expr1</i> <em>%</em> <i>expr2</i>		<span class="cm"># 剰余</span>
+<i>expr1</i> <em>^</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>の<i>expr2</i>乗</span>
+<i>expr1</i> <em>**</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>の<i>expr2</i>乗</span>
+
+<i>expr</i><em>++</em>			<span class="cm"># <i>expr</i>をインクリメント(インクリメント前の値が式の値)</span>
+<em>++</em><i>expr</i>			<span class="cm"># <i>expr</i>をインクリメント(インクリメント後の値が式の値)</span>
+<i>expr</i><em>--</em>			<span class="cm"># <i>expr</i>をデクリメント(デクリメント前の値が式の値)</span>
+<em>--</em><i>expr</i>			<span class="cm"># <i>expr</i>をデクリメント(デクリメント後の値が式の値)</span>
+
+<i>expr1</i> <em>==</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>が<i>expr2</i>と等しければ</span>
+<i>expr1</i> <em>!=</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>が<i>expr2</i>と等しくなければ</span>
+<i>expr1</i> <em>&lt;</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>が<i>expr2</i>より小さければ</span>
+<i>expr1</i> <em>&lt;=</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>が<i>expr2</i>以下であれば</span>
+<i>expr1</i> <em>&gt;</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>が<i>expr2</i>より大きければ</span>
+<i>expr1</i> <em>&gt;=</em> <i>expr2</i>		<span class="cm"># <i>expr1</i>が<i>expr2</i>以上であれば</span>
+
+<i>str</i> <em>~</em> <i>reg</i>		<span class="cm"># 文字列<i>str</i>が正規表現<i>reg</i>にマッチすれば</span>
+<i>str</i> <em>!~</em> <i>reg</i>		<span class="cm"># 文字列<i>str</i>が正規表現<i>reg</i>にマッチしなければ</span>
+
+<em>!</em><i>bool</i>			<span class="cm"># <i>bool</i>が真でなければ(NOT)</span>
+<i>bool1</i> <em>&amp;&amp;</em> <i>bool2</i>		<span class="cm"># <i>bool1</i>かつ<i>bool2</i>が真であれば(AND)</span>
+<i>bool1</i> <em>||</em> <i>bool2</i>		<span class="cm"># <i>bool1</i>または<i>bool2</i>が真であれば(OR)</span>
+
+<i>var</i> <em>=</em> <i>expr</i>		<span class="cm"># <i>var</i>に<i>expr</i>を代入</span>
+<i>var</i> <em>+=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> + <i>expr</i>と同じ</span>
+<i>var</i> <em>-=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> - <i>expr</i>と同じ</span>
+<i>var</i> <em>*=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> * <i>expr</i>と同じ</span>
+<i>var</i> <em>/=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> / <i>expr</i>と同じ</span>
+<i>var</i> <em>%=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> % <i>expr</i>と同じ</span>
+<i>var</i> <em>^=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> ^ <i>expr</i>と同じ</span>
+<i>var</i> <em>**=</em> <i>expr</i>		<span class="cm"># <i>var</i> = <i>var</i> ** <i>expr</i>と同じ</span>
+
+<i>cond</i> <em>?</em> <i>expr1</i> <em>:</em> <i>expr2</i>	<span class="cm"># <i>cond</i>が真であれば<i>expr1</i>、さもなくば<i>expr2</i></span>
+</pre>
+</div>
+
+<h4 id="array">配列</h4>
+<div class="i">
+<p>変数名[添え字] で配列を扱うことができます。</p>
+<pre class="c">
+<em>foo[1]</em> = 123
+<em>foo[2]</em> = "ABC"
+print foo[1]		<span class="cm"># =&gt; 123</span>
+print foo[2]		<span class="cm"># =&gt; ABC</span>
+</pre>
+<p>添え字には文字列を使用することもできます。</p>
+<pre class="c">
+<em>foo["name"]</em> = "Yamada"
+<em>foo["age"]</em> = 26
+print foo["name"]	<span class="cm"># =&gt; Yamada</span>
+print foo["age"]	<span class="cm"># =&gt; 26</span>
+</pre>
+<p>配列の個数は length() で求めることができます。数値を添え字とする配列は次のようにしてループを回します。</p>
+<pre class="c">
+foo[0] = "ABC"
+foo[1] = "DEF"
+for (i = 0; i &lt; <em>length(</em>foo<em>)</em>; i++) {
+    print foo[i]
+}
+</pre>
+<p>添え字が文字列の場合は次のようにしてループを回します。</p>
+<pre class="c">
+foo["name"] = "Yamada"
+foo["age"] = 26
+<em>for (</em>x <em>in</em> foo<em>)</em> {
+    print x "=" foo[x]		<span class="cm"># =&gt; name=Yamada, age=26</span>
+}
+</pre>
+<p>配列の中に該当の要素があるか否かを調べるには下記の様にします。</p>
+<pre class="c">
+foo["name"] = "Yamada"
+<em>if (</em>"name" <em>in</em> foo<em>)</em> {
+    print "Exist"
+}
+</pre>
+<p>配列要素を削除するには delete を用います。</p>
+<pre class="c">
+foo["name"] = "Yamada"
+foo["age"] = 26
+<em>delete</em> foo["name"]	<span class="cm"># foo["name"]を削除</span>
+<em>delete</em> foo		<span class="cm"># 配列foo自体を削除</span>
+</pre>
+</div>
+
+<h4 id="multi_array">多次元配列</h4>
+<div class="i">
+<p>次のようにして多次元配列を扱うことができます。</p>
+<pre class="c">
+foo[1, 1] = 1001
+foo[1, 2] = 1002
+foo[2, 1] = 2001
+foo[2, 2] = 2002
+for (i = 1; i &lt;= 2; i++) {
+    for (j = 1; j &lt;= 2; j++) {
+        print foo[i, j]
+    }
+}
+</pre>
+<p>多次元配列のように見えますが、内部的には添え字を <b>SUBSEP</b>("\034") で連結した1次元配列として扱っています。</p>
+<pre class="c">
+foo["A", "B"] = "XYZ"
+print foo["A" SUBSEP "B"]	<span class="cm"># =&gt; XYZ</span>
+print foo["A\034B"]		<span class="cm"># =&gt; XYZ</span>
+</pre>
+</div>
+
+<h4 id="array_of_array">配列の配列</h4>
+<div class="i">
+<p>下記は、配列の配列を使用する例です。</p>
+<pre class="c">
+foo[1][1] = 1001
+foo[1][2] = 1002
+foo[2][1] = 2001
+foo[2][2] = 2002
+for (i in foo) {
+    for (j in foo[i]) {
+        print foo[i][j]
+    }
+}
+</pre>
+</div>
+
+<h4 id="print">print文</h4>
+<div class="i">
+<p><b>print</b> は変数や値を出力します。</p>
+<pre class="c">
+<em>print</em> $1, $2, $3
+</pre>
+<p>値をカンマ(,)で連結するとビルトイン変数 <b>OFS</b> に指定された出力フィールドセパレータ(デフォルトは半角空白文字)で区切って出力します。</p>
+<pre class="c">
+a = "AA"; b = "BB"; c = "CC";
+print a, b, c			<span class="cm"># =&gt; AA BB CC</span>
+</pre>
+<p><b>OFS</b> を変更することで区切り文字を変更することができます。</p>
+<pre class="c">
+a = "AA"; b = "BB"; c = "CC";
+<em>OFS</em> = ","
+print a, b, c			<span class="cm"># =&gt; AA,BB,CC</span>
+</pre>
+<p>値をカンマ(,)で区切らない場合は文字列の連結が行われた後に出力されます。</p>
+<pre class="c">
+a = "AA"; b = "BB"; c = "CC";
+print a b c			<span class="cm"># =&gt; AABBCC</span>
+</pre>
+</div>
+
+<h4 id="printf">printf文</h4>
+<div class="i">
+<p><b>printf</b> は、値をフォーマットして出力します。</p>
+<pre class="c">
+printf "%d\n", 123		<span class="cm"># 整数値を出力</span>
+printf "%f\n", 3.14		<span class="cm"># 実数値を出力</span>
+printf "%s\n", "ABC"		<span class="cm"># 文字列を出力</span>
+</pre>
+<p>%d などは引数の型を示します。下記のものを使用できます。</p>
+<pre class="c">
+printf "d: <em>%d</em>\n", 123		<span class="cm"># =&gt; 123 (10進整数)</span>
+printf "i: <em>%i</em>\n", 123		<span class="cm"># =&gt; 123 (10進整数)</span>
+printf "u: <em>%u</em>\n", 123		<span class="cm"># =&gt; 123 (符号無し10進整数)</span>
+
+printf "x: <em>%x</em>\n", 123		<span class="cm"># =&gt; 7b (16進整数)</span>
+printf "X: <em>%X</em>\n", 123		<span class="cm"># =&gt; 7B (16進整数)</span>
+printf "o: <em>%o</em>\n", 123		<span class="cm"># =&gt; 173 (8進整数)</span>
+
+printf "f: <em>%f</em>\n", 123.45	<span class="cm"># =&gt; 123.450000 (小数表記)</span>
+printf "F: <em>%F</em>\n", 123.45	<span class="cm"># =&gt; 123.450000 (小数表記)</span>
+printf "e: <em>%e</em>\n", 123.45	<span class="cm"># =&gt; 1.234500e+02</span>
+printf "E: <em>%E</em>\n", 123.45	<span class="cm"># =&gt; 1.234500E+02</span>
+printf "g: <em>%g</em>\n", 1.2345e10	<span class="cm"># =&gt; 1.2345e+10 (%f表記と%g表記を自動判断)</span>
+printf "G: <em>%G</em>\n", 1.2345e10	<span class="cm"># =&gt; 1.2345E+10 (%f表記と%g表記を自動判断)</span>
+
+printf "c: <em>%c</em>\n", 0x41		<span class="cm"># =&gt; A (ASCIIコード)</span>
+printf "s: <em>%s</em>\n", "ABC"		<span class="cm"># =&gt; ABC (文字列)</span>
+
+printf "%%: <em>%%</em>\n"		<span class="cm"># =&gt; % (%を文字として出力)</span>
+</pre>
+<p>下記の様に桁数を指定して出力することができます。</p>
+<pre class="c">
+printf "|<em>%7d</em>|\n", 123		<span class="cm"># |    123| ... 7桁</span>
+printf "|<em>%+7d</em>|\n", 123		<span class="cm"># |   +123| ... 正の場合に+を表示</span>
+printf "|<em>%-7d</em>|\n", 123		<span class="cm"># |123    | ... 左寄せ7桁</span>
+printf "|<em>%07d</em>|\n", 123		<span class="cm"># |0000123| ... 0埋め7桁</span>
+
+printf "|<em>%.2f</em>|\n", 3.1416	<span class="cm"># |3.14| ... 小数部2桁</span>
+printf "|<em>%7.2f</em>|\n", 3.1416	<span class="cm"># |   3.14| ... 7桁(小数部2桁)</span>
+
+printf "|<em>%7s</em>|\n", "ABC"		<span class="cm"># |    ABC| ... 右寄せ7桁</span>
+printf "|<em>%-7s</em>|\n", "ABC"	<span class="cm"># |ABC    | ... 左寄せ7桁</span>
+</pre>
+</div>
+
+<h4 id="redirect">リダイレクト</h4>
+<div class="i">
+<p>print や printf の出力を標準出力ではなくファイルに書き込むことができます。</p>
+<pre class="c">
+print "ABC" <em>&gt;</em> "data.txt"	<span class="cm"># ファイルdata.txtに新規書き込み</span>
+print "ABC" <em>&gt;&gt;</em> "data.txt"	<span class="cm"># ファイルdata.txtに追記書き込み</span>
+</pre>
+<p>print や printf の出力をコマンドにパイプ(|)で渡すこともできます。下記の例では ps -axu の結果を受け取り、VSZ($5) と COMMAND($11) の値をソートして表示します。</p>
+<pre class="c">
+$ ps -axu | awk '{ print $5, $11 <em>| "sort -n"</em> }'
+</pre>
+</div>
+
+<h4 id="getline">getline文</h4>
+<div class="i">
+<pre class="c">
+getline [<i>var</i>]
+getline [<i>var</i>] &lt; <i>file</i>
+<i>command</i> | getline [<i>var</i>]
+<i>command</i> |&amp; getline [<i>var</i>]
+</pre>
+<p><b>getline</b> は標準入力やファイルからデータを読み取ります。下記では標準入力から変数 x にデータを読み取り、printf で出力しています。</p>
+<pre class="c">
+BEGIN {
+    printf "Input: "
+    <em>getline x</em>
+    printf "[%s]\n", x
+}
+</pre>
+<p>変数を省略すると、<b>$0</b>, <b>$1</b>, <b>$2</b>, ... に読み取ります。</p>
+<pre class="c">
+<em>getline</em>
+printf "[%s] [%s] [%s] [%s]\n", $0, $1, $2, $3
+</pre>
+<p>下記の様にしてファイルからデータを読み取ることもできます。</p>
+<pre class="c">
+BEGIN {
+    while ((<em>getline &lt; "xx.dat"</em>) &gt; 0) {
+        printf "[%s] [%s] [%s] [%s]\n", $0, $1, $2, $3
+    }
+}
+</pre>
+<p>下記の様に <b>|</b> を用いることで、外部コマンドの実行結果からデータを読み取ることもできます。</p>
+<pre class="c">
+BEGIN {
+    cmd = "ps -ef"
+    while (<em>cmd | getline</em>) {
+        printf "[%s] [%s] [%s] [%s]\n", $1, $2, $3, $8
+    }
+}
+</pre>
+<p><b>|&amp;</b> を用いると外部コマンドにデータを渡し、その実行結果を読み出すことが可能となります。(双方向接続)</p>
+<pre class="c">
+BEGIN {
+    cmd = "base64"
+    <em>print "AAA" |&amp; cmd</em>
+    close(cmd, "to")
+    while ((<em>cmd |&amp; getline</em>) &gt; 0) {
+        printf "[%s]\n", $0
+    }
+    close(cmd)
+}
+</pre>
+</div>
+
+<h4 id="if-statement">if文</h4>
+<div class="i">
+<p><b>if</b>文は、もし、... であればという条件を記述します。</p>
+<pre class="c">
+<em>if (</em>n == 3<em>)</em> {			<span class="cm"># もしnが3と等しければ</span>
+    print "OK"			<span class="cm"># OKを表示</span>
+}
+</pre>
+<p><b>else</b> は、さもなくば、を意味します。</p>
+<pre class="c">
+if (n == 3) {			<span class="cm"># もしnが3と等しければ</span>
+    print "OK"			<span class="cm"># OKを表示</span>
+} <em>else</em> {			<span class="cm"># さもなくば</span>
+    print "NG"			<span class="cm"># NGを表示</span>
+}
+</pre>
+<p>アクションが1文であれば { や } は省略することができます。正確に言うと、if はひとつの文しか実行しないので、複数の文を実行するには { ... } で囲って複文にします。これは、while や do-while 文でも同様です。</p>
+<pre class="c">
+if (n == 3)
+    print "OK"
+else
+    print "NG"
+</pre>
+</div>
+
+<h4 id="while-statement">while文</h4>
+<div class="i">
+<p><b>while</b>文は、条件が成り立っている間、アクションを繰り返して実行します。</p>
+<pre class="c">
+n = 0
+<em>while (</em>n &lt; 10<em>)</em> {		<span class="cm"># nが10より小さい間</span>
+    print n			<span class="cm"># nを表示して</span>
+    n++				<span class="cm"># nをインクリメントする</span>
+}
+</pre>
+</div>
+
+<h4 id="do-while-statement">do-while文</h4>
+<div class="i">
+<p><b>do-while</b>文も、条件が成り立っている間、アクションを繰り返して実行します。while文が、条件をチェックしてからアクションを実行するのに対して、do-while文はアクションを実行してから条件をチェックするため、最初から条件が成り立っていなくても最低1回はアクションが実行される点が異なります。</p>
+<pre class="c">
+n = 0
+<em>do</em> {
+    print n
+    n++
+} <em>while (</em>n &lt; 10<em>)</em>
+</pre>
+</div>
+
+<h4 id="for-statement">for文</h4>
+<div class="i">
+<p><b>for</b>文は、n回処理を繰り返すといった場合に使用します。下記の例は10回繰り返し実行する例です。まず、i = 0 の初期化を行い、print n のアクションを実行し、i++ で i をインクリメントし、これを i &lt; 10 の条件が成り立つ間繰り返します。</p>
+<pre class="c">
+<em>for (</em>i = 0<em>;</em> i &lt; 10<em>;</em> i++<em>)</em> {		<span class="cm"># iが0～9の間</span>
+   print n				<span class="cm"># nを出力する</span>
+}
+</pre>
+<p><b>for</b>文はまた、配列に対して繰り返し処理を行う場合にも使用されます。</p>
+<pre class="c">
+arr1[0] = "Red"
+arr1[1] = "Green"
+arr1[2] = "Blue"
+<em>for (</em>i <em>in</em> arr1<em>)</em> {
+    print arr[i]
+}
+
+arr2["red"] = "#f00"
+arr2["green"] = "#0f0"
+arr2["blue"] = "#00f"
+<em>for (</em>x <em>in</em> arr2<em>)</em> {
+    print x " = " arr2[x]
+}
+</pre>
+</div>
+
+<h4 id="switch-statement">switch文</h4>
+<div class="i">
+<p><b>switch</b>文は、複数の条件分岐を行う際に使用します。<b>case</b> で条件を指定します。下記の例では、変数 color の値が何なのかによって処理を振り分けています。<b>default</b> はどの条件にもマッチしなかった場合のアクションを指定します。</p>
+<pre class="c">
+<em>switch (</em>color<em>)</em> {		<span class="cm"># coloeの値が...</span>
+<em>case</em> "red"<em>:</em>			<span class="cm"># "red"であれば</span>
+    print "#f00"		<span class="cm"># "#f00"を表示</span>
+    <em>break</em>
+<em>case</em> "green"<em>:</em>			<span class="cm"># "green"であれば</span>
+    print "#0f0"		<span class="cm"># "#0f0"を表示</span>
+    <em>break</em>
+<em>case</em> "blue"<em>:</em>			<span class="cm"># "blue"であれば</span>
+    print "#00f"		<span class="cm"># "#00f"を表示</span>
+    <em>break</em>
+<em>default:</em>			<span class="cm"># いずれでもなければ</span>
+    print "(unknown)"		<span class="cm"># "(unknown)"を表示</span>
+    <em>break</em>
+}
+</pre>
+<p><b>break</b>文を記述しない場合、次の条件のアクションも実行します。下記の場合、"red" や "green" の場合の break 文が無いため、"red"、"green"、または "blue" の場合に "(known)" を表示します。</p>
+<pre class="c">
+switch (color) {		<span class="cm"># colorの値が</span>
+case "red":			<span class="cm"># "red"でも</span>
+case "green":			<span class="cm"># "green"でも</span>
+case "blue":			<span class="cm"># "blue"でも</span>
+    print "(known)"		<span class="cm"># "(known)"を表示</span>
+    break
+default:
+    print "(unknown)"
+    break
+}
+</pre>
+</div>
+
+<h4 id="break-statement">break文</h4>
+<div class="i">
+<p><b>break</b>文は、switch文で使用する他、for、while、do-while文のループを抜ける場合に使用します。</p>
+<pre class="c">
+for (i = 0; i &lt; 10; i++) {
+    if (i == 5) {			<span class="cm"># iが5になったら</span>
+        <em>break</em>				<span class="cm"># forループを終了する</span>
+    }
+    print n
+}
+</pre>
+<p>for や while が多重にネストしている場合、一番内側のループを抜けます。</p>
+<pre class="c">
+for (i = 0; i &lt; 10; i++) {
+    for (j = 0; j &lt; 10; j++) {
+        if (i == 5 &amp;&amp; j == 5) {		<span class="cm"># iが5、jも5になったら</span>
+            <em>break</em>			<span class="cm"># 一番内側のjのループを終了する</span>
+        }
+        print i, j
+    }
+}
+</pre>
+</div>
+
+<h4 id="continue-statement">continue文</h4>
+<div class="i">
+<p><b>continue</b>文は、一番内側のループを繰り返し実行します。下記の例では i が 3 の時はアクションを途中でスキップして、i = 4 のループに移ります。</p>
+<pre class="c">
+for (i = 0; i &lt; 5; i++) {
+    if (i == 3) {			<span class="cm"># iが3であれば</span>
+        <em>continue</em>			<span class="cm"># 後続のアクションをスキップする</span>
+    }
+    print i				<span class="cm"># =&gt; 0 1 2 4</span>
+}
+</pre>
+</div>
+
+<h4 id="next-statement">next文</h4>
+<div class="i">
+<p><b>next</b>文は、現在のレコードに対するアクションを終了し、次のレコードの処理に移ります。</p>
+<pre class="c">
+{
+    if (NF &lt; 5) {			<span class="cm"># フィールドの個数(NF)が5未満であれば</span>
+        <em>next</em>				<span class="cm"># 次のレコードの処理に移る</span>
+    }
+}
+</pre>
+</div>
+
+<h4 id="nextfile-statement">nextfile文</h4>
+<div class="i">
+<p><b>nextfile</b>文は、現在のファイルに対するアクションを終了し、次のファイルの処理に移ります。</p>
+<pre class="c">
+{
+    if ($1 == "END") {			<span class="cm"># 第1フィールドが"END"であれば</span>
+        <em>nextfile</em>			<span class="cm"># 次のファイルの処理に移る</span>
+    }
+}
+</pre>
+</div>
+
+<h4 id="exit-statement">exit文</h4>
+<div class="i">
+<p><b>exit</b>文はプログラムを終了させます。引数にはプログラムの終了ステータスを指定することができます。</p>
+<pre class="c">
+if ($1 == "END") {			<span class="cm"># 第1フィールドが"END"であれば</span>
+    <em>exit</em> 1				<span class="cm"># プログラムを終了する(終了ステータス=1)</span>
+}
+</pre>
+</div>
+
+<h4 id="functions">関数</h4>
+<div class="i">
+<p>いくつかの <a href="#built-in_functions">ビルトイン関数</a> の他、<b>function</b> を用いてユーザ定義の関数を使用することができます。下記は、第1引数 x と第2引数 y を受け取り、その和を返却する関数 add() を定義し、$1 と $2 の合計を表示しています。<b>return</b> は関数の戻り値を指定します。</p>
+<pre class="c">
+<em>function</em> add(x, y) {
+    <em>return</em> x + y
+}
+BEGIN {
+    print add($1, $2)
+}
+</pre>
+<p>function の代わりに省略形の <b>func</b> を使用することもできます。</p>
+<pre class="c">
+<em>func</em> add(x, y) {
+    return x + y
+}
+</pre>
+<p>ローカル変数を使用するには、引数の箇所にローカル変数を記述します。引数とローカル変数の間は慣習的に少し離して記述します。</p>
+<pre class="c">
+function sum(arr,  <em>i, ret</em>) {
+    ret = 0;
+    for (i = 0; i &lt; length(arr); i++) {
+        ret = ret + arr[i]
+    }
+    return ret
+}
+BEGIN {
+   arr[0] = 123
+   arr[1] = 234
+   arr[2] = 300
+   print sum(arr)
+}
+</pre>
+<p><b>@</b> を用いると、文字列を関数名として使用することができます。関数名を関数の引数として受け取り、呼び出す際に便利です。</p>
+<pre class="c">
+fname = "add"
+print <em>@fname(3, 5)</em>			<span class="cm"># =&gt; 8</span>
+</pre>
+</div>
+
+<h4 id="regexp">正規表現</h4>
+<div class="i">
+<p><b>/</b> ... <b>/</b> で正規表現を使用することができます。正規表現の詳細は <a href="regexp.html" tppabs="http://www.tohoho-web.com/ex/regexp.html">とほほの正規表現入門</a> を参照してください。</p>
+<pre class="c">
+<em>/ABC/</em> { ... }			<span class="cm"># 行全体の中にABCが含まれていれば</span>
+$0 <em>~</em> /ABC/ { ... }		<span class="cm"># 行全体の中にABCが含まれていれば</span>
+$1 <em>~</em> /ABC/ { ... }		<span class="cm"># 第1カラムにABCが含まれていれば</span>
+$1 <em>!~</em> /ABC/ { ... }		<span class="cm"># 第1カラムにABCが含まれていなければ</span>
+{ if ($1 ~ /ABC/) { ... } }	<span class="cm"># 第1カラムにABCが含まれていれば</span>
+</pre>
+<p>下記のエスケープシーケンスを利用できます。</p>
+<pre class="c">
+<em>\\</em>		<span class="cm"># バックスラッシュ</span>
+<em>\a</em>		<span class="cm"># ベル(BEL) (0x07)</span>
+<em>\b</em>		<span class="cm"># バックスペース(BS) (0x08)</span>
+<em>\f</em>		<span class="cm"># フォームフィード(FF) (0x0c)</span>
+<em>\n</em>		<span class="cm"># 改行(LF) (0x0a)</span>
+<em>\r</em>		<span class="cm"># 復帰(CR) (0x0d)</span>
+<em>\t</em>		<span class="cm"># タブ(TAB) (0x09)</span>
+<em>\v</em>		<span class="cm"># 垂直タブ(VT) (0x0b)</span>
+<em>\</em><i>nnn</i>		<span class="cm"># 文字コード指定(8進数)</span>
+<em>\x</em><i>hh</i>		<span class="cm"># 文字コード指定(16進数)</span>
+<em>\/</em>		<span class="cm"># スラッシュ(/)</span>
+<em>\"</em>		<span class="cm"># ダブルクォート(")</span>
+</pre>
+<p>下記の正規表現を使用できます。</p>
+<pre class="c">
+<em>^</em>		<span class="cm"># 行頭にマッチ</span>
+<em>$</em>		<span class="cm"># 行末にマッチ</span>
+<em>.</em>		<span class="cm"># 任意の1文字(改行を含む)にマッチ</span>
+<em>[</em>ABC<em>]</em>		<span class="cm"># AまたはBまたはCにマッチ</span>
+<em>[</em>A-Z<em>]</em>		<span class="cm"># A～Zにマッチ</span>
+<em>[</em>a-zA-Z0-9<em>]</em>	<span class="cm"># 半角英数字にマッチ</span>
+[<em>^</em>ABC]		<span class="cm"># A, B, C以外の文字にマッチ</span>
+A<em>|</em>B		<span class="cm"># AまたはBにマッチ</span>
+<em>(</em>...<em>)</em>		<span class="cm"># グルーピングを行う</span>
+A<em>*</em>		<span class="cm"># 0個以上のAにマッチ</span>
+A<em>+</em>		<span class="cm"># 1個以上のAにマッチ</span>
+A<em>?</em>		<span class="cm"># 0個または1個のAにマッチ</span>
+A<em>{</em><i>n</i><em>}</em>		<span class="cm"># <i>n</i>個のAにマッチ</span>
+A<em>{</em><i>n</i><em>,}</em>		<span class="cm"># <i>n</i>個以上のAにマッチ</span>
+A<em>{</em><i>n</i><em>, </em><i>m</i><em>}</em>		<span class="cm"># <i>n</i>～<i>m</i>個のAにマッチ</span>
+</pre>
+<p><b>[</b>...<b>]</b> の中では下記の POSIX表現を使用することができます。</p>
+<pre class="c">
+<em>[:alnum:]</em>	<span class="cm"># 英数字(a-zA-Z0-9)</span>
+<em>[:alpha:]</em>	<span class="cm"># 英字(a-zA-Z)</span>
+<em>[:lower:]</em>	<span class="cm"># 小文字(a-z)</span>
+<em>[:upper:]</em>	<span class="cm"># 大文字(A-Z)</span>
+<em>[:digit:]</em>	<span class="cm"># 10進数字(0-9)</span>
+<em>[:xdigit:]</em>	<span class="cm"># 16進文字(0-9a-fA-F)</span>
+<em>[:blank:]</em>	<span class="cm"># 空白文字(SP,TAB)</span>
+<em>[:space:]</em>	<span class="cm"># 空白文字(SP,TAB,LF,CR,FF,VT)</span>
+<em>[:cntrl:]</em>	<span class="cm"># 制御文字</span>
+<em>[:graph:]</em>	<span class="cm"># 印字可能文字(空白を含まない)</span>
+<em>[:print:]</em>	<span class="cm"># 印字可能文字(空白を含む)</span>
+<em>[:punct:]</em>	<span class="cm"># 記号文字(!"#$%&'-=^~\|@`...)</span>
+</pre>
+<p>下記を使用することもできます。</p>
+<pre class="c">
+<em>\s</em>		<span class="cm"># 空白文字(TAB,LF,CR,FF,VT)</span>
+<em>\S</em>		<span class="cm"># \s以外の文字</span>
+<em>\w</em>		<span class="cm"># アンダーバーを含む英数字</span>
+<em>\W</em>		<span class="cm"># \w以外の文字</span>
+<em>\&lt;</em>		<span class="cm"># 単語の先頭</span>
+<em>\&gt;</em>		<span class="cm"># 単語の末尾</span>
+<em>\y</em>		<span class="cm"># 単語の先頭または末尾</span>
+<em>\B</em>		<span class="cm"># 単語の先頭または末尾以外</span>
+<em>\`</em>		<span class="cm"># 文字列の先頭</span>
+<em>\'</em>		<span class="cm"># 文字列の末尾</span>
+</pre>
+<p>正規表現(/.../)は通常はオブジェクトとして扱われないため、変数に代入しても正規表現として使用することはできません。これを実現するためには <b>/.../</b> の代わりに <b>@/.../</b> を使用します。</p>
+<pre class="c">
+reg = <em>@/^[A-Z]+$/</em>
+if (str ~ reg) { ... }
+</pre>
+</div>
+
+<h4 id="include">インクルード(@include)</h4>
+<div class="i">
+<p><b>@include</b> は外部ファイルをプログラムファイルとして読み取ります。ファイルを探す場所は通常カレントディレクトリですが、<b>AWKPATH</b> が指定されていればその場所から探します。</p>
+<pre class="c">
+<em>@include</em> "mysubr.awk"
+</pre>
+</div>
+
+<h4 id="load">ライブラリロード(@load)</h4>
+<div class="i">
+<p><b>@load</b> は共有ライブラリ形式のライブラリを読み込みます。</p>
+<pre class="c">
+<em>@load</em> "ordchr";
+BEGIN { print chr(0x41) }
+</pre>
+</div>
+
+<h4 id="namespace">ネームスペース(@namespace)</h4>
+<div class="i">
+<p>AWK 5.0 からはネームスペースの機能が加わりました。同じ関数名であっても、下記の様に名前空間を分けて呼び出すことが可能です。</p>
+<pre class="c">
+# mylibA.awk
+<em>@namespace "mylibA"</em>
+function myfunc(x, y) { return x + y }
+</pre>
+<pre class="c">
+# mylibB.awk
+<em>@namespace "mylibB"</em>
+function myfunc(x, y) { return x * y }
+</pre>
+<pre class="c">
+@include "mylibA.awk"
+@include "mylibB.awk"
+BEGIN {
+    print <em>mylibA::</em>myfunc(3, 5)		<span class="cm"># mylibA.awkのmyfunc()</span>
+    print <em>mylibB::</em>myfunc(3, 5)		<span class="cm"># mylibB.awkのmyfunc()</span>
+}
+</pre>
+</div>
+
+<h4 id="command_line">コマンドラインオプション</h4>
+<div class="i">
+<p>コマンドラインには下記のオプションや引数を指定できます。</p>
+<div class="c">
+<dl class="dl1">
+<dt>-F <i>fs</i> (--field-separator)</dt>
+<dd>フィールドセパレータを指定します。</dd>
+<dt>-f <i>program-file</i> (--file)</dt>
+<dd>プログラムファイルを指定します。複数指定することもできます。</dd>
+<dt>-v <i>var</i>=<i>value</i> (--assign)</dt>
+<dd>プログラムから参照可能な変数を引数で指定します。</dd>
+<dt><i>var</i>=<i>value</i>
+<dd>プログラムから参照可能な変数を引数で指定します。「awk '{print foo}' foo=FOO」 の様に、入力ファイルリストを指定する場所に記述する必要があります。</dd>
+<dt>--</dt>
+<dd>-- より後ろに記述した - や -- で始まる文字列を、オプションではない引数として扱います。</dd>
+<dt>-</dt>
+<dd>入力ファイルリストとして <b>-</b> を指定すると、標準入力を読み込みます。例えば、file1 - file2 は、file1、標準入力、file2 の順番で読み込みます。</dd>
+<dt>-W <i>opttion</i></dt>
+<dd>gawk特有のオプションを指定(詳細別途)します。</dd>
+<dt>-b (--characters-as-bytes)</dt>
+<dd>入力をシングルバイト文字として扱います。</dd>
+<dt>-c (--traditional)</dt>
+<dd>古いBWK awk(nawk)との互換モードで実行します。</dd>
+<dt>-C (--copyright)</dt>
+<dd>コピーライトを表示します。</dd>
+<dt>-d<i>file</i> (--dump-variables=<i>file</i>)</dt>
+<dd>グローバル変数をファイルに書き出します。<i>file</i> を省略した場合は awkvars.out ファイルに書き出します。</dd>
+<dt>-D<i>file</i> (--debug=<i>file</i>)</dt>
+<dd>デバッグコマンドをファイルから読み取ります。</dd>
+<dt>-e <i>program-file</i> (--source)</dt>
+<dd>プログラムを引数で指定します。<b>-f</b> と組み合わせることで、プログラムをファイルと引数の両方で指定できます。</dd>
+<dt>-E <i>file</i> (--exec)</dt>
+<dd><i>var</i>=<i>value</i> 形式のオプションを無視します。AWK プログラムを CGI として動作させる場合に、URL で指定された変数が悪影響を及ぼさないよう無視する場合に指定します。</dd>
+<dt>-g (--gen-pot)</dt>
+<dd>プログラムを国際化対応させるために _"..." のようなテキストを gettext が扱える形式で標準入力に出力します。</dd>
+<dt>-h (--help)</dt>
+<dd>ヘルプを表示します。</dd>
+<dt>-i <i>library-file</i> (--include)</dt>
+<dd>ライブラリ的なプログラムファイルを読み込みます。<b>-f</b> とほぼ同じですが、読み込み済みファイルは二重には読み込まないこと、<b>-i</b> で指定したライブラリファイル以外にメインのプログラムを求めることの2点が異なります。</dd>
+<dt>-l <i>extension</i> (--load)</dt>
+<dd>gawk の拡張ライブラリを読み込みます。拡張ライブラリは <b>AWKLIBPATH</b> (/usr/lib64/gawk など) に格納される共有ライブラリとして提供されています。</dd>
+<dt>-L<i>value</i> (--lint)</dt>
+<dd>AWK プログラムのエラーや警告を調べます。<i>value</i> には <b>fatal</b>(警告をエラーとして表示), <b>invalid</b>(不正なもののみ警告), <b>no-ext</b>(拡張ライブラリについては警告しない)のいずれかを指定します。</dd>
+<dt>-M (--bignum)</dt>
+<dd>多倍長精度数値計算ライブラリ(MP, MPFR)が利用可能な場合、それを使用します。</dd>
+<dt>-n (non-decimal-data)</dt>
+<dd>printf("%d", ...) で出力する際に、"0123" を8進数、"0x123" を16進数の数値とみなして扱います。将来バージョンでは削除される可能性があります。</dd>
+<dt>-N (use-lc-numeric)</dt>
+<dd>小数点として扱う文字を、ピリオド(.)ではなく、ロケールに従った文字、例えばフランス語の場合はカンマ(,)を使用するようにします。</dd>
+<dt>-o<i>file</i> (--pretty-print=<i>file</i>)</dt>
+<dd>プログラムを整形して <i>file</i> に書き出します。<i>file</i> を省略すると awkprof.out に書き出します。</dd>
+<dt>-O (--optimize)</dt>
+<dd>gawk がプログラムを最適化することを許可します。過去互換のために残されていますが、現在の gawk はデフォルトで最適化を行います。</dd>
+<dt>-p<i>file</i> (--profile=<i>file</i>)</dt>
+<dd>プロファイル情報を <i>file</i> に書き出します。どのアクションが何回実行されたかが記録されます。<i>file</i> を省略すると awkprof.out ファイルに書き出します。</dd>
+<dt>-P (--posiz)</dt>
+<dd>POSIX 互換モードで動作します。</dd>
+<dt>-r (--re-interval)</dt>
+<dd>正規表現の中で {<i>n</i>, <i>m</i>} の使用を許可します。過去互換のために残されており、現在の gawk ではデフォルトで使用可能です。</dd>
+<dt>-s (--no-optimize)</dt>
+<dd>プログラムの最適化を禁止します。</dd>
+<dt>-S (--sandbox)</dt>
+<dd>安全性のため、system(), getline の入力リダイレクション、print や printf の出力リダイレクション、および、ダイナミックエクステンションの利用を禁止します。また、ARGV に引数で指定したファイルを追加しません。</dd>
+<dt>-t (--lint-old)</dt>
+<dd>オリジナル版の awk (Version 7 Unix) で利用できないを使用している場合に警告を出します。</dd>
+<dt>-V (--version)</dt>
+<dd>gawk のバージョン情報を表示します。</dd>
+</dl>
+</div>
+</div>
+
+<h4 id="built-in_variables">ビルトイン変数</h4>
+<div class="i">
+<p>いくつかのビルトイン変数を使用することができます。下記の例ではフィールドセパレータ(FS) をカンマ(,)としてCSV ファイルを読み込み、そのフィールド数(NF)を出力しています。</p>
+<pre class="c">
+$ awk '{ print <em>NF</em> }' <em>FS</em>=, data.csv
+$ awk -v <em>FS</em>=, '{ print <em>NF</em> }' data.csv
+$ awk 'BEGIN { <em>FS</em>="," } { print <em>NF</em> }' data.csv
+</pre>
+<p>ビルトイン変数には下記のものがあります。</p>
+<div class="c">
+<dl class="dl1">
+<dt>FS</dt>
+<dd>入力時のフィールドセパレータ(Field Separator)。コマンドラインオプションの -F でも変更することができます。デフォルトは空白文字(" ")です。空白文字の場合は特別に、ひとつ以上の空白文字・タブ文字・改行文字が区切り文字となります。空文字("")にすると、1文字1文字がフィールドとして区切られます。"[A-Z]" の様な正規表現を指定することもできます。</dd>
+<dt>RS</dt>
+<dd>入力時のレコードセパレータ(Record Separator)。デフォルトは改行文字("\n")です。</dd>
+<dt>OFS</dt>
+<dd>出力時のフィールドセパレータ(Output Field Separator)。デフォルトは空白文字(" ")です。print $1, $2, $3 のようにカンマ(,)を使用した場合、OFS の値が区切り文字として出力されます。</dd>
+<dt>ORS</dt>
+<dd>出力時のレコードセパレータ(Output Record Separator)。デフォルトは改行文字("\n")です。</dd>
+<dt>FILENAME</dt>
+<dd>現在処理中の入力ファイル名。</dd>
+<dt>NF</dt>
+<dd>現在行のフィールド数(Number of Fields)。</dd>
+<dt>NR</dt>
+<dd>現在行のレコード番号(Number of Records)。</dd>
+<dt>FNR</dt>
+<dd>現在のファイルにおけるレコード番号。複数のファイルを処理する際、NR はリセットされませんが、FNR はリセットされます。</dd>
+<dt>ARGC</dt>
+<dd>引数の個数(ARGuments Count)。</dd>
+<dt>ARGV</dt>
+<dd>引数の配列(ARGuments Vector)。</dd>
+<dt>ARGIND</dt>
+<dd>引数のインデックス(ARGuments INDex)。複数の入力ファイルを処理する際に対象のファイルに応じて変動します。ARGV[ARGIND] は FILENAME と同値となります。</dd>
+<dt>ENVIRON</dt>
+<dd>環境変数の配列(ENVIRONments)。ENVIRON["PATH"] で環境変数 PATH の値を参照することができます。</dd>
+<dt>OFMT</dt>
+<dd>print で実数を出力する際のフォーマット(Output FORmat)。デフォルトは "%.6g" です。</dd>
+<dt>CONVFMT</dt>
+<dd>実数を文字列に変換する際のフォーマット(CONVert FORmat)。デフォルトは "%.6g" です。print num だと print の引数なので OFMT が参照されますが、print "[" num "]" だと文字列連結となるので CONVFMT が参照されます。</dd>
+<dt>IGNORECASE</dt>
+<dd>正規表現やセパレータのマッチングで大文字・小文字を無視するか否か。初期値は 0 で無視しません。0 以外の値が設定されると大文字・小文字を区別しなくなります。</dd>
+<dt>SUBSEP</dt>
+<dd>多次元配列の添え字の区切り文字(SUBscript SEParator)。デフォルトは "\034" (FS:\x1C)。foo["A", "B"] は foo["A\034B"] と同じ扱い。</dd>
+<dt>ERRNO</dt>
+<dd>エラー番号(ERRor Number)。getline のリダイレクションや読み込み、close() 実行などでエラーが発生した場合にエラー番号が設定されます。</dd>
+<dt>RLENGTH</dt>
+<dd>match 関数でマッチした部分文字列の長さ。match("ABCDEF", /DEF/) の場合 3 となります。</dd>
+<dt>RSTART</dt>
+<dd>match 関数でマッチした部分文字列の最初の文字の位置(最初の文字が1)。match("ABCDEF", /DEF/) の場合 4 となります。</dd>
+<dt>RT</dt>
+<dd>レコードを読み込んだ際に区切り文字として使用されたセパレータを示します。例えば RS="[/|]" と指定されていた場合、レコードが / で区切られた場合は / が、| で区切られた場合は | が格納されます。</dd>
+<dt>FIELDWIDTHS</dt>
+<dd>入力データを固定長データとして読み込みます。例えば FIELDWIDTHS="3 4 5" とした場合、入力データは、3文字、4文字、5文字の固定長フィールドのデータとして読み込まれます。</dd>
+<dt>BINMODE</dt>
+<dd>入出力をバイナリモードに切り替えます。0 はテキストモード(初期値)、1 や "r" は読み込みのみ、2 や "w" は書き込みのみ、3 や "rw" や "wr" は読み書き両方をバイナリモードにします。主に Windows において \r\n と \n を自動変換したくない場合に使用します。</dd>
+<dt>FPAT</dt>
+<dd>FS がフィールドセパレータを正規表現で指定するのに対し、FPAT はフィールド自体を正規表現で示します。FPAT="[a-zA-Z]+" とした場合、1文字以上の英字の連続部分をフィールドとみなします。FPAT を指定した場合、FS や FIELDWIDTHS は無視されます。</dd>
+<dt>LINT</dt>
+<dd>0 や null 以外の値が設定された場合、--lint オプションが指定されたものとして動作します。。</dd>
+<dt>PREC</dt>
+<dd>小数点演算のビット数を指定します。通常は53ビット長演算ですが、PREC=100 を指定するとより正確な100ビット演算が行われます。-M オプションと合わせて指定します。「awk -M -v PREC=100 -v OFMT="%.100g" 'BEGIN { print 1/3 }'」</dd>
+<dt>ROUNDMODE</dt>
+<dd>未稿。</dd>
+<dt>TEXTDOMAIN</dt>
+<dd>プログラムを多国語対応する際に、翻訳ファイルを見つけるためのテキストドメインを指定します。デフォルトは "messages" です。詳細は gettext() などのマニュアルを参照してください。</dd>
+<dt>FUNCTAB</dt>
+<dd>利用可能な関数名の配列。</dd>
+<dt>SYMTAB</dt>
+<dd>利用可能な変数の配列。foo="FOO" とした場合、SYMTAB["foo"] が "FOO" になります。SYMTAB["foo"]="baa" とすると、foo も "baa" になります。</dd>
+<dt>PROCINFO</dt>
+<dd>PROCINFO["uid"](ユーザID)、PROCINFO["pid"](プロセスID)など、プロセスに関する情報の配列です。</dd>
+</dl>
+</div>
+</div>
+
+<h4 id="built-in_functions">ビルトイン関数</h4>
+<div class="i">
+<p>下記のビルトイン関数を使用できます。個々の関数の詳細説明は省略します。</p>
+<pre class="c">
+<span class="cm"># 数学関連</span>
+int(<i>x</i>)					<span class="cm"># <i>x</i>の整数部</span>
+rand()					<span class="cm"># 0.0～1.0の間の乱数</span>
+srand(<i>x</i>)				<span class="cm"># 乱数の初期シードを指定(<i>x</i>を省略すると現時刻をシードとする)</span>
+sqrt(<i>x</i>)					<span class="cm"># 0.0～1.0の間の乱数</span>
+exp(<i>x</i>)					<span class="cm"># <i>x</i>の平方根</span>
+sin(<i>x</i>)					<span class="cm"># <i>x</i>のサイン</span>
+cos(<i>x</i>)					<span class="cm"># <i>x</i>のコサイン</span>
+atan2(<i>y</i>, <i>x</i>)				<span class="cm"># <i>y</i>/<i>x</i>のアークタンジェント</span>
+log(<i>x</i>)					<span class="cm"># log <i>x</i></span>
+
+<span class="cm"># 文字列関連</span>
+asort(<i>arr</i>[, <i>dest</i>[, <i>how</i>]])		<span class="cm"># 値順にソート</span>
+asorti(<i>arr</i>[, <i>dest</i>[, <i>how</i>]])		<span class="cm"># 添え字(インデックス)順にソート</span>
+gensub(<i>reg</i>, <i>replace</i>, <i>how</i>[, <i>target</i>])	<span class="cm"># 文字列を高度に置換</span>
+gsub(<i>reg</i>, <i>replace</i>[, <i>target</i>])		<span class="cm"># 文字列を連続置換</span>
+index(<i>str</i>, <i>s</i>)				<span class="cm"># <i>str</i>中に<i>s</i>が出現する位置</span>
+length([<i>str</i>])				<span class="cm"># <i>str</i>の長さ</span>
+match(<i>str</i>, <i>reg</i>[, <i>array</i>])		<span class="cm"># <i>str</i>が正規表現<i>reg</i>にマッチするかを検査</span>
+patsplit(<i>str</i>, <i>array</i>[, <i>fpat</i>[, <i>seps</i>]])	<span class="cm"># <i>str</i>をパターンで分割</span>
+split(<i>str</i>, <i>array</i>[, <i>fpat</i>[, <i>seps</i>]])	<span class="cm"># <i>str</i>をパターンで分割</span>
+sprintf(<i>fmt</i>, <i>exp1</i>, ...)			<span class="cm"># 値をフォーマットに合わせて整形</span>
+strtonum(<i>str</i>)				<span class="cm"># 文字列を数値に変換</span>
+sub(<i>reg</i>, <i>repl</i>[, <i>target</i>])		<span class="cm"># 文字列を置換</span>
+substr(<i>str</i>, <i>start</i>[, <i>length</i>])		<span class="cm"># <i>str</i>の一部を抽出</span>
+tolower(<i>str</i>)				<span class="cm"># 小文字に変換</span>
+toupper(<i>str</i>)				<span class="cm"># 大文字に変換</span>
+
+<span class="cm"># 入出力関連</span>
+close(<i>filename</i>[, <i>how</i>])			<span class="cm"># ファイルをクローズ</span>
+fflush([<i>filename</i>])			<span class="cm"># 書き込みをフラッシュ</span>
+system(<i>command</i>)				<span class="cm"># 外部コマンドを実行</span>
+
+<span class="cm"># 時間関連</span>
+mktime(<i>datespec</i>[, <i>utcflag</i>])		<span class="cm"># 文字列型時刻を数値型時刻に変換</span>
+strftime([<i>fmt</i>[, <i>time</i>[, <i>utc</i>]]])		<span class="cm"># 数値型時刻を文字列型時刻に変換</span>
+systime()				<span class="cm"># 現在の時刻を数値型時刻で取得</span>
+
+<span class="cm"># ビット操作関連</span>
+and(<i>x1</i>, <i>x2</i>, ...)			<span class="cm"># 論理積(AND)</span>
+or(<i>x1</i>, <i>x2</i>, ...)				<span class="cm"># 論理和(OR)</span>
+xor(<i>x1</i>, <i>x2</i>, ...)			<span class="cm"># 排他的論理和(XOR)</span>
+compl(<i>x</i>)				<span class="cm"># 補数</span>
+lshift(<i>x</i>, <i>n</i>)				<span class="cm"># 左シフト</span>
+rshift(<i>x</i>, <i>n</i>)				<span class="cm"># 右シフト</span>
+
+<span class="cm"># 型情報関連</span>
+isarray(<i>x</i>)				<span class="cm"># 配列か否かを確認</span>
+typeof(<i>x</i>)				<span class="cm"># 型名を取得</span>
+
+<span class="cm"># 国際化対応関連</span>
+bindtextdomain(<i>directory</i>[, <i>domain</i>])		<span class="cm"># ドメインのパスを設定</span>
+dcgettext(<i>directory</i>[, <i>domain</i>[, <i>category</i>]])	<span class="cm"># 単一の参照に関するドメインを上書き</span>
+dcngettext(<i>str1</i>, <i>str2</i>, <i>n</i>[, <i>domain</i>[, <i>category</i>]])	<span class="cm"># 単一の参照に関するドメインを上書き(複数)</span>
+</pre>
+</div>
+
+<h4 id="library_functions">ライブラリ関数</h4>
+<div class="i">
+<p>ビルトイン関数の他にも @load または -i や -l オプションで読み込むライブラリ機能があります。</p>
+<pre class="c">
+@load "filefuncs"
+chdir(<i>directory</i>)			<span class="cm"># カレントディレクトリを移動</span>
+stat(<i>file</i>, <i>statdata</i>[, <i>follow</i>])		<span class="cm"># ファイル情報を得る</span>
+<i>flags</i> = or(FTS_PHYSICAL, ...)		<span class="cm"># fts()に渡すフラグを生成</span>
+fts(<i>pathlist</i>, <i>flags</i>, <i>filedata</i>)		<span class="cm"># ディレクトリを横断検索する？</span>
+
+@load "fnmatch"
+fnmatch(<i>pattern</i>, <i>filename</i>, <i>flags</i>)	<span class="cm"># <i>filename</i>がワイルドカード<i>pattern</i>にマッチするか調べる</span>
+
+@load "fork"
+<i>pid</i> = fork()				<span class="cm"># プロセスをフォークする</span>
+waitpid(<i>pid</i>)				<span class="cm"># 指定した子プロセスの終了を待つ</span>
+wait()					<span class="cm"># いずれかの子プロセスの終了を待つ</span>
+
+@load "inplace"				<span class="cm"># -i inplaceで読み込むと入力ファイルを書き換える</span>
+
+@load "ordchr"
+<i>number</i> = ord(<i>string</i>)			<span class="cm"># 文字を文字コードに変換</span>
+<i>char</i> = chr(<i>number</i>)			<span class="cm"># 文字コードを文字に変換</span>
+
+@load "readdir"				<span class="cm"># ディレクトリ内のファイル一覧？(うまく動かない)</span>
+BEGIN { FS = "/" }
+{ print "file name is", $2 }
+
+@load "revoutput"			<span class="cm"># "/dev/stdout"への書き込みを逆順にする</span>
+BEGIN { REVOUT = 1 }
+{ print $0 &gt; "/dev/stdout" }
+
+@load "rwarray"
+writea(<i>file</i>, <i>arr</i>)			<span class="cm"># 配列をバイナリデータとしてファイルに格納する</span>
+reada(<i>file</i>, <i>arr</i>)			<span class="cm"># writea()で書き込まれたデータを配列として読み出す</span>
+
+@load "readfile"
+readfile(<i>file</i>)				<span class="cm"># ファイルの内容を一括して読み込む</span>
+BEGIN { PROCINFO["readfile"] = 1 }	<span class="cm"># $0とRTを設定するらしいがうまく機能しない</span>
+
+@load "time"
+gettimeofday()				<span class="cm"># 1970年1月1日00:00:00からの秒数を得る</span>
+sleep(<i>sec</i>)				<span class="cm"># <i>sec</i>秒間スリープする</span>
+</pre>
+</div>
+
+<h4 id="environments">環境変数</h4>
+<div class="i">
+<p>下記の環境変数が参照されます。</p>
+<div class="c">
+<dl class="dl1">
+<dt>AWKPATH</dt>
+<dd>-f オプションで指定したプログラムファイルを探すディレクトリ名を指定します。複数のディレクトリを指定する場合はコロン(:)で連結します。</dd>
+<dt>AWKLIBPATH</dt>
+<dd>-l オプションで指定したライブラリファイルを探すディレクトリ名を指定します。複数のディレクトリを指定する場合はコロン(:)で連結します。</dd>
+<dt>GAWK_MSEC_SLEEP</dt>
+<dd>接続をリトライする間隔をミリ秒で指定します。</dd>
+<dt>GAWK_READ_TIMEOUT</dt>
+<dd>読み込みのタイムアウト時間をミリ秒単位で指定します。</dd>
+<dt>GAWK_SOCK_RETRIES</dt>
+<dd>TCP/IPソケットによる通信でリトライを行う回数を指定します。</dd>
+<dt>POSIXLY_CORRECT</dt>
+<dd>true や 1 を設定すると、POSIX互換モードで動作します。</dd>
+<dt>AWKBUFSIZE</dt>
+<dd>I/Oバッファサイズを指定します。POSIX互換モードの場合に有効です。</dd>
+<dt>AWK_HASH</dt>
+<dd>gst を設定すると、ハッシュアルゴリズムを標準のものから GNU Smalltalk 版の高速なものに切り替えます。</dd>
+<dt>AWKREADFUNC</dt>
+<dd>何かが設定されていると、プログラムファイルを1行ずつ読み込みます。これは、デバッグにおける問題を解決するために使用されます。</dd>
+<dt>GAWK_MSG_SRC</dt>
+<dd>何かが設定されていると、警告やエラーメッセージにファイル名と行番号の表示を加えます。</dd>
+<dt>GAWK_LOCALE_DIR</dt>
+<dd>多国語対応のためのメッセージファイルの場所を示します。</dd>
+<dt>GAWK_NO_DFA</dt>
+<dd>何かが設定されていると、DFA正規表現マッチングを行わなくなります。>/dd>
+<dt>GAWK_STACKSIZE</dt>
+<dd>スタックサイズを指定します。</dd>
+<dt>INT_CHAIN_MAX</dt>
+<dd>数値型配列管理に使用するハッシュチェーンのための最大アイテム数を指定します。</dd>
+<dt>STR_CHAIN_MAX</dt>
+<dd>文字列型配列管理に使用するハッシュチェーンのための最大アイテム数を指定します。</dd>
+<dt>TIDYMEM</dt>
+<dd>何かが設定されていると、メモリリークを検出するために mtrace() を呼ぶようになります。
+</dl>
+</div>
+</div>
+
+<h4 id="network_access">ネットワークアクセス</h4>
+<div class="i">
+<p>AWK でネットワークアクセスすることも可能です。下記は簡単な TCP サーバの例です。</p>
+<pre class="c">
+BEGIN {
+    print "Hello!" |&amp; "/inet/tcp/8080/0/0"
+    close("/inet/tcp/8080/0/0")
+}
+</pre>
+<p>次は簡単な TCP クライアントの例です。上記の TCP サーバに接続して Hello! メッセージを取得して表示します。</p>
+<pre class="c">
+BEGIN {
+    "/inet/tcp/0/localhost/8080" |&amp; getline
+    print $0
+    close("/inet/tcp/0/localhost/8080")
+}
+</pre>
+<p>次は簡単な HTTP クライアントの例です。</p>
+<pre class="c">
+BEGIN {
+    RS = ORS = "\r\n"
+    http = "/inet/tcp/0/www.example.com/80"
+    print "GET http://www.example.com/" |&amp; http
+    while ((http |&amp; getline) &gt; 0) print $0
+    close(http)
+}
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.gnu.org/software/gawk/manual/gawk.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.gnu.org/software/gawk/manual/gawk.html'" tppabs="https://www.gnu.org/software/gawk/manual/gawk.html">The GNU Awk User's Guide(英語)</a></li>
+<li><a target="_top" href="javascript:if(confirm('https://invisible-island.net/mawk/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://invisible-island.net/mawk/'" tppabs="https://invisible-island.net/mawk/">Mawk Manual(英語)</a></li>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2021 杜甫々</div>
+<div>初版:2021年1月17日 最終更新:2021年1月17日</div>
+<div>http://www.tohoho-web.com/ex/awk.html</div>
+</body>
+</html>

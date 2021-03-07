@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>カスタム要素(Custom Elements) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>カスタム要素(Custom Elements)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+カスタム要素(Custom Elements)
+
+<h4>概要</h4>
+<div class=i>
+<p>カスタム要素(custom elements)は、<a href="web-components.html" tppabs="http://www.tohoho-web.com/ex/web-components.html">Webコンポーネント(Web Components)</a> と呼ばれる技術群のひとつです。JavaScript を用いて独自の要素を定義することができます。</p>
+<p>カスタム要素のバージョンには、document.registerElement() を用いる v0 と、window.customElements() を用いる v1 がありますが、ここでは、新しい v1 について説明します。Chrome 59 や Opera 47 などでサポートされています。</p>
+<p>カスタム要素には、新規の要素を定義する「自律カスタム要素」と、既存の要素をカスタマイズする「カスタマイズドビルトイン要素」があります。</p>
+<p>カスタム要素名は、標準の要素名との重複を避けるために、必ずハイフン(-)を含める必要があります。</p>
+</div>
+
+<h4>自律カスタム要素(autonomous custom element)</h4>
+<div class=i>
+<p>下記は、name 属性の値に応じて 「Hello, {name属性}!」と表示する新規のカスタム要素 &lt;hello-element&gt; を定義しています。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;script&gt;
+class HelloElement extends HTMLElement {
+  // コンストラクタ
+  // 必ず親コンストラクタ super() を呼び出すこと。
+  // 属性値 _name を初期化
+  constructor() {
+    super();
+    this._name = null;
+  }
+
+  // 監視する属性名のリストを返却する
+  static get observedAttributes() {
+    return ["name"];
+  }
+
+  // 監視する属性が設定・変更された際に呼び出される
+  // _name 属性を変更し、レンダリングする
+  attributeChangedCallback(name, oldValue, newValue) {
+    this._name = newValue;
+    this._updateRendering();
+  }
+
+  // 要素が挿入された際に呼び出される
+  connectedCallback() {
+    this._updateRendering();
+  }
+
+  // name属性のゲッター
+  get name() {
+    return this._name;
+  }
+
+  // name属性のセッター
+  set name(v) {
+    this.setAttribute("name", v);
+  }
+
+  // レンダリング
+  // Hello, {name属性}! と表示する
+  _updateRendering() {
+    this.textContent = 'Hello, ' + this._name + '!';
+  }
+}
+
+// 上記で定義したクラスを用いて、カスタム要素 &lt;hello-element&gt; を定義する
+customElements.define("hello-element", HelloElement);
+&lt;/script&gt;
+
+// カスタム要素を使用する
+&lt;hello-element name="Tanaka"&gt;&lt;/hello-element&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class="c2">
+<script>
+class HelloElement extends HTMLElement {
+  constructor() {
+    super();
+    this._name = null;
+  }
+  static get observedAttributes() {
+    return ["name"];
+  }
+  attributeChangedCallback(name, oldValue, newValue) {
+    this._name = newValue;
+    this._updateRendering();
+  }
+  connectedCallback() {
+    this._updateRendering();
+  }
+  get name() {
+    return this._name;
+  }
+  set name(v) {
+    this.setAttribute("name", v);
+  }
+  _updateRendering() {
+    this.textContent = 'Hello, ' + this._name + '!';
+  }
+}
+customElements.define("hello-element", HelloElement);
+</script>
+<hello-element name="Tanaka"></hello-element>
+</div>
+</div>
+
+<h4>カスタマイズドビルトイン要素(customized built-in element)</h4>
+<div class=i>
+<p>カスタム要素は新規に作成する他、既存の要素を拡張して作成することもできます。下記の例では、既存の button 要素に対して、plastic-button というカスタム効果を加えています。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;script&gt;
+class PlasticButton extends HTMLButtonElement {
+  constructor() {
+    super();
+    this.addEventListener("click", () =&gt; {
+      // アニメーションなどの効果を記述する
+    });
+  }
+}
+customElements.define("plastic-button", PlasticButton, { extends: "button" });
+&lt;script&gt;
+
+&lt;button is="plastic-button"&gt;Click Me!&lt;/button&gt;
+</pre>
+</div>
+
+<h4>関連</h4>
+<div class=i>
+<a href="web-components.html" tppabs="http://www.tohoho-web.com/ex/web-components.html">Webコンポーネント</a>,
+<a href="shadow-dom.html" tppabs="http://www.tohoho-web.com/ex/shadow-dom.html">Shadow DOM</a>,
+<a href="html-imports.html" tppabs="http://www.tohoho-web.com/ex/html-imports.html">HTMLインポート</a>,
+<a href="html-template.html" tppabs="http://www.tohoho-web.com/ex/html-template.html">HTMLテンプレート</a>
+</div>
+
+<h4>リンク</h4>
+<div class=i>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://html.spec.whatwg.org/multipage/custom-elements.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://html.spec.whatwg.org/multipage/custom-elements.html'" tppabs="https://html.spec.whatwg.org/multipage/custom-elements.html">https://html.spec.whatwg.org/multipage/custom-elements.html</a>
+<li><a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/custom-elements/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/custom-elements/'" tppabs="https://www.w3.org/TR/custom-elements/">https://www.w3.org/TR/custom-elements/</a>
+<li><a target="_top" href="javascript:if(confirm('https://w3c.github.io/webcomponents/spec/custom/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://w3c.github.io/webcomponents/spec/custom/'" tppabs="https://w3c.github.io/webcomponents/spec/custom/">https://w3c.github.io/webcomponents/spec/custom/</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2017 杜甫々</div>
+<div>初版:2017年11月19日 最終更新:2017年11月19日</div>
+<div>http://www.tohoho-web.com/ex/custom-elements.html</div>
+</body>
+</html>

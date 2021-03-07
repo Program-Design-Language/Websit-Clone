@@ -1,0 +1,282 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>SSI偱socket傪巊偆僾儘僌儔儉傪屇傃弌偡</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>SSI偱socket傪巊偆僾儘僌儔儉傪屇傃弌偡</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[忋偵]</a>
+<a href="99070249.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070249.htm">[慜偵]</a>
+<a href="99070251.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070251.htm">[師偵]</a>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/07/23(嬥) 20:33:22</span><br>
+WWW僒乕僶A: CGI偼巊梡晄壜丆SSI偼摦嶌壜擻<br>
+WWW僒乕僶B: CGI, SSI偳偪傜傕摦嶌壜擻<br>
+偲偄偆娐嫬偑偁傝傑偡丏A偺儁乕僕偐傜SSI偱B偵偁傞CGI僾儘僌儔儉<br>
+傪屇傃弌偟偰昞帵偝偣傞僾儘僌儔儉傪嶌偭偰偄傑偡丏<br>
+A偺儁乕僕偐傜&lt;A HREF="<a href="javascript:if(confirm('http://b/~miyu/98022505.htm  \n\n该文件无法用 Teleport Ultra 下载, 因为 它是一个域或路径外部被设置为它的启始地址的地址。  \n\n你想在服务器上打开它?'))window.location='http://b/~miyu/98022505.htm'" tppabs="http://b/~miyu/foo.cgi">http://B/~miyu/foo.cgi</a>"&gt;乧偲偄偆傛偆偵<br>
+屇傃弌偣偽偄偄偺偱偡偑丆B偺僒乕僶柤傪弌偟偨偔偁傝傑偣傫丏<br>
+<br>
+埲壓偺傛偆側僗僋儕僾僩傪彂偄偰僒乕僶A偵抲偄偰丆<br>
+&lt;!---exec cmd="乣"---&gt;<br>
+偱屇傃弌偟偰傒偨偺偱偡偑丆僗僋儕僾僩偲偟偰擣幆偟偰偄傞<br>
+傛偆側偺偱偡偑丆側偵傕昞帵偝偣傑偣傫丏<br>
+<br>
+Perl偼丆偲傎傎偝傫偺儁乕僕傗懠偺僗僋儕僾僩傪嶲峫偵彂偒姺偊傞掱搙<br>
+偵偟偐暘偐傝傑偣傫丏偳偆捈偣偽偄偄偺偐偛彆尵傪偍婅偄偟傑偡丏<br>
+<br>
+-----begin------<br>
+$post_parameter = "hogehoge=hagahaga&amp;..."<br>
+$addr = (gethostbyname("僒乕僶B偺儂僗僩柤"))[4];<br>
+$method = "POST";<br>
+$url&nbsp;&nbsp;&nbsp;&nbsp;= "~miyu/foo.cgi";<br>
+$ipname = pack("S n a4 x8", 2, 80, $addr);<br>
+<br>
+#-----------------------------------------曄悢偺僙僢僩--------------<br>
+&amp;make_socket;<br>
+print @lines;<br>
+<br>
+#-----------------------------------------僨乕僞憲怣--------------<br>
+sub make_socket{<br>
+ socket(SOCKET, 2, 1, 0) || die "Can't socket\n";<br>
+ connect(SOCKET, $ipname) || die "Can't connect\n";<br>
+ select(SOCKET); $| = 1; select(STDOUT);<br>
+<br>
+ if( $method eq "GET" ){<br>
+&nbsp;&nbsp;print SOCKET "$method /$url?$post_parameter HTTP/1.0\r\n";<br>
+ }else{<br>
+&nbsp;&nbsp;print SOCKET "$method /$url HTTP/1.0\r\n";<br>
+ }<br>
+ if( $method eq "POST" ){<br>
+&nbsp;&nbsp;$len = length($post_parameter);<br>
+&nbsp;&nbsp;print SOCKET "Content-length: $len\r\n";<br>
+&nbsp;&nbsp;print SOCKET "\r\n";<br>
+&nbsp;&nbsp;print SOCKET "$post_parameter\r\n";<br>
+ }<br>
+ print SOCKET "User-Agent: $ownscript\r\n";<br>
+ print SOCKET "\r\n";<br>
+<br>
+ #----------------------------------------僨乕僞庴怣---------------<br>
+ $i=0;<br>
+<br>
+ if( $method eq "GET" || $method eq "POST" ){<br>
+&nbsp;&nbsp;print "$i\n";<br>
+&nbsp;&nbsp;while(&lt;SOCKET&gt;){&nbsp;&nbsp;m/^\r\n$/ &amp;&amp; last;&nbsp;&nbsp;$i++;}<br>
+&nbsp;&nbsp;while(&lt;SOCKET&gt;){<br>
+&nbsp;&nbsp;&nbsp;if( $_ =~ m/^&lt;HR&gt;.*/ ){ $lines[$i++] = $_; }#foo.cgi偺弌椡寢壥傪堦晹敳悎<br>
+&nbsp;&nbsp;&nbsp;$i++;<br>
+&nbsp;&nbsp;}<br>
+ }elsif( $method eq "HEAD" ){<br>
+&nbsp;&nbsp;while(&lt;SOCKET&gt;){&nbsp;&nbsp;&nbsp;print $_;&nbsp;&nbsp;}<br>
+ }<br>
+}<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/07/23(嬥) 20:36:24</span><br>
+偙偺丆乽曄悢偺僙僢僩乿偲偄偆偺偼娫堘偄側偺偱丆柍帇偟偰壓偝偄<br>
+<font color="#CC8000">&gt;#-----------------------------------------曄悢偺僙僢僩--------------</font><br>
+<font color="#CC8000">&gt;&amp;make_socket;</font><br>
+<font color="#CC8000">&gt;print @lines;</font><br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/23(嬥) 22:32:45</span><br>
+偪傖傫偲撉傫偱側偄偺偱尨場偼傢偐傜傫偗偳丄<br>
+<font color="#CC8000">&gt; socket(SOCKET, 2, 1, 0) || die "Can't socket\n";</font><br>
+側偳偲偟側偄偱丄<br>
+丂if ( ! socket(SOCKET, 2, 1, 0) ){ print "Error in socket"; exit; }<br>
+偲偟偰丄偳偙偑偍偐偟偄偐僨僶僢僋偟偰傒偰偼丅<br>
+丂close(STDERR);<br>
+丂open(STDERR,"&gt;&amp;-");<br>
+偲偟偰偍偗偽die偱傕偄偄傫偩偭偗?("&gt;-"偐傕偟傟側偄)<br>
+<br>
+<font color="#CC8000">&gt; &lt;!---exec cmd="乣"---&gt;</font><br>
+惓偟偔偼 &lt;!--#exec cmd="乣" --&gt;<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/07/23(嬥) 23:07:10</span><br>
+憗懍偺傾僪僶僀僗偁傝偑偲偆偛偞偄傑偡丏<br>
+<font color="#CC8000">&gt;if ( ! socket(SOCKET, 2, 1, 0) ){ print "Error in socket"; exit; }</font><br>
+偼壗傕昞帵偝傟傑偣傫偱偟偨丏<br>
+<br>
+<font color="#CC8000">&gt;if( $method eq "GET" || $method eq "POST" ){</font><br>
+<font color="#CC8000">&gt;print "$i\n";</font><br>
+<br>
+偺偲偙傠偱偼丆`0'偲$i偺抣偑昞帵偝傟傑偡丏偁偲丆<br>
+僒乕僶B偺傾僋僙僗儘僌偵偼丆婰榐偝傟偰偄傑偣傫偱偟偨丏<br>
+<br>
+B-Cus偝傫傕彂偐傟偰偄傞傛偆偵丆僄儔乕儊僢僙乕僕傪<br>
+偆傔偙傫偱偳偙偱僄儔乕偑弌偰偄傞偺偐昞帵偝偣偨偄偺偱偡偑丆<br>
+彂偒曽偑椙偔暘偐傜側偄偺偱丆偦傟傕偁傢偣偰偛嫵帵偔偩偝偄丏<br>
+<br>
+<font color="#CC8000">&gt;丂close(STDERR);</font><br>
+<font color="#CC8000">&gt;丂open(STDERR,"&gt;&amp;-");</font><br>
+<br>
+偙傟偼偳偙偵杽傔崬傔偽偄偄偺偱偟傚偆偐丠<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/24(搚) 14:05:29</span><br>
+尨場傪挷傋傞偺偵偐側傝嬯楯偟偰偟傑偭偨丅偙傟偱慡晹奜傟偰偨傜斶偟偄側偀丅<br>
+<br>
+-------------------------------------------------------------------------<br>
+偙偺僗僋儕僾僩偭偰丄<a href="../../wwwperl2.htm#socket" tppabs="http://www.tohoho-web.com/wwwperl2.htm#socket">http://www.tohoho-web.com/wwwperl2.htm#socket</a><br>
+傪嶲峫偵偟偨傫偱偡傛偹? 杔偼偄偮傕 Socket儌僕儏乕儖傪巊偭偰傞傫偱<br>
+(梫perl5)傕偟偐偟偨傜娫堘偭偰傞偐傕偟傟傑偣傫偑丄偲慜抲偒偟偨忋偱乧<br>
+<br>
+------------------------------------------------------------------------<br>
+<font color="#CC8000">&gt; socket(S, 2, 1, 0);</font><br>
+栤戣偼偙偙偠傖側偄偱偡偐偹偉丅埲壓偼婎慴抦幆丅<br>
+<br>
+丂丂socket偺堷悢偼丄弴偵丄僜働僢僩柤丄僪儊僀儞僞僀僾(偭偰尵偆偺偐側)丄<br>
+丂丂僜働僢僩僞僀僾丄僾儘僩僐儖僞僀僾傪堄枴偟傑偡丅<br>
+<br>
+丂丂僪儊僀儞僞僀僾偱<br>
+丂丂丂丒AF_UNIX(UNIX僪儊僀儞僜働僢僩)偐AF_INET(僀儞僞乕僱僢僩僪儊僀儞僜働僢僩)<br>
+丂丂傪巜掕偟傑偡丅傑丄偙偺応崌僀儞僞乕僱僢僩僪儊僀儞僜働僢僩偵偡傞傋偒偱偡丅<br>
+<br>
+丂丂僜働僢僩僞僀僾偱<br>
+丂丂丂丒SOCK_STREAM(TCP/IP)偐SOCK_DGRAM(UDP/IP)偐<br>
+丂丂傪慖傃傑偡丅<br>
+<br>
+丂丂僾儘僩僐儖僞僀僾偼丄傎傫偲偼IP偲偐TCP偲偐ICMP偲偐巜掕偡傞傫偩偗偳丄<br>
+丂丂0偵偟偲偗偽彑庤偵愝掕偝傟傑偡丅<br>
+<br>
+偱丄socket(S,2,1,0)偭偰偺偼AF_INET丄SOCK_DGRAM傪堄枴偡傞傢偗側傫偱偡丅<br>
+梫偼僀儞僞乕僱僢僩偱丄UDP/IP傪巊偆偭偰堄枴丅<br>
+<br>
+偑偟偐偟丅WWW僒乕僶偭偰偺偼UDP/IP偠傖側偔偰TCP/IP偱懸偭偰傞曽偑懡偄丅<br>
+偲偄偆偐丄傎偲傫偳TCP/IP偱懸偭偰傑偡丅<br>
+# 偙偙傜傊傫傛偔傢偐傝傑偣傫丅愄撉傫偩杮偵偼乽HTTP偼UDP偱偁傞乿偲<br>
+# 妋偐偵彂偄偰偁傝傑偟偨丅偟偐偟RFC偵偼<br>
+#丂丂HTTP communication usually takes place over TCP/IP connections.<br>
+# 偲偁傝傑偡偟丄TCP偱懸偭偰傞曽偑傎偲傫偳偱偼側偄偐偲巚偄傑偡丅<br>
+<br>
+偱偡偐傜丄偆偪偺娐嫬偱偼 socket(S,2,2,0) 偵偟偨傜摦偒傑偟偨丅<br>
+偨偩偟丄偨傑偵UDP偱傕懸偭偰傞WWW僒乕僶傕懚嵼偟傑偡丅偨傑偨傑<br>
+偦偆偄偆偲偙傠偵偁偨傞偲丄UDP偱傕摦嶌偡傞偱偟傚偆丅<br>
+# 偙偙傜傊傫偺忬嫷偵偮偄偰丄忣曬媮傓丅<br>
+<br>
+------------------------------------------------------------------------<br>
+偁偲丄<a href="../../wwwperl2.htm#socket" tppabs="http://www.tohoho-web.com/wwwperl2.htm#socket">http://www.tohoho-web.com/wwwperl2.htm#socket</a> 偼<br>
+僒儞僾儖偲偄偆偙偲偱偙偆偄偆彂偒曽偵側偭偰傑偡偑丄愨懳偵偍姪傔偟傑偣傫丅<br>
+僜乕僗偵捈愙儅僕僢僋僫儞僶(堄枴偺傢偐傜側偄悢帤)傪杽傔崬傓偺偼<br>
+愨懳傗偭偰偼偄偗傑偣傫丅<br>
+<br>
+perl5傪巊偭偰傞側傜 Socket儌僕儏乕儖傪巊偭偰<br>
+丂<a href="javascript:if(confirm('http://www.cs.gunma-u.ac.jp/~j5306050/net/98022507.htm  \n\n该文件无法用 Teleport Ultra 下载, 因为 它是一个域或路径外部被设置为它的启始地址的地址。  \n\n你想在服务器上打开它?'))window.location='http://www.cs.gunma-u.ac.jp/~j5306050/net/98022507.htm'" tppabs="http://www.cs.gunma-u.ac.jp/~j5306050/net/http-2.html">http://www.cs.gunma-u.ac.jp/~j5306050/net/http-2.html</a><br>
+偲偄偆彂偒曽傪偟傑偟傚偆丅億乕僩偼80偲傢偐偭偰偄偰傕 getservbyname傪巊偆丅<br>
+2偠傖側偔偰PF_INET偲彂偔丅<br>
+丂socket(SERVER,2,2,0)<br>
+丂socket(SERVER,PF_INET,SOCK_STREAM,$proto)<br>
+偳偪傜偑棟夝偟傗偡偄偐偼傢偐傝傑偡傛偹?<br>
+<br>
+傕偪傠傫偝傜偵曋棙側LWP儌僕儏乕儖傪巊偭偰傕壜丅<br>
+# Socket儌僕儏乕儖偼Perl5偵昗弨偱晅偄偰偒傑偡丅<br>
+# LWP儌僕儏乕儖偼帺暘偱僀儞僗僩乕儖偡傞昁梫偑偁傝傑偡丅<br>
+<br>
+側偺偱丄偱偒傟偽傕偆彮偟傢偐傝傗偡偄婰弎傪婓朷偟傑偡亜偲傎傎偝傫<br>
+# 傑偀傢偐傝傗偡偔偟傛偆偲偡傞偲丄寢嬊慡晹愢柧偡傞偼傔偵側傞傫偱偡偑乧<br>
+<br>
+------------------------------------------------------------------------<br>
+偁偲丄暿偺壜擻惈傕偁傝傑偡丅SSI傪摦偐偟偰偄傞僒乕僶偐傜奜晹傊偼丄<br>
+proxy傪宱桼偟側偄偲峴偗側偄応崌丅偦偺偲偒偼<br>
+丂GET /$url HTTP/1.0\r\n<br>
+偱偼側偔<br>
+丂GET http://愙懕偟偨偄WWW僒乕僶偺儂僗僩柤/$url HTTP/1.0\r\n<br>
+偲偟傑偣偆丅摉慠connect偡傞偺偼proxy僒乕僶偹丅<br>
+<br>
+------------------------------------------------------------------------<br>
+偁偲偝丄POST偺彂幃 堘偭偰傑偣傫? $post_parameter偼嵟屻偵<br>
+晅偗傞傕傫偩偲巚偭偰偄偨傫偱偡偑(妋擣偟偰側偄偺偱堘偆偐傕)丅<br>
+<br>
+------------------------------------------------------------------------<br>
+偁偲丄僨僶僢僌拞偼栤戣傪愗傝暘偗傞偨傔偵丄僾儘僌儔儉傪嵟彫扨埵傑偱<br>
+峣傝崬傒傑偟傚偆丅<br>
+<br>
+POST傗傜HEAD側傫偰曻偭偰偍偗偽偄偄傫偱偡丅偦傫側偺GET(HEAD偱傕偄偄偗偳)偑<br>
+摦偄偰偐傜峫偊傟偽偄偄傫偩偐傜丅杔偼埲壓偺傛偆偵晄梫側晹暘傪嶍偭偰<br>
+埲壓偺傛偆側忬懺偐傜僨僶僢僌傪巒傔傑偟偨丅<br>
+<br>
+$addr = (gethostbyname("僒乕僶B偺儂僗僩柤"))[4];<br>
+$url = "/index.html";<br>
+$ipname = pack("S n a4 x8", 2, 80, $addr);<br>
+socket(SOCKET, 2, 1, 0);<br>
+connect(SOCKET, $ipname);<br>
+select(SOCKET); $| = 1; select(STDOUT);<br>
+print SOCKET "GET /index.html HTTP/1.0\r\n\r\n";<br>
+while(&lt;SOCKET&gt;){print;}<br>
+<br>
+------------------------------------------------------------------------<br>
+<font color="#CC8000">&gt; 偙傟偼偳偙偵杽傔崬傔偽偄偄偺偱偟傚偆偐丠</font><br>
+僗僋儕僾僩偺愭摢偱偡丅die偺暥帤楍偑STDOUT偵弌椡偝傟傑偡丅<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/07/25(擔) 23:19:54</span><br>
+<span class=resolv>[[夝寛]]</span><br>
+<font color="#CC8000">&gt;&gt; socket(S, 2, 1, 0);</font><br>
+<font color="#CC8000">&gt;栤戣偼偙偙偠傖側偄偱偡偐偹偉丅埲壓偼婎慴抦幆丅</font><br>
+<br>
+傑偝偟偔丆栤戣偼偙偙偵偁傝傑偟偨丏<br>
+socket(S, 2, 2, 0);<br>
+偲偟偨偲偙傠丆摦嶌偟傑偟偨丏<br>
+<br>
+偛巜揈偺傛偆偵丆儅僕僢僋僫儞僶乕傪杽傔崬傓僾儘僌儔儉偼<br>
+椙偔側偄偺偼彸抦偟偰偄傞偺偱偡偑丆偲傎傎偝傫偺<br>
+socket偺晹暘傪偦偺傑傑巊偭偰偄偰丆偙偺悢帤偺堄枴偑<br>
+傛偔傢偐傜偢丆偳偆曄偊傟偽偄偄偺偐慡慠暘偐傜側偐偭偨偺偱<br>
+偦偺傑傑偵偟偰偄傑偟偨丏崱夞偺丆B-Cus偝傫偺夝愢偱<br>
+傛偔暘偐傝傑偟偨丏偳偆傕偁傝偑偲偆偛偞偄傑偟偨丏<br>
+傑偨丆B-Cus偝傫偺儁乕僕傕嶲峫偵偟偰傒傑偡丏<br>
+<br>
+偙傟偱丆側傫偲偐僾儘僌儔儉偑偱偒偦偆側偺偱丆<br>
+夝寛儅乕僋傪僠僃僢僋偟偰偍偒傑偡丏<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/26(寧) 02:59:05</span><br>
+偡傑傫偡丅塕擖偭偰傑偟偨丅<br>
+<br>
+<font color="#CC8000">&gt; WWW僒乕僶偭偰偺偼UDP/IP偠傖側偔偰TCP/IP偱懸偭偰傞曽偑懡偄丅</font><br>
+<font color="#CC8000">&gt; 偲偄偆偐丄傎偲傫偳TCP/IP偱懸偭偰傑偡丅</font><br>
+偙傟偼偨傇傫塕丅HTTP偼UDP偱偼側偔TCP丅<br>
+<br>
+<font color="#CC8000">&gt; 愄撉傫偩杮偵偼乽HTTP偼UDP偱偁傞乿偲妋偐偵彂偄偰偁傝傑偟偨丅</font><br>
+偙傟偼姩堘偄偺壜擻惈偑崅偄偱偡丅<br>
+<br>
+<br>
+C偱偼 socket 偺堷悢偲偟偰丄SOCK_STREAM 偲偐 SOCK_DGRAM 偲偐傪<br>
+巊偄傑偡丅偙傟偼 (/usr/include/)sys/socket.h 偵掕媊偝傟偰偄傑偡丅<br>
+壠偺FreeBSD偱偼<br>
+丂丂#define SOCK_STREAM 1 /* stream socket */<br>
+丂丂#define SOCK_DGRAM 2 /* datagram socket */<br>
+偲側偭偰偄傑偟偨丅側偺偱丄socket(2,1,0)偱傕摦偒傑偟偨丅<br>
+# 偦偺偲偒偼姩堘偄偟偰偰丄崱傾僋僙僗偟偨僒乕僶偼UDP側傫偩傠偆<br>
+# 偲巚偭偰偄傑偟偨<br>
+<br>
+偟偐偟丄Solaris偩偲<br>
+丂丂#define SOCK_STREAM 2 /* stream socket */<br>
+丂丂#define SOCK_DGRAM 1 /* datagram socket */<br>
+偲側偭偰偍傝丄TCP偲UDP偺抣偑慡偔媡偵側偭偰偄傑偡丅偱偡偺偱丄<br>
+<a href="../../wwwperl2.htm#socket" tppabs="http://www.tohoho-web.com/wwwperl2.htm#socket">http://www.tohoho-web.com/wwwperl2.htm#socket</a> 偺 socket(2,1,0) 偼丄<br>
+FreeBSD偱偼 TCP/IP 傪堄枴偟丄Solaris偱偼 UDP/IP傪堄枴偟傑偡偺偱丄<br>
+僒儞僾儖偲偟偰偼傑偢偄偐偲亜偲傎傎偝傫<br>
+<br>
+perl5偩偲慜弎偺傛偆偵<br>
+丂use Socket;<br>
+丂socket(SERVER,PF_INET,SOCK_STREAM,$proto)<br>
+偲彂偗傑偡偑丄perl4偩偲丄偳偆偟傛偆傕側偄乧偺偐側?<br>
+屆偄儔僋僟杮偱偼丄偳偆偄偆僐乕僨傿儞僌偟偰傞傫偱偟傚偆偐丅<br>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/07/26(寧) 16:13:25</span><br>
+<font color="#CC8000">&gt;FreeBSD偱偼 TCP/IP 傪堄枴偟丄Solaris偱偼 UDP/IP傪堄枴偟傑偡</font><br>
+C偱偼側偔Perl側偺偱偡偑丆巚偄摉偨傞愡偑偁傝傑偡丏<br>
+幚偼丆嵟弶偺婰帠偺僒乕僶A偼Solaris丆<br>
+僒乕僶B偼FreeBSD側偺偱偡丏<br>
+僒乕僶B偵丆忋偱嫇偘偨僾儘僌儔儉偺傑傑偱扨撈偱摦偐偡偲偪傖傫偲愙懕偱偒傑偟偨丏C偲Perl偱偼扨弮偵斾妑偱偒傑偣傫偑丏丏丏<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[忋偵]</a>
+<a href="99070249.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070249.htm">[慜偵]</a>
+<a href="99070251.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070251.htm">[師偵]</a>
+</body>
+</html>

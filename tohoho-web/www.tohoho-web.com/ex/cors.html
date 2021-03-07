@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>CORS(Cross-Origin Resource Sharing) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>CORS(Cross-Origin Resource Sharing)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+CORS(Cross-Origin Resource Sharing)
+
+<h4>CORSとは</h4>
+<div class=i>
+<p>クロスサイトリクエストフォージェリ(CSRF)などのセキュリティ攻撃を防止するために、ブラウザは「<a href="same-origin-policy.html" tppabs="http://www.tohoho-web.com/ex/same-origin-policy.html">同一生成元ポリシー(Same-Origin Policy)</a>」という仕組みを実装し、異なるオリジンのリソースへのアクセスに制約をかけています。CORS (Cross-Origin Resource Sharing)は、この制約を一部解除し、異なるオリジン間でリソースを共有するための仕組みです。</p>
+</div>
+
+<h4>CORS の仕組み</h4>
+<div class=i>
+<p>例えば、site-a.example.com から他オリジンの site-b.example.com のリソースを参照したい場合、ブラウザは site-b へのリクエストヘッダにアクセス元のオリジン情報を付加します。XMLHttpRequest によるアクセスや、<a href="../html/attr/crossorigin.htm" tppabs="http://www.tohoho-web.com/html/attr/crossorigin.htm">crossorigin="anonymous"</a> を指定した <a href="../html/img.htm" tppabs="http://www.tohoho-web.com/html/img.htm">img</a>, <a href="../html/script.htm" tppabs="http://www.tohoho-web.com/html/script.htm">script</a>, <a href="../html/audio.htm" tppabs="http://www.tohoho-web.com/html/audio.htm">audio</a>, <a href="../html/video.htm" tppabs="http://www.tohoho-web.com/html/video.htm">video</a>, <a href="../html/link.htm" tppabs="http://www.tohoho-web.com/html/link.htm">link</a> アクセスの場合などに、Origin: ヘッダが付与されます。</p>
+<div class="title-tab">Site-A → Site-B</div>
+<pre class="c2">
+Origin: http://site-a.example.com
+</pre>
+<p>これに対し、site-b 側で、site-a へのアクセスを許可する場合、下記の様なレスポンスヘッダを返します。</p>
+<div class="title-tab">Site-B → Site-A</div>
+<pre class="c2">
+Access-Control-Allow-Origin: http://site-a.example.com
+</pre>
+<p>すべてのオリジンに対してアクセスを許可する場合、ワイルドカード(*) を使用することができます。</p>
+<div class="title-tab">Site-B → Site-A</div>
+<pre class="c2">
+Access-Control-Allow-Origin: *
+</pre>
+</div>
+
+<h4>単純リクエストとプリフライトリクエスト</h4>
+<div class=i>
+<p>上記のやりとりは「単純リクエスト」と呼ばれるもので、下記の条件が満たされる場合に利用可能なシーケンスです。</p>
+<ul>
+<li>メソッドが GET, HEAD, POST のいずれかである。
+<li>Accept, Accept-Language, Content-Language, Content-Type, DPR, DownLink, Save-Data, Viewport-Width, Width 以外の HTTP ヘッダを送信していない。
+<li>Content-Type が application/x-www-form-urlencoded, multipart/form-data, text/plain のいずれかである。
+<li>リクエストに使用される XMLHttpRequestUpload にイベントリスナーが登録されていない。
+<li>リクエストに ReadableStream オブジェクトが使用されていない。
+</ul>
+<p>上記の条件を満たせない場合は、「プリフライトリクエスト」と呼ばれるもう少し複雑なシーケンスとなります。下記は、条件に含まれてないヘッダ (X-Custom-Header) を送信する例です。まず、Site-A は Site-B に対して、リクエストしたい情報を OPTIONS で事前確認します。</p>
+<div class="title-tab">Site-A → Site-B</div>
+<pre class="c2">
+OPTIONS /test HTTP/1.1
+Origin: http://site-a.example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: X-Custom-Header, Content-Type
+</pre>
+<p>これに対し、Site-B は、アクセスを許可する・しないの情報を返します。</p>
+<div class="title-tab">Site-B → Site-A</div>
+<pre class="c2">
+Access-Control-Allow-Origin: http://site-a.example.com
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: X-Custom-Header, Content-Type
+Access-Control-Max-Age: 86400
+</pre>
+<p>アクセスの許可が得られたのちに、Site-A は実際のリクエストを送信します。</p>
+<div class="title-tab">Site-A → Site-B</div>
+<pre class="c2">
+POST /test HTTP/1.1
+Content-Type: text/json
+X-Custom-Header: custom-data
+</pre>
+<p>Site-B がこれに応答します。Access-Control-Max-Age で指定した時間が過ぎるまでは、OPTIONS による事前確認なしに POST します。</p>
+<div class="title-tab">Site-B → Site-A</div>
+<pre class="c2">
+HTTP/1.1 200 OK
+</pre>
+</div>
+
+<h4>資格情報を含むリクエスト</h4>
+<div class=i>
+<p>Site-A から Site-B に対して、Site-A の Cookie や HTTP認証による認証情報を渡す場合は、Site-A 側で withCredentials フラグを true にし、Site-B からの OPTIONS 応答で Access-Control-Allow-Credentials フラグで true が返却される必要があります。</p>
+<div class="title-tab">Site-A</div>
+<pre class="c2">
+&lt;script&gt;
+window.onload = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            console.log("status = " + xhr.status);
+            console.log(xhr.responseText);
+        }
+    }
+    xhr.open("POST", "http://site-b.example.com/");
+    <em>xhr.withCredentials = true;</em>
+    xhr.setRequestHeader("Content-Type" , "text/json");
+    xhr.send(JSON.stringify({"sid": getCookie("sid")}));
+}
+&lt;/script&gt;
+</pre>
+<p>Site-A は通常通りの事前確認用の OPTIONS を送信します。</p>
+<div class="title-tab">Site-A → Site-B</div>
+<pre class="c2">
+OPTIONS /test HTTP/1.1
+Origin: http://site-a.example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: X-Custom-Header, Content-Type
+</pre>
+<p>Site-B は、Access-Control-Allow-Credentials: true を返却します。</p>
+<div class="title-tab">Site-B → Site-A</div>
+<pre class="c2">
+Access-Control-Allow-Origin: http://site-a.example.com
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: X-Custom-Header, Content-Type
+Access-Control-Max-Age: 86400
+<em>Access-Control-Allow-Credentials: true</em>
+</pre>
+<p>これにより、Site-A は、Cookie などの認証情報を Site-B に POST することが許可されます。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年12月30日 最終更新:2018年12月30日</div>
+<div>http://www.tohoho-web.com/ex/cors.html</div>
+</body>
+</html>

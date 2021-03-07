@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのperl入門（利用例編） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel=StyleSheet href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのperl入門（利用例編）</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwperl.htm" tppabs="http://www.tohoho-web.com/wwwperl.htm">とほほのperl入門</a> &gt;
+利用例編
+
+<h4>制御</h4>
+<h5 id="If">◆ 条件判断する</h5>
+<div class=i>
+<pre class=c>
+if ($xx &gt; 100) {
+    print "大きい\n";
+} else {
+    print "小さい\n";
+}
+</pre>
+</div>
+
+<h5 id="For">◆ 10回処理を繰り返す</h5>
+<div class=i>
+<pre class=c>
+for ($i = 0; $i &lt; 10; $i++) {
+    print "$i\n";
+}
+</pre>
+</div>
+
+<h4>文字列</h4>
+<h5 id="StringByChar">◆ 文字を1文字ずつ処理する</h5>
+<div class=i>
+<pre class=c>
+$str = "ABCDEFG";
+for ($i = 0; $i &lt; length($str); $i++) {
+    $c = substr($str, $i, 1);
+    print "[$c] ";
+}
+</pre>
+</div>
+
+<h5 id="StringByWchar">◆ 文字を1文字ずつ処理する(日本語対応)</h5>
+<div class=i>
+<pre class=c>
+$str = "ABCDEFGあいうえお";   # 漢字コードはEUCとする
+for ($i = 0; $i &lt; length($str); $i++) {
+    $c = substr($str, $i, 1);
+    if ($c =~ /[\x80-\xff]/) {
+        $c = substr($str, $i++, 2);
+    }
+    print "[$c] ";
+}
+</pre>
+</div>
+
+<h5 id="DeleteReturn">◆ 行末の改行コードや空白を取り去る</h5>
+<div class=i>
+<pre class=c>
+$str =~ s/\s*$//;
+</pre>
+</div>
+
+<h5 id="IsJapanese">◆ 全角文字が含まれているか調べる</h5>
+<div class=i>
+<pre class=c>
+# $strの漢字コードをEUCにしておいて
+if ($str =~ /[\x80-\xff]/) { print "全角文字が含まれてます"; }
+</pre>
+</div>
+
+<h4>書き出し</h4>
+
+<h5 id="Print">◆ 文字列を書き出す</h5>
+<div class=i>
+<pre class=c>
+print "あいうえお\nかきくけこ\n";
+</pre>
+</div>
+
+<h5 id="Quote">◆ ダブルクォーテーションを含む文字列を書き出す</h5>
+<div class=i>
+<pre class=c>
+print "&lt;a href=\"index.html\"&gt;\n";
+print '&lt;a href="index.html"&gt;';
+</pre>
+</div>
+
+<h5 id="At">◆ アットマークを含む文字列を書き出す</h5>
+<div class=i>
+<pre class=c>
+print "foo\@abc.xyz";
+print 'foo@abc.xyz';
+</pre>
+</div>
+
+<h5 id="Format">◆ 書式を指定して書き出す</h5>
+<div class=i>
+<pre class=c>
+printf("%04d/%02d/%02d\n", $year, $month, $mday);
+</pre>
+</div>
+
+<h5 id="Multi">◆ 数行にわたる内容を書き出す</h5>
+<div class=i>
+<pre class=c>
+print &lt;&lt;END_OF_DATA;
+あいうえお
+かきくけこ
+END_OF_DATA
+</pre>
+</div>
+
+<h5 id="Flush">◆ バッファをフラッシュする</h5>
+<div class=i>
+<pre class=c>
+$old = select(OUT); $| = 1; select($old);
+</pre>
+</div>
+
+<h5 id="Lock">◆ ファイルをロックする</h5>
+<div class=i>
+<pre class=c>
+open(OUT, "&gt; file.txt");
+flock(OUT, 2);
+print OUT ".......\n";
+close(OUT);  # closeすると自動的にアンロックされる
+</pre>
+</div>
+
+<h4>配列</h4>
+
+<h5 id="Array">◆ 配列を用いる</h5>
+<div class=i>
+<pre class=c>
+$xx[0] = "あああ";
+$xx[1] = "いいい";
+print "$xx[0]\n";
+</pre>
+</div>
+
+<h5 id="ForArray">◆ すべての配列要素に対して処理する</h5>
+<div class=i>
+<pre class=c>
+for $yy (@xx) {
+    print $yy;
+}
+</pre>
+</div>
+
+<h4>ファイル</h4>
+
+<h5 id="ReadFile">◆ ファイルを読み出す</h5>
+<div class=i>
+<pre class=c>
+open(IN, "xxxx.txt");
+while (&lt;IN&gt;) {
+    print $_;
+}
+close(IN);
+</pre>
+</div>
+
+<h5 id="FileSize">◆ ファイルのサイズを得る</h5>
+<div class=i>
+<pre class=c>
+$size = -s $file;
+</pre>
+</div>
+
+<h5 id="Binary">◆ ファイルをバイナリモードで読み出す</h5>
+<div class=i>
+<pre class=c>
+$size = -s $file;
+open(IN, $file);
+binmode(IN);              # Windowsで必要
+sysread(IN, $buf, $size);
+close(IN);
+</pre>
+</div>
+
+<h5 id="Exist">◆ ファイルが存在するか確認する</h5>
+<div class=i>
+<pre class=c>
+if (-f $file) {
+    print "ファイルは存在します。\n";
+}
+</pre>
+</div>
+
+<h5 id="LockFile">◆ ファイルをロックする</h5>
+<div class=i>
+<pre class=c>
+open(OUT, "&gt;&gt; outfile.txt");
+flock(OUT, 2);
+truncate(OUT, 0);
+print "....";
+close(OUT);
+</pre>
+</div>
+
+<h4>サブルーチン</h4>
+
+<h5 id="Sub">◆ サブルーチンを定義する</h5>
+<div class=i>
+<pre class=c>
+sub add {
+    return($_[0] + $_[1]);
+}
+</pre>
+</div>
+
+<h5 id="Call">◆ サブルーチンを呼び出す</h5>
+<div class=i>
+<pre class=c>
+$answer = &amp;add(3, 5);
+</pre>
+</div>
+
+<h5 id="Local">◆ サブルーチンの中で使う変数をローカル変数とする</h5>
+<div class=i>
+<pre class=c>
+sub add {
+    local($ans);
+    $ans = $_[0] + $_[1];
+    return($ans);
+}
+</pre>
+</div>
+
+<h4>その他</h4>
+
+<h5 id="Argv">◆ 引数を解釈する</h5>
+<div class=i>
+<pre class=c>
+for ($i = 0; $i &lt;= $#ARGV; $i++) {
+    print "$ARGV[$i]\n";
+}
+</pre>
+</div>
+
+<h5 id="Japan">◆ 時間帯を日本時間に設定する</h5>
+<div class=i>
+<pre class=c>
+$ENV{'TZ'} = "JST-9";
+</pre>
+</div>
+
+<h5 id="Signal">◆ プログラム強制中断の際の処理を記述する</h5>
+<div class=i>
+<pre class=c>
+$SIG{'INT'} = $SIG{'HUP'} = $SIG{'QUIT'} = $SIG{'TERM'} = "sigexit";
+sub sigexit {
+    # この部分に作業ファイル削除などの終了処理を記述する
+}
+</pre>
+
+</div>
+
+<hr>
+<div>Copyright (C) 1997-2002 杜甫々</div>
+<div>初版：1997年2月3日、最終更新：2002年2月24日</div>
+<div>http://www.tohoho-web.com/wwwperl3.htm</div>
+</body>
+</html>

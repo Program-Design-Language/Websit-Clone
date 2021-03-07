@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>負荷を小さくするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>負荷を小さくするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060272.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060272.htm">[前に]</a>
+<a href="99060274.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060274.htm">[次に]</a>
+<hr>
+<span class=name>匿名</span>
+<span class=time>1999/06/28(月) 02:41:50</span><br>
+#!/usr/bin/perl<br>
+<br>
+$datafile = "./log.txt";<br>
+<br>
+open(IN,$datafile);<br>
+@IN=&lt;IN&gt;;<br>
+for ($i=0; $i&lt;20; $i++) {<br>
+print $IN[$i];<br>
+}<br>
+<br>
+close(IN);<br>
+<br>
+といううふうに、先頭の２０行を表示するものを<br>
+作ったのですが、他に負荷を小さく同じような処理をする方法ありますか？<br>
+何度も利用するのでなるべく負荷をかけたくないです。<br>
+お願いします。<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=email><a href="mailto:jrm@fureai.or.jp">[E-Mail]</a></span>
+<span class=time>1999/06/28(月) 05:44:20</span><br>
+open(IN,$datafile);<br>
+for(0..19){$_=&lt;IN&gt;;print;}<br>
+close(IN);<br>
+<br>
+はどうでしょう<br>
+細かいパフォーマンスは測ったことがありませんが<br>
+データファイルが小さいなら一気に読み込んだ方が早いんでしょうか？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/28(月) 15:21:03</span><br>
+以下のようなコードで測定してみました。<br>
+(環境：Celeron 333, 128MB, Windows NT4.0, Perl 5.005_03)<br>
+<br>
+#!/usr/local/bin/perl<br>
+use Benchmark;<br>
+<br>
+open (OUT , "&gt; result.txt");<br>
+$count = 1000;<br>
+$datafile = "data.txt";<br>
+<br>
+@t = timethese($count , {<br>
+	'ALL ' =&gt; '&amp;all;',<br>
+	'STEP' =&gt; '&amp;step;'<br>
+});<br>
+exit;<br>
+<br>
+sub all{<br>
+	open (DATA, "&lt; ./$datafile");<br>
+	@data = &lt;DATA&gt;;<br>
+	for ($i=0; $i&lt;20; $i++) {<br>
+		print OUT $data[$i];<br>
+	}<br>
+	close DATA;<br>
+}<br>
+sub step{<br>
+	open (DATA, "&lt; ./$datafile");<br>
+	for ($i=0; $i&lt;20; $i++) {<br>
+		$_ = &lt;DATA&gt;;<br>
+		print OUT $_;<br>
+	}<br>
+	close DATA;<br>
+}<br>
+<br>
+結果、<br>
+data.txt : 100 lines ,&nbsp;&nbsp;6.4KB<br>
+ALL :&nbsp;&nbsp;3 wallclock secs ( 1.71 usr +&nbsp;&nbsp;0.54 sys =&nbsp;&nbsp;2.25 CPU)<br>
+STEP:&nbsp;&nbsp;1 wallclock secs ( 0.60 usr +&nbsp;&nbsp;0.44 sys =&nbsp;&nbsp;1.04 CPU)<br>
+<br>
+data.txt : 1000 lines , 65KB<br>
+ALL: 14 wallclock secs (11.28 usr +&nbsp;&nbsp;1.69 sys = 12.97 CPU)<br>
+STEP:&nbsp;&nbsp;1 wallclock secs ( 0.65 usr +&nbsp;&nbsp;0.40 sys =&nbsp;&nbsp;1.05 CPU)<br>
+<br>
+data 10000 lines ,&nbsp;&nbsp;660KB<br>
+ALL : 123 wallclock secs (112.23 usr +&nbsp;&nbsp;9.75 sys = 121.99 CPU)<br>
+STEP:&nbsp;&nbsp;2 wallclock secs ( 0.59 usr +&nbsp;&nbsp;0.44 sys =&nbsp;&nbsp;1.03 CPU)<br>
+<br>
+ということで。一行ずつ読む方が速いです。メモリも喰わないし。<br>
+<br>
+<font color="#CC8000">＞データファイルが小さいなら一気に読み込んだ方が早いんでしょうか？</font><br>
+<br>
+data.txt : 20lines ,&nbsp;&nbsp;1.26KB<br>
+ALL : 15 wallclock secs ( 7.41 usr +&nbsp;&nbsp;4.56 sys = 11.97 CPU)<br>
+STEP: 13 wallclock secs ( 5.36 usr +&nbsp;&nbsp;4.36 sys =&nbsp;&nbsp;9.71 CPU)<br>
+（註：これだけ $count = 10000 としてます）<br>
+データファイルが小さくても、１行ずつ読んだ方が速いみたいです。<br>
+配列の処理に時間を喰われるんでしょうか。<br>
+<br>
+長文失礼。<br>
+<hr>
+<span class=name>匿名</span>
+<span class=time>1999/06/30(水) 07:23:55</span><br>
+お返事ありがとうございます。<br>
+負荷を計るようなソフトがあるんでしょうか？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/30(水) 13:37:34</span><br>
+Perlの標準ライブラリに Benchmark.pm ってのがありまして、<br>
+それを使ってみました。<br>
+perl/lib/ に入っているので、使い方はそれを見て下さい。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060272.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060272.htm">[前に]</a>
+<a href="99060274.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060274.htm">[次に]</a>
+</body>
+</html>

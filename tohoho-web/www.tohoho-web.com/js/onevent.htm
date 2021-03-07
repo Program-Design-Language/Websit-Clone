@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>イベントハンドラ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script>
+window.onscroll = function() { console.log("[Scroll]"); };
+</script>
+</head>
+<body>
+
+<h2>イベントハンドラ</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="value.htm" tppabs="http://www.tohoho-web.com/js/value.htm">[prev]</a>
+<a href="builtin.htm" tppabs="http://www.tohoho-web.com/js/builtin.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#addEventListener">addEventListener()</a>,
+<a href="#onAbort">onabort</a>,
+<a href="#onBlur">onblur</a>,
+<a href="#onChange">onchange</a>,
+<a href="#onClick">onclick</a>,
+<a href="#onDblClick">ondblclick</a>,
+<a href="#onError">onerror</a>,
+<a href="#onFocus">onfocus</a>,
+<a href="#onInput">oninput</a>,
+<a href="#onKeyDown">onkeydown</a>,
+<a href="#onKeyPress">onkeypress</a>,
+<a href="#onKeyUp">onkeyup</a>,
+<a href="#onMouseDown">onmousedown</a>,
+<a href="#onMouseMove">onmousemove</a>,
+<a href="#onMouseOut">onmouseout</a>,
+<a href="#onMouseOver">onmouseover</a>,
+<a href="#onMouseUp">onmouseup</a>,
+<a href="#onMove">onmove</a>,
+<a href="#onLoad">onload</a>,
+<a href="#onReset">onreset</a>,
+<a href="#onResize">onresize</a>,
+<a href="#onScroll">onscroll</a>,
+<a href="#onSelect">onselect</a>,
+<a href="#onSubmit">onsubmit</a>,
+<a href="#onUnload">onunload</a>
+<a href="#removeEventListener">removeEventListener()</a>,
+</div>
+
+<h4 id="event">イベントハンドラ</h4>
+<div class=i>
+<p>イベントハンドラはタグの属性部分に指定します。例えば、ボタンをクリックした時に JavaScript を実行する場合は以下のようにします。ブラウザの種類やバージョンによって、各タグで使用可能なイベントハンドラは異なります。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="button" value="OK" <em>onclick="alert('OK!!')"</em>&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<input type="button" value="OK" onclick="alert('OK!!')">
+</div>
+<p>JavaScript の文法に従い、セミコロン(;)で区切ることにより、複数の文を呼び出すことも可能です。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="button" value="OK" onclick="<em>alert('A'); alert('B')"</em>&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<input type="button" value="OK" onclick="alert('A'); alert('B')">
+</div>
+<p>イベントハンドラから関数を呼び出すこともできます。関数は通常、&lt;head&gt;～&lt;/head&gt; の間で定義します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;TEST&lt;/title&gt;
+<em>&lt;script&gt;
+function kansuu() {
+  alert("OK!!");
+}
+&lt;/script&gt;</em>
+&lt;/head&gt;
+&lt;body&gt;
+&lt;input type="button" value="OK" <em>onclick="kansuu()"</em>&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>&lt;a href="..."&gt; や &lt;input type="submit"&gt; で onclick などのイベントを使用する際、イベントハンドラの戻り値として false を返すことにより、本来の動作(フォームのサブミットやリンク先への移動)を無効化することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function kakunin() {
+  if (window.confirm("よろしいですか？")) {
+    return true;        <span class="comment">// サブミットする、リンクする</span>
+  } else {
+    <em>return false;</em>       <span class="comment">// サブミットしない、リンクジャンプしない</span>
+  }
+}
+&lt;/script&gt;
+
+&lt;a href="xxx.htm" onclick="return kakunin()"&gt;XXX&lt;/a&gt;
+
+&lt;form action="xxx.cgi"&gt;
+  &lt;input type="submit" value="OK" onclick="return kakunin('OK');"&gt;
+&lt;/form&gt;
+</pre>
+</div>
+
+<h4 id="setevent">イベントハンドラの指定方法</h4>
+<div class=i>
+<p>イベントハンドラを指定するには下記の方法があります。</p>
+</div>
+
+<h5 id="tagOnxxx">◆ &lt;<i>tagName</i> onxxx="..."&gt;</h5>
+<div class=i>
+<p>タグに onxxx="..." 属性を指定します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="button" value="OK" <em>onclick=</em>"alert('Hello!')"&gt;
+</pre>
+</div>
+
+<h5 id="objOnxxx">◆ <i>object</i>.onxxx = <i>function</i></h5>
+<div class=i>
+<p>JavaScript の onxxx 属性に関数を指定します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+window.<em>onload</em> = function() {
+  alert("Hello!");
+};
+
+document.getElementById("button1").<em>onclick</em> = function() {
+  alert("Clicked!");
+};
+&lt;/script&gt;
+&lt;input type="button" id="button1"&gt;
+</pre>
+</div>
+
+<h5 id="addEventListener">◆ <i>object</i>.addEventListener(<i>event</i>, <i>function</i>)</h5>
+<div class=i>
+<p><i>object</i> に対してイベントを設定します。<i>object</i>.onxxxx = "～" ではひとつのイベントハンドラしか設定することができませんが、addEventListener() を用いることで、複数のイベントハンドラを設定することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+window.<em>addEventListener</em>("load", function() {
+  alert("Hello A");
+});
+window.<em>addEventListener</em>("load", function() {
+  alert("Hello B");
+});
+&lt;/script&gt;
+</pre>
+</div>
+
+<h5 id="removeEventListener">◆ <i>object</i>.removeEventListener(<span class="nb"><i>type</i>, <i>listener</i>[, <i>options</i>]</span>)</h5>
+<div class=i>
+<p><a href="#addEventListener">addEventListener()</a> で登録したイベントハンドラを削除します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+function keyUpHandler() { ... }
+obj.addEventListener("keyup", keyUpHandler);
+obj.<em>removeEventListener</em>("keyup", keyUpHandler);
+</pre>
+</div>
+
+<h4 id="onXxxx">各種イベントハンドラ</h4>
+
+<h5 id="onClick">◆ onclick=<i>scripts</i></h5>
+<h5 id="onDblClick">◆ ondblclick=<i>scripts</i></h5>
+<div class=i>
+<p>クリックされた時(onclick)、ダブルクリックされた時(ondblclick)に発生します。Internet Explorer 4.0 以降や Netscape 6 以降では &lt;b&gt; や &lt;img&gt; など大半のタグに指定することができますが、古いブラウザでは、&lt;a&gt;、&lt;area&gt; や、&lt;input&gt; タグによるボタンにのみ指定できます。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="button" value="Click me" <em>onclick="</em>alert('Clicked')"&gt;
+&lt;input type="button" value="Double click me" <em>ondblclick=</em>"alert('Double clicked')"&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<input type="button" value="Click me" onclick="alert('Clicked')">
+<input type="button" value="Double click me" ondblclick="alert('Double clicked')">
+</div>
+</div>
+
+<h5 id="onKeyDown">◆ onkeydown=<i>scripts</i></h5>
+<h5 id="onKeyPress">◆ onkeypress=<i>scripts</i></h5>
+<h5 id="onKeyUp">◆ onkeyup=<i>scripts</i></h5>
+<div class=i>
+<p>キーが押された時(onkeydown)、キーがしばらく押された時(onkeypress)、押されたキーが離された時(onkeyup)に発生します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="text"
+  <em>onkeypress=</em>"document.getElementById('t1').innerHTML += '[Press]'"
+  <em>onkeydown=</em>"document.getElementById('t1').innerHTML += '[Down]'"
+  <em>onkeyup=</em>"document.getElementById('t1').innerHTML += '[Up]'"&gt;
+&lt;div id="t1"&gt;Event: &lt;/div&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<input type="text"
+  onkeypress="document.getElementById('t1').innerHTML += '[Press]'"
+  onkeydown="document.getElementById('t1').innerHTML += '[Down]'"
+  onkeyup="document.getElementById('t1').innerHTML += '[Up]'">
+<div id="t1">Event: </div>
+</div>
+</div>
+
+<h5 id="onMouseDown">◆ onmousedown=<i>scripts</i></h5>
+<h5 id="onMouseUp">◆ onmouseup=<i>scripts</i></h5>
+<h5 id="onMouseOver">◆ onmouseover=<i>scripts</i></h5>
+<h5 id="onMouseOut">◆ onmouseout=<i>scripts</i></h5>
+<h5 id="onMouseMove">◆ onmousemove=<i>scripts</i></h5>
+<div class=i>
+<p>マウスボタンが押された時(onmousedown)、マウスボタンが離された時(onmouseup)、マウスカーソルがそのオブジェクトの上に乗った時(onmouseover)、マウスカーソルがそのオブジェクトの上から離れた時(onmouseout)、マウスカーソルが移動した時(onmousemove)に発生します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="button"
+  value="Hover your mouse."
+  <em>onmousedown=</em>"document.getElementById('t2').innerHTML += '[Down]'"
+  <em>onmouseup=</em>"document.getElementById('t2').innerHTML += '[Up]'"
+  <em>onmouseover=</em>"document.getElementById('t2').innerHTML += '[Over]'"
+  <em>onmouseout=</em>"document.getElementById('t2').innerHTML += '[Out]'"
+  <em>onmousemove=</em>"document.getElementById('t2').innerHTML += '[Move]'"
+&gt;
+&lt;div id="t2"&gt;Event: &lt;/div&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<input type="button"
+  value="Hover your mouse."
+  onmousedown="document.getElementById('t2').innerHTML += '[Down]'"
+  onmouseup="document.getElementById('t2').innerHTML += '[Up]'"
+  onmouseover="document.getElementById('t2').innerHTML += '[Over]'"
+  onmouseout="document.getElementById('t2').innerHTML += '[Out]'"
+  onmousemove="document.getElementById('t2').innerHTML += '[Move]'"
+>
+<div id="t2">Event: </div>
+</div>
+</div>
+
+<h5 id="onLoad">◆ onload=<i>scripts</i></h5>
+<h5 id="onBeforeUnload">◆ onbeforeunload=<i>scripts</i></h5>
+<h5 id="onUnload">◆ onunload=<i>scripts</i></h5>
+<div class=i>
+<p>onload はページが読込まれた時に発生します。ページが読み込まれた時の処理を複数指定するには <a href="#addEventListener">addEventListener()</a> を用います。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+window.<em>onload</em> = function() { alert("Hello!"); };
+&lt;/script&gt;
+</pre>
+<p>onbeforeunload はページから離れる前に発生します。下記の様に文字列を返却すると、ページ離脱時に警告ダイアログが表示されるようになります。Internet Explorer や Edge では、返却した文字列がダイアログに表示されます。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+window.<em>onbeforeunload</em> = function() { return "本当にこのページから離れますか？"; };
+&lt;/script&gt;
+</pre>
+<p>onunload では alert() を出すなどの操作は禁止されているので、便利な使用方法はあまりないかもしれません。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+window.<em>onunload</em> = function() { ... };
+&lt;/script&gt;
+</pre>
+</div>
+
+<h5 id="onFocus">◆ onfocus=<i>scripts</i></h5>
+<h5 id="onBlur">◆ onblur=<i>scripts</i></h5>
+<div class=i>
+<p>その部品がクリックされるなどして、選択された状態になることを「フォーカスがあたる」といいます。これらのイベントは、フォーカスを得た時(onfocus)、フォーカスを失った時(onblur)に発生します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;input type="text" name="text1"&gt;
+&lt;input type="text" name="text2"
+  <em>onfocus=</em>"document.getElementById('t3').innerHTML += '[Focus]'"
+  <em>onblur=</em>"document.getElementById('t3').innerHTML += '[Blur]'"&gt;
+&lt;input type="text" name="text3"&gt;
+&lt;div id="t3"&gt;Event: &lt;/div&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<input type="text" name="text1">
+<input type="text" name="text2"
+  onfocus="document.getElementById('t3').innerHTML += '[Focus]'"
+  onblur="document.getElementById('t3').innerHTML += '[Blur]'">
+<input type="text" name="text3">
+<div id="t3">Event: </div>
+</div>
+</div>
+
+<h5 id="onSubmit">◆ onsubmit=<i>scripts</i></h5>
+<h5 id="onReset">◆ onreset=<i>scripts</i></h5>
+<div class=i>
+<p>フォームがサブミットされた時(onsubmit)、フォームがリセットされた時(onreset)に発生します。onsubmit="..."、onreset="..." の戻り値として false を返すことにより、サブミットボタン、リセットボタンの本来の動作を無効化することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function doSubmit(form) {
+  if (window.confirm("送信してよろしいですか？")) {
+    return true;
+  } else {
+    return false;
+  }
+}
+&lt;/script&gt;
+&lt;form method="POST" action="sample.cgi" <em>onsubmit=</em>"return doSubmit(this)"&gt;
+  &lt;input type="text" name="word" value="abc..."&gt;
+  &lt;input type="submit" value="OK"&gt;
+&lt;/form&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<script>
+function doSubmit(form) {
+  if (window.confirm("送信してよろしいですか？")) {
+    return true;
+  } else {
+    return false;
+  }
+}
+</script>
+<form method="POST" action="http://www.tohoho-web.com/cgi/wwwperl.cgi" onsubmit="return doSubmit(this)">
+  <input type="text" name="word" value="abc...">
+  <input type="submit" value="OK">
+</form>
+</div>
+</div>
+
+<h5 id="onChange">◆ onchange=<i>scripts</i></h5>
+<div class=i>
+<p>フォーム部品の内容が変更された時に発生します。テキストボックスの場合は、内容が変更されて別の部品にフォーカスが移動した際に発生します。<a href="#oninput">ononput</a> も参照してください。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function doChange() {
+  document.getElementById('t4').innerHTML += "[Change]";
+}
+&lt;/script&gt;
+&lt;input type="checkbox" name="check1" <em>onchange=</em>"doChange()"&gt;
+&lt;input type="text" name="text1" <em>onchange=</em>"doChange()"&gt;
+&lt;select <em>onchange=</em>"doChange()"&gt;
+  &lt;option&gt;AAA&lt;/option&gt;
+  &lt;option&gt;BBB&lt;/option&gt;
+&lt;/select&gt;
+&lt;div id="t4"&gt;Event: &lt;/div&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<script>
+function doChange() {
+  document.getElementById('t4').innerHTML += "[Change]";
+}
+</script>
+<input type="checkbox" name="check1" onchange="doChange()">
+<input type="text" name="text1" onchange="doChange()">
+<select onchange="doChange()">
+  <option>AAA</option>
+  <option>BBB</option>
+</select>
+<div id="t4">Event: </div>
+</div>
+</div>
+
+<h5 id="onInput">◆ oninput=<i>scripts</i></h5>
+<div class=i>
+<p>テキストボックスなどに入力された時(oninput)発生します。<a href="#onChange">onchange</a> と異なり、テキストボックスでも文字が入力される度に発生します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function doInput() {
+  document.getElementById('t5').innerHTML += "[Input]";
+}
+&lt;/script&gt;
+&lt;input type="text" name="text1" <em>oninput</em>="doInput()"&gt;
+&lt;div id="t5"&gt;Event: &lt;/div&gt;
+</pre>
+<div class="title-tab">表示</div>
+<div class=c2>
+<script>
+function doInput() {
+  document.getElementById('t5').innerHTML += "[Input]";
+}
+</script>
+<input type="text" name="text1" oninput="doInput()">
+<div id="t5">Event: </div>
+</div>
+</div>
+
+<h5 id="onResize">◆ onresize=<i>scripts</i></h5>
+<div class=i>
+<p>ウィンドウがリサイズされた時(onresize)に発生します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+window.<em>onresize</em> = function() { console.log("[Resize]"); };
+</pre>
+</div>
+
+<h5 id="onScroll">◆ onscroll=<i>scripts</i></h5>
+<div class=i>
+<p>ウィンドウや、スクロールバー付きの要素がスクロールされた時(onscroll)に発生します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+window.<em>onscroll</em> = function() { console.log("[Scroll]"); };
+</pre>
+</div>
+
+<h5 id="onMove">◆ onmove=<i>scripts</i></h5>
+<div class=i>
+<p>ウィンドウの位置が移動した時(onmove)に発生します。Netscape Navigator 4.0 でサポートされていたもので、現在の主要ブラウザではサポートされていません</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+window.<em>onmove</em> = function() { console.log("[Move]"); };
+</pre>
+</div>
+
+<h5 id="onAbort">◆ onabort=<i>scripts</i></h5>
+<div class=i>
+<p>ページや画像などの読込みが中断された時(onabort)に発生します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+window.<em>onabort</em> = function() { console.log("[Abort]"); };
+</pre>
+</div>
+
+<h5 id="onError">◆ onerror=<i>scripts</i></h5>
+<div class=i>
+<p>読込みが失敗した時に発生します。&lt;body&gt;、&lt;img&gt; などに指定します。</p>
+<div class="title-tab">JavaScript</div>
+<pre class=c2>
+document.getElementById("img1").<em>onabort</em> = function() {
+  alert("Load aborted!");
+};
+</pre>
+</div>
+
+<h5 id="onSelect">◆ onselect=<i>scripts</i></h5>
+<div class=i>
+<p>テキストが選択された時に発生します。</p>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+window.<em>onselect</em> = function() {
+  alert("Selected");
+};
+&lt;/script&gt;
+&lt;textarea&gt;Select this text.&lt;/textarea&gt;
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="value.htm" tppabs="http://www.tohoho-web.com/js/value.htm">[prev]</a>
+<a href="builtin.htm" tppabs="http://www.tohoho-web.com/js/builtin.htm">[next]</a>
+<div>Copyright (C) 1996-2019 杜甫々</div>
+<div>改訂版初版：2001年5月20日、最終更新：2019年2月17日</div>
+<div>http://www.tohoho-web.com/js/onevent.htm</div>
+</body>
+</html>

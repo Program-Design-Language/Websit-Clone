@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CGIでHTMLのTABLEを表示したとき。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CGIでHTMLのTABLEを表示したとき。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060103.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060103.htm">[前に]</a>
+<a href="99060105.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060105.htm">[次に]</a>
+<hr>
+<span class=name>ユミ</span>
+<span class=email><a href="mailto:yumi-f@ntec.ncs.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/10(木) 13:13:27</span><br>
+クッキーのデータをテーブルで表示させたいのですが<br>
+1つ目と2つ目のデータの間に空白の&lt;td&gt;&lt;/td&gt;が入ってしまいます。<br>
+どうしてそうなるのかわからないのでどなたかアドバイス頂けませんか？よろしくお願いします。<br>
+～～＊～～＊～～＊～～＊～～＊～～＊～～＊～～<br>
+print "&lt;html&gt;&lt;center&gt;&lt;h1&gt;Cookie中身&lt;/h1&gt;&lt;/center&gt;&lt;hr&gt;&lt;table border='1'&gt;&lt;tr&gt;\n";<br>
+@pairs = split(/:/,$ENV{'HTTP_COOKIE'});<br>
+<br>
+foreach $value(@pairs){<br>
+	@s = split(/&amp;/,$value);<br>
+	#print "@s";<br>
+	foreach (@s){<br>
+		($n,$p) = split(/,/);<br>
+		print "$n,$p";<br>
+		print "&lt;td&gt;$p&lt;/td&gt;";<br>
+	}<br>
+		print "&lt;/tr&gt;&lt;tr&gt;";<br>
+}<br>
+～～＊～～＊～COOKIEのデータです～＊～～＊～～<br>
+hinban,1111&amp;name,ココア&amp;kazu,7&amp;tanka,785:&amp;hinban,2222&amp;name,コーヒー&amp;kazu,5&amp;tanka,365:<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/10(木) 13:16:49</span><br>
+すみません。付け足しです。上のプログラムのコメント行とprint "$n,$p";はムシしてください。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/06/10(木) 13:40:02</span><br>
+<font color="#CC8000">&gt; &amp;hinban,2222</font><br>
+この&amp;が余計じゃないですか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/10(木) 13:52:01</span><br>
+こんな感じで毎回質問していては先が思いやられるので、<br>
+print文を埋め込んでデバッグする癖をつけましょう。<br>
+<br>
+　foreach $value(@pairs){<br>
+　　print "[\$value=$value]\n";<br>
+　　@s = split(/&amp;/,$value);<br>
+　　foreach (@s){<br>
+　　　print "[\$_=$_]\n";<br>
+　　　($n,$p) = split(/,/);<br>
+　　　print "&lt;td&gt;$p&lt;/td&gt;\n";<br>
+　　}<br>
+　　print "&lt;/tr&gt;&lt;tr&gt;\n";<br>
+　}<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/10(木) 14:19:04</span><br>
+&amp;でデータをつないでいたんですが、それを","に変えたらなんとなく上手くいきそうです。<br>
+たこすけさん、ありがとうございました。<br>
+B-Cusさん、一応プリントしてデバッグするようにはしてるんですが、それでも分からなかったからここに書いたんですけど…。初心者な質問してすみませんでした。<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/10(木) 14:22:33</span><br>
+<span class=resolv>[[解決]]</span><br>
+一応、解決ってことで…。<br>
+これ押すの忘れてました。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/06/10(木) 15:27:38</span><br>
+<font color="#CC8000">&gt; &amp;でデータをつないでいたんですが</font><br>
+<br>
+なんか誤解されてそうだなぁ・・・。<br>
+レコードの区切りを":", フィールド区切りを"&amp;",<br>
+フィールド名とフィールド値の区切りを","でしてると思ったので<br>
+「二回目の"hinban"の前に付いてる"&amp;"のせいで余計にsplitしていませんか？」<br>
+と書いたつもりだったのですが・・・<br>
+<br>
+# 誤解でないなら、ごめんなさい。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060103.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060103.htm">[前に]</a>
+<a href="99060105.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060105.htm">[次に]</a>
+</body>
+</html>

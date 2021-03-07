@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CHECKBOXをチェックする</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CHECKBOXをチェックする</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030012.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030012.htm">[前に]</a>
+<a href="99030014.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030014.htm">[次に]</a>
+<hr>
+<span class=name>やま</span>
+<span class=email><a href="mailto:yama@yama.net">[E-Mail]</a></span>
+<span class=time>1999/03/03(水) 04:41:59</span><br>
+&lt;FORM NAME="form" onSubmit="return check()"&gt;<br>
+&lt;INPUT TYPE=CHECKBOX NAME="CHK" VALUE="1"&gt;1<br>
+&lt;INPUT TYPE=CHECKBOX NAME="CHK" VALUE="2"&gt;2<br>
+&lt;INPUT TYPE=CHECKBOX NAME="CHK" VALUE="2"&gt;2<br>
+&lt;INPUT TYPE=SUBMIT&gt;<br>
+&lt;/FORM&gt;<br>
+<br>
+というフォームで、SUBMITされたときにどれでもいいので１つ以上チェックされているかどうかチェックして、されていなければ警告を出すJavaScriptを作りたいのですが、<br>
+<br>
+ &lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&nbsp;&nbsp;&lt;!--<br>
+&nbsp;&nbsp;&nbsp;function check() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if( ---- ????? ----<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert("選択してください。");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;// --&gt;<br>
+ &lt;/SCRIPT&gt;<br>
+<br>
+おそらく、document.form.CHK.checkedを使うのであろうというところまではたどり着いたのですが、---- ????? ----の部分の書き方がどうしても分かりません。<br>
+どなたか、このJavaScript超初心者にアドバイスいただけませんでしょうか。<br>
+<hr>
+<span class=name>Tiot</span>
+<span class=time>1999/03/03(水) 05:24:04</span><br>
+&lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&lt;!--<br>
+function check() {<br>
+　　　　if( !(document.form.elements[0].checked ||<br>
+　　　　　　　document.form.elements[1].checked ||<br>
+　　　　　　　document.form.elements[2].checked)) {<br>
+　　　　　　　　alert("選択してください。");<br>
+　　　　　　　　return false;<br>
+　　　　} else {<br>
+　　　　　　　　return true;<br>
+　　　　}<br>
+}<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+チェックボックスが同じ名前なら、エレメントが格納されている<br>
+配列で値を取るのが無難。<br>
+もちっと、スマートな方法があるかもしんない。<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/03/03(水) 10:59:33</span><br>
+本題からズレますが、CHECKBOXのNAMEが全部同じなのはなぜ？<br>
+その合理性が分からないのですが。<br>
+<hr>
+<span class=name>とこやん</span>
+<span class=time>1999/03/03(水) 19:23:14</span><br>
+ポケ鬼！！ さん&gt;CHECKBOXのNAMEが全部同じなのはなぜ？<br>
+<br>
+私もこの手のチェックボックスをよく利用するんですが、<br>
+やっぱしまずいんでしょうか？<br>
+りんごとみかんとバナナはフルーツというグループにいるわけで、<br>
+その中から好きなものを複数選べっていう場合は、こういう使い方になっちゃいますよね。<br>
+<br>
+というわけで、こうゆうのはどうですか？<br>
+<br>
+というのも、チェックボックスは一つしかない場合には配列にならないそうなんです。<br>
+だからもしCGIなどがチェックボックスを生成するので、1つかもしれないし<br>
+2つ以上かもしれないって場合は、まず「チェックボックスかどうか」を判定してから<br>
+オン、オフを確認するのが良いかも！<br>
+（私も以前ここでいいづかさんという方に教えて頂いたんですよ。）<br>
+<br>
+function check() {<br>
+flag = 0;<br>
+<br>
+　for(i=0;i&lt;document.form.elements.length;i++){<br>
+　　//エレメントがチェックボックスの時に処理を行う<br>
+　　if(document.form.elements[i].type=="chekcbox"){<br>
+　　　　if(document.form.elements[i].checked==true){<br>
+　　　　　flag = 1;<br>
+　　　　　break;<br>
+　　　　}<br>
+　　}<br>
+　}<br>
+<br>
+　if(flag!=1) {<br>
+　　window.alert("チェックボックスを選択してくれよ");<br>
+　　return false;<br>
+　}<br>
+<br>
+}<br>
+<hr>
+<span class=name>ドラクエの鬼！！</span>
+<span class=time>1999/03/03(水) 20:22:12</span><br>
+ＪａｖａＳｃｒｉｐｔなら分かるけど、ＣＧＩで同じ名前のＣＨＥＣＫＢＯＸを識別できるんですか？<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1999/03/03(水) 20:25:49</span><br>
+<span class=resolv>[[解決]]</span><br>
+ぎゃあ、入れ違いになってしまった～。みなさまアドバイスありがとうございます。<br>
+僕もいろいろ考えていて、こんなのに到達しました。結局、ほとんど一緒です。<br>
+他人様の作ったものをコピーするのは簡単だけど、自分で考えるのはひと苦労ですね。<br>
+でも勉強になりました。<br>
+<br>
+ &lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&nbsp;&nbsp;&lt;!--<br>
+&nbsp;&nbsp;&nbsp;function check() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chk = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i = 0; i &lt; document.form.elements.length; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if((document.form.elements[i].name == "CHK") &amp;&amp; (document.form.elements[i].checked)) { chk = 1; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(chk) { return true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert("選択してください");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;// --&gt;<br>
+ &lt;/SCRIPT&gt;<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1999/03/03(水) 20:26:31</span><br>
+<font color="#CC8000">&gt; ＣＧＩで同じ名前のＣＨＥＣＫＢＯＸを識別できるんですか？</font><br>
+できますよ。<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/03/04(木) 11:35:12</span><br>
+私もドラクエの鬼！！さん（爆）と同じ疑問が・・・<br>
+<br>
+普通に連想型配列で受け取ったら、$FORM{'CHK'}が最後の値で上書きされませんか？<br>
+それとも、取得のループの中で一個ずつみるのですか？<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1999/03/04(木) 18:14:36</span><br>
+そうですね。普通に連想配列に格納していくようなプログラムにしていると、最後の値しか読みとれませんね。ちょっと工夫しましょう。<br>
+おそらくループの中で、<br>
+　　$FORM{$name}=$value;<br>
+の様になっていると思いますが、ここを<br>
+　　if($FORM{$name} eq '') {$FORM{$name}=$value;} else {$FORM{$name}.=','.$value;}<br>
+とでもしておけば、すべて受け取れるでしょう。<br>
+　　if($name eq 'CHK') {push(@CHK,$value);} else {$FORM{$name}=$value;}<br>
+とかでも。現在、僕はこちらを使っています。<br>
+<hr>
+<span class=name>Tiot</span>
+<span class=time>1999/03/04(木) 23:44:12</span><br>
+私も以前に似たような質問をした事があるので、その時のことを。<br>
+**cgi-lib.pl** の **ReadParse** ルーチンを使う場合です。<br>
+同名の値が2つ以上ある場合は\0を区切り文字として連想配列に格納されます。<br>
+$in{'name'} = "firstAns\0secondAns";<br>
+のような感じ。<br>
+($first, $second) = split(/\0/, $in{'name'});<br>
+等の方法で、取り出せます。<br>
+cgi-lib.plを使ってない場合は関係ありませんが、参考まで。<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/03/05(金) 11:03:46</span><br>
+なるほど。<br>
+私なら複数選択可のCHECKBOXは別名にしますけど、こういうやりかたもあるんですね。<br>
+納得！<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030012.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030012.htm">[前に]</a>
+<a href="99030014.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030014.htm">[次に]</a>
+</body>
+</html>

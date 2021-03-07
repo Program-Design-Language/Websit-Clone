@@ -1,0 +1,181 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>同時書き込みによるファイルの破損を防止するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>同時書き込みによるファイルの破損を防止するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199802/index.htm">[上に]</a>
+<a href="98022502.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022502.htm">[前に]</a>
+<a href="98022504.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022504.htm">[次に]</a>
+<hr>
+<span class=name>ドナドナ</span>
+<span class=time>1998/02/25(水) 11:52:02</span><br>
+flockで行う方法、ロックファイルやロックディレクトリを<br>
+作る方法など色々な方法があると思いますが、<br>
+その方法のメリット・デメリットを教えて下さい。<br>
+もし一番確実な方法が存在するなら、それも教えて下さい。<br>
+お願いします！！<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=email><a href="mailto:miyasiro@msd.biglobe.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/02/25(水) 16:31:00</span><br>
+　「ページ記入で排他制御をする際、排他制御を解除するには？ 」でのとほほさんやB-Cusさんの書き込みを読んでいろいろ勉強させて頂いたので、これをまとめてみました。UNIXはよく分からないので、フォローをよろしくお願いします。<br>
+<br>
+●通常のファイルをロックファイルに使用する<br>
+・欠点<br>
+　if (-f $lockfile)でロックを検査した後、open(LF,"&gt;$lockfile")でロックを設定するので、これら検査と作成の間の隙間に他のプロセスが重複してアクセスする可能性がある。つまり、ロックが不完全になるおそれがある。<br>
+<br>
+●symlink<br>
+・利点<br>
+　if symlink($datafile,$lockfile)でロックの検査と設定とがシステムコールレベルで同時に行われるので、これらの間に隙間が生じない。<br>
+・欠点<br>
+　UNIXに限定され、symlink()をサポートしないシステムもある。<br>
+<br>
+●mkdir（とほほさんの方法）<br>
+・利点<br>
+　symlink()と同じ利点に加えて、すべてのUNIXで利用可能で、さらにWindowsでも使える。<br>
+<br>
+●flock<br>
+・利点<br>
+　システムが提供するロック機構であるため、確実なロックが期待でき、使い方も簡単。<br>
+・欠点<br>
+　UNIXに限定され、flock()をサポートしないシステムもある。<br>
+　flock()を呼び出すと、ロックが解除されるまで制御が戻らないので、一定時間以上待たされた場合に処理を中止してブラウザに戻るというようなやり方（とほほさんの方法で採用）ができない。<br>
+・個人的な疑問点<br>
+　プロセスがロック中にダウンしたりしたような場合、このロックが確実に解除されるかどうかが分からない。解除されないと後のプロセスは永久に待たされることになる？<br>
+　symlink()やmkdir()なら、後のプロセスがロックの設定日時を調べて、十分古い場合には強制的にロックを解除することができる（とほほさんの方法で採用）。<br>
+<br>
+<br>
+　あと、同時書き込みとは関係ないのですが、書き込み中にサーバダウンが発生すると、ファイルが破壊される可能性がありますよね。とほほさんが一旦データを .tmpファイルに書き出して、後から .datファイルにコピーするようにしているのは、この場合のバックアップのためでしょうか？<br>
+<hr>
+<span class=name>ドナドナ</span>
+<span class=time>1998/02/25(水) 18:04:50</span><br>
+miyasiroさん、早速詳しい解説ホントにありがとうございました！！<br>
+これを見るととほほさんが使用されているmkdir()が一番良いように思われますね。<br>
+今後この方法でやっていきたいと思います。<br>
+<br>
+さて、ロックディレクトリですが、<br>
+一つのデータファイルを複数のプログラムで<br>
+使う場合はやはり同じディレクトリ名にしたほうがいいですか。<br>
+<br>
+また、ラウンジのスクリプトを参考にさせて頂こうとかんがえているのですが、<br>
+どうしても分からないところがあるので、教えていただけないでしょうか。<br>
+「ファイルロック開始」の部分です。<br>
+sub fileLock {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if ($file_lock_flag) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for ($i = 1; $i &lt;= 6; $i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (mkdir($lock_file, 755)) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;last;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} elsif ($i &lt; 6) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return(undef);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return(true);<br>
+}<br>
+というものですが、return(undef);とreturn(true);という命令が<br>
+具体的に何をしてるのか分かりません。<br>
+どうぞよろしくお願いします。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/02/25(水) 22:51:15</span><br>
+<font color="#CC8000">&gt;また、ラウンジのスクリプトを参考にさせて頂こうとかんがえているのですが、</font><br>
+ということで、ラウンジのスクリプトを覗いてみたのですが、ゲストブックや掲示板とはまた少し違ってますね。<br>
+それはともかく、ご質問に形式的に回答するならば、return(undef)は、サブルーチンfileLockの呼び出し元に未定義値を返し、return(true)は、trueを'true'と解釈してこの文字列を返します。ラウンジのスクリプトでは、これらの返り値は利用されていませんが、（従って、ラウンジの場合は、mkdir()を６回失敗しても書き込みが行われるようです）<br>
+　$ret = &amp;fileLock;<br>
+　if ( defined( $ret ) ) { データファイルの更新処理 }<br>
+　else { データファイルの更新を行わずに終了処理 }<br>
+とすれば、ロックに成功した場合と失敗した場合で、処理を分岐させることができます。（defined(&amp;fileLock)でもいいと思ってやってみたらダメだった…サブルーチン自体の定義／未定義を検査してるのかな？）<br>
+いずれにしても、普通はreturn(0)やreturn(1)でいいと思いますが…<br>
+<br>
+<font color="#CC8000">&gt;一つのデータファイルを複数のプログラムで</font><br>
+<font color="#CC8000">&gt;使う場合はやはり同じディレクトリ名にしたほうがいいですか。</font><br>
+同じ名前にしないと、ロックにならないと思います。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/02/25(水) 23:27:36</span><br>
+flock()の使い方についてちょっと調べてみました。<br>
+　　open(IN, "file.txt");<br>
+　　flock(IN, $mode);<br>
+のように使用します。$modeは、<br>
+　　1: 読み込みロック。ブロッキングモード。<br>
+　　2: 書き込みロック。ブロッキングモード。<br>
+　　5: 読み込みロック。ノンブロッキングモード。<br>
+　　6: 書き込みロック。ノンブロッキングモード。<br>
+　　8: ロックを解除する。<br>
+誰かが読み込みロック中は、書き込みロックが禁止されます。<br>
+誰かが書き込みロック中は、書き込みロックも読み込みロックも禁止されます。<br>
+ブロッキングモードだと誰かがロック中はずっと待ちます。<br>
+ノンブロッキングモードだと誰かがロック中だとすぐにエラーで戻ります。<br>
+プログラムが途中でダウンした場合は、確実にロックは自動解除されます。<br>
+・・・という訳で、flock()が使えるなら、flock()が一番確実です。<br>
+<br>
+return(undef), return(true)については・・・私が無知だった頃の<br>
+不要コードの残骸です。(^_^;)削除していただいて結構です。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/02/26(木) 02:21:09</span><br>
+　フォローありがとうございます &gt; とほほさん<br>
+<br>
+<font color="#CC8000">&gt;　　6: 書き込みロック。ノンブロッキングモード。</font><br>
+　ノンブロッキングモードは知りませんでした。（手元の本には$modeは1,2,4,8しかないと書いてあった…）それから、ダウン時も確実にロック解除されるということなので、flock()の欠点は、「サーバーによっては利用できない」ということだけになりますね。<br>
+<font color="#CC8000">&gt;・・・という訳で、flock()が使えるなら、flock()が一番確実です。</font><br>
+　うちも、flock()に変えよう。<br>
+<br>
+　そんなわけで、もう不要になったかも知れませんが、掲示板とかのやり方も加味してsub fileLockを書き換えてみました。&amp;fileLockが真を返した場合にのみデータファイルを更新して最後にrmdir( $lock_file );を実行します。<br>
+# 行頭に全角空白があるので注意！<br>
+sub fileLock {<br>
+　if ( $file_lock_flag ) {<br>
+　　foreach $i ( 1 .. 6 ) {<br>
+　　　last if mkdir($lock_file, 755); # ロックに成功すれば true を返す<br>
+　　　return 0 if $i &gt; 5; # ロックに失敗したら false を返す<br>
+　　　if ( $i == 1 &amp;&amp; (stat($lock_file))[9] &lt; time - 600 ) {<br>
+　　　　rmdir( $lock_file ); # 10分以上前のロックは強制的に解除する。<br>
+　　　　next; # 次のループでロックが成功する筈<br>
+　　　}<br>
+　　　sleep(2);<br>
+　　}<br>
+　}<br>
+　return 1;<br>
+}<br>
+<hr>
+<span class=name>ドナドナ</span>
+<span class=time>1998/02/26(木) 10:15:15</span><br>
+すごくよく分かりました！<br>
+丁寧な解説を本当どうもありがとうございました。<br>
+これを参考にやっていきたいと思います。<br>
+<br>
+最後に・・・flock()が使えるか使えないかは<br>
+プロバイダに聞けば分かりますか？<br>
+プログラムを動かしているサーバーがサポートしていればいいんですよね。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/02/26(木) 18:43:16</span><br>
+<font color="#CC8000">&gt;最後に・・・flock()が使えるか使えないかは</font><br>
+eval を使って下のような perl script を実行してみれば確認できます。<br>
+open( FH, "&gt;$file" ) || die;<br>
+eval 'flock(FH,6)';<br>
+if ( $@ eq '' ) { print "OK!\n"; }<br>
+else { print "NO: $@\n"; }<br>
+<br>
+うちも OK! でした。<br>
+ただ、open(FH,"&lt;$file");flock(FH,5);の読み込みロックが成功しません。書き込み時にしか使えないのかなぁ？<br>
+<hr>
+<span class=name>ドナドナ</span>
+<span class=time>1998/03/02(月) 09:43:28</span><br>
+<span class=resolv>[[解決]]</span><br>
+miyasiroさん、とほほさん、回答ありがとうございました。<br>
+すごく勉強になりました★<br>
+flock(IN,5);のことはちょっとわかりませんが、<br>
+一応解決にしておきますね。<br>
+また何かあったらよろしくお願いします！<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199802/index.htm">[上に]</a>
+<a href="98022502.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022502.htm">[前に]</a>
+<a href="98022504.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022504.htm">[次に]</a>
+</body>
+</html>

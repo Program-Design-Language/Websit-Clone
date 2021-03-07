@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>文字化けしないようにするには - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>文字化けしないようにするには</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+文字化けしないようにするには
+
+<div class="caution">
+現在では、<a href="html/meta.htm#charset" tppabs="http://www.tohoho-web.com/html/meta.htm#charset">&lt;meta charset="..."&gt;</a> を用いて文字コードを指定することにより、ほぼ、文字化けの問題は解決しています。また、もっとも推奨される文字コードは UTF-8 となっています。
+</div>
+
+<h4>文字化けとは</h4>
+<div class=i>
+<p>Webページを見ていると、時たま日本語がちゃんと表示されないときがあります。これを「文字化け」と呼びます。文字化けをおこす原因はいくつかあります。</p>
+</div>
+
+<h4>原因１：ブラウザが漢字コードの判定に誤ってしまう場合</h4>
+<div class=i>
+<p><b>【原因】</b>日本語の漢字コードにはJIS、シフトJIS(Shift_JIS)、EUC(EUC-JP)などいくつもの種類があります。(→<a href="wwwkanji.htm" tppabs="http://www.tohoho-web.com/wwwkanji.htm">漢字コードについて</a>) 通常はブラウザが自動的に漢字コードを判別するのですが、たまに判別を誤ってしまうことがあります。一般に、JISコード ＜ シフトJIS　＜ EUCの順で、文字化けする可能性が高いようです。</p>
+<p>（補足します。最近では、シフトJISのパソコンが大半であることから、ブラウザはシフトJISを優先する傾向にあるようです。従って、シフトJIS が一番文字化けしにくい漢字コードになっています。(2001.7.5追記)）</p>
+<p><b>【対策】</b>文書をJISコードで記述するか、「対策１：おまじないの文字を書く」、「対策２：文字コードを明示的に指定する」あたりを参照してください。</p>
+</div>
+
+<h4>原因２：ブラウザの設定が変わってしまう場合</h4>
+<div class=i>
+<p><b>【原因】</b>あるページを見ていると、ブラウザの文字コード設定（IE5.0の場合[表示]-[エンコード]、Netscape Communicator 4.0の場合[表示]-[文字コードセット]）がシフトJISやEUCに固定されてしまい、その後に、別の文字コードのページにジャンプすると、EUCのページをシフトJISの設定で見てしまい、文字化けすることがあるようです。</p>
+<p><b>【対処】</b>文字化けしたら、ブラウザ側で文字コードの設定を「自動判別」などに戻してもらうしか・・・文字コードを明示的に指定したページを見る場合に、この現象が多いような気がするのですが・・・</p>
+</div>
+
+<h4>原因３：FTP転送時に文字化けしてしまう場合</h4>
+<div class=i>
+<p><b>【原因】</b>Macintoshで海外版のFetchを使用して転送したりすると、文字化けしてしまうことがあります。これは、海外版のFTPソフトでテキストモード(ASCIIモード)で転送すると、漢字コードが崩れてしまう(最上位ビットが落ちてしまう)ために発生します。</p>
+<p><b>【対策】</b>バイナリモード(MacではRawモードとか生モードと呼んでいます)で転送する、日本語完全対応のFTPソフトを使用する。などの対処を行います。また、Macの英語版Fetchの場合は、[Preferences]-[Misc]-[Translate ISO characters]のチェックを外すと大丈夫との情報もいただきました。</p>
+</div>
+
+<h4>原因３：CGIで書き出す文字が化けてしまう場合</h4>
+<div class=i>
+<p><b>【原因】</b>「表示」が「侮ヲ」に化けたりするパターンです。これは、シフトJISで書かれたperlスクリプトをUNIXサーバーで実行させた時などに発生します。「表示」のシフトJIS漢字コードは「95 5C 8E A6」なのですが、この5Cというコードが "\n" などに使用されるバックスラッシュ(\)と重複しているために発生します。</p>
+<p><b>【対処】</b>スクリプトをEUCで記述するか、「表\示」のように、5Cのコードの次にもう一つバックスラッシュを挿入することで解決できます。</p>
+</div>
+
+<h4>原因４：海外のサーバーを利用している場合</h4>
+<div class=i>
+<p><b>【原因】</b>ロシアのサーバーを借りると文字化けが発生するという例がありました。これは、ロシアのとあるプロバイダーのサーバーが、すべてのHTML文書にロシア語のキャラクタセット(後述)を追加して返しているためでした。意外に盲点でした。</p>
+<p><b>【対処】</b>対処方法は、「対策２：文字コードを明示的に指定する」を参照してください。</p>
+</div>
+
+<h4>対策１：おまじないの文字を書く</h4>
+<div class=i>
+<p>HTML文書の文字化け対策として、HTML文書の最初の方(&lt;body&gt;の前でも可)に、おまじないの文字をコメントとして記述する方法があるという情報をいただきました。シフトJISならシフトJISにしか存在しない文字を、EUCならEUCにしか存在しない文字をファイルの先頭に記述することにより、ブラウザの文字コード自動判別アルゴリズムにヒントを与えてあげようというものです。</p>
+<p>シフトJIS文書の場合は、HTML文書の最初の方にひらがなをコメントで記述しておきます。シフトJISの「あ(82A0)」は、JISにもEUCにも存在しないコードなので、文字コード自動認識のヒントになります。</p>
+<pre class=c>
+&lt;!-- あ(MOJIBAKE TAISAKU) --&gt;
+</pre>
+<p>EUCの場合、シフトJISで半角カタカナが使用されていることを考慮されると、EUCにしか存在しない漢字コードは FDA1～FDFE、FEA1～FEFE の領域のみとなります。Yahooなどでは、HTML文書の先頭に以下のような文字コードを挿入しているようです。</p>
+<pre class=c>
+&lt;!-- (FDFEのコードを持つ漢字) --&gt;
+</pre>
+<p>しかし、この領域にはまだ漢字が割り当てられていないので、通常の漢字変換では入力することができません。漢字変換機能の文字コード入力機能を用いるなど、何らかの方法を用いて入力してください。</p>
+<p>CGIから書き出すページの場合、例えばperlであれば、次のようにして記述することも可能です。</p>
+<pre class=c>
+print "&lt;!-- \xfd\xfe(MOJIBAKE TAISAKU)--&gt;\n";
+</pre>
+<p>また、FDFE文字が無理な場合でも、「龠(F3FE)」のように大きめな漢字コードの文字を記述しておけば効果はあるという情報も頂きました。（どのくらいの効果があるのかは未確認ですが・・・）</p>
+<pre class=c>
+&lt;!-- 龠(MOJIBAKE TAISAKU) --&gt;
+</pre>
+<p>ただ、これらのおまじないを記述しておいても、文字化けを100%解消できる訳ではないのでご注意ください。</p>
+</div>
+
+<h4>対策２：文字コード（キャラクタセット）を明示的に指定する</h4>
+<div class=i>
+<p>HTML文書はHTTPというプロトコルで通信していますが、このプロトコルのヘッダに次のような記述を加えることにより、HTML文書の漢字コードを明示的に指定してやることができます。</p>
+<pre class=c>
+Content-type: text/html; charset=Shift_JIS
+</pre>
+<p>HTML文書で上記のヘッダを追加するには、&lt;head&gt;～&lt;/head&gt;の間に以下の1行を追加します。(→<a href="html/meta.htm" tppabs="http://www.tohoho-web.com/html/meta.htm">&lt;meta&gt;</a>)</p>
+<pre class=c>
+&lt;meta http-equiv="Content-type"
+         content="text/html; charset=Shift_JIS"&gt;
+</pre>
+<p>perlによるCGIスクリプトで指定する場合は、Content-typeを記述している1行を以下のように変更します。</p>
+<pre class=c>
+print "Content-type: text/html; charset=Shift_JIS\n\n";
+</pre>
+<p>シフトJISの場合は「Shift_JIS」ですが、EUCの場合は「euc-jp」を指定します。これをキャラクタセットと呼び、以下のものがあります。大文字・小文字は区別されません。</p>
+<table class="tb1">
+<tr><th>文字コード</th><th>説明</th></tr>
+<tr><td class="nowrap">iso-2022-jp</td><td>JISコードであることを示す。</td></tr>
+<tr><td>Shift_JIS</td><td>シフトJISであることを示す。ただし、これを指定すると、Netscape Navigator 2.0で文字化けが発生する可能性がある。</td></tr>
+<tr><td>x-sjis</td><td>シフトJISであることを示す。Shift_JISが正式採用される前に仮に使用されていた名前。これを指定するとLynxなどのブラウザでは文字化けが発生する。</td></tr>
+<tr><td>euc-jp</td><td>EUCであることを示す。</td></tr>
+<tr><td>x-euc-jp</td><td>EUCであることを示す。euc-jpが正式採用される前に仮に使用されていた名前。</td></tr>
+<tr><td>その他</td><td>その他の一覧については下記を参照してください。<br><a href="javascript:if(confirm('http://www.iana.org/assignments/select.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.iana.org/assignments/select.htm'" tppabs="http://www.iana.org/assignments/character-sets" target="_top">http://www.iana.org/assignments/character-sets</a></td></tr>
+</table>
+</div>
+
+<h4>問題：文字コードを明示的に指定した場合の問題点</h4>
+<div class=i>
+<p>すべてのWeb関連アプリケーションが文字コードを適切に判断してくれればよいのですが、困った問題もあります。</p>
+<p><b>【問題１】</b>x-sjis は昔の暫定的なもので、Shift_JIS が後程定められた正しいものなのですが、Netscape Navigator 2.0は、x-sjis しか知らないため、Shift_JIS を指定するとかなりの確率で文字化けをおこします。かと言って、x-sjis を指定すると今度は Lynx などの一部のブラウザがこれを解釈できず、文字化けします。</p>
+<p><b>【問題２】</b>まだこれは未確認ですが、文字コードを明示的に指定したページを見たあと、別のページにジャンプした時、両者の文字コードが異なっていると、文字化けが発生する確率が高くなるという情報もいただきました。</p>
+<p><b>【問題３】</b>一部のプロキシサーバーでは、プロキシサーバー内に情報をキャッシュする際に、文字コードを勝手に変換してしまい、charset= で指定した文字コードと矛盾を生じさせてしまう問題が発生するそうです。</p>
+<p>では、結局、文字コードの指定はどうすればよいのかというと・・・現状のところ、明快な結論は出ていません。<s>私の場合は、現状は、「少々の文字化けが発生することがあっても、とりあえず、もうしばらの間は文字コードを指定しない。」という案を採択しています。</s></p>
+<p>Netscape Navigator 2.0 の使用者も皆無となり、Shift_JIS を指定しないと Internet Explorer で文字化けするケースも増えてきたために、現在では Shift_JIS を指定することとしました。(2001.1.21追記)</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1998-2001 杜甫々</div>
+<div>初版：1998年5月24日、最終更新：2001年1月21日</div>
+<div>http://www.tohoho-web.com/wwwxx005.htm</div>
+</body>
+</html>

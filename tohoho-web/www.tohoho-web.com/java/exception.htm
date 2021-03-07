@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのJava入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>例外処理</h2>
+
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="package.htm" tppabs="http://www.tohoho-web.com/java/package.htm">[前に]</a>
+<a href="thread.htm" tppabs="http://www.tohoho-web.com/java/thread.htm">[次に]</a>
+
+<h4 id="exception">例外とは</h4>
+<div class=i>
+<p>Java では、プログラムを実行する最中に発生するエラーを <b>例外</b>（exception）として扱うことができます。例外には例えば、0で割り算をした、メモリが枯渇した、存在しないファイルを開こうとしたなどがあります。</p>
+</div>
+
+<h4 id="try_catch">例外をキャッチする（try, catch, finally）</h4>
+<div class=i>
+<p>FileReader() は、指定したファイルが存在しない場合に FileNotFoundException 例外を発生させます。これは、FileReader() のマニュアルに下記のように記述してあることから分かります。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+public FileReader(String fileName)
+    <em>throws FileNotFoundException</em>
+</pre>
+<p><b>try</b> は、例外を発生させる可能性のある処理を呼び出す場合に用います。try { ... } の間で例外が発生した場合、<b>catch</b> を用いてこの例外を捕捉します。下記の例では、FileNotFoundException 例外が発生した場合に、その内容を標準出力に書き出します。このような例外発生時の処理を <b>例外ハンドラ</b> と呼びます。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+<em>try</em> {
+    FileReader in = new FileReader("data.txt");
+} <em>catch (FileNotFoundException e)</em> {
+    System.out.println(e);
+}
+</pre>
+<p>catch は例外発生時に投げられる <b>例外オブジェクト</b> に応じて複数記述することができます。いずれの catch にも該当しない例外やファイルクローズなどの後処理を行うために、<b>finally</b> を用います。finally の部分は、たとえ try 部分で return を行っても実行されます。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+try {
+    :
+} <em>catch (TestAException e)</em> {
+    :
+} <em>catch (TestBException e)</em> {
+    :
+} <em>finally</em> {
+    :
+}
+</pre>
+<p>例外が発生した場合、try { ... } catch の間の残りの処理はスキップされます。下記の例では、例外が発生した場合 (1) (2) (4) (5) (6) の処理が実行され、(3) の処理はスキップされます。例外が発生しない場合は (1) (2) (3) (5) (6) の処理が実行されます。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+System.out.println("(1)");
+try {
+    System.out.println("(2)");
+    FileReader in = new FileReader("data.txt");  ← 例外発生!!
+    System.out.println("(3)");                   ← スキップされる
+} catch (FileNotFoundException e) {
+    System.out.println("(4)");
+} finally {
+    System.out.println("(5)");
+}    
+System.out.println("(6)");
+</pre>
+</div>
+
+<h4 id="throw">例外を投げる（throw, throws）</h4>
+<div class=i>
+<p><b>throw</b> を用いて例外を投げることができます。例外を投げるメソッドを定義する場合は、<b>throws</b> を用いて、そのメソッドが例外を投げる可能性があることを明示しておきます。throws 宣言されたメソッドは、try catch で例外を補足しないと、コンパイル時にエラーとなります。</p>
+<div class=f>§ThrowTest.java</div>
+<div class="tab">Java</div>
+<pre class=c2>
+class MyException extends Exception {
+    public String errMsg;
+    MyException(String msg) { errMsg = msg; }
+}
+
+class ThrowTest {
+    public static void main(String[] args) {
+        try {
+            methodA();
+        } catch (MyException e) {
+            System.out.println(e.errMsg);
+        }
+    }
+    static void methodA() <em>throws</em> MyException {
+        MyException e = new MyException("エラー発生!!");
+        <em>throw</em> e;
+    }
+}
+</pre>
+</div>
+
+<h4 id="Exception">例外オブジェクト（Exception）</h4>
+<div class=i>
+<p>例外オブジェクトは次のようなクラス階層を持ちます。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+<span class="mr">└□</span> Object
+<span class="mr">　└□</span> Throwable
+<span class="mr">　　├□</span> Error
+<span class="mr">　　│└□</span>
+<span class="mr">　　└□</span> Exception
+<span class="mr">　　　├□</span> RuntimeException
+<span class="mr">　　　│└□</span>
+<span class="mr">　　　└□</span>
+</pre>
+<p>それぞれのクラス（およびそのサブクラス）は次のように分類できます。</p>
+<table class="tb1">
+<tr><th class="nowrap">クラス</th><th>説明</th></tr>
+<tr><td>Error</td><td>JavaVM で検出される致命的エラー。例外ハンドラを記述しても処理を継続できないことが多い。OutOfMemory（メモリ枯渇）など。</td></tr>
+<tr><td>RuntimeException</td><td>Javaの処理上発生するエラー。例外ハンドラは省略可能。ArithmeticException（ゼロ除算）、IllegalArgumentException（引数不正）、NullPointerException（NULLポインタ参照）、ArrayIndexOutOfBoundsException（不正インデックスによる配列参照）など。</td></tr>
+<tr><td>Exception</td><td>通常の例外。例外ハンドラを記述しないとコンパイルエラーとなる。</td></tr>
+</table>
+</div>
+
+<hr>
+<div>http://www.tohoho-web.com/java/exception.htm</div>
+<div>初版：2004年6月26日、最終更新：2004年6月26日</div>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="package.htm" tppabs="http://www.tohoho-web.com/java/package.htm">[前に]</a>
+<a href="thread.htm" tppabs="http://www.tohoho-web.com/java/thread.htm">[次に]</a>
+</body>
+</html>

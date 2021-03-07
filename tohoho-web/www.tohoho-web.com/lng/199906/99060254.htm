@@ -1,0 +1,116 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Expiresでのキャッシュ防止について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Expiresでのキャッシュ防止について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060253.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060253.htm">[前に]</a>
+<a href="99060255.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060255.htm">[次に]</a>
+<hr>
+<span class=name>No.02</span>
+<span class=time>1999/06/25(金) 19:35:33</span><br>
+はじめまして。<br>
+キャッシュのことで質問があります。<br>
+常に最新のページが表示されるようにしたいので、<br>
+キャッシュされるのを防ぎたいのですが、<br>
+perlで以下のような出力をしても、キャッシュされてしまいます。<br>
+print "Expires: Thu, 01 Dec 1994 16:00:00 GMT\n";<br>
+print "Content-Type:text/html\n\n";<br>
+print "&lt;HTML&gt;";<br>
+・・・<br>
+何かおかしいところがあれば、指摘してください。<br>
+因みにno-cacheはIEでは動作しないので使いたくありません。<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>s</span>
+<span class=time>1999/06/25(金) 23:34:11</span><br>
+print "Pragma: no-cache\n"; ← HTTP 1.0<br>
+print "Cache-Control: no-cache\n"; ← HTTP 1.1<br>
+だそうです。<br>
+私は念のため両方出力してますが、問題有るのかなぁ？<br>
+<br>
+<font color="#CC8000">&gt;因みにno-cacheはIEでは動作しないので</font><br>
+へー、これは知りませんでした。<br>
+3/4/5のバージョンでもそうなのでしょうか？<br>
+<hr>
+<span class=name>きむ</span>
+<span class=time>1999/06/28(月) 14:22:25</span><br>
+回答ありがとうございます。<br>
+<br>
+<font color="#CC8000">&gt;print "Cache-Control: no-cache\n"; ← HTTP 1.1</font><br>
+こんな方法もあるんですね。今度試してみます。<br>
+<br>
+<font color="#CC8000">&gt;&gt;因みにno-cacheはIEでは動作しないので</font><br>
+<font color="#CC8000">&gt;へー、これは知りませんでした。</font><br>
+少なくとも、私の試した環境(Win95/IE3.01、Win98/IE4.0or5.0)では<br>
+Pragma:no-cacheは無効でした。<br>
+<br>
+本題に戻ります。<br>
+質問がまわりくどかったようですね。単刀直入にいうと、<br>
+「Expiresを使ってキャッシュを無効にするにはどう記述したらいいのか」<br>
+が知りたかったのですが・・・。<br>
+<br>
+出来れば、IEでもNNでも機能するような記述でお願いします。<br>
+<hr>
+<span class=name>きむ</span>
+<span class=time>1999/06/28(月) 15:31:51</span><br>
+申し訳ありません。<br>
+別のところで使っているペンネームで質問してしまいました。<br>
+最初の「No.02」は「きむ」と同一です。<br>
+名前を偽ったとか言う意図はまったくありません。<br>
+<hr>
+<span class=name>hiro-kim</span>
+<span class=time>1999/06/28(月) 17:53:06</span><br>
+print "Cache-Control: no-cache\n"; ← HTTP 1.1<br>
+<br>
+のことはまったく記載されていませんが，<br>
+『日経オープンシステム　1999年４月号』を繰ってみたら，IEで no-cacheが有効になったのは次の一例だけだったと書いてありました。<br>
+<br>
+IE4.x と &lt;meta http-equiv="Pragma" content="no-cache"&gt; の組合せ<br>
+（HTTPヘッダの "Pragma: no-cache" はダメ）<br>
+<br>
+で，IEはキャッシュには入ってしまうので，キャッシュ内の古いページを表示しないという対処を採るしかない。<br>
+<br>
+&lt;meta http-equiv="expires" content="Sun, 10 Jan 1990 01:01:01 GMT"&gt;<br>
+（記事中には HTTPヘッダの "Expires:" だとは書いてないです，念のため）<br>
+<br>
+の過去日指定で対処すれば IEでも Netscapeでも効果がある，と書いてあります。<br>
+<br>
+私自身は確認したわけではありません，参考までに。<br>
+<hr>
+<span class=name>s</span>
+<span class=time>1999/06/29(火) 22:41:52</span><br>
+本題とはそれてしまうのですが、<br>
+<br>
+キャッシュしない＝再表示しない<br>
+ならばキャッシュエリアには、データが残っている可能性あり。<br>
+<br>
+キャッシュしない＝キャッシュエリアに保存しない<br>
+ならばローカルにはデータが残らないという事になりますが、<br>
+この違いはかなり大きいです。<br>
+<br>
+つまりローカル内にデータが残ると、セキュリティー関連の問題があります。<br>
+これは結構深い問題だなぁ。<br>
+自分で検証すればいいのですが、既に実験した方おられますでしょうか？<br>
+<hr>
+<span class=name>きむ</span>
+<span class=time>1999/07/01(木) 09:38:23</span><br>
+<span class=resolv>[[解決]]</span><br>
+hiro-kimさんのご指摘どおり、METAタグを使用したらうまくいきました。<br>
+METAタグでExpiresを指定するのと、HTTPヘッダにExpiresを<br>
+出力するのとでは挙動が違うのでしょうか・・・。<br>
+教えていただき、ありがとうございました。<br>
+<br>
+ところで、<br>
+<font color="#CC8000">&gt;ローカル内にデータが残ると、セキュリティー関連の問題があります。</font><br>
+ってありますけど、どのような問題が発生するのでしょう？<br>
+差し支えなければ教えてください。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060253.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060253.htm">[前に]</a>
+<a href="99060255.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060255.htm">[次に]</a>
+</body>
+</html>

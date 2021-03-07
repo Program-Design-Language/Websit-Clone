@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>フレックス・グリッドレイアウト - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script src="../../code.jquery.com/jquery-3.4.1.min.js" tppabs="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="../lib/canvas.js" tppabs="http://www.tohoho-web.com/lib/canvas.js"></script>
+<style>
+.box {
+  display: inline-block;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+.gray {
+  background-color: #eee;
+}
+.v {
+  xwriting-mode: vertical-rl;
+  xtext-orientation: mixed;
+  xpadding: .2rem;
+}
+.flex-container {
+  display: flex;
+  width: 16rem;
+  height: 18rem;
+  padding: .2rem;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  margin-bottom: .5rem;
+  flex-wrap: wrap;
+}
+.flex-item {
+  padding: .2rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  text-align: center;
+}
+.grid-container {
+  display: grid;
+  width: 16rem;
+  height: 18rem;
+  padding: .2rem;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  margin-bottom: .5rem;
+  grid-auto-flow: row;
+  grid-template-rows: 1fr 1fr 1ft;
+  grid-template-columns: 1fr 1fr 1ft;
+}
+.grid-item {
+  padding: .2rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  text-align: center;
+}
+.itemA, .itemD, .itemG, .item1, .item6, .item8 { font-size: 40pt; }
+.itemB, .itemE, .itemH, .item2, .item4, .item9 { font-size: 30pt; }
+.itemC, .itemF, .itemI, .item3, .item5, .item7 { font-size: 20pt; }
+.item1 { grid-row: 1 / 2; grid-column: 1 / 2; }
+.item2 { grid-row: 1 / 2; grid-column: 2 / 3; }
+.item3 { grid-row: 1 / 2; grid-column: 3 / 4; }
+.item4 { grid-row: 2 / 3; grid-column: 1 / 2; }
+.item5 { grid-row: 2 / 3; grid-column: 2 / 3; }
+.item6 { grid-row: 2 / 3; grid-column: 3 / 4; }
+.item7 { grid-row: 3 / 4; grid-column: 1 / 2; }
+.item8 { grid-row: 3 / 4; grid-column: 2 / 3; }
+.item9 { grid-row: 3 / 4; grid-column: 3 / 4; }
+.prop-name {
+  display: inline-block;
+  width: 8rem;
+  font-size: 90%;
+}
+.prop-value {
+  display: inline-block;
+  width: 8rem;
+  font-size: 90%;
+}
+.sel {
+  width: 10rem;
+  margin-bottom: .5rem;
+}
+</style>
+<script>
+$(function() {
+  if (window.navigator.appVersion.indexOf("Trident") != -1) {
+    $(".no-ie").css("display", "none");
+  }
+  $(".property").on("click", function() {
+    $("#justify-items").val("");
+    $("#justify-content").val("");
+    $("#align-items").val("");
+    $("#align-content").val("");
+    $("#justify-items-value").text("");
+    $("#justify-content-value").text("");
+    $("#align-items-value").text("");
+    $("#align-content-value").text("");
+  });
+  $("select").on("change", function() {
+    var target = $('.property:checked').val();
+    var prop = $(this).attr('id');
+    var value = $(this).find("option:selected").val();
+    $("#" + target).css(prop, "");
+    $("#" + target).css(prop, value);
+    value = $("#" + target).css(prop);
+    $("#" + prop + "-value").text(value);
+  });
+});
+</script>
+</head>
+<body>
+
+<h2>フレックス・グリッドのレイアウト</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+フレックス・グリッドのレイアウト
+
+<h4>概要</h4>
+<div class=i>
+<p>フレックスボックス、グリッド、マルチカラム、ボックス等をレイアウトするために使用される、下記のCSSプロパティについて説明します。</p>
+<div style="display:flex">
+<ul>
+<li><a href="../css/prop/justify-self.htm" tppabs="http://www.tohoho-web.com/css/prop/justify-self.htm">justify-self</a>
+<li><a href="../css/prop/justify-items.htm" tppabs="http://www.tohoho-web.com/css/prop/justify-items.htm">justify-items</a>
+<li><a href="../css/prop/justify-content.htm" tppabs="http://www.tohoho-web.com/css/prop/justify-content.htm">justify-content</a>
+</ul>
+<ul>
+<li><a href="../css/prop/align-self.htm" tppabs="http://www.tohoho-web.com/css/prop/align-self.htm">align-self</a>
+<li><a href="../css/prop/align-items.htm" tppabs="http://www.tohoho-web.com/css/prop/align-items.htm">align-items</a>
+<li><a href="../css/prop/align-content.htm" tppabs="http://www.tohoho-web.com/css/prop/align-content.htm">align-content</a>
+</ul>
+<ul>
+<li><a href="../css/prop/place-self.htm" tppabs="http://www.tohoho-web.com/css/prop/place-self.htm">place-self</a>
+<li><a href="../css/prop/place-items.htm" tppabs="http://www.tohoho-web.com/css/prop/place-items.htm">place-items</a>
+<li><a href="../css/prop/place-content.htm" tppabs="http://www.tohoho-web.com/css/prop/place-content.htm">place-content</a>
+</ul>
+</div>
+</div>
+
+<h4>結論</h4>
+<div class="i">
+<p>結論だけ先に書くと、現時点では下記を指定するのがよさそうです。
+<h5>◆フレックスの横方向の配置</h5>
+<ul>
+<li>右寄せ：justify-content: flex-end
+<li>中寄せ：justify-content: center
+<li>左寄せ：justify-content: flex-start
+<li>均等配置(1)：justify-content: space-between
+<li>均等配置(2)：justify-content: space-around
+<li>均等配置(3)：justify-content: space-evenly ... IE/Edge未サポート
+</ul>
+<h5>◆フレックスの縦方向の配置</h5>
+<ul>
+<li>上寄せ：align-items: flex-start
+<li>中寄せ：align-items: center
+<li>下寄せ：align-items: flex-end
+</ul>
+<h5>◆グリッドの横方向の配置</h5>
+<ul>
+<li>右寄せ：justify-content: end
+<li>中寄せ：justify-content: center
+<li>左寄せ：justify-content: start
+<li>均等配置(1)：justify-content: space-between
+<li>均等配置(2)：justify-content: space-around
+<li>均等配置(3)：justify-content: space-evenly ... IE/Edge未サポート
+</ul>
+<h5>◆グリッドの縦方向の配置</h5>
+<ul>
+<li>上寄せ：align-content: start
+<li>中寄せ：align-content: center
+<li>下寄せ：align-content: end
+<li>均等配置(1)：align-content: space-between
+<li>均等配置(2)：align-content: space-around
+<li>均等配置(3)：align-content: space-evenly ... IE/Edge未サポート
+</ul>
+</div>
+
+<h4>関連仕様書</h4>
+<div class="i">
+<p>これらのプロパティは最初フレックスボックスの仕様の一部として定義されました。ここでは、プロパティとして <b>justify-content</b>, <b>align-self</b>, <b>align-items</b>, <b>align-content</b> のみが定義されています。値も <b>auto</b>, <b>flex-start</b>, <b>flex-end</b>, <b>right</b>, <b>left</b>, <b>center</b>, <b>baseline</b>, <b>space-between</b>, <b>space-around</b>, <b>stretch</b> のみが定義されています。</p>
+<ul>
+<li>[CSS-FLEXBOX-1] <a target="_blank" href="javascript:if(confirm('https://www.w3.org/TR/css-flexbox-1/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/css-flexbox-1/'" tppabs="https://www.w3.org/TR/css-flexbox-1/">https://www.w3.org/TR/css-flexbox-1/</a> (勧告候補)
+</ul>
+<p>後に、フレックスボックスに加え、グリッド、マルチカラム、ボックスなどに対する汎用的な仕様として再定義されました。プロパティとして <b>justify-self</b>, <b>justify-items</b>, <b>place-self</b>, <b>place-items</b>, <b>place-content</b> が追加されました。値として <b>normal</b>, <b>start</b>, <b>end</b>, <b>self-start</b>, <b>self-end</b>, <b>space-evenly</b>, <b>legacy</b>, <b>legacy left</b>, <b>legacy right</b>, <b>legacy center</b> が追加されました。また、補足値として <b>safe</b>, <b>unsafe</b> が追加されました。</p>
+<ul>
+<li>[xCSS-ALIGN-3] <a target="_blank" href="javascript:if(confirm('https://www.w3.org/TR/css-align-3/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/css-align-3/'" tppabs="https://www.w3.org/TR/css-align-3/">https://www.w3.org/TR/css-align-3/</a> (勧告候補)
+</ul>
+</div>
+
+<h4>用語</h4>
+<div class="i">
+<p>親要素を <b>コンテナ</b>、子要素を <b>アイテム</b> と呼びます。</p>
+<div>
+<canvas id="cv1" width=300 height=80 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv1")
+  .box(5, 20, 70, 30, {text:"Item A"})
+  .box(85, 20, 70, 30, {text:"Item B"})
+  .box(165, 20, 70, 30, {text:"Item C"})
+  .text("Container", 3, 10);
+});
+</script>
+</div>
+<p>文字が並ぶ方向を <b>主軸</b>、改行が進む方向を <b>交差軸</b> と呼びます。通常は左から右が主軸、上から下が交差軸です。アラビア語など文字を右から左に書く環境では主軸は右から左となります。日本語の縦書きでは主軸は上から下、交差軸は右から左となります。</p>
+<div>
+<canvas id="cv2" width=300 height=80 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv2")
+  .text("主軸", 100, 14)
+  .line(132, 10, 68, 0)
+  .line(200, 10, -3, -3)
+  .line(200, 10, -3, 3)
+  .text("交差軸", 5, 20)
+  .line(20, 30, 0, 40)
+  .line(20, 70, -3, -3)
+  .line(20, 70, 3, -3);
+});
+</script>
+</div>
+</div>
+
+<h4>レイアウトの対象</h4>
+<div class="i">
+<p>レイアウトの対象には下記のものがありますが、フレックスとグリッド以外は、まだブラウザの対応が追い付いていないため、ここではフレックスとグリッドについてのみ説明します。</p>
+<ul>
+<li><a href="../css/prop/flex.htm" tppabs="http://www.tohoho-web.com/css/prop/flex.htm">flex</a> で作成するフレックスコンテナ。
+<li><a href="../css/prop/grid.htm" tppabs="http://www.tohoho-web.com/css/prop/grid.htm">grid</a> で作成するグリッドコンテナ。
+<li><a href="../css/prop/columns.htm" tppabs="http://www.tohoho-web.com/css/prop/columns.htm">columns</a> で作成するマルチカラムコンテナ。
+<li><a href="../html/table.htm" tppabs="http://www.tohoho-web.com/html/table.htm">&lt;table&gt;</a> で作成するテーブルセル。
+<li><a href="../html/div.htm" tppabs="http://www.tohoho-web.com/html/div.htm">&lt;div&gt;</a> などで作成するブロックボックス。
+</ul>
+</div>
+
+<h4>CSSプロパティの使い分け</h4>
+<div class="i">
+<p><b>justify-*</b> は主軸方向のレイアウトを制御します。<b>align-*</b> は交差軸方向のレイアウトを制御します。<b>place-*</b> は主軸と交差軸をまとめて指定します。</p>
+<canvas id="cv3" width=300 height=80 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv3")
+  .text("justify-*", 70, 10)
+  .line(130, 5, 70, 0)
+  .line(200, 5, -3, -3)
+  .line(200, 5, -3, 3)
+  .text("align-*", 5, 24)
+  .line(18, 30, 0, 40)
+  .line(18, 70, -3, -3)
+  .line(18, 70, 3, -3)
+  .text("place-*", 100, 30)
+  .line(144, 27, 70, 0)
+  .line(214, 27, -3, -3)
+  .line(214, 27, -3, 3)
+  .line(120, 35, 0, 35)
+  .line(120, 70, -3, -3)
+  .line(120, 70, 3, -3);
+});
+</script>
+<p><b>*-self</b> はアイテムに直接指定します。<b>*-items</b> や <b>*-content</b> はコンテナに指定してその子アイテムのレイアウトを制御します。</p>
+<div>
+<canvas id="cv4" width=300 height=80 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv4")
+  .box(5, 30, 70, 30, "#fff")
+  .box(85, 30, 70, 30, "#fff")
+  .box(165, 30, 70, 30, "#fff")
+  .text("*-items", 8, 13)
+  .text("*-content", 8, 23)
+  .text("*-self", 16, 46);
+});
+</script>
+</div>
+<div class="title-tab">CSS</div>
+<pre class="c2">
+.container {
+  <em>justify-items: ...;</em>
+  <em>justify-content: ...;</em>
+  <em>align-items: ...;</em>
+  <em>align-content: ...;</em>
+}
+.item {
+  <em>justify-self: ...;</em>
+  <em>align-self: ...;</em>
+}
+</pre>
+<p><a href="../css/prop/flex-wrap.htm" tppabs="http://www.tohoho-web.com/css/prop/flex-wrap.htm">flex-wrap</a>: wrap などでアイテムが改行されている場合や、グリッドで行・列の概念がある場合、<b>*-items</b> はひとつの行や列の中での、個々の子アイテムの位置を制御するのに対して、<b>*-content</b> は、行や列自体をどのように配置するかを制御します。フレックスボックスの主軸方向には列という概念はないので、フレックスボックスに対しては justify-items は機能しません。</p>
+<div style="margin-bottom:.3rem">
+<canvas id="cv5" width=300 height=160 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv5")
+  .box(3, 31, 74, 50)
+  .box(83, 46, 74, 35)
+  .box(163, 61, 74, 20)
+  .box(3, 106, 74, 50)
+  .box(83, 121, 74, 35)
+  .box(163, 136, 74, 20)
+  .text("align-items:flex-end", 180, 10)
+  .text("各行の各アイテムの下端を揃える", 10, 25)
+  .line(1, 82, 298, 0, {type:"dash"})
+  .line(1, 159, 298, 0, {type:"dash"})
+});
+</script>
+</div>
+<div>
+<canvas id="cv6" width=300 height=160 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv6")
+  .box(2, 49, 296, 52, {type:"dash", bgcolor:"transparent"})
+  .box(2, 105, 296, 52, {type:"dash", bgcolor:"transparent"})
+  .box(3, 50, 74, 50)
+  .box(83, 50, 74, 35)
+  .box(163, 50, 74, 20)
+  .box(3, 106, 74, 50)
+  .box(83, 106, 74, 35)
+  .box(163, 106, 74, 20)
+  .text("align-content:flex-end", 169, 10)
+  .text("行の中はそのままで、行自体を下側に寄せる", 10, 40)
+  .text("行", 282, 78)
+  .text("行", 282, 135);
+});
+</script>
+</div>
+</div>
+
+<h4>値の説明</h4>
+<div class="i">
+<dl class="dl1">
+<dt>normal</dt>
+<dd>何も指定しない場合の規定値です。主軸方向に関しては start, flex-start と同様、交差軸方向に関しては stretch と同様の振る舞いをします。</dd>
+<dt>auto</dt>
+<dd>親コンテナの指定に従います。</dd>
+<dt>center</dt>
+<dd>軸方向の中間に揃えます。</dd>
+<dt>start</dt>
+<dt style="margin-top:0">end</dt>
+<dd>軸方向の開始側、終了側にアイテムを寄せます。(Chrome では、グリッドでは使用できるが、フレックスボックスでは使用できない？)</dd>
+<dt>flex-start</dt>
+<dt style="margin-top:0">flex-end</dt>
+<dd>フレックスボックスでのみ使用します。軸方向の開始側、終了側にアイテムを寄せます。フレックスボックス以外で使用した場合は start, end とみなされます。([CSS-FLEXBOX-1] との互換性のために残されている？)</dd>
+<dt>self-start</dt>
+<dt style="margin-top:0">self-end</dt>
+<dd>start, end が親コンテナの軸方向を基準に揃えるのに対し、self-start, self-end は子アイテムの軸方向を基準に揃えます。例えば、子アイテムがアラビア語で、主軸が右から左であれば、self-start は右側に揃えます。(まだあまりサポートされていない？)
+<div>
+<canvas id="cv7ss2" width=400 height=101></canvas>
+<script>
+$(function() {
+  new Canvas("cv7ss2")
+  .box(10, 10, 150, 90, {bgcolor:"#eee", text:"start"})
+  .box(14, 14, 52, 20, {text:"English"})
+  .box(14, 38, 42, 20, {text:"日本語"})
+  .box(14, 62, 40, 20, {text:"العربية"})
+  .box(170, 10, 150, 90, {bgcolor:"#eee", text:"self-start"})
+  .box(174, 14, 52, 20, {text:"English"})
+  .box(174, 38, 42, 20, {text:"日本語"})
+  .box(276, 62, 40, 20, {text:"العربية"});
+});
+</script>
+</div>
+</dd>
+<dt>baseline</dt>
+<dt style="margin-top:0">first baseline</dt>
+<dt style="margin-top:0">last baseline</dt>
+<dd>アイテムの中の文字のベースライン (文字 A や m の下端) を揃えます。first baseline は 1行目のベースライン、last baseline は最終行のベースラインに揃えます。baseline は first baseline と同じ動作となります。
+<div>
+<canvas id="cv7bl2" width=400 height=101></canvas>
+<script>
+  new Canvas("cv7bl2")
+  .box(10, 10, 300, 90, {bgcolor:"#eee"})
+  .box(40, 14, 40, 80)
+  .box(90, 18, 40, 32)
+  .box(140, 22, 30, 28)
+  .text("A", 52, 44, {font: "24pt Consolas"})
+  .text("A", 52, 74, {font: "24pt Consolas"})
+  .text("B", 102, 44, {font: "20pt Consolas"})
+  .text("C", 150, 44, {font: "14pt Consolas"})
+  .line(30, 45, 270, 0, {type:"dash"})
+  .line(30, 75, 270, 0, {type:"dash"})
+  .text("first baseline", 200, 42)
+  .text("last baseline", 200, 72);
+</script>
+</div>
+</dd>
+<dt>space-between</dt>
+<dd>均等配置します。アイテム間のみ余白を入れ、最初のアイテムの前、最後のアイテムの後ろには余白を入れません。
+<div>
+<canvas id="cv7sb" width=400 height=51></canvas>
+<script>
+  new Canvas("cv7sb")
+  .box(10, 10, 300, 40, {bgcolor:"#eee"})
+  .box(14, 14, 40, 32)
+  .box(140, 14, 40, 32)
+  .box(266, 14, 40, 32)
+  .box(58, 14, 78, 32, {bgcolor:"transparent", type:"dash"})
+  .box(184, 14, 78, 32, {bgcolor:"transparent", type:"dash"});
+</script>
+</div>
+</dd>
+<dt>space-around</dt>
+<dd>均等配置します。最初のアイテムの前、最後のアイテムの後ろには、アイテム間の半分の余白を入れます。
+<div>
+<canvas id="cv7sa" width=400 height=51></canvas>
+<script>
+  new Canvas("cv7sa")
+  .box(10, 10, 300, 40, {bgcolor:"#eee"})
+  .box(42, 14, 40, 32)
+  .box(140, 14, 40, 32)
+  .box(238, 14, 40, 32)
+  .box(14, 14, 25, 32, {bgcolor:"transparent", type:"dash"})
+  .box(86, 14, 50, 32, {bgcolor:"transparent", type:"dash"})
+  .box(184, 14, 50, 32, {bgcolor:"transparent", type:"dash"})
+  .box(282, 14, 25, 32, {bgcolor:"transparent", type:"dash"});
+</script>
+</div>
+</dd>
+<dt>space-evenly</dt>
+<dd>均等配置します。最初のアイテムの前、最後のアイテムの後ろにも、アイテム間と同じ余白を入れます。
+<div>
+<canvas id="cv7se" width=400 height=51></canvas>
+<script>
+  new Canvas("cv7se")
+  .box(10, 10, 300, 40, {bgcolor:"#eee"})
+  .box(55, 14, 40, 32)
+  .box(140, 14, 40, 32)
+  .box(225, 14, 40, 32)
+  .box(14, 14, 36, 32, {bgcolor:"transparent", type:"dash"})
+  .box(100, 14, 36, 32, {bgcolor:"transparent", type:"dash"})
+  .box(184, 14, 36, 32, {bgcolor:"transparent", type:"dash"})
+  .box(270, 14, 36, 32, {bgcolor:"transparent", type:"dash"});
+</script>
+</div>
+</dd>
+<dt>stretch</dt>
+<dd>余白が無くなるようにアイテムを伸長します。
+<div>
+<canvas id="cv7d2" width=400 height=51></canvas>
+<script>
+  new Canvas("cv7d2")
+  .box(10, 10, 300, 40, {bgcolor:"#eee"})
+  .box(14, 14, 94, 32)
+  .box(113, 14, 94, 32)
+  .box(212, 14, 94, 32);
+</script>
+</div>
+</dd>
+<dt>left</dt>
+<dt style="margin-top:0">right</dt>
+<dd>軸の方向に関わらず、左側、右側に寄せます。</dd>
+<dt>legacy</dt>
+<dt style="margin-top:0">legacy left</dt>
+<dt style="margin-top:0">legacy right</dt>
+<dt style="margin-top:0">legacy center</dt>
+<dd>子孫要素にも left, right, center を継承します。正式勧告では削除されるかもしれません。</dd>
+</dl>
+<table class="tb0" style="text-align:center; table-layout:fixed;">
+  <tr>
+    <th rowspan=2 colspan=2>値</th>
+    <th colspan=4>[CSS-FLEXBOX-1]</th>
+    <th colspan=6>[CSS-ALIGN-3]</th>
+  </tr>
+  <tr>
+    <th><span class="v">justify-content</span></th>
+    <th><span class="v">align-self</span></th>
+    <th><span class="v">align-items</span></th>
+    <th><span class="v">align-content</span></th>
+    <th><span class="v">justify-self</span></th>
+    <th><span class="v">justify-items</span></th>
+    <th><span class="v">justify-content</span></th>
+    <th><span class="v">align-self</span></th>
+    <th><span class="v">align-items</span></th>
+    <th><span class="v">align-content</span></th>
+  </tr>
+  <tr><td rowspan=2><span class="v"></span></td>
+      <td class="l">normal</td>        <td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">auto</td>          <td>－</td><td>○</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td></tr>
+  <tr><td rowspan=9><span class="v">方向</span></td>
+      <td class="l">center</td>        <td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">start</td>         <td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">end</td>           <td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">flex-start</td>    <td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">flex-end</td>      <td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">self-start</td>    <td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>－</td><td>○</td><td>○</td><td>－</td></tr>
+  <tr><td class="l">self-end</td>      <td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>－</td><td>○</td><td>○</td><td>－</td></tr>
+  <tr><td class="l">left</td>          <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>－</td><td>－</td><td>－</td></tr>
+  <tr><td class="l">right</td>         <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>－</td><td>－</td><td>－</td></tr>
+  <tr><td rowspan=3><span class="v">ベースライン</span></td>
+      <td class="l">baseline</td>      <td>－</td><td>○</td><td>○</td><td>－</td><td>○</td><td>○</td><td>－</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">first baseline</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>－</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td class="l">last baseline</td> <td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>○</td><td>－</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td rowspan=4><span class="v">間隔</span></td>
+      <td class="l">space-between</td> <td>○</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>○</td></tr>
+  <tr><td class="l">space-around</td>  <td>○</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>○</td></tr>
+  <tr><td class="l">space-evenly</td>  <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>○</td></tr>
+  <tr><td class="l">stretch</td>       <td>－</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+  <tr><td rowspan=4><span class="v">レガシー</span></td>
+      <td class="l">legacy</td>        <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>－</td><td>－</td></tr>
+  <tr><td class="l">legacy left</td>   <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>－</td><td>－</td></tr>
+  <tr><td class="l">legacy right</td>  <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>－</td><td>－</td></tr>
+  <tr><td class="l">legacy center</td> <td>－</td><td>－</td><td>－</td><td>－</td><td>－</td><td>○</td><td>－</td><td>－</td><td>－</td><td>－</td></tr>
+</table>
+</div>
+
+<h4>safeとunsafe</h4>
+<div class="i">
+<p>start, end, flex-start, flex-end, self-start, self-end, center, right, left には、<b>safe</b> または <b>unsafe</b> をつけることができます。</p>
+<dl class="dl1">
+<dt>safe</dt>
+<dd>アイテムが開始方向にあふれそうな場合、溢れないように開始線に揃えます。Firefox でサポートされています。</dd>
+<dt>unsafe</dt>
+<dd>規定値。アイテムが開始方向にあふれる場合でも、そのまま表示します。</dd>
+</dl>
+<div class="title-tab">CSS</div>
+<pre class="c2">
+.safe-contaier {
+  margin-left: 3rem;
+  display: flex;
+  flex-direction: column;
+  width: 5rem;
+  height: 6rem;
+  padding: .1rem;
+  align-tems: center;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  align-items: <em>safe</em> center;
+}
+.safe-item {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  text-align: center;
+  padding: .2rem;
+}
+</pre>
+<div class="title-tab">CSS</div>
+<pre class="c2">
+&lt;div class="safe-contaier"&gt;
+  &lt;span class="safe-item" xstyle="width:5rem"&gt;ABC&lt;/span&gt;
+  &lt;span class="safe-item" xstyle="width:12rem"&gt;ABCDEFGHIJKLMN&lt;/span&gt;
+  &lt;span class="safe-item" xstyle="width:5rem"&gt;XYZ&lt;/span&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div>
+<canvas id="cv8a" width=400 height=136 class="box"></canvas>
+<script>
+$(function() {
+  new Canvas("cv8a")
+  .box(40, 10, 80, 100, {bgcolor:"#eee"})
+  .box(240, 10, 80, 100, {bgcolor:"#eee"})
+  .box(62, 13, 36, 20, {text:"ABCDE"})
+  .box(25, 36, 110, 20, {text:"ABCDEFGHIJKLMNOPQR"})
+  .box(48, 59, 65, 20, {text:"ABCDEFGHIJ"})
+  .box(262, 13, 38, 20, {text:"ABCDE"})
+  .box(243, 36, 110, 20, {text:"ABCDEFGHIJKLMNOPQR"})
+  .box(248, 59, 65, 20, {text:"ABCDEFGHIJ"})
+  .text("unsafe", 64, 125)
+  .text("safe", 268, 125);
+});
+</script>
+</div>
+
+<h4>動きを試してみる</h4>
+<div class="i">
+<p>フレックスボックス・グリッドに対して、それぞれの指定がどのように動作するかを試してみてください。Chrome よりも Firefox が比較的サポート範囲が広いです。IE の場合はフレックスボックスのみ試せます。</p>
+<div style="display:flex">
+  <div>
+    <b>Flex</b>
+    <div id="flex-container" class="flex-container" style="margin-right:1rem">
+      <div class="flex-item itemA">A</div>
+      <div class="flex-item itemB">B</div>
+      <div class="flex-item itemC">C<br>C</div>
+      <div class="flex-item itemD">D</div>
+      <div class="flex-item itemE">E</div>
+      <div class="flex-item itemF">F</div>
+      <div class="flex-item itemG">G</div>
+      <div class="flex-item itemH">H</div>
+      <div class="flex-item itemI">I</div>
+    </div>
+  </div>
+  <div class="no-ie">
+    <b>Grid</b>
+    <div id="grid-container" class="grid-container">
+      <div class="grid-item item1">1</div>
+      <div class="grid-item item2">2</div>
+      <div class="grid-item item3">3</div>
+      <div class="grid-item item4">4</div>
+      <div class="grid-item item5">5</div>
+      <div class="grid-item item6">6</div>
+      <div class="grid-item item7">7</div>
+      <div class="grid-item item8">8</div>
+      <div class="grid-item item9">9</div>
+    </div>
+  </div>
+</div>
+<div class="no-ie" style="margin-bottom:.5rem">
+  <input type="radio" class="property" name="property" value="flex-container" checked>Flex
+  <input type="radio" class="property" name="property" value="grid-container">Grid
+</div>
+<div>
+  <span class="prop-name">justify-items:</span>
+  <span class="prop-value" id="justify-items-value"></span>
+  <select class="sel" id="justify-items">
+    <option value="">(none)</option>
+    <option value="normal">normal</option>
+    <option value="center">center</option>
+    <option value="start">start</option>
+    <option value="end">end</option>
+    <option value="flex-start">flex-start</option>
+    <option value="flex-end">flex-end</option>
+    <option value="self-start">self-start</option>
+    <option value="self-end">self-end</option>
+    <option value="left">left</option>
+    <option value="right">right</option>
+    <option value="baseline">baseline</option>
+    <option value="first baseline">first baseline</option>
+    <option value="last baseline">last baseline</option>
+    <option value="stretch">stretch</option>
+    <option value="legacy">legacy</option>
+    <option value="legacy left">legacy left</option>
+    <option value="legacy center">legacy center</option>
+    <option value="legacy right">legacy right</option>
+  </select>
+</div>
+<div>
+  <span class="prop-name">justify-content:</span>
+  <span class="prop-value" id="justify-content-value"></span>
+  <select class="sel" id="justify-content">
+    <option value="">(none)</option>
+    <option value="normal">normal</option>
+    <option value="center">center</option>
+    <option value="start">start</option>
+    <option value="end">end</option>
+    <option value="flex-start">flex-start</option>
+    <option value="flex-end">flex-end</option>
+    <option value="left">left</option>
+    <option value="right">right</option>
+    <option value="space-between">space-between</option>
+    <option value="space-around">space-around</option>
+    <option value="space-evenly">space-evenly</option>
+    <option value="stretch">stretch</option>
+  </select>
+</div>
+<div>
+  <span class="prop-name">align-items:</span>
+  <span class="prop-value" id="align-items-value"></span>
+  <select class="sel" id="align-items">
+    <option value="">(none)</option>
+    <option value="normal">normal</option>
+    <option value="center">center</option>
+    <option value="start">start</option>
+    <option value="end">end</option>
+    <option value="flex-start">flex-start</option>
+    <option value="flex-end">flex-end</option>
+    <option value="self-start">self-start</option>
+    <option value="self-end">self-end</option>
+    <option value="baseline">baseline</option>
+    <option value="first baseline">first baseline</option>
+    <option value="last baseline">last baseline</option>
+    <option value="stretch">stretch</option>
+  </select>
+</div>
+<div>
+  <span class="prop-name">align-content:</span>
+  <span class="prop-value" id="align-content-value"></span>
+  <select class="sel" id="align-content">
+    <option value="">(none)</option>
+    <option value="normal">normal</option>
+    <option value="center">center</option>
+    <option value="start">start</option>
+    <option value="end">end</option>
+    <option value="flex-start">flex-start</option>
+    <option value="flex-end">flex-end</option>
+    <option value="baseline">baseline</option>
+    <option value="first baseline">first baseline</option>
+    <option value="last baseline">last baseline</option>
+    <option value="space-between">space-between</option>
+    <option value="space-around">space-around</option>
+    <option value="space-evenly">space-evenly</option>
+    <option value="stretch">stretch</option>
+  </select>
+</div>
+</div>
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年1月5日 最終更新:2020年1月5日</div>
+<div>http://www.tohoho-web.com/ex/css-align.html</div>
+</body>
+</html>

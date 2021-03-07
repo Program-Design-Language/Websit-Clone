@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのSSI入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのSSI入門</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+とほほのSSI入門
+
+<h4 id="Content">目次</h4>
+<ul>
+<li><a href="#Content">目次</a>
+<li><a href="#About">SSIとは？</a>
+<li><a href="#Preparate">SSIの使用準備</a>
+<li><a href="#Sample">SSIの使用例</a>
+<li><a href="#Include">ファイル読みこみ（#include）</a>
+<li><a href="#Fsize">ファイルサイズ（#fsize）</a>
+<li><a href="#ConfigSizefmt">ファイルサイズ表示形式（#config sizefmt）</a>
+<li><a href="#Flastmod">最終更新時刻（#flastmod）</a>
+<li><a href="#ConfigTimefmt">時刻表示形式（#config timefmt）</a>
+<li><a href="#Echo">環境変数表示（#echo）</a>
+<li><a href="#Printenv">環境変数表示（#printenv）</a>
+<li><a href="#Set">変数設定（#set）</a>
+<li><a href="#ConfigErrmsg">エラーメッセージ（#config errmsg）</a>
+<li><a href="#Exec">コマンド実行（#exec）</a>
+<li><a href="#If">制御構文（#if, #elif, #else, #endif）</a>
+<li><a href="#Point">SSIの注意点</a>
+<li><a href="#Refdoc">参考文献</a>
+</ul>
+
+<h4 id="About">SSIとは？</h4>
+<div class=i>
+<p>SSI は Server Side Includes の略です。HTML文書中に以下のようなコメントを挿入することにより、サーバー側がコメントの場所に実行コマンドの結果などを置き換えてくれたりする機能です。</p>
+<pre class=c>
+&lt;!--#exec cmd="/bin/ls" --&gt;
+</pre>
+<p>SSI を使用することにより、例えば次のようなことが可能になります。</p>
+<ul>
+<li>すべてのファイルに同じヘッダやフッタを表示することが簡単になる。</li>
+<li>ファイルの最終更新時刻やサイズを自動的に表示できるようになる。</li>
+<li>外部コマンドの実行結果をページ中に表示できるようになる。</li>
+<li>カウンターもつくれる。</li>
+</ul>
+</div>
+
+<h4 id="Preparate">SSIの使用準備</h4>
+<div class=i>
+<p>SSI を使用するには、WWW サーバーが SSI をサポートしており、SSI を許可する設定が行われている必要があります。一般のプロバイダでは、セキュリティのために使用を禁止しているところも多いようです。</p>
+<p>サポートしていても、拡張子を .shtml にしなければならない、SSI を置けるフォルダが決まっている、自分で .htaccess の設定を行わなければならないなどいろいろあります。詳細はプロバイダにお問い合わせください。</p>
+<p>サーバーが Apache の場合は、httpd.conf か .htaccess に以下の記述が追加されている必要があります。（ httpd.conf を変更した場合は Apache を再起動してください。）</p>
+<pre class=c>
+AddType text/x-server-parsed-html .shtml
+Options Includes
+</pre>
+<p>また、.htaccess で AddType や Options の指定を可能にするには、httpd.conf で以下の設定を行ってください。「許可対象」には、FileInfo（AddType などの指定を可能にする）、Options（Optionsの指定を可能にする）、All（すべての指定を可能にする）などを指定します。</p>
+<pre class=c>
+AllowOverride 許可対象
+</pre>
+<p>.shtml のファイルだけでなく、拡張子が .html のファイルでも SSI を使用したいときは、AddType の行を次のようにしてください。ただし、.html のファイルに対しても、サーバーで SSI 処理を行うので、サーバーに負荷がかかります。</p>
+<pre class=c>
+AddType text/x-server-parsed-html .shtml .html
+</pre>
+</div>
+
+<h4 id="Sample">SSIの使用例</h4>
+<div class=i>
+<p>ファイルの最終更新時刻を表示します。</p>
+<pre class=c>
+このファイルは
+&lt;!--#config timefmt="%Y/%m/%d %X" --&gt;
+&lt;!--#echo var="LAST_MODIFIED" --&gt;
+に更新されました。
+</pre>
+<p>ダウンロードファイルの最終更新日とサイズを表示します。</p>
+<pre class=c>
+ダウンロードは
+&lt;a href="xxx.zip"&gt;xxx.zip&lt;/a&gt;
+(&lt;!--#config timefmt="%Y/%m/%d" --&gt;
+&lt;!--#flastmod file="xxx.zip" --&gt;更新,
+&lt;!--#config sizefmt="abbrev" --&gt;
+&lt;!--#fsize file="xxx.zip" --&gt;)
+を読込んでください。
+</pre>
+<p>ヘッダ/フッタを指定します。</p>
+<pre class=c>
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Sample Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!--#include file="header.html" --&gt;
+本文
+&lt;!--#include file="footer.html" --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<h4 id="Include">ファイル読みこみ（#include）</h4>
+<h5 class="b0">◆ &lt;!--#include file="～" --&gt;</h5>
+<h5 class="t0">◆ &lt;!--#include virtual="～" --&gt;</h5>
+<div class=i>
+<p>指定したファイルの中身を読込んで表示します。file="～" の ～ にはファイル名を指定します。../ や絶対パス名は使用できない場合があります。virtual="～" の ～ には指定するファイルの仮想パス名（「http://サーバー名/パス名」の「/パス名」の部分）を指定します。</p>
+<pre class=c>
+&lt;!--#include file="header.html" --&gt;
+          :
+&lt;!--#include file="footer.html" --&gt;
+</pre>
+</div>
+
+<h4 id="Fsize">ファイルサイズ（#fsize）</h4>
+<h5 class="b0">◆ &lt;!--#fsize file="～" --&gt;</h5>
+<h5 class="t0">◆ &lt;!--#fsize virtual="～" --&gt;</h5>
+<div class=i>
+<p>指定したファイルのサイズを表示します。表示のフォーマットは &lt;!--#config sizefmt="..." --&gt; で指定したものに従います。file="～" と virtual="～" の説明は #include と同様です。</p>
+<pre class=c>
+&lt;!--#config sizefmt="abbrev" --&gt;
+&lt;a href="xxx.zip"&gt;ダウンロード&lt;/a&gt;
+（サイズ：&lt;!--#fsize file="xxx.zip" --&gt;）
+</pre>
+</div>
+
+<h4 id="ConfigSizefmt">ファイルサイズ表示形式（#config sizefmt）</h4>
+<h5>◆ &lt;!--#config sizefmt="～" --&gt;</h5>
+<div class=i>
+<p>#fsizeコマンドなどで表示されるファイルサイズのフォーマットを指定します。～ に <b>bytes</b> を指定するとバイト単位で、<b>abbrev</b> を指定すると Bytes, KBytes, MBytes などの適切な単位で表示されるようになります。</p>
+</div>
+
+<h4 id="Flastmod">最終更新時刻（#flastmod）</h4>
+<h5 class="b0">◆ &lt;!--#flastmod file="～" --&gt;</h5>
+<h5 class="t0">◆ &lt;!--#flastmod virtual="～" --&gt;</h5>
+<div class=i>
+<p>指定したファイルの最終更新時刻を表示します。表示のフォーマットは &lt;!--#config timefmt="..." --&gt; で指定したものに従います。file="～" と virtual="～" の説明は #include と同様です。</p>
+<pre class=c>
+最終更新日：&lt;!--#flastmod file="this.html" --&gt;
+</pre>
+</div>
+
+<h4 id="ConfigTimefmt">時刻表示形式（#config timefmt）</h4>
+<h5>◆ &lt;!--#config timefmt="～" --&gt;</h5>
+<div class=i>
+<p>#echoコマンドなどで時刻を表示する際のフォーマットを指定します。～ には %Y/%m/%d %H:%M:%s などの文字列を指定します。 %Y や %m は次のような意味を持ちます。</p>
+<table class="tb1">
+<tr><th>置換文字</th><th>表示例</th><th>意味</th></tr>
+<tr><td>%c</td><td>10/30/97 11:22:33</td><td>月/日/年 時:分:秒</td></tr>
+<tr><td>%x</td><td>10/30/97</td><td>月/日/年</td></tr>
+<tr><td>%X</td><td>11:22:33</td><td>時:分:秒</td></tr>
+<tr><td>%y</td><td>97</td><td>年(2桁)</td></tr>
+<tr><td>%Y</td><td>1997</td><td>年(4桁)</td></tr>
+<tr><td>%b</td><td>Oct</td><td>月(3文字)</td></tr>
+<tr><td>%B</td><td>October</td><td>月(フルスペル)</td></tr>
+<tr><td>%m</td><td>08</td><td>月(2桁)</td></tr>
+<tr><td>%a</td><td>Sat</td><td>曜日(3文字)</td></tr>
+<tr><td>%A</td><td>Saturday</td><td>曜日(フルスペル)</td></tr>
+<tr><td>%d</td><td>30</td><td>日(2桁)</td></tr>
+<tr><td>%j</td><td>223</td><td>1月1日からの日数</td></tr>
+<tr><td>%w</td><td>6</td><td>日曜日からの日数</td></tr>
+<tr><td>%p</td><td>PM</td><td>AMもしくはPM</td></tr>
+<tr><td>%H</td><td>23</td><td>時(24時間制)</td></tr>
+<tr><td>%I</td><td>11</td><td>時(12時間制)</td></tr>
+<tr><td>%M</td><td>44</td><td>分</td></tr>
+<tr><td>%S</td><td>56</td><td>秒</td></tr>
+<tr><td>%Z</td><td>JST</td><td>タイムゾーン</td></tr>
+</table>
+</div>
+
+<h4 id="Echo">環境変数表示（#echo）</h4>
+<h5>◆ &lt;!--#echo var="～" --&gt;</h5>
+<div class=i>
+<p>指定した環境変数の値を表示します。～ には <b>LAST_MODIFIED</b> などの環境変数名を指定します。環境変数名には次のようようなものがあります。</p>
+<table class="tb1">
+<tr><th>環境変数</th><th>意味</th></tr>
+<tr><td>DOCUMENT_NAME</td><td>この文書のファイル名(wwwssi.htm)</td></tr>
+<tr><td>DOCUMENT_URI</td><td>文書の仮想パス名(/wwwssi.htm)</td></tr>
+<tr><td>QUERY_STRING_UNESCAPED</td><td>WWWクライアントから検索用に送信された文字列。いくつかの記号文字(UNIXのシェルのメタ文字)はパックスラッシュ( \ )でエスケープされているので注意。</td></tr>
+<tr><td>DATE_LOCAL</td><td>現在の時刻(ローカル時刻)</td></tr>
+<tr><td>DATE_GMT</td><td>現在の時刻(グリニッジ標準時)</td></tr>
+<tr><td>LAST_MODIFIED</td><td>この文書の最終更新時刻</td></tr>
+</table>
+<p>サーバーによっては、「<a href="wwwcgi3.htm#CgiEnvironment" tppabs="http://www.tohoho-web.com/wwwcgi3.htm#CgiEnvironment">CGIスクリプトが参照可能な環境変数</a>」も表示できます。時間の表示は &lt;!--#config timefmt="..." --&gt; で指定したフォーマットに従います。</p>
+<pre class=c>
+最終更新日：&lt;!--#echo var="LAST_MODIFIED" --&gt;
+</pre>
+</div>
+
+<h4 id="Printenv">環境変数表示（#printenv）</h4>
+<h5>◆ &lt;!--#printenv --&gt;</h5>
+<div class=i>
+<p>使用可能な環境変数の一覧を表示します。Apache 1.2 以上のバージョンで使用できます。printenv と --&gt; の間にスペースを忘れないでください。</p>
+<pre class=c>
+&lt;pre&gt;
+&lt;!--#printenv --&gt;
+&lt;/pre&gt;
+</pre>
+</div>
+
+<h4 id="Set">変数設定（#set）</h4>
+<h5>◆ &lt;!--#set var="～" value="～" --&gt;</h5>
+<div class=i>
+<p>変数 ～ に、値 ～ を代入します。Apache 1.2 以上のバージョンで使用可能です。</p>
+<pre class=c>
+&lt;!--#set var="msg" value="Hello!!" --&gt;
+&lt;!--#echo var="msg" --&gt;
+</pre>
+</div>
+
+<h4 id="ConfigErrmsg">エラーメッセージ（#config errmsg）</h4>
+<h5>◆ &lt;!--#config errmsg="～" --&gt;</h5>
+<div class=i>
+<p>文書処理中にエラーが発生した場合のエラーメッセージを指定します。これはWWWサーバーのエラーログにも記録されます。</p>
+</div>
+
+<h4 id="Exec">コマンド実行（#exec）</h4>
+<h5 class="b0">◆ &lt;!--#exec cmd="～" --&gt;</h5>
+<h5 class="t0">◆ &lt;!--#exec cgi="～" --&gt;</h5>
+<div class=i>
+<p>～ で指定したコマンドやCGIを実行し、その結果を表示します。</p>
+<pre class=c>
+&lt;!--#exec cmd="/bin/ls" --&gt;
+&lt;!--#exec cgi="./cgi-bin/count.cgi" --&gt;
+</pre>
+<p>cgi="..." で呼び出す際は、CGI側で Content-type: text/html などのヘッダを出力してやる必要があります。</p>
+<p>引数(arg1, arg2, ...)を指定する際は、cmd="/bin/xxx arg1 arg2" などのようにスペースで区切って指定します。（perlで引数を受け取るには @ARGV を参照します。）</p>
+<p>サーバーの種類やバージョンによっては、コマンド名に絶対パスを指定できない、パス名で上位のディレクトリ(..)を参照できない、コマンドの引数を渡せない、コマンド実行時のカレントディレクトリが異なる・・・などの違いがあるようです。ちなみに、私が使用している Apache/1.3.4 では以下の状況でした。</p>
+<pre class=c>
+○ &lt;!--#exec cgi="xx.cgi" --&gt;
+× &lt;!--#exec cgi="xx.cgi arg1 arg2" --&gt;
+× &lt;!--#exec cgi="xx.cgi?arg1+arg2" --&gt;
+× &lt;!--#exec cmd="xxx.pl" --&gt;
+○ &lt;!--#exec cmd="./xxx.pl" --&gt;
+○ &lt;!--#exec cmd="./xxx.pl arg1 arg2" --&gt;
+○ &lt;!--#exec cmd="/bin/ls arg1 arg2" --&gt;
+</pre>
+</div>
+
+<h4 id="If">制御構文（#if, #elif, #else, #endif）</h4>
+<h5 class="b0">◆ &lt;!--#if expr="～" --&gt;</h5>
+<h5 class="t0 b0">◆ &lt;!--#elif expr="～" --&gt;</h5>
+<h5 class="t0 b0">◆ &lt;!--#else --&gt;</h5>
+<h5 class="t0">◆ &lt;!--#endif --&gt;</h5>
+<div class=i>
+<p>条件によって表示する内容を制御します。条件演算子には、等しい（=）、等しくない（!=）、辞書的に小さい（&lt;）、等しいか小さい（&lt;=）、大きい（&gt;）、等しいか大きい（&gt;=）、否定（!）、かつ（&amp;&amp;）、または（||）を使用できます。/.../ の形式を用いた場合は、正規表現によるマッチングを使用できます。#else や #endif の後ろのスペースを忘れないでください。</p>
+<pre class=c>
+&lt;!--#if expr="$HTTP_ACCEPT_LANGUAGE = ja" --&gt;
+こんにちわ。
+&lt;!--#else --&gt;
+Hello!!
+&lt;!--#endif --&gt;
+</pre>
+<pre class=c>
+&lt;!--#if expr="$HTTP_USER_AGENT = /compatible; MSIE/" --&gt;
+Internet Explorer をお使いですね。
+&lt;!--#endif --&gt;
+</pre>
+<pre class=c>
+&lt;!--#if expr="($a = A) &amp;&amp; ($b = B)" --&gt;
+こんにちわ。
+&lt;!--#endif --&gt;
+</pre>
+</div>
+
+<h4 id="Point">SSIの注意点</h4>
+<div class=i>
+<p>使えると便利な SSI ですが、いくつか注意点があります。</p>
+</div>
+<h5>◆ パフォーマンスが下がる</h5>
+<div class=i>
+<p>*.html や *.htm のファイルに対して SSI を使用可能にしておくと、Webサーバーが大半のファイルに対して SSI の構文解析や処理を行うことが必要となるため、パフォーマンスに影響を与えます。これは、*.shtml のファイルだけ SSI 処理するようにすることで軽減することができます。</p>
+</div>
+<h5>◆ セキュリティが弱まる</h5>
+<div class=i>
+<p>*.html や *.htm のファイルに対して SSI を使用可能にしておくと、例えば、HTMLタグを禁止していない掲示板で「&lt;!--#exec cmd="悪意のあるコマンド"--&gt;」と書き込まれた時にヤバイことになります。これも *.shtml のファイルだけ SSI処理するようにすることで軽減できますが、もし、何らかの手段で、サーバに *.shtml のファイルをアップロードされてしまうと、やはり、悪意のコマンドが実行されてしまうことになります。</p>
+<p>SSI を使用する際は、上記の点に十分ご注意ください。</p>
+</div>
+
+<h4 id="Refdoc">参考文献</h4>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://httpd.apache.org/docs/howto/docker_export.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://httpd.apache.org/docs/howto/docker_export.html'" tppabs="http://httpd.apache.org/docs/howto/ssi.html">http://httpd.apache.org/docs/howto/ssi.html</a></li>
+<li><a target="_top" href="javascript:if(confirm('http://httpd.apache.org/docs/mod/dockerfile.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://httpd.apache.org/docs/mod/dockerfile.html'" tppabs="http://httpd.apache.org/docs/mod/mod_include.html">http://httpd.apache.org/docs/mod/mod_include.html</a></li>
+</ul>
+
+<hr>
+<div>Copyright (C) 1997-2016 杜甫々</div>
+<div>初版：1997年3月8日、最終更新：2016年8月29日</div>
+<div>http://www.tohoho-web.com/wwwssi.htm</div>
+</body>
+</html>

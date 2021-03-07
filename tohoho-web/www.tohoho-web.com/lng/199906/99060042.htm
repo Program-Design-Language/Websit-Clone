@@ -1,0 +1,57 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>cookie を読み込むための Cシェルの記述方法を教えて</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>cookie を読み込むための Cシェルの記述方法を教えて</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060041.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060041.htm">[前に]</a>
+<a href="99060043.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060043.htm">[次に]</a>
+<hr>
+<span class=name>うなち</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/04(金) 22:38:50</span><br>
+cookie の値を読み込むのに、perlでスクリプトを作って使っています。<br>
+<br>
+ところが、Cシェルを使って cookie の値を読み込む必要が出てきました。<br>
+しかし、Cシェルの経験がほとんどない上、手元に適当な資料もないため、<br>
+困っています。<br>
+どなたかそのようなシェルスクリプトを作られた方がおりましたら、<br>
+コードを教えて頂けますよう、宜しくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/05(土) 07:02:09</span><br>
+#!/bin/csh -f<br>
+/usr/local/bin/perl&lt;&lt;'END'<br>
+foreach (split(/ *; */,$ENV{HTTP_COOKIE})) {<br>
+　($name,$value) = split(/=/, $_);<br>
+　$value =~ s/%([0-9A-Fa-f][0-9A-Fa-f])/pack("C", hex($1))/eg;<br>
+　$cookie{$name} = $value;<br>
+}<br>
+......<br>
+END<br>
+<br>
+…というのは冗談ですが、<br>
+<br>
+#!/bin/csh -f<br>
+echo $HTTP_COOKIE | sed 's/ *\; */;/g;' | tr \; \\n<br>
+<br>
+てな感じでやってみては。しかしなぜにcsh?<br>
+<hr>
+<span class=name>うなち</span>
+<span class=time>1999/06/08(火) 15:40:31</span><br>
+アドバイスありがとうございます。<br>
+汎用的に作りたかったのですが、時間がなかったため、ほとんどハードコードに近いですが、以下のように<br>
+コーディングしました。ご参考まで。<br>
+汎用的な処理方法を作られた方がいましたら、教えて下さい。<br>
+<br>
+set cookie_value = `echo $HTTP_COOKIE | sed -e 's/\; */\;/g' | nawk '{ printf("%s\n", substr($0, i<br>
+ndex($0,"COOKIE_NAME=")+9, 7)) }'`;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060041.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060041.htm">[前に]</a>
+<a href="99060043.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060043.htm">[次に]</a>
+</body>
+</html>

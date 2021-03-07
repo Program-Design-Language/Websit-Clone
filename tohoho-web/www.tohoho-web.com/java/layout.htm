@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのJava入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>レイアウト</h2>
+
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="swing.htm" tppabs="http://www.tohoho-web.com/java/swing.htm">[前に]</a>
+<a href="listener.htm" tppabs="http://www.tohoho-web.com/java/listener.htm">[次に]</a>
+
+<h4 id="LayoutManager">レイアウトを制御する（LayoutManager）</h4>
+<div class=i>
+<p>画面上にボタンなどの部品を配置する際に使用するレイアウトアルゴリズムには下記のものなどがあります。</p>
+<ul>
+<li>FlowLayout - 流し込みレイアウト
+<li>GridLayout - グリッドレイアウト
+<li>BorderLayout - ボーダーレイアウト
+<li>BorderBagLayout - ボーダーバッグレイアウト
+<li>CardLayout - カードレイアウト
+<li>BoxLayout - ボックスレイアウト
+</ul>
+</div>
+
+<h4 id="FlowLayout">フローレイアウト（FlowLayout）</h4>
+<div class=i>
+<p><b>FlowLayout</b> は、左上から右下に向けて、部品を流し込むようにレイアウトします。HTML で文字や画像を流し込むのに似ています。</p>
+<div class="tab">FlowLayout</div>
+<pre class=c2>
+    <em>setLayout(new FlowLayout());</em>
+    add(b1);
+    add(b2);
+    add(b3);
+</pre>
+<div class="center" style="width:300px; border: 1px solid gray; padding: 5px;">
+<button style="width:100px;">B1</button>　<button style="width:100px;">B2</button><br>
+<button style="width:100px; margin-top: 5px;">B3</button>
+</div>
+</div>
+
+<h4 id="GridLayout">グリッドレイアウト（GridLayout）</h4>
+<div class=i>
+<p><b>GridLayout</b> は、画面を n×m の格子に分割し、それぞれの升目に部品をレイアウトします。</p>
+<div class="tab">GridLayout</div>
+<pre class=c2>
+    <em>setLayout(new GridLayout(2, 3));</em>
+    add(b1);
+    add(b2);
+    add(b3);
+    add(b4);
+    add(b5);
+    add(b6);
+</pre>
+<button style="width:100px;">B1</button><button style="width:100px;">B2</button><button style="width:100px;">B3</button><br>
+<button style="width:100px;">B4</button><button style="width:100px;">B5</button><button style="width:100px;">B6</button><br>
+</div>
+
+<h4 id="GridBagLayout">グリッドバッグレイアウト（GridBagLayout）</h4>
+<div class=i>
+<p><b>GridBagLayout</b> を用いることで、画面を n×m の升目に分割し、(0, 0) の座標から幅 1、高さ 3 の部品を配置することができます。</p>
+<div class=f>§BorderLayout</div>
+<pre class=c>
+    <em>GridBagLayout gbl = new GridBagLayout();</em>
+
+    void addButton(Button b, int x, int y, int w, int h) {
+        <em>GridBagConstraints gbc = new GridBagConstraints();</em>
+        <em>gbc.fill = GridBagConstraints.BOTH;</em>
+        <em>gbc.gridx = x;</em>
+        <em>gbc.gridy = y;</em>
+        <em>gbc.gridwidth = w;</em>
+        <em>gbc.gridheight = h;</em>
+        <em>gbl.setConstraints(b, gbc);</em>
+        add(b);
+    }
+
+    Test() {
+            :
+        <em>setLayout(gbl);</em>
+        addButton(b1, 0, 0, 1, 3);   // (0, 0) 幅=1, 高さ=3
+        addButton(b2, 1, 0, 1, 1);   // (1, 0) 幅=1, 高さ=1
+        addButton(b3, 1, 1, 1, 1);   // (1, 1) 幅=1, 高さ=1
+        addButton(b4, 1, 2, 1, 1);   // (1, 2) 幅=1, 高さ=1
+            :
+    }
+</pre>
+<table style="border-collapse:collapse;">
+<tr><td rowspan=3><button style="width:30px; height:90px;">B1</button></td><td><button style="width:30px; height:30px;">B2</button></td></tr>
+<tr><td><button style="width:30px; height:30px;">B3</button></td></tr>
+<tr><td><button style="width:30px; height:30px;">B4</button></td></tr>
+</table>
+</div>
+
+<h4 id="BorderLayout">ボーダーレイアウト（BorderLayout）</h4>
+<div class=i>
+<p><b>BorderLayout</b> は、画面を上下左右中の 5つのブロックに分け、それぞれに部品を配置します。5つのブロックはそれぞれ、東西南北中央（East, West, South, North, Center）で示されます。</p>
+<div class="tab">BorderLayout</div>
+<pre class=c2>
+    <em>setLayout(new BorderLayout());</em>
+    add(<em>"North"</em>, b1);
+    add(<em>"East"</em>, b2);
+    add(<em>"South"</em>, b3);
+    add(<em>"West"</em>, b4);
+    add(<em>"Center"</em>, b5);
+</pre>
+<div class="nowrap">
+ <button style="width:300px;">B1</button><br>
+ <button style="width:100px;">B4</button><button style="width:100px;">B5</button><button style="width:100px;">B2</button><br>
+ <button style="width:300px;">B3</button>
+</div>
+</div>
+
+<h4 id="CardLayout">カードレイアウト（CardLayout）</h4>
+<div class=i>
+<p><b>CardLayout</b> は、複数の部品をカードのスタックとして保持し、一番最初のカードだけを画面に表示します。カードを入れ替えるには next()、previous()、first()、last()、show() などのメソッドを用います。</p>
+<div class="tab">CardLayout</div>
+<pre class=c2>
+    <em>CardLayout cl = new CardLayout();</em>
+    <em>setLayout(cl);</em>
+    add("b1", b1);
+    add("b2", b2);
+    add("b3", b3);
+    <em>cl.show(this, "b2");</em>
+</pre>
+<button style="width:150px; height:60px;">B2</button><br>
+</div>
+
+<h4 id="BoxLayout">ボックスレイアウト（BoxLayout）</h4>
+<div class=i>
+<p><b>BoxLayout</b> は Swing で追加されたレイアウトで、部品を単純に横方向または縦方向にならべていきます。横方向の場合、画面の横幅が狭くなっても自動改行されない点が FlowLayout と異なります。</p>
+<div class="tab">BoxLayout</div>
+<pre class=c2>
+    <em>setLayout(new BoxLayout(this, BoxLayout.X_AXIS);</em>
+    add(b1);
+    add(b2);
+    add(b3);
+</pre>
+<div class="nowrap">
+ <button style="width:100px;">B1</button><button style="width:100px;">B2</button><button style="width:100px;">B3</button>
+</div>
+</div>
+
+<h4 id="Panel">パネルによるレイアウト（Panel）</h4>
+<div class=i>
+<p><b>パネル</b>（<b>Panel</b>）は、ボタンなどの部品や他のパネルを乗せることができる無地の板です。パネルを用いることで、柔軟なレイアウトが可能になります。下記の例では、フレームを左右に分割してそれぞれにパネル p1、p2 を貼り付けています。さらに、p1 には b1 を、p2 には b2、b3、b4 を貼り付けています。</p>
+<div class="tab">PanelLayout</div>
+<pre class=c2>
+import java.awt.*;
+
+public class Test extends Frame {
+    Panel p1 = new Panel();
+    Panel p2 = new Panel();
+    Button b1 = new Button("B1");
+    Button b2 = new Button("B2");
+    Button b3 = new Button("B3");
+    Button b4 = new Button("B4");
+    public Test() {
+        super("Test");
+        setLayout(new GridLayout(1, 2));
+        add(p1);
+        add(p2);
+        p1.setLayout(new GridLayout(1, 1));
+        p2.setLayout(new GridLayout(3, 1));
+        p1.add(b1);
+        p2.add(b2);
+        p2.add(b3);
+        p2.add(b4);
+        setSize(300, 200);
+        show();
+    }
+    public static void main (String args []) {
+        new Test();
+    }
+}
+</pre>
+<table class="collapse">
+<tr><td rowspan=3><button style="width:50px; height:90px;">B1</button></td><td><button style="width:50px; height:30px;">B2</button></td></tr>
+<tr><td><button style="width:50px; height:30px;">B3</button></td></tr>
+<tr><td><button style="width:50px; height:30px;">B4</button></td></tr>
+</table>
+</div>
+
+<hr>
+<div>http://www.tohoho-web.com/java/layout.htm</div>
+<div>初版：2004年6月26日、最終更新：2004年6月26日</div>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="swing.htm" tppabs="http://www.tohoho-web.com/java/swing.htm">[前に]</a>
+<a href="listener.htm" tppabs="http://www.tohoho-web.com/java/listener.htm">[次に]</a>
+</body>
+</html>

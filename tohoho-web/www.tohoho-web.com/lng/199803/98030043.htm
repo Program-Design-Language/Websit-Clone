@@ -1,0 +1,60 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>perlの配列について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>perlの配列について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199803/index.htm">[上に]</a>
+<a href="98030042.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030042.htm">[前に]</a>
+<a href="98030044.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030044.htm">[次に]</a>
+<hr>
+<span class=name>ちゅー太</span>
+<span class=time>1998/03/13(金) 15:30:06</span><br>
+　下のプログラムなんですが、３行目のコメントを外さないとエラーになるんです。<br>
+　なぜなんですか？<br>
+<br>
+<br>
+{<br>
+	&amp;func;<br>
+#	$a = $data[0];<br>
+	print "Content-type: text/html\n\n";<br>
+	print "@data";<br>
+}<br>
+<br>
+sub func<br>
+{<br>
+	$data[0] = "abcdefg\n";<br>
+	$data[1] = "hijklmn\n";<br>
+}<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/13(金) 21:59:22</span><br>
+面白いですね。perl4 では問題なく、perl5 でのみエラーになります。この場合に限らず、未定義配列をダブルクオートの内部で使うとperl5 がエラーにしてしまう理由をワタシも知りたいです。<br>
+<br>
+エラーの原因は、@data は（配列ではないようなので）、文字列として出力するには \ を付けろ！ということです。また、このエラーは実行時エラーではなく、コンパイルエラーなので、単純にソースコード上の<br>
+　print "@data";<br>
+前に @data は配列だよ！と教えてやる必要があるようです。だから、<br>
+　$a = $data[0];<br>
+でもいいし、<br>
+　@data;<br>
+だけでもＯＫです（ -w で警告は出ますが）。<br>
+　defined @data &amp;&amp; print "@data";<br>
+でも大丈夫ですが、<br>
+　print "@data" if defined @data;<br>
+ではダメでした。（なんか気に入らないなぁ…）<br>
+（perl5 のラクダ本を買わなきゃいけないのかなぁ…）<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/13(金) 22:20:04</span><br>
+書き忘れです。<br>
+このあいだ perl4 と perl5 での @ の取り扱いの違いを知ってから、perl4 用に書かれた<br>
+　print "To: someone@somewhere.com\n";<br>
+のようなスクリプトが実行されるのを防ぐための緊急避難的な措置なのかなぁ、とも思っているのですが、ご存知の方がいらしゃいましたら、ぜひ教えて下さい。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199803/index.htm">[上に]</a>
+<a href="98030042.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030042.htm">[前に]</a>
+<a href="98030044.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030044.htm">[次に]</a>
+</body>
+</html>

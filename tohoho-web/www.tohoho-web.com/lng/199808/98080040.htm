@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Web上でファイル内容の更新を行うには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Web上でファイル内容の更新を行うには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199808/index.htm">[上に]</a>
+<a href="98080039.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080039.htm">[前に]</a>
+<a href="98080041.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080041.htm">[次に]</a>
+<hr>
+<span class=name>兎</span>
+<span class=time>1998/08/20(木) 14:34:31</span><br>
+Web上からファイル名を指定し、<br>
+その内容を書き換えるCGIスクリプトを組んでいます。<br>
+が、パーミッションが書き込み可のファイルしか更新することができません。<br>
+<br>
+こればっかりは当たり前のことなんでしょうが、<br>
+もし対策があればぜひとも教えていただきたいのですが・・・・。<br>
+<br>
+目的のファイルのパーミッションを変える方法を試してみましたが、<br>
+Perlのchmodは、他人権限ではうまく動いてくれませんでした。<br>
+<br>
+みなさん、よろしくお願いいたします。<br>
+<hr>
+<span class=name>tetsuya</span>
+<span class=time>1998/08/20(木) 15:06:24</span><br>
+<font color="#CC8000">＞パーミッションが書き込み可のファイルしか・・・</font><br>
+<br>
+　いや、そういうもんじゃないかと(汗<br>
+<br>
+　例えばサーバがapacheならば、<br>
+　デフォルトでcgiの実行者は「nobody」さんという人になり、<br>
+　この仮想的な人は一応パーミッションが「other:write」を<br>
+　許可していないと書き込みが出来ません。<br>
+　つまりパーミッションが------rw-を満たしている必要がある。<br>
+<br>
+　コレを避けるには、「cgiスクリプトそのものの所有者が<br>
+　実行者という扱いになる」という方策があります。<br>
+　大抵、web用のファイルは自分のアカウントが所有者なので<br>
+　cgi実行者も自分なら・・というわけです。<br>
+<br>
+　こういう事を実現してくれているプロバイダもありますが、<br>
+　ないのならちょっと難しいです。<br>
+　実現するためにはサーバデーモンに手を入れる必要があり、<br>
+　apacheならsuEXECという外部モジュールが必要になります。<br>
+<br>
+　そう言うわけで手軽な逃げ方。<br>
+　全てのファイルに対してchmod o+rwを実行。<br>
+　（実行するのは当然ftp上やtelnet上です）<br>
+　更にディレクトリにも実行。（コレが重要）<br>
+　こうするとnobodyさんも自由に書けます。<br>
+　新規ファイルも作り放題。<br>
+<br>
+　但し、言うまでもなく安全性がかなり低下しますので<br>
+　それなりの方策を練って下さい。あまり勧めません私は。<br>
+<hr>
+<span class=name>tetsuya</span>
+<span class=time>1998/08/20(木) 15:16:07</span><br>
+　申し訳ない、補足・・<br>
+　というか読解が足りなかったかもしれないので・・<br>
+<br>
+<br>
+<font color="#CC8000">＞Perlのchmodは他人権限では・・・</font><br>
+<br>
+　というのは以下の２つ考えられます。<br>
+<br>
+　パーミッションを変えようとしたファイルは<br>
+　そもそも所有者が貴方自身であるのか？<br>
+　（つまりperlをcgiとして動かしていて、<br>
+　　実行者nobody扱いなのでchmod出来ない）<br>
+<br>
+　又は、ファイルの所有者が元々自分ではないのか？<br>
+　（perlスクリプトをtelnet上で動かしたりするときは<br>
+　　実行権限はtelnetしたアカウントと同じになるので<br>
+　　自分のファイルのchmodは簡単に出来るはず）<br>
+<br>
+　前者の場合なら私が上に書いた浅薄な知識も少しは<br>
+　役に立つと思いますが、後者ならお手上げです。<br>
+　他人のファイルをいじれる権限は基本的にスーパーユーザー、<br>
+　大抵はroot(NTはAdministrator)に限られます。<br>
+<br>
+<hr>
+<span class=name>兎</span>
+<span class=time>1998/08/20(木) 18:07:17</span><br>
+<span class=resolv>[[解決]]</span><br>
+早速の返答、ありがとうございます（＾＾）＞tetsuyaさん<br>
+<br>
+<font color="#CC8000">＞全てのファイルに対してchmod o+rwを実行。</font><br>
+この方法で逃げてました。<br>
+セキュリティ上の問題がつきまとうので、個人的にイヤだったのですが。<br>
+<br>
+やはりシステム自体の壁は越えられなかったということで・・・・。<br>
+残念ですがきっぱり諦めることにします（・・、）<br>
+<br>
+詳しい返答、誠にありがとうございました（＾＾）<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199808/index.htm">[上に]</a>
+<a href="98080039.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080039.htm">[前に]</a>
+<a href="98080041.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080041.htm">[次に]</a>
+</body>
+</html>

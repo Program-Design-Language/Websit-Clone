@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>C言語CGIのJavascript内の’％’を認識させるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>C言語CGIのJavascript内の’％’を認識させるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070061.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070061.htm">[前に]</a>
+<a href="99070063.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070063.htm">[次に]</a>
+<hr>
+<span class=name>しん</span>
+<span class=email><a href="mailto:s-adachi@comp.hitachi.co.jp">[E-Mail]</a></span>
+<span class=time>1999/07/07(水) 19:37:32</span><br>
+このラウンジ内で紹介されていたJavascriptをCGIに実装したのですが、<br>
+（TEXTAREAで入力文字数を制限するには？という質問）<br>
+ロジック内にある’％’が巧く認識されていないみたいで、<br>
+正常に動作してもらえません。<br>
+（ソースを表示させると'%'が消えている）<br>
+’％’をきちんと認識させるにはどうしたらよいのでしょうか？<br>
+<br>
+下のリンク先が参照したロジックです。<br>
+<a href="../199808/98080062.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080062.htm">../199808/98080062.htm</a><br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/07(水) 19:58:32</span><br>
+どういうふうに書いたのかわからんので何とも言えませんが<br>
+(ソースくらい公開しましょうや)、printf/sprintfの第一引数に<br>
+そのまま%を書いたとか?<br>
+<br>
+printfでは、%dや%sなどでフォーマットの指定をするので、<br>
+そのまま「%」を置きたい場合は「%%」としなくてはいけません。<br>
+<hr>
+<span class=name>maeda</span>
+<span class=email><a href="mailto:maeda@octnet.co.jp">[E-Mail]</a></span>
+<span class=time>1999/07/07(水) 20:05:46</span><br>
+あれ？ 「\%」じゃありませんでしたっけ？f(?_?)<br>
+<hr>
+<span class=name>maeda</span>
+<span class=email><a href="mailto:maeda@octnet.co.jp">[E-Mail]</a></span>
+<span class=time>1999/07/07(水) 20:10:36</span><br>
+↑失礼。<br>
+　同じ記号を続けて記述した場合、その記号そのものになるんでしたね(^_^;<br>
+<hr>
+<span class=name>とこやん</span>
+<span class=time>1999/07/07(水) 20:11:20</span><br>
+あれ？とこやんは「%%」でやってます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/07(水) 20:12:59</span><br>
+Cでの文字列の仕様として、<br>
+　エスケープはするときは「\」を付けるべし<br>
+と決まっているわけです。C言語においては、%は特別な文字ではありません。<br>
+<br>
+で、%% はprintfに渡す文字列の話。Cという言語自体の仕様ではなく、<br>
+printfというライブラリの仕様です。scanf/sscanfも同じ。<br>
+<br>
+man 3 printf<br>
+　　%　　A `%' is written. No argument is converted. The complete conver-<br>
+　　　　　sion specification is `%%'.<br>
+<br>
+% cat a.c<br>
+main(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printf("abc%\n");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printf("abc\%\n");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printf("abc%%\n");<br>
+}<br>
+% cc a.c ; ./a.out<br>
+abc<br>
+abc<br>
+abc%<br>
+<hr>
+<span class=name>maeda</span>
+<span class=email><a href="mailto:maeda@octnet.co.jp">[E-Mail]</a></span>
+<span class=time>1999/07/07(水) 20:21:32</span><br>
+　確認完了。MS-Cでは、<br>
+<br>
+「warning C4129: '%' : エスケープ シーケンスとして正しく認識されませんでした。」<br>
+<br>
+という警告が出ました(^_^;<br>
+<br>
+＃ ちなみに、実際には半角カナで出力されています。<br>
+＃ そーか、ずっと勘違いしてたです。<br>
+<hr>
+<span class=name>しん</span>
+<span class=email><a href="mailto:s-adachi@comp.hitachi.co.jp">[E-Mail]</a></span>
+<span class=time>1999/07/08(木) 08:59:51</span><br>
+<span class=resolv>[[解決]]</span><br>
+みなさん回答有難うございました。m(__)mペコ<br>
+%%で%を文字として認識してくれるんですね。<br>
+Printfとかの仕様だとは全然気がつかなくって、<br>
+訳も分からずデコードの%として認識されてるのかなー？なーんて変な方向にも考えていました。<br>
+<br>
+遅れ馳せながら自分の遭遇していた現象です。<br>
+<br>
+printf("for(;(i=escval.indexOf('%', i))&gt;-1; i++) {\n");<br>
+<br>
+上の行の'%'が認識されずページを表示してソースを見ると、<br>
+for(;(i=escval.indexOf(', i))&gt;-1; i++)<br>
+と表示されていました。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/09(金) 16:12:54</span><br>
+<font color="#CC8000">&gt; C言語CGIのJavascript内の’％’を認識させるには？</font><br>
+<font color="#CC8000">&gt; このラウンジ内で紹介されていたJavascriptをCGIに実装したのですが、</font><br>
+この文を読んで「何言ってるんだろう?」と思ってたんですが、<br>
+どうやら「Javascriptを含むHTMLを出力するCGIをC言語で作成した」<br>
+ってことのようですね。<br>
+<br>
+症状は具体的に。文章はわかりやすく。投稿する前に3度読み直すこと<br>
+(僕は3回読み直してます)。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070061.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070061.htm">[前に]</a>
+<a href="99070063.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070063.htm">[次に]</a>
+</body>
+</html>

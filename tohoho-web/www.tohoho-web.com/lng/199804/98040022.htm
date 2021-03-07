@@ -1,0 +1,96 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>perlで読み書き両用ファイルオープンするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>perlで読み書き両用ファイルオープンするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040021.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040021.htm">[前に]</a>
+<a href="98040023.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040023.htm">[次に]</a>
+<hr>
+<span class=name>織田信長</span>
+<span class=time>1998/04/07(火) 14:17:27</span><br>
+以前はファイル・ロックにとほほさん式のディレクトリ作成方式を<br>
+使っていましたが、なんらかの原因でロック・ディレクトリが残っ<br>
+てしまうことが多く、flockを使う方法に変更しました。<br>
+具体的には、<br>
+<br>
+　open(LOG, "file");<br>
+　flock(LOG, 1);<br>
+　@log = &lt;LOG&gt;;<br>
+　flock(LOG, 8);<br>
+　close(LOG);<br>
+<br>
+　　　@log への操作<br>
+<br>
+　open(LOG, "&gt;file");<br>
+　flock(LOG, 2);<br>
+　print LOG @log;<br>
+　flock(LOG, 8);<br>
+　close(LOG)<br>
+<br>
+ってな感じです。<br>
+<br>
+でも、@logへの操作中に他プロセスがfileをアクセスできてしまいま<br>
+すよね？だから、<br>
+<br>
+　open(LOG, "file");<br>
+　flock(LOG, 2);<br>
+　@log = &lt;LOG&gt;;<br>
+<br>
+　　　@log への操作<br>
+<br>
+　print LOG @log;<br>
+　flock(LOG, 8);<br>
+　close(LOG);<br>
+<br>
+ってな感じにしたいのですが、読み書き両用openがうまく行きません。<br>
+"+&lt;file" や "+&gt;file"、"+&gt;&gt;file" など、いろいろ書式があるのですが、<br>
+どれもこれも 「@logが取り出せて、print LOG が完全上書きになる」<br>
+という条件を満たしてくれません。<br>
+<br>
+ご指南のほどおねがいいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/07(火) 23:47:59</span><br>
+試してませんけど、別のファイルをロックファイルとして<br>
+扱って、そのファイルをflockしている間に目的ファイルを<br>
+操作するというのはどうですか？<br>
+<br>
+あと、これも試してませんが、seekを使うとか。これは無理っぽいかな。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/04/07(火) 23:50:29</span><br>
+以下のコードでできるようです。<br>
+<br>
+open(LOG, "+&gt;file");<br>
+flock(LOG, 2);<br>
+@log = &lt;LOG&gt;;<br>
+seek(LOG, 0, 0);<br>
+print LOG "HEHE";<br>
+truncate(LOG, tell());<br>
+flock(LOG, 8);<br>
+close(LOG);<br>
+<br>
+ただし、truncate()はサポートしていないシステムもあるので注意。<br>
+<hr>
+<span class=name>織田信長</span>
+<span class=time>1998/04/08(水) 19:23:55</span><br>
+<span class=resolv>[[解決]]</span><br>
+<font color="#CC8000">＞試してませんけど、別のファイルをロックファイルとして</font><br>
+<font color="#CC8000">＞扱って、そのファイルをflockしている間に目的ファイルを</font><br>
+<font color="#CC8000">＞操作するというのはどうですか？</font><br>
+<br>
+おぉ！ これは気づかなかった！<br>
+早速試してみたところ、どうやらＯＫのようです。<br>
+ありがとうございました。<br>
+<br>
+とほほさんもありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040021.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040021.htm">[前に]</a>
+<a href="98040023.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040023.htm">[次に]</a>
+</body>
+</html>

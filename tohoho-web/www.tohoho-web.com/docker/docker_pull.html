@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Docker pull/push/search/login/logoutコマンド - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Docker pull/push/search/login/logoutコマンド</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+<a href="command.html" tppabs="http://www.tohoho-web.com/docker/command.html">コマンド</a> &gt;
+docker pull/push/search/login/logout
+
+<h4 id="pull">docker pull</h4>
+<div class="i">
+<p>Dockerレジストリからイメージをダウンロードします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker pull</em> centos:7
+# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+centos              7                   9f38484d220f        5 months ago        202MB
+</pre>
+<p>タグ(:タグ名)を省略すると、最新版(:latest)をダウンロードします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker pull centos
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+centos              latest              67fa590cfc1c        11 days ago         202MB
+centos              7                   9f38484d220f        5 months ago        202MB
+</pre>
+<p>下記のオプションが使用できます。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>-a</b>, <b>--all-tags</b>          すべてのタグをダウンロードする
+<b>--disable-content-trust</b> イメージの認証をスキップする
+<b>-q</b>, <b>--quiet</b>              経過情報を表示しない
+</pre>
+</div>
+
+<h4 id="push">docker push</h4>
+<div class="i">
+<p>Dockerレジストリにイメージをアップロードします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker images
+# docker tag my-app registry.example.com/my-app
+# <em>docker push</em> registry.example.com/my-app
+</pre>
+<p>次の例では、AWS の ECR(Elastic Container Registry)にイメージをプッシュします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# $(aws ecr get-login --no-include-email)
+# docker tag my-app ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-app
+# <em>docker push</em> ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-app
+</pre>
+<p><b>--disable-content-trust</b> オプションは、アップロード時のイメージの署名をスキップします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker push --disable-content-trust registry.example.com/my-app
+</pre>
+</div>
+
+<h4 id="search">docker search</h4>
+<div class="i">
+<p>Dockerレジストリから指定した単語を含むイメージを検索します。STARS は人気度(スター数)、OFFICIAL は各ベンダが公式イメージとして提供しているものを示します。AUTOMATED は自動構築されたものであるかを示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker search</em> mariadb
+NAME                      DESCRIPTION                                      STARS       OFFICIAL    AUTOMATED
+mariadb                   MariaDB is a community-developed fork of MyS...  2962        [OK]
+bitnami/mariadb           Bitnami MariaDB Docker Image                     105                     [OK]
+linuxserver/mariadb       A Mariadb container, brought to you by Linux...  81
+toughiq/mariadb-cluster   Dockerized Automated MariaDB Galera Cluster ...  38                      [OK]
+</pre>
+<p><b>--limit</b> オプションは、最大表示件数を指定します。省略時は 25件です。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker search <em>--limit 100</em> mariadb
+</pre>
+<p><b>-f</b> (<b>--filter</b>) オプションは、検索のフィルタを行います。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker search <em>-f stars=100</em> mariadb    <span class="cm">STARS が100以上のもの</span>
+# docker search <em>-f is-official</em> mariadb  <span class="cm">オフィシャルなもの</span>
+# docker search <em>-f is-automated</em> mariadb <span class="cm">自動構築されたもの</span>
+</pre>
+<p><b>--no-trunc</b> オプションをつけると、スター数が 3以上のものについて、DESCRIPTION を省略せずに表示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker search <em>--no-trunc</em> mariadb
+</pre>
+<p><b>--format</b> (<b>--format</b>) オプションは、Go template 形式でフォーマットを指定します。指定可能な名前は、Name, Description, StarCount, IsOfficial, IsAutomated です。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker search <em>--format '{{.Name}} {{.StarCount}}'</em> mariadb
+</pre>
+</div>
+
+<h4 id="login">docker login</h4>
+<div class="i">
+<p>Dockerレジストリにログインします。レジストリを省略した場合は Docker Hub (http://docker.io/) にログインします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker login</em> -u ${USER_NAME} -p ${PASSWD} registry.example.com
+</pre>
+<p>下記のオプションが使用できます。</p>
+<div class="title-tab">Options</div>
+<pre class="c2">
+<b>-u</b>, <b>--username</b> <i>string</i>  ユーザ名
+<b>-p</b>, <b>--password</b> <i>string</i>  パスワード
+<b>--password-stdin</b>       パスワードを標準入力から読み取る
+<b>--help</b>                 ヘルプ表示
+</pre>
+</div>
+
+<h4 id="logout">docker logout</h4>
+<div class="i">
+<p>Dockerレジストリからログアウトします。レジストリを省略した場合は Docker Hub (http://docker.io/) からログアウトします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker logout</em> registry.example.com
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class="i">
+<ul>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/internals.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/internals.htm'" tppabs="http://docs.docker.jp/engine/reference/commandline/pull.html">http://docs.docker.jp/engine/reference/commandline/pull.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/angular.min.js  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/angular.min.js'" tppabs="http://docs.docker.jp/engine/reference/commandline/push.html">http://docs.docker.jp/engine/reference/commandline/push.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/filter  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/filter'" tppabs="http://docs.docker.jp/engine/reference/commandline/search.html">http://docs.docker.jp/engine/reference/commandline/search.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/input  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/input'" tppabs="http://docs.docker.jp/engine/reference/commandline/login.html">http://docs.docker.jp/engine/reference/commandline/login.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/api  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/api'" tppabs="http://docs.docker.jp/engine/reference/commandline/logout.html">http://docs.docker.jp/engine/reference/commandline/logout.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年9月1日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/docker_pull.html</div>
+</body>
+</html>

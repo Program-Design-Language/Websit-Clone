@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CGIの仕様 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>CGIの仕様</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwcgi.htm" tppabs="http://www.tohoho-web.com/wwwcgi.htm">とほほのCGI入門</a> &gt;
+CGIの仕様
+
+<h4 id="Mokuji">目次</h4>
+<ul>
+<li><a href="#CgiHeader">CGIスクリプトが書き出すヘッダ情報</a></li>
+<li><a href="#CgiParameter">CGIスクリプトへ渡すパラメータ</a></li>
+<li><a href="#CgiEncode">CGIデータのエンコード</a></li>
+<li><a href="#CgiEnvironment">CGIスクリプトが参照可能な環境変数</a></li>
+</ul>
+
+<h4 id="CgiHeader">CGIスクリプトが書き出すヘッダ情報</h4>
+<div class=i>
+<p>CGI スクリプトの実行結果（出力）の1行目は、以下の形式がよく使用されます。ヘッダ情報が完了した次の行)は必ず空白行にしてください。これを怠ると、ヘッダ行が完了したとみなされず、CGI スクリプトは動作しません。</p>
+</div>
+<h5>Content-type: <i>TypeName</i></h5>
+<div class=i>
+<p>最もよく使われる形式です。<i>TypeName</i> には MIME タイプと呼ばれる名前を指定します。MIME タイプには次のようなものがあります。</p>
+<ul>
+<li>text/html ... HTML文書</li>
+<li>text/plain ... べた文書</li>
+<li>image/gif ... GIFファイル</li>
+<li>image/jpeg ... JPEGファイル</li>
+<li>video/mpeg ... MPEGファイル</li>
+</ul>
+</div>
+
+<h5>Location: <i>UrlName</i></h5>
+<div class=i>
+<p>指定したURLにジャンプします。URLを http:// または https:// ではじまる完全URLで指定してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+#!/usr/local/bin/perl
+print "Location: http://xxx.yyy.zzz/\n";
+print "\n";
+</pre>
+</div>
+
+<h5>Status: <i>StatusCode</i></h5>
+<div class=i>
+<p>ブラウザに状態コードを返します。これは、HTTP ヘッダではなく、HTTP のステータスコードとして返却されます。</p>
+</div>
+
+<h4 id="CgiParameter">CGIスクリプトへ渡すパラメータ</h4>
+<div class=i>
+<p>CGI スクリプトにパラメータを渡すには以下のような方法があります。それぞれの方法で引き渡したパラメータを Perl で記述した CGI で参照する方法は、<a href="wwwcgi4.htm#CgiTemplate" tppabs="http://www.tohoho-web.com/wwwcgi4.htm#CgiTemplate">CGIスクリプトのテンプレート</a> を参照してください。</p>
+<p><b>◆ コマンドライン引数で渡す</b></p>
+<p>以下のような形式で CGI スクリプトを呼び出すことにより渡します。引数1、引数2が CGI スクリプトのコマンドライン引数になります。Perl の場合、これらの引数は配列 @ARGV や、環境変数 QUERY_STRING から読み出します。サーバーによっては、環境変数 @ARGV は参照できない場合もあります。</p>
+<div class="tab">URL</div>
+<pre class=c2>
+http://...../cgi-bin/xxx.cgi?引数1+引数2
+</pre>
+<p>引数に日本語や特殊記号を用いる場合は、適切なエンコードを行う必要があります。エンコード方式は、呼び出し側と CGI 側で整合がとれていれば %nn 形式でも BASE64 形式でもなんでも構いません。</p>
+<p>ダブルクォート（"）や感嘆符（!）など、引数に、UNIX のシェルで意味を持つ記号が含まれていると、\" や \! のように、バックスラッシュ（\）でエスケープされてしまうことがありますので注意してください。</p>
+<p><b>◆ METHOD=GETで渡す</b></p>
+<p>次のような形式でCGIスクリプトに渡します。CGIスクリプトは、これを環境変数の QUERY_STRING から読み出します。</p>
+<div class="tab">URL</div>
+<pre class=c2>
+http://...../cgi-bin/xxx.cgi?名前1=値1&amp;名前2=値2
+</pre>
+<p>フォームから METHOD=GET で呼び出した場合も、この形式でデータが渡されます。この場合、記号などは %nn 形式に適切にエンコードされます。</p>
+<p>環境変数のサイズには上限があるので、大きなデータを転送する時は METHOD=POST を用います。</p>
+<p><b>◆ URLにスラッシュ(/)をつけて渡す</b></p>
+<p>以下のような形式で CGI スクリプトを呼び出すこともできます。/引数1/引数2 の部分を環境変数 PATH_INFO で読み取ります。</p>
+<div class="tab">URL</div>
+<pre class=c2>
+http://...../cgi-bin/xxx.cgi/引数1/引数2
+</pre>
+<p><b>◆ METHOD=POSTで渡す</b></p>
+<p>フォームから METHOD=POST で呼び出した場合は、データはURLではなく、標準入出力で渡されます。CGIスクリプトは、これを環境変数の CONTENT_LENGTH 分、標準入力（STDIN）から読み出します。</p>
+<div class="tab">URL</div>
+<pre class=c2>
+http://...../cgi-bin/xxx.cgi
+</pre>
+</div>
+
+<h4 id="CgiEncode">CGIデータのエンコード</h4>
+<div class=i>
+<p>CGIスクリプトに渡すデータは、次のような規則にしたがってエンコード(符号化)しなくてはなりません。（フォームの場合はブラウザが自動的にエンコードしてくれます。）これを怠ると、~ が \~ に変換されてしまったり、日本語が化けてしまったりします。</p>
+<ul>
+<li>スペースはプラス(+)に置き換える。</li>
+<li>特殊文字、日本語などはパーセント(%)に続く2桁の16進数に置き換える。</li>
+</ul>
+<p>CGIスクリプトの中では、これを適切な手段でデコードしてやらなくてはなりません。例えば、perlによるCGIスクリプトでは、次のようなコードでデータをデコードします。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+$value =~ tr/+/ /;
+$value =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C",hex($1))/eg;
+</pre>
+</div>
+
+<h4 id="CgiEnvironment">CGIスクリプトが参照可能な環境変数</h4>
+<div class=i>
+<p>CGIスクリプトの中では次の環境変数を使用することができます。(ABC順)</p>
+<table class="tb1">
+<tr><th>変数名</th><th>意味</th></tr>
+<tr><td>AUTH_TYPE</td>
+<td>認証方式(例えば MD5, Basicなど)</td></tr>
+<tr><td>CONTENT_LENGTH</td>
+<td>標準入力から読み込み可能なデータのバイト数(METHOD=POSTの時)</td></tr>
+<tr><td>CONTENT_TYPE</td>
+<td>クライアントから送られてきたデータのタイプ。フォームからMETHOD=POSTで送信した場合は、application/<wbr>x-www-<wbr>form-<wbr>urlencoded となる。</td></tr>
+<tr><td>GATEWAY_INTERFACE</td>
+<td>ゲートウェイプロトコル名称(例えばCGI/1.1)</td></tr>
+<tr><td>HTTP_ACCEPT</td>
+<td>ブラウザがサポートする Content-type: のリスト。すべてを許可する場合、*/* となる。</td></tr>
+<tr><td>HTTP_FORWARDED</td>
+<td>この要求をフォワードしたプロキシサーバーの情報。送信されない場合もある。</td></tr>
+<tr><td>HTTP_REFERER</td>
+<td>そのCGIを呼び出したページのURL。送信されない場合や、たまに、全く別のURLを差していることもある。</td></tr>
+<tr><td>HTTP_USER_AGENT</td>
+<td>ブラウザに関する情報(Mozilla/4.01 [ja] (Win95; I) など)</td></tr>
+<tr><td>HTTP_X_FORWARDED_FOR</td>
+<td>この要求をフォワードしたプロキシサーバーのIPアドレス。</td></tr>
+<tr><td>PATH_INFO</td>
+<td>パス情報。たとえば、「cgi-bin/xxx.cgi/taro/xxx.htm」というURLでCGIスクリプトを呼び出した場合、PATH_INFOには「/taro/xxx.htm」が格納される。</td></tr>
+<tr><td>PATH_TRANSLATED</td>
+<td>PATH_INFOで指定したファイルの、サーバー上の絶対パス名。</td></tr>
+<tr><td>QUERY_STRING</td>
+<td>「http://サーバー名/CGIスクリプト名?データ」というURLを要求した場合のデータ部分。</td></tr>
+<tr><td>REMOTE_ADDR</td>
+<td>クライアントのIPアドレス(例えば10.0.0.1)</td></tr>
+<tr><td>REMOTE_HOST</td>
+<td>クライアントのホスト名(例えば abc32.abc.co.jp)</td></tr>
+<tr><td>REMOTE_IDENT</td>
+<td>クライアント側のユーザーID</td></tr>
+<tr><td>REMOTE_USER</td>
+<td>クライアント側のユーザー名</td></tr>
+<tr><td>REQUEST_METHOD</td>
+<td>METHODで指定したデータ取得手段。GET, POST, HEAD, PUT, DELETE, LINK, UNLINKなどの種類がある。</td></tr>
+<tr><td>SCRIPT_NAME</td>
+<td>CGIスクリプトの名前。</td></tr>
+<tr><td>SERVER_NAME</td>
+<td>サーバー名</td></tr>
+<tr><td>SERVER_PORT</td>
+<td>サーバーのポート番号(例えば80)</td></tr>
+<tr><td>SERVER_PROTOCOL</td>
+<td>サーバーのプロトコル名(例えばHTTP/1.0)</td></tr>
+<tr><td>SERVER_SOFTWARE</td>
+<td>サーバーのソフトウェア名(例えば NCSA/1.3)</td></tr>
+</table>
+</div>
+
+<hr>
+<div>Copyright (C) 1996-1998 杜甫々</div>
+<div>1998年7月19日</div>
+<div>http://www.tohoho-web.com/wwwcgi3.htm</div>
+</body>
+</html>

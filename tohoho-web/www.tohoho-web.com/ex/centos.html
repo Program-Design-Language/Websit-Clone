@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>CentOSメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>CentOSメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+CentOSメモ
+
+<h4>SELinuxを無効にする</h4>
+<div class="i">
+<p>SELinux - Security-Enhanced Linux</p>
+<pre class="dos">
+# vi /etc/selinux/config
+SELINUX=<em>disabled</em>
+
+# setenforce 0
+</pre>
+</div>
+
+<h4>ネットワークを有効にする</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">CentOS 6:</span>
+# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+ONBOOT=<em>yes</em>
+
+# vi /etc/sysconfig/network-scripts/ifcfg-eth1
+ONBOOT=<em>yes</em>
+
+# service network restart
+
+<span class="cm">CentOS 7:</span>
+# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+ONBOOT=<em>yes</em>
+
+# vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
+ONBOOT=<em>yes</em>
+
+# systemctl restart network
+</pre>
+</div>
+
+<h4>MACアドレスを変更する</h4>
+<div class="i">
+<p>VirtualBox で VM をクローンすると、MAC アドレスが変わってしまうことがある。VirtualBox の [設定]-[ネットワーク] で表示される MACアドレスに合わせて、VM側の MAC アドレスも変更する。</p>
+<pre class="dos">
+<span class="cm">CentOS 6:</span>
+# vi /etc/udev/rules.d/70-persistent-net.rules
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="<em>08:00:27:1d:03:80</em>", ATTR{type}=="1", KERNEL=="eth*", NAME="eth0"
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="<em>08:00:27:ee:a9:48</em>", ATTR{type}=="1", KERNEL=="eth*", NAME="eth1"
+
+# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+HWADDR=<em>08:00:27:1D:03:80</em>
+
+# vi /etc/sysconfig/network-scripts/ifcfg-eth1
+HWADDR=<em>08:00:27:EE:A9:48</em>
+
+# service network restart
+
+<span class="cm">CentOS 7:</span>
+# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+HWADDR=<em>08:00:27:1D:03:80</em>
+
+# vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
+HWADDR=<em>08:00:27:EE:A9:48</em>
+
+# systemctl restart network
+</pre>
+</div>
+
+<h4>EPELレポジトリを有効にする</h4>
+<div class="i">
+<p>EPEL (Extra Packages for Enterprise Linux) - Fedora プロジェクトによる RHEL 向けの拡張パッケージ</p>
+<pre class="dos">
+# yum install epel-release
+
+<span class="cm">CentOS 5.x(32bit):</span>
+# rpm -ivh http://ftp.riken.jp/Linux/fedora/epel/5/i386/epel-release-5-4.noarch.rpm
+
+<span class="cm">CentOS 5.x(64bit):</span>
+# rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
+
+<span class="cm">CentOS 6.x(32bit):</span>
+# rpm -ivh http://ftp.riken.jp/Linux/fedora/epel/6/i386/epel-release-6-8.noarch.rpm
+
+<span class="cm">CentOS 6.x(64bit):</span>
+# rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+<span class="cm">CentOS 7.x(64bit):</span>
+# rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+
+<span class="cm">RPMforgeとの競合を抑えるため、デフォルトでは EPEL を利用しないモードにしておく</span>
+# sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel.repo
+
+<span class="cm">EPELからのインストール</span>
+# yum -y install モジュール名 --enablerepo=epel
+</pre>
+</div>
+
+<h4>IUSレポジトリを有効にする</h4>
+<div class="i">
+<p>IUS(IUS Community Project) のレポジトリを有効にする。</p>
+<pre class="dos">
+<span class="cm">CentOS 7.x(64bit):</span>
+# yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+
+<span class="cm">デフォルトでは IUS を利用しないモードにしておく</span>
+# sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/ius.repo
+
+<span class="cm">IUSからのインストール</span>
+# yum install -y --enablerepo=ius モジュール名
+</pre>
+</div>
+
+<h4>IPv6 を無効化する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">CentOS 6:</span>
+# vi /etc/sysctl.conf
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+
+# sysctl -w net.ipv6.conf.all.disable_ipv6=1
+# sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+<span class="cm">CentOS 7:</span>
+# echo "net.ipv6.conf.all.disable_ipv6 = 1" &gt;&gt; /etc/sysctl.conf
+# echo "net.ipv6.conf.default.disable_ipv6 = 1" &gt;&gt; /etc/sysctl.conf
+# systemctl restart network
+</pre>
+</div>
+
+<h4>パッケージをアップグレードする</h4>
+<div class="i">
+<pre class="dos">
+# yum -y update
+</pre>
+</div>
+
+<h4>SSH のログインが遅いのを早くする</h4>
+<div class="i">
+<p>VirtualBox 上の CentOS に SSH でログインすると、何秒か待たされることがある。SSH クライアント(ホストOS)の IPアドレスを DNS で逆引きしようとしてタイムアウトするまで待ってしまうのが原因。/etc/hosts にクライアントの IPアドレスを追加するか、sshd を、DNS 解決しないように設定するかで回避する。</p>
+<pre class="dos">
+# vi /etc/hosts
+192.168.56.1  ssh-client
+</pre>
+<pre class="dos">
+# vi /etc/ssh/sshd_config
+<em>UseDNS no</em>
+
+<span class="cm">CentOS6:</span>
+# service sshd restart
+
+<span class="cm">CentOS7:</span>
+# systemctl restart sshd
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2016-2019 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2019年4月8日</div>
+<div>http://www.tohoho-web.com/ex/centos.html</div>
+</body>
+</html>

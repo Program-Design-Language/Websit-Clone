@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>shell　上ではうまく動くスクリプトなのに、Web 上ではうまく動かないのですが？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>shell　上ではうまく動くスクリプトなのに、Web 上ではうまく動かないのですが？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040027.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040027.htm">[前に]</a>
+<a href="98040029.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040029.htm">[次に]</a>
+<hr>
+<span class=name>IMO</span>
+<span class=email><a href="mailto:imo@mail.at-m.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/08(水) 14:21:54</span><br>
+　今、掲示板を設置しようとしています。それで、そのスクリプトが、<br>
+shell 上で走らせると、エラーは出ないのですが、Web から走らせると、<br>
+メッセージを書き込んで送信したときに、<br>
+<br>
+500 Internal Server Error<br>
+<br>
+と表示されてしまいます。しかも、そのページを再読み込みすると、<br>
+今書いたメッセージが表示されるんです。一体なんででしょう？<br>
+エラーを出さないためにはどうすればよいのですか？<br>
+<br>
+　ちなみに、私のプロバイダーのサーバは、ＮＣＳＡで、<br>
+ヘッダのあとには、一行改行もあるし、\n\n も最後に付けています。<br>
+　また、サーバに .htaccess ファイルに以下のことを書き込めといわれたので、<br>
+書き込みもしたのですが、、、<br>
+<br>
+Options Includes ExecCGI<br>
+AddType application/x-httpd-cgi cgi<br>
+&lt;Limit PUT GET POST&gt;<br>
+order deny,allow<br>
+allow from all<br>
+&lt;/Limit&gt;<br>
+<br>
+　その時に、設置ディレクトリはスクリプトに依存するといわれたので、<br>
+もしかしたら、それがカギなのかもしれません。<br>
+<br>
+　どうか、教えて下さい。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/08(水) 17:21:52</span><br>
+ひとつひとつ解決していきましょう。<br>
+<br>
+#!/usr/bin/perl<br>
+<br>
+print "Content-type: text/plain\n\n";<br>
+print "test ok.\n";<br>
+<br>
+このCGIを実行させられますか？ ダメならパーミッションを<br>
+見直してください。<br>
+<br>
+BBSがどうこうというのは、これが動いてからの話です。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=email><a href="mailto:imo@mail.at-m.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/08(水) 23:11:34</span><br>
+　B-Cus さんの書いていたスクリプトは問題なく動きました。<br>
+（ブラウザに test ok. って出ればいいんですよね）<br>
+<br>
+　それで、今ＦＴＰしたときにちょっと気になったのですが、私のプロバイダは<br>
+ファイルが来ると、勝手にパーミッションを６４４にしてしまうみたいなんです。<br>
+だから、掲示板のログファイルを書き換えるときに、パーミッションが６４４に戻って<br>
+しまうからなような気もします。<br>
+<br>
+　もしそうならば、どうやればこの設定を変えられるか、教えて下さい。<br>
+<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/09(木) 04:08:46</span><br>
+ということはCGIの実行はできているということで、.htaccessは<br>
+関係ないわけですね。<br>
+<br>
+<font color="#CC8000">&gt; ファイルが来ると、勝手にパーミッションを６４４にしてしまうみたいなんです。</font><br>
+<font color="#CC8000">&gt; だから、掲示板のログファイルを書き換えるときに、パーミッションが６４４に戻って</font><br>
+<font color="#CC8000">&gt; しまうからなような気もします。</font><br>
+<br>
+それはないと思うけど…。<br>
+<br>
+最初はログファイルは777にしたのだけれど、CGIを実行すると<br>
+644になる、とおっしゃりたいわけでしょうか。<br>
+<br>
+nobody権限で実行した場合、ファイルのオーナーのからみで<br>
+パーミッションを変更することはできないと思います。<br>
+<br>
+所有者の権限で実行した場合は、ファイルを一度消して<br>
+再び書き込んむのなら644になってしまうかもしれませんが、<br>
+それはそれで問題ないわけです。だって所有者の権限で<br>
+read,writeできるんだから。<br>
+<br>
+コマンドラインから実行できるのにCGIで実行できない<br>
+となれば、まずはPATHでしょう。スクリプト中で<br>
+system("foo")とか`bar`('…'じゃなくて`…`ね)とか<br>
+open(OUT,"|hogehoge")とか書いてあるところはありませんか？<br>
+そのコマンドをフルパスで書いてみましょう。<br>
+例えばopen(OUT,"|sendmail")をopen(OUT,"|/usr/sbin/sendmail")<br>
+とか。<br>
+<br>
+あとはパーミッションですかね。nobody権限で動かす場合、<br>
+ディレクトリやファイルは777などになっていますか？<br>
+もちろんCGIが読み書きする全てのファイルについて、です。<br>
+<br>
+ところで、どこのどんなCGIを設置しようとしているんですか？<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 14:08:02</span><br>
+　まず、PATH のことですが、関数（？）（$ のついたもの）で、<br>
+一応全部書かれてありました。でも、ものによっては、<br>
+相対パスだったり、絶対パスだったりしていたので、統一したほうがよいのでしょうか？<br>
+（もし統一するならば、どちらの方が、よいのでしょうか？）<br>
+<br>
+　それと、パーミッションのことなんですが、やっぱり一度書き込んだら、<br>
+ログファイルが６４４に戻っていました。しかも、所有者が私ではなく、www で。<br>
+　もともと、パーミッションが６６６ということは、誰でも、そのファイルを<br>
+書き換えられるってことですよね。だから、外部からブラウザを通してアクセスしてきた人も<br>
+その人の名義（この場合は www）で新たにファイルを作ってしまい、<br>
+その時にパーミッションもデフォルトの６４４に戻ってしまうからのように思われます。<br>
+素人の考えなので、当たっているかどうかは分かりませんが。<br>
+　でも、仮にそうならば、どうしたらよいでしょうか？（大きな声じゃいえないのですが、<br>
+ウチのプロバイダーは、基本的にＣＧＩやシェルの質問を受け付けてくれないようですので）<br>
+<br>
+　あ、設置しようとしている掲示板は、浜ちゃん（すいません、ＵＲＬは忘れてしまいましたが、<br>
+Yahoo で検索できました）の「掲示板ｖ５」というものです。<br>
+<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/09(木) 15:16:37</span><br>
+<font color="#CC8000">&gt; まず、PATH のことですが、関数（？）（$ のついたもの）で、</font><br>
+<font color="#CC8000">&gt; 一応全部書かれてありました。</font><br>
+<br>
+$sendmail = "/usr/sbin/sendmail";<br>
+のような書き方ってことですね。すべてこういう書き方に<br>
+なっているなら、パスは問題ないでしょう。<br>
+相対パス、絶対パスは統一する必要はないと思います。<br>
+<br>
+<font color="#CC8000">&gt; それと、パーミッションのことなんですが、やっぱり一度書き込</font><br>
+<font color="#CC8000">&gt; んだら、 ログファイルが６４４に戻っていました。しかも、</font><br>
+<font color="#CC8000">&gt; 所有者が私ではなく、www で。</font><br>
+<br>
+なるほど。おそらく777のディレクトリの下にあるファイルを<br>
+一度消してからまた作っているのだと思います。とはいえ、<br>
+パーミッションは問題ないのかもしれません。だって所有者が<br>
+wwwでパーミッションが644ならwww君はread,writeできるんですから。<br>
+とはいえ、書き込み時にエラーになってその後はうまくいくのなら、<br>
+やっぱりパーミッションの問題のような気もします。<br>
+<br>
+どういうBBSなのか知らないし(このラウンジ風なのか<br>
+それとも一つの書き込みでファイルを一つ作るのかなど)、<br>
+スクリプトも手元にないの、これ以上はなんとも言えません。<br>
+# 配布元のURL教えてくれたら何か言えるかもね;-)<br>
+<br>
+<font color="#CC8000">&gt; ウチのプロバイダーは、基本的にＣＧＩやシェルの質問を受け付けて&gt; くれないようですので</font><br>
+<br>
+そんなもんです。僕がプロバイダのサポートだったとしても、<br>
+CGIのサポートは絶対やりたくないですから(笑)<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 16:02:29</span><br>
+<span class=resolv>[[解決]]</span><br>
+　不思議なもので、友達などにも頼んで試してもらった結果、<br>
+うまくいくようになりました。いまだにどこかが悪くてダメだったのか、分かりませんが、<br>
+なんとか無事につながっております。<br>
+<br>
+　またトラブルが起きたら、このラウンジに質問を出すかもしれませんが、<br>
+当面は動くように思われます。<br>
+<br>
+　どうもありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040027.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040027.htm">[前に]</a>
+<a href="98040029.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040029.htm">[次に]</a>
+</body>
+</html>

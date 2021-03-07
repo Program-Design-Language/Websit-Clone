@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのJava入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>入出力</h2>
+
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="thread.htm" tppabs="http://www.tohoho-web.com/java/thread.htm">[前に]</a>
+<a href="awt.htm" tppabs="http://www.tohoho-web.com/java/awt.htm">[次に]</a>
+
+<h4 id="io">入出力</h4>
+<div class=i>
+<p>データの <b>入出力</b> には多数のクラスが用意されています。クラスの階層構造を下記に示します。InputStream系クラスは主にバイナリデータを扱う際に、Reader系クラスは主にテキストデータを扱う際に用いられます。</p>
+<div class="tab">クラス階層</div>
+<pre class=c2>
+<span class="mr">□</span> Object
+<span class="mr">├□</span> InputStream（抽象クラス：主にバイナリ用）
+<span class="mr">│├□</span> AudioInputStream
+<span class="mr">│├□</span> ByteArrayInputStream
+<span class="mr">│├□</span> <a href="#FileInputStream">FileInputStream</a>（バイナリファイル読み込み）
+<span class="mr">│├□</span> FilterInputStream
+<span class="mr">││├□</span> BufferedInputStream（非推奨）
+<span class="mr">││├□</span> CheckedInputStream
+<span class="mr">││├□</span> CipherInputStream
+<span class="mr">││├□</span> DataInputStream
+<span class="mr">││├□</span> DigestInputStream
+<span class="mr">││├□</span> InflaterInputStream
+<span class="mr">│││├□</span> GZIPInputStream
+<span class="mr">│││└□</span> ZipInputStream
+<span class="mr">│││　└□</span> JarInputStream
+<span class="mr">││├□</span> LineNumberInputStream
+<span class="mr">││├□</span> ProgressMonitorInputStream
+<span class="mr">││└□</span> PushbackInputStream
+<span class="mr">│├□</span> ObjectInputStream
+<span class="mr">│├□</span> PipedInputStream
+<span class="mr">│├□</span> SequenceInputStream
+<span class="mr">│└□</span> StringBufferInputStream
+<span class="mr">└□</span> Reader（抽象クラス：主にテキスト用）
+<span class="mr">　├□</span> <a href="#BufferedReader">BufferedReader</a>（1行ずつ読み込む）
+<span class="mr">　│└□</span> LineNumberReader
+<span class="mr">　├□</span> CharArrayReader
+<span class="mr">　├□</span> FilterReader
+<span class="mr">　│└□</span> PushbackReader
+<span class="mr">　├□</span> <a href="#InputStreamReader">InputStreamReader</a>（文字コード指定が可能）
+<span class="mr">　│└□</span> <a href="#FileReader">FileReader</a>（テキストファイル読み込み）
+<span class="mr">　├□</span> PipedReader
+<span class="mr">　└□</span> StringReader
+</pre>
+</div>
+
+<h4 id="FileInputStream">バイナリファイルを読み込む（FileInputStream）</h4>
+<div class=i>
+<p><b>FileInputStream</b> は指定したファイルをバイナリファイルとして読み込みます。</p>
+<div class="tab">FileInputStreamTest.java</div>
+<pre class=c2>
+import java.io.*;
+
+class FileInputStreamTest {
+    public static void main(String[] args) {
+        try {
+            <em>FileInputStream in = new FileInputStream("file.txt");</em>
+            int ch;
+            while ((ch = in.read()) != -1) {
+                System.out.print(Integer.toHexString(ch) + " ");
+            }
+            in.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+</pre>
+<p>シフトJISの「あいう」という内容のファイルを読み込んだ場合、結果は次のようになります。82a0 は「あ」、82a2 は「い」、82a4 は「う」のシフトJIS文字コード、d は復帰コード（CR）、a は改行（LF）コードです。漢字コードがそのまま、1バイトずつ読み込まれています。</p>
+<pre class=dos>
+82 a0 82 a2 82 a4 d a
+</pre>
+</div>
+
+<h4 id="InputStreamReader">テキストファイルを読み込む（InputStreamReader）</h4>
+<div class=i>
+<p><b>InputStreamReader</b> は指定したストリームを、指定した文字コードで構成されるテキストファイルとして読み込みます。</p>
+<div class="tab">InputStreamReaderTest.java</div>
+<pre class=c2>
+import java.io.*;
+
+class InputStreamReaderTest {
+    public static void main(String[] args) {
+        try {
+            FileInputStream is = new FileInputStream("file.txt");
+            <em>InputStreamReader in = new InputStreamReader(is, "SJIS");</em>
+            int ch;
+            while ((ch = in.read()) != -1) {
+                System.out.print(Integer.toHexString(ch) + " ");
+            }
+            in.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+</pre>
+<p>「あいう」という内容のファイルを読み込んだ場合、結果は次のようになります。</p>
+<pre class=dos>
+3042 3044 3046 d a
+</pre>
+<p>3042 は「あ」、3044 は「い」、3046 は「う」の Unicode表現です。InputStreamReader を用いることでシフトJIS のファイルを Java の標準文字コードである Unicode に変換しながら読み込むことができました。</p>
+<p>文字コード "SJIS" を省略した場合は、プラットフォームに依存したデフォルト（省略時の）文字コードで読み出されます。日本語 Windows の場合のデフォルト文字コードは "MS932" になります。SJIS と MS932 はほとんど同じものですが、「～」や「∥」など一部の文字で動作が異なります。</p>
+<table class="tb1">
+<tr><th>文字コード</th><th>説明</th></tr>
+<tr><td>ISO-8859-1</td><td>ASCII。</td></tr>
+<tr><td>ISO-2022-JP</td><td>JISコード。</td></tr>
+<tr><td>Shift_JIS</td><td>JDK1.1 までは SJIS と同義。JDK1.2 からは MS932 と同義。</td></tr>
+<tr><td>SJIS</td><td>シフトJIS。</td></tr>
+<tr><td>MS932</td><td>Microsoft 932。シフトJISとほぼ同様だが若干異なる。</td></tr>
+<tr><td>CP932</td><td>Code Page 932。MS932 とほぼ同様だが若干異なる。</td></tr>
+<tr><td>EUC_JP</td><td>EUC。</td></tr>
+</table>
+<p>使用可能な文字コードに関しては下記のページを参照してください。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://java.sun.com/j2se/1.4/ja/docs/ja/guide/intl/border-collapse.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://java.sun.com/j2se/1.4/ja/docs/ja/guide/intl/border-collapse.htm'" tppabs="http://java.sun.com/j2se/1.4/ja/docs/ja/guide/intl/encoding.doc.html">http://java.sun.com/j2se/1.4/ja/docs/ja/guide/intl/encoding.doc.html</a>
+</ul>
+</div>
+
+<h4 id="FileReader">テキストファイルを読み込む（FileReader）</h4>
+<div class=i>
+<p><b>FileReader</b> は InputStreamReader の面倒さを解消するために用意されたサブクラスです。InputStreamReader より簡単に扱えますが、文字コードには常に省略時文字コードが用いられます。</p>
+<div class="tab">FileReaderTest.java</div>
+<pre class=c2>
+import java.io.*;
+
+class FileReaderTest {
+    public static void main(String[] args) {
+        try {
+            <em>FileReader in = new FileReader("file.txt");</em>
+            int ch;
+            while ((ch = in.read()) != -1) {
+                System.out.print(Integer.toHexString(ch) + " ");
+            }
+            in.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+</pre>
+<div class="tab">Java</div>
+<pre class=c2>
+FileReader in = new FileReader("file.txt");
+</pre>
+<p>は、下記のコードとほぼ同じ意味を持ちます。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+FileInputStream is = new FileInputStream("file.txt");
+InputStreamReader in = new InputStreamReader(is);
+</pre>
+</div>
+
+<h4 id="BufferedReader">ファイルを1行ずつよみこむ（BufferedReader）</h4>
+<div class=i>
+<p>ファイルを 1行ずつ読み込むには <b>BufferedReader</b> を用います。</p>
+<div class="tab">BufferedReaderTest.java</div>
+<pre class=c2>
+import java.io.*;
+
+class BufferedReaderTest {
+    public static void main(String[] args) {
+        try {
+            FileReader in = new FileReader("file.txt");
+            <em>BufferedReader br = new BufferedReader(in);</em>
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+            br.close();
+            in.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+}
+</pre>
+</div>
+
+<hr>
+<div>http://www.tohoho-web.com/java/file.htm</div>
+<div>初版：2004年6月26日、最終更新：2004年6月26日</div>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="thread.htm" tppabs="http://www.tohoho-web.com/java/thread.htm">[前に]</a>
+<a href="awt.htm" tppabs="http://www.tohoho-web.com/java/awt.htm">[次に]</a>
+</body>
+</html>

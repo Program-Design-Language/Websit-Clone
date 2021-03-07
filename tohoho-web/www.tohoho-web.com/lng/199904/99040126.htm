@@ -1,0 +1,165 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>IRCのデータをソケットから読み出すには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>IRCのデータをソケットから読み出すには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040125.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040125.htm">[前に]</a>
+<a href="99040127.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040127.htm">[次に]</a>
+<hr>
+<span class=name>tre</span>
+<span class=time>1999/04/18(日) 02:32:54</span><br>
+はじめまして。<br>
+<br>
+　ただ今僕は、IRCのボットをPerlで書いています。<br>
+ですが、ソケットのファイルハンドルから値を取ることが出来なくて困っています。<br>
+<br>
+簡単なソース、<br>
+<br>
+S &lt;- Socketのファイルハンドル。<br>
+print S "NICK bot\r\n";<br>
+$_ = scalar　&lt;S&gt;;<br>
+print "Nickname is already in use\n" if (/433/);　#433は、同一のニックネーム<br>
+があった時に出される。<br>
+<br>
+ここで、ソケットのファイルハンドルに値がないと、ずっと待ってしまって、<br>
+IRCサーバからクローズされてしまいます。<br>
+どうにかして、エラーでなければundefを得たいのです。<br>
+やり方がわかりません。<br>
+<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/18(日) 07:39:16</span><br>
+IRCのプロトコルは全く知りませんが、<br>
+<br>
+<font color="#CC8000">&gt; ここで、ソケットのファイルハンドルに値がないと、ずっと待ってしまって、</font><br>
+<br>
+"NICK bot\r\n" を送った後、サーバは<br>
+　「成功なら何も返さない」<br>
+　「失敗したら433を返す」<br>
+という動作をするんでしょうか。多分そういうことはなくて<br>
+　「成功したらxxxを返す」<br>
+という挙動をするんですよね?<br>
+<br>
+なら、サーバが何も返さない原因は、クライアントが<br>
+正しいプロトコルをしゃべってないからではないでしょうか。<br>
+<br>
+タトなら失礼。<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/18(日) 07:47:16</span><br>
+B-Cusさんに返信してもらえて、、とてもうれしいです。<br>
+<font color="#CC8000">&gt;「成功したらxxxを返す」</font><br>
+<font color="#CC8000">&gt;という挙動をするんですよね?</font><br>
+成功したなら、何も返さないです。<br>
+だから、ずーっと待ってしまって・・<br>
+タイムアウトの処理の仕方とか、、ないでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/18(日) 08:00:37</span><br>
+<font color="#CC8000">&gt; 成功したなら、何も返さないです。</font><br>
+<br>
+ほんとにほんとですか? もっかいRFC(などの解説文)を読んでみては<br>
+どうでしょうか。<br>
+<br>
+普通、返事を返すかもしれないし、もしかしたら返さないかも<br>
+しれないサーバを相手にすることはできない…んじゃないかなぁと<br>
+思うんですが…(弱気)。<br>
+# ここらへんご存知の方、教えてください。<br>
+<br>
+例えばFTP/HTTP/SMTPなど、いずれのプロトコルでも、返事が返って<br>
+くるかどうかわからない状況というのは発生しないですよね。<br>
+<br>
+<br>
+もしほんとに、成功したら何も返さないのなら、<br>
+　1. NICKの後に何か適当なプロトコル(常に返事が返ってくるもの)を送る<br>
+　2. ソケットから1行読んで、433ならNICKが失敗したということ<br>
+　3. 433じゃなくて、適当なプロトコルに対する返事が返ってきたら、<br>
+　　　NICKは成功したということ。<br>
+とか。でも何か正しい方法があるはず、と思います。<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/18(日) 09:45:40</span><br>
+<span class=resolv>[[解決]]</span><br>
+もう一度、RFCをよく読んでみます。<br>
+<br>
+<font color="#CC8000">&gt;1. NICKの後に何か適当なプロトコル(常に返事が返ってくるもの)を送る</font><br>
+　&gt;2. ソケットから1行読んで、433ならNICKが失敗したということ<br>
+こんなこと、思いつきませんでした。<br>
+早速、やってみます。<br>
+<br>
+ついでに、<br>
+:[nickname]!~[name]@[ip address] [command] [channel or nickname] :[message]<br>
+*[]は、実際にはない。<br>
+ircでは、こんなふうにメッセージのやりとりがされています。<br>
+<br>
+僕は、<br>
+if (/^:(.*)\?!~.*?\@(.*) (.*) :(.*)$/) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$nick = $1; $ip = $2; $command = $3; $msg_or_ch = $4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;....<br>
+#joinしてきた場合は、<br>
+#:nickname!~name@ip join :channel　になる。<br>
+<br>
+このような正規表現で、値を得ています。<br>
+もっと、スマートな書き方があったら教えて頂けませんか？<br>
+<br>
+乱文で、ごめんなさい。<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/18(日) 16:42:55</span><br>
+前に書いた正規表現では、対処できなくなったので、<br>
+こちらの方を教えてください。<br>
+<br>
+$priv = ':tre!~user\@echna.ne.jp privmsg #channel :hello\n';<br>
+$join = ':nick!~user\@xxx.orange.ne.jp join :#channel\n';<br>
+を、一回でマッチさせたいんです。<br>
+$nameには、treまたは、nick.<br>
+$ipには、echna.ne.jpまたは、xxx.orange.ne.jp<br>
+$commandには、privmsgまたは、join<br>
+$channelには、#channelまたは、undef<br>
+$msg_or_chには、helloまたは、#channel<br>
+<br>
+いろいろ考えて、<br>
+if (/^:(.*)?\!~.*?\@(.*) ([\w|\s]+)(.*) :(.*)$/) {<br>
+　$name = $1; $ip = $2; $command = $3; $channel = $4; $chMsg = $5;<br>
+}<br>
+のようにしてみましたが、ゴミが入ってしまいうまく動作しません。<br>
+たすけてください。。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/18(日) 21:00:05</span><br>
+解決マークを押されてますが、僕はIRCプロトコルを全く知らない<br>
+人間なので、あまり信用しないでね。<br>
+<br>
+<br>
+　$priv = ':tre!~user@echna.ne.jp privmsg #channel :hello';<br>
+　$join = ':nick!~user@xxx.orange.ne.jp join :#channel';<br>
+　/^:(.*?)\!~.*?\@(.*?) (\w+) ?(.*?)? :(.*?)$/<br>
+<br>
+で如何。''内はエスケープ不要なので、\を書くとそのまま\として<br>
+認識されますのでご注意を。<br>
+<br>
+まぁ正規表現でわからなくなったら、とりあえず$nameだけマッチ<br>
+させてみる、次に$ip、更に$commandも…というふうに一歩ずつ<br>
+やってけば必ずできます。実際 僕もそうやりましたし。<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/19(月) 01:10:24</span><br>
+本当にありがとうございました。<br>
+もっと勉強しときます。。<br>
+<br>
+これで、本当に解決ですね・・<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040125.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040125.htm">[前に]</a>
+<a href="99040127.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040127.htm">[次に]</a>
+</body>
+</html>

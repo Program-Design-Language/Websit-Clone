@@ -1,0 +1,111 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>フォームから入力されたデータの比較をＣＧＩで行うには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>フォームから入力されたデータの比較をＣＧＩで行うには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199808/index.htm">[上に]</a>
+<a href="98080059.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080059.htm">[前に]</a>
+<a href="98080061.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080061.htm">[次に]</a>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/08/28(金) 00:59:44</span><br>
+お久しぶりです、とほほさん。　がんまです。<br>
+<br>
+しばらくＣＧＩから遠ざかっていましたが、今週から<br>
+再び組みはじめました。<br>
+<br>
+で、早速と言うか、どうにもうまく行かないので<br>
+ここに質問をさせていただきます。<br>
+<br>
+まず、フォームで入力したデータを<br>
+「名前」「性別」「時間」としてＣＧＩで処理をして<br>
+指定したファイルに保存します。<br>
+<br>
+それが、仮に以下の<br>
+<br>
+GAMMA,MEN,10,20,50,<br>
+OMEGA,MEN,9,50,33,<br>
+<br>
+と、このようになってます。<br>
+<br>
+目的としているのは<br>
+この保存ファイルに保存してあるデータと、新しく書込まれたデータ<br>
+<br>
+例えば上記の２行に追加する形で<br>
+<br>
+RAY,WOMEN,9,58,20,<br>
+<br>
+と、フォームで入力して、登録ボタンを押した後に<br>
+先に書いた、これまでの保存データと、新しく書込まれたデータを<br>
+比較して、時間の速い順、もし同時間であった場合を考えて、<br>
+名前の順に変更して、保存ファイルにデータを保存をしたいのです。<br>
+<br>
+今の私がやると、ベタなものであれですが<br>
+<br>
+GAMMA,MEN,10,20,50,<br>
+OMEGA,MEN,9,50,33,<br>
+RAY,WOMEN,9,58,20,<br>
+<br>
+と、単に下に追加することしか出来ません(;_;<br>
+理想としているのは、上記のデータを<br>
+<br>
+OMEGA,MEN,9,50,33,<br>
+RAY,WOMEN,9,58,20,<br>
+GAMMA,MEN,10,20,50,<br>
+<br>
+このように並び替えて、保存ファイルに再び保存したいのです。<br>
+<br>
+お忙しいところ、すみませんが、ご教授をお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/08/28(金) 01:19:34</span><br>
+とりあえず、データ形式を固定長にしてはどうですか？<br>
+　1998/01/05 21:06:05 GAMMA MEN<br>
+とかね。これなら文字列でソートすればご希望の時間順、<br>
+名前順になると思います。例えばこんな感じ。<br>
+<br>
+open(IN,"file");<br>
+while (&lt;IN&gt;){<br>
+　chop;<br>
+　push(@datas,$_);<br>
+}<br>
+close(IN);<br>
+<br>
+push(@datas,"1998/08/08 00:11:22 RAY WOMEN"); # 追加したいデータ<br>
+<br>
+open(OUT,"&gt;data");<br>
+foreach ( sort @data ){<br>
+　print OUT "$_\n";<br>
+}<br>
+close(OUT);<br>
+<br>
+<br>
+データ変更が必要なら、名前をキーとしたhashを使うときれいに<br>
+書けるかと思います。<br>
+<br>
+# もしかして、こういうのってDBMを使うと簡単に書けたりするのかな。<br>
+# 使った事ないからよくわかんないんだけど。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/08/28(金) 18:59:09</span><br>
+<span class=resolv>[[解決]]</span><br>
+B-Cusさん、はじめまして(^^<br>
+<br>
+ご丁寧にリストまで組んでいただき、ありがとうございます！<br>
+お蔭様で、理想とした形に表示することが出来ました。<br>
+<br>
+これから、問題点などを探りながら組んでみます。<br>
+<br>
+もし、息詰まったら、質問させていただくことになると思いますが<br>
+その時は、よろしくお願いします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199808/index.htm">[上に]</a>
+<a href="98080059.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080059.htm">[前に]</a>
+<a href="98080061.htm" tppabs="http://www.tohoho-web.com/lng/199808/98080061.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>題名を取り出す方法は？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>題名を取り出す方法は？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050029.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050029.htm">[前に]</a>
+<a href="99050032.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050032.htm">[次に]</a>
+<hr>
+<span class=name>矢部くん</span>
+<span class=time>1999/05/11(火) 09:03:17</span><br>
+05月10日(月)12時02分33秒,投稿者,メール,コメント,題名,<br>
+というふうにログに記録されているので、ここから題名だけを取り出すために<br>
+#!/usr/bin/perl<br>
+<br>
+$subjectfile = './bbs.dat';<br>
+<br>
+($date,$fname,$email,$value,$subject,$res,$cnt) = split(/,/,$subjectfile);<br>
+print "$subject\n";<br>
+<br>
+と書いてsubject.plという名前にしてSSIで呼び出してみたのですが、<br>
+正常に動いていないようなのです。<br>
+妙にスクリプトが短いので、何か肝心な記述が抜けているのでしょうか・・？<br>
+<hr>
+<span class=name>Syn</span>
+<span class=email><a href="mailto:kohshi@inaba.forum.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/11(火) 10:43:37</span><br>
+で その bbs.dat はいつ読み出すんでしょう?(^^;<br>
+それがスクリプトの全文だとすると './bbs.dat' とゆう文字列を<br>
+split することになりますが (しかも , はないから split は<br>
+されない) …。<br>
+すくなくとも<br>
+o ファイルのオープン<br>
+o 内容の読み出し<br>
+が必要ですヨ。<br>
+<br>
+open(DATA,$subjectfile);<br>
+@data = &lt;DATA&gt;;<br>
+close(DATA);<br>
+foreach (@data) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;($date,$fname,$email,$value,$subject,$res,$cnt) = split(/,/,$_);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print "$subject\n";<br>
+}<br>
+<hr>
+<span class=name>矢部くん</span>
+<span class=time>1999/05/11(火) 12:02:52</span><br>
+お返事ありがとうございます。<br>
+読み出しが必要なんですね。早速やってみたらうまくいきました。<br>
+<br>
+ただ、これだと題名がいっぱい出て来ちゃうので<br>
+２０個だけにしたいと思いました。<br>
+<br>
+そこでいろいろ調べてみて<br>
+for ($i=0; $i&lt;19; $i++)<br>
+を入れたらいいかなと思ったんですがどこにいれたらいいのか<br>
+わかりませんでした・・・。<br>
+<hr>
+<span class=name>Syn</span>
+<span class=email><a href="mailto:kohshi@inaba.forum.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/11(火) 12:12:55</span><br>
+ふむふむ。<br>
+ファイルの先頭から 20 件分でよいのでしたら<br>
+for ($i=0; $i&lt;19; $i++)<br>
+が使えます。<br>
+@data 配列の添字を 0 ～ 19 まで表示すればいいわけですので<br>
+<br>
+for ($i=0; $i&lt;19; $i++) {<br>
+　　($date,$fname,$email,$value,$subject,$res,$cnt) = split(/,/,@data[$i]); # @data[$i]; の部分がキモ<br>
+　　print "$subject\n";<br>
+}<br>
+<br>
+こんなカンジでどうでしょうか。<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/11(火) 12:48:59</span><br>
+open(DATA,$subjectfile);<br>
+@data = &lt;DATA&gt;;<br>
+close(DATA);<br>
+これだとファイルのデータを一度に全部読みにいっちゃうので、<br>
+ファイルサイズが大きくなるとメモリ食いまくりますよ。<br>
+open(DATA,$subjectfile);<br>
+while (&lt;DATA&gt;){<br>
+　　chomp;<br>
+　　($date,$fname,$email,$value,$subject,$res,$cnt) = split(/,/);<br>
+　　print "$subject\n";<br>
+　　last if ++$i&gt;=20;<br>
+}<br>
+close(DATA);<br>
+こんな感じに一行ずつ読むようにしましょう。<br>
+<hr>
+<span class=name>矢部くん</span>
+<span class=time>1999/05/11(火) 15:36:21</span><br>
+みなさんお返事ありがとうございます。<br>
+#!/usr/bin/perl<br>
+<br>
+$subjectfile = './bbs.dat';<br>
+<br>
+open(DATA,$subjectfile);<br>
+while (&lt;DATA&gt;){<br>
+　　chomp;<br>
+　　($date,$fname,$email,$value,$subject,$res,$cnt) = split(/,/);<br>
+　　print "$subject\n";<br>
+　　last if ++$i&gt;=20;<br>
+}<br>
+close(DATA);<br>
+と書かせてもらったのですが、どうも動いてないみたいなのです。<br>
+前の、記事の題名を全部表示するスクリプトは動いているので<br>
+もしかしたらエラー出しているんでしょうか・・。。<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/11(火) 15:46:16</span><br>
+もしかしてPerlのバージョンが４なのでしょうか？<br>
+だとしたらchompではなくchopにしてください。<br>
+それから私の書き込んだ文をそのままカット&amp;ペーストしてませんか？<br>
+whileループの中の字下げに全角スペースを使いましたが（この掲示板では行頭の半角スペースが取り除かれちゃうから）、<br>
+実際はタブか半角スペースにしてくださいね。<br>
+<hr>
+<span class=name>矢部くん</span>
+<span class=time>1999/05/11(火) 15:59:56</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございます<br>
+書き直したら無事動き出しました。<br>
+それでは「済」印を。ぺたん。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050029.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050029.htm">[前に]</a>
+<a href="99050032.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050032.htm">[次に]</a>
+</body>
+</html>

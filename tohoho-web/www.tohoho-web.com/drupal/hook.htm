@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Drupal入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<div class="page">
+<h2>Drupal入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="top.htm" tppabs="http://www.tohoho-web.com/drupal/top.htm">Drupal入門</a> &gt;
+<a href="module.htm" tppabs="http://www.tohoho-web.com/drupal/module.htm">モジュール</a> &gt;
+モジュールを作る
+
+<h4>Hook関数一覧</h4>
+<div class=i>
+<div class="c">
+custom_url_rewrite_inbound /
+custom_url_rewrite_outbound /
+hook_access /
+hook_actions_delete /
+hook_action_info /
+hook_action_info_alter /
+<a href="#hook_block">hook_block</a> /
+hook_boot /
+hook_comment /
+<a href="#hook_cron">hook_cron</a> /
+hook_db_rewrite_sql /
+hook_delete /
+<a href="#hook_disable">hook_disable</a> /
+hook_elements /
+<a href="#hook_enable">hook_enable</a> /
+hook_exit /
+hook_file_download /
+hook_filter /
+hook_filter_tips /
+hook_flush_caches /
+<a href="#hook_footer">hook_footer</a> /
+hook_form /
+hook_forms /
+hook_form_alter /
+hook_form_FORM_ID_alter /
+<a href="#hook_help">hook_help</a> /
+hook_hook_info /
+<a href="#hook_init">hook_init</a> /
+hook_insert /
+hook_install /
+hook_link /
+hook_link_alter /
+hook_load /
+hook_locale /
+hook_mail /
+hook_mail_alter /
+<a href="#hook_menu">hook_menu</a> /
+hook_menu_alter /
+hook_menu_link_alter /
+hook_nodeapi /
+hook_node_access_records /
+hook_node_grants /
+hook_node_info /
+hook_node_operations /
+hook_node_type /
+<a href="#hook_perm">hook_perm</a> /
+hook_ping /
+hook_prepare /
+hook_profile_alter /
+hook_requirements /
+hook_schema /
+hook_schema_alter /
+<a href="#hook_search">hook_search</a> /
+hook_search_preprocess /
+hook_system_info_alter /
+hook_taxonomy /
+hook_term_path /
+hook_theme /
+hook_theme_registry_alter /
+hook_translated_menu_link_alter /
+hook_uninstall /
+hook_update /
+hook_update_index /
+hook_update_N /
+hook_update_status_alter /
+hook_user /
+hook_user_operations /
+hook_validate /
+hook_view /
+<a href="#hook_watchdog">hook_watchdog</a> /
+hook_xmlrpc /
+module_hook /
+module_implements /
+module_invoke /
+module_invoke_all
+</div>
+</div>
+
+<h5 id="hook_help">◆xxx_help()</h5>
+<div class=i>
+<p>ヘルプを表示します。下記の例により、[管理セクション]→[ヘルプ] に Testモジュールが追加されます。パスは http://～/?q=admin/help/test となります。Drupal 5.x と 6.x では引数が変更されています。</p>
+<pre class=c>
+function test_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#test':
+      $output = '&lt;p&gt;' . t('This is TEST module.') . '&lt;/p&gt;';
+      return $output;
+  }
+}
+</pre>
+</div>
+
+<h5 id="hook_menu">◆xxx_menu()</h5>
+<div class=i>
+<p>ナビゲーションリンクへのメニューを設定します。下記の例ではナビゲーションリンクのトップに TEST メニューが表示されます。メニューが実行されると test_main() が呼び出されます。このメニューは 'do test' 権限を持っているユーザが実行できます。$item['test'] を $item['admin/build/test'] とすると、[管理セクション]→[サイトの構築]→[TEST] メニューが追加されます。</p>
+<pre class=c>
+function test_menu() {
+  $item['test'] = array(
+    'title' =&gt; 'TEST',
+    'page callback' =&gt; 'test_main',
+    'access arguments' =&gt; array('do test'),
+  );
+  return $item;
+}
+</pre>
+</div>
+
+<h5 id="hook_perm">◆xxx_perm()</h5>
+<div class=i>
+<p>[管理セクション]→[ユーザの管理]→[権限] で参照可能な権限を追加します。</p>
+<pre class=c>
+function test_perm() {
+  return array('do test');
+}
+</pre>
+</div>
+
+<h5 id="hook_init">◆xxx_init()</h5>
+<div class=i>
+<p>ページが開かれる度に呼び出されます。必要とするCSSファイルやJavaScriptファイルを追加する場合に便利です。</p>
+<pre class=c>
+function test_init() {
+  drupal_add_css(drupal_get_path('module', 'test') . '/test.css');
+}
+</pre>
+</div>
+
+<h5 id="hook_cron">◆xxx_cron()</h5>
+<div class=i>
+<p>cron.php が実行された時に実行されます。</p>
+<pre class=c>
+function test_cron() {
+  :
+}
+</pre>
+</div>
+
+<h5 id="hook_enabe">◆xxx_enable()</h5>
+<div class=i>
+<p>モジュールが有効化された時に実行されます。</p>
+<pre class=c>
+function test_enable() {
+  :
+}
+</pre>
+</div>
+
+<h5 id="hook_disable">◆xxx_disable()</h5>
+<div class=i>
+<p>モジュールが無効化された時に実行されます。</p>
+<pre class=c>
+function test_disable() {
+  :
+}
+</pre>
+</div>
+
+<h5 id="hook_footer">◆xxx_footer()</h5>
+<div class=i>
+<p>ページのフッタに追加するHTMLを指定します。ページ末尾に JavaScript コードを埋め込むのにも使用されます。フロントページの時 $main は 0 になります。</p>
+<pre class=c>
+function test_footer($main) {
+  return '&lt;div&gt;See you!&lt;/div&gt;';
+}
+</pre>
+</div>
+
+<h5 id="hook_block">◆xxx_block()</h5>
+<div class=i>
+<p>モジュールがブロックをサポートする場合に定義します。$op = 'list' は、[管理セクション]→[サイトの構築]→[ブロック] で表示される名前を定義します。$op = 'view' は、そのブロックが表示される際に $block-&gt;subject と $block-&gt;content で参照されるHTMLを定義します。subject と content 以外にも任意のブロック変数を増やすことができます。複数のブロックをサポートする場合、$delta が 0, 1, 2... と変化します。</p>
+<pre class=c>
+function test_block($op = 'list', $delta = 0) {
+  if ($op == 'list') {
+    $blocks[0] = array(
+      'info' =&gt; t('Test block'),
+    );
+    return $blocks;
+  }
+  if ($op == 'view') {
+    if ($delta == 0) {
+      $block = array(
+        'subject' =&gt; t('Test block'),
+        'content' =&gt; t('Hello World'),
+      );
+    }
+    return $block;
+  }
+}
+</pre>
+</div>
+
+<h5 id="hook_watchdog">◆xxx_watchdog()</h5>
+<div class=i>
+<p>syslog に記録するような何らかのイベントが発生した際に呼び出されます。</p>
+<pre class=c>
+function test_watchdog($log_msg) {
+  $msg =
+    "---------------------\n";
+    "Severity: {$log_msg['severity']}\n" .
+    "Time: " . format_date($log_msg['timestamp']) . "\n" .
+    "Type: {$log_msg['type']}\n" .
+    "Ip Address: {$log_msg['ip']}\n" .
+    "Message: {$log_msg['message']}\n" .
+    "Name: {$log_msg['user']-&gt;name}\n" .
+    "Uid: {$log_msg['user']-&gt;uid}\n" .
+    "Link: {$log_msg['link']}\n" .
+    "Request URI: {$log_msg['request_uri']}\n" .
+    "Referrer URI: {$log_msg['referer_uri']}\n" .
+    "---------------------\n";
+
+  $log = fopen("/tmp/xx", "a");
+  fwrite($log, "test_watchdog()\n");
+  fwrite($log, $msg);
+  fclose($log);
+}
+</pre>
+</div>
+
+<h5 id="hook_search">◆xxx_search()</h5>
+<div class=i>
+<p>Search モジュールから呼び出されます。'name' ではサーチ画面のに表示するサブメニューを、'search' ではサーチ結果を返します。</p>
+<pre class=c>
+function test_search($op = 'search', $keys = NULL, $skip_access_check = FALSE) {
+  switch ($op) {
+    case 'name':
+      return 'Test';
+      break;
+    case 'search':
+      $find = array();
+       $result = db_query("SELECT name FROM {users} WHERE name = '%s'", $keys);
+       while ($data = db_fetch_object($result)) {
+         $find[] = array(
+           'title' =&gt; $data-&gt;name,
+           'link' =&gt; $data-&gt;name,
+         );
+      }
+      return $find;
+      break;
+  }
+}
+</pre>
+</div>
+
+<h5 id="hook_node_info">◆xxx_node_info()</h5>
+<div class=i>
+<p>下記を記述しておくと、[コンテンツの作成] メニューの下に Test コンテンツの追加メニューが表示されます。</p>
+<pre class=c>
+function test_node_info() {
+  return array(
+    'test' =&gt; array(
+      'name' =&gt; 'Test',
+      'module' =&gt; 'test',
+      'description' =&gt; 'Test is my contents.',
+    ),
+  );
+}
+</pre>
+</div>
+
+<h5>◆その他のHook関数</h5>
+<div class=i>
+<p>その他のフック関数については下記を参照してください。</p>
+<ul>
+<li><a target="_blank" href="javascript:if(confirm('http://api.drupal.org/api/group/hooks/grid-area.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://api.drupal.org/api/group/hooks/grid-area.htm'" tppabs="http://api.drupal.org/api/group/hooks/6">http://api.drupal.org/api/group/hooks/6</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2008 杜甫々</div>
+<div>初版：2008年9月21日</div>
+<div>http://www.tohoho-web.com/drupal/</div>
+</div>
+</body>
+</html>

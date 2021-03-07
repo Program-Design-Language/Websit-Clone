@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Docker 小技・ノウハウ集 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Docker 小技・ノウハウ集</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+小技・ノウハウ集
+
+<h4>CentOSコンテナでsystemctlを使用する</h4>
+<div class="i">
+<p>CentOS コンテナで systemctl を使用しようとすると "Failed to get D-Bus connection: Operation not permitted" エラーが出ることがあります。これを回避するにはコンテナ起動時に --privileged オプションをつけ、かつ、/sbin/init を PID=1 のメインプロセスにします。</p>
+<pre class="c">
+# docker run -d --privileged --name cont1 centos:7 /sbin/init
+# docker exec -it cont1 /bin/bash
+# yum install -y httpd
+# systemctl start httpd
+</pre>
+</div>
+
+<h4>コンテナ削除時に事前にstopするのが面倒</h4>
+<div class="i">
+<p>通常、コンテナは stop した状態でなければ削除できませんが、docker rm に -f (--force) オプションをつけることで、起動したままでも削除することができます。</p>
+<pre class="c">
+# docker rm -f cont1
+</pre>
+</div>
+
+<h4>コンテナを一瞬で停止したい</h4>
+<div class="i">
+<p>docker stop は SIGTERM＋10秒待ちロジックでコンテナを極力安全に停止しますが、docker kill は SIGKILL でコンテナを一瞬で停止します。</p>
+<pre class="c">
+# docker kill cont1
+</pre>
+
+<h4>コンテナログイン時にCtrl-Pを二度押さないと効かないのを改善する</h4>
+<div class="i">
+<p>Ctrl-P は、コンテナからデタッチする際のキーとして割り当てられているため、ホストOS側でこれを変更します。</p>
+<pre class="c">
+# mkdir ~/.docker
+# vi ~/.docker/config.json
+
+{
+    "detachKeys": "ctrl-\\"
+}
+</pre>
+</div>
+
+<h4>コンテナにログインした際にvimで日本語が文字化けするのを改善する</h4>
+<div class="i">
+<p>コンテナ側で環境変数LANGを設定します。</p>
+<pre class="c">
+# cat &gt;&gt; ~/.bashrc &lt;&lt;EOF
+export LANG=en_US.UTF-8
+EOF
+</pre>
+</div>
+
+<h4>Dockerコンテナ間で名前解決する</h4>
+<div class="i">
+<p>コンテナ間で相手コンテナのIPアドレスを名前解決するには、① docker run --link オプションで設定する、② docker run --add-host オプションで設定する、③ ユーザ定義ネットワークの内部DNSサーバで解決するなどの方法があります。① の --link オプションは非推奨となっているのでおススメできません。② はIPアドレスを静的に管理する環境では有効です。③ はコンテナを docker network create で新規に作成されたネットワークに接続するだけで、相手コンテナ名を内部DNSサーバ(127.0.0.11)が名前解決してくれるものでおススメです。--net オプション無しの時にデフォルトで接続される bridge ネットワークでは、後方互換のため、デフォルトでは内部DNSサーバはサポートされません。</p>
+<pre class="c">
+# docker network create --subnet 192.168.1.0/24 network1
+# docker run -d -it --name host1 --net network1 centos:7
+# docker run -d -it --name host2 --net network1 centos:7
+# docker exec -it host2 /bin/bash
+host2# ping host1
+PING host1 (192.168.1.2) 56(84) bytes of data.
+64 bytes from host1.network1 (192.168.1.2): icmp_seq=1 ttl=64 time=0.073 ms
+64 bytes from host1.network1 (192.168.1.2): icmp_seq=2 ttl=64 time=0.061 ms
+64 bytes from host1.network1 (192.168.1.2): icmp_seq=3 ttl=64 time=0.065 ms
+</pre>
+</div>
+
+<h4>ループバックデバイスの警告を抑止する</h4>
+<div class="i">
+<p>コンテナ起動時に下記の警告が表示される場合は...</p>
+<pre class="c">
+Usage of loopback devices is strongly discouraged for production use.
+Either use `--storage-opt dm.thinpooldev` or use `--storage-opt dm.no_warn_on_loop_devices=true` to suppress this warning.
+</pre>
+<p>Dockerストレージの起動オプションに下記を加える</p>
+<pre class="c">
+# vi /etc/sysconfig/docker-storage
+DOCKER_STORAGE_OPTIONS=<em>"--storage-opt dm.no_warn_on_loop_devices=true"</em>
+
+# systemctl restart docker
+</pre>
+</div>
+
+<h4>Node.js は PID=1 のプロセスにしてはならない</h4>
+<div class="i">
+<p>Node.js は PID=1 のプロセスとして動作する場合に docker stop から送信される SIGTERM シグナルをうまく受け取ることができないそうです。docker run 時に --init を指定し、PID=1 のラッパープロセスの子プロセスとして Node.js を起動するのがおすすめだそうです。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 2016-2019 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/howto.html</div>
+</body>
+</html>

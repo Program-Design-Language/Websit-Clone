@@ -1,0 +1,87 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>不規則なパターンマッチで置換するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>不規則なパターンマッチで置換するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060155.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060155.htm">[前に]</a>
+<a href="99060157.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060157.htm">[次に]</a>
+<hr>
+<span class=name>Shinji</span>
+<span class=time>1999/06/16(水) 17:58:42</span><br>
+初めまして。ぜひともみなさまのお知恵を拝借したく、投稿させてもらいました。<br>
+perlでの以下の様なパターンの置換はどのように行えばよろしいのでしょうか？<br>
+<br>
+&lt;img src="normal.gif"&gt;<br>
+&lt;a href="big.gif"&gt;&lt;img src="small.gif"&gt;<br>
+&lt;/a&gt;&nbsp;&nbsp;と複数行あった場合（さらに続く場合もあり）に、<br>
+<br>
+&lt;a href="normal.gif"&gt;normal.gif&lt;/a&gt;<br>
+&lt;a href="big.gif"&gt;big.gif&lt;/a&gt;<br>
+：<br>
+という結果が欲しいのです。なにかよい方法はないでしょうか。<br>
+よろしくお願いいたします。<br>
+<hr>
+<span class=name>aki</span>
+<span class=time>1999/06/18(金) 12:35:35</span><br>
+（さらに続く場合もあり）というのがどのように続くのかちょっと<br>
+わかりませんが、<br>
+<br>
+&nbsp;&nbsp;s/^&lt;img src="(.*)"&gt;$/&lt;a href="$1"&gt;$1&lt;\/a&gt;/gi ;<br>
+&nbsp;&nbsp;s/^&lt;a href="(.*)"&gt;&lt;img src="(.*)"&gt;$/&lt;a href="$1"&gt;$1&lt;\/a&gt;/gi ;<br>
+&nbsp;&nbsp;s/^&lt;\/a&gt;$//gi ;<br>
+<br>
+じゃダメなんでしょうか？<br>
+もっと複雑な置換しようとしてるのだったらゴメンナサイ。<br>
+＃全然不規則じゃないし(^^;<br>
+<hr>
+<span class=name>Shinji</span>
+<span class=time>1999/06/18(金) 17:38:00</span><br>
+akiさん、早速のお返事ありがとうございます。<br>
+しかし、正常に置換してくれません。（というかまったく置換されません）<br>
+<br>
+補足：（さらにつづく場合、不規則）<br>
+&lt;img src="xx1"&gt;&lt;img src="xx2"&gt;&lt;a href="big"&gt;&nbsp;&nbsp;(FORM内で改行される)<br>
+&lt;img src="small"&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(同)<br>
+&lt;/a&gt;&lt;img src="nazo"&gt;<br>
+<br>
+と、予想が付かない場合です。<br>
+<br>
+説明を省いてしまって申し訳なかったのですが、<br>
+掲示板のCGIをPerlで作成してまして、FORMからの入力(タグフル許可)<br>
+の情報を、オプションでアンカーに置き換えるというものです。<br>
+普通は、１行程度なのですが、中には入り乱れて入力されるものが<br>
+あって、正常に置換できなくて困っています。いろいろ考えるうち頭が<br>
+パニックになってる状態です＾＾；<br>
+<br>
+また、質問の仕方などが不適切ならご指摘下さい。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/19(土) 00:56:41</span><br>
+　s|&lt;img src="(.*?)"&gt;|&lt;a href="$1"&gt;$1&lt;/a&gt;|gi ;<br>
+　s|&lt;a href="(.*?)"&gt;\n*&lt;img src="(.*?)"&gt;\n*&lt;/a&gt;|&lt;a href="$1"&gt;$1&lt;/a&gt;|gi ;<br>
+じゃダメ?<br>
+<hr>
+<span class=name>Shinji</span>
+<span class=time>1999/06/23(水) 16:09:10</span><br>
+<span class=resolv>[[解決]]</span><br>
+B-Cusさん、ありがとうございます。<br>
+お返事が遅れましたが、<br>
+行を逆転させましたが．．．無事置換で出来ました。<br>
+<br>
+そもそも、すぐ解決出来なかったのは、\nを判断してたつもりが、<br>
+これ以前に、<br>
+s/\r\n/\r/g;<br>
+s/\n/\r/g;<br>
+があったからだめだったんですね＾＾；勉強不足でした。<br>
+<br>
+どうも、みなさんありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060155.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060155.htm">[前に]</a>
+<a href="99060157.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060157.htm">[次に]</a>
+</body>
+</html>

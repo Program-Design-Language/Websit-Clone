@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PHP - 関数 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>PHP - 関数</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/php/index.html">PHP</a> &gt;
+関数
+
+<h4 id="function">関数(function)</h4>
+<div class=i>
+<p><b>function</b> を用いて関数を定義することができます。下記の例では、2つの引数を加算して返却する add() 関数を定義し、利用しています。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$c = add(5, 3);
+echo $c;                   // 8が出力される
+
+<em>function add($x, $y) {</em>
+    return $x + $y;
+<em>}</em>
+</pre>
+<p>関数名には、アンダーバー(_)、数字(0～9)、文字(a～z, A～Z, 日本語等)を使用できます。ただし、数字で始まる関数名は使用できません。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+○ function GetName() { ... }
+○ function get_name() { ... }
+○ function 名前取得() { ... }      // 日本語も使用可能
+× function get-name() { ... }      // 許可されない記号(-)を用いてる
+× function 2GetName() { ... }      // 先頭が数字で始まっている
+</pre>
+<p>下記の様に、引数を省略した場合のデフォルトの引数を指定することができます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+function func($str, <em>$charset = "UTF-8"</em>) {
+    // 関数の処理
+}
+
+func("ABC", "Shift_JIS");  // $mode に Shift_JIS が指定される
+func("ABC");               // $mode にデフォルト引数 UTF-8 が指定される
+</pre>
+</div>
+
+<h4 id="return">返却(return)</h4>
+<div class=i>
+<p><b>return</b> は値を返却します。return の後には値を記述します。値は (...) で括らないことを推奨します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+function add($x, $y) {
+    $z = $x + $y;
+    <em>return</em> $z;             // return ($z) とはしない
+}
+</pre>
+<p>値を記述しない場合もあります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+function print_message($msg) {
+    if (!isset($msg)) {
+        <em>return;</em>
+    }
+    echo "== $msg\n";
+}
+</pre>
+</div>
+
+<h4 id="return_list">配列の返却</h4>
+<div class=i>
+<p>関数の戻り値としてリストを返却することも可能です。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+function getDate() {
+    <em>return array(2012, 12, 31);</em>
+}
+
+list($year, $mon, $mday) = getDate();
+</pre>
+</div>
+
+<h4 id="scope">変数のスコープ</h4>
+<div class=i>
+<p>関数の内部で使用される変数は、関数内部だけで有効なローカル変数になります。下記の例では、関数 func() の中で使用されている $var は、変数名は同じですが、外部で宣言されている $var とはまったく別の変数として扱われます。関数内部のローカル変数 $var に 5を代入しても、関数外部のグローバル変数 $var の値は 10のままです。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>$var</em> = 10;              // グローバル変数
+func();
+function func() {
+    <em>$var</em> = 5;           // ローカル変数
+}
+echo "var = $var\n";    // 10が出力される
+</pre>
+</div>
+
+<h4 id="global">グローバル変数(global)</h4>
+<div class=i>
+<p><b>global</b> を用いて、関数内部からグローバル変数を参照することができます。下記の例では、func() なかで設定している $var はローカル変数ではなくグローバル変数となります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$var = 10;
+func();
+function func() {
+    <em>global</em> $var;
+    $var = 5;
+}
+echo "var = $var\n";    // 5が出力される
+</pre>
+</div>
+
+<h4 id="refference">値の参照渡し</h4>
+<div class=i>
+<p>アンパサンド(&amp;)を用いて、値の参照渡しを行うことで、呼び出し元の変数の値を、関数の中で設定することが可能となります。下記の例では、setValue() 関数により、呼び出し元の変数 $name の値を関数の内部で変更しています。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+$name = "Tanaka";
+setValue($name, "Suzuki");
+echo $name;                 // Suzuki と出力される
+
+function setValue(<em>&amp;$value</em>, $str) {
+    $value = $str;
+}
+</pre>
+</div>
+
+<h4 id="args">可変長引数</h4>
+<div class=i>
+<p><b>func_num_args()</b>, <b>func_get_arg()</b>, <b>func_get_args()</b> を用いることで、引数の数が不定の関数を作成することができます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+func("AAA", "BBB", "CCC");
+
+function func() {
+    for ($i = 0; $i &lt; <em>func_num_args()</em>; $i++) {
+        echo "$i : " . <em>func_get_arg($i)</em> . "\n";
+    }
+
+    foreach (<em>func_get_args()</em> as $arg) {
+        echo "$arg\n";
+    }
+}
+</pre>
+</div>
+
+<h4 id="variable_functions">可変関数</h4>
+<div class=i>
+<p>下記の様にして、関数名を変数で指定することができます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+function foo() { echo "foo\n"; }
+function bar() { echo "bar\n"; }
+
+$func = "foo";
+<em>$func();</em>     // 関数foo()が呼ばれる
+</pre>
+</div>
+
+<h4 id="anonymous">無名関数</h4>
+<div class=i>
+<p>array_map()の第一引数などではコールバック関数を指定しますが、下記の様にして無名の関数を指定することができます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+# (1)関数名を指定するケース
+function func($n) {
+    return $n * 2;
+}
+print_r(array_map(<em>"func"</em>, array(1, 2, 3)));
+
+# (2)無名関数を代入した変数を指定するケース
+$func = function($n) {
+    return $n * 2;
+};
+print_r(array_map(<em>$func</em>, array(1, 2, 3)));
+
+# (3)無名関数を直接指定するケース
+print_r(array_map(<em>function($n) {
+    return $n * 2;
+}</em>, array(1, 2, 3)));
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2013 杜甫々</div>
+<div>初版：2013年5月12日、最終更新：2013年5月12日</div>
+<div>http://www.tohoho-web.com/php/syntax.html</div>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>sendmail のかわりに mail を使用するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>sendmail のかわりに mail を使用するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040026.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040026.htm">[前に]</a>
+<a href="98040028.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040028.htm">[次に]</a>
+<hr>
+<span class=name>IMO</span>
+<span class=email><a href="mailto:imo@mail.at-m.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/08(水) 14:04:14</span><br>
+　サーバに、sendmail へのパスを聞いたところ、<br>
+次のような答えが返ってきました。<br>
+<br>
+<font color="#CC8000">&gt;sendmail を直接操作することはシステム上問題が多いので mail コマンド</font><br>
+<font color="#CC8000">&gt;をご利用になって下さい。mail のパスは whereis コマンドで検索出来ます。</font><br>
+<br>
+　このような場合、どのような設定をすれば、<br>
+フォームからメールが届くようになるのですか？<br>
+ちなみに、今設置しようとしているスクリプトは、<br>
+掲示板で、新規書き込みがあったときに私のところへ、<br>
+メールが届くようにするものです。<br>
+<br>
+　このあたりのスクリプトをどう変えればよいか、教えて下さい。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/08(水) 17:24:34</span><br>
+/usr/sbin/sendmailなどとなっているところを、<br>
+/bin/mailか/usr/bin/mailに直すだけでいけると思います。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 16:05:49</span><br>
+　こちらの方も無事にメールが届いております。<br>
+<br>
+　が、文字化けてるんです。jpde.pl のパーミッションも７７５になってるし、<br>
+恐らく PATH も通ってるはずなのですが、なぜなのでしょう？<br>
+<br>
+　初めの質問の趣旨とは変わってきてしまいましたが、分かる方はお願いいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/09(木) 16:12:20</span><br>
+どんな風に化けてますか？アルファベットだけですか？<br>
+open(OUT,"|/usr/local/bin/nkf -j|/bin/mail");<br>
+としたらどうなりますか？<br>
+あと、一応 nkf -e とnkf -sも試してみてください。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 16:31:41</span><br>
+　まず、文字の化け方なんですが、アルファベットではなく、難しい漢字やよく分からない<br>
+記号混じりです。恐らく漢字コードに起因しているものと思われます。<br>
+<br>
+　それと、B-Cus さんが書いて下さったスクリプトなんですが、cgi ファイル全て調べてみても、<br>
+open(OUT ～ で始まるところはありませんでした。<br>
+　もしかしたら、この１文を書き加えろ、ということなんですか？<br>
+もしそうなら、どこに書き加えればよいのでしょうか？<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 16:35:27</span><br>
+　すいません、先ほど書き忘れました。今私が使っているスクリプトなんですが、<br>
+オリジナルは、「浜ちゃん～」というホームページありまして、<br>
+<br>
+<a href="javascript:if(confirm('http://www.c-5.ne.jp/~hamachan/cgihtm/msub_sougou.htm  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.c-5.ne.jp/~hamachan/cgihtm/msub_sougou.htm'" tppabs="http://www.c-5.ne.jp/~hamachan/cgihtm/gb50.txt">http://www.c-5.ne.jp/~hamachan/cgihtm/gb50.txt</a><br>
+<br>
+　にオリジナルのものがあります。もしよろしかったら、これも参照にしていただくと幸いです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/09(木) 16:54:43</span><br>
+$mailprog = "/usr/local/bin/nkf -j | /bin/mail";<br>
+としてみてください。<br>
+<br>
+こういうときは$mailprogをキーワードとして検索すれば<br>
+sub mailOptionにopne(OUT,"|$mailprog");的な記述が<br>
+見つけられます。<br>
+<br>
+あと、、、/bin/mailが8ビットスルーじゃないって可能性は<br>
+、、、ないか。もし心配なら適当に漢字を含んだ文を書いて<br>
+(たとえばファイル名はsample)、コマンドラインから<br>
+% mail imoさんのメールアドレス &lt; sample<br>
+などとやってみてください。さらにnkfも通してみてください。<br>
+たとえば<br>
+% cat sample | mail foo@bar.com<br>
+とか<br>
+% cat sample | nkf -j | mail foo@bar.com<br>
+とかね。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 18:02:48</span><br>
+　$mailprog を B-Cus さんのおっしゃる通り書き換えてやってみたところ、<br>
+今度は、メール自体が届かなくなってしまいました。<br>
+<br>
+　また、コマンドラインから試してみたところ、１、２番のコマンドはうまくいったのですが、<br>
+３番目のものは、<br>
+<br>
+<font color="#CC8000">&gt;$ cat sample | nkf -j | mail imo@mail.at-m.or.jp</font><br>
+<font color="#CC8000">&gt;nkf: not found</font><br>
+<font color="#CC8000">&gt;No message !?!</font><br>
+<br>
+と表示され、メールも届いていませんでした。<br>
+<br>
+　私は素人なので、よく分かりませんが、ここら辺がカギなのでしょうか？<br>
+<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 18:05:50</span><br>
+　すいません、また書き忘れました。<br>
+<br>
+　mail への PATH なんですが、whereis で調べたところ、<br>
+<br>
+<font color="#CC8000">&gt;/etc/mail /usr/bin/mail /usr/ucb/mail /usr/lib/mail.local /usr/man/man1/mail.1';</font><br>
+<br>
+　と出て来ました。<br>
+<br>
+この中でどれを 　PATH として採用すればよいかも教えて下さい。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/09(木) 19:12:36</span><br>
+あー、じゃあnkfがないのかな。ls /usr/local/bin/nkf<br>
+として、nkfがなかったら管理者にnkfはどこにありますか<br>
+と質問してみてください。<br>
+<br>
+ find / -name nkf | grep nkf でもいいですけど、<br>
+ちょっと負荷がかかります。<br>
+<br>
+/etc/mailって、ほんとに/etc/mailがありました？<br>
+たぶん/bin/mailじゃないかと思うんですが。<br>
+まぁ、/bin/mailか/usr/bin/mailで問題はないと<br>
+思います。<br>
+<br>
+おそらくnkf通せば直ると思うんだけどなぁ。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/09(木) 19:26:54</span><br>
+失礼。find / -name nkf |&amp; grep nkf でした。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 20:23:00</span><br>
+　B-Cus さんのおっしゃったことを試してみたところ、ls ～ の方では、<br>
+not found と表示され、find ～ の方では、find: cannot chdir to ............ : Permission denied<br>
+と表示されました。管理者の方にもメールを書いたのですが、<br>
+nkf はもしかしたらないのかもしれません。<br>
+<br>
+　もし、nkf がなかったら、どのように設定すればよいのでしょうか？<br>
+jcode.pl というのはこのようなメール送信には関係ないのでしょうか？<br>
+んー、難しいですね、本当に。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/09(木) 20:26:48</span><br>
+　あっ、そうそう、やっぱり、/etc/mail ありましたよ。それで、/bin/mail はありませんでした。<br>
+これだったら、とりあえず、/usr/bin/mail を使えばいいんですね。<br>
+今まで /usr/ucb/mail と書いていたような気もするので、チェックしてみます。<br>
+<hr>
+<span class=name>飯塚</span>
+<span class=time>1998/04/10(金) 02:03:36</span><br>
+以下の戦法はいかがでしょうか（全部同時にやってください）？<br>
+「メールが送れるけど化ける」スクリプトに対して、<br>
+<br>
+(1)　$mailprog = "/etc/mail";<br>
+　　　とする。<br>
+(2)　require './jcode.pl';<br>
+　　　とあるところを<br>
+　　　require 'jcode.pl';<br>
+　　　にする。<br>
+<br>
+なお、このスクリプトは「メールをShift JISで送る」という<br>
+言語道断のことをしているようです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/10(金) 02:13:47</span><br>
+mailOptionをそっくり以下のものと差し替えたらどうなりますか？<br>
+<br>
+sub mailOption {<br>
+local($from) = @_;<br>
+local($buf) = "";<br>
+open (MAIL, "|$mailprog $mail_ad") || &amp;errExit('メールが送れません','');<br>
+$buf = "Subject: $guest Board\n\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf .= "$resp への返信\n\n" if $resp;<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf = "$from \n\n$mtitle\n$comments\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf = "$longdate\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf = "$hst_name\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf = "$agent\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf = "$email\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+$buf = "$url\n";<br>
+&amp;jcode'convert(*buf,'jis'); print MAIL $buf;<br>
+close (MAIL);<br>
+}<br>
+<br>
+これでダメなら…「への返信」を削ってみてください。<br>
+これでもダメなら…この部分のprintを、半分ずつ<br>
+コメントアウトしてみてください。上半分をコメント<br>
+アウトして化けなかったら下半分が原因だし、化けなかったら<br>
+そのまた上半分をコメントアウトしていけば、原因の行が<br>
+つかめるはずです。<br>
+<br>
+一番いいのはnkfを自分でインストールすることなんですが、<br>
+トラブったときはめんどくさいからなぁ…。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/10(金) 02:49:01</span><br>
+全然関係ない話ですが、ひとりごと。<br>
+<br>
+<font color="#CC8000">&gt; あっ、そうそう、やっぱり、/etc/mail ありましたよ。</font><br>
+<br>
+一言でUNIXといっても管理者によって千差万別ですな。<br>
+# まさかデフォルトで/etc/mailがあるUN*Xはないですよねぇ。<br>
+<hr>
+<span class=name>IMO</span>
+<span class=time>1998/04/10(金) 10:14:07</span><br>
+<span class=resolv>[[解決]]</span><br>
+　飯塚さんと B-Cus さんのおっしゃったように、スクリプトを変えてみたところ、<br>
+飯塚さんの方では、メールが届かなかったのですが、B-Cus さんのスクリプトで、<br>
+無事、文字化けはなくなりました。どうもありがとうございました。<br>
+<br>
+　それと、なぜか mail コマンドは、/usr/ucb/mail じゃないと、メールが届かないようです。<br>
+これも、私にはよく分かりませんが。<br>
+<br>
+　でも、これで無事に掲示板が設置できます。どうもありがとうございました。<br>
+<br>
+Ｐ．Ｓ．みなさん、何でそんなに詳しいのでしょう。うらやましいかぎりです。<br>
+<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/10(金) 19:43:22</span><br>
+対処療法しか書いてなかったので、なにをしていたのか<br>
+軽く説明しておきますと、、、<br>
+<br>
+日本語コードにはJISとEUCとSJISがあります。<br>
+で、メールはJISで送らなければなりません。<br>
+で、nkf -j というのはJISコードに変換する<br>
+ためのコマンドですので、mailに送る前にnkfに<br>
+変換させたかったのです。<br>
+<br>
+でもnkfがないようなので、perlの中でjcode.plの<br>
+&amp;jcode'convertを使ってJISに変換してからmailに<br>
+出力したわけです。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040026.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040026.htm">[前に]</a>
+<a href="98040028.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040028.htm">[次に]</a>
+</body>
+</html>

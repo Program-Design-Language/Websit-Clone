@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Drupal入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<div class="page">
+<h2>Drupal入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="top.htm" tppabs="http://www.tohoho-web.com/drupal/top.htm">Drupal入門</a> &gt;
+<a href="module.htm" tppabs="http://www.tohoho-web.com/drupal/module.htm">モジュール</a> &gt;
+モジュールを作る
+
+<h4>Drupal関数一覧</h4>
+
+<p>ごく一部ですが、Drupal のモジュール開発でよく利用される関数について説明します。</p>
+
+<h5 id="t">◆t($string, $args = array(), $langcode = NULL)</h5>
+<div class=i>
+<p>翻訳対象の文字列を指定します。.po ファイルがアップロードされ、$msg で指定された文字列に対応する翻訳があれば翻訳後の文字列を返します。</p>
+<pre class=c>
+  $output = '&lt;p&gt; . t('This is Japan.') . '&lt;/p&gt;';
+</pre>
+<p>文章中の @変数名 を引数で置換することも可能です。</p>
+<pre class=c>
+  $output = t('This is @contry.', array(
+    '@contry' =&gt; 'Japan',
+  ));
+</pre>
+</div>
+
+<h5 id="user_access">◆user_access($string, $account = NULL, $reset = FALSE)</h5>
+<div class=i>
+<p>ユーザが権限を持っているかどうかを調べます。$account にはチェックしたいユーザ名を指定します。省略すると現在ログインしているユーザになります。$reset に TRUE を指定すると、ユーザーの権限情報のキャッシュをリセットします。</p>
+<pre class=c>
+  if (user_access('administer users')) {
+    :
+  }
+</pre>
+</div>
+
+<h5 id="variable_set">◆variable_set($name, $value)</h5>
+<div class=i>
+<p>Drupal の持続変数 $name に値 $value を設定します。持続変数はデータベースの variable テーブルに保存されます。</p>
+<pre class=c>
+  variable_set('my_test_counter', '1234');
+</pre>
+</div>
+
+<h5 id="variable_get">◆variable_get($name, $default)</h5>
+<div class=i>
+<p>Drupal の持続変数 $name を参照します。値が存在しない場合は $default を返します。</p>
+<pre class=c>
+  $count = variable_get('my_test_counter', 0);
+</pre>
+</div>
+
+<h5 id="db_query">◆db_query($sql, $args...)</h5>
+<div class=i>
+<p>データベースに問い合わせます。%d や %s は引数に置き換えられます。</p>
+<pre class=c>
+  $output = "";
+  $result = db_query("SELECT uid, name FROM {users} WHERE status = %d", 1);
+  while ($data = db_fetch_object($result)) {
+    if ($data-&gt;uid != 0) {
+      $output .= "&lt;div&gt;{$data-&gt;name}(uid={$data-&gt;uid})&lt;/div&gt;\n";
+    }
+  }
+</pre>
+</div>
+
+<h5 id="db_query_range">◆db_query_range($sql, $arg..., $n, $m)</h5>
+<div class=i>
+<p><a href="#db_query">db_query()</a> とほぼ同様ですが、実行結果の中から $n 番目から $m 個のデータのみを取り出します。</p>
+<pre class=c>
+  $output = "";
+  $result = db_query("SELECT name FROM {users} ORDER BY created DESC", 0, 5);
+  while ($data = db_fetch_object($result)) {
+    if ($data-&gt;uid != 0) {
+      $output .= "&lt;div&gt;{$data-&gt;name}&lt;/div&gt;\n";
+    }
+  }
+</pre>
+</div>
+
+<h5 id="db_fetch_object">◆db_fetch_object($result)</h5>
+<div class=i>
+<p><a href="#db_query">db_query()</a> や <a href="#db_query_range">db_query_range()</a> の実行結果として得られたデータリストをひとつずつ処理します。使い方は <a href="#db_query">db_query()</a> を参照してください。</p>
+</div>
+
+<h5 id="drupal_get_form">◆drupal_get_form($form_id)</h5>
+<div class=i>
+<p>Drupal のポリシーに従ったフォームを表示します。$form_id にはフォームIDと呼ばれるフォーム関数名を指定します。フォーム関数では、フォーム情報の配列を返却します。</p>
+<pre class=c>
+function test_menu() {
+  $item['test'] = array(
+    'title' =&gt; 'TEST',
+    'page callback' =&gt; 'test_main',
+    'access arguments' =&gt; array('do test'),
+    'description' =&gt; 'Test module',
+  );
+  return $item;
+}
+
+function test_main() {
+  return drupal_get_form('test_myform');
+}
+
+function test_myform() {
+  $form = array();
+  $form['name'] = array(
+    '#title' =&gt; 'Name',
+    '#type' =&gt; 'textfield',
+    '#default_value' =&gt; 'Yamada Tarou',
+    '#description' =&gt; 'Your name. (ex. Yamada Tarou)',
+  );
+  $form['age'] = array(
+    '#title' =&gt; 'Age',
+    '#type' =&gt; 'textfield',
+    '#default_value' =&gt; '26',
+    '#description' =&gt; 'Your age. (ex. 26)',
+  );
+  $form['sex'] = array(
+    '#title' =&gt; 'Sex',
+    '#type' =&gt; 'radios',
+    '#options' =&gt; array('Male', 'Female'),
+    '#default_value' =&gt; 0,
+    '#description' =&gt; 'Your sex. (ex. Male)',
+  );
+  $form['submit'] = array(
+    '#type' =&gt; 'submit',
+    '#value' =&gt; 'OK',
+    '#submit' =&gt; array('test_myform_submit'),
+  );
+  return $form;
+}
+
+function test_myform_submit($form, &amp;$form_state) {
+  drupal_set_message(
+    "&lt;div&gt;name:{$form_state['values']['name']}&lt;/div&gt;\n" .
+    "&lt;div&gt;age:{$form_state['values']['age']}&lt;/div&gt;\n" .
+    "&lt;div&gt;sex:{$form_state['values']['sex']}&lt;/div&gt;\n"
+  );
+}
+</pre>
+</div>
+
+<h5 id="drupal_set_message">◆drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE)</h5>
+<div class=i>
+<p>画面上にメッセージ $msg を表示します。$type には 'status'、'warning'、'error' のいずれかを指定します。$repeat を FALSE にすると、すでに同じメッセージが表示されていた場合に繰り返しメッセージの表示を抑制します。利用方法は <a href="#drupal_get_form">drupal_get_form()</a> を参照してください。</p>
+</div>
+
+<h5>◆その他のDrupal関数</h5>
+<div class=i>
+<p>その他のDrupal関数については下記を参照してください。</p>
+<ul>
+<li><a target="_blank" href="javascript:if(confirm('http://api.drupal.org/api/place-content.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://api.drupal.org/api/place-content.htm'" tppabs="http://api.drupal.org/api/functions">http://api.drupal.org/api/functions</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2008 杜甫々</div>
+<div>初版：2008年9月21日</div>
+<div>http://www.tohoho-web.com/drupal/</div>
+</div>
+</body>
+</html>

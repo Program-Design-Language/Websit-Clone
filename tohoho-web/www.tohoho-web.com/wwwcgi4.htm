@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CGIその他 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>CGIその他</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwcgi.htm" tppabs="http://www.tohoho-web.com/wwwcgi.htm">とほほのCGI入門</a> &gt;
+CGIその他
+
+<h4 id="Mokuji">目次</h4>
+<ul>
+<li><a href="#CgiTemplate">CGIスクリプトのテンプレート</a></li>
+<li><a href="#CgiCheckList">CGIスクリプト作成時の注意</a></li>
+<li><a href="#NphScript">NPHスクリプト</a></li>
+<li><a href="#CgiSecurity">CGIのセキュリティについて</a></li>
+<li><a href="#NodispArg">CGI実行後の ? 以降を表示しないようにするには？</a></li>
+<li><a href="#MSelect">セレクトの複数選択の結果を受け取るには？</a></li>
+</ul>
+
+<h4 id="CgiTemplate">CGIスクリプトのテンプレート</h4>
+<div class=i>
+<p>CGIスクリプトの動作環境、環境変数、デコード方法について参考になると思われるスクリプトを作成してみました。詳細な説明は、スクリプトの中に書いてあるコメントを参照してください。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://www.tohoho-web.com/cgi/svg-sample.svg  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/cgi/svg-sample.svg'" tppabs="http://www.tohoho-web.com/cgi/wwwperl.txt">wwwperl.cgi</a></li>
+</ul>
+<p>このスクリプトを以下の場所に置いています。いろいろな方法で呼び出して、実行結果をみてください。(オフラインでは表示できません。)</p>
+</div>
+<h5>◆ URLで呼び出す</h5>
+<div class=i>
+<p><a href="javascript:if(confirm('http://www.tohoho-web.com/cgi/meter.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/cgi/meter.htm'" tppabs="http://www.tohoho-web.com/cgi/wwwperl.cgi">http://～/～/wwwperl.cgi</a></p>
+</div>
+<h5>◆ URLで呼び出す(引数付き)</h5>
+<div class=i>
+<p><a href="javascript:if(confirm('http://www.tohoho-web.com/cgi/polyfill.js  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/cgi/polyfill.js'" tppabs="http://www.tohoho-web.com/cgi/wwwperl.cgi?aaa+bbb">http://～/～/wwwperl.cgi?aaa+bbb</a></p>
+</div>
+<h5>◆ フォームからMETHOD=GETで呼び出す</h5>
+<div class=i>
+<form method=GET action="http://www.tohoho-web.com/cgi/wwwperl.cgi" style="margin: 1em 0;">
+VALUE1=<input type="text" name="VALUE1" value="あいうえお">
+<input type="submit" value="GET">
+</form>
+</div>
+<h5>◆ フォームからMETHOD=POSTで呼び出す</h5>
+<div class=i>
+<form method=POST action="http://www.tohoho-web.com/cgi/wwwperl.cgi" style="margin: 1em 0;">
+VALUE2=<input type="text" name="VALUE2" value="かきくけこ">
+<input type="submit" value="POST">
+</form>
+</div>
+
+<h4 id="CgiCheckList">CGIスクリプト作成時の注意</h4>
+<div class=i>
+<p>CGIスクリプトを記述する際に注意しなければならないことを、UNIXサーバーの場合、Windowsサーバーの場合に分けて説明します。(多くのプロバイダではUNIXサーバーを利用しています。たまにWindows NTサーバーもあるようです。）</p>
+</div>
+<h5>◆ サーバーがCGIをサポートしていない(共通)</h5>
+<div class=i>
+<p>セキュリティ確保のためCGIの使用を禁止していたり、CGIの設定を行っていなかったりするため、CGIを利用できない場合があります。</p>
+</div>
+<h5>◆ プロバイダの注意事項をよく読む(共通)</h5>
+<div class=i>
+<p>プロバイダによっては、CGIスクリプトを cgi-bin フォルダの下に置かなくてはならない、CGI用の別サーバに設置しなくてはならない、別途申請フォームから申請が必要など、プロバイダに依存した注意事項がある場合があります。ご利用のプロバイダの説明書をお読み下さい。</p>
+</div>
+<h5>◆ .htaccessファイルが必要？(UNIX)</h5>
+<div class=i>
+<p>サーバが Apache などの場合、.htaccess というファイルの設定が必要な場合があります。プロバイダやサーバー管理者に問い合わせてください。また、.htaccess に記述しても有効にならない場合もありますので、サーバーの管理者の指示に従ってください。</p>
+</div>
+<h5>◆ ローカルファイルを実行しようとしてる(共通)</h5>
+<div class=i>
+<p>CGIスクリプトの動作チェックは必ず、http:// で始まるアドレスでアクセスしなくてはなりません。自分のパソコンでチェックしたい場合は、「<a href="wwwcgi6.htm" tppabs="http://www.tohoho-web.com/wwwcgi6.htm">Windows でCGIを動かすには</a>」を参照してください。</p>
+</div>
+<h5>◆ perlのパス名があっていない(UNIX)</h5>
+<div class=i>
+<p>CGIスクリプトの1行目は、perlの絶対パス名（ディレクトリ上の位置）を正確に指定してください。絶対パス名がわからない場合は、プロバイダの説明を読んだり、サーバーの管理者に問い合わせてください。多くの場合、/usr/local/bin/perl や、/usr/bin/perl などに置かれています。</p>
+</div>
+<h5>◆ CGIスクリプトの場所が適切でない(共通)</h5>
+<div class=i>
+<p>サーバーの設定によってはCGIスクリプトを置くディレクトリが制限されている場合があります。普段 HTMLファイルを置いているのとは別のサーバーに設置しなくてはならないプロバイダもあります。CGIスクリプトを置く場所がこのホームページで説明されている場所と合わない場合は、プロバイダの指示などに従って、適切にディレクトリを変更してください。</p>
+</div>
+<h5>◆ CGIスクリプトの拡張子が適切でない(共通)</h5>
+<div class=i>
+<p>CGIスクリプトの拡張子が .cgi でなくてはならない場合があります。他にも .pl でなくてはならない場合もあります。これらも、サーバーの設定によって異なります。</p>
+</div>
+<h5>◆ perlがインストールされていない(Windows)</h5>
+<div class=i>
+<p>Windows NTにはperlが標準では装備されていませんから、perl for Win32 や ActivePerl を入手してインストールする必要があります。また、MicrosoftのIISを用いる場合は、.cgi という拡張子に対して perl.exe が起動されるように、IISのヘルプを参照して設定を行う必要があります。（古いバージョンのIISではレジストリの追加が必要）</p>
+</div>
+<h5>◆ CGIスクリプトのパーミッションが誤っている(UNIX)</h5>
+<div class=i>
+<p>サーバーがUNIXの場合は、CGIスクリプトファイルの<a href="wwwxx012.htm" tppabs="http://www.tohoho-web.com/wwwxx012.htm">パーミッション</a>を755にしてください。また、CGIスクリプトが書込むデータファイルは、666 にしてください。一部のプロバイダでは、700 や 600 でなければならないところもあるそうです。</p>
+</div>
+<h5>◆ ユーザーの権限設定が誤っている(Windows)</h5>
+<div class=i>
+<p>MicrosoftのIISでは、IUSER_<i>MachineName</i> というユーザーの権限でコマンドが実行されます。このユーザーがCGIスクリプトを実行する権限を持っているか確認してください。</p>
+</div>
+<h5>◆ ファイルの所有者が変(共通)</h5>
+<div class=i>
+<p>他のサーバーからデータファイルを移行させたときなど、ファイルの所有者が nobody でなくてはならないのに、自分自身の所有になっていて、パーミッションが 644 でもCGIがファイルに書き込めないことがあります。</p>
+</div>
+<h5>◆ CGIスクリプトの改行コードが変(共通)</h5>
+<div class=i>
+<p>CGIスクリプトファイルの<a href="wwwxx011.htm" tppabs="http://www.tohoho-web.com/wwwxx011.htm">改行コード</a>は、サーバーのOSタイプに適したものでなくてはなりません。</p>
+</div>
+<h5>◆ .htaccessの改行コードが変(共通)</h5>
+<div class=i>
+<p>.htaccessを設置する場合は、.htaccessの改行コードもまた、サーバーのOSタイプにあわせてやる必要があります。</p>
+</div>
+<h5>◆ .htaccessの最後の行が改行されていない</h5>
+<div class=i>
+<p>.htaccessの最後の行が改行されていないと、その行は無視されてしまうようです。</p>
+</div>
+<h5>◆ CGIスクリプト内で使用するコマンドのパスが変(共通)</h5>
+<div class=i>
+<p>スクリプト実行時、スクリプト内で使用するコマンドのパス(PATH)が通っていない場合があります。TELNETなどでログインした時のPATHと、CGIスクリプトが実行される時のPATHは異なるので注意してください。コマンドはなるべくフルパスで記述したほうが無難かもしれません。</p>
+</div>
+<h5>◆ 最初の１行が変(UNIX)</h5>
+<div class=i>
+<p>CGIスクリプトの最初の１行は「#!」で始めるようにしてください。CGIスクリプトは「#!」で始めなくてはなりません。「#!」の前に空白文字や空行があってもいけません。</p>
+</div>
+<h5>◆ ヘッダ行のあとの空行が無い(共通)</h5>
+<div class=i>
+<p><b>Content-type: text/html</b> などのCGIヘッダの後には必ず、1行以上の空行を出力してください。これを怠るとCGIスクリプトは正常に動作しません。</p>
+</div>
+<h5>◆ 大文字、小文字の区別が誤っている(UNIX)</h5>
+<div class=i>
+<p>UNIXというOSは通常、アルファベットの大文字と小文字を別の文字として扱いますので注意してください。たとえば、test1.cgi と TEST1.CGI はまったく別のファイルとして扱われます。</p>
+</div>
+<h5>◆ ブラウザのキャッシングに惑わされている(共通)</h5>
+<div class=i>
+<p>ブラウザがCGIスクリプトの結果をキャッシングするために、スクリプトを書き換えても古い情報が表示されたりします。CGIスクリプト変更時には十分に注意して、再読み込みを欠かさないようにしましょう。</p>
+</div>
+<h5>◆ ヘッダにスペルミスがある(共通)</h5>
+<div class=i>
+<p>意外に多いのがこれ。Context-type: になっていたり、test/html や type/html になっていたり....もう一度確認してみましょう。</p>
+</div>
+<h5>◆ CGIスクリプトの出力漢字コードが変(共通)</h5>
+<div class=i>
+<p>CGIスクリプトから出力する漢字コードはJISコードにするのが無難です。通常はブラウザが自動判断するのですが、Windowsで使用されているシフトJISと、UNIXで使用されているEUCの場合は誤判断してしまうことがあります。</p>
+</div>
+<h5>◆ ブラウザの漢字コード選択が変(共通)</h5>
+<div class=i>
+<p>EUCのファイルを書き出しているのに、ブラウザの文字コード選択([表示]-[エンコード])がシフトJISのままになっていて、うまく表示できないケースがあるようです。</p>
+</div>
+<h5>◆ ファイルへの同時アクセスに注意(共通)</h5>
+<div class=i>
+<p>CGIスクリプトは複数のブラウザ(ひとつのブラウザからでも)同時に起動されます。CGIスクリプトからファイルを更新する際は、ロックファイルの生成などにより排他制御を行う必要があります。</p>
+</div>
+<h5>◆ ブラウザの[画像表示]チェックがオフになっている(共通)</h5>
+<div class=i>
+<p>CGIを&lt;img&gt;タグから呼び出す場合、Netscapeの場合[オプション]→[画像の自動読み込み]、Internet Explorerの場合[表示]→[オプション]→[情報]→[画像の表示]がオンになっていないと読み込まれません。</p>
+</div>
+<h5>◆ text/plain のわな(共通)</h5>
+<div class=i>
+<p>Content-type: text/plain を使用した場合、Internet Explorer 3.0以降ではうまく動かないことがあります。[表示]→[オプション]→[プログラム]→[ファイルタイプ]で、.cgiという拡張子のファイルにメモ帳などのプログラムを割り当てている場合、text/plain 形式の実行結果をダウンロードしてしまい、期待通りの動作をしないことがあります。</p>
+</div>
+<h5>◆ カレントディレクトリの差異(Win)</h5>
+<div class=i>
+<p>Windows NT + IISの場合は、CGIスクリプトが動作する際のカレントディレクトリ(作業フォルダ)の場所が異なる場合があります。スクリプトの最初の方に、chdir("C:/HomePage/cgi-bin"); などの1行(C:/～の部分にはCGIスクリプトを置いているフォルダを指定する)を追加することで回避できる場合があります。</p>
+</div>
+<h5>◆ もう一度スペルチェック(共通)</h5>
+<div class=i>
+<p>すべて確認したのに、どうしても動かない・・・そういう時は、もう一度、すべてのスペルをチェックしてみましょう。大文字・小文字もあわせて見てください。l(小文字のエル)と I(大文字のアイ)と 1(数字の１)は間違えやすいので気を付けてください。</p>
+</div>
+<h5>◆ アットマーク（@）の扱い</h5>
+<div class=i>
+<p> Perl5でダブルクォーテーション（"..."）の間にアットマーク（@）を記述する場合は @ を \@ と記述する必要があります。Perl4の場合や、Perl5であってもシングルクォーテーション（'...'）であればそのまま @ と記述できます。</p>
+</div>
+<h5>◆ 画像ファイルに広告データが挿入される</h5>
+<div class=i>
+<p>広告付きのサイトを利用している場合が、カウンターなどの画像データにまで、広告画像が自動的に挿入されてしまい、画像データが壊れてしまうケースがあるようです。対策は利用サーバのマニュアルなどを参照ください。</p>
+</div>
+<h5>◆ Perlのバージョンが異なる</h5>
+<div class=i>
+<p>サイトによっては perl のバージョンが 3 や 4 など古いバージョンだったり、perl 5 を利用するには /usr/bin/perl5 や /usr/local/bin/perl5 のように指定する必要があるサイトもあるようです。</p>
+</div>
+<h5>◆ CGIの仕様が一般と異なる</h5>
+<div class=i>
+<p>print "Content-Type: text/html\n\n"; の前に、print "HTTP/1.0 200 OK\n"; の追記が必要など、サイトによっては CGI の仕様が一般のものと多少異なる場合があるようです。</p>
+</div>
+<h5>◆ それでも動かないときは</h5>
+<div class=i>
+<p>それでも、どうしても、動かない時は、「<a href="wwwcgi7.htm" tppabs="http://www.tohoho-web.com/wwwcgi7.htm">CGIスクリプトをデバッグするには？</a>」の方法でデバッグしてみてください。それでも動かなければ、質問メールを受け付けています。「<a href="wwwquest.htm" tppabs="http://www.tohoho-web.com/wwwquest.htm">とほほにメールを送る</a>」の注意事項をよく読んで、ご質問ください。また、これらの他にも、「私はこういう原因でつまずいた!!」というのがありましたら、追記したいと思いますのでお知らせ下さい。</p>
+</div>
+
+<h4 id="NphScript">NPHスクリプト</h4>
+<div class=i>
+<p>通常のCGIスクリプトの出力はWWWサーバー経由でWWWブラウザに渡されますが、NPHスクリプト形式にすると、CGIスクリプトから直接WWWブラウザに渡されるため、WWWサーバーの負荷が軽くなり、速度も若干速くなります。</p>
+<p>CGIスクリプトをNPHスクリプトにするには次の２つの作業を行ってください。</p>
+<ul>
+<li>CGIスクリプトを nph- で始まるファイル名にする。</li>
+<li>Content-type: を出力する前に、「HTTP/1.0 200 OK」を出力する。</li>
+<li>ヘッダ部の改行コードを \r\n にする。（\n のままでも動作するケースが多いが）</li>
+</ul>
+<p>次は、NPHスクリプトの例です。(nph-sample.cgi)</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+#!/usr/local/bin/perl
+binmode(STDOUT);
+print "HTTP/1.0 200 OK\r\n";
+print "Content-type: text/html\r\n";
+print "\r\n";
+print "&lt;html&gt;\n";
+print "&lt;head&gt;\n";
+print "&lt;title&gt;NPHスクリプトのテスト&lt;/title&gt;\n";
+print "&lt;/head&gt;\n";
+print "&lt;body&gt;\n";
+print "これは、NPHスクリプトのテストです。\n";
+print "&lt;/body&gt;\n";
+print "&lt;/html&gt;\n";
+</pre>
+</div>
+
+<h4 id="CgiSecurity">CGIのセキュリティについて</h4>
+<div class=i>
+<p>SSIやCGIは便利さの代償としてセキュリティ上非常に危険なものです。以下の文章はセキュリティを強化するために必要な情報ですが、反面、未防御のシステムに対してアタックをかけるための情報にもなってしまいます。この場で記載すべきかどうか悩んだのですが、このホームページの読者を信用して公開することにしました。</p>
+</div>
+<h5>◆ index.htmlを設置する</h5>
+<div class=i>
+<p>CGIスクリプトを置くディレクトリには index.html を置いておきましょう。index.html が存在しない場合、cgi-bin ディレクトリをブラウザでみるとCGIスクリプトの一覧が見えてしまいます。ファイル名からセキュリティホールのあるスクリプトを見つけてアタックされる可能性が高くなります。</p>
+</div>
+<h5>◆ 見られるとまずいファイルはpublic_htmlの外に</h5>
+<div class=i>
+<p>パスワードファイルなど、見られるとまずいファイルは、public_htmlの外など、通常の閲覧者が見ることのできないディレクトリに置きましょう。(それでも、同じサーバーにログインできる人や、他の人のCGIのセキュリティホールのために、見られてしまうことはあります。)</p>
+</div>
+<h5>◆ evalの危険性</h5>
+<div class=i>
+<p>perlはよく分からないのでCGIスクリプトをシェルで記述しよう・・・と思った時など、CGIスクリプトのパラメータを解釈するためによく、UNIX のシェルの eval を利用しますが、これは大変危険です。もし、変数名NAMEの値として「値;危険なコマンド」を指定されると・・・</p>
+</div>
+<h5>◆ grepの危険性</h5>
+<div class=i>
+<p>「grep $KEY file」というコードも危険です。もし、KEYの値としてバッククォーテーション( ` )で囲まれた「`危険なコマンド`」を指定されると・・・</p>
+</div>
+<h5>◆ SSIの危険性</h5>
+<div class=i>
+<p>チャットや伝言板など利用者の書き込んだメッセージを表示するシステムではSSIに注意してください。もし、「&lt;!--#exec cmd="危険なコマンド"--&gt;」を書き込まれると・・・</p>
+</div>
+<h5>◆ パスワード漏洩の危険性</h5>
+<div class=i>
+<p>人様のパスワードを扱う場合はとにかく厳重に扱ってください。多くの人は同じパスワードを使いまわします。あなたのサービスが不法使用されるだけでなく、同じパスワードを使いまわしていた他の有料サービスも不法使用される恐れがあります。あなたのCGIスクリプトは完璧でも、同じサーバー上の他の人の不備で情報が漏れる可能性もあります。パスワード情報ファイルに password.txt などといった安直な名前はつけないようにしましょう。</p>
+</div>
+
+<h4 id="NodispArg">CGI実行後の ? 以降を表示しないようにするには？</h4>
+<div class=i>
+<p>CGIを実行すると、http://.../.../xxx.cgi?aaa&amp;bbb&amp;ccc のように、CGIへの引数が表示されてしまうことがあります。この?以降の文字を表示させないようにするには、以下の手段があります。</p>
+</div>
+<h5>◆ POSTを用いる</h5>
+<div class=i>
+<p>&lt;form method="GET" action="..."&gt; の代わりに、&lt;form method="POST" action="..."&gt;を用いると、?以降の文字がURLではなく標準入出力で渡されるため、表示されなくなります。ただし、CGI側もPOSTに対応する必要があります。</p>
+</div>
+<h5>◆ Location:で飛ばしてやる</h5>
+<div class=i>
+<p>CGIで処理を行った後、Content-type:ヘッダの代わりに Location: ヘッダで一度別のHTMLやCGIに飛ばしてやると、表示されなくなります。</p>
+</div>
+
+<h4 id="MSelect">セレクトの複数選択の結果を受け取るには？</h4>
+<div class=i>
+<p>セレクトボックス（&lt;select&gt;）を複数選択可能（MULTIPLE）にした場合、CGI に渡される値は、SEL1=aaa&amp;SEL1=bbb&amp;SEL1=ccc のようになります。Perl で値を受け取る際に単純に &amp;FORM{$name} = $value; としていると最後の値しか取得できないので、$FORM{$name} .= "$value "; とするなどの対応が必要となります。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1996-2009 杜甫々</div>
+<div>初版：1999年9月13日、最終更新：2009年4月22日</div>
+<div>http://www.tohoho-web.com/wwwcgi4.htm</div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Javaでイメージを表示するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Javaでイメージを表示するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060146.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060146.htm">[前に]</a>
+<a href="99060148.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060148.htm">[次に]</a>
+<hr>
+<span class=name>ゆうき</span>
+<span class=time>1999/06/16(水) 12:25:19</span><br>
+Javaアップレットで、プロジェクトのあるフォルダ外にある、イメージファイルを表示させるには、ファイル名を書くところに、どのように書いたら良いのでしょうか。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/16(水) 12:49:09</span><br>
+<font color="#CC8000">&gt; プロジェクトのあるフォルダ外にある、イメージファイル</font><br>
+とは具体的にどこですか? サーバ側? ローカル側? HTTPでファイルを取得できる?<br>
+<br>
+アプレットはセキュリティの関係上、(CGIを噛ませるなど工夫しない限り)<br>
+サーバ側のコンテンツしか扱えません。<br>
+<hr>
+<span class=name>ゆうき</span>
+<span class=time>1999/06/16(水) 13:05:12</span><br>
+サーバや、ローカルといった用語が良くわからないのですが、自分のコンピュータ内のファイルです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/16(水) 17:06:53</span><br>
+# まさかJavaじゃなくてJavaScriptというオチじゃないでしょうね?<br>
+<br>
+要は画像を *.class と同じディレクトリに置けばいいです。<br>
+同じじゃなくてもHTTP経由で画像を見られればOKです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/16(水) 17:27:57</span><br>
+ああ、どう書くかがわかんないのね。<br>
+　Image img = getImage(getDocumentBase(),"hoge.gif");<br>
+とか<br>
+　Image img = getImage(getDocumentBase(),"dir/hoge.gif");<br>
+とか<br>
+　Image img = getImage(getDocumentBase(),"../dir/hoge.gif");<br>
+てな感じでいいんじゃない。動くかどうかは確かめてません。<br>
+<hr>
+<span class=name>ゆうき</span>
+<span class=time>1999/06/17(木) 14:04:23</span><br>
+見るのが遅くなってごめんなさい。<br>
+かなり初心者で良く理解できないので、最初から説明します。<br>
+<br>
+Visual J++ を使ってJavaアプレットを書いています。<br>
+Class と同じディレクトリに、HTMLファイルが入っています。<br>
+その１つ上のディレクトリにイメージファイルがある場合、<br>
+Image img=getImage(getDocumentBase(),"");<br>
+の "" の中にはどのように記述すれば良いのですか。<br>
+同じディレクトリ内に置けば、できるのはわかりましたが、<br>
+わざと違うディレクトリに置いた場合にはどうなるのか、<br>
+教えてください。よろしくお願いします。<br>
+<hr>
+<span class=name>hiro-kim</span>
+<span class=time>1999/06/17(木) 19:42:28</span><br>
+・JavaアプレットとJavaアプリケーションとの動作環境の違い<br>
+・URLとはなにか<br>
+・絶対pathと相対pathの違い<br>
+<br>
+以上の前提知識がおありなら，<br>
+<br>
+・Visual J++ の ヘルプ → キーワード で Applet.getImage の書式を調べる<br>
+<br>
+と解答が書いてあります。<br>
+<br>
+このあたりの前提知識があやふやならば，まず先にそちらを解決すべきでしょう。<br>
+<hr>
+<span class=name>ゆうき</span>
+<span class=time>1999/06/18(金) 11:41:18</span><br>
+hiro-kimさんの言った前提知識は、調べて大体わかったつもりですが、<br>
+ファイルパスの書き方がおかしいのか、出来ませんでした。<br>
+<br>
+例えば、<br>
+HTMLファイルが F:\Java\ にあり、<br>
+イメージファイルが F:\Test\ にある場合には、<br>
+img=getImage(getDocumentBase(),"..\\Test\\ファイル名")<br>
+という風に書いたのですが、イメージが表示されませんでした。<br>
+<br>
+どのように変えれば良いのか教えてください。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/19(土) 06:44:21</span><br>
+えっと、役に立たんフォローですいませんが、<br>
+<font color="#CC8000">&gt; img=getImage(getDocumentBase(),"..\\Test\\ファイル名")</font><br>
+確かにできませんね。<br>
+　img=getImage(getDocumentBase(),"../Test/ファイル名")<br>
+もダメなようで。getDocumentBase()はURLクラスのインスタンスを返すので、<br>
+　URL image_url;<br>
+として適当なURLを与えて<br>
+　img=getImage(image_url,"ファイル名")<br>
+とするのがいい…のかな?<br>
+<hr>
+<span class=name>exon</span>
+<span class=time>1999/06/23(水) 02:31:52</span><br>
+たしか、ふたつの引数をひとつに合わせて解釈するのじゃなかったでしたっけ。<br>
+getDocumentBase() と　"../test/file.gif" をくっつけたってだめですよ。<br>
+それより第一引数をいじって、"file.gif" をくっつければいい。<br>
+<hr>
+<span class=name>ゆうき</span>
+<span class=time>1999/06/23(水) 11:20:05</span><br>
+第一引数をいじるというのは、具体的に、<br>
+どのようなことをすれば良いのでしょうか？<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060146.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060146.htm">[前に]</a>
+<a href="99060148.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060148.htm">[次に]</a>
+</body>
+</html>

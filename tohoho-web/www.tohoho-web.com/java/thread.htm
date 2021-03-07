@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのJava入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2> スレッド</h2>
+
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="exception.htm" tppabs="http://www.tohoho-web.com/java/exception.htm">[前に]</a>
+<a href="file.htm" tppabs="http://www.tohoho-web.com/java/file.htm">[次に]</a>
+
+<h4 id="aboutThread">スレッドとは</h4>
+<div class=i>
+<p><b>スレッド</b> を用いることにより、ひとつのプログラム（プロセス）の中で複数の処理の流れを走らせることができます。スレッドを作成するには、Thread のサブクラスを作成する方法と、Runnable インタフェースを実装したオブジェクトを用いる方法があります。</p>
+</div>
+
+<h4 id="Thread">スレッドクラス（Thread）</h4>
+<div class=i>
+<p><b>Thread</b> クラスのサブクラスを作成することにより、スレッドを作成する方法を以下に示します。Thread クラスのサブクラスを定義し、そのインスタンスを生成し、<b>start()</b> メソッドを呼び出すことで、ThreadTestThread クラスの <b>run()</b> メソッドが実行されます。</p>
+<div class="tab">ThreadTest.java</div>
+<pre class=c2>
+class ThreadTest {
+    public static void main(String[] args) {
+        <em>ThreadTestThread tt = new ThreadTestThread();</em>
+        <em>tt.start();</em>
+        for (int i = 0; i &lt; 1000; i++) {
+            System.out.print('.');
+        }
+    }
+}
+
+<em>class ThreadTestThread extends Thread</em> {
+    <em>public void run()</em> {
+        for (int i = 0; i &lt; 1000; i++) {
+            System.out.print('o');
+        }
+    }
+}
+</pre>
+</div>
+
+<h4 id="Runnable">ランナブル（Runnable）</h4>
+<div class=i>
+<p>すでに他のクラスを継承しているサブクラスをスレッド化したい場合は、Thread クラスのサブクラスとして定義するのではなく、代わりに <b>Runnable</b> インタフェースを実装させます。このクラスのインスタンスを引数にして Thread クラスのインタフェースを作成し、start() メソッドを呼び出します。</p>
+<div class="tab">RunnableTest.java</div>
+<pre class=c2>
+class RunnableTest {
+    public static void main(String[] args) {
+        <em>RunnableTestThread tt = new RunnableTestThread();</em>
+        <em>Thread t = new Thread(tt);</em>
+        <em>t.start();</em>
+        for (int i = 0; i &lt; 1000; i++) {
+            System.out.print('.');
+        }
+    }
+}
+
+<em>class RunnableTestThread implements Runnable</em> {
+    <em>public void run()</em> {
+        for (int i = 0; i &lt; 1000; i++) {
+            System.out.print('o');
+        }
+    }
+}
+</pre>
+</div>
+
+<h4 id="synchronized">スレッドの排他制御（synchronized）</h4>
+<div class=i>
+<p>複数のスレッドが同時に処理を行ってしまうとまずい場合があります。例えば下記の例では、1000個のスレッドを実行し、それぞれがカウンターをひとつずつカウントアップするので結果は 1000になるはずですが、結果が 995になったりします。これは、カウンター値を読み出して設定するまでの間に他のスレッドが割り込んでしまい、同じ値を読み出して同じ値を設定してしまうために発生します。</p>
+<div class="tab">SyncTest.java</div>
+<pre class=c2>
+// テストプログラム
+class SyncTest {
+    static Counter counter = new Counter();
+
+    public static void main(String[] args) {
+
+        // スレッドを1000個作成する
+        MyThread[] threads = new MyThread[1000];
+        for (int i = 0; i &lt; 1000; i++) {
+            threads[i] = new MyThread();
+            threads[i].start();
+        }
+
+        // スレッドがすべて終了するのを待つ
+        for (int i = 0; i &lt; 1000; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+        }
+
+        // カウンターを表示する
+        System.out.println(SyncTest.counter.count);
+    }
+}
+
+// スレッド
+class MyThread extends Thread {
+    public void run() {
+        SyncTest.counter.countUp();
+    }
+}
+
+// カウンター
+class Counter {
+    int count;
+    void countUp() {
+        System.out.print("[");
+        <em>int n = count;</em>            // カウンターを読み出して
+        System.out.print(".");
+        <em>count = n + 1;</em>            // 加算して書き戻す
+        System.out.print("]");
+    }
+}
+</pre>
+<p>下記に実行結果の例を示します。[ と ] の対応がとれていない部分が、複数のスレッドが処理を同時実行してしまっている部分です。</p>
+<pre class=dos>
+[.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.]
+[.][.][.][.][[[[[[[[[........]]]]]]]].][.][.][.][.][.][.][.]
+[.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.]
+[.][.][.][.][.][.][.][.][.][.][.][.][.]983
+</pre>
+<p>この問題を防ぐには、<b>同期処理</b> や <b>排他制御</b> と呼ばれる制御を行います。下記のように <b>synchronized</b> を用いることで、(...) で指定したオブジェクト（下記の例では this、つまり Counter オブジェクト）に対してロック権を取得した単一のスレッドのみが { ... } の処理を実行できるようになります。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+    void countUp() {
+        <em>synchronized (this) {</em>
+            System.out.print("[");
+            int n = count;            // カウンターを読み出して
+            System.out.print(".");
+            count = n + 1;            // 加算して書き戻す
+            System.out.print("]");
+        <em>}</em>
+    }
+</pre>
+<p>上記は、下記のように書き表すこともできます。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+    <em>synchronized</em> void countUp() {
+        System.out.print("[");
+        int n = count;            // カウンターを読み出して
+        System.out.print(".");
+        count = n + 1;            // 加算して書き戻す
+        System.out.print("]");
+    }
+</pre>
+<p>これにより、起動したスレッドの数だけ正常にカウントを行うことができるようになります。</p>
+<pre class=dos>
+[.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.]
+[.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.]
+[.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.][.]
+[.][.][.][.][.][.][.][.][.][.][.][.][.]1000
+</pre>
+<p>synchronized メソッドは、常にひとつのスレッドのみがそのメソッドを実行すると誤解されがちですが、スレッドを実行するインスタンスが複数あれば、インスタンスの個数だけ多重に実行される可能性がありますので注意してください。例えば、上記の例で countUp() ではなく run() メソッドを synchronized にしても、run() メソッドのインスタンスはスレッドの個数分 1000個ありますので、排他制御はうまく機能しません。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+    <em>synchronized</em> public void run() { // 駄目な例
+        SyncTest.counter.countUp();
+    }
+</pre>
+<p>グローバルに参照可能なロック用オブジェクトを作成しておき、排他制御を行いたい箇所で下記のように使用する方法もあります。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+class Global {
+    <em>static Object lock = new Object();</em>
+}
+class Counter {
+    void countUp() {
+        <em>synchronized (Global.lock) {</em>
+            // 排他制御を行いたい箇所
+        }
+    }
+}
+</pre>
+</div>
+
+<h4 id="Other">スレッド関連のその他の機能</h4>
+<div class=i>
+<ul>
+<li>実行権を放棄する。→ yield()
+<li>スレッドを一時中断する。 → sleep()
+<li>優先度を設定する。→ setPriority()
+<li>優先度を得る。→ getPriority()
+<li>スレッドが完了するまで待つ。→ join()
+</ul>
+</div>
+
+<hr>
+<div>http://www.tohoho-web.com/java/thread.htm</div>
+<div>初版：2004年6月26日、最終更新：2004年6月26日</div>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="exception.htm" tppabs="http://www.tohoho-web.com/java/exception.htm">[前に]</a>
+<a href="file.htm" tppabs="http://www.tohoho-web.com/java/file.htm">[次に]</a>
+</body>
+</html>

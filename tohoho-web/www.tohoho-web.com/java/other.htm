@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのJava入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>その他</h2>
+
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="applet.htm" tppabs="http://www.tohoho-web.com/java/applet.htm">[前に]</a>
+<a href="vsclang.htm" tppabs="http://www.tohoho-web.com/java/vsclang.htm">[次に]</a>
+
+<h4 id="Args">コマンドライン引数を参照する（args）</h4>
+<div class=i>
+<p>コマンドラインで指定した引数は、main() メソッドの引数（String 配列）で参照することができます。</p>
+<div class="tab">ArgsTest.java</div>
+<pre class=c2>
+class ArgsTest {
+    public static void main(<em>String[] args</em>) {
+        for (int i = 0; i &lt; <em>args.length</em>; i++) {
+            System.out.println("[" + <em>args[i]</em> + "]");
+        }
+    }
+}
+</pre>
+<pre class=dos>
+C:\java&gt;<kbd>javac ArgsTest.java</kbd>
+C:\java&gt;<kbd>java ArgsTest AAA BBB CCC</kbd>
+[AAA]
+[BBB]
+[CCC]
+</pre>
+</div>
+
+<h4 id="Exec">外部コマンドを起動する（exec）</h4>
+<div class=i>
+<p>メモ帳（notepad.exe）など、他のアプリケーションを起動するには <b>exec()</b> を用います。</p>
+<div class="tab">ExecTest.java</div>
+<pre class=c2>
+import java.io.File;
+import java.io.IOException;
+
+class ExecTest {
+    public static void main(String[] args) {
+        try {
+            <em>Runtime.getRuntime().exec("notepad.exe");</em>
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</pre>
+<p>アプリケーションの終了を待ち合わせるには <b>waitFor()</b> メソッドを用います。</p>
+<div class="tab">Java</div>
+<pre class=c2>
+Process proc = Runtime.getRuntime().exec("notepad.exe");
+proc.<em>waitFor()</em>;
+</pre>
+</div>
+
+<h4 id="TextEditor">簡易テキストエディタ</h4>
+<div class=i>
+<p>Java でメモ帳程度の簡易的なテキストエディタを作ってみました。</p>
+<div><a href="javascript:if(confirm('http://www.tohoho-web.com/java/sample/column-rule-color.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/java/sample/column-rule-color.htm'" tppabs="http://www.tohoho-web.com/java/sample/TextEditor.java">TextEditor.java</a></div>
+<div><img src="image/column-span.htm" tppabs="http://www.tohoho-web.com/java/image/TextEditor.jpg" width=407 height=332 alt="TextEditor"></div>
+</div>
+
+<h4 id="jarf">jarファイルを作る（jar）</h4>
+<div class=i>
+<p>複数のクラスから構成される Java プログラムをコンパイルすると、複数の *.class ファイルが作成されます。<b>jar</b> コマンドを用いてこれらを *.jar（Java ARchive）形式のファイルにまとめることができます。</p>
+<div class="tab">JarTest.java</div>
+<pre class=c2>
+class JarTest {
+    public static void main(String[] args) {
+        new JarTest2();
+    }
+}
+
+class JarTest2 {
+    JarTest2() {
+        System.out.println("Hello!!");
+    }
+}
+</pre>
+<p>これをコンパイルすると、JarTest.class と JarTest2.class ファイルが作成されます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>javac JarTest.java</kbd>
+C:\java&gt;<kbd>dir</kbd>
+2004/07/03  23:38            290 JarTest.class
+2004/07/03  23:38            158 JarTest2.class
+</pre>
+<p>jar コマンドを用いて、これを JarTest.jar ファイルにまとめます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>jar cvf JarTest.jar *.class</kbd>
+マニフェストが追加されました。
+JarTest.class を追加中です。(入 = 290) (出 = 219)(24% 収縮されました)
+JarTest2.class を追加中です。(入 = 349) (出 = 261)(25% 収縮されました)
+C:\java&gt;<kbd>dir</kbd>
+2004/07/03  23:40          1,063 JarTest.jar
+</pre>
+<p>JarTest.jar ファイルを実行してみますが、まだ Main-Class マニフェストをロードできないため、エラー終了してしまいます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>java -jar JarTest.jar JarTest</kbd>
+Failed to load Main-Class manifest attribute from
+JarTest.jar
+</pre>
+<p>JarTest.jar ファイルの中に、どんなファイルが格納されているか見てみましょう。</p>
+<pre class=dos>
+C:\java&gt;<kbd>jar tvf JarTest.jar</kbd>
+     0 Sat Jul 03 23:45:32 JST 2004 META-INF/
+    71 Sat Jul 03 23:45:32 JST 2004 META-INF/MANIFEST.MF
+   290 Sat Jul 03 23:43:26 JST 2004 JarTest.class
+   349 Sat Jul 03 23:43:26 JST 2004 JarTest2.class
+</pre>
+<p>JarTest.jar ファイルを解凍してみましょう。META-INF\MANIFEST.MF ファイルが作成されます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>jar xvf JarTest.jar</kbd>
+  META-INF/ が作成されました。
+META-INF/MANIFEST.MF が抽出されました。
+JarTest.class が抽出されました。
+JarTest2.class が抽出されました。
+</pre>
+<p>ここで、META-INF\MANIFEST.MF ファイルに次の 1行を追加します。</p>
+<div class="tab">MANIFEST.MF</div>
+<pre class=c2>
+Manifest-Version: 1.0
+Created-By: 1.4.2_04 (Sun Microsystems Inc.)
+<em>Main-Class: JarTest</em>
+</pre>
+<p>今度は、作成したマニフェストファイルを加えて jar ファイルにまとめます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>jar cvfm JarTest.jar META-INF\MANIFEST.MF *.class</kbd>
+</pre>
+<p>今度は実行可能になりました。</p>
+<pre class=dos>
+C:\java&gt;<kbd>java -jar JarTest.jar JarTest</kbd>
+Hello!!
+</pre>
+</div>
+
+<h4 id="javadoc">リファレンスマニュアルを作る（javadoc）</h4>
+<div class=i>
+<p><b>javadoc</b> コマンドを用いて、ソースコード中に埋めたコメントを用いてリファレンスマニュアルを自動生成することができます。</p>
+<div class="tab">JavaDocTest.java</div>
+<pre class=c2>
+<em>/**
+ * javadocコマンドのテスト用クラス。
+ * @author 杜甫々
+ * @version 1.0
+ */</em>
+public class JavaDocTest {
+    <em>/**
+     * 名前
+     */</em>
+    private String myName;
+
+    <em>/**
+     * 名前を設定する。
+     * @param name 名前
+     */</em>
+    public void setName(String name) {
+        myName = name;
+    }
+
+    <em>/**
+     * 名前を返す。
+     * @return 名前
+     */</em>
+    public String getName() {
+        return myName;
+    }
+}
+</pre>
+<p>下記のコマンドを実行することで、doc フォルダの下にリファレンスマニュアルを自動生成することができます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>javadoc -d doc JavaDocTest.java</kbd>
+</pre>
+</div>
+
+<h4 id="classpath">クラスを探す（CLASSPATH）</h4>
+<div class=i>
+<p>Java で java.lang.String や、myPackage.MyClass などのクラスを使用する場合、コンパイラは、まず、javac コマンドの -classpath オプションで指定されたフォルダから該当のパッケージやクラスを探します。</p>
+<pre class=dos>
+C:\java&gt;<kbd>javac -classpath C:\myJavaLib Test.java</kbd>
+</pre>
+<p>-classpath には、フォルダ名の他、jarファイル名、zipファイル名を指定することができます。</p>
+<pre class=dos>
+C:\java&gt;<kbd>javac -classpath C:\myJavaLib\MyClass.jar Test.java</kbd>
+</pre>
+<p>複数のフォルダや jarファイルを指定する場合、Windows ではセミコロン（;）、UNIX系OSではコロン（:）で区切ります。</p>
+<pre class=dos>
+C:\java&gt;<kbd>javac -classpath C:\dirA;C:\dirB Test.java</kbd>
+</pre>
+<p>-classpath で見つからない場合、環境変数 <b>CLASSPATH</b> で指定されたフォルダや jarファイルを探します。</p>
+<pre class=dos>
+C:\java&gt;<kbd>set CLASSPATH=C:\myJavaLib</kbd>
+C:\java&gt;<kbd>javac Test.java</kbd>
+</pre>
+<p>設定した CLASSPATH 環境変数を解除する場合、次のようにします。</p>
+<pre class=dos>
+C:\java&gt;<kbd>set CLASSPATH=</kbd>
+</pre>
+<p>-classpath や CLASSPATH を指定しない場合は、カレントフォルダを探します。</p>
+<pre class=dos>
+C:\java&gt;<kbd>dir</kbd>
+2004/07/03  23:38          1,290 MyClass.class
+</pre>
+<p>それでも見つからない場合、システム標準のクラスフォルダから、rt.jar や i18n.jar などの標準 jarファイルを探します。</p>
+<pre class=dos>
+C:\java&gt;<kbd>dir C:\j2sdk1.4.2_04\jre\lib\rt.jar</kbd>
+2004/06/27  03:29       26,465,083 rt.jar
+</pre>
+</div>
+
+<h4 id="Properties">システムプロパティを参照する（Properties）</h4>
+<div class=i>
+<p><b>Properties</b> を用いて <b>システムプロパティ</b> を参照することができます。</p>
+<div class="tab">PropertiesTest.java</div>
+<pre class=c2>
+import java.util.*;
+
+class PropertiesTest {
+    public static void main(String[] args) {
+        <em>Properties prop = System.getProperties();</em>
+        prop.list(System.out);
+    }
+}
+</pre>
+<p>結果は次のようになります。</p>
+<div class="tab">実行結果</div>
+<pre class=c2>
+-- listing properties --
+java.runtime.name=Java(TM) 2 Runtime Environment, Stand...
+sun.boot.library.path=C:\Program Files\Java\j2re1.4.2_06\bin
+java.vm.version=1.4.2_06-b03
+java.vm.vendor=Sun Microsystems Inc.
+java.vendor.url=http://java.sun.com/
+path.separator=;
+java.vm.name=Java HotSpot(TM) Client VM
+file.encoding.pkg=sun.io
+user.country=JP
+sun.os.patch.level=Service Pack 2
+java.vm.specification.name=Java Virtual Machine Specification
+user.dir=C:\HomePage\java\sample
+java.runtime.version=1.4.2_06-b03
+java.awt.graphicsenv=sun.awt.Win32GraphicsEnvironment
+java.endorsed.dirs=C:\Program Files\Java\j2re1.4.2_06\li...
+os.arch=x86
+java.io.tmpdir=C:\DOCUME~1\田中\LOCALS~1\Temp\
+line.separator=
+
+java.vm.specification.vendor=Sun Microsystems Inc.
+user.variant=
+os.name=Windows XP
+sun.java2d.fontpath=
+java.library.path=C:\WINDOWS\system32;.;C:\WINDOWS\syst...
+java.specification.name=Java Platform API Specification
+java.class.version=48.0
+java.util.prefs.PreferencesFactory=java.util.prefs.WindowsPreferencesFac...
+os.version=5.1
+user.home=C:\Documents and Settings\田中
+user.timezone=
+java.awt.printerjob=sun.awt.windows.WPrinterJob
+file.encoding=MS932
+java.specification.version=1.4
+user.name=田中
+java.class.path=.
+java.vm.specification.version=1.0
+sun.arch.data.model=32
+java.home=C:\Program Files\Java\j2re1.4.2_06
+java.specification.vendor=Sun Microsystems Inc.
+user.language=ja
+awt.toolkit=sun.awt.windows.WToolkit
+java.vm.info=mixed mode
+java.version=1.4.2_06
+java.ext.dirs=C:\Program Files\Java\j2re1.4.2_06\li...
+sun.boot.class.path=C:\Program Files\Java\j2re1.4.2_06\li...
+java.vendor=Sun Microsystems Inc.
+file.separator=\
+java.vendor.url.bug=http://java.sun.com/cgi-bin/bugreport...
+sun.cpu.endian=little
+sun.io.unicode.encoding=UnicodeLittle
+sun.cpu.isalist=pentium i486 i386
+</pre>
+</div>
+
+<hr>
+<div>http://www.tohoho-web.com/java/other.htm</div>
+<div>初版：2004年6月26日、最終更新：2004年7月3日</div>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="applet.htm" tppabs="http://www.tohoho-web.com/java/applet.htm">[前に]</a>
+<a href="vsclang.htm" tppabs="http://www.tohoho-web.com/java/vsclang.htm">[次に]</a>
+</body>
+</html>

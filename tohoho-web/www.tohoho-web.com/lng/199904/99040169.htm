@@ -1,0 +1,172 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>フォーム中の半角カナに警告を返すには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>フォーム中の半角カナに警告を返すには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040168.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040168.htm">[前に]</a>
+<a href="99040170.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040170.htm">[次に]</a>
+<hr>
+<span class=name>和歌子</span>
+<span class=time>1999/04/23(金) 04:34:21</span><br>
+とほほさんのwwwメール送信プログラムを活用させていただき２ヶ月がたちました。<br>
+私はマックユーザーなので馴染みがないのですが、<br>
+メールを送っていただくかたの多くはウィンドウズユーザーの方のようで<br>
+ご記入いただいた箇所に半角かなが大変多く見受けられ、一部化けていたりしまして困っています。<br>
+「化けて読めないから、半角カタカナなどは使わないでね(^^)」とうたってはいるのですが。<br>
+もしもフォーム内に半角かながあったときに送信ボタンを押すと、<br>
+上記のようなお知らせをブラウザ画面に表示して、戻るボタンをつけるには<br>
+とほほさまプログラムのなかにどういう記述をするのが適切なのかについて<br>
+ご教授していただくことはできませんでしょうか？<br>
+素人てき質問および甘えた考えかもしれませんが、<br>
+せっかくメールをくださった方の内容が確認せねばわからず本当に困っています。<br>
+どうかお知恵をお貸しください。<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/04/23(金) 10:19:32</span><br>
+JavaScriptでチェックを行い、半角カナが含まれていないときだけ送信できるようにする方法が有効です。<br>
+ただし、JavaScript非対応の環境ではメールできなくなりますが。<br>
+<br>
+以下、サンプル（長い・・・）<br>
+-------------------------------<br>
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"&gt;<br>
+&lt;HTML LANG="ja"&gt;<br>
+&lt;HEAD&gt;<br>
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS"&gt;<br>
+&lt;META HTTP-EQUIV="Content-Script-type" CONTENT="text/javascript"&gt;<br>
+&lt;TITLE&gt;テストのページ&lt;/TITLE&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;SCRIPT TYPE="text/javascript" DEFER&gt;<br>
+&lt;!--<br>
+//<br>
+// 半角カタカナが含まれていないなら、true<br>
+//<br>
+function KanaCheck(str)<br>
+{<br>
+	var i;<br>
+	var moji;<br>
+	var len;<br>
+<br>
+	len = StrLen(str);<br>
+<br>
+	if (navigator.appName == "Microsoft Internet Explorer") {<br>
+		for (i = 0; i &lt; len; i++) {<br>
+			moji = GetCharAt(str, i);<br>
+			if (moji &gt;= "｡" &amp;&amp; moji &lt;= "ﾟ") {<br>
+				return (false);<br>
+			}<br>
+		}<br>
+	} else {<br>
+		for (i = 0; i &lt; len; i++) {<br>
+			moji = GetCharAt(str, i);<br>
+			if (moji &gt;= "｡" &amp;&amp; moji &lt;= "ﾟ") {<br>
+				return (false);<br>
+			}<br>
+		}<br>
+	}<br>
+	return (true);<br>
+}<br>
+<br>
+// 指定１文字取得(SJIS)<br>
+//<br>
+function GetCharAt(str, pos)<br>
+{<br>
+	var i;<br>
+	var len;<br>
+	var moji;<br>
+	var emoji;<br>
+	var xmoji;<br>
+<br>
+	if (navigator.appName == "Microsoft Internet Explorer") {<br>
+		return (str.charAt(pos));<br>
+	} else {<br>
+		len = 0;<br>
+		for (i = 0; i &lt; str.length; i++) {<br>
+			moji = str.charAt(i);<br>
+			emoji = escape(moji);<br>
+			xmoji = eval("0x" + emoji.charAt(1));<br>
+			if ((xmoji == 8) || (xmoji == 9) || (xmoji == 14) || (xmoji == 15)) {<br>
+				moji = moji + str.charAt(i + 1);<br>
+				i++;<br>
+			}<br>
+			if (pos == len) {<br>
+				break;<br>
+			}<br>
+			len++;<br>
+		}<br>
+		return (moji);<br>
+	}<br>
+}<br>
+<br>
+//<br>
+// 文字列長を返す<br>
+// （全角文字も1文字としてカウント）<br>
+//<br>
+function StrLen(str)<br>
+{<br>
+	var i;<br>
+	var len;<br>
+	var moji;<br>
+	var xmoji;<br>
+<br>
+	if (navigator.appName == "Microsoft Internet Explorer") {<br>
+		return (str.length);<br>
+	} else {<br>
+		len = 0;<br>
+		for (i = 0; i &lt; str.length; i++) {<br>
+			moji = escape(str.charAt(i));<br>
+			xmoji = eval("0x" + moji.charAt(1));<br>
+			if ((xmoji == 8) || (xmoji == 9) || (xmoji == 14) || (xmoji == 15)) {<br>
+				i++;<br>
+			}<br>
+			len++;<br>
+		}<br>
+		return (len);<br>
+	}<br>
+}<br>
+<br>
+//<br>
+// 半角チェック<br>
+//<br>
+function check(obj)<br>
+{<br>
+	if (!KanaCheck(obj.MSG.value)) {<br>
+		alert("半角カナは使えません。");<br>
+		return (false);<br>
+	} else {<br>
+		obj.submit();<br>
+	}<br>
+}<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+&lt;BODY&gt;<br>
+&lt;FORM ACTION="xxx.cgi"&gt;<br>
+&lt;P&gt;&lt;INPUT TYPE="TEXT" VALUE="（何か書いて）" NAME="MSG"&gt;&lt;/P&gt;<br>
+&lt;P&gt;&lt;INPUT TYPE="BUTTON" VALUE="検証" onClick="check(this.form);"&gt;&lt;/P&gt;<br>
+&lt;/FORM&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/04/23(金) 23:54:21</span><br>
+上記のように入り口で弾いてしまうという方法の他に、内部で変換してしまうという手もあります。<br>
+<br>
+$value =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C", hex($1))/eg;<br>
+if($FORM{$name} eq "")<br>
+の２行の間に私は<br>
+&amp;jcode'h2z_sjis(*value);&nbsp;&nbsp;#全角化<br>
+という関数を入れています。<br>
+環境によっては<br>
+&amp;jcode'h2z_euc(*value);<br>
+かも知れませんが、それはそちらで試してみて下さい。<br>
+これなら JavaScript非対応の環境でも大丈夫です。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040168.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040168.htm">[前に]</a>
+<a href="99040170.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040170.htm">[次に]</a>
+</body>
+</html>

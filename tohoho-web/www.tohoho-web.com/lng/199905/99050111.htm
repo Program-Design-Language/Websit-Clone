@@ -1,0 +1,121 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>flockの使い方について。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>flockの使い方について。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050110.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050110.htm">[前に]</a>
+<a href="99050112.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050112.htm">[次に]</a>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/20(木) 00:58:17</span><br>
+open(OUT,"$guest");<br>
+　flock(OUT,2);<br>
+　　while (&lt;OUT&gt;) {<br>
+　　　print;<br>
+　　}<br>
+　flock(OUT,8);<br>
+close(OUT);<br>
+<br>
+このような処理を見かけたのですが、flock(2,...);と、flock(1,...);の使い分けがわかりません。flock(1,...);というのは一体どのような場面で使うのでしょうか？<br>
+<br>
+あと、追加書きこみをするときにflockを使いたい場合の正しい使い方を教えてください。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/20(木) 01:41:49</span><br>
+すいません。訂正です。<br>
+flock(...,2);とflock(...,1);です。^^;<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/20(木) 03:00:24</span><br>
+<a href="../../wwwperl2.htm#flock" tppabs="http://www.tohoho-web.com/wwwperl2.htm#flock">http://www.tohoho-web.com/wwwperl2.htm#flock</a><br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/20(木) 03:40:00</span><br>
+あっ、、一応そこは読んだのですが、はっきりとわからなかったので質問してみました。<br>
+読みこみ宣言ロックと言うのは別に読みこむときにするものとは限らないのでしょうか？、、というか読みこみ処理が同時に行われてファイルが壊れるというようなことはあるのでしょうか？<br>
+もし、そういう可能性がないならばファイル読み込み時には読み込み宣言ロックを行えばよいということですよね？<br>
+初めの質問で載せた例では読み込み時に書きこみ宣言ロックを行っていたのでどうなのだろう、、と思いました。<br>
+<br>
+あと、追加書きこみの時のflockの使い方なのですが、<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;open(OUT, "&gt;&gt; outfile.txt");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;flock(OUT, 2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;truncate(OUT, 0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print OUT "........";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;close(OUT);<br>
+<br>
+これでいいんですか、、？（わからかったので、結構適当です。^^;)<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/20(木) 08:52:35</span><br>
+読み込みロックを掛けると、他の処理はそのファイルを読むことはできるけど書き込むことはできない。<br>
+書き込みロックを掛けると、他の処理はそのファイルを読むことも書き込むこともできません。<br>
+で、読み込みが同時に行われてファイルが壊れるということは普通はありえません。<br>
+<br>
+それから追加書き込み時は、truncateはいらないです。<br>
+truncateはファイルのサイズを切り詰める関数です。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/20(木) 15:25:28</span><br>
+なるほど。<br>
+、、、ということは初めに出した例は書いた人の誤りだったということでしょうかね、、、？<br>
+ちなみに追加書きこみのときは普通にflock(2, ...);とflock(8,...);を使えばいいと言うことですか？<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/20(木) 15:27:21</span><br>
+また間違えました。^^;<br>
+<br>
+追加書きこみのときは、<br>
+<br>
+open(OUT, "&gt;&gt; outfile.txt");<br>
+flock(OUT, 2);<br>
+print OUT "........";<br>
+flock(OUT, 8);<br>
+close(OUT);<br>
+<br>
+でいいんですか？<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/20(木) 16:31:05</span><br>
+最初の例は、間違いというよりその人が面倒くさがりで、<br>
+全てのロックを書き込みロックにしてるんじゃないでしょうか？<br>
+よっぽどアクセス数の多いCGIでもなければ、<br>
+全てflock(**, 2)にしちゃって良いと思います。<br>
+<br>
+<font color="#CC8000">＞open(OUT, "&gt;&gt; outfile.txt");</font><br>
+<font color="#CC8000">＞flock(OUT, 2);</font><br>
+<font color="#CC8000">＞print OUT "........";</font><br>
+<font color="#CC8000">＞flock(OUT, 8);</font><br>
+<font color="#CC8000">＞close(OUT);</font><br>
+flock(OUT, 8);はいらないです。<br>
+ファイルをcloseすれば勝手にロック解除されます。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/20(木) 20:12:56</span><br>
+<span class=resolv>[[解決]]</span><br>
+あっ、、勝手にロック解除されるんですか、、、。<br>
+どういう仕組みなんでしょうかね、、、。<br>
+どうもありがとうございました。m(_ _)m<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1999/05/21(金) 10:28:51</span><br>
+flock(OUT, 2); の直後に<br>
+seek(OUT, 0, 2);<br>
+が必要です。ロック中に他の CGI がデータを追加している可能性がある<br>
+からです。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/21(金) 23:00:15</span><br>
+どうもありがとうございます。<br>
+追加しておきます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050110.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050110.htm">[前に]</a>
+<a href="99050112.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050112.htm">[次に]</a>
+</body>
+</html>

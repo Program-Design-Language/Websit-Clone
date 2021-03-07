@@ -1,0 +1,72 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>改行を反映させるには？？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>改行を反映させるには？？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060038.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060038.htm">[前に]</a>
+<a href="99060040.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060040.htm">[次に]</a>
+<hr>
+<span class=name>新庄強死</span>
+<span class=time>1999/06/04(金) 17:16:49</span><br>
+翔泳社のCGIプログラミング入門を読んでて疑問に思ったことがあるので教えてください。<br>
+普通、掲示板っていうのは、テキストエリアに書かれた内容は<br>
+そのとおりに反映されて表示されますが、<br>
+この本に載ってるスクリプトを試してみると、<br>
+改行したつもりの部分は半角のスペースが入っているだけのようです。<br>
+簡易掲示板のスクリプト眺めていてもどの部分が改行処理なのか<br>
+わりません・・。<br>
+<br>
+自分は最終的には、改行してあるときにはそれを無視して、半角スペースも消しちゃう、<br>
+そして一行が１５文字になると強制改行、っていうふうにしたいなと思っています。<br>
+これについてももしよかったらヒントください。<br>
+「一行が１５文字になると」っていう部分をどう処理して良いかわからないので。<br>
+お願いします。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/04(金) 18:17:09</span><br>
+<font color="#CC8000">＞簡易掲示板のスクリプト眺めていてもどの部分が改行処理なのか</font><br>
+<font color="#CC8000">＞わりません・・。</font><br>
+多分それは、改行処理をしていないんでしょう。出力された<br>
+htmlのソースを見ると、改行されて書かれていると思います。<br>
+<br>
+で、htmlでは改行は半角空白と同じに出力されるので、半角空白が入っているように見える。<br>
+改行を消すには、<br>
+s/\n//g;<br>
+で済みますが、一行が15文字ってのは少々厄介かも。<br>
+2バイト文字の真ん中で切り落とさないようにしないといけないので・・・<br>
+<br>
+とりあえず、文字列の文字コードがEUCで $str に入っているとして、<br>
+<br>
+$twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';<br>
+$threeBytes = '\x8F[\xA1-\xFE]{2}';<br>
+<br>
+@_ = ($str =~ /($twoBytes|$threeBytes|.)/osg);<br>
+<br>
+これで @_ に、一文字ごとに入るので、あとはそれを適当に・・・<br>
+＃出力はEUCです。<br>
+<hr>
+<span class=name>新庄強死</span>
+<span class=time>1999/06/04(金) 18:38:46</span><br>
+<span class=resolv>[[解決]]</span><br>
+お返事ありがとうございます。<br>
+１５文字で区切るのは高度な技術のようなので、今後の課題として、<br>
+とりあえず改行を反映するようにしようかと思って<br>
+s/\n/&lt;br&gt;/g;<br>
+とするとうまくいきました！<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=time>1999/06/05(土) 00:21:46</span><br>
+Shift-JISを使用するなら<br>
+s/([\x20-\xFF]{15}[\x80-\xFF]?)/$1&lt;BR&gt;/g<br>
+ってな感じですか<br>
+でも、なんかぶら下がってて美しくないですね<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060038.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060038.htm">[前に]</a>
+<a href="99060040.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060040.htm">[次に]</a>
+</body>
+</html>

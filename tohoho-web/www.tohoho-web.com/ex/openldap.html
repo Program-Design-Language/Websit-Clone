@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>OpenLDAPメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>OpenLDAPメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+OpenLDAPメモ
+
+<h4>環境</h4>
+<div class="i">
+<ul>
+<li>実施日: 2016年6月4日</li>
+<li>ホストOS: Windows 10</li>
+<li>ゲストOS: CentOS 6.8</li>
+<li>ハイパーバイザ: VirtualBox 5.0.12</li>
+<li>OpenLDAP: OpenLDAP</li>
+</ul>
+</div>
+
+<h4>参考</h4>
+<div class="i">
+<p>下記のサイトを参考にさせていただきました。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://www.unix-power.net/linux/openldap.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.unix-power.net/linux/openldap.html'" tppabs="http://www.unix-power.net/linux/openldap.html">CentOS6 OpenLDAPの設定</a> (by UnixPower on Networking)
+</ul>
+</div>
+
+<h4>OpenLDAP をインストールする</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">OpenLDAP をインストールする</span>
+# yum -y install openldap-servers openldap-clients
+
+<span class="cm">パスワードを暗号化しておく</span>
+# slappasswd
+New password:
+Re-enter new password:
+{SSHA}l3lUgv5JrcNV0fwIEqPa93Ybielmvp3z
+
+<span class="cm">コンフィグ設定する</span>
+<span class="cm">OpenLDAP 2.3 以降では、slapd.conf を使用せず、/etc/openldap/slapd.d/cn=config 配下のエントリを</span>
+<span class="cm">使用するように変更された。これにより、コンフィグ自体も LDAP 経由でダイナミックにリモートからでも変更可能となったが、</span>
+<span class="cm">面倒なので、今回は slapd.conf を用いて初期設定する。</span>
+
+# cp -p /usr/share/openldap-servers/slapd.conf.obsolete /etc/openldap/slapd.conf
+# vi /etc/openldap/slapd.conf
+
+suffix          "dc=<em>example</em>,dc=com"
+rootdn          "cn=Manager,dc=<em>example</em>,dc=com"
+rootpw          <em>{SSHA}l3lUgv5JrcNV0fwIEqPa93Ybielmvp3z</em>
+
+# vi /etc/sysconfig/ldap
+
+SLAPD_OPTIONS=<em>"-f /etc/openldap/slapd.conf"</em>
+
+<span class="cm">サービスを起動する</span>
+# chkconfig slapd on
+# service slapd start
+
+<span class="cm">接続できるか確認する。</span>
+# ldapsearch -x -LLL -D 'cn=Manager,dc=example,dc=com' -W -b 'dc=example,dc=com' '(objectClass=*)'
+Enter LDAP Password:
+No such object (32)
+</pre>
+</div>
+
+<h4>データを登録する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">基本エントリを登録する</span>
+
+# vi init.ldif
+
+dn: dc=example,dc=com
+objectclass: dcObject
+objectclass: organization
+o: VIRTUAL CORPORATION
+dc: example
+
+dn: cn=Manager,dc=example,dc=com
+objectclass: organizationalRole
+cn: Manager
+
+# ldapadd -x -W -D "cn=Manager,dc=example,dc=com" -f init.ldif
+
+<span class="cm">Users, Groups, Computers を登録する</span>
+
+# vi add.ldif
+
+dn: ou=Users,dc=example,dc=com
+objectclass: organizationalUnit
+ou: Users
+
+dn: ou=Groups,dc=example,dc=com
+objectclass: organizationalUnit
+ou: Groups
+
+dn: ou=Computers,dc=example,dc=com
+objectclass: organizationalUnit
+ou: Computers
+
+# ldapadd -x -W -D "cn=Manager,dc=example,dc=com" -f add.ldif
+
+<span class="cm">グループ情報を登録する</span>
+
+# vi groupadd.ldif
+
+dn: cn=develop,ou=Groups,dc=example,dc=com
+objectClass: posixGroup
+cn: develop
+gidNumber: 1000
+
+dn: cn=sales,ou=Groups,dc=example,dc=com
+objectClass: posixGroup
+cn: sales
+gidNumber: 1001
+
+dn: cn=market,ou=Groups,dc=example,dc=com
+objectClass: posixGroup
+cn: market
+gidNumber: 1002
+
+# ldapadd -x -W -D "cn=Manager,dc=example,dc=com" -f groupadd.ldif
+
+<span class="cm">ユーザ情報を登録する</span>
+
+# vi useradd.ldif
+
+dn: uid=takeda,ou=Users,dc=example,dc=com
+objectclass: posixAccount
+objectclass: inetOrgPerson
+sn: takeda
+cn: kazuma
+displayName: Takeda Kazuma
+uid: takeda
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/takeda
+loginShell: /bin/bash
+userPassword: {CRYPT}B5fKzlwfatuy2
+mail: takeda@example.com
+
+dn: uid=suzuki,ou=Users,dc=example,dc=com
+objectclass: posixAccount
+objectclass: inetOrgPerson
+sn: suzuki
+cn: hajime
+displayName: Suzuki Hajime
+uid: suzuki
+uidNumber: 1001
+gidNumber: 1000
+homeDirectory: /home/suzuki
+loginShell: /bin/bash
+userPassword: {CRYPT}B5fKzlwfatuy2
+mail: suzuki@example.com
+
+dn: uid=tanaka,ou=Users,dc=example,dc=com
+objectclass: posixAccount
+objectclass: inetOrgPerson
+sn: tanaka
+cn: takuya
+displayName: Tanaka Takuya
+uid: tanaka
+uidNumber: 1002
+gidNumber: 1000
+homeDirectory: /home/tanaka
+loginShell: /bin/bash
+userPassword: {CRYPT}B5fKzlwfatuy2
+mail: tanaka@example.com
+
+# ldapadd -x -W -D "cn=Manager,dc=example,dc=com" -f useradd.ldif
+</pre>
+</div>
+
+<h4>データを検索する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">ユーザ情報を表示する</span>
+
+# ldapsearch -x -W -D "cn=Manager,dc=example,dc=com" -b "ou=Users,dc=example,dc=com" -s sub
+
+ -x 簡易認証
+ -W パスワードをプロンプトから入力
+ -D 認証に使用するユーザ情報
+ -b 検索の起点
+ -s 検索範囲 base | one | sub
+</pre>
+</div>
+
+<h4>Python からアクセスしてみる</h4>
+<div class="i">
+<pre class="dos">
+# yum -y install python python-ldap python-setuptools
+# easy_install pit
+# vi pyldap.py
+
+import ldap,ldif
+import sys,optparse,getpass
+
+lo = ldap.initialize("ldap://localhost")
+lo.simple_bind_s("cn=Manager,dc=example,dc=com", "パスワード")
+result = lo.search_s("dc=example,dc=com", ldap.SCOPE_SUBTREE)
+ldif_writer = ldif.LDIFWriter(sys.stdout)
+for dn, entry in result:
+    ldif_writer.unparse(dn,entry)
+
+# python pyldap.py
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2016 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2016年6月4日</div>
+<div>http://www.tohoho-web.com/ex/openldap.html</div>
+</body>
+</html>

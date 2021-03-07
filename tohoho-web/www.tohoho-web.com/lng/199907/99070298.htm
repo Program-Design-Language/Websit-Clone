@@ -1,0 +1,124 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>リロードによる二重投稿を阻止するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>リロードによる二重投稿を阻止するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070297.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070297.htm">[前に]</a>
+<a href="99070299.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070299.htm">[次に]</a>
+<hr>
+<span class=name>くろっくぁ</span>
+<span class=time>1999/07/28(水) 20:05:39</span><br>
+掲示板なんかで、投稿した後リロードすると、前発言した内容が<br>
+CGIに送られてしまい、同じ内容の記事がいくつも表示される羽目に<br>
+なると思うのですが、これを阻止する方法は無いのでしょうか。<br>
+いちいちログファイルを開いて、内容を比較する方法も<br>
+あると思うのですが、あまり効率的とは思えないので・・・。<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1999/07/28(水) 23:26:43</span><br>
+完全な阻止にはならないかもしれないけど・・・<br>
+投稿後すぐに次の表示に移るのではなく、間に<br>
+「このページをリロードしないでください」みたいな<br>
+ページを挟んでみてはどうでしょう。<br>
+<hr>
+<span class=name>ST</span>
+<span class=time>1999/07/29(木) 00:52:25</span><br>
+書き込み処理の後に<br>
+print "Location: $bbsのurl\n\n";<br>
+exit;<br>
+とでも追加すればいいと思いますが。<br>
+<br>
+私自身MiniBBSを改造して使っているのですが，これって何か弊害があるのでしょうか(^^; 心配だ……。<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1999/07/29(木) 02:17:54</span><br>
+<font color="#CC8000">&gt; print "Location: $bbsのurl\n\n";</font><br>
+これをしても再投稿されてしまった記憶があります。<br>
+（曖昧な記憶です）<br>
+どうでしたでしょうか？<br>
+<hr>
+<span class=name>ひ***</span>
+<span class=time>1999/07/29(木) 04:12:10</span><br>
+フォームの送信ボタンでリロードするってことでいいんですよね？<br>
+<br>
+リロードする時はフォームの中は空っぽだから、ウチでは<br>
+if(! $FORM{'MESSAGE'}) { &amp;error; }<br>
+とかと同じ発想で<br>
+if(! $FORM{'MESSAGE'}) { return 0; }<br>
+ってしてサブルーチンから抜けだしてしまいますよ。<br>
+ウチはコレにしてから二重投稿はなくなりました。<br>
+<hr>
+<span class=name>得名</span>
+<span class=time>1999/07/29(木) 08:42:38</span><br>
+print "Location: $bbsのurl\n\n";<br>
+exit;<br>
+↑これでやっぱりcgiを表示するときにログファイルを開いてしまいますから、<br>
+やっぱりログを読み込んで、一番新しいログと比較するか、前回投稿された<br>
+時間を記録しておいて、一定時間たたないと書き込めないようにするほうが<br>
+いいようにおもいます。<br>
+だいたい、２重書き込みって、サーバーの重たい時間帯に、<br>
+書き込まれたか不安になって、もう一度送る人が起こす事が多いようにもおもえますし。。<br>
+<hr>
+<span class=name>エイ</span>
+<span class=time>1999/07/29(木) 10:07:06</span><br>
+<font color="#CC8000">&gt;やっぱりログを読み込んで、一番新しいログと比較するか、</font><br>
+<br>
+だな。<br>
+だいたい２重投稿が起こる時ってなぁ、<br>
+・回線ないしCGIが重い<br>
+・それで結果が投稿者になかなか返ってこない<br>
+・不安になって再送信<br>
+なんて流れになってるのがほとんどだ。<br>
+<br>
+比較用に最新のログ１件を保存する機能を追加してそれとチェックすると、<br>
+本物ログの一部を切り出す作業をしなくていいから改造楽かもね。<br>
+＃　チェックに引っかかったら単純にLocationですっ飛ばして終了。<br>
+＃＃　爆撃に対してもささやかではあるが防御力が上がる。<br>
+<br>
+あと、投稿後のリロードも確かに原因になるから<br>
+＃　経験上、上の原因の方が多いけど。<br>
+<br>
+<font color="#CC8000">&gt;「このページをリロードしないでください」みたいなページを挟んでみてはどうでしょう。</font><br>
+<br>
+のも有効。記入欄に「注意書き」だけでもいいと思うが。<br>
+<hr>
+<span class=name>くろっくぁ</span>
+<span class=time>1999/07/29(木) 22:53:04</span><br>
+みなさんありがとうございます。<br>
+せっかくアドバイスを頂いたのですが、<br>
+うまくいきません。<br>
+フォームのリロードには対応していたのですが、<br>
+ブラウザの「更新」を押すと同じ記事がえんえんと<br>
+投稿されてしまいます。<br>
+完全に阻止したいのですが。<br>
+<hr>
+<span class=name>ST</span>
+<span class=time>1999/07/29(木) 23:21:32</span><br>
+Locationも試してみましたか？<br>
+<br>
+・ボタン連打によって再投稿されてしまう<br>
+場合にはログ比較法が良いと思いますが，元の質問の，<br>
+<br>
+・投稿した後にリロードすると再投稿されてしまう<br>
+という場合には，<br>
+print "Location: bbsのurl\n\n";<br>
+で効くのでは無いでしょうか。もう一度お聞きしますが，弊害があればどなたかご教授願います。<br>
+少なくともMiniBBSの場合は書き込み処理の後，そのまま読み込み・表示処理へ行きますので，そこにLocationを使ってもそんなに大きな影響はないと思うのですが（そうでもないか^^;）。大抵の掲示板システムも書き込み時の処理はMiniBBSと同じような構成だと思います。<br>
+<br>
+POSTで投稿した場合，IEではリロードしようとすると「再送信しますか？Y/N」といったダイアログが出るので，それが鬱陶しいというのもあるのですが。<br>
+<hr>
+<span class=name>くろっくぁ</span>
+<span class=time>1999/07/30(金) 23:04:07</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございました。<br>
+うまくいきました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070297.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070297.htm">[前に]</a>
+<a href="99070299.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070299.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほのLess入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script src="../../cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js" tppabs="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
+</head>
+<body>
+<h2>とほほのLess入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Less入門
+
+<h4>目次</h4>
+<ul>
+<li><a href="#whatis">Less とは</a></li>
+<li><a href="#use_client">Less を使用するには(クライアントサイド変換方式)</a></li>
+<li><a href="#use_server">Less を使用するには(サーバサイド変換方式)</a></li>
+<li><a href="#comment">コメント</a></li>
+<li><a href="#import">インポート</a></li>
+<li><a href="#variables">変数</a></li>
+<li><a href="#operations">演算</a></li>
+<li><a href="#functions">関数</a></li>
+<li><a href="#mixins">ミックスイン</a></li>
+<li><a href="#nested_rules">ネストルール</a></li>
+<li><a href="#parent_selector">親セレクタ</a></li>
+<li><a href="#nest_directive">ディレクティブのネスト</a></li>
+<li><a href="#namespace">名前空間とアクセッサ</a></li>
+<li><a href="#scope">スコープ</a></li>
+<li><a href="#escape">エスケープ</a></li>
+<li><a href="#extend">extend</a></li>
+<li><a href="#loop">ループ</a></li>
+<li><a href="#merge">値のマージ</a></li>
+<li><a href="#links">リンク</a></li>
+</ul>
+
+<h4 id="whatis">Less とは</h4>
+<div class="i">
+<p>Less は、CSS をより使いやすく、よりメンテナンスしやすくするための CSS プリプロセッサです。</p>
+<ul>
+<li>Less は Leaner CSS の略です。lean は「無駄のない」、「効率的な」という意味を持ちます。
+<li>2009年に Alexis Sellier(@cloudhead)氏によって開発されました。
+<li>最初は Ruby で記述され、後に JavaScript に移植されました。
+<li>現在(2015年9月13日)時点の最新版は v2.5.1 です。
+<li>大半のブラウザは Less を直接解釈できないため、サーバサイドまたはクライアントサイドで CSS に変換する必要があります。
+<li>変数を使用できるので、色や幅などの値を一括で変更することができます。
+<li>ミックスイン(クラス継承)を利用することにより、定義済みの CSS 定義を簡単に継承することができます。
+<li>関数を利用することにより、数学演算や色演算(もう少し明るくなど)を利用することができます。
+</ul>
+</div>
+
+<h4 id="use_client">Less を使用するには(クライアントサイド変換方式)</h4>
+<div class="i">
+<p>ページを読み込む度にクライアントサイドで Less から CSS に変換するので速度の面では不利ですが、サーバサイド変換方式よりも手軽に Less を試すことができます。Less のファイルを読み込んだ後、less.js (less.min.js) を読み込むことで、Less構文を CSS に変換します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;link rel="<em>stylesheet/less</em>" type="<em>text/css</em>" href="<em>style.less</em>"&gt;
+&lt;script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/<em>less.min.js</em>"&gt;&lt;/script&gt;
+</pre>
+<p>less.js は下記からもダウンロードすることができます。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://lesscss.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://lesscss.org/'" tppabs="http://lesscss.org/">http://lesscss.org/</a>
+</ul>
+<p>通常の Chrome ではセキュリティ設定により、less.js をローカルで動かすことができませんが、Chrome の起動オプションに下記を追加することで、実行可能になります。</p>
+<div class="tab">コマンドプロンプト</div>
+<pre class=c2>
+"C:\Program Files\Google\Chrome\Application\chrome.exe" <em>--allow-file-access-from-files</em>
+</pre>
+<p>URL の最後に #!watch を追加すると、less ファイルの更新を監視し、リアルタイムに変更を反映させることができます。</p>
+<div class="tab">URL</div>
+<pre class=c2>
+http://～/～/test.html<em>#!watch</em>
+</pre>
+</div>
+
+<h4 id="use_server">Less を使用するには(サーバサイド変換方式)</h4>
+<div class="i">
+<p>Lessコンパイラは、Node.js のパッケージマネージャ npm を用いて下記の様にインストールすることができます。</p>
+<div class="tab">Linux</div>
+<pre class=c2>
+$ npm install -g <em>less</em>
+</pre>
+<p>Less コンパイラ(lessc)を用いて、Less ファイルをコンパイルします。下記の例では、style.less ファイルを style.css ファイルにコンパイル(変換)しています。</p>
+<div class="tab">Linux</div>
+<pre class=c2>
+$ <em>lessc</em> style.less style.css
+</pre>
+<p>--clean-css オプションをつけると、minified された CSS ファイルを作成することができます。プラグインがインストールされていない場合は、npm で less-plugin-clean-css プラグインをインストールしてください。</p>
+<div class="tab">Linux</div>
+<pre class=c2>
+$ lessc <em>--clean-css</em> styles.less styles.min.css
+</pre>
+</div>
+
+<h4 id="comment">コメント</h4>
+<div class="i">
+<p>通常の CSS のコメント　/* ... */ に加え、// から行末までもコメントとみなされます。コンパイルすると // コメントは削除されます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>/* ここはコメント */</em>
+<em>/*
+ * ここもコメント
+ */</em>
+<em>// ここもコメント</em>
+h1 { color: red; }
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+<em>/* ここはコメント */</em>
+<em>/*
+ * ここもコメント
+ */</em>
+
+h1 { color: red; }
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="import">インポート</h4>
+<div class="i">
+<p><b>@import</b> を用いて他の Less ファイルをインポートすることができます。拡張子を省略すると ファイル名.less が読み込まれます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>@import</em> "mystyle";  // "mystyle.less"
+
+* { color: @mycolor; }
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+* { color: #469; }
+</pre>
+</div>
+</div>
+<p>@import に続く <b>(...)</b> の中にいくつかのオプションを指定することができます。オプションは下記などを指定します。</p>
+<ul>
+<li><b>reference</b> - 呼び出し元から参照されたスタイルだけ展開し、未参照の定義を破棄します。
+<li><b>inline</b> - CSSファイルとして単純に読み込みします。CSS非互換ファイルを読み込む際に有効です。
+<li><b>less</b> - 拡張子に関わらず Less ファイルとして読み込みます。
+<li><b>css</b> - 拡張子に関わらず CSS ファイルとして読み込みます。
+<li><b>once</b> - 同名ファイルが指定された場合、一度だけ読み込みます(デフォルト)。
+<li><b>multiple</b> - 同名ファイルが指定された場合、重複して読み込みます。
+<li><b>optional</b> - ファイルが存在する時のみ、読み込みます。
+</ul>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+@import <em>(optional, reference)</em> "style.less";
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="variables">変数</h4>
+<div class="i">
+<p>下記の様に、変数(<b>@変数名</b>) を定義・使用することができます。"..." や '...' の中で参照する際は、<b>@{変数名}</b> と記述します。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>@mycolor: #369;</em>
+<em>@imgdir: "../image";</em>
+h1 {
+  color: <em>@mycolor</em>;
+  borde: 2px solid <em>@mycolor</em>;
+  background: url("<em>@{imgdir}</em>/sample.png");
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+h1 {
+  color: <em>#369</em>;
+  border: 2px solid <em>#369</em>;
+  background: url("<em>../image</em>/sample.png");
+}
+</pre>
+</div>
+</div>
+<p>セレクタやプロパティ名を変数定義することもできます。この場合も <b>@{変数名}</b> で参照します。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+@headers: h1, h2, h3, h4, h5, h6;
+@property: color;
+<em>@{headers}</em> {
+  <em>@{property}</em>: black;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+<em>h1, h2, h3, h4, h5, h6</em> {
+  <em>color</em>: black;
+}
+</pre>
+</div>
+</div>
+<p>変数名を変数定義することもできます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+@name: "mycolor";
+@mycolor: red;
+h1 {
+  color: <em>@@name</em>;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+h1 {
+  color: <em>red</em>;
+}
+</pre>
+</div>
+</div>
+<p>変数を定義する場所は、参照する場所より前でも後ろでも構いません。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+h1 {
+  color: @mycolor;
+}
+<em>@mycolor: red;</em>
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+h1 {
+  color: <em>red</em>;
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="operations">演算</h4>
+<div class="i">
+<p>加減乗除などの演算を行うことができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox {
+  width: <em>200px * 2</em>;
+  color: <em>#888888 / 2</em>;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox {
+  width: <em>400px</em>;
+  color: <em>#444444</em>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="functions">関数</h4>
+<div class="i">
+<p>小数をパーセントに変換する <b>percentage()</b>, 彩度を高める <b>saturate()</b>, 色を明るくする <b>lighten()</b> など、数多くの関数を使用することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+@mycolor: #f00;
+.mybox10 { background-color: <em>lighten(@mycolor, 10%)</em>; }
+.mybox20 { background-color: <em>lighten(@mycolor, 20%)</em>; }
+.mybox30 { background-color: <em>lighten(@mycolor, 30%)</em>; }
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+.mybox10 { background-color: <em>#ff3333</em>; }
+.mybox20 { background-color: <em>#ff6666</em>; }
+.mybox30 { background-color: <em>#ff9999</em>; }
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="mixins">ミックスイン</h4>
+<div class="i">
+<p>ミックスイン(mixin) は、継承用に利用されるクラス定義です。下記の例では、.mybox というミックスインを定義し、これを h4 の CSS 定義で利用(継承)しています。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>.mybox</em> {
+  border: 1px solid #999;
+}
+h4 {
+  color: #336;
+  <em>.mybox</em>;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+.mybox {
+  border: 1px solid #999;
+}
+h4 {
+  color: #336;
+  <em>border: 1px solid #999;</em>
+}
+</pre>
+</div>
+</div>
+<p>下記の様に、引数を受け取るミックスインを定義することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>.mybox(@width; @color)</em> {
+  border: @width solid @color;
+}
+h1 {
+  .mybox(1px; #666);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  border: 1px solid #666666;
+}
+</pre>
+</div>
+</div>
+<p>引数のセパレータにはセミコロン(<b>;</b>) またはカンマ(<b>,</b>)を使用できますが、カンマは他のセパレータとしても使用されることがあるため、引数セパレータにはセミコロンを用いることが推奨されています。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>.myfont(@size; @family)</em> {
+  font-size: @size;
+  font-family: @family;
+}
+h1 {
+  .myfont(9pt; Arial, Courier);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  font-size: 9pt;
+  font-family: Arial, Courier;
+}
+</pre>
+</div>
+</div>
+
+
+
+
+<p>下記の様に、引数にデフォルト値を指定し、名前付き引数を指定することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>.mybox(@width: 1px; @color: black)</em> {
+  border: @width solid @color;
+}
+h1 {
+  .mybox(@color: #666);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  border: 1px solid #666666;
+}
+</pre>
+</div>
+</div>
+<p><b>@arguments</b> は、すべての引数を参照します。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox(@x:0; @y:0; @blur:1px; @color:#000) {
+  box-shadow: <em>@arguments</em>;
+  -moz-box-shadow: <em>@arguments</em>;
+  -webkit-box-shadow: <em>@arguments</em>;
+}
+h1 {
+  .mybox(@blur:3px);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  box-shadow: 0 0 3px #000000;
+  -moz-box-shadow: 0 0 3px #000000;
+  -webkit-box-shadow: 0 0 3px #000000;
+}
+</pre>
+</div>
+</div>
+<p><b>@rest...</b> は、残りの引数を参照します。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox(@width; <em>@rest...</em>) {
+  border: @width @rest;
+}
+h1 {
+  .mybox(1px, solid, #666666);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  border: 1px solid #666666;
+}
+</pre>
+</div>
+</div>
+<p><b>when (...)</b> により、ミックスインを定義する条件を指定することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+@mode: large;
+.mybox <em>when (@mode = large)</em> {
+  width: 1200px;
+}
+.mybox <em>when (@mode = small)</em> {
+  width: 768px;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+.mybox {
+  width: 1200px;
+}
+
+
+
+</pre>
+</div>
+</div>
+<p>下記の様に、引数にマッチする条件によって適用するミックスインを変更することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox(<em>thin</em>, @color) {
+  border: 1px solid @color;
+}
+.mybox(<em>thick</em>, @color) {
+  border: 4px solid @color;
+}
+h1 {
+  .mybox(<em>thin</em>, red);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+
+
+
+h1 {
+  border: 1px solid red;
+}
+</pre>
+</div>
+</div>
+<p><b>!important</b> を指定すると、CSS 定義に !important が指定されます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox(@color) {
+  color: @color;
+}
+h1 {
+  .mybox(red) <em>!important</em>;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  color: red <em>!important</em>;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="nested_rules">ネストルール</h4>
+<div class="i">
+<p>下記の様に、親子の階層をネストして記述することができます。CSS にくらべ、より構造的にスタイルを定義することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>#page</em> {
+  @mycolor: #469;
+  <em>#header</em> {
+    color: @mycolor;
+  }
+  <em>#body</em> {
+    color: @mycolor;
+  }
+  <em>#footer</em> {
+    color: @mycolor;
+  }
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+<em>#page #header</em> {
+  color: #446699;
+}
+<em>#page #body</em> {
+  color: #446699;
+}
+<em>#page #footer</em> {
+  color: #446699;
+}
+
+</pre>
+</div>
+</div>
+
+
+</div>
+
+<h4 id="parent_selector">親セレクタ</h4>
+<div class="i">
+<p><b>&amp;</b> は、親セレクタを示します。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+a {
+  <em>&amp;</em>:link { color: #369; }
+  <em>&amp;</em>:visited { color: #369; }
+}
+
+
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+<em>a:link</em> {
+  color: #369;
+}
+<em>a:visited</em> {
+  color: #369;
+}
+</pre>
+</div>
+</div>
+<p>下記の様にして、if 文のような記述をすることができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+@mode: large;
+body {
+  <em>&amp; when (@mode = large)</em> {
+    padding: 0 20px 0 20px;
+  }
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+body {
+  padding: 0 20px 0 20px;
+}
+
+
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="nest_directive">ディレクティブのネスト</h4>
+<div class="i">
+<p>下記の様に、クラスの中に @media 等のディレクティブを記述することもできます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mycolor {
+  <em>@media screen</em> {
+    color: #f00;
+    <em>@media (min-width: 768px)</em> {
+      color: #0f0;
+    }
+  }
+  <em>@media tv</em> {
+    color: #00f;
+  }
+}
+
+
+
+
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+<em>@media screen</em> {
+  .mycolor {
+    color: #f00;
+  }
+}
+<em>@media screen and (min-width: 768px)</em> {
+  .mycolor {
+    color: #0f0;
+  }
+}
+<em>@media tv</em> {
+  .mycolor {
+    color: #00f;
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="scope">スコープ</h4>
+<div class="i">
+<p>変数のスコープは、通常のプログラミング言語と同様、もっとも内側の { ... } 内で定義されたものが有効になります。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+<em>@color: red;</em>
+.scopeA {
+  <em>@color: green;</em>
+  .scopeB {
+    color: <em>@color</em>;
+  }
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+.scopeA .scopeB {
+  color: <em>green</em>;
+}
+
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="namespace">名前空間とアクセッサ</h4>
+<div class="i">
+<p>下記の様にして、いくつかの Mixin を #my_mixins という名前でグルーピングすることができます。グループ中の Mixin を使用するには <b>&gt;</b> を用いますが、&gt; は省略することも可能です。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+#my_mixins {
+  .color(@color) { color: @color; }
+  .border(@color) { border: 1px solid @color; }
+}
+.mybox {
+  <em>#my_mixins &gt; .border(#999);</em>
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+
+.mybox {
+  <em>border: 1px solid #999;</em>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="escape">エスケープ</h4>
+<div class="i">
+<p>CSS3 の新しい機能や、ブラウザ依存の機能など、Less コンパイラが解釈できず、文法エラーとなってしまう場合、<b>~"..."</b> または <b>~'...'</b> で Less のコンパイルをエスケープすることができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mybox {
+  width: calc(<em>~"100% - 200px"</em>);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+.mybox {
+  width: calc(<em>100% - 200px</em>);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="extend">extend</h4>
+<div class="i">
+<p><b>&amp;extend(...)</b> を用いることで、単純なクラス名ではないセレクタ (.mytable td など)を継承することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.mytable td {
+    color: red;
+}
+.mytable2 td {
+    <em>&amp;:extend(.mytable td);</em>
+    border: 1px solid gray;
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+.mytable td,
+<em>.mytable2 td</em> {
+  color: red;
+}
+<em>.mytable2 td</em> {
+  border: 1px solid gray;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="loop">ループ</h4>
+<div class="i">
+<p><b>when</b> と再起呼び出しを用いることでループを実現することができます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.myloop(@n) <em>when (@n &gt; 0)</em> {
+  .col@{n} {
+    width: 100px * @n;
+  }
+  <em>.myloop(@n - 1)</em>;
+}
+
+.myloop(3);
+
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+.col3 {
+  width: 300px;
+}
+.col2 {
+  width: 200px;
+}
+.col1 {
+  width: 100px;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="merge">値のマージ</h4>
+<div class="i">
+<p>プロパティ名の後ろに <b>+</b> をつけると、プロパティ名が重複する場合、値がカンマ(,)で連結されます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.courier() {
+  <em>font-family+</em>: Courier;
+}
+.helvetica() {
+  <em>font-family+</em>: Helvetica;
+}
+h1 {
+  <em>font-family+</em>: Arial;
+  .courier();
+  .helvetica();
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+
+
+
+
+
+h1 {
+  font-family: <em>Arial, Courier, Helvetica</em>;
+}
+</pre>
+</div>
+</div>
+<p>プロパティ名の後ろに <b>+_</b> をつけると、プロパティ名が重複する場合、値がスペースで連結されます。</p>
+<div class="clearfix">
+<div class="col6">
+<div class="title-tab">Less</div>
+<pre class="c2">
+.border-width(@width) { <em>border+_</em>: @width; }
+.border-color(@color) { <em>border+_</em>: @color; }
+.border-style(@style) { <em>border+_</em>: @style; }
+h1 {
+  .border-width(1px);
+  .border-style(sorid);
+  .border-color(gray);
+}
+</pre>
+</div>
+<div class="col6">
+<div class="title-tab">CSS</div>
+<pre class="c2">
+
+
+
+h1 {
+  border: <em>1px sorid gray</em>;
+}
+
+
+</pre>
+</div>
+</div>
+</div>
+
+<h4 id="links">リンク</h4>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://lesscss.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://lesscss.org/'" tppabs="http://lesscss.org/">http://lesscss.org/</a></li>
+<li><a target="_top" href="javascript:if(confirm('http://less-ja.studiomohawk.com/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://less-ja.studiomohawk.com/'" tppabs="http://less-ja.studiomohawk.com/">http://less-ja.studiomohawk.com/</a></li>
+</ul>
+
+<hr>
+<div>Copyright (C) 2015 杜甫々</div>
+<div>初版:2015年9月13日 最終更新:2015年9月13日</div>
+<div>http://www.tohoho-web.com/ex/less.html</div>
+</body>
+</html>

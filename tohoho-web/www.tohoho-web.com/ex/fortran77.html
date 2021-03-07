@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset=utf-8"utf-8">
+<title>FORTRAN入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<style>
+.local-table {
+  border-collapse: collapse;
+}
+.local-table td {
+  vertical-align: top;
+  white-space: pre;
+  border: 0;
+}
+</style>
+</head>
+<body>
+<h2>FORTRAN入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+FORTRAN入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">FORTRANとは</a>
+<li><a href="#install">インストール</a>
+<li><a href="#hello-world">Hello world</a>
+<li><a href="#columns">カラム</a>
+<li><a href="#keywords">キーワード</a>
+<li><a href="#types">型</a>
+  <ul>
+  <li><a href="#character">文字(CHARACTER)</a>
+  <li><a href="#logical">真偽値(LOGICAL)</a>
+  <li><a href="#byte">1バイト整数(BYTE)</a>
+  <li><a href="#integer">整数(INTEGER)</a>
+  <li><a href="#real">実数(REAL)</a>
+  <li><a href="#complex">虚数(COMPLEX)</a>
+  <li><a href="#double">倍精度(DOUBLE)</a>
+  <li><a href="#dimension">N次元配列(DIMENSION)</a>
+  </ul>
+<li><a href="#operators">演算子</a>
+<li><a href="#variables">変数</a>
+<li><a href="#statements">制御構文</a>
+  <ul>
+  <li><a href="#continue">CONTINUE文</a>
+  <li><a href="#goto">GOTO文</a>
+  <li><a href="#do">DO文</a>
+  <li><a href="#if">IF文</a>
+  <li><a href="#stop">STOP文</a>
+  </ul>
+<li><a href="#in-out">入出力</a>
+  <ul>
+  <li><a href="#print">PRINT文</a>
+  <li><a href="#format">FORMAT文</a>
+  <li><a href="#open">OPEN文</a>
+  <li><a href="#read">READ文</a>
+  <li><a href="#write">WRITE文</a>
+  </ul>
+<li><a href="#function-subroutine">関数・サブルーチン</a>
+  <ul>
+  <li><a href="#function">FUNCTION文</a>
+  <li><a href="#subroutine">SUBROUTINE文</a>
+  <li><a href="#call">CALL文</a>
+  <li><a href="#return">RETURN文</a>
+  </ul>
+<li><a href="javascript:if(confirm('http://www.tohoho-web.com/ex/other  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������������ļ�δ�ҵ���  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/ex/other'" tppabs="http://www.tohoho-web.com/ex/other">その他</a>
+  <ul>
+  <li><a href="#implicit">IMPLICIT文</a>
+  </ul>
+</ul>
+</div>
+
+<h4 id="about">FORTRANとは</h4>
+<div class="i">
+<ul>
+<li>IBMのジョン・バッカス氏らが1954年に考案した世界最初の高水準プログラミング言語です。
+<li>名前は「FORmula TRANslation(数式処理)」から由来しています。
+<li>科学技術計算の分野で特に利用されていました。
+<li>「FORTRAN 66」、「FORTRAN 77」、「Fortran 90」、「Fortran 95」などのバージョンがあります。
+<li>大文字・小文字の区別はありません。
+<li>FORTRAN 77 までは固定形式と呼ばれ、プログラムは7～72カラムめに記述する必要がありました。Fortran 90 では自由形式もサポートされ、この制約はなくなりました。
+<li>私が学生の頃は、1枚に1行分(ASCII文字を80文字)打てるパンチカードにプログラムを記録し、計算機センターのカード読み取り装置でプログラムをロードしていました。
+</ul>
+<p>ここでは、ノスタルジーを感じるために、懐かしの 「<b>FORTRAN 77</b>」 についてさわりだけ紹介してみます。</p>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<pre class="c">
+<span class="cm"># CentOS 7</span>
+# yum -y install gcc-gfortran libgfortran
+</pre>
+</div>
+
+<h4 id="hello-world">Hello world</h4>
+<div class="i">
+<pre class="c">
+      PROGRAM HELLO
+      PRINT *, 'HELLO, WORLD!'
+      END PROGRAM HELLO
+</pre>
+<pre class="c">
+$ <em>gfortran hello.f -o hello</em>
+$ ./hello
+HELLO, WORLD!
+</pre>
+</div>
+
+<h4 id="columns">カラム</h4>
+<div class="i">
+<p>Fortran 90 では自由形式で記述できますが、FORTRAN 77 までは下記の様な固定形式でした。</p>
+<ul>
+<li>1行は最大80カラムです。
+<li>1カラム目に <b>C</b> を書くと、その行はコメント行とみなされます。
+<li>1～5カラム目に数字を書くと、その数字はその行の行番号とみなされます。
+<li>6カラム目に空白や <b>0</b> 以外の文字を書くと、継続行とみなされます。
+<li>7～72カラム目にプログラムを書きます。
+<li>73～80カラムは注釈などを書きます。本文には影響しません。
+<li>プログラムでは文字列定義以外の空白文字はすべて無視されます。「GOTO 100」も「GO TO 100」も「GOTO100」も「G OT O1 00」もすべて同じコードとみなされます。
+</ul>
+<pre class="c">
+<span class="cm">0        1         2         3         4         5         6         7         8</span>
+<span class="cm">12345678901234567890123456789012345678901234567890123456789012345678901234567890</span>
+C THIS IS COMMENT LINE.
+      PROGRAM SAMPLE                                                    COMMENT
+      DO 100 I=1,5                                                      COMMENT
+        PRINT *, I
+ 100  CONTINUE
+      END PROGRAM SAMPLE
+</pre>
+</div>
+
+<h4 id="keywords">キーワード</h4>
+<div class="i">
+<pre class="c">
+ACCEPT
+ASSIGN
+AUTOMATIC
+BACKSPACE
+BLOCK DATA
+<a href="#byte">BYTE</a>			<span class="cm"># 1バイト整数</span>
+<a href="#call">CALL</a>			<span class="cm"># サブルーチンコール</span>
+<a href="#character">CHARACTER</a>		<span class="cm"># 文字</span>
+<a href="#close">CLOSE</a>			<span class="cm"># ファイルを閉じる</span>
+COMMON
+<a href="#complex">COMPLEX</a>			<span class="cm"># 虚数</span>
+<a href="#continue">CONTINUE</a>		<span class="cm"># 何もしない</span>
+DATA
+DECODE
+<a href="#dimension">DIMENSION</a>		<span class="cm"># N次元配列</span>
+<a href="#do">DO</a>			<span class="cm"># DO文</span>
+<a href="#do-while">DO WHILE</a>		<span class="cm"># 繰り返し</span>
+<a href="#double">DOUBLE</a>			<span class="cm"># 倍精度</span>
+<a href="#if">ELSE</a>			<span class="cm"># IF文</span>
+<a href="#else-if">ELSE IF</a>			<span class="cm"># IF文</span>
+ENCODE
+<a href="#hello-world">END</a>			<span class="cm"># 終わり</span>
+ENTRY
+EQUIVALENCE
+EXTERNAL
+<a href="#format">FORMAT</a>			<span class="cm"># フォーマット指定</span>
+<a href="#function">FUNCTION</a>		<span class="cm"># 関数定義</span>
+<a href="#goto">GOTO</a>			<span class="cm"># GOTO文</span>
+<a href="#if">IF</a>			<span class="cm"># IF文</span>
+<a href="#implicit">IMPLICIT</a>		<span class="cm"># 暗黙の型定義</span>
+INCLUDE
+INQUIRE
+<a href="#integer">INTEGER</a>			<span class="cm"># 整数</span>
+INTRINSIC
+<a href="#logical">LOGICAL</a>			<span class="cm"># 真偽値</span>
+MAP
+NAMELIST
+<a href="#open">OPEN</a>			<span class="cm"># ファイルオープン</span>
+OPTIONS
+PARAMETER
+<a href="#pause">PAUSE</a>			<span class="cm"># 一時中断</span>
+POINTER
+<a href="#print">PRINT</a>			<span class="cm"># 出力</span>
+<a href="#hello-world">PROGRAM</a>			<span class="cm"># プログラムの開始</span>
+<a href="#read">READ</a>			<span class="cm"># データ入力</span>
+<a href="#real">REAL</a>			<span class="cm"># 実数</span>
+RECORD
+<a href="#return">RETURN</a>			<span class="cm"># 戻り値分岐</span>
+REWIND
+SAVE
+STATIC
+<a href="#stop">STOP</a>			<span class="cm"># プログラム停止</span>
+STRUCTURE
+<a href="#subroutine">SUBROUTINE</a>		<span class="cm"># サブルーチン</span>
+TYPE
+UNION
+VIRTUAL
+VOLATILE
+<a href="#write">WRITE</a>			<span class="cm"># ファイル出力</span>
+</pre>
+</div>
+
+<h4 id="types">型</h4>
+<div class="i">
+<h5 id="character">文字(CHARACTER)</h5>
+<pre class="c">
+      CHARACTER S(2)*3
+      S(1)='AAA'
+      S(2)='BBB'
+</pre>
+<h5 id="logical">真偽値(LOGICAL)</h5>
+<pre class="c">
+      LOGICAL F1, F2
+      F1=.TRUE.
+      F2=.FALSE.
+</pre>
+<h5 id="byte">1バイト整数(BYTE)</h5>
+<pre class="c">
+      BYTE B				<span class="cm"># 1バイト整数B</span>
+      BYTE B/127/			<span class="cm"># 初期化</span>
+</pre>
+<h5 id="integer">整数(INTEGER)</h5>
+<pre class="c">
+      INTEGER N, M			<span class="cm"># 整数NとM</span>
+      INTEGER N(2), M(3)		<span class="cm"># N(1), N(2), M(1), M(2), M(3)</span>
+      INTEGER N/123/, M/234/		<span class="cm"># 初期化</span>
+      INTEGER*2 N			<span class="cm"># 2バイト整数N</span>
+      INTEGER*4 N			<span class="cm"># 4バイト整数N</span>
+      INTEGER*8 N			<span class="cm"># 8バイト整数N</span>
+</pre>
+<h5 id="real">実数(REAL)</h5>
+<pre class="c">
+      REAL X, Y			<span class="cm"># 実数XとY</span>
+      REAL X/12.3/			<span class="cm"># 初期化(12.3)</span>
+      REAL X/1.23E2/			<span class="cm"># 初期化(1.23×10<sup><small>2</small></sup>)</span>
+      REAL*4 X, Y			<span class="cm"># 4バイト実数</span>
+      REAL*8 X, Y			<span class="cm"># 8バイト実数</span>
+      REAL*8 X/1.23D2/			<span class="cm"># 初期化(1.23×10<sup><small>2</small></sup>)</span>
+      REAL*16 X, Y			<span class="cm"># 16バイト実数</span>
+      REAL*16 X/1.23Q2/		<span class="cm"># 初期化(1.23×10<sup><small>2</small></sup>)</span>
+</pre>
+<h5 id="complex">虚数(COMPLEX)</h5>
+<pre class="c">
+      COMPLEX X, Y			<span class="cm"># 虚数XとY</span>
+      COMPLEX X/(1.0,2.0)/		<span class="cm"># 初期化</span>
+      COMPLEX*8 X			<span class="cm"># 8バイト虚数</span>
+      COMPLEX*16 X			<span class="cm"># 16バイト虚数</span>
+      COMPLEX*32 X			<span class="cm"># 32バイト虚数</span>
+</pre>
+<h5 id="double">倍精度(DOUBLE)</h5>
+<pre class="c">
+      DOUBLE PRECISION X		<span class="cm"># REAL*8と同意</span>
+      DOUBLE COMPLEX X			<span class="cm"># COMPLEX*16と同意</span>
+</pre>
+<h5 id="dimension">N次元配列(DIMENSION)</h5>
+<pre class="c">
+      DIMENSION N(2)			<span class="cm"># N(1), N(2)</span>
+      DIMENSION N(2,3)			<span class="cm"># N(1,1), ..., N(2,3)</span>
+      DIMENSION N(-2:2)		<span class="cm"># N(-2), ..., N(2)</span>
+</pre>
+</div>
+
+<h4 id="operators">演算子</h4>
+<div class="i">
+<pre class="c">
++		<span class="cm"># 加算</span>
+-		<span class="cm"># 減算</span>
+*		<span class="cm"># 乗算</span>
+/		<span class="cm"># 除算</span>
+**		<span class="cm"># べき乗</span>
+.LT.		<span class="cm"># より小さい(Less Than)</span>
+.LE.		<span class="cm"># 以下(Less than or Equal to)</span>
+.EQ.		<span class="cm"># 等しい(EQual to)</span>
+.NE.		<span class="cm"># 等しくない(Not Equal to)</span>
+.GE.		<span class="cm"># 以上(Greater than or Equal to)</span>
+.GT.		<span class="cm"># より大きい(Greater Than)</span>
+.OR.		<span class="cm"># または(OR)</span>
+.AND.		<span class="cm"># かつ(AND)</span>
+.NOT.		<span class="cm"># 否定(NOT)</span>
+</pre>
+</div>
+
+<h4 id="variables">変数</h4>
+<div class="i">
+<p>暗黙的に、I～L で始まる変数は整数、その他は実数とみなされます。</p>
+</div>
+
+<h4 id="statements">制御構文</h4>
+<div class="i">
+<h5 id="continue">CONTINUE文</h5>
+<pre class="c">
+      CONTINUE				<span class="cm"># 何もしない</span>
+</pre>
+<h5 id="goto">GOTO文</h5>
+<pre class="c">
+      GOTO 100				<span class="cm"># 行番号100にジャンプする</span>
+      PRINT *, 'NOT PRINTED THIS LINE'
+100   PRINT *, 'HERE!'
+</pre>
+<h5 id="do">DO文</h5>
+<pre class="c">
+      DO 100 I=1,5			<span class="cm"># 行番号100との間を5回繰り返す</span>
+        PRINT *, I
+100   CONTINUE
+</pre>
+<h5 id="do-while">DO WHILE文</h5>
+<pre class="c">
+      N=1
+      DO WHILE (N .LT. 10)		<span class="cm"># Nが10より小さい間繰り返す</span>
+        PRINT *, N
+        N=N+1
+      END DO
+</pre>
+<h5 id="if">IF文</h5>
+<pre class="c">
+      IF (A1 .GT. A2) THEN		<span class="cm"># もしA1がA2より大きければ</span>
+        PRINT *, 'BIG!'
+      ELSE IF (A1 .EQ. A2) THEN	<span class="cm"># 等しければ</span>
+        PRINT *, 'EQUAL!'
+      ELSE				<span class="cm"># さもなくば</span>
+        PRINT *, 'SMALL!'
+      ENDIF
+</pre>
+<h5 id="if2">IF文</h5>
+<pre class="c">
+      IF (N) 100, 110, 120		<span class="cm"># Nの値によって</span>
+100   PRINT *, 'A'			<span class="cm"># 負数なら100に、</span>
+110   PRINT *, 'B'			<span class="cm"># 0なら110に、</span>
+120   PRINT *, 'C'			<span class="cm"># 正数なら120にジャンプする</span>
+</pre>
+<h5 id="pause">PAUSE文</h5>
+<pre class="c">
+      PAUSE				<span class="cm"># プログラムを一時中断する</span>
+</pre>
+<h5 id="stop">STOP文</h5>
+<pre class="c">
+      STOP				<span class="cm"># プログラムを中止する</span>
+</pre>
+</div>
+
+<h4 id="in-out">入出力</h4>
+<div class="i">
+<h5 id="print">PRINT文</h5>
+<pre class="c">
+      PRINT *, A, B			<span class="cm"># 標準形式</span>
+      PRINT '(I5)', N			<span class="cm"># 5桁の整数(I:10進数, O:8進数, Z:16進数)</span>
+      PRINT '(F6.2)', X		<span class="cm"># 小数部2桁、全体6桁の実数(F:固定小数, E:指数, D:倍精度, G:自動)</span>
+      PRINT '(A)', 'HELLO'		<span class="cm"># 文字</span>
+      PRINT '(L)', FLAG		<span class="cm"># 真偽値 (真ならT, 偽ならFを出力)</span>
+      PRINT '(F4.1, F5.2)', X, Y	<span class="cm"># 複数の値を出力</span>
+</pre>
+<h5 id="format">FORMAT文</h5>
+<pre class="c">
+      PRINT 100, X, Y			<span class="cm"># 行番号100で指定したフォーマットで出力</span>
+100   FORMAT (F4.2, ' ', F6.3)
+</pre>
+<h5 id="open">OPEN文</h5>
+<pre class="c">
+      OPEN(100, FILE="sample.dat")	<span class="cm"># ファイルをオープンし、ユニット番号100を割り当てる</span>
+</pre>
+<h5 id="read">READ文</h5>
+<pre class="c">
+      READ (*, *), N			<span class="cm"># 標準入力から標準フォーマットで読み込む</span>
+      READ (*, '(I3)'), N		<span class="cm"># 標準入力から3桁の整数値フォーマットで読み込む</span>
+      OPEN(100, FILE='sample.dat')	<span class="cm"># ファイルをオープンし、ユニット番号100を割り当てる</span>
+      READ (100, *), N			<span class="cm"># ユニット番号100のファイルから標準フォーマットで読み込む</span>
+</pre>
+<h5 id="write">WRITE文</h5>
+<pre class="c">
+      WRITE (*, *), N			<span class="cm"># 標準出力に標準フォーマットで書き出す</span>
+      WRITE (*, '(I3)'), N		<span class="cm"># 標準出力に3桁の整数値フォーマットで書き出す</span>
+      OPEN(100, FILE='sample.dat')	<span class="cm"># ファイルをオープンし、ユニット番号100を割り当てる</span>
+      WRITE (100, *), N		<span class="cm"># ユニット番号100のファイルに標準フォーマットで書き込む</span>
+</pre>
+<h5 id="close">CLOSE文</h5>
+<pre class="c">
+      CLOSE (100)			<span class="cm"># OPEN()で開いたファイルを閉じる</span>
+</pre>
+</div>
+
+<h4 id="function-subroutine">関数・サブルーチン</h4>
+<div class="i">
+<h5 id="function">FUNCTION文</h5>
+<pre class="c">
+      PROGRAM MAIN
+      Z=TASHIZAN(2.3, 3.4)		<span class="cm"># 関数を呼び出す</span>
+      PRINT *, Z
+      END PROGRAM MAIN
+
+      FUNCTION TASHIZAN(X, Y)		<span class="cm"># 関数を定義する</span>
+        TASHIZAN=X+Y			<span class="cm"># 関数と同じ変数名が戻り値</span>
+        RETURN
+      END FUNCTION TASHIZAN
+</pre>        
+<h5 id="subroutine">SUBROUTINE文</h5>
+<pre class="c">
+      SUBROUTINE TASHIZAN(X,Y,Z)	<span class="cm"># サブルーチンを定義</span>
+        REAL :: X, Y, Z
+        Z=X+Y
+      END SUBROUTINE TASHIZAN
+</pre>
+<h5 id="call">CALL文</h5>
+<pre class="c">
+      PROGRAM MAIN
+        X=12.3
+        Y=23.4
+        CALL TASHIZAN(X,Y,Z)		<span class="cm"># サブルーチンを呼び出す</span>
+        PRINT *, Z
+      END PROGRAM MAIN
+</pre>
+<h5 id="return">RETURN文</h5>
+<pre class="c">
+      PROGRAM MAIN
+        N=123
+        M=234
+        CALL HIKAKU(N, M, *110, *120)	<span class="cm"># RETURNに対応する行番号にジャンプする</span>
+        PRINT *, 'EQUAL'		<span class="cm"># 無値であればEQUALを表示</span>
+        GOTO 130
+110     PRINT *, 'SMALL'		<span class="cm"># 1であればSMALLを表示</span>
+        GOTO 130
+120     PRINT *, 'BIG'			<span class="cm"># 2であればBIGを表示</span>
+130     CONTINUE
+      END PROGRAM MAIN
+
+      SUBROUTINE HIKAKU(N, M, *, *)
+        IF (N .EQ. M) THEN
+          RETURN			<span class="cm"># 等しければ無値を返す</span>
+        ELSE IF (N .LT. M) THEN
+          RETURN 1			<span class="cm"># 小さければ1を返す</span>
+        ELSE
+          RETURN 2			<span class="cm"># 大きければ2を返す</span>
+        END IF
+      END SUBROUTINE
+</pre>
+</div>
+
+<h4 id="other">その他</h4>
+<div class="i">
+<h5 id="implicit">IMPLICIT文</h5>
+<pre class="c">
+      IMPLICIT INTEGER (A-Z)		<span class="cm"># A～Zで始まる変数は整数とみなす</span>
+      IMPLICIT REAL (X-Z)		<span class="cm"># X～Zで始まる変数は実数とみなす</span>
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://docs.oracle.com/cd/E19957-01/805-4939/index.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.oracle.com/cd/E19957-01/805-4939/index.html'" tppabs="https://docs.oracle.com/cd/E19957-01/805-4939/index.html">FORTRAN 77 Language Reference</a> (by Oracle)
+</ul>
+</div>
+
+<!--
+○FORMAT
+○IMPLICIT
+○PRINT
+○READ
+-->
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年6月21日 最終更新:2020年6月21日</div>
+<div>http://www.tohoho-web.com/ex/fortlan.html</div>
+</body>
+</html>

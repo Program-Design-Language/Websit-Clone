@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>関数（Function） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>関数（Function）</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="date.htm" tppabs="http://www.tohoho-web.com/js/date.htm">[prev]</a>
+<a href="object.htm" tppabs="http://www.tohoho-web.com/js/object.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#arrow">=&gt;</a>,
+<a href="#apply">apply()</a>,
+<a href="#arity">arity</a>,
+<a href="#arguments">arguments</a>,
+<a href="#bind">bind()</a>,
+<a href="#call">call()</a>,
+<a href="#caller">caller</a>,
+<a href="#Function">function</a>,
+<a href="#newFunction">Function()</a>,
+<a href="#prototype">prototype</a>,
+<a href="#toString">toString()</a>
+
+</div>
+
+<h4 id="xFunction">関数</h4>
+
+<h5 id="Function">◆ function <i>func</i>(<i>arg1</i>, <i>arg2</i>, ...) { ... }</h5>
+<div class=i>
+<p><b id="func2">関数</b>を定義します。関数とは、よく使用する処理を <b id="subroutine">サブルーチン</b> として定義するものです。例えば、時：分：秒を秒数に変換する関数を定義するには次のようにします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>function</em> toSeconds(hour, min, sec) {
+  var answer = hour * 3600 + min * 60 + sec;
+  <em>return(</em>answer<em>)</em>;
+}
+</pre>
+<p>この関数は次のようにして呼び出すことができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+sec1 = toSeconds(12, 34, 56);     <span class="cm">// 12時間34分56秒 =&gt; 45296秒</span>
+sec2 = toSeconds(23, 59, 59);     <span class="cm">// 23時間59分59秒 =&gt; 86399秒</span>
+</pre>
+<p>関数を次のような形式で定義することもできます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var toSeconds = <em>function</em>(hour, min, sec) {
+  var answer = hour * 3600 + min * 60 + sec;
+  return(answer);
+}
+</pre>
+<p>function は、関数（処理）を定義するだけではなく、クラスを定義する目的でも使用されます。詳細は「<a href="object.htm#defClass" tppabs="http://www.tohoho-web.com/js/object.htm#defClass">クラスを定義する</a>」を参照してください。</p>
+</div>
+
+<h4 id="argReturn">引数と戻り値</h4>
+
+<h5>◆ 引数と戻り値</h5>
+<div class=i>
+<p>下記の例における hour, min, sec などのように、関数に渡す値を <b id="argument">引数</b>、answer の値のように関数から戻される値を <b id="returnValue">戻り値</b> と呼びます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function toSeconds(<em>hour</em>, <em>min</em>, <em>sec</em>) {
+  var answer = hour * 3600 + min * 60 + sec;
+  return(<em>answer</em>);
+}
+</pre>
+</div>
+
+<h5 id="defaultArgument">◆ デフォルト引数</h5>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES6(ES2015)</a> からは、引数を省略した場合のデフォルト値を指定できるようになりました。下記の例では min や sec 引数を省略した場合、それぞれ 0分、0秒とみなされます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function toSeconds(hour, <em>min = 0</em>, <em>sec = 0</em>) {
+  var answer = hour * 3600 + min * 60 + sec;
+  return(answer);
+}
+var sec = toSeconds(2);   <span class="cm">// =&gt; 7200</span>
+</pre>
+</div>
+
+<h5 id="varargs">◆ 可変長引数(...arg)</h5>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES6(ES2015)</a> ではまた、可変長引数を扱うことが可能となりました。下記の例では、a, b, c は第1, 第2, 第3引数を、rest は残りの引数の配列を受け取ります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function func(a, b, c, <em>...rest</em>) {
+  console.log(a, b, c, rest);        <span class="cm">// =&gt; 1, 2, 3, [4, 5, 6]</span>
+}
+func(1, 2, 3, 4, 5, 6);
+</pre>
+</div>
+
+<h5 id="trailingComma">◆ 末尾のカンマ</h5>
+<div class=i>
+<p><a href="what.htm#es2017" tppabs="http://www.tohoho-web.com/js/what.htm#es2017">ES2017(ES8)</a> では、関数定義や関数呼び出しの引数の最後にカンマ(,)を記述することが許容されました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function func(
+  theFirstArgument,
+  theSecondArgument,
+  theThirdArgument<em>,</em>
+) {
+ ...
+}
+ret = func(a, b, c<em>,</em>);
+</pre>
+</div>
+
+<h4 id="gloLoc">グローバル変数とローカル変数</h4>
+<div class=i>
+<p>変数は通常 <b id="globalVariable">グローバル変数</b>（プログラム全体で有効な値）として扱われますが、<i>arg1</i>, <i>arg2</i>, ... 部分に指定した変数や、関数内で <a href="statement.htm#var" tppabs="http://www.tohoho-web.com/js/statement.htm#var">var</a> や <a href="statement.htm#let" tppabs="http://www.tohoho-web.com/js/statement.htm#let">let</a> で定義した変数は <b id="localVariable">ローカル変数</b>（関数内部でのみ有効な値）として扱われます。グローバル変数とローカル変数は、名前が同じでも別の変数として扱われます。</p>
+<p>下記の例では、グローバル変数 xx と、ローカル変数 xx は名前は同じでも別の変数として扱われます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 5;               <span class="cm">// グローバル変数 xx に 5 を代入</span>
+yy = 5;               <span class="cm">// グローバル変数 yy に 5 を代入</span>
+
+func();               <span class="cm">// 関数 func() を呼び出す</span>
+
+alert("xx = " + xx);  <span class="cm">// グローバル変数 xx を表示（5 が表示される）</span>
+alert("yy = " + yy);  <span class="cm">// グローバル変数 yy を表示（8 が表示される）</span>
+
+function func() {
+   var xx = 8;        <span class="cm">// ローカル変数 xx に 8 を代入</span>
+   yy = 8;            <span class="cm">// グローバル変数 yy に 8 を代入</span>
+}
+</pre>
+</div>
+
+<h4 id="objFunction">関数オブジェクト</h4>
+
+<h5 id="newFunction">◆ <i>func</i> = new Function(<i>arg1</i>, <i>arg2</i>, ..., <i>statements</i>)</h5>
+<div class=i>
+<p>関数オブジェクトを作成します。下記のコードは上記のfunctionによる宣言と同等です。この方法はあまり利用されることはありません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+add = new Function("x", "y", "return(x+y)");
+</pre>
+</div>
+
+<h5 id="arity">◆ <i>func</i>.arity <span class="nb">[廃止]</span></h5>
+<h5 id="length">◆ <i>func</i>.length</h5>
+<div class=i>
+<p>関数が要求する引数の個数を返します。arity は廃止されました。代わりに length を使用します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function goukei(a, b, c) {
+  return(a + b + c);
+}
+console.log(goukei.<em>length</em>);             <span class="cm">// =&gt; 3</span>
+</pre>
+</div>
+
+<h5 id="arguments">◆ <i>func</i>.arguments</h5>
+<div class=i>
+<p>arguments は引数の配列を返します。個数不定の引数を受け取る際に便利です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function goukei() {
+  var ans = 0;
+  for (i = 0; i &lt; <em>arguments.length</em>; i++) {
+    ans += <em>arguments[i]</em>;
+  }
+  return(ans);
+}
+sum = goukei(1, 2, 3, 4, 5);
+</pre>
+</div>
+
+<h5 id="this">◆ this</h5>
+<div class=i>
+<p>this は、関数が実行されるターゲットのオブジェクトを参照します。例えば、ボタン要素のイベントハンドラの場合、this はボタン要素を示します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;input type="button" onclick="console.log(<em>this</em>)" value="OK"&gt;
+</pre>
+</div>
+
+<h5 id="caller">◆ <i>func</i>.caller</h5>
+<div class=i>
+<p>この関数を呼び出した関数。将来の JavaScript のバージョンでは削除される予定らしいので使用しない方が無難です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function func1(x, y) {
+  func2();
+}
+function func2() {
+  alert(func2.<em>caller</em>.arguments.caller);
+}
+</pre>
+</div>
+
+<h5 id="prototype">◆ <i>func</i>.prototype.<i>newName</i></h5>
+<div class=i>
+<p>→ <a href="object.htm#prototype" tppabs="http://www.tohoho-web.com/js/object.htm#prototype">prototype</a></p>
+</div>
+
+<h5 id="call">◆ <i>func</i>.call(<span class="nb"><i>this</i>, <i>arg</i>, ...</span>)</h5>
+<h5 id="apply">◆ <i>func</i>.apply(<span class="nb"><i>this</i>, <i>args</i></span>)</h5>
+<div class=i>
+<p>JavaScript 1.3 で追加されたメソッドで、クラスの継承を実現します。詳細は「<a href="object.htm#inheritClass" tppabs="http://www.tohoho-web.com/js/object.htm#inheritClass">クラスを継承する</a>」を参照してください。</p>
+</div>
+
+<h5 id="bind">◆ <i>func</i>.bind(<span class="nb"><i>thisArg</i>, <i>arg1</i>, <i>arg2</i>, ...</span>)</h5>
+<div class=i>
+<p>this に <i>thisArg</i> を割り当て、引数 <i>arg1</i>, <i>arg2</i>, ... で呼び出される関数を生成します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<span class="cm">// グローバルオブジェクトのname属性</span>
+this.name = "Tanaka";
+
+<span class="cm">// moduleオブジェクトのname属性</span>
+var module = {
+  name: "Yamada",
+  getName: function() { return this.name; }
+};
+
+<span class="cm">// moduleオブジェクトのname属性が参照される</span>
+console.log(module.getName());                 // "Yamada"
+
+<span class="cm">// グローバルコンテキストのため、thisはグローバルオブジェクトとなる</span>
+var retrieveName = module.getName;
+console.log(retrieveName());                   // "Tanaka"
+
+<span class="cm">// thisにmoduleを割り当てた状態で retrieveName() を呼び出す</span>
+var boundGetName = retrieveName.bind(module);
+console.log(boundGetName());                   // "Yamada"
+</pre>
+</div>
+
+<h5 id="toString">◆ <i>func</i>.toString()</h5>
+<div class=i>
+<p>関数定義を文字列に変換します。<a href="what.htm#es2019" tppabs="http://www.tohoho-web.com/js/what.htm#es2019">ES2019(ES10)</a> では、関数内のコメントや空白も文字列化されるようになりました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function add(x, y) {
+    /* 加算 */
+    return x + y;
+}
+console.log(add.toString());    <span class="cm">// =&gt; function(x, y) { /* 加算 */ return x + y; }</span>
+</pre>
+</div>
+
+<h4 id="callback">コールバック関数</h4>
+<div class=i>
+<p>関数を、関数の引数として渡すことができます。時間が経過したり、処理が完了したりした際に、引数で登録した関数が呼び出されます。これを <b>コールバック関数</b> と呼びます。下記の例は、3秒後にコールバック関数が呼ばれてメッセージを書き出す例です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+setTimeout(function() {
+    console.log("Callback function called!!");
+}, 3000);
+</pre>
+</div>
+
+<h4 id="recursive">再帰関数</h4>
+<div class=i>
+<p>関数の中から自分自身の関数を再帰的に呼び出す関数を <b>再帰関数</b> と呼びます。下記は、n の階乗を求める再帰関数の例です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function factorial(n) {
+  if (n &lt;= 1) {
+    return 1;
+  }
+  return (n * <em>factorial(</em>n - 1<em>)</em>);
+}
+console.log(factorial(5));            <span class="cm">// =&gt; 120</span>
+</pre>
+</div>
+
+<h4 id="arrow">アロー関数(=&gt;)</h4>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES6(ES2015)</a> では、<b>function</b> の代わりに <b>=&gt;</b> を記述するアロー関数がサポートされました。Chrome 45, Firefox 22, Edge 12, Opera 32, Safari 10 以降で使用できます。Internet Explorer では使用できません。下記は同じ意味になります。</p>
+<div class="tab">ES5</div>
+<pre class=c2>
+var func = <em>function</em>(arg1, arg2) { console.log(arg1, arg2); }
+</pre>
+<div class="tab">ES6</div>
+<pre class=c2>
+var func = (arg1, arg2) <em>=&gt;</em> { console.log(arg1, arg2); }
+</pre>
+<p>下記の様な書き方ができます。</p>
+<div class="tab">ES6</div>
+<pre class=c2>
+<span class="cm">// 一般的な書き方</span>
+(arg1, arg2) =&gt; { return arg1 + arg2; }
+
+<span class="cm">// { } を省略すると return 文とみなされる</span>
+(arg1, arg2) =&gt; <em>arg1 + arg2</em>
+
+<span class="cm">// { } 省略でオブジェクトを返却する場合は () でくくる</span>
+(arg1, arg2) =&gt; <em>(</em>{"x": arg1, "y": arg2}<em>)</em>
+
+<span class="cm">// 引数が1個の場合は ( ) を省略可能</span>
+<em>arg1</em> =&gt; { return arg1 * 2; }
+
+<span class="cm">// 引数が0個の場合は ( ) が必要</span>
+<em>()</em> =&gt; { return 10; }
+
+<span class="cm">// 可変引数をサポート</span>
+(x, y, z, <em>...rest</em>) =&gt; { ... }
+
+<span class="cm">// デフォルト引数をサポート</span>
+(file, <em>mode = "r"</em>) =&gt; { ... }
+</pre>
+<p>function と =&gt; で <a href="#this">this</a> の扱いが異なります。function の場合は関数が呼ばれる対象のオブジェクトとなるのに対し、=&gt; の場合は関数を呼び出す側の this となります。</p>
+<div class="tab">ES6</div>
+<pre class=c2>
+function MyClass() {
+  window.setTimeout(function() { console.log(<em>this</em>) }, 1000); <span class="cm">// Window オブジェクト</span>
+  window.setTimeout(() =&gt; { console.log(<em>this</em>) }, 1000);      <span class="cm">// MyClass オブジェクト</span>
+}
+new MyClass();
+</pre>
+<p>arguments の扱いも異なります。function の場合は関数の引数を示しますが、=&gt; の場合は関数を呼び出す側の引数を示します。</p>
+<div class="tab">ES6</div>
+<pre class=c2>
+function func(a, b) {
+  var func1 = function(a, b) { console.log(<em>arguments</em>); }
+  func1(1, 2);    <span class="cm">// [1, 2]</span>
+  var func2 = (a, b) =&gt; { console.log(<em>arguments</em>); }
+  func2(3, 4);    <span class="cm">// [5, 6]</span>
+}
+func(5, 6);
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="date.htm" tppabs="http://www.tohoho-web.com/js/date.htm">[prev]</a>
+<a href="object.htm" tppabs="http://www.tohoho-web.com/js/object.htm">[next]</a>
+<div>Copyright (C) 1996-2019 杜甫々</div>
+<div>改訂版初版：2001年5月20日、最終更新：2019年11月17日</div>
+<div>http://www.tohoho-web.com/js/function.htm</div>
+</body>
+</html>

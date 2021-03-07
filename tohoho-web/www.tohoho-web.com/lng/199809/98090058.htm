@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>IE4とNN4でCGI出力のHTMLが違う</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>IE4とNN4でCGI出力のHTMLが違う</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090057.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090057.htm">[前に]</a>
+<a href="98090059.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090059.htm">[次に]</a>
+<hr>
+<span class=name>NAKA</span>
+<span class=email><a href="mailto:ynakam@mtci.or.jp">[E-Mail]</a></span>
+<span class=time>1998/09/17(木) 11:37:44</span><br>
+FORMのMETHOD="POST"でCGIを呼び出し、そのCGIはHTMLを返すのですが、IE4ではHTMLとして表示されるのにNN4ではソースそのものが表示されてしまいます。<br>
+<br>
+Content-type: text/html\n\n は記述してあります。<br>
+不思議なことに、NN4でも直接CGIを呼び出すとちゃんと表示されます。POSTでの呼び出しの時にソースが表示されてしまうのです。<br>
+これはいったい何が悪いのでしょうか？<br>
+ご経験のある方や、解決のヒントをお持ちの方はどうか教えてくださいますようお願いいたします。<br>
+<hr>
+<span class=name>えへへ</span>
+<span class=time>1998/09/19(土) 09:33:42</span><br>
+ソースを見せてもらえれば見当がつきますが。<br>
+&lt;html&gt;タグがついていないのでは？<br>
+<hr>
+<span class=name>mura</span>
+<span class=email><a href="mailto:mura@cools.com">[E-Mail]</a></span>
+<span class=time>1998/09/19(土) 11:06:20</span><br>
+ヒントというほどにはならないと思いますが、<br>
+<br>
+1.空のデータをPOSTしてみる(&lt;INPUT&gt;(TYPE=SUBMIT以外)&lt;SELECT&gt;&lt;TEXTAREA&gt;をすべて消す)とどうなるでしょうか。<br>
+&nbsp;&nbsp;これでもしちゃんと表示されるなら送っているデータに原因がある(プログラムが原因ではない)という<br>
+&nbsp;&nbsp;ことになります。<br>
+<br>
+2.「Content-type: text/html」以外にも「Content-type:」のヘッダを送ってないですか?<br>
+&nbsp;&nbsp;(つまり１回の実行で２度以上送っている)<br>
+&nbsp;&nbsp;IEでHTML表示になってNNでソース表示になるというのはこれがからんでそうな気がします。<br>
+&nbsp;&nbsp;あくまでも想像ですが。<br>
+<br>
+3.めっちゃ基本的ですが、「ソース表示される」という時に、webサーバー側のCGIではなく<br>
+&nbsp;&nbsp;PCのハードディスクとかにあるローカルCGIを呼び出したりとかはしてないですよね??<br>
+&nbsp;&nbsp;文面を見る限りではこういう失敗はやってなさそうですが…。<br>
+<hr>
+<span class=name>mura</span>
+<span class=email><a href="mailto:mura@cools.com">[E-Mail]</a></span>
+<span class=time>1998/09/19(土) 11:11:43</span><br>
+もう１つ。<br>
+<br>
+4.「Content-type: text/html\n\n」の直後とか、あるいはもっと後ろ(&lt;BODY&gt;の後とか)に<br>
+簡単なHTML(「&lt;HTML&gt;&lt;BODY&gt;あ&lt;/BODY&gt;&lt;/HTML&gt;\n」とか)を書いて<br>
+そこですぐexitさせるとどうなるでしょうか。<br>
+その時にちゃんと表示されるなら、その部分までは問題ないということになります。<br>
+<hr>
+<span class=name>NAKA</span>
+<span class=email><a href="mailto:ynakam@mtci.or.jp">[E-Mail]</a></span>
+<span class=time>1998/09/21(月) 11:29:08</span><br>
+<span class=resolv>[[解決]]</span><br>
+えへへさん、muraさん、貴重なアドバイスありがとうございました。<br>
+<br>
+muraさんの言う通り、空のデータをＰＯＳＴしてみるとうまく表示されるので、<br>
+きっとＰＯＳＴするデータがおかしいという観点で調査しました。<br>
+１つ１つＰＯＳＴするデータを追加していって、ある時点でおかしくなる<br>
+ことを発見し、その部分を詳細に見てみますと、なんと、デバッグ用に<br>
+記述してあったPRINT文が残っていました！<br>
+そのため、一番始めにPRINTされるのが Content-typeじゃないパターンができていたのです。なんというチョンボ！<br>
+<br>
+本当にお騒がせしました。ただ、ＮＮ４で表示されたページのページ情報をみると、「ファイルＭＩＭＥタイプ：不明」となっているのが気になります。<br>
+<br>
+でも、とりあえず表示されるようになりました。本当にありがとうございました。<br>
+これからもよろしくお願いいたします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090057.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090057.htm">[前に]</a>
+<a href="98090059.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090059.htm">[次に]</a>
+</body>
+</html>

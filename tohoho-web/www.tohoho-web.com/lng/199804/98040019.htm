@@ -1,0 +1,63 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ファイル名の変更ができない</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ファイル名の変更ができない</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040018.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040018.htm">[前に]</a>
+<a href="98040020.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040020.htm">[次に]</a>
+<hr>
+<span class=name>ぷよママ</span>
+<span class=email><a href="mailto:puyomama@geocities.co.jp">[E-Mail]</a></span>
+<span class=time>1998/04/06(月) 22:37:15</span><br>
+Perlでファイルの削除と名称変更をしたいと思います。<br>
+まず、ファイル１を削除し、次にファイル２のファイル名をファイル１に変更したいのですが、<br>
+ファイル名変更ができないのです。なにが悪いのでしょうか？<br>
+以下<br>
+<br>
+	unlink&nbsp;&nbsp;$FNAME1;<br>
+	rename( $FNAME2, $FNAME1 );<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/06(月) 23:17:15</span><br>
+ ファイル名変更ができないのです。なにが悪いのでしょうか？<br>
+<font color="#CC8000">&gt; unlink $FNAME1;</font><br>
+<font color="#CC8000">&gt; rename( $FNAME2, $FNAME1 );</font><br>
+<br>
+unlinkとrenameのどっちがうまくいかないんですか？<br>
+ちゃんと問題を切り分けましょう。<br>
+<br>
+chmod 0777 $FNAME1;<br>
+chmod 0777 $FNAME2;<br>
+unlink $FNAME1;<br>
+rename( $FNAME2, $FNAME1 );<br>
+<br>
+だとどうなりますか。これでうまくいくならパーミッションの<br>
+問題でしょう。<br>
+<br>
+もしダメなら、telnetでログインしてコマンドラインからCGIを実行して<br>
+ください。これがうまくいった場合は、CGIがnobody権限で実行<br>
+されているのかもしれません。<br>
+# どの権限で実行されているかは system("/usr/bin/whoami");<br>
+# でわかります。<br>
+<br>
+もしnobodyで実行されているなら…どーしよっかな。<br>
+<br>
+1. CでCGIを書いてsetuidビットを立てる。<br>
+2. パーミッション777のディレクトリを作ってその中でファイルを扱う。<br>
+<br>
+のどちらかでしょうね。簡単なのは2でしょうか。ただし2はセキュリティ<br>
+ホールとになりかねないので取り扱いは慎重に。<br>
+<br>
+3. プロバイダにCGIを所有者の権限で動かす方法があるか質問する。<br>
+<br>
+ってのもありかな。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040018.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040018.htm">[前に]</a>
+<a href="98040020.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040020.htm">[次に]</a>
+</body>
+</html>

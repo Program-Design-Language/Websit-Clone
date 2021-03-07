@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>UNIXのcgiで環境変数の使用方法について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>UNIXのcgiで環境変数の使用方法について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030001.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030001.htm">[前に]</a>
+<a href="99030003.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030003.htm">[次に]</a>
+<hr>
+<span class=name>やまもり</span>
+<span class=time>1999/03/01(月) 15:16:43</span><br>
+UNIXでcgiからある環境変数を取得するのですが、通常環境変数は<br>
+どこで設定するものなのでしょうか？<br>
+・cgi上で環境変数をセットする？<br>
+・httpのサービスのどこかで設定する？<br>
+・環境変数は使用できない？（固定で使用している環境変数があるから）<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/03/01(月) 15:40:37</span><br>
+普通、<br>
+　1.UNIXのプロセス自体に設定されている値<br>
+　　(というか、httpdが子プロセスをfork/execするときに引き継がれる値、かな)<br>
+　2.httpdが設定する値<br>
+です。<br>
+<br>
+1は、PATHなど。<br>
+2は、QUERY_STRING、REMOTE_ADDR、HTTP_USER_AGENT、SERVER_NAMEなど。<br>
+<br>
+CGI上で環境変数を書き換えることは、普通しないと思いますが、<br>
+必要なら書き換えても構わないでしょう。例えばPATHとかね。<br>
+<br>
+設定されている環境変数を見たいなら、<br>
+　#!/usr/local/bin/perl<br>
+　print "Content-type: text/plain\n\n";<br>
+　foreach ( keys %ENV ){<br>
+　　print "\$ENV{$_} = $ENV{$_}\n";<br>
+　}<br>
+など。<br>
+<hr>
+<span class=name>やまもり</span>
+<span class=time>1999/03/01(月) 15:52:00</span><br>
+例えば、cgiの中であるディレクトリをみていて、cgiのプログラム<br>
+を変更しないでディレクトリ位置を変更したい場合、環境変数を<br>
+使用すればプログラムを変更しないで、参照するディレクトリを<br>
+変更できるようなると思いますが、httpdが設定する環境変数以外<br>
+の環境変数はどこで設定すればよいのでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/03/01(月) 16:17:55</span><br>
+<font color="#CC8000">&gt; 例えば、cgiの中であるディレクトリをみていて、cgiのプログラム</font><br>
+<font color="#CC8000">&gt; を変更しないでディレクトリ位置を変更したい場合</font><br>
+<br>
+意味がよく分かりませんが、例えば<br>
+　if ( $ENV{HOGE}==1 ){<br>
+　　$dir = "/hoge";<br>
+　} else {<br>
+　　$dir = "/fuga";<br>
+　}<br>
+　opendir(DIR,$dir);<br>
+などということですか?<br>
+<br>
+そういう場合は、CGIを呼び出すときに hoge.cgi?hoge=1 などとするのが<br>
+一般的だと思います。<br>
+<hr>
+<span class=name>やまもり</span>
+<span class=time>1999/03/01(月) 18:20:43</span><br>
+<span class=resolv>[[解決]]</span><br>
+わかりました。ありがとうございます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030001.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030001.htm">[前に]</a>
+<a href="99030003.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030003.htm">[次に]</a>
+</body>
+</html>

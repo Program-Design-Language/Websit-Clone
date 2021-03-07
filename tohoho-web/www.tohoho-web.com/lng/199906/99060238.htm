@@ -1,0 +1,106 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>文字を置き換えるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>文字を置き換えるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060237.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060237.htm">[前に]</a>
+<a href="99060239.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060239.htm">[次に]</a>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/06/24(木) 13:35:03</span><br>
+こんにちは！<br>
+フォームからデータを読み込んでファイルに保存するときに、<br>
+タグ入力に関しての文字の置き換えはしているのですが、他に<br>
+これだけは置き換えしておいた方が良い、しなくてはダメ！と<br>
+いうような文字はありますか？<br>
+<br>
+*以下の処理はしてあります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$text =~ s/&amp;/&amp;amp;/g;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$text =~ s/&lt;/&amp;lt;/g;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$text =~ s/&gt;/&amp;gt;/g;<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/24(木) 14:13:05</span><br>
+ケースバイケースです。<br>
+<br>
+例えば保存の際にそれぞれのデータをコンマで区切っていたとすると、保存するデータの中にコンマが含まれていては都合が悪いので，<br>
+<br>
+$text =~ s/,/&amp;#44;/g;<br>
+<br>
+という処理が必要になります。<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/06/24(木) 14:15:42</span><br>
+じぇいさん、ありがとうございます。<br>
+普通の文字もそうなんですが、特殊文字などは気にしなくても<br>
+良いのでしょうか？<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/24(木) 14:41:10</span><br>
+特殊文字というのがどういう文字のことを言っているのかはわかりませんが、気にしなくて大丈夫だと思います。<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/06/24(木) 14:48:48</span><br>
+もう一つ教えて下さい！<br>
+とほほさんのプログラムに記述されている<br>
+$value =~ tr/+/ /;<br>
+$value =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C", hex($1))/eg;<br>
+<br>
+$value =~ s/&amp;/&amp;amp;/g;<br>
+$value =~ s/&lt;/&amp;lt;/g;<br>
+$value =~ s/&gt;/&amp;gt;/g;<br>
+$value =~ s/\r\n/\n/g;<br>
+$value =~ s/\s+$//;<br>
+は、何をしているのですか？<br>
+<hr>
+<span class=name>ワイ(;´Д`)</span>
+<span class=time>1999/06/24(木) 14:59:46</span><br>
+1行目で+をスペースに、2行目で%xxをxxが示すコードの文字に直してます。このへんは誰が作っても同じ感じになりますよん。きっと。<br>
+4～6行目ではHTMLタグを無効化します。<br>
+7行目は…改行コードの統一？自信なし。<br>
+8行目は、本文後についている余計な改行とか半角スペースとかを取り去ってます。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/24(木) 15:00:11</span><br>
+まず、<br>
+<a href="../../wwwcgi3.htm#CgiEncode" tppabs="http://www.tohoho-web.com/wwwcgi3.htm#CgiEncode">http://www.tohoho-web.com/wwwcgi3.htm#CgiEncode</a><br>
+これを読んで下さいな。<br>
+<br>
+<font color="#CC8000">＞$value =~ s/\r\n/\n/g;</font><br>
+Windows環境から送られてきたデータは改行コードが\r\nになっていることがあるので、<br>
+それをUNIXの改行コードである \n に変換。<br>
+<br>
+<font color="#CC8000">＞$value =~ s/\s+$//;</font><br>
+行末の連続した空白文字を削除。<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/06/24(木) 15:12:07</span><br>
+ワイ(?)さん、ふじさん、ありがとうございます。<br>
+$value =~ tr/+/ /;<br>
+$value =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C", hex($1))/eg;<br>
+の２行ってもしかして、cgi-lib.plの&amp;ReadParseを使うと自動的に<br>
+やってくれているのでしょうか？<br>
+もし、そうなら必要なのは最後の５行になりますよね？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/24(木) 15:16:11</span><br>
+<font color="#CC8000">＞cgi-lib.plの&amp;ReadParseを使うと自動的にやってくれているのでしょうか？</font><br>
+やってくれます。<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/06/24(木) 15:32:55</span><br>
+<span class=resolv>[[解決]]</span><br>
+じぇいさん、わいさん、ふじさん<br>
+どうもありがとうございました。<br>
+いつもみなさんに教えていただいて、いろいろ勉強になります。<br>
+また、よろしくお願いします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060237.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060237.htm">[前に]</a>
+<a href="99060239.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060239.htm">[次に]</a>
+</body>
+</html>

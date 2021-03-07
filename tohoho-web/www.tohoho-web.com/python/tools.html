@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのPython入門 - Python関連ツール - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのPython入門 - Python関連ツール</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/python/index.html">Python入門</a> &gt;
+Python関連ツール
+
+<!--
+・mypy - 型アノテーションチェック
+-->
+
+<h4>目次</h4>
+<div class="i">
+<ul>
+<li><a href="#pip">pip</a> - パッケージ管理
+<li><a href="#pylint">pylint</a> - コーディングチェッカ
+<li><a href="#flake8">flake8</a> - コーディングスタイルチェッカ
+<li><a href="#black">black</a> - コーディングスタイルフォーマッタ
+<li><a href="#pdb">pdb</a> - Pythonデバッガ
+<li><a href="#pudb">pudb</a> - Python CUIデバッガ
+<li><a href="#pytest">pytest</a> - ユニットテスト
+<li><a href="#unittest">unittest</a> - ユニットテスト
+<li><a href="#coverage">coverage</a> - ユニットテストの網羅度チェック
+<li><a href="#cloc">cloc</a> - プログラム行数カウンタ
+<li><a href="#pyscss">pyscss</a> - Scssコンパイラ
+<li><a href="#bandit">bandit</a> - 静的脆弱性検証ツール
+</ul>
+</div>
+
+<h4 id="pip">pip - パッケージ管理</h4>
+<div class="i">
+<p>Python関連のパッケージ(ツールやライブラリ)を管理します。ここで紹介する pip 以外のツールは、いずれも 「pip install ツール名」で簡単にインストールできるものです。Python 3系の場合は pip3 という名前の場合があります。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip install <i>package_name</i>     <span class="cm">// パッケージをインストールする</span>
+$ pip uninstall <i>package_name</i>   <span class="cm">// パッケージをアンインストールする</span>
+$ pip search <i>package_name</i>      <span class="cm">// リポジトリからパッケージを探す</span>
+$ pip list                            <span class="cm">// インストール済みパッケージを表示する</span>
+</pre>
+</div>
+
+<h4 id="pylint">pylint - コーディングチェッカ</h4>
+<div class="i">
+<p>Python プログラムを解析し、バグの原因となりそうな箇所をチェックします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip install pylint                  <span class="cm">// pylint をインストールする</span>
+$ pylint ./src                        <span class="cm">// ./src 配下のソースをチェックする</span>
+</pre>
+</div>
+
+<h4 id="flake8">flake8 - コーディングスタイルチェッカ</h4>
+<div class="i">
+<p>Python プログラムが PEP8 と呼ばれる Python のコーディングスタイルに従っているか、および簡単なエラーチェックを行います。pycodestyle というスタイルチェッカ、pyflakes というエラーチェッカ、mccabe という複雑度チェッカを内部で利用しています。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip install flake8                  <span class="cm">// flake8 をインストールする</span>
+$ flake8 ./src                        <span class="cm">// ./src 配下のソースをチェックする</span>
+</pre>
+</div>
+
+<h4 id="black">black - コーディングスタイルフォーマッタ</h4>
+<div class="i">
+<p>Python プログラムを PEP8 と呼ばれる Python のコーディングスタイルに準拠するように自動フォーマットします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip install black                   <span class="cm">// black をインストールする</span>
+$ black ./src                         <span class="cm">// ./src 配下のソースをフォーマットする</span>
+$ black --diff ./src                  <span class="cm">// ファイルは書き換えずに修正案のみを表示<する/span>
+$ black -l 140 ./src                  <span class="cm">// 1行の長さ上限を88文字から140文字に緩和する</span>
+</pre>
+</div>
+
+<h4 id="pdb">pdb - Pythonデバッガ</h4>
+<div class="i">
+<p>Python に標準添付されるシングルラインデバッガです。まず、プログラムの中に下記の1行を埋め込みます。</p>
+<div class="title-tab">sample.py</div>
+<pre class="c2">
+import pdb; pdb.set_trace()
+</pre>
+<p>プログラムを実行すると上記コードを埋め込んだ箇所でデバッガに制御が移り、デバッガコマンドを使用できるようになります。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ python sample.py
+-&gt; ret = add(3, 5)
+(Pdb) s
+(Pdb) q
+</pre>
+<p>デバッガコマンドには下記などがあります。</p>
+<div class="title-tab">Commands</div>
+<pre class="c2">
+h       <span class="cm">// ヘルプ表示</span>
+l       <span class="cm">// 周辺のソースコード表示</span>
+s       <span class="cm">// 1ステップ実行(関数の中に入る)</span>
+n       <span class="cm">// 1ステップ実行(関数の中に入らない)</span>
+c       <span class="cm">// 次のブレークポイントまで実行</span>
+r       <span class="cm">// 現在の関数が終わるまで実行</span>
+p <i>exp</i>   <span class="cm">// 変数<i>exp</i>の値を表示</span>
+q       <span class="cm">// デバッガを終了</span>
+</pre>
+</div>
+
+<h4 id="pudb">pudb - Python CUIデバッガ</h4>
+<div class="i">
+<p>CUIを用いたビジュアルなデバッガツールです。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip install pudb                    <span class="cm">// pudb をインストールする</span>
+</pre>
+<p><a href="#pdb">pdb</a> と同様、プログラムの中に下記の1行を埋め込みます。</p>
+<div class="title-tab">sample.py</div>
+<pre class="c2">
+import pudb; pudb.set_trace()
+</pre>
+<p>プログラムを実行すると上記コードを埋め込んだ箇所でデバッガに制御が移り、グラフィカルにデバッガコマンドを使用できるようになります。使用できるコマンドは、ほぼ pdb と同様です。</p>
+</div>
+
+<h4 id="pytest">pytest - ユニットテスト</h4>
+<div class="i">
+<p>シンプルなユニットテスト(単体テスト)ツールです。まず、テストプログラムを記述します。assert 文でテストの内容を記述します。</p>
+<div class="title-tab">test_case1.py</div>
+<pre class="c2">
+def test_case1():
+    ret = add(3, 5)
+    assert ret == 8
+</pre>
+<p>下記の様に実行します。test_*.py にマッチするファイルの test で始まる関数、および、Test で始まるクラスの test で始まるメソッドが実行の対象となります。</p>
+<div class="title-tab">sample.py</div>
+<pre class="c2">
+$ pip install pytest                  <span class="cm">// pytest をインストールする</span>
+$ pytest ./tests                      <span class="cm">// tests フォルダ配下の単体テストを実行する</span>
+============= FAILURES ===============
+def test_case1():
+    ret = add(3, 5)
+&gt;   assert ret == 8
+E   assert 10 == 8
+========== 1 failed in 0.08s =========
+</pre>
+</div>
+
+<h4 id="unittest">unittest - ユニットテスト</h4>
+<div class="i">
+<p><a href="#pytest">pytest</a> と同様のユニットテストツールです。まず、テストプログラムを書きます。test で始まるファイル名、unittest.TestCase を継承するクラス、test で始まるメソッド名にしてください。</p>
+<div class="title-tab">./tests/test_case1.py</div>
+<pre class="c2">
+import unittest
+from lib.mysample import myfunc
+
+class TestCase1(unittest.TestCase):
+
+    def test_case_1_1(self):
+        ret = myfunc(3, 5)
+        self.assertEqual(ret, 8)
+
+if __name__ == "__main__":
+    unittest.main()
+</pre>
+<p>下記の様に実行します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ python ./tests/test_case1.py
+</pre>
+<p>カレントディレクトリ配下のファイルを探索して実行することもできます。各ディレクトリには __init__.py が必要です。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ python -m unittest discover -v
+test_case_1_1 (tests.test_case1.TestCase1) ... ok
+----------------------------------------------------------------------
+Ran 1 tests in 0.001s
+OK
+</pre>
+</div>
+
+<h4 id="coverage">coverage - ユニットテストの網羅度チェック</h4>
+<div class="i">
+<p><a href="#unittest">unittest</a> のテスト網羅度を集計します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip install coverage                          <span class="cm">// coverage をインストールする</span>
+$ coverage run --append ./tests/test_case1.py   <span class="cm">// テスト1を実行する</span>
+$ coverage run --append ./tests/test_case2.py   <span class="cm">// テスト2を実行する</span>
+$ coverage report -m                            <span class="cm">// テスト結果(.coverage)をレポートする</span>
+Name                  Stmts   Miss  Cover   Missing
+---------------------------------------------------
+lib/calc.py              10      1    90%   11
+tests/test_case1.py      11      0   100%
+tests/test_case2.py      11      0   100%
+---------------------------------------------------
+TOTAL                    32      1    97%
+$ coverage html                                 <span class="cm">// HTMLレポート(.htmlcov)を生成する</span>
+$ coverage erase                                <span class="cm">// テスト結果(.coverage)を削除する</span>
+</pre>
+</div>
+
+<h4 id="cloc">cloc - プログラム行数カウンタ</h4>
+<div class="i">
+<p>Python 専用ツールではありませんが、様々な言語のプログラム行数をカウントします。files, blank, comment, code はそれぞれファイル数、空白行数、コメント行数、プログラム行数を示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ yum install -y cloc                           <span class="cm">// cloc をインストールする</span>
+$ cloc ./src                                    <span class="cm">// ./src 配下のプログラム行数を調べる</span>
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Python                           1              0              0             11
+JavaScript                       1              3              2              8
+-------------------------------------------------------------------------------
+$ cloc --by-file ./src                          <span class="cm">// ファイル毎に行数を表示する</span>
+$ cloc --diff ./src1 ./src2                     <span class="cm">// ./src1 から ./src2 への修正行数を調べる</span>
+</pre>
+</div>
+
+<h4 id="pyscss">pyscss - Scssコンパイラ</h4>
+<div class="i">
+<p>CSS を拡張した、SCSS 形式の <a href="../ex/sass.html" tppabs="http://www.tohoho-web.com/ex/sass.html">Sass</a> ファイルを CSS 形式にコンパイルします。</p>
+<div class="title-tab">style.scss</div>
+<pre class="c2">
+$default-font-size: 9pt;
+body { font-size: $default-font-size; }
+</pre>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip3 install pyscss                           <span class="cm">// pyscss をインストールする</span>
+$ pyscss style.scss -o style.css                <span class="cm">// SCSS を CSS にコンパイルする</span>
+$ pyscss -w ./css                               <span class="cm">// ./css フォルダを監視して更新時に自動コンパイルする</span>
+</pre>
+</div>
+
+<h4 id="bandit">bandit - 静的脆弱性検証ツール</h4>
+<div class="i">
+<p>ソースコードを解析し、セキュリティ的な問題を含む可能性のあるコードを洗い出します。下記の例では「パスワードがハードコーディングされている」といった、セキュリティ上の問題点をレポートしています。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+$ pip3 install bandit                           <span class="cm">// bandit をインストールする</span>
+$ bandit -r .                                   <span class="cm">// カレントディレクトリ配下をチェックする</span>
+&gt;&gt; Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'AgBx8#4G98F'
+   Severity: Low   Confidence: Medium
+   Location: ./sample.py:5
+   More Info: https://bandit.readthedocs.io/en/latest/plugins/b105_hardcoded_password_string.html
+4
+5       password = 'AgBx8#4G98F'
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2020 杜甫々</div>
+<div>初版：2014年12月30日、最終更新：2018年2月5日</div>
+<div>http://www.tohoho-web.com/python/tools.html</div>
+</body>
+</html>
+

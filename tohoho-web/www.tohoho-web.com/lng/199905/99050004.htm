@@ -1,0 +1,428 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>記事内容に返信したいのですが？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>記事内容に返信したいのですが？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050003.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050003.htm">[前に]</a>
+<a href="99050005.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050005.htm">[次に]</a>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/05/01(土) 14:27:06</span><br>
+BBS投稿者の発言、<br>
+投稿内容を呼び出し、その内容にレスを付けたいのですが(投稿された同じ欄に)。<br>
+ログfile.txtから必要な記事を取り出すには＞<br>
+取り出した記事に返信コメントを書き、<br>
+再び投稿者記事、返信コメントを基の場所に<br>
+　　　　　　　　　　　　　　出力するには＞<br>
+誰か教えてください。<br>
+<hr>
+<span class=name>exon</span>
+<span class=time>1999/06/23(水) 03:06:54</span><br>
+コメント挿入は流行りの掲示板のスタイルですね。YY-Boardとか。<br>
+単純に本文にレスを書き加えてしまえばよさそうな気がしますが。<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/25(金) 15:48:53</span><br>
+書き込み後、約２ヶ月・・・。<br>
+exonさん　Reありがとうございます。<br>
+それからというもの悩みは解決していません、あセあセ。<br>
+<font color="#CC8000">＞単純に本文にレスを書き加えてしまえばよさそうな気がしますが。</font><br>
+ログファイルを取り出し追加すればよいわけですよね。<br>
+一番さんのコメント<br>
+二番さんのコメント<br>
+三番さんのコメント<br>
+順序ずけされている配列から三番さんのコメントだけを取り出す<br>
+事ができません。<br>
+たびたびすみませんが、答えというより答えに近いヒントを下されば<br>
+幸いです。<br>
+こんな事も分からないのかと笑われてしまうかもしれませんが、<br>
+perlを勉強するにあたって、こんな事が僕にとって必要なので、<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/25(金) 16:06:01</span><br>
+例えば、あらかじめそれぞれのコメントに認証番号のようなものをつけておいて、hiddenなどでその番号を隠し持っておく、、などという方法はどうでしょうか？<br>
+<br>
+（そういうことではないのですか？）<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/25(金) 16:17:40</span><br>
+じぇいさん！早速ありがとうございます。<br>
+<font color="#CC8000">＞（そういうことではないのですか？）</font><br>
+そういう事だと思います。<br>
+すみません自信がなくて。<br>
+認証番号とは記事番号とか、個々のパスワードと言うことで解釈し<br>
+早速取り組んでみます。<br>
+じぇいさんありがとうございます。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/25(金) 16:46:23</span><br>
+ちなみに、、<br>
+<br>
+	open(IN, "$bbs_data");<br>
+	flock(IN, 2);<br>
+	$befo_data = &lt;IN&gt;;<br>
+	flock(IN, 8);<br>
+	close(IN);<br>
+<br>
+<br>
+	#<br>
+	# 二重投稿防止<br>
+	#<br>
+	($k_msg,$k_name,$k_mail,$k_url,$k_date,$k_addr,$count) = split(/,/, $befo_data);<br>
+	if($ENV{'REMOTE_ADDR'} eq $k_addr &amp;&amp; $k_msg eq $f_msg){<br>
+		&amp;error('同一人の連続投稿は禁止です。');<br>
+	}<br>
+<br>
+	#<br>
+	# 削除に使う識別番号のカウントアップ<br>
+	#<br>
+	if($count){<br>
+		$count++;<br>
+	} else{<br>
+		$count = 1;<br>
+	}<br>
+<br>
+	#<br>
+	# すべてのデータをひとつにまとめる<br>
+	#<br>
+	$new_data = "$f_msg,$f_name,$f_mail,$f_url,$date,$ENV{'REMOTE_ADDR'},$count,\n";<br>
+<br>
+僕はこんな感じで番号をつけています。（ついでに2重投稿防止もできるし。2重投稿防止については、もっと堅くできると思いますが。）<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/26(土) 09:18:14</span><br>
+じぇいさんREありがとうございます。<br>
+なんとか別ログで記事NOをつけられました。<br>
+#登録FORM<br>
+print "&lt;FORM METHOD=POST ACTION=××.cgi&gt;\n";<br>
+print "&lt;INPUT TYPE=text NAME=name&gt;\n";<br>
+print "&lt;TEXTAREA NANE=coment CLOSE=7 ROWS=40&gt;&lt;/TEXTAREA&gt;\n";<br>
+print "&lt;INPUT TYPE=hidden NAME=action VALUE=enter&gt;\n";<br>
+print "&lt;/FORM&gt;\n";<br>
+<br>
+#別ログで記事NOを所得して見ました。うまく認証番号がつけられました。<br>
+<br>
+#出力結果<br>
+print "&lt;FORM METHOD=POST ACTION=××.cgi&gt;\n";<br>
+print "記事NO$number\n";<br>
+print "$nameさん\n";<br>
+print "&lt;BLOCKQUOTE&gt;$coment&lt;/&lt;BLOCKQUOTE&gt;\n";<br>
+print "&lt;INPUT TYPE=hidden NAME=action VALUE=res&gt;\n";<br>
+print "&lt;INPUT TYPE=hidden NAME=number VALUE=$number&gt;\n";<br>
+<br>
+#検索マッチを使って記事を拾い出して見ました。<br>
+if (!open(LOG, "$logfile") {&amp;error;}<br>
+@DATA=&lt;LOG&gt;;<br>
+close(LOG);<br>
+foreach $data (@DATA) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;push (@kensaku, $data) if ($data =~ $number); }<br>
+<br>
+#検索結果<br>
+print "@kennsaku\n";<br>
+<br>
+と、言った感じでやって見ました。<br>
+１@kensakuにうまくマッチしてくれません。<br>
+　（うまく拾えるものとうまく拾えないのがあります）<br>
+２@kensakuに入った配列を分解することはできないのでしょうか。<br>
+　（僕が思うにただコピーされているだけだと思います）<br>
+３これがうまくいけば本文に追加書き込みできるのでしょうか。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 13:39:50</span><br>
+<font color="#CC8000">＞@kensakuにうまくマッチしてくれません。</font><br>
+if ($data =~ $number)<br>
+この方法では、、明らかにうまくいきませんよね？($dataというのはすべてのデータを表しているんですよね？）<br>
+もし、メッセージ文中などに認証番号と同じ文字列が含まれていたら、本当の記事に当たる前にそれがマッチしてしまいますよね？<br>
+<br>
+<font color="#CC8000">＞@kensakuに入った配列を分解することはできないのでしょうか。</font><br>
+、、というのは？、具体的にどのような処理を行いたいのでしょうか？<br>
+<br>
+<br>
+あと、僕の場合は、、１から総なめ（でも別にいいのですが、、）をするのではなく、hiddenで、認証番号と同時に、そのデータを読み込んだときに、そのデータがファイルの何番目にあったかという記憶もhiddenで隠し持っておいて、大たい1発か2発で（foreachを使うのではなく、whileを使って）見つかるようにしています。<br>
+<br>
+例えば、、これは削除処理なのですが、、（基本は同じですね。）<br>
+<br>
+	$i = --$FORM{'DELETE'};<br>
+<br>
+	while(@all_msg &gt;= $i)<br>
+	{<br>
+		($f_msg,$f_name,$f_mail,$f_url,$date,$addr,$count) = split(/,/, $all_msg[$i]);<br>
+		if($count == $FORM{'CHECK'}){<br>
+			splice(@all_msg, $i, 1);<br>
+			open(OUT, "+&lt; $bbs_data");<br>
+			flock(OUT, 2);<br>
+			truncate(OUT, 0);<br>
+			seek(OUT, 0, 0);<br>
+			print OUT @all_msg;<br>
+			close(OUT);<br>
+			&amp;read_msg;<br>
+		}<br>
+		$i++;<br>
+	}<br>
+<br>
+このようにして、あらかじめある程度の見当をつけておきます。<br>
+削除処理を行おうとしている間に誰かが書きこみをしていた場合を想定して、ループ処理を行っています。<br>
+僕の場合は、メッセージの削除は管理人しか行えないようにしているので、これでうまくいきますが、削除処理が誰でも行えるのであれば、もう少し工夫が必要化もしれません。<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/26(土) 15:00:03</span><br>
+じぇいさんREいつもありがとうございます。<br>
+<br>
+<font color="#CC8000">＞この方法では、、明らかにうまくいきませんよね？($dataというのはすべてのデータを表しているんですよね？）</font><br>
+たしかに$numberに一致したすべてにマッチしてしまいました。<br>
+<font color="#CC8000">＞認証番号と同時に、そのデータを読み込んだときに、そのデータがファイルの何番目にあったかという記憶もhiddenで隠し持っておいて・・。</font><br>
+すみません・・もう少し具体的におねがいできないでしょうか。<br>
+<font color="#CC8000">＞$i = --$FORM{'DELETE'};</font><br>
+意味はだいたいわかるのですが&lt;FORM&gt;&lt;/FORM&gt;内のどの部分にあたるのでしょうか。<br>
+<br>
+<font color="#CC8000">＞if($count == $FORM{'CHECK'}){</font><br>
+と言うのは僕の場合<br>
+&lt;INPUT TYPE="hidden"NAME="CHEKE"VALUE="$number"&gt;<br>
+でよいのですか。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 15:31:51</span><br>
+え～と、、ちょっと長くなりますが、、。<br>
+<br>
+データの保存方法が僕といっしょとは限らないので、そこらへんは微調整してください。<br>
+<br>
+あくまで、僕が取っている方法なので、これが最も正しい方法かどうかはわかりませんが、、。<br>
+<br>
+これは、削除処理の場合です。（前にも書きましたが、基本は同じですね。）<br>
+<br>
+open(IN, "$bbs_data");<br>
+flock(IN, 2);<br>
+@show_datas = &lt;IN&gt;;<br>
+flock(IN, 8);<br>
+close(IN);<br>
+<br>
+$i = 0;<br>
+foreach $show_data (@show_datas)<br>
+{<br>
+　　$i++;<br>
+　　($f_msg,$f_name,$f_mail,$f_url,$date,$addr,$count) = split(/,/, $show_data);<br>
+　　print "&lt;FORM METHOD=POST ACTION=\"$easy_master\"&gt;\n";<br>
+　　print "&lt;table width=420&gt;&lt;tr&gt;&lt;td&gt;&lt;INPUT TYPE=submit VALUE=\" 削除 \"&gt;&lt;/td&gt;&lt;/tr&gt;\n";<br>
+　　print "&lt;INPUT TYPE=hidden NAME=DELETE VALUE=$i&gt;\n";<br>
+　　print "&lt;INPUT TYPE=hidden NAME=CHECK VALUE=\"$count\"&gt;\n";<br>
+　　print "&lt;/FORM&gt;\n";<br>
+　　print "&lt;table&gt;（以下略）&lt;/table&gt;\n";<br>
+}<br>
+<br>
+データを配列の頭から順に表示させていく場合、削除処理を行おうとしたとき、そのデータが配列の何番目に格納されていたかを$iに保存しておきます。<br>
+$countは認証番号です。<br>
+<br>
+そして、、実際の削除処理は上記の通り、、<br>
+<br>
+open(IN, "$bbs_data");<br>
+flock(IN, 2);<br>
+@all_msg = &lt;IN&gt;;<br>
+flock(IN, 8);<br>
+close(IN);<br>
+<br>
+<br>
+$i = --$FORM{'DELETE'};<br>
+<br>
+while(@all_msg &gt;= $i)<br>
+{<br>
+　　($f_msg,$f_name,$f_mail,$f_url,$date,$addr,$count) = split(/,/, $all_msg[$i]);<br>
+　　if($count == $FORM{'CHECK'}){<br>
+　　　　　splice(@all_msg, $i, 1);<br>
+　　　　　open(OUT, "+&lt; $bbs_data");<br>
+　　　　　flock(OUT, 2);<br>
+　　　　　truncate(OUT, 0);<br>
+　　　　　seek(OUT, 0, 0);<br>
+　　　　　print OUT @all_msg;<br>
+　　　　　close(OUT);<br>
+　　　　　&amp;read_msg;<br>
+　　}<br>
+　　$i++;<br>
+}<br>
+<br>
+というように行います。<br>
+こうすれば、配列の頭から一つ一つ探していかなくて済みます。<br>
+要するに処理を軽くするための手段です。<br>
+<br>
+$i = --$FORM{'DELETE'};<br>
+<br>
+”--”の意味は、上のコードをよく見てもらえばわかります。<br>
+<br>
+<font color="#CC8000">＞と言うのは僕の場合</font><br>
+<font color="#CC8000">＞&lt;INPUT TYPE="hidden"NAME="CHEKE"VALUE="$number"&gt;</font><br>
+<font color="#CC8000">＞でよいのですか。</font><br>
+え～と、、どのようにしてデータを保存しているのでしょうか？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/26(土) 15:35:44</span><br>
+＃本筋と関係ないところで済みませんが。<br>
+<br>
+<font color="#CC8000">＞open(IN, "$bbs_data");</font><br>
+<font color="#CC8000">＞flock(IN, 2);</font><br>
+<font color="#CC8000">＞@all_msg = &lt;IN&gt;;</font><br>
+<font color="#CC8000">＞flock(IN, 8);</font><br>
+<font color="#CC8000">＞close(IN);</font><br>
+<br>
+これだとロックしている意味がありませんよ。以下を参照のこと。<br>
+<a href="../../wwwperl4.htm#Flock" tppabs="http://www.tohoho-web.com/wwwperl4.htm#Flock">http://www.tohoho-web.com/wwwperl4.htm#Flock</a><br>
+<a href="../../wwwperl2.htm#flock" tppabs="http://www.tohoho-web.com/wwwperl2.htm#flock">http://www.tohoho-web.com/wwwperl2.htm#flock</a><br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 15:38:17</span><br>
+補足。<br>
+<br>
+<font color="#CC8000">＞”--”の意味は、上のコードをよく見てもらえばわかります。</font><br>
+$i++の処理をデータを書き出す前じゃなくて後でやったら”--”を尽ける必要はないのですが、、条件判断（削除処理を行うかどうか）のときに<br>
+if($FORM{'DELETE'}){...}<br>
+とやっていたので、$i++をデータを書き出す前にやる必要がありました。、、しかし、、よく考えてみたら、、<br>
+if($FORM{'CHECK'}){...}<br>
+、、とやっていたら、、よかったような気が。。^^;<br>
+<br>
+まあ、、どうでもいいことです。気にしないでください。(笑)<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 15:40:38</span><br>
+<font color="#CC8000">＞これだとロックしている意味がありませんよ。</font><br>
+<br>
+…どういう意味でしょうか？<br>
+<br>
+flock(IN, 2);<br>
+この部分について言っているのでしょうか？<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 15:56:45</span><br>
+まあ、、しかし、、保存件数が100件かそこらなら、、普通にforeachを使って総なめをしても全然問題ないと思いますが…。。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/26(土) 15:57:45</span><br>
+<font color="#CC8000">＞…どういう意味でしょうか？</font><br>
+よく読んでなかったです。読込み時だったら問題ないですね(^^;<br>
+失礼いたしました。<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/26(土) 16:01:16</span><br>
+じぇいさんREありがとうございます。<br>
+さっそく取り組んでみます。<br>
+<br>
+ふじさん補足コメントありがとうございます。<br>
+if (!open(LOG, "+&lt;logfaile"){&amp;error;}<br>
+eval 'flock(LOG,2);';<br>
+@data=&lt;LOG&gt;;<br>
+eval 'flock(LOG,8);';<br>
+close(LOG);<br>
+と僕の場合していますが・・。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 16:09:39</span><br>
+<font color="#CC8000">＞if (!open(LOG, "+&lt;logfaile"){&amp;error;}</font><br>
+読みこむだけならば、、<br>
+<br>
+if (!open(LOG, "logfaile"){&amp;error;}<br>
+<br>
+ですね。<br>
+<br>
+書き込み時には、<br>
+<br>
+　　　　　open(OUT, "+&lt; $bbs_data");<br>
+　　　　　flock(OUT, 2);<br>
+　　　　　truncate(OUT, 0);<br>
+　　　　　seek(OUT, 0, 0);<br>
+　　　　　print OUT "...";<br>
+　　　　　close(OUT);<br>
+<br>
+とする必要がありますね。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/26(土) 16:16:26</span><br>
+話が逸れて行く・・・<br>
+<br>
+<font color="#CC8000">＞まあ、、しかし、、保存件数が100件かそこらなら、、普通にforeachを使って総なめをしても全然問題ないと思いますが</font><br>
+保存件数が数万件だったら、一気に配列に読み込むのはヤバいような（環境によりますが）<br>
+<br>
+<font color="#CC8000">＞eval 'flock(LOG,2);';</font><br>
+これ、flockを実装していない機械の場合、ロック機構が全く働かないから（知らん顔して実行する）怖いですね(^^;<br>
+自宅でWindows環境などでデバッグするための処置だとは思いますが。<br>
+万が一NTがサーバの場合は気を付けないと。念の為。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/26(土) 16:30:29</span><br>
+<font color="#CC8000">＞保存件数が数万件だったら、一気に配列に読み込むのはヤバいような（環境によりますが）</font><br>
+もちろんです。(笑)<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/27(日) 10:45:36</span><br>
+　　　トチュウケイカです。<br>
+<br>
+削除処理はできました。<br>
+（恥ずかしい話、ちょっとビックリしています）。<br>
+もう少しでできるような気がします、頑張ってつづけます。以上。<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/27(日) 10:59:28</span><br>
+ふじさんありがとうございます。<br>
+<font color="#CC8000">＞これ、flockを実装していない機械の場合、ロック機構が全く働かい</font><br>
+から（知らん顔して実行する）怖いですね(^^;<br>
+<font color="#CC8000">＞自宅でWindows環境などでデバッグするための処置だとは思いますが。</font><br>
+<font color="#CC8000">＞万が一NTがサーバの場合は気を付けないと。念の為。</font><br>
+<br>
+次回の課題にさせてもらいます。<br>
+初心者の僕としてはFlockに関してまだ勉強不足でして、<br>
+単独テストを行う場合Errorになってしまうので、<br>
+eval'flock(LOG,2);';<br>
+ときべんさせています。が、とっても重要な事と把握し次回の課題にさせてもらいます。<br>
+ふじさんありがとうございました。<br>
+<hr>
+<span class=name>やす</span>
+<span class=email><a href="mailto:ipoo@mwb.biglobe.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/28(月) 13:21:26</span><br>
+色々やって見ましたが限界です。<br>
+ヒントと言うよりも答えをもらっているような気がするんですがお手上げ状態です。<br>
+じぇいさん・・<br>
+お手数でなければ、僕のスクリプトを見て頂けると光栄なのですが。<br>
+（ちょっと人に見せるのは恥ずかしいのですが・・・）<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/28(月) 16:12:05</span><br>
+僕も経験浅なので、、あまり的確なことを教えられるかどうか、、。。<br>
+<br>
+とりあえず、、スクリプトをテキスト形式にしてアップしてもらえますか？<br>
+、、で、、ちなみに、、何がお手上げなんでしょうか？<br>
+返信機能ですか？<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=email><a href="mailto:fwnb5232@mb.infoweb.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/28(月) 16:13:58</span><br>
+ああ、、やはり、、メールで送ってもらえますでしょうか？<br>
+<br>
+スクリプトの内容について、となると、、このラウンジを利用するのは、あまりよろしくないかと思うので。。<br>
+<br>
+こちらもメールで返事を書きます。<br>
+<hr>
+<span class=name>やす</span>
+<span class=email><a href="mailto:ipoo@mwb.biglobe.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/28(月) 16:26:25</span><br>
+じぇいさんREありがとうございます。<br>
+<font color="#CC8000">＞、、で、、ちなみに、、何がお手上げなんでしょうか？</font><br>
+<font color="#CC8000">＞返信機能ですか？</font><br>
+はい。<br>
+じぇいさんの削除機能を参考に返信機能へのカスタマイズがうまくいきません。<br>
+僕もはじめて書くスクリプトなので何かおかしな所があるのかと思われます。<br>
+大変ご迷惑おかけします。<br>
+<hr>
+<span class=name>やす</span>
+<span class=time>1999/06/29(火) 11:00:40</span><br>
+<span class=resolv>[[解決]]</span><br>
+解決！・・してもらいました。<br>
+これから復習に入るとこです。<br>
+exonさん　ふじさん　じぇいさん　それと、この場所を貸してくださった"とほほ"さん、アリガトウございました。<br>
+じぇいさんには最後までお付き合い頂きありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050003.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050003.htm">[前に]</a>
+<a href="99050005.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050005.htm">[次に]</a>
+</body>
+</html>

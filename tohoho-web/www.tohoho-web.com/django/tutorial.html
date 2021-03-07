@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Django入門 (チュートリアル) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Django入門 (チュートリアル)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/django/index.html">Django入門</a> &gt;
+チュートリアル
+
+<h4 id="what">Django とは</h4>
+<div class=i>
+<ul>
+<li>Python ベースでは最も有名な Webアプリケーションフレームワーク。
+<li>ライセンスは BSD License。商用利用可能。
+<li>MVC(Model-View-Controller)モデルをサポートする。
+<li>現在(2019年4月)の最新版は 2.2.0。
+<li>バージョン 2.0 からは Python 3.5 以上のみに対応する。
+<li>1.8, 1.11, 2.2 は LTS(Long Term Support) と呼ばれ、3年間サポートされる。
+<li>他のバージョンは 1年4ヶ月程度でサポートが切れる。
+<li>URLディスパッチャ、O/Rマッパー、ビューシステム、テンプレートエンジン等の機能を含む。
+<li>データベースとして SQLite, MySQL, PostgreSQL, Oracle に対応している。
+<li>開発評価版の簡易 HTTP サーバが同梱されている。
+<li>プロダクト利用では、Apache＋mod_python、または、Nginx＋uWSGI で動作させることが多い。
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class=i>
+<p>CentOS 7 に Django 2.2 をインストールします。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+# yum -y install https://centos7.iuscommunity.org/ius-release.rpm
+# yum -y install python36u python36u-pip
+# pip3.6 install --upgrade pip
+# pip3.6 install Django==2.2
+# django-admin --version
+</pre>
+</div>
+
+<h4 id="version-up-sqlite3">SQLite3をバージョンアップする</h4>
+<div class=i>
+<p>データベースに SQLite を使用する場合、Django 2.2 は SQLite のバージョンが古いと、「django.core.exceptions.ImproperlyConfigured: SQLite 3.8.3 or later is required (found 3.7.17).」の様なエラーとなるので、SQLite を最新版にバージョンアップします。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+# yum install -y wget gcc make
+# wget https://www.sqlite.org/2019/sqlite-autoconf-3290000.tar.gz
+# tar zxvf ./sqlite-autoconf-3290000.tar.gz
+# cd ./sqlite-autoconf-3290000
+# ./configure --prefix=/usr/local
+# make
+# make install
+# cd ..
+# rm -rf ./sqlite-autoconf-3290000 ./sqlite-autoconf-3290000.tar.gz
+# mv /usr/bin/sqlite3 /usr/bin/sqlite3_old
+# ln -s /usr/local/bin/sqlite3 /usr/bin/sqlite3
+# echo 'export LD_LIBRARY_PATH="/usr/local/lib"' &gt;&gt; ~/.bashrc
+# source ~/.bashrc
+</pre>
+</div>
+
+<h4 id="make-project">プロジェクトを作成する</h4>
+<div class=i>
+<p>まず、Django プロジェクトを作成します。Django では、コンフィグディレクトリの名前もプロジェクト名と同じになってしまうため、一度、config という名前でプロジェクトを作成し、その後、ディレクトリ名を変更するのがおすすめです。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ django-admin startproject config
+$ mv ./config ./myproj
+$ cd ./myproj
+</pre>
+<p>下記のファイルが作成されます。</p>
+<div class="tab">Files</div>
+<pre class=c2>
+./myproj
+./myproj/manage.py
+./myproj/config
+./myproj/config/__init__.py
+./myproj/config/settings.py
+./myproj/config/urls.py
+./myproj/config/wsgi.py
+</pre>
+</div>
+
+<h4 id="start-server">簡易サーバを起動する</h4>
+<div class=i>
+<p>外部のクライアントから接続すると 「Invalid HTTP_HOST header: '192.168.xx.xx'. You may need to add '192.168.56.102' to ALLOWED_HOSTS.」 といったエラーとなることがあります。./config/settings.py に接続を許可するホストの情報を設定する必要があります。開発時はとりあえず、すべて('*')を指定していてもよいですが、本番移行の際にはセキュリティ確保のため、HTTP の Host ヘッダで送信されてくる IPアドレスや URL を指定してください。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+ALLOWED_HOSTS = [<em>'*'</em>]
+</pre>
+<p>開発用の簡易サーバを起動します。LISTEN する IPアドレスとポート番号を指定することができます。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py runserver 0.0.0.0:80
+</pre>
+<p>80番ポート番号が解放されていない場合は、例えば下記の様にして開放する必要があります。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+# yum -y install firewalld
+# systemctl enable firewalld
+# systemctl start firewalld
+# firewall-cmd --add-port 80/tcp --permanent
+# firewall-cmd --reload
+</pre>
+<p>ブラウザから http://サーバアドレス/ にアクセスすることで、Django のサンプルページが表示されれば成功です。</p>
+</div>
+
+<h4 id="make-application">アプリケーションを作成する</h4>
+<div class=i>
+<p>books アプリケーションを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py startapp books
+</pre>
+<p>下記のファイルが作成されます。</p>
+<div class="tab">Files</div>
+<pre class=c2>
+./books/__init__.py
+./books/admin.py
+./books/apps.py
+./books/models.py
+./books/tests.py
+./books/views.py
+./books/migrations/__init__.py
+</pre>
+<p>./books/apps.py に定義されたクラス名をアプリケーションとして ./config/settings.py の INSTALLED_APPS に登録します。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+INSTALLED_APPS = [
+    <em>'books.apps.BooksConfig',</em>
+    'django.contrib.admin',
+    'django.contrib.auth',
+</pre>
+<p>./config/urls.py に、http://サーバアドレス/books/ が要求されたら、./books/urls.py を参照するように指定します。</p>
+<div class="tab">./config/urls.py</div>
+<pre class=c2>
+from django.contrib import admin
+from django.urls import path<em>, include</em>
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    <em>path('books/', include('books.urls')),</em>
+]
+</pre>
+<p>./books/urls.py ファイルを新規に作成し、http://サーバアドレス/books/ の次に何もなければ、view.py の list_books 関数を呼び出すように指定します。</p>
+<div class="tab">./books/urls.py</div>
+<pre class=c2>
+<em>from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.list_books, name='list_books'),
+]</em>
+</pre>
+<p>./books/views.py ビューを下記の様に修正します。</p>
+<div class="tab">./books/views.py</div>
+<pre class=c2>
+<em>from django.http import HttpResponse
+
+def list_books(request):
+    return HttpResponse("Hello world!")</em>
+</pre>
+<p>ブラウザで http://サーバアドレス/books/ にアクセスして Hello world! が表示されれば成功です。</p>
+</div>
+
+<h4 id="application-path">アプリケーションディレクトリを集約する</h4>
+<div class=i>
+<p>Django の標準では BASE_DIR(./) 直下にアプリケーションディレクトリが乱雑に並んでしまうため、アプリケーションを集約して格納するための ./apps ディレクトリを用意します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ mkdir ./apps
+</pre>
+<p>./apps ディレクトリを ./config/settings.py に登録します。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+import os
+<em>import sys</em>
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+<em>sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))</em>
+</pre>
+<p>アプリケーションディレクトリを ./apps 配下に移動します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ mv ./books ./apps
+</pre>
+<p>ブラウザで http://サーバアドレス/books/ にアクセスして Hello world! が表示されれば成功です。</p>
+</div>
+
+<h4 id="make-models">モデルを作成する</h4>
+<div class=i>
+<p>本(Book)を管理するモデルを作成します。本(Book)は、管理番号(book_id)、タイトル(title)、著者(author)の属性を持つものとします。</p>
+<div class="tab">./apps/books/models.py</div>
+<pre class=c2>
+from django.db import models
+
+<em>class Book(models.Model):
+    book_id = models.CharField(max_length=32)
+    title = models.CharField(max_length=256)
+    author = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.title</em>
+</pre>
+<p>DB に対するマイグレーションファイルを作成し、マイグレーションを実行します。これにより、モデルで定義したテーブルやカラムが自動的に作成されます。テーブルやカラムを変更して再度マイグレーションを行うことで、テーブル追加やカラム追加がマイグレーションされます。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py makemigrations
+$ python3.6 manage.py migrate
+</pre>
+<p>作成されたテーブルは次のようにして確認することができます。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py dbshell
+sqlite&gt; <em>.tables</em>
+auth_group                  books_book
+    :                            :
+sqlite&gt; <em>.schema books_book</em>
+CREATE TABLE IF NOT EXISTS "books_book" (...);
+sqlite&gt; <em>select * from books_book;</em>    <span class="cm">// まだ何も表示されない</span>
+sqlite&gt; <em><i>(Ctrl-D)</i></em>
+</pre>
+</div>
+
+<h4 id="django-admin">管理者サイトを使用する</h4>
+<div class=i>
+<p>Django は簡易的な管理サイト機能を標準で装備しています。管理者サイトからモデルで定義した DB に対して簡単な追加・一覧・更新・削除を行うことができます。まず、管理者ユーザを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py createsuperuser
+Username (leave blank to use 'root'): <em>admin</em>
+Email address: <em>admin@example.com</em>
+Password: <em><i>***password***</i></em>
+Password (again): <em><i>***password***</i></em>
+Superuser created successfully.
+</pre>
+<p>Books アプリケーションの Book モデルを管理者サイトで管理できるようにします。</p>
+<div class="tab">./apps/books/admin.py</div>
+<pre class=c2>
+from django.contrib import admin
+<em>from .models import Book
+
+admin.site.register(Book)</em>
+</pre>
+<p>ブラウザから http://サーバアドレス/admin/ にアクセスすることで、上記で作成した管理者ユーザで管理者サイトにログインすることができます。Groups と Users のみ表示され、Books が表示されない場合は、「manage.py runserver」を再起動してみてください。管理者サイトから、Book の情報を何冊が登録してみましょう。</p>
+</div>
+
+<h4 id="template">テンプレートを使用する</h4>
+<div class=i>
+<p>HTMLテンプレートを使用して Book の一覧をテーブル表示してみます。まず、テンプレートディレクトリを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ mkdir ./templates
+</pre>
+<p>./templates を ./config/settings.py に登録します。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [<em>os.path.join(BASE_DIR, 'templates')</em>],
+        'APP_DIRS': True,
+           :
+    },
+]
+</pre>
+<p>Books のためのテンプレートディレクトリを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ mkdir ./templates/books
+</pre>
+<p>./templates/books の下に list_books.html テンプレートファイルを作成します。</p>
+<div class="tab">./templates/books/list_books.html</div>
+<pre class=c2>
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Book ID&lt;/th&gt;
+      &lt;th&gt;Title&lt;/th&gt;
+      &lt;th&gt;Author&lt;/th&gt;
+      &lt;th&gt;Action&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    {% if books %}
+      {% for book in books %}
+        &lt;tr&gt;
+          &lt;td&gt;&lt;a href="/books/{{ book.book_id }}"&gt;{{ book.book_id }}&lt;/a&gt;&lt;/td&gt;
+          &lt;td&gt;{{ book.title }}&lt;/td&gt;
+          &lt;td&gt;{{ book.author }}&lt;/td&gt;
+          &lt;td&gt;&lt;a href="/books/{{ book.book_id }}/edit"&gt;[Edit]&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+      {% endfor %}
+    {% else %}
+      &lt;tr&gt;
+        &lt;td colspan=4&gt;No books.&lt;/td&gt;
+      &lt;/tr&gt;
+    {% endif %}
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+<p>./apps/books/views.py ファイルを下記の様に修正します。</p>
+<div class="tab">./apps/books/views.py</div>
+<pre class=c2>
+from django.http import HttpResponse
+<em>from django.template import loader
+from .models import Book</em>
+
+def list_books(request):
+    <em>books = Book.objects.all()
+    context = {
+        'title': 'List Books',
+        'books': books,
+    }
+    template = loader.get_template('books/list_books.html')
+    return HttpResponse(template.render(context, request))</em>
+</pre>
+<p>http://サーバアドレス/books/ にアクセスして、管理者サイトで登録した本の一覧が表示されれば成功です。</p>
+</div>
+
+<h4 id="layout-template">テンプレートで共通なレイアウトページを参照する</h4>
+<div class=i>
+<p>{% block %} や {% extends %} を用いて、複数のテンプレートで共有するレイアウトを作成することができます。子テンプレート(list_books.html)で定義した content という名前のブロックを、親テンプレート(layout.html)が参照して表示します。まず、./templates/layout.html を新規作成します。</p>
+<div class="tab">./templates/layout.html</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;<em>{{ title }}</em>&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;<em>{{ title }}</em>&lt;/h1&gt;
+  <em>{% block content %}{% endblock %}</em>
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>テンプレートファイルに下記を追記します。</p>
+<div class="tab">./templates/books/list_books.html</div>
+<pre class=c2>
+<em>{% extends 'layout.html' %}</em>
+<em>{% block content %}</em>
+&lt;table&gt;
+  :
+&lt;/table&gt;
+<em>{% endblock %}</em>
+</pre>
+<p>http://サーバアドレス/books/ にアクセスして、「List Books」のタイトルが表示されれば成功です。</p>
+</div>
+
+<h4 id="static-files">スタティックファイルを読み込む</h4>
+<div class=i>
+<p>CSS や JavaScript などのスタティックファイルを格納するスタティックディレクトリ(./static)を作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ mkdir ./static
+$ mkdir ./static/css ./static/js ./static/img
+</pre>
+<p>./static を ./config/settings.py の末尾に登録します。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+    :
+STATIC_URL = '/static/'
+
+<em>STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)</em>
+</pre>
+<p>./static/css/style.css ファイルを作成します。</p>
+<div class="tab">./static/css/style.css</div>
+<pre class=c2>
+table { border-collapse: collapse; margin-bottom: .5rem; }
+table th, table td { border: 1px solid #999; padding: .1rem .3rem; }
+table th { background-color: #ddd; }
+button { line-height: 1.2rem; min-width: 6rem; }
+</pre>
+<p>レイアウトファイルから style.css を読み込ませます。</p>
+<div class="tab">./templates/layout.html</div>
+<pre class=c2>
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;{{ title }}&lt;/title&gt;
+<em>&lt;link rel="stylesheet" href="/static/css/style.css"&gt;</em>
+&lt;/head&gt;
+</pre>
+<p>http://サーバアドレス/books/ にアクセスして、表の枠線が表示されたら成功です。うまく表示されない場合は、「manage.py runserver」を再起動したり、ブラウザのキャッシュをクリアしてみましょう。</p>
+</div>
+
+<h4 id="header-and-menu">ヘッダやメニューバーを表示する</h4>
+<div class=i>
+<p>レイアウトファイルにヘッダやメニューバーを追加します。</p>
+<div class="tab">./templates/layout.html</div>
+<pre class=c2>
+&lt;body&gt;
+  <em>&lt;div class="header-block"&gt;
+    @ Django Sample
+  &lt;/div&gt;
+  &lt;div class="menu-block"&gt;
+    &lt;a href="/books/"&gt;Book&lt;/a&gt;
+    &lt;a href="/settings/"&gt;Settings&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div class="content-block"&gt;</em>
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+    {% block content %}{% endblock %}
+  <em>&lt;/div&gt;</em>
+&lt;/body&gt;
+</pre>
+<p>ヘッダやメニューのためのスタイルを追記します。</p>
+<div class="tab">./static/css/style.css</div>
+<pre class=c2>
+<em>* { margin: 0; padding: 0; }
+.header-block { background-color: #000; color: #fff; line-height: 2rem;
+    font-weight: bold; padding: 0 .5rem; }
+.menu-block { background-color: #ddd; line-height: 2rem; padding: 0 .5rem; }
+.content-block { padding: 0 .5rem; }</em>
+table { border-collapse: collapse; margin-bottom: .5rem; }
+</pre>
+<p>http://サーバアドレス/books/ にアクセスして、ヘッダやメニューが表示されれば成功です。</p>
+</div>
+
+<h4 id="detail-book">詳細画面</h4>
+<div class=i>
+<p>一覧画面と同様に詳細画面を作成します。まず、テンプレートを作成します。</p>
+<div class="tab">./templates/books/detail_book.html</div>
+<pre class=c2>
+{% extends 'layout.html' %}
+{% block content %}
+&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Book ID&lt;/th&gt;&lt;td&gt;{{ book.book_id }}&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;th&gt;Title&lt;/th&gt;&lt;td&gt;{{ book.title }}&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;th&gt;Author&lt;/th&gt;&lt;td&gt;{{ book.author }}&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;div class="basic-block"&gt;
+  &lt;button onclick="location.href='/books/'"&gt;Return&lt;/button&gt;
+&lt;/div&gt;
+{% endblock %}
+</pre>
+<p>./apps/books/views.py に詳細画面用のビュー関数を追加します。</p>
+<div class="tab">./apps/books/views.py</div>
+<pre class=c2>
+    :
+<em>def detail_book(request, book_id):
+    try:
+        book = Book.objects.get(book_id=book_id)
+    except Book.DoesNotExist:
+        book = None
+
+    context = {
+        'title': 'Detail Book',
+        'book': book,
+    }
+    template = loader.get_template('books/detail_book.html')
+    return HttpResponse(template.render(context, request))</em>
+</pre>
+<p>ビューを urls.py に登録します。</p>
+<div class="tab">./apps/books/urls.py</div>
+<pre class=c2>
+urlpatterns = [
+    path('', views.list_books, name='list_books'),
+    <em>path('&lt;str:book_id&gt;', views.detail_book, name='detail_book'),</em>
+]
+</pre>
+<p>http://サーバアドレス/books/ から Book ID のリンクをクリックして、詳細画面が表示されれば成功です。</p>
+</div>
+
+<h4 id="edit-book">編集画面</h4>
+<div class=i>
+<p>詳細画面と同様に編集画面を作成します。まず、テンプレートを作成します。{% url 名前 引数 %} は、urls.py の name="..." で指定した名前に対応するパス名を取得します。{% if ... %} ... {% elif ... %} ... {% endif %} は条件式を記述します。</p>
+<div class="tab">./templates/books/edit_book.html</div>
+<pre class=c2>
+{% extends 'layout.html' %}
+{% block content %}
+&lt;form method="POST" action="<em>{% url 'edit_book' book.book_id %}</em>"&gt;
+  {% csrf_token %}
+  &lt;input type="hidden" name="mode" value="{{ mode }}"&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Book ID&lt;/th&gt;
+      &lt;td&gt;&lt;input type="text" name="book_id" readonly value="{{ book.book_id }}"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Title&lt;/th&gt;
+      &lt;td&gt;&lt;input type="text" name="title"
+          <em>{% if mode != 'input' %}</em>readonly<em>{% endif %}</em> value="{{ book.title }}"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Author&lt;/th&gt;
+      &lt;td&gt;&lt;input type="text" name="author"
+          <em>{% if mode != 'input' %}</em>readonly<em>{% endif %}</em> value="{{ book.author }}"&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;div class="basic-block"&gt;
+    <em>{% if mode == 'input' %}</em>
+      &lt;button type="button" onclick="location.href='<em>{% url 'list_books' %}</em>'"&gt;Return&lt;/button&gt;
+      &lt;button type="submit"&gt;OK&lt;/button&gt;
+    <em>{% elif mode == 'confirm' %}</em>
+      &lt;button type="button" onclick="history.back()"&gt;Back&lt;/button&gt;
+      &lt;button type="submit"&gt;OK&lt;/button&gt;
+    <em>{% elif mode == 'result' %}</em>
+      &lt;button type="button" onclick="location.href='<em>{% url 'list_books' %}</em>'"&gt;Return&lt;/button&gt;
+    <em>{% endif %}</em>
+  &lt;/div&gt;
+&lt;/form&gt;
+{% endblock %}
+</pre>
+<p>ビューファイルに編集画面用のビューを追加します。</p>
+<div class="tab">./apps/books/views.py</div>
+<pre class=c2>
+def edit_book_input(request, book_id):
+    try:
+        book = Book.objects.get(book_id=book_id)
+    except Book.DoesNotExist:
+        book = None
+
+    context = {
+        'title': 'Edit Book(input)',
+        'mode': 'input',
+        'book': book,
+    }
+    template = loader.get_template('books/edit_book.html')
+    return HttpResponse(template.render(context, request))
+
+def edit_book_confirm(request, book_id):
+    book = Book()
+    book.book_id = request.POST['book_id']
+    book.title = request.POST['title']
+    book.author = request.POST['author']
+
+    context = {
+        'title': 'Edit Book(confirm)',
+        'mode': 'confirm',
+        'warning_message': 'Are you sure you want to save?',
+        'book': book,
+    }
+    template = loader.get_template('books/edit_book.html')
+    return HttpResponse(template.render(context, request))
+
+def edit_book_result(request, book_id):
+    try:
+        book = Book.objects.get(book_id=book_id)
+        book.book_id = request.POST['book_id']
+        book.title = request.POST['title']
+        book.author = request.POST['author']
+        book.save()
+    except Book.DoesNotExist:
+        book = None
+
+    context = {
+        'title': 'Edit Book(result)',
+        'mode': 'result',
+        'success_message': 'Success!',
+        'book': book,
+    }
+    template = loader.get_template('books/edit_book.html')
+    return HttpResponse(template.render(context, request))
+
+def edit_book(request, book_id):
+    if request.method == 'GET':
+        return edit_book_input(request, book_id)
+    elif request.method == 'POST':
+        if request.POST['mode'] == 'input':
+            return edit_book_confirm(request, book_id)
+        if request.POST['mode'] == 'confirm':
+            return edit_book_result(request, book_id)
+</pre>
+<p>ビューを urls.py に登録します。</p>
+<div class="tab">./apps/books/urls.py</div>
+<pre class=c2>
+urlpatterns = [
+    path('', views.list_books, name='list_books'),
+    path('&lt;str:book_id&gt;', views.detail_book, name='detail_book'),
+    <em>path('&lt;str:book_id&gt;/edit', views.edit_book, name='edit_book'),</em>
+]
+</pre>
+<p>レイアウトにメッセージ表示欄を追加します。</p>
+<div class="tab">./templates/layout.html</div>
+<pre class=c2>
+  &lt;div class="content-block"&gt;
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+    <em>{% if success_message %}
+    &lt;div class="msg-success"&gt;{{ success_message }}&lt;/div&gt;
+    {% endif %}
+    {% if warning_message %}
+    &lt;div class="msg-warning"&gt;{{ warning_message }}&lt;/div&gt;
+    {% endif %}
+    {% if error_message %}
+    &lt;div class="msg-error"&gt;{{ error_message }}&lt;/div&gt;
+    {% endif %}</em>
+    {% block content %}{% endblock %}
+  &lt;/div&gt;
+</pre>
+</div>
+<p>style.css にスタイルを追加します。</p>
+<div class="tab">./static/css/style.css</div>
+<pre class=c2>
+button { line-height: 1.2rem; min-width: 6rem; }
+<em>input[type="text"], select { border: 1px solid #ccc; height: 1.5rem;
+    border-radius: .2rem; padding: 0 .3rem; width: 20rem; }
+input[readonly] { border: 0; }
+.msg-success { padding: .2rem; color: #080; border: 1px solid #9c9;
+    background-color: #cfc; margin-bottom: .5rem; }
+.msg-warning { padding: .2rem; color: #880; border: 1px solid #cc9;
+    background-color: #ffc; margin-bottom: .5rem; }
+.msg-error   { padding: .2rem; color: #800; border: 1px solid #c99;
+    background-color: #fcc; margin-bottom: .5rem; }</em>
+</pre>
+<p>http://サーバアドレス/books/ から [Edit] のリンクをクリックして、編集操作ができれば成功です。</p>
+
+<h4 id="i18n">多言語対応</h4>
+<div class=i>
+<p>Webページを、多言語に対応させます。まず、gettext をインストールします。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+# yum install -y gettext
+</pre>
+<p>./config/settings.py に下記の設定を行います。LocaleMiddleware は必ず SessionMiddleware と CommonMiddleware の間に記述してください。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    <em>'django.middleware.locale.LocaleMiddleware',</em>
+    'django.middleware.common.CommonMiddleware',
+       :
+]
+
+LANGUAGE_CODE = <em>'ja'</em>
+
+<em>LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)</em>
+</pre>
+<p>テンプレートの冒頭で i18n を読み込み、翻訳対象の文字列を {% trans ... %} で囲みます。</p>
+<div class="tab">./templates/books/list_books.html</div>
+<pre class=c2>
+{% extends 'layout.html' %}
+<em>{% load i18n %}</em>
+{% block content %}
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;<em>{% trans 'Book ID' %}</em>&lt;/th&gt;
+      &lt;th&gt;<em>{% trans 'Title' %}</em>&lt;/th&gt;
+      &lt;th&gt;<em>{% trans 'Author' %}</em>&lt;/th&gt;
+      &lt;th&gt;<em>{% trans 'Action' %}</em>&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+</pre>
+<p>プログラムの中で翻訳対象の文字列を _(...) で囲みます。</p>
+<div class="tab">./apps/books/views.py</div>
+<pre class=c2>
+<em>from django.utils.translation import gettext_lazy as _</em>
+
+def list_books(request):
+    books = Book.objects.all()
+    context = {
+        'title': <em>_('List Books'),</em>
+        'books': books,
+    }
+</pre>
+<p>./locale フォルダを作成し、翻訳対象の辞書ファイルを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py makemessages -l ja
+</pre>
+<p>./locale/ja/LC_MESSAGES/django.po ファイルが作成されるので、これに、翻訳対象文字列の翻訳を記入します。</p>
+<div class="tab">./locale/ja/LC_MESSAGES/django.po</div>
+<pre class=c2>
+#: apps/books/views.py:9
+msgid "List Books"
+msgstr "<em>ブックの一覧</em>"
+
+#: templates/books/list_books.html:7
+msgid "Book ID"
+msgstr "<em>ブックID</em>"
+</pre>
+<p>下記のコマンドを実行して、メッセージをコンパイルし、./locale/ja/LC_MESSAGES/django.mo ファイルを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py compilemessages
+</pre>
+<p>http://サーバアドレス/books/ にアクセスし、「List Books」の代わりに「ブックの一覧」と日本語が表示されれば成功です。うまく表示できない場合は、「manage.py runserver」を再起動したり、ブラウザキャッシュをクリアしてみましょう。</p>
+</div>
+
+<h4 id="setlang">言語設定画面を用意する</h4>
+<div class=i>
+<p>言語設定画面を用意します。まずは、設定画面のためのアプリケーションとテンプレートディレクトリを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ python3.6 manage.py startapp settings
+$ mv ./settings ./apps
+$ mkdir ./templates/settings
+</pre>
+<p>テンプレートファイルを作成します。</p>
+<div class="tab">./templates/settings/settings.html</div>
+<pre class=c2>
+{% extends 'layout.html' %}
+{% load i18n %}
+{% block content %}
+&lt;form action="{% url 'set_language' %}" method="post"&gt;
+  {% csrf_token %}
+  &lt;input name="next" type="hidden" value="{{ redirect_to }}"&gt;
+  &lt;select name="language"&gt;
+    {% get_current_language as LANGUAGE_CODE %}
+    {% get_available_languages as LANGUAGES %}
+    {% get_language_info_list for LANGUAGES as languages %}
+    {% for language in languages %}
+      &lt;option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}&gt;
+        {{ language.name_local }} ({{ language.code }})
+      &lt;/option&gt;
+    {% endfor %}
+  &lt;/select&gt;
+  &lt;button&gt;{% trans 'Set' %}&lt;/button&gt;
+&lt;/form&gt;
+{% endblock %}
+</pre>
+<p>views.py および urls.py を設定します。</p>
+<div class="tab">./apps/settings/views.py</div>
+<pre class=c2>
+from django.http import HttpResponse
+from django.template import loader
+from django.utils.translation import gettext_lazy as _
+
+def settings(request):
+    context = {
+        'title': _('Settings'),
+    }
+    template = loader.get_template('settings/settings.html')
+    return HttpResponse(template.render(context, request))
+</pre>
+<div class="tab">./apps/settings/urls.py</div>
+<pre class=c2>
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.settings,  name='settings'),
+]
+</pre>
+<div class="tab">./config/urls.py</div>
+<pre class=c2>
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('books/', include('books.urls')),
+    <em>path('i18n/', include('django.conf.urls.i18n')),</em>
+    <em>path('settings/', include('settings.urls')),</em>
+]
+</pre>
+<p>選択肢として表示する言語を絞るには、./config/settings.py で LANGUAGES を設定してください。</p>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+import os
+import sys
+<em>from django.utils.translation import gettext_lazy as _</em>
+   :
+   :
+
+LANGUAGE_CODE = 'ja'
+
+<em>LANGUAGES = [
+    ('ja', _('Japanese')),
+    ('en', _('English')),
+]</em>
+</pre>
+<p>Settings メニューから http://サーバアドレス/settings/ にアクセスして、表示言語を切り替えることができれば成功です。</p>
+</div>
+
+
+
+
+
+
+<!--
+<h4 id="mariadb">MariaDB と接続する</h4>
+<div class=i>
+<p>Django は標準では SQLite を使用しますが、MariaDB を使用する場合は次のように設定します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+# pip3.6 install PyMySQL
+</pre>
+<div class="tab">./config/settings.py</div>
+<pre class=c2>
+<em>import pymysql</em>
+<em>pymysql.install_as_MySQLdb()</em>
+DATABASES = {
+    'default': {
+        <em>'ENGINE': 'django.db.backends.mysql',</em>
+        <em>'NAME': 'django',</em>        <span class="cm"># データベース名</span>
+        <em>'USER': 'xxxxxx',</em>        <span class="cm"># DBユーザ名</span>
+        <em>'PASSWORD': 'xxxxxxxx',</em>  <span class="cm"># DBパスワード</span>
+        <em>'HOST': '127.0.0.1',</em>     <span class="cm"># DBサーバアドレス</span>
+        <em>'PORT': '3306',</em>          <span class="cm"># DBサーバポート</span>
+    }
+}
+</pre>
+</div>
+
+<h4 id="apache">Apache＋mod_wsgiで動かす</h4>
+<div class=i>
+<div class="tab">Shell</div>
+<pre class=c2>
+# yum install -y httpd python36u-mod_wsgi
+</pre>
+<div class="tab">/etc/httpd/conf/httpd.conf</div>
+<pre class=c2>
+<em>ServerName www.example.com</em>
+</pre>
+</div>
+-->
+
+<hr>
+<div>Copyright (C) 2018-2019 杜甫々</div>
+<div>初版:2018年3月4日 最終更新:2019年7月15日</div>
+<div>http://www.tohoho-web.com/django/tutorial.html</div>
+</body>
+</html>

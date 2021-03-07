@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Laravel入門 - とほほのWWW入門</title>
+<meta name="viewport" content="wih4h=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Laravel入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Laravel入門
+
+<h4>目次</h4>
+<div class="i">
+<ul>
+<li><a href="#whatis">Laravelとは</a></li>
+<li><a href="#install">インストール</a></li>
+<li><a href="#project">プロジェクトを作成する</a></li>
+<li><a href="#runserver">簡易サーバを起動する</a></li>
+<li><a href="#apache">Apacheから起動する</a></li>
+<li><a href="#routes">ルーティングを設定する</a></li>
+<li><a href="#views">ビューを利用する</a></li>
+<li><a href="#links">リンク</a></li>
+</ul>
+</div>
+
+<h4 id="whatis">Laravelとは</h4>
+<div class=i>
+<ul>
+<li>PHP で記述された Webフレームワークの一つです。
+<li>PHPフレームワークでは CakePHP と Symfony が争っていた時代がありましたが、最近は Laravel 一強の感があります。
+<li>Ruby の Ruby on Rails、Python の Django、PHP の Laravel で三大フレームワークとも呼ばれます。
+<li>マイクロソフト .NET の開発に関わっていた Taylor Otwell 氏が開発。
+<li>PHPのライブラリ管理システム Composer を利用。
+<li>Symfony のライブラリをいくつか使用しています。
+<li>ライセンスは MIT License。
+<li>通常のリリース版は、バグフィックスが半年、セキュリティバグフィックスが1年間。
+<li>LTS(Long Time Support)版は、バグフィックスが2年間、セキュリティバグフィックスが3年間予定されています。
+<li>現在(2020年3月)時点の最新版は 7.3.0。LTS(Long Time Support)版は 6.x が最新です。
+<li>Laravel を少し軽量化した Lumen というマイクロフレームワークも公開されています。
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<p>CentOS 7 に Laravel 7.3 をインストールする手順を示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">必要なパッケージと PHP 7.2 をインストールする</span>
+# yum install -y zip unzip
+# yum install -y http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+# yum install -y --enablerepo=remi,remi-php72 php php-bcmath php-json php-mbstring php-pdo php-xml php-zip
+
+<span class="cm">Composer をインストールする</span>
+# curl -sS https://getcomposer.org/installer | php
+# mv ./composer.phar /usr/local/bin/composer
+
+<span class="cm">Composer を用いて Laravel インストーラをインストールする</span>
+# composer global require laravel/installer
+# echo export PATH=$PATH:~/.composer/vendor/bin/ >> ~/.bashrc
+# source ~/.bashrc
+# laravel --version
+Laravel Installer 3.0.1
+</pre>
+</div>
+
+<h4 id="project">プロジェクトを作成する</h4>
+<div class="i">
+<p>Laravelインストーラを用いて blog という名前のプロジェクトを作成します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# cd /opt
+# laravel new blog
+# cd blog
+</pre>
+</div>
+
+<h4 id="runserver">簡易サーバを起動する</h4>
+<div class="i">
+<p>簡易サーバを起動します。簡易サーバは試験用のものですので、本番では使用しないようにしてください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# php artisan serve --host=0.0.0.0 --port=80
+</pre>
+<p>ブラウザから http://サーバアドレス/ にアクセスして、「Laravel」と表示されれば成功です。</p>
+</div>
+
+<h4 id="apache">Apacheから起動する</h4>
+<div class="i">
+<p>Apache をインストールします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# yum install -y httpd
+</pre>
+<p>コンフィグファイル /etc/httpd/conf.d/laravel.conf を作成します。</p>
+<div class="title-tab">/etc/httpd/conf.d/laravel.conf</div>
+<pre class="c2">
+&lt;VirtualHost "*:80"&gt;
+    DocumentRoot /opt/blog/public
+    ServerName www.example.com
+    &lt;Directory "/opt/blog/public"&gt;
+        AllowOverride All
+        Options All
+        Require all granted
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;
+</pre>
+<p>./storage, ./bootstrap/cache ディレクトリのパーミッションを変更します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# chown -R apache:apache ./storage ./bootstrap/cache
+</pre>
+<p>httpd を起動します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# systemctl enable httpd
+# systemctl start httpd
+</pre>
+<p>ブラウザから http://サーバアドレス/ にアクセスして、「Laravel」と表示されれば成功です。</p>
+</div>
+
+<h4 id="routes">ルーティングを設定する</h4>
+<div class="i">
+<p>./routes/web.php にルーティング情報を追記します。</p>
+<div class="title-tab">./routes/web.php</div>
+<pre class="c2">
+&lt;?php
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+<em>Route::get('/hello', function () {
+    return 'Hello world!';
+});</em>
+</pre>
+<p>http://～/hello にアクセスして、"Hello world!" と表示されれば成功です。</p>
+<p>引数を使用するには下記の様にしてください。</p>
+<div class="title-tab">./routes/web.php</div>
+<pre class="c2">
+Route::get('/hello/<em>{name}</em>', function (<em>$name</em>) {
+    return <em>'Hello ' . $name . '!'</em>;
+});
+</pre>
+<p>http://～/hello/Yamada にアクセスして、"Hello Yamada!" と表示されれば成功です。</p>
+</div>
+
+<h4 id="views">ビューを利用する</h4>
+<div class="i">
+<p>ビューファイル ./resources/view/hello.blade.php を作成します。</p>
+<div class="title-tab">./soureces/view/hello.blade.php</div>
+<pre class="c2">
+&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;TEST&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello {{ $name }}!&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>./routes/web.php を下記の様に修正します。</p>
+<div class="title-tab">./routes/web.php</div>
+<pre class="c2">
+Route::get('/hello/{name}', function ($name) {
+    return <em>view('hello', ['name' =&gt; $name])</em>;
+});
+</pre>
+<p>http://～/hello/Yamada にアクセスして、"Hello Yamada!" と表示されれば成功です。</p>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li>Laravel Official Site: <a target="_top" href="javascript:if(confirm('https://laravel.com/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://laravel.com/'" tppabs="https://laravel.com/">https://laravel.com/</a>
+<li>API Reference: <a target="_top" href="javascript:if(confirm('https://laravel.com/api/7.x/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://laravel.com/api/7.x/'" tppabs="https://laravel.com/api/7.x/">https://laravel.com/api/7.x/</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年3月29日 最終更新:2020年3月29日</div>
+<div>http://www.tohoho-web.com/ex/laravel.html</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ロック処理について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ロック処理について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050100.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050100.htm">[前に]</a>
+<a href="99050102.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050102.htm">[次に]</a>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/18(火) 16:20:36</span><br>
+聞くは一瞬の恥、聞かぬは一生の恥ということで恥をしのんで毎回すごく基本的なことを聞いているものです。（独学なもので近くに質問できる人がいません。）<br>
+<br>
+ロック処理についてお聞きしたいのですが、CGIでよくロックフォルダを作成してロック処理をしているプログラムを見かけるのですが、flockだけではロック処理は十分じゃないのですか？<br>
+<br>
+あと、これは関係無いのですが、今スクリプトを作っていて、書きこみ処理で、<br>
+<br>
+	$new_data = ($f_msg,$f_name,$f_mail,$f_url,$f_title,$date\n);<br>
+<br>
+	open(OUT, '+&lt; $bbs_dat');<br>
+	flock(OUT, 2);<br>
+	@all_data = &lt;OUT&gt;;<br>
+	unshift(@all_data, $new_data);<br>
+	truncate(OUT, 0);<br>
+	seek(OUT, 0, 0);<br>
+	print OUT @all_data;<br>
+	close(OUT);<br>
+<br>
+このような処理をしているのですが、ちょっと不安だったので質問しました。誤りがあれば教えてください。<br>
+（毎回毎回基本的なことですいません。）<br>
+<hr>
+<span class=name>Syn</span>
+<span class=email><a href="mailto:kohshi@inaba.forum.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/18(火) 17:20:23</span><br>
+わたしもその方法 (flock ～ truncate ～ seek ～ print) です。<br>
+さしあたっていまのところログが飛んだりはしていないので<br>
+問題なしとしています。<br>
+よくいわれることですが いくら手を尽くしてもカンペキなロック<br>
+はできないので 手間と効果のトレードオフですね。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/19(水) 00:58:26</span><br>
+なんか上で変なこと書いてました。＾＾；<br>
+<br>
+$new_data = ($f_msg,$f_name,$f_mail,$f_url,$f_title,$date\n);<br>
+<br>
+ではなく、<br>
+<br>
+$new_data = "$f_msg,$f_name,$f_mail,$f_url,$f_title,$date,\n";<br>
+<br>
+ですね。<br>
+<br>
+しかし、、、<br>
+<br>
+	$new_data = "$f_msg,$f_name,$f_mail,$f_url,$f_title,$date,\n";<br>
+	open(OUT, '+&lt; $bbs_data');<br>
+	flock(OUT, 2);<br>
+	@all_data = &lt;OUT&gt;;<br>
+	unshift(@all_data, $new_data);<br>
+	truncate(OUT, 0);<br>
+	seek(OUT, 0, 0);<br>
+	print OUT @all_data;<br>
+	close(OUT);<br>
+<br>
+これではいくら書きこんでもファイルに何も記録されません。<br>
+一体何が原因なのでしょうか、、？<br>
+<br>
+ここに原因があると思うのですが、ここに原因が無いのならばそう教えてください。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/19(水) 01:17:28</span><br>
+open(OUT, '+&lt; $bbs_data');<br>
+<br>
+これだと、$bbs_dataが展開されないからでは？<br>
+open(OUT, "+&lt; $bbs_data");<br>
+こうじゃないですかね。<br>
+openなどの戻り値はきちんとチェックした方が良いですよ。<br>
+例えば<br>
+unless(open(.....)){<br>
+ print "can't open $!";<br>
+ exit(0);<br>
+}<br>
+てな感じで。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/19(水) 02:25:25</span><br>
+すいません。<br>
+なんかとんでもない基本的なミスをしてたようです。<br>
+どうもありがとうございました。<br>
+ロック処理に付いてはもうちょっと情報がほしいので解決は押さないでおきます。<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/19(水) 08:39:31</span><br>
+ロック処理に関しては、flockが使えるならそれが一番いいと思います。<br>
+もしも使えないなら、シンボリックリンクを利用するのがいいんじゃないかな。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/19(水) 14:40:23</span><br>
+<a href="../199903/99030145.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030145.htm">../199903/99030145.htm</a><br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/19(水) 21:20:19</span><br>
+<span class=resolv>[[解決]]</span><br>
+<font color="#CC8000">＞なえさんへ</font><br>
+シンボリックリンクによるロック処理については後で聞こうと思っていたところでした。<br>
+flockが使えるならそれが一番いいんですね。どうもありがとうございました。<br>
+<br>
+<font color="#CC8000">＞ふじさんへ</font><br>
+なるほど。えらく詳しく討論していますね…。<br>
+読んでみます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050100.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050100.htm">[前に]</a>
+<a href="99050102.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050102.htm">[次に]</a>
+</body>
+</html>

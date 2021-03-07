@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Linuxのディレクトリー権限とファイル作成について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Linuxのディレクトリー権限とファイル作成について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040198.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040198.htm">[前に]</a>
+<a href="99040200.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040200.htm">[次に]</a>
+<hr>
+<span class=name>まる</span>
+<span class=email><a href="mailto:maruyama@techno-brain.co.jp">[E-Mail]</a></span>
+<span class=time>1999/04/28(水) 14:45:53</span><br>
+perlで記述したCGIを実行して、データをディレクトリーdirの下の<br>
+ファイルに保存するCGIを作成したのですが、ファイルをOPENで、<br>
+上書きまたは追記用でオープンした場合,その対象ファイルが存在<br>
+しない場合はファイルを新規に作成してくれると思うのですが、<br>
+、この時ファイルを保存するディレクトリの権限は、全ての<br>
+フラグビットを立てて、「rwxrwxrwx」 にしなければ新規作成を<br>
+してないと思うのですが、このような権限の設定であっても、ファイルを新規作成してくれない場合があります。<br>
+ディレクトリの権限と、OPENコマンドによるそのディレクトリの下にファイルを新規作成する処理との関係を詳しく教えてください。<br>
+また、保存するためのファイルを、自分で新規に作成して時は、その<br>
+権限は、「rw-rw-rw-」にする必要がありますが、OPENコマンドによって作成された権限は「rw-r--r--」になると思うのですが,この関係を<br>
+教えてください。<br>
+基本的には、CGIプログラムのファイルやディレクトリに関する権限は、user,groupでなくてotherですよね？<br>
+ですから上書きや追記や読まれるファイルの権限のビットは絶対に、<br>
+「rw-rw-rw」である必要があるのですよね？<br>
+<br>
+どなたかこの辺のことを詳しく解りやすく説明したいただけないでしょうか？ よろしくお願いいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/28(水) 15:19:04</span><br>
+<font color="#CC8000">&gt; 「rwxrwxrwx」 にしなければ新規作成をしてないと思うのですが</font><br>
+<font color="#CC8000">&gt; このような権限の設定であっても、ファイルを新規作成してくれない場合が</font><br>
+<font color="#CC8000">&gt; あります。</font><br>
+<br>
+777で置けないことなんてありましたっけ?　設定ミスじゃないでしょうか。<br>
+<br>
+<font color="#CC8000">&gt; OPENコマンドによって作成された権限は「rw-r--r--」になると思うのですが</font><br>
+<br>
+新規ファイルのパーミッションは、umaskの値によって決まります。<br>
+umaskというのは「ビットをOFFにするパーミッション」のことです。<br>
+<br>
+umask が 022 なら作成されるファイルは644です。<br>
+umask が 002 なら作成されるファイルは664です。<br>
+umask が 000 なら作成されるファイルは666です。<br>
+<br>
+<font color="#CC8000">&gt; 基本的には、CGIプログラムのファイルやディレクトリに関する権限は、</font><br>
+<font color="#CC8000">&gt; user,groupでなくてotherですよね？</font><br>
+<br>
+まぁそう言ってしまえばそうなんですけど、CGIを各ユーザの権限で<br>
+動かしているサイトもありますし、「基本的には」などと一般化<br>
+しない方がいいと思います。<br>
+<br>
+要は「777が必要」なのではなく、「CGIの実行オーナー(nobodyだったり<br>
+各ユーザだったり)が読める/書き込めるパーミッション」が必要なわけで。<br>
+<br>
+だから(もしnobody権限で動いているなら)ディレクトリは777じゃなくて<br>
+007や003でもいいし、ファイルは666じゃなくて006とかでもいいわけです。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040198.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040198.htm">[前に]</a>
+<a href="99040200.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040200.htm">[次に]</a>
+</body>
+</html>

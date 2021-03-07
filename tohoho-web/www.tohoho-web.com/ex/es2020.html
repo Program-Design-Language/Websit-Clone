@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ES2020の新機能 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>ES2020の新機能</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+ES2020の新機能
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#what">ES2020とは</a>
+<li><a href="#bigint">任意精度整数(BigInt)</a>
+<li><a href="#for-in">for-in ループにおける順序保証</a>
+<li><a href="#nullish">ヌル合体(Nullish Coalescing)演算子(??)</a>
+<li><a href="#optional">オプショナル連結(Optional Chaining)(?)</a>
+<li><a href="#globalThis">globalThis</a>
+<li><a href="#matchAll">string.matchAll()</a>
+<li><a href="#dynamic-import">ダイナミックインポート(Dynamic Import)</a>
+<li><a href="#import-export">export * as <i>name</i> from module 構文</a>
+<li><a href="#import-meta">import.meta</a>
+<li><a href="#promise-allSettled">Promise.allSettled()</a>
+</ul>
+</div>
+
+<h4 id="what">ES2020とは</h4>
+<div class="i">
+<p>JavaScript の標準仕様 ES2020 (ECMAScript 11th Edision) として 2020年6月にリリースされました。ES2020 で新たに追加された機能について説明していきます。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.ecma-international.org/ecma-262/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.ecma-international.org/ecma-262/'" tppabs="https://www.ecma-international.org/ecma-262/">https://www.ecma-international.org/ecma-262/</a>
+</ul>
+</div>
+
+<h4 id="bigint">任意精度整数(BigInt)</h4>
+<div class="i">
+<p>これまでの JavaScript では、2^53 の精度の整数しか扱うことができませんでしたが、任意の精度を持つ整数 <b>BigInt</b> がサポートされました。数字を <b>BigInt</b> 整数として表現するには数字の末尾に <b>n</b> をつけます。</p>
+<pre class="c">
+var num1 = 123<em>n</em>;
+</pre>
+<p>通常の整数では17桁あたりから丸め誤差が出始めますが、BigInt 整数は何桁であっても誤差が生じることはありません。</p>
+<pre class="c">
+console.log(1234567890123456789);	<span class="cm">// =&gt; 1234567890123456800 ... 末尾に誤差が出ることがある</span>
+console.log(1234567890123456789<em>n</em>);	<span class="cm">// =&gt; 1234567890123456789n ... 誤差は生じない</span>
+</pre>
+<p>通常の整数を <b>BigInt</b> 整数に変換するには <b>BigInt()</b> を用います。</p>
+<pre class="c">
+var num1 = 123;			<span class="cm">// 通常精度の整数</span>
+var num2 = <em>BigInt(</em>num1<em>)</em>;	<span class="cm">// BigInt整数</span>
+</pre>
+<p>typeof の値は <b>bigint</b> となります。</p>
+<pre class="c">
+console.log(typeof(123n));	<span class="cm">// =&gt; bigint</span>
+</pre>
+</div>
+
+<h4 id="for-in">for-in ループにおける順序保証</h4>
+<div class="i">
+<p>オブジェクトの属性等を for-in ループで参照する際、これまでは順序が保障されませんでしたが、ES2020 では順序が保障されるようになりました。下記の例では、処理系によっては順不同で表示される可能性がありましたが、ES2020 では a, b, c, d, e の順に表示されることが保障されます。</p>
+<pre class="c">
+var data = {a:"A", b:"B", c:"C", d:"D", e:"E"};
+<em>for (</em>var d <em>in</em> data) {
+    console.log(d);		<span class="cm">// =&gt; a, b, c, d, e</span>
+}
+</pre>
+</div>
+
+<h4 id="nullish">ヌル合体(Nullish Coalescing)演算子(??)</h4>
+<div class="i">
+<p>ヌル合体(Nullish Coalescing)演算子 <b>??</b> を用いることで、値が <b>undefined</b> や <b>null</b> の時にデフォルト値を設定するといった処理を、下記の様に記述することが可能となります。</p>
+<pre class="c">
+<span class="cm">// 古い書き方(obj.fooが未設定の場合デフォルト値60を設定する)</span>
+if (typeof(obj.foo) == "undefined" || obj.foo == null) {
+    obj.foo = 60;
+}
+
+<span class="cm">// ES2020以降の新しい書き方</span>
+obj.foo = obj.foo <em>??</em> 60;
+</pre>
+</div>
+
+<h4 id="optional">オプショナル連結(Optional Chaining)(?)</h4>
+<div class="i">
+<p>これまで、obj.foo.baa などの参照で、foo が未定義の場合 TypeError が発生していましたが、オプショナル連結 <b>?</b> を用いることで、foo が未定義の場合は TypeError ではなく <b>undefined</b> を返却させることが可能となりました。</p>
+<pre class="c">
+<span class="cm">// 古い書き方(obj.fooが定義されていたら参照する)</span>
+if (obj.foo) {
+    console.log(obj.foo.baa);
+}
+
+<span class="cm">// ES2020以降の新しい書き方</span>
+console.log(obj.foo<em>?</em>.baa);	<span class="cm">// =&gt; foo が未定義の場合は undefined</span>
+</pre>
+</div>
+
+<h4 id="globalThis">globalThis</h4>
+<div class="i">
+<p>ブラウザで動作する JavaScript でも、サーバ上で動作する Node.js でも共通に参照できるグローバルオブジェクトとして <b>globalThis</b> がサポートされました。ブラウザで動作する JavaScript では <a href="../js/window.htm" tppabs="http://www.tohoho-web.com/js/window.htm">window</a> オブジェクト、Node.js では <a href="../js/value.htm#global" tppabs="http://www.tohoho-web.com/js/value.htm#global">global</a> オブジェクトと同値になります。</p>
+<pre class="c">
+console.log(<em>globalThis</em>);	<span class="cm">// =&gt; <i>Window {window:...}</i></span>
+</pre>
+</div>
+
+<h4 id="matchAll">string.matchAll()</h4>
+<div class="i">
+<p><i>string</i>.<b>matchAll(</b><i>regexp</i><b>)</b> は、<i>string</i> の中から <i>regexp</i> にマッチするものをリスト(正確にはイテレーター)として返却します。</p>
+<pre class="c">
+for (var m of "2020-12-31".<em>matchAll(</em>/[0-9]+/g)<em>)</em> {
+  console.log(m);
+}
+<span class="cm">// =&gt; <i>["2020", index: 0, input: "2020-12-31", groups: undefined]</i></span>
+<span class="cm">// =&gt; <i>["12", index: 5, input: "2020-12-31", groups: undefined]</i></span>
+<span class="cm">// =&gt; <i>["31", index: 8, input: "2020-12-31", groups: undefined]</i></span>
+</pre>
+</div>
+
+<h4 id="dynamic-import">ダイナミックインポート(Dynamic Import)</h4>
+<div class="i">
+<p>モジュールを非同期に読み込むことが可能となりました。<b>import()</b> は Promise を返却します。非同期にモジュールを読み込み、読み込みが完了した時点でコールバック関数を実行することができます。</p>
+<pre class="c">
+<em>import(</em>"./module.js"<em>)</em>.then(mod => {
+   console.log(mod.a1);
+});
+</pre>
+</div>
+
+<h4 id="import-export">export * as <i>name</i> from module 構文</h4>
+<div class="i">
+<p>インポートしたものを直接エクスポートすることが可能となりました。</p>
+<pre class="c">
+<span class="cm">// 以前の古い書き方</span>
+import * as mod from "./module.js";
+export { mod };
+
+<span class="cm">// ES2020以降の新しい書き方</span>
+<em>export</em> * as mod from "./module.js";
+</pre>
+</div>
+
+<h4 id="import-meta">import.meta</h4>
+<div class="i">
+<p><b>import.meta</b> がサポートされました。現在のモジュールに関する URL などのメタ情報を得ることができます。</p>
+<pre class="c">
+console.log(<em>import.meta</em>);
+<span class="cm">// =&gt; <i>{url, "http://www.example.com/example.js"}</i></span>
+</pre>
+</div>
+
+<h4 id="promise-allSettled">Promise.allSettled()</h4>
+<div class="i">
+<p><a href="promise.html#promise-all" tppabs="http://www.tohoho-web.com/ex/promise.html#promise-all">Promise.all()</a> では、指定したタスクのいずれか一つがエラーになるとそこで待ち合わせを完了してしまいますが、新しくサポートされた Promise.allSettled() を用いると、タスクがエラーとなっても、すべてのタスクが成功終了するか、エラー終了するまで、処理を待ち合わせることが可能となります。</p>
+<pre class="c">
+p1 = Promise.resolve("OK1");
+p2 = Promise.reject("NG2");
+p3 = Promise.resolve("OK3");
+<em>Promise.allSettled(</em>[p1, p2, p3]<em>)</em>.then(
+   resolveList => resolveList.forEach(res => console.log(res)),
+   rejectList  => rejectList.forEach(rej => console.log(rej))
+);
+<span class="cm">// =&gt; <i>{status: "fulfilled", value: "OK1"}</i></span>
+<span class="cm">// =&gt; <i>{status: "rejected", reason: "NG2"}</i></span>
+<span class="cm">// =&gt; <i>{status: "fulfilled", value: "OK3"}</i></span>
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版：2020年12月27日、最終更新：2020年12月27日</div>
+<div>http://www.tohoho-web.com/ex/es2020.html</div>
+</body>
+</html>

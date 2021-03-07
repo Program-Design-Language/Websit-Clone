@@ -1,0 +1,247 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>COOKIEを正しくセットするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>COOKIEを正しくセットするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060077.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060077.htm">[前に]</a>
+<a href="99060079.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060079.htm">[次に]</a>
+<hr>
+<span class=name>あみ</span>
+<span class=time>1999/06/08(火) 09:02:06</span><br>
+フォームで送られてくるデータをクッキーに取り込むということをしたいんですけど、私が作ったプログラムではCOOKIEにセットされずに終わってしまうのです。<br>
+どなたか良いアドバイスをください。<br>
+ここのCOOKIEの説明も読んだんですけどいまいち理解できなくて…。よろしくお願いします。<br>
+<br>
+～＊～＊～＊～＊以下プログラムです＊～＊～＊～<br>
+#!/usr/local/bin/perl<br>
+<br>
+require 'jcode.pl';<br>
+<br>
+if($ENV{"REQUEST_METHOD"} EQ 'GET'){<br>
+	$INPUT = $ENV{"QUERY_STRING"};<br>
+}<br>
+else{<br>
+	read(STDIN,$INPUT,$ENV{"CONTENT_LENGTH"});<br>
+}<br>
+<br>
+print "Set-Cookie: ";<br>
+print "$form{$name}; ";<br>
+print "CookieData=$name; ";<br>
+print "expires=Sat, 1-Jan-2000 00:00:00 GMT; ";<br>
+print "path=/~fuji/futaba/cgi; ";<br>
+print "domain=172.21.8.26\n";<br>
+print "\n";<br>
+<br>
+@DATA = split(/&amp;/,$INPUT);<br>
+foreach $ABC(@DATA){<br>
+($name,$value) = split(/=/,$ABC);<br>
+$value =~tr/+/ /;<br>
+$value =~s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+&amp;jcode'h2z_sjis(*value);<br>
+&amp;jcode'convert(*value,'sjis');<br>
+$form{$name} = $value;<br>
+<br>
+<br>
+print "Content-type: text/html\n";<br>
+print "&lt;HTML&gt;&lt;TITLE&gt;例題２&lt;/TITLE&gt;";<br>
+print "&lt;BODY&gt;";<br>
+print "&lt;CENTER&gt;";<br>
+print "&lt;H3&gt;あなたのいれたデータは：&lt;/H3&gt;&lt;BR&gt;";<br>
+print "&lt;CENTER&gt;";<br>
+print "&lt;FONT SIZE=5 COLOR=#ff0000&gt;&lt;B&gt;変数名＝$name&lt;/B&gt;&lt;/FONT&gt;&lt;BR&gt;";<br>
+print "&lt;FONT SIZE=5 COLOR=#ff0000&gt;&lt;B&gt;値＝$ENV{'HTTP_COOKIE'}&lt;/B&gt;&lt;/FONT&gt;&lt;BR&gt;";<br>
+print "&lt;/CENTER&gt;";<br>
+}<br>
+print "&lt;/BODY&gt;&lt;/HTML&gt;";<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=email><a href="mailto:jrm@fureai.or.jp">[E-Mail]</a></span>
+<span class=time>1999/06/09(水) 01:27:18</span><br>
+まずクッキーの使い方をかなり間違えているように見受けられます<br>
+<font color="#CC8000">＞@DATA = split(/&amp;/,$INPUT);</font><br>
+以下のルーチンで%formを取り出す前に$form{$name}を参照しているのも気になります<br>
+SetCookieの部分の$nameがどこからくるのかも理解できません<br>
+<font color="#CC8000">＞print "&lt;HTML&gt;&lt;TITLE&gt;例題２&lt;/TITLE&gt;";</font><br>
+&lt;HEAD&gt;が抜けています<br>
+とりあえずリファレンスをもう一度よく見て、サンプルスクリプトをいじってみてください<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/09(水) 12:50:25</span><br>
+私なりに解析しました。(^^)<br>
+<br>
+＃ここから<br>
+jcode.plをrequire<br>
+<br>
+クエリストリングや標準入力からの入力を$INPUTに代入<br>
+<br>
+クッキーをブラウザにセット<br>
+（しようとしているが$form{$name}に値が入っていないため代入<br>
+しようとしていると思われるデータはセットされない）<br>
+<br>
+$INPUTのデータを分解しデコードして%form（$form{～})にセットし<br>
+HTTPヘッダを出力してHTML文を出力。奇妙な動きです。<br>
+なぜなら、$INPUTを&amp;で区切ったもの各々を@DATAにいれているが、<br>
+そのあとのforeachループでループ一回するたびにHTTPヘッダ<br>
+(Content-type～の行）を出力しているので、HTTPの仕組みをあまり<br>
+知らないように見うけられます。<br>
+この場合はヘッダの出力は一度でよいと思われます。<br>
+<br>
+＃ここまで<br>
+<br>
+井かに私が書いた例を・・・<br>
+（とても完璧なものとは言えませんが参考にしてください）<br>
+<br>
+＃ここから<br>
+<br>
+#!/usr/local/bin/perl<br>
+<br>
+require 'jcode.pl';<br>
+<br>
+if($ENV{"REQUEST_METHOD"} eq 'GET'){ # EQをeqに変更<br>
+$INPUT = $ENV{"QUERY_STRING"};<br>
+}<br>
+else{<br>
+read(STDIN,$INPUT,$ENV{"CONTENT_LENGTH"});<br>
+}<br>
+<br>
+if ($INPUT eq ""){<br>
+# $INPUT入力が無い時のページ<br>
+print "Content-type: text/html\n\n";<br>
+print "&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;入力&lt;/TITLE&gt;&lt;/HEAD&gt;";<br>
+print "&lt;BODY&gt;";<br>
+print "&lt;FORM ACTION=$ENV{'SCRIPT_NAME'} METHOD=GET&gt;";<br>
+print "&lt;INPUT TYPE='text' NAME='data1'&gt;";<br>
+print "&lt;INPUT TYPE='text' NAME='data2'&gt;";<br>
+print "&lt;INPUT TYPE='submit'&gt;";<br>
+print "&lt;/FORM&gt;";<br>
+print "&lt;/BODY&gt;&lt;/HTML&gt;";<br>
+exit;<br>
+}<br>
+elsif($INPUT eq "view"){<br>
+# クッキーを見るモード<br>
+&amp;view; # サブルーチンviewへ<br>
+exit;<br>
+}<br>
+# クエリストリング（標準入力）からフォームのデータに分解<br>
+@DATA = split(/&amp;/,$INPUT);<br>
+foreach $ABC(@DATA){<br>
+($name,$value) = split(/=/,$ABC);<br>
+$value =~tr/+/ /;<br>
+$value =~s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+&amp;jcode'h2z_sjis(*value);<br>
+&amp;jcode'convert(*value,'sjis');<br>
+$form{$name} = $value;<br>
+}<br>
+<br>
+# クッキーデータのセット<br>
+<br>
+# このへんの動きは、クッキーはひとつのページひとつの名前と値のセット<br>
+#「名前=値」しか呼び出せないので、値に複数の「名前:値」を&amp;でくっつけて<br>
+# 保存しているので、ちょっと複雑になっています。(クッキーの仕様参照）<br>
+<br>
+foreach $key (keys %form){<br>
+# エンコード（ＵＲＬにはアスキーコードしか送らないようにする）<br>
+$key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=~ s/(\W)/sprintf("%%%02X", unpack("C", $1))/eg;<br>
+$form{$key} =~ s/(\W)/sprintf("%%%02X", unpack("C", $1))/eg;<br>
+# クッキーデータをバッファリング（ためこむ）<br>
+$cbuf{$key} = "$key:$form{$key}";<br>
+}<br>
+$COOKIE = join("&amp;",values(%cbuf));<br>
+<br>
+print "Set-Cookie: ";<br>
+print "$ENV{'SCRIPT_NAME'}_CookieData=$COOKIE; "; # 変更可能<br>
+# ↑「スクリプト名_CookieData=名前1:値1&amp;名前2:値2&amp;名前3:値3&amp;名前4:値4」となる<br>
+print "expires=Sat, 1-Jan-2000 00:00:00 GMT; ";<br>
+print "path=/~fuji/futaba/cgi; ";<br>
+print "domain=172.21.8.26\n";<br>
+# print "\n"; # あとに「Content-typeのヘッダ」が来るので改行してはいけない<br>
+print "Content-type: text/html\n\n"; # 改行は2回<br>
+print "&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;例題２&lt;/TITLE&gt;&lt;/HEAD&gt;";<br>
+print "&lt;BODY&gt;";<br>
+print "入力したときには見れないので";<br>
+print "&lt;a href='$ENV{SCRIPT_NAME}?view'&gt;リロードしてクッキーを見る&lt;/a&gt;";<br>
+print "&lt;/BODY&gt;&lt;/HTML&gt;";<br>
+<br>
+# クッキーを見るためのサブルーチン<br>
+sub view{<br>
+# クッキーデータの取り出し。<br>
+# クッキーをセットしているときの動きがわかれば<br>
+# このへんの動きも理解できるはず。<br>
+$cookies = $ENV{'HTTP_COOKIE'};<br>
+@pairs = split(/;/,$cookies);<br>
+foreach $pair (@pairs) {<br>
+($name, $value) = split(/=/, $pair);<br>
+$name =~ s/ //g;<br>
+$DUMMY{$name} = $value;<br>
+}<br>
+$dummy = $DUMMY{"$ENV{'SCRIPT_NAME'}_CookieData"};<br>
+@cookies = split(/&amp;/,$dummy);<br>
+foreach $key (@cookies){<br>
+($name,$value) = split(/:/,$key);<br>
+# クッキーデータをデコード<br>
+$name&nbsp;&nbsp;=~s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+$value =~s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+$cookies{$name} = $value;<br>
+}<br>
+<br>
+# HTTPヘッダ及びHTML出力<br>
+print "Content-type: text/html\n\n"; # 改行は2回<br>
+print "&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;例題２&lt;/TITLE&gt;&lt;/HEAD&gt;";<br>
+print "&lt;BODY&gt;";<br>
+print "&lt;CENTER&gt;";<br>
+print "&lt;H3&gt;あなたのいれたデータは：&lt;/H3&gt;&lt;BR&gt;";<br>
+print "&lt;CENTER&gt;";<br>
+foreach $key (keys(%cookies)){<br>
+print "&lt;FONT SIZE=5 COLOR=#ff0000&gt;&lt;B&gt;変数名＝$key&lt;/B&gt;&lt;/FONT&gt;&lt;BR&gt;";<br>
+print "&lt;FONT SIZE=5 COLOR=#ff0000&gt;&lt;B&gt;値＝$cookies{$key}&lt;/B&gt;&lt;/FONT&gt;&lt;BR&gt;";<br>
+}<br>
+print "&lt;/CENTER&gt;";<br>
+print "&lt;/BODY&gt;&lt;/HTML&gt;";<br>
+}<br>
+<br>
+＃ここまで<br>
+＃長文失礼しました<br>
+<hr>
+<span class=name>あみ</span>
+<span class=time>1999/06/09(水) 15:25:39</span><br>
+Auraiさん、羽崎さん、ありがとうございます。<br>
+私のプログラムがとんでもなく間違えていたんですね。<br>
+羽崎さんのプログラムを頂こうとおもったのですがちょっと難しくて…。<br>
+動かしたんですけど、COOKIEにセットはされるものの表示が上手くいかないんです。<br>
+何かつけたさないといけないのでしょうか？？<br>
+こんなに有難いレスを頂いたのにすみません。<br>
+表示の部分を教えて頂けないでしょうか？<br>
+それとこのプログラムはHTMLからデータを送ってもいいですか？データの数に制限があるのでしょうか？<br>
+知識が足りなくてすみません。よろしくお願いします。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/09(水) 16:33:21</span><br>
+<font color="#CC8000">&gt;羽崎さんのプログラムを頂こうとおもったのですがちょっと難しくて…。</font><br>
+具体的にどこらへんが難しいのか（全部というのはナシ、必ずわからない<br>
+ところは特定されているはずですから）教えてください。<br>
+<br>
+<font color="#CC8000">&gt;動かしたんですけど、COOKIEにセットはされるものの表示が上手くいかないんです。</font><br>
+<br>
+表示がうまく行かない、とは具体的にどういうことですか？<br>
+1、画面が変わらない。<br>
+2、サーバエラーの画面になる<br>
+3、なにかをダウンロードしようとする。<br>
+4、ページは表示されるが、クッキーが表示されない。<br>
+5、ブラウザがタイムアウトする。<br>
+<br>
+<font color="#CC8000">&gt;それとこのプログラムはHTMLからデータを送ってもいいですか？データの数に制限があるのでしょうか？</font><br>
+ありません。他のHTMLからPOST(GET)しても問題ありません。<br>
+<br>
+<font color="#CC8000">&gt;知識が足りなくてすみません。よろしくお願いします。</font><br>
+できれば、CGIかPerlの解説書（解説しているwebサイト）を片手に<br>
+わからないところを”具体的”に質問していただけると答えやすいです。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060077.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060077.htm">[前に]</a>
+<a href="99060079.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060079.htm">[次に]</a>
+</body>
+</html>

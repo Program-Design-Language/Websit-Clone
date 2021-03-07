@@ -1,0 +1,129 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>splitで要素を分ける方法について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>splitで要素を分ける方法について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050107.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050107.htm">[前に]</a>
+<a href="99050109.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050109.htm">[次に]</a>
+<hr>
+<span class=name>kofuku</span>
+<span class=email><a href="mailto:FKPA9018@jpo-miti.go.jp">[E-Mail]</a></span>
+<span class=time>1999/05/19(水) 16:11:50</span><br>
+文字列を、ある文字で分けるコマンドとして、perlには、splitがありますが、<br>
+例えば、<br>
+$x = 'a&lt;&gt;b&lt;&gt;c&lt;&gt;"d&lt;&gt;e"&lt;&gt;f';<br>
+といった、文字列$xを<br>
+@y = split(/&lt;&gt;/, $x);<br>
+で実行した場合、結果は,@yに<br>
+(a,b,c,"d,e",f)<br>
+が帰ってきますが、ここで、<br>
+(a,b,c,d&lt;&gt;e,f)<br>
+が、戻ってくるようにするには、どの様にしたらよいのでしょうか？<br>
+つまり、ある区切り文字で連結された要素の中に、区切り文字が入っていた場合にはどの様にしたらよいのか<br>
+といったことですが、ご教授方よろしくお願いします。<br>
+因みに、csv ファイルの場合は<br>
+@y = ();<br>
+push (@y, $+) while $x =~ m{ "([^\"\\]*(?:\\.[^\"\\]*)*)",? | ([^,]+),?| , }gx;<br>
+push (@y, undef) if substr ( $x, -1, 1) eq ',' ;<br>
+<br>
+でうまくいったのですが、これのカンマの所を&lt;&gt;に置き換えると、最後の要素が出てこないのですが、<br>
+<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/19(水) 22:57:54</span><br>
+ちょっといまいちなコードかもしれないけど…<br>
+<br>
+　$_ = 'a&lt;&gt;b&lt;&gt;c&lt;&gt;"d&lt;&gt;e"&lt;&gt;f';<br>
+　while ($_){<br>
+　　s/^"(.*?)"(&lt;&gt;|$)// || s/^(.*?)(&lt;&gt;|$)//;<br>
+　　push(@y,$1);<br>
+　}<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/20(木) 11:25:20</span><br>
+ややこしいこと考えずに、分割する前に""で囲まれた部分の&lt;&gt;を別の文字列に置き換えちゃえばいいんじゃない？<br>
+$x =&nbsp;&nbsp;'a&lt;&gt;b&lt;&gt;c&lt;&gt;"d&lt;&gt;e"&lt;&gt;f';<br>
+$x =~ s/&amp;/&amp;&amp;/g; # &lt;&amp;&gt;という文字列が入力された場合の対応<br>
+$x =~ s/(".*?)&lt;&gt;(.*?")/$1&lt;&amp;&gt;$2/g;<br>
+@y = split(/(?:"|&lt;&gt;)+/, $x);<br>
+@y = map{s/&lt;&amp;&gt;/&lt;&gt;/; s/&amp;&amp;/&amp;/; $_}(@y);<br>
+<br>
+これで、どうでしょうか？<br>
+<hr>
+<span class=name>K's K</span>
+<span class=email><a href="mailto:kawa_s@mx3.tiki.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/08/10(火) 01:34:32</span><br>
+kofukuさんのデータ内にカンマが含まれる場合のcsvの処理を見させて貰って、使わせていただきました。<br>
+すると、うまく切り取ることが出来ない行があって、その行には、元のデータにダブルクオーテーションマークが含まれるていて("tohoho")、それが、("""tohoho""")のようにcsvに変換されていました。<br>
+やってみたのですが、Perlを始めて２ヶ月程度では歯が立ちません。<br>
+どうかご教授願います。なお、元のデータにコンマとダブルクオーテーションマークがともに含まれている場合もあるので、<br>
+<br>
+a,"a,b","""a""","""a, b, and c"""<br>
+<br>
+を、正しく<br>
+<br>
+a と a,b と"a"と"a, b, and c"に区切る方法ということになると思います。よろしくお願いいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/08/10(火) 05:08:36</span><br>
+うまくいくかどうか自信はないけど<br>
+　$_='a,"a,b","""a""","""a, b, and c"""';<br>
+　while ($_){<br>
+　　s/^("*)(".*?")\1(,|$)// || s/^()(.*?)(,|$)//;<br>
+　　print "$2\n";<br>
+　}<br>
+とか。<br>
+<hr>
+<span class=name>K's K</span>
+<span class=time>1999/08/11(水) 01:40:02</span><br>
+B-Cusさんのをやってみたら２つめが、"a,b"と表示されました。<br>
+なお、単にCSVといってもソフトによって保存形式が違うんですね。<br>
+a	a,b	"a"	"a,b"	a,"b"	"a","b"<br>
+が、Windows版のExcel(95)では<br>
+a,"a,b","""a""","""a,b""","a,""b""","""a"",""b"""<br>
+となり三四郎８で保存すると、<br>
+"a","a,b",""a"",""a,b"","a,"b"",""a","b""<br>
+となりました。私の使いたいデータは桐の７で、これを「テキストで書き出す」とExcelと同じになりました。<br>
+ややっこしい例を増やしてしまったようですが、Excel形式のcsvでよろしくお願い致します。<br>
+<hr>
+<span class=name>K's K</span>
+<span class=time>1999/08/11(水) 01:44:25</span><br>
+上の３行目が、書いている間は離れていたのですが送信するとくっついて見づらくなってしまいました。<br>
+a　　a,b　　"a"　　"a,b"　　a,"b"　　"a","b"<br>
+の６つです。<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=time>1999/08/11(水) 05:28:49</span><br>
+長くなってしまいましたが<br>
+$x='a,"a,b","""a""","""a, b, and c"""';<br>
+while( $x =~ s/^([^,"]*|"(""|[^"])*"),// ) {<br>
+&nbsp;&nbsp;$_ = $1;<br>
+&nbsp;&nbsp;s/^"(.*)"$/$1/;<br>
+&nbsp;&nbsp;s/""/"/g;<br>
+&nbsp;&nbsp;print "$_\n";<br>
+}<br>
+$x =~ s/^"(.*)"$/$1/;<br>
+$x =~ s/""/"/g;<br>
+print "$x\n";<br>
+こんなのどうでしょう<br>
+<hr>
+<span class=name>K's K</span>
+<span class=time>1999/08/12(木) 01:05:06</span><br>
+Auraiさん、ありがとうございます。目的のデータ517行分うまく切り出せました。<br>
+しかしPerlってすごいですね。バッチファイルぐらいしか知らない私でも根幹部分を教えてもらえれば、CSVからHTMLのテーブルに変換するプログラムが作れてしまう。あ、もちろん参考にするプログラムがあったからできたことですが・・・。<br>
+感動というかあきれています。<br>
+なお、桐の「テキストで書き出す」データはExcelのCSVと微妙に違っていました。<br>
+私と同じように桐のデータを利用する方は、一旦Excelを通して下さい。<br>
+Excelなんか持っていないという人もいらっしゃるでしょうね。<br>
+a"b"cというデータを桐はa"b"c、Excelは"a""b""c"に変換します。<br>
+ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050107.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050107.htm">[前に]</a>
+<a href="99050109.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050109.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>カウンターを複数設置する方法はありますか？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>カウンターを複数設置する方法はありますか？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199805/index.htm">[上に]</a>
+<a href="98050001.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050001.htm">[前に]</a>
+<a href="98050003.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050003.htm">[次に]</a>
+<hr>
+<span class=name>Ｋ</span>
+<span class=email><a href="mailto:f-kei@mars.dti.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/05/02(土) 15:17:03</span><br>
+cgiカウンターを使用させてもらって、ＨＰ作成中なのですが、カウンターを何個所かに付けたいと<br>
+思っています。wwwcount.cgiを共有するような形で複数設置する方法はありますか？<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>L</span>
+<span class=time>1998/05/02(土) 19:16:47</span><br>
+別々にカウントする場合は、ファイルネームを変えれば大丈夫です。<br>
+その際は、スクリプトの中のファイルネームも揃える必要があります。<br>
+<br>
+例)<br>
+wwwcount.cgi→ wwwcount2.cgi<br>
+wwwcount.cnt→wwwcount2.cnt<br>
+wwwcount.dat→wwwcount2.dat<br>
+wwwcount.acc→wwwcount.2acc<br>
+<br>
+<br>
+$file_count&nbsp;&nbsp;= "wwwcount2.cnt";<br>
+$file_date&nbsp;&nbsp;&nbsp;= "wwwcount2.dat";<br>
+$file_access = "wwwcount2.acc";<br>
+$file_lock&nbsp;&nbsp;&nbsp;= "lock/wwwcount2.loc";<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# アクセスログをメールで送信する<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($mailto ne "") {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$tmp_count = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open(IN, "&lt; $file_access");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (&lt;IN&gt;) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (/^COUNT/) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$tmp_count++;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;close(IN);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open(OUT, "| $nkf -j | $sendmail $mailto");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print OUT "To: $mailto\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print OUT "From: wwwcount2\n";<br>
+<br>
+というようにです。<br>
+<hr>
+<span class=name>Ｋ</span>
+<span class=email><a href="mailto:f-kei@mars.dti.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/05/03(日) 04:54:36</span><br>
+早速の回答、ありがとうございます！<br>
+Ｌさんの説明の通りそれぞれのファイルをリネームして設置したらうまくできました。<br>
+<br>
+もう１つ質問あのですが、私が以前設置したカウンターは（プロバイダーが提供して<br>
+いる物ですから設置はおおげさですね。）<br>
+ &lt;img src="/cgi-bin/Count.cgi?df=ユーザ名.dat"&gt;<br>
+のように、ユーザ名で認識したカウンターだったのですが、そのような設置の方法も<br>
+あるのでしょうか？これの場合、ユーザ名２.datのようにすれば２つ目のカウンターが<br>
+設置できるというものでした。<br>
+少々最初の質問と趣旨が変わってしまいますが、よろしくお願いします。<br>
+<hr>
+<span class=name>Ｋ</span>
+<span class=email><a href="mailto:f-kei@mars.dti.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/05/03(日) 05:05:10</span><br>
+すいません、もう１つ。<br>
+上記のようにして設定したカウンターから２種類のgifファイル呼ぶことはできますか？<br>
+wwwcount.cgiからは0.gif<br>
+wwwcount2.cgiからはa0.gif<br>
+ファイルでそれぞれカウントアップさせたいのですが。<br>
+<br>
+いくつも書いてしまってすいません。どうぞよろしくおねがいします。<br>
+<hr>
+<span class=name>M</span>
+<span class=time>1998/05/03(日) 13:04:30</span><br>
+プロバイダのカウンタはプロバイダに聞くしかないと思うのですが、事実あるということはあるわけでしょう。<br>
+ユーザ名2というデータファイルを作ってそれを参照してくれるスクリプトになっていると推測します。<br>
+もう一つの方は、gifcat.plを書き換える必要が出てきます。<br>
+それよりも、別のディレクトリに同じフィル名で違うカウンタ用の画像を用意した方が簡単です。<br>
+そうすれば、wwwcount.cgiも書き換える必要がなくなります。<br>
+但し、プロバイダが、cgiを使えるディレクトリを新規に作ることを許してくれないとできませんが。<br>
+<hr>
+<span class=name>K</span>
+<span class=time>1998/05/14(木) 18:16:44</span><br>
+<span class=resolv>[[解決]]</span><br>
+すいません。ちょっと色々ありまして、レス遅くなりました。<br>
+別ディレクトリを用意する方法でうまくいきました！<br>
+ありがとうございました！<br>
+<hr>
+<span class=name>webmaster</span>
+<span class=email><a href="mailto:webmaster@administrator.office.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/09(水) 18:06:26</span><br>
+複数設置で質問なのですが説明書？には<br>
+カウンターを複数設置する<br>
+｛<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;カウンターを複数設置するには、<br>
+2個目のカウンターを貼り付けたいHTMLファイルから wwcount.cgiを<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;呼び出す際に、<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CGIの場合: wwwcount.cgi?gif+name+wwwcount2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SSIの場合: wwwcount.cgi gif name wwwcount2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;のように、name オプションと新しいカウンター名(上の例では wwwcount2)を指定し、<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://～/～/cgi-bin/wwwcount2.cgi (1999.1.31訂正)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://～/～/cgi-bin/wwwcount2.cnt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://～/～/cgi-bin/wwwcount2.dat<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://～/～/cgi-bin/wwwcount2.acc<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;のファイルをそれぞれ追加してください。<br>
+wwwcount2 を wwwcount3 としていけば、3個目、4個目の<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;カウンターを設置可能です。<br>
+｝<br>
+<br>
+とありスクリプトの中身を編集する必要はないように思うのですが。<br>
+説明書の通りにやっただけでは元々あるwwwcount.*だけしか使用<br>
+していないようです。<br>
+スクリプトの中身は編集しなければならないのですか。<br>
+また、その場合はスクリプトを追加するのですか、それとも書き換えるのですか。<br>
+更に、一つの.cntファイル（.acc .datも)で管理することはできませんか。<br>
+複数設置するとファイルがやたら増えてしまうので<br>
+助言をお待ちしております。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199805/index.htm">[上に]</a>
+<a href="98050001.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050001.htm">[前に]</a>
+<a href="98050003.htm" tppabs="http://www.tohoho-web.com/lng/199805/98050003.htm">[次に]</a>
+</body>
+</html>

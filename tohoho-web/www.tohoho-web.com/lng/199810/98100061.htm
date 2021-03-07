@@ -1,0 +1,178 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>&lt;img src="xx.cgi"&gt;で画像を表示させるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>&lt;img src="xx.cgi"&gt;で画像を表示させるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199810/index.htm">[上に]</a>
+<a href="98100059.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100059.htm">[前に]</a>
+<a href="98100062.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100062.htm">[次に]</a>
+<hr>
+<span class=name>すし屋</span>
+<span class=time>1998/10/23(金) 04:39:13</span><br>
+Perlでカウンタを作りたいのですが、<br>
+<br>
+--xx.cgi--<br>
+print "Content-type: image/gif\n\n";<br>
+<br>
+open(IMAGE, 'xx.gif');<br>
+$size = (-s IMAGE);<br>
+binmode(IMAGE);<br>
+sysread(IMAGE, $image, $size);<br>
+close(IMAGE);<br>
+<br>
+binmode(STDOUT);<br>
+syswrite(STDOUT, $image, $size);<br>
+--eof--<br>
+<br>
+として、&lt;img src="xx.cgi"&gt;<br>
+とやるとなぜか表示されないのです。<br>
+STDOUTをファイルに指定すると、きちんとxx.gifと同じファイルができあがります。<br>
+#ローカルで実験しています。Windowsです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/10/23(金) 04:44:31</span><br>
+winは知りませんが、気になった点としては、<br>
+・binmodeの前にサイズを計算して大丈夫でしょうか(asciiで計算されない?)<br>
+・img srcではなく、直接xx.cgiを読むと画像は表示されるのでしょうか。<br>
+<br>
+　print "Content-type: image/gif\n\n";<br>
+　open(IMAGE, 'xx.gif');<br>
+　binmode(IMAGE);<br>
+　binmode(STDOUT);<br>
+　print &lt;IMAGE&gt;;<br>
+<br>
+だとどうでしょう。あと、もしサイズを求めるんなら<br>
+Content-length: を出力すると親切かも。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/10/23(金) 05:04:15</span><br>
+あるいは binmode(STDOUT) の前に Content-type を表示して<br>
+しまっているので、binmodeがうまく働いてない、というのはダメ？<br>
+<br>
+つまり<br>
+　binmode(STDOUT)→print "Content-type: ..";<br>
+の順にするとか。<br>
+<br>
+…うーん、どれもこれもタトくさいなぁ。<br>
+<hr>
+<span class=name>かっくん</span>
+<span class=time>1998/10/23(金) 11:15:51</span><br>
+<br>
+私の場合、サーバ上では<br>
+<br>
+open (IMG, "$gifname");<br>
+print "Content-type: image/gif\n\n";<br>
+print &lt;IMG&gt;;<br>
+close(IMG);<br>
+<br>
+これだけで表示されますが、ローカルで<br>
+AN-HTTPD ＋ perl for Win32の場合は壊れて表示されます。<br>
+これはHTTPDかperlのどちらかのバグだと思います。<br>
+<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/10/23(金) 21:34:04</span><br>
+perl の記述に誤りがあります。<br>
+<br>
+誤：print &lt;IMG&gt;;<br>
+正：{local($/); print &lt;IMG&gt;; }<br>
+<br>
+&lt;&gt; 演算子は "\n" が現れる所までしか読みません。<br>
+一度に全てのデータを読み取るには、$/ を未定義、あるいは<br>
+空文字列にします。<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/10/24(土) 00:45:09</span><br>
+すみません。私が間違っていました。<br>
+<br>
+print &lt;IMG&gt;;<br>
+<br>
+で OK なはずです。何をぼけていたんだろうか。<br>
+<hr>
+<span class=name>すし屋</span>
+<span class=time>1998/10/24(土) 03:36:52</span><br>
+みなさんありがとうございます。<br>
+僕が上に書いたスクリプトをサーバー上で試したのですが、(binmode()は消しました)<br>
+なぜか動きませんでした。<br>
+B-Cusさんの発言の物もいろいろ組み合わせて試したのですが、だめでした。<br>
+ブラウザからではなくDOSからPerl.exeを使って試したところ最終バイトまで出力されるので、<br>
+#ビープ音が鳴りつつ(^^;;<br>
+かっくんさんのは全く同じ症状です。画像の情報をブラウザで表示すると、40バイトだけ出力されています。<br>
+サーバー上では動作します。<br>
+<br>
+とりあえず、かっくんさんのスクリプトをお借りしますm(_ _)m。<br>
+<br>
+そこでふと、とほほさんのカウンタはローカルで、動作するのかと思い、実験しました。<br>
+やはりPerl for win32かAn HTTPdを疑ってみることにします。<br>
+ローカル依存の話で申し訳ございませんでした。<br>
+<br>
+一応解決としておきます。<br>
+みなさんありがとうございました。<br>
+<hr>
+<span class=name>すし屋</span>
+<span class=time>1998/10/24(土) 03:44:48</span><br>
+妙な文のまま送ってしまったので、出直します。ごめんなさい。<br>
+<br>
+みなさんありがとうございます。<br>
+僕が上に書いたスクリプトをサーバー上で試したのですが、(binmode()は消しました)<br>
+なぜか動きませんでした。<br>
+B-Cusさんの発言の物もいろいろ組み合わせて試したのですが、だめでした。<br>
+ブラウザからではなくDOSからPerl.exeを使って試したところ最終バイトまで出力されるので、<br>
+#ビープ音が鳴りつつ(^^;;<br>
+AnHTTPdなのでは？と思っています。<br>
+<br>
+かっくんさんのは全く同じ症状です。画像の情報をブラウザで表示すると、40バイトだけ出力されています。<br>
+サーバー上では動作します。<br>
+<br>
+とりあえず、かっくんさんのスクリプトをお借りしますm(_ _)m。<br>
+<br>
+そこでふと、とほほさんのカウンタはローカルで、動作するのかと思い、実験しました。<br>
+結果は「perl for win32+AnHTTPdでは動かず」でした。<br>
+やはりPerl for win32かAn HTTPdを疑ってみることにします。<br>
+ローカル依存の話で申し訳ございませんでした。<br>
+<br>
+一応解決としておきます。<br>
+みなさんありがとうございました。<br>
+<hr>
+<span class=name>ひろぼー</span>
+<span class=time>1998/10/28(水) 07:55:46</span><br>
+Perl for win32 で read("file.jpg", $buff, 256); とすると、0x1A (^Z) が現れた所で読込が中断されます。&lt;&gt;演算子も同様。<br>
+DOSでは正常な動作だと思います。binmodeは必要では？<br>
+すし屋さんの「最後まで出力された」のが不思議ですが・・・<br>
+<br>
+一番最初のスクリプトがうまくいかなかったのは、<br>
+printで出力したヘッダ行がバッファリングされるのに対し、<br>
+syswriteはバッファを飛ばして出力してしまうので、<br>
+ヘッダ行はバッファに残ったままになってるんじゃないですかね？<br>
+syswriteじゃなくて、単純にprintかwriteを使えばいいのでは？<br>
+あるいは、printの後ろにフラッシュ処理を入れて見るとか<br>
+&nbsp;&nbsp;$s = select(STDOUT); $| = 1; select($s); print "";<br>
+<br>
+はずしてたらごめんなさいね。<br>
+<hr>
+<span class=name>ひろぼー</span>
+<span class=time>1998/10/30(金) 07:28:00</span><br>
+すし屋さん、もう見てないかも知れないけど、<br>
+嘘書いてしまったこともあり再登場です。<br>
+write命令はＣのfwriteに対応するものじゃなかったんですね。<br>
+<br>
+フラッシュ処理を入れたものも動きましたが、以下の方が簡単。<br>
+Perl for Win32 ＋ AnHTTPd で確認。<br>
+　open(IMAGE, 'xx.gif');<br>
+　binmode(IMAGE);<br>
+　$size = read(IMAGE, $image, -s IMAGE);<br>
+　close(IMAGE);<br>
+　print "Content-type: image/gif\n\n";<br>
+　binmode(STDOUT);<br>
+　print $image;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199810/index.htm">[上に]</a>
+<a href="98100059.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100059.htm">[前に]</a>
+<a href="98100062.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100062.htm">[次に]</a>
+</body>
+</html>

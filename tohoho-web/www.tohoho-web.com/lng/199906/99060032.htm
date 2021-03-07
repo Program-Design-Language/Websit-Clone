@@ -1,0 +1,348 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>location.href=" 文を続けて使用出来ますか？(2)</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>location.href=" 文を続けて使用出来ますか？(2)</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060031.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060031.htm">[前に]</a>
+<a href="99060033.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060033.htm">[次に]</a>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/04(金) 10:27:23</span><br>
+以前この質問をしたのですが、アドバイスを頂けませんでしたので、もう一度分かり易い形(?)<br>
+で再度質問させて頂きたいと思います。<br>
+<br>
+実際にはありえないと思いますが、以下のようにダウンロード操作をループさせる処理を考えます。<br>
+<br>
+&lt;HTML&gt;<br>
+&lt;HEAD&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;TITLE&gt;HREF test&lt;/title&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;META CONTENT="charset=euc-jp"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SCRIPT LANGUAGE=JavaScript&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i=0; i &lt;= 5; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;location.href="test.csv";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// --&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+<br>
+&lt;BODY&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;B&gt;location.href のループテスト。&lt;/B&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+<br>
+ところがこれをブラウザで実行すると、ダウンロード用のダイアログボックスがループの回数だけ<br>
+出てこなくてはいけない筈ですが、一度しか出てきません。<br>
+（多分、最後のループでの location.href="test.csv"; の実行結果だと思います。）<br>
+<br>
+しかし、location.href="test.csv"; の後に<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert("正常に動作させるための操作です。");<br>
+といった行を追加してタイミングを取ると、ループの回数だけダイアログボックスが出るように<br>
+なります。<br>
+<br>
+なぜ、上記のコードでは正しく動作しないのでしょうか？<br>
+また、JavaScriptでこのような操作を確実に行なうにはどうすればよいでしょうか？<br>
+アドバイスお願いします。<br>
+<br>
+動作環境は、Windows NT4.0 + Netscape 4.5 です。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/04(金) 10:49:01</span><br>
+想像なんですが，例えば<br>
+location.href='hoge.html';<br>
+などのようにダウンロードファイルでない場合は，この命令が実行された<br>
+ときには，別のHTMLを読みにいくわけですから，それ以後の命令がなん<br>
+であろうとも実行されないのではないでしょうか？<br>
+ダウンロードファイルの場合でも同じようなことが起こる可能性はあると<br>
+思います。<br>
+とりあえず，回避法になりそうなものとしては別ウインドウかフレームか<br>
+で，とにかく別のtargetのlocation.hrefを読ませるようにしてみては？<br>
+見栄えを考えるなら隠しフレームがいいかもしれません。<br>
+<br>
+それとこの場合，もしかしたら同じ隠しフレームのlocation.hrefを２回<br>
+連続で書き換えると，１つ目のロード途中で中断して２つ目を読みにいく<br>
+こともあるかもしれません。このときはonLoadだか何かで，読み込みが<br>
+終わるまでのループを作っておくのが常道かもしれませんが・・・個人的<br>
+には無限ループに陥るケースもないとはいえないので，できればそれぞれ<br>
+別のtargetを持たせるのがいいのかも。<br>
+＃杞憂かもしれませんが。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/04(金) 10:54:16</span><br>
+失礼，現状を読み違えてました。<br>
+ループをalertで中断させると正常に読み込めるのであれば，<br>
+<font color="#CC8000">&gt;それ以後の命令がなんであろうとも実行されない</font><br>
+わけではないですね。<br>
+<br>
+ただ，その後に書いたtargetを指定するのや，ウェイトを<br>
+噛ませるのは有効かも。<br>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/04(金) 14:12:25</span><br>
+やはり、意外と難しそうですね。<br>
+<br>
+試しに異なるブラウザ環境でテストしてみたところ、以下のような結果になりました。<br>
+1. Windows NT 4.0 + IE 3.0<br>
+&nbsp;&nbsp;&nbsp;alert()文をループ表示した後、csv ファイルをExcel形式で画面に読み込みました。<br>
+2. UNIX (Solaris 2.5) + NN 4.04<br>
+&nbsp;&nbsp;&nbsp;alert()文を、確認ボタンも待たずにループ表示した後、ダウンロードのダイアログボックス<br>
+&nbsp;&nbsp;&nbsp;を表示しました。alert()文による確認ボタンは、ダウンロード操作後、押すようになります。<br>
+<br>
+こんなに動作が異なるとは...。<br>
+<br>
+結局はループの中で、<br>
+1. 与えた検索条件によりデータベースを検索し、結果を csv ファイルに出力するCGI スクリプト<br>
+&nbsp;&nbsp;&nbsp;を起動する。<br>
+2. 作られた CSV ファイルをダウンロードする。<br>
+という操作を行なうために、<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+location.href="search.cgi?"+'$param1'+\"+\"+'$param2'+\"+\"+'$param3';<br>
+location.href="<a href="javascript:if(confirm('http://.../  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://.../'" tppabs="http://.../">http://.../</a>$download_file";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+<br>
+という処理を実行させたいだけなのですが...。<br>
+（この場合、alert()文などをかませないと、csv ファイルが作られないままダウンロードの<br>
+&nbsp;&nbsp;ダイアログボックスが起動します。）<br>
+<br>
+<font color="#CC8000">&gt; ただ，その後に書いたtargetを指定するのや，ウェイトを噛ませるのは有効かも。</font><br>
+<br>
+ウェイトは試してみましたが、その時の設定では効果がありませんでした。<br>
+効果があるとしても、パフォーマンスとの兼ね合いもあるので、あまり長時間の設定は好ましく<br>
+ないし、何か簡単で確実な方法はないものかと悩んでおります。<br>
+<br>
+いいアイデアがありましたら、宜しくお願いします。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/04(金) 14:59:16</span><br>
+なるほど。１つのファイルを作成した後で，そのファイルをとなるとさらに<br>
+難しそうですね。<br>
+ただ思うに，最初のlocation.hrefで呼びだしたURLの読み込み（この場合は<br>
+ファイル作成）が完了している／していないに関わらず，次のlocation.href<br>
+を実行するところに問題があるような気がしますから，それを判断させる必要<br>
+があるのではないでしょうか。<br>
+<br>
+例えば<br>
+frameA.location.href='search.cgi?・・・<br>
+i=0;<br>
+while ((frameA.onLoad=false)&amp;&amp;(i &lt; 10000)){<br>
+i++;<br>
+}<br>
+location.href='test.csv';<br>
+なんかではどうですか？<br>
+＃もちろんiのカウンタは無限ループ対策です。<br>
+<br>
+問題はonLoadの挙動なんですけど。ちゃんとcgiの動作終了を拾ってくれるか。<br>
+それが無理なら・・・javascriptでは難しいような気がします。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/04(金) 16:09:25</span><br>
+すみません，onLoadでは拾えなかったですね。勘違いしてました。<br>
+<br>
+IE4ならdocument.readyState='complete'ですか。<br>
+それ以外だと・・・う～ん，lastModifiedを使うとか？<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/06/04(金) 18:21:40</span><br>
+<font color="#CC8000">&gt; 結果を csv ファイルに出力するCGI スクリプト</font><br>
+これの最後にLocationヘッダ吐かせるのじゃ駄目なんでしょうか？<br>
+<br>
+CGIの事よくわかってないけど・・・・＾＾；<br>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/04(金) 20:55:07</span><br>
+いろいろなアドバイス、ありがとうございます。<br>
+<br>
+<font color="#CC8000">&gt; これの最後にLocationヘッダ吐かせるのじゃ駄目なんでしょうか？</font><br>
+<br>
+課題としている処理では、データベースを検索して結果を csv ファイルに出力し、それを<br>
+ダウンロードするというケースだけでなく、以下のような処理もあります。<br>
+<br>
+1. いくつかの異なる検索条件によりデータベースを検索し、結果を１つの csv ファイルに<br>
+&nbsp;&nbsp;&nbsp;追記出力する。（従って、ループ処理となります）<br>
+2. 最終的に作られた CSV ファイルをダウンロードする。<br>
+<br>
+1 の「データベースを検索し、結果を csv ファイルに出力する」という処理を汎用的に<br>
+使うために、あえて 2 の「ダウンロード処理」と分けていました。<br>
+この場合も、1 の処理を繰り返すと、前の処理がキャンセルされるようで、結果的に最後<br>
+の検索条件による検索結果しか csv ファイルには記述されていませんでした。<br>
+<br>
+しかし、他にうまいやり方がなければ、ループさせない場合だけでも回避出来るか試して<br>
+みる必要はありそうですね。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/07(月) 00:34:10</span><br>
+単純に複数のＤＬを連続して行うなら、<br>
+location.hrefではなく、<br>
+新しいウィンドウに表示させることでうまく行くみたいです。<br>
+<br>
+for(i=0;i&lt;5;i++){<br>
+window.open('hoge.lzh');<br>
+}<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/07(月) 11:59:03</span><br>
+どうもJavaScriptで解決するのは無理のような気がしますね。<br>
+といいつつ，僕もCGIについては，てんで判らないのですが。<br>
+<br>
+ただ，原因はおそらくcsvファイルの書込が終了したかどうかを<br>
+チェックせずに次の書込や読込を実行している点にあるような<br>
+気がします。掲示板の同時書込を禁止するのと同じルーチンで<br>
+防止できるのではないでしょうか。<br>
+<br>
+それと同様な処理を使い回すのであれば，cgi呼びだすときに<br>
+処理のやり方を決めるパラメーターを１つ追加して呼びだし，<br>
+サブルーチンで処理するなり，ライブラリ（でいいんですかね？<br>
+jcode.plみたいなのって）にするなりで，呼びだすcgi側で<br>
+行う方がいいように思いますけど。<br>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/08/24(火) 21:53:53</span><br>
+質問を投げかけたまま、随分時間が経ってしまいました。<br>
+結局、アラート文でタイミングを取る形でひとまず完成という事にしていましたが、<br>
+アラート文のＯＫボタンを押すタイミングが早すぎると、最初のlocation.href=...<br>
+の処理がスキップされるというトラブルが発生するため、再度解決策を検討する<br>
+必要が出てきました。<br>
+根本的な解決策も検討したのですが、ひとまずウェイトを噛ませる事で回避する事<br>
+にして、以下の様にコーディングしてみたのですが、ウェイトがforループの最初の<br>
+setTimeout()にしか利きません。<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function downLoad(param) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;location.href="listview_dl.cgi?"+param;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function test() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i=0; i &lt;= num; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (init_flag == 0) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setTimeout(downLoad, 3000, 0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setTimeout(downLoad, 3000, 1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+ものの本によると、タイムアウトイベントがアクティブな状態で新しいページに移動すると、<br>
+タイムアウトが取り消されると書いてありましたが、location.href=...により新しいページ<br>
+に移動したと解釈されて取り消されてしまったのでしょうか？<br>
+もしそうであれば、何か回避策はないのでしょうか？<br>
+再びアドバイスをお願いします。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/08/25(水) 10:04:39</span><br>
+setTimeoutは「一定時間後に処理を発生させる」ものであって「一定時間処理待ちにする」ものでは<br>
+ないですよね？<br>
+だからループでつぎつぎにsetTimeoutが実行され，一定時間後につぎつぎに処理が実行されてるのでは？<br>
+<br>
+現在の時刻を取得して，whileループか何かでその時刻＋αの時刻になるまで（判定は == でなく &gt;で）<br>
+ウェイトをかけるようにしてみてはどうでしょう？<br>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/09/10(金) 17:06:35</span><br>
+<font color="#CC8000">&gt;setTimeoutは「一定時間後に処理を発生させる」ものであって「一定時間処理待ちにする」ものでは</font><br>
+<font color="#CC8000">&gt;ないですよね？</font><br>
+<font color="#CC8000">&gt;だからループでつぎつぎにsetTimeoutが実行され，一定時間後につぎつぎに処理が実行されてるのでは？</font><br>
+<br>
+そのとおりです。勘違いしていました。<br>
+<br>
+<font color="#CC8000">&gt;現在の時刻を取得して，whileループか何かでその時刻＋αの時刻になるまで（判定は == でなく &gt;で）</font><br>
+<font color="#CC8000">&gt;ウェイトをかけるようにしてみてはどうでしょう？</font><br>
+<br>
+ウェイトをかけるにしても、sleep() のように関数１つという訳にはいかないのですね。<br>
+どうせ手間暇かけるなら、やはりきちんとした対策に取り組もうかと、思い直しています。<br>
+<br>
+そこで改めて質問なんですが、JavaScriptとCGIで、引数以外の唯一(?)の情報共有方法である cookieを<br>
+用いてうまくハンドリング出来ないかと思っています。<br>
+具体的なイメージは以下のとおりです。<br>
+<br>
+1.JavaScript から "location.href=..."文により、CGI を起動する。<br>
+2.起動された CGI の最初で、ある cookie の値を、作業中である事を示す「BUSY」にセットする。<br>
+&nbsp;&nbsp;作業が終了したら、その cookie の値を「DONE」にセットする。<br>
+3.JavaScript から、次の "location.href=..."文が実行される前に、2 で設定した cookie を参照し、<br>
+&nbsp;&nbsp;その値「BUSY」の間はループから出られないようにする。<br>
+4.cookie の値が「DONE」になるのを待ってループから抜け、次の "location.href=..."文により、CGI<br>
+&nbsp;&nbsp;を起動する。<br>
+<br>
+というものです。<br>
+元々 cookie は静的な情報を管理するためのもので、このような利用法はイレギュラーなものだとは<br>
+思いますが、他にいい方法が見つからなかったため、実現性を検討中です。<br>
+この方法について、問題点等知見のある方がおられましたら、アドバイス頂けますよう、お願い致します。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=email><a href="mailto:nobutaka@p2452.nsk.ne.jp">[E-Mail]</a></span>
+<span class=url><a href="javascript:if(confirm('http://w2452.nsk.ne.jp/~nobutaka/  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://w2452.nsk.ne.jp/~nobutaka/'" tppabs="http://w2452.nsk.ne.jp/~nobutaka/">[HomePage]</a></span>
+<span class=time>1999/09/11(土) 01:39:06</span><br>
+ループでウェイトを取るのはやめた方がいいでしょう。<br>
+「ループという仕事」をしているので、クライアントの負担はかなりのものになるかと（経験者）<br>
+<br>
+１秒ごとに自分を呼び出すくらいでいいのでは？<br>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/09/13(月) 19:45:18</span><br>
+アドバイス、ありがとうございます。<br>
+早速、注意された点に気を付けながら、cookie による対策を試してみようと思った矢先、<br>
+タイマーについて以下のようにコーディングすれば、当初期待したとおりの動きをする<br>
+事に気が付きました。<br>
+<br>
+function downLoad(param) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;location.href="listview_dl.cgi?"+param;<br>
+}<br>
+<br>
+function test() {<br>
+...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i=0; i &lt;= num; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setTimeout(downLoad, 3000 * (i + 1), 1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+}<br>
+<br>
+結局、ループした数だけウェイトに掛け合わせるという、馬鹿馬鹿しいほど単純な操作で、<br>
+すぐに気が付かなかった間抜けさ加減を暴露するようなものですが、多くの方のお手を煩わせた<br>
+手前、念のためご報告致します。<br>
+ただ実際の処理では、各処理の負荷や、サーバー・回線の混み具合等を考慮した、必要十分な<br>
+値を設定しなくてはなりませんが、ほとんどの場合、かなり冗長な処理になってしまうため、<br>
+やはり根本的な解決策を見つける必要がありそうです。<br>
+<hr>
+<span class=name>えいちく</span>
+<span class=email><a href="mailto:s-kaneko@hpt.yrc.co.jp">[E-Mail]</a></span>
+<span class=time>2000/01/05(水) 16:19:38</span><br>
+前述の方法でとりあえず仮対応していたのですが、新たな問題が発生しました。<br>
+これは複数のデータを一括してダウンロードすると、処理が途中で終わってしまう<br>
+場合があるというものです。現象には再現性がなく、同じ操作に対して成功する<br>
+場合もあれば、違うデータに対して処理が終わってしまう場合もあります。<br>
+現象的にプログラム的なミスではなさそうでしたので、ブラウザのバージョンを<br>
+NetScape V4.04からV4.51に上げてみたところ、このトラブルはかなり減りました<br>
+が、まだ皆無という訳ではないようです。<br>
+この件について、何か知見のある方がおられましたら、是非アドバイス頂けます<br>
+よう、お願い致します。<br>
+<hr>
+<span class=name>Ichi</span>
+<span class=time>2000/01/16(日) 06:28:50</span><br>
+少し興味があります。<br>
+<br>
+私見としては、最初に、csvファイルをCGIを呼び出して少しずつ作って行く<br>
+という設計にした時点で、タイミングに悩まされることが決まってしまって<br>
+いるような気がします。<br>
+<br>
+JavaScriptで、検索する項目を全てチェックしてから、一括でCGIに<br>
+渡し、検索させて、location: で持ってくるというのはどうでしょう。<br>
+<br>
+細かい部分が分かりませんので、はずしていたら済みません。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060031.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060031.htm">[前に]</a>
+<a href="99060033.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060033.htm">[次に]</a>
+</body>
+</html>

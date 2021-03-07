@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WindowsでCGIを動かすには？ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>WindowsでCGIを動かすには？</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwcgi.htm" tppabs="http://www.tohoho-web.com/wwwcgi.htm">とほほのCGI入門</a> &gt;
+WindowsでCGIを動かすには？
+
+<h4>はじめに</h4>
+<div class=i>
+<p>CGI の動作を確認するのに、いちいちプロバイダに接続するのは面倒です。ここでは、自宅の Windows マシンのみで、Perl による CGI を動かす手順について説明します。</p>
+<p>Perl は ActiveState 社の <b>ActivePerl</b> を、Webサーバーには <b>An HTTPD</b> を用います。Webサーバーとして Apache を用いる方法については「<a href="wwwxx048.htm" tppabs="http://www.tohoho-web.com/wwwxx048.htm">WindowsでApacheを使おう</a>」を参照してください。</p>
+</div>
+
+<h4>ActivePerlをインストールする</h4>
+<div class=i>
+<p>ActivePerl は Windows 上で動作するPerlです。再配布には制限がつきますが、利用は私用・商用を問わず無料で可能です。</p>
+<p>ActivePerl は以下のページからダウンロードしてください。現時点（2003年9月）では AcrivePerl-5.6.1.635-MSWin32-x86.msi が最新版です。.msi ファイルをダブルクリックするとインストールが始まります。説明は英語ですが、適当に [Next &gt;] ボタンを押していけばインストールできるでしょう。</p>
+<a target="_top" href="javascript:if(confirm('http://www.activestate.com/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.activestate.com/'" tppabs="http://www.activestate.com/">http://www.activestate.com/</a>
+<p>Windows 9x/Me/NT の場合は別途 Windows Installer 2.0+ を入手してインストールする必要があります。</p>
+</div>
+
+<h4>AN HTTPDをインストールする</h4>
+<div class=i>
+<p>AN HTTPD は、中田氏が開発・配布されている、Windows上のウェブサーバーソフトです。下記のページからダウンロードできます。現在（2003年9月）の最新バージョンは 1.42k です。インストールは簡単、解凍するだけで完了です。</p>
+<a target="_top" href="javascript:if(confirm('http://www.st.rim.or.jp/~nakata/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.st.rim.or.jp/~nakata/'" tppabs="http://www.st.rim.or.jp/~nakata/">http://www.st.rim.or.jp/~nakata/</a>
+</div>
+
+<h4>AN HTTPDを設定する</h4>
+<div class=i>
+<p>ここでは、フォルダの構成が次のようになっていると仮定します。フォルダ構成が異なる場合は、適切に読み替えて設定してください。</p>
+<ul>
+<li>C:\HomePage - 通常のHTMLファイルを置くフォルダ</li>
+<li>C:\HomePage\cgi-bin - CGIスクリプトを置くフォルダ</li>
+<li>C:\Perl\bin\perl.exe - ActivePerlの実行コマンドの場所</li>
+</ul>
+<p>AN HTTPDの設定は次の手順に従ってください。</p>
+<ul>
+<li>AN HTTPDを解凍してできた httpd.exe を起動する。</li>
+<li>タスクトレイに表示される黄色いアイコンをクリックする。</li>
+<li>[オプション(O)]メニューの[一般(G)...]を実行する。</li>
+<li>[一般]タブの[ドキュメントルート]に、C:\HomePage を入力する。</li>
+<li>[.pl,.cgiの実行プログラム]に、C:\Perl\bin\perl.exe を入力する。</li>
+<li>[エイリアス]タブの /cgi-bin や /scripts のチェックをはずす。</li>
+<li>[OK]ボタンを押す。</li>
+</ul>
+</div>
+
+<h4>まずはHTMLファイルを読めるかテストする</h4>
+<div class=i>
+<p>まずは、通常のHTMLファイルを、AN HTTPD経由で読めるか確かめてみます。</p>
+<ul>
+<li>適当な内容の C:\HomePage\test.html を作成する。</li>
+<li>ブラウザを起動する。</li>
+<li>[ファイル]-[開く]などで http://localhost/test.html を開く。</li>
+</ul>
+<p>localhost というのは、自分自身のマシンを示す名前です。うまく設定できていれば、http://localhost/test.html というアドレスの文書をブラウザで開くことができるはずです。これで、自分のマシンがウェブサーバーとして機能するようになりました。</p>
+<p>「接続しますか？」のようなダイアログが表示される場合、Internet Explorerであれば[ファイル]-[オフライン作業]のチェックを外しておく、Netscape Navigatorであれば[ファイル]-[オンラインにする]を実行しておくなど、いろいろやってみてください。あくまで、自分のマシンから自分のマシンへオンラインで接続（電話はかけないで）することにより、CGIは動作します。</p>
+<p> Netscape Navigatorでプロキシの設定をされている場合は、[編集]-[設定]-[詳細]-[プロキシ]-[手動でプロキシを設定する]-[表示]の[次で始まるドメインにはプロキシサーバを使用しない]の欄に localhost を追加しておいてください。</p>
+<p>また、localhost でうまくいかない場合は、localhost の代わりに 127.0.0.1 というアドレスで試してみてください。127.0.0.1 は、自分自身を示す特別なアドレスです。</p>
+</div>
+
+<h4>簡単なCGIのテストをしてみる</h4>
+<div class=i>
+<p>次に、簡単なCGIのテストを行ってみます。次のような内容の、簡単なCGIスクリプト（C:\HomePage\cgi-bin\test.cgi）を作成してください。</p>
+<div class="tab">Perl</div>
+<pre class=c2>
+print "Content-type: text/html\n";
+print "\n";
+print "&lt;html&gt;\n";
+print "&lt;head&gt;\n";
+print "&lt;title&gt;CGIのテスト&lt;/title&gt;\n";
+print "&lt;/head&gt;\n";
+print "&lt;body&gt;\n";
+print "&lt;p&gt;CGIのテスト&lt;/p&gt;\n";
+print "&lt;/body&gt;\n";
+print "&lt;/html&gt;\n";
+</pre>
+<p>これを、ブラウザから http://localhost/cgi-bin/test.cgi というアドレスで呼び出すと、「CGIのテスト」が表示されるはずです。以上で、Windows パソコンで CGI を動かす環境が整いました。あとは、自分で CGI スクリプトをいろいろ改造、開発しながら試してみてください。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1999-2003 杜甫々</div>
+<div>1999年11月17日版初版、2003年9月28日更新</div>
+<div>http://www.tohoho-web.com/wwwcgi6.htm</div>
+</body>
+</html>

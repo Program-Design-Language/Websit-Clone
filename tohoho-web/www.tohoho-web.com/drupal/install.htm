@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Drupal入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<div class="page">
+<h2>Drupal入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="top.htm" tppabs="http://www.tohoho-web.com/drupal/top.htm">Drupal入門</a> &gt;
+インストール
+
+<h4>CentOS に Drupal をインストールする</h4>
+<div class=i>
+<p>私が、VMware 上の CentOS に Drupal 6.2（日本語版）をインストールした際の手順を紹介します。iptables をすべて無効にするなど、セキュリティ的には好ましくない設定もしていますので、参考程度に眺めてください。</p>
+<pre class=c>
+<!--// パッケージをアップデートする
+# <em>yum -y update</em>
+
+// ユーザを追加する
+# <em>useradd -c "Taro Yamada" -d /home/yamada -k /bin/bash -m yamada</em>
+
+// ユーザのパスワードを変更する
+# <em>passwd yamada</em>
+
+// ユーザのシェルを変更する
+# <em>chsh -s /bin/tcsh yamada</em>
+
+-->// iptablesを無効化する
+# <em>chkconfig iptables off</em>
+# <em>iptables -F</em>
+
+// xinetdをインストールする
+# <em>yum -y install xinetd</em>
+
+<!--// TELNETサーバをインストールする
+# <em>yum -y install telnet-server</em>
+# <em>vi /etc/inetd.d/telnet</em>
+    disable     = no
+# <em>vi /etc/hosts.allow</em>
+in.telnetd : 127.0.0.1 192.168.24.0/255.255.255.0
+# <em>vi /etc/hosts.deny</em>
+in.telnetd : ALL
+# <em>/etc/init.d/xinetd restart</em>
+
+// FTPサーバをインストールする
+# <em>yum -y install vsftpd</em>
+# <em>vi /etc/vsftpd/vsftpd.conf</em>
+anonymous_enable=NO
+ascii_upload_enable=YES
+ascii_download_enable=YES
+# <em>setsebool -P ftp_home_dir 1</em>
+# <em>/etc/init.d/vsftpd start</em>
+# <em>chkconfig vsftpd on</em>
+# <em>ftp localhost</em>
+220 (vsFTPd 2.0.5)
+530 Please login with USER and PASS.
+530 Please login with USER and PASS.
+KERBEROS_V4 rejected as an authentication type
+Name (localhost:root): <em>yamada</em>
+331 Please specify the password.
+Password:<em>********</em>
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> <em>quit</em>
+
+-->// Apacheを動かす
+# <em>yum -y install httpd</em>
+# <em>vi /etc/httpd/conf/httpd.conf</em>
+&lt;Directory "/var/www/html"&gt;
+  Options Indexes FollowSymLinks ExecCGI
+&lt;/Directory&gt;
+  :
+AddHandler cgi-script .cgi
+  :
+# <em>/etc/rc.d/init.d/httpd restart</em>
+# <em>chkconfig httpd on</em>
+# <em>vi /var/www/html/index.html</em>
+
+// MySQLをインストールする
+# <em>yum -y install mysql-server</em>
+# <em>vi /etc/my.cnf</em>
+[mysqld]
+default-character-set = utf8
+
+[mysql]
+default-character-set = utf8
+# <em>chkconfig mysqld on</em>
+# <em>/etc/init.d/mysqld restart</em>
+
+// drupalをインストールする
+# <em>cd /var/www/html</em>
+# <em>tar zxvf ./drupal-6.2-japanese_002.gz</em>
+# <em>cd drupal-6.2</em>
+# <em>chmod 644 `find . -type f`</em>
+# <em>chmod 755 `find . -type d`</em>
+# <em>chmod -R o+w sites/default/</em>
+# <em>mysqladmin -u root -p create drupal</em>
+# Enter password: <em>******</em>
+# <em>mysql -u root -p</em>
+mysql&gt; <em>GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER
+ON drupal.*
+TO 'drupal'@'localhost' IDENTIFIED BY '******';</em>
+mysql&gt; <em>quit</em>
+
+// その他
+# <em>yum -y install php-mbstring</em>
+# <em>yum -y install php-mysql</em>
+# <em>yum -y install php-gd</em>
+# <em>/etc/init.d/httpd restart</em>
+
+</pre>
+<!--
+// データベース名: drupal
+// データベースユーザ名: drupal
+// データベースパスワード: い.つ.も.の
+// Drupal管理ユーザ名: admin
+// Drupal管理パスワード: い.つ.も.の
+-->
+</div>
+
+<hr>
+<div>Copyright (C) 2008 杜甫々</div>
+<div>初版：2008年9月21日</div>
+<div>http://www.tohoho-web.com/drupal/</div>
+</div>
+</body>
+</html>

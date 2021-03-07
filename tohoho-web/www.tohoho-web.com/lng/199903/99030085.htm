@@ -1,0 +1,240 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>JavaScriptで半角数字の入力チェックをするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>JavaScriptで半角数字の入力チェックをするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030084.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030084.htm">[前に]</a>
+<a href="99030086.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030086.htm">[次に]</a>
+<hr>
+<span class=name>みかん☆〃</span>
+<span class=email><a href="mailto:mikan@mediawars.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/03/15(月) 17:32:35</span><br>
+もしよければ教えてください。<br>
+JavaScriptを使って、フォームの内容をSubmitするときに<br>
+半角数字で入力されているかどうかのチェックをしたいのですが<br>
+なにぶんプログラムの経験がないものでどうしてよいのか<br>
+全くわかりません。<br>
+<br>
+よろしければ、サンプルとかいただけませんか？<br>
+よろしくお願いします。m(_ _)m<br>
+<br>
+みかん☆<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/03/15(月) 19:09:53</span><br>
+こうです。<br>
+IEとMozillaの両方で実現しようとすると、どうしてもこの長さが必要になってします（と思う･･･）。<br>
+<br>
+==========================================================<br>
+<br>
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"&gt;<br>
+&lt;HTML LANG="ja"&gt;<br>
+&lt;HEAD&gt;<br>
+&lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS"&gt;<br>
+&lt;META HTTP-EQUIV="Content-Script-type" CONTENT="text/javascript"&gt;<br>
+&lt;LINK REV="made" TITLE="Your Name" HREF="mailto:your@email.com"&gt;<br>
+&lt;SCRIPT TYPE="text/javascript"&gt;<br>
+&lt;!--<br>
+function check(obj)<br>
+{<br>
+<br>
+}<br>
+<br>
+function check(obj)<br>
+{<br>
+	var i;<br>
+	var moji;<br>
+	var len;<br>
+	var str;<br>
+	var flg = 0;<br>
+<br>
+	str = obj.NUMBER.value;<br>
+	len = StrLen(str);<br>
+<br>
+	if (len == 0) {<br>
+		alert("入力がありません。")<br>
+		return (false);<br>
+	}<br>
+<br>
+	if (navigator.appName == "Microsoft Internet Explorer") {<br>
+		for (i = 0; i &lt; len; i++) {<br>
+			moji = GetCharAt(str, i);<br>
+			if (moji &lt; "0" || moji &gt; "9") {<br>
+				flg = 1;<br>
+			}<br>
+		}<br>
+	} else {<br>
+		for (i = 0; i &lt; len; i++) {<br>
+			moji = GetCharAt(str, i);<br>
+			if ((moji &lt; "0" || moji &gt; "9") &amp;&amp; moji.length != 1) {<br>
+				flg = 1;<br>
+			}<br>
+		}<br>
+	}<br>
+<br>
+	if (flg) {<br>
+		alert("数字以外の文字が含まれています。")<br>
+		return (false);<br>
+	} else {<br>
+		obj.submit();<br>
+		return (true);<br>
+	}<br>
+}<br>
+<br>
+function StrLen(str)<br>
+{<br>
+	var i;<br>
+	var len;<br>
+	var moji;<br>
+	var xmoji;<br>
+<br>
+	if (navigator.appName == "Microsoft Internet Explorer") {<br>
+		return (str.length);<br>
+	} else {<br>
+		len = 0;<br>
+		for (i = 0; i &lt; str.length; i++) {<br>
+			moji = escape(str.charAt(i));<br>
+			xmoji = eval("0x" + moji.charAt(1));<br>
+			if ((xmoji == 8) || (xmoji == 9) || (xmoji == 14) || (xmoji == 15)) {<br>
+				i++;<br>
+			}<br>
+			len++;<br>
+		}<br>
+		return (len);<br>
+	}<br>
+}<br>
+<br>
+function GetCharAt(str, pos)<br>
+{<br>
+	var i;<br>
+	var len;<br>
+	var moji;<br>
+	var emoji;<br>
+	var xmoji;<br>
+<br>
+	if (navigator.appName == "Microsoft Internet Explorer") {<br>
+		return (str.charAt(pos));<br>
+	} else {<br>
+		len = 0;<br>
+		for (i = 0; i &lt; str.length; i++) {<br>
+			moji = str.charAt(i);<br>
+			emoji = escape(moji);<br>
+			xmoji = eval("0x" + emoji.charAt(1));<br>
+			if ((xmoji == 8) || (xmoji == 9) || (xmoji == 14) || (xmoji == 15)) {<br>
+				moji = moji + str.charAt(i + 1);<br>
+				i++;<br>
+			}<br>
+			if (pos == len) {<br>
+				break;<br>
+			}<br>
+			len++;<br>
+		}<br>
+		return (moji);<br>
+	}<br>
+}<br>
+<br>
+<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+&lt;TITLE&gt;テストのページ&lt;/TITLE&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;BODY&gt;<br>
+&lt;FORM ACTION="hoge.cgi" METHOD="GET" NAME="MyForm"&gt;<br>
+&lt;INPUT TYPE="TEXT" VALUE="" NAME="NUMBER"&gt;<br>
+&lt;INPUT TYPE="BUTTON" VALUE="submit" onClick="check(MyForm);"&gt;<br>
+&lt;INPUT TYPE="RESET" VALUE="clear"&gt;<br>
+&lt;/FORM&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/03/15(月) 19:11:52</span><br>
+ゴミが残ってました、、、（；；）<br>
+<br>
+function check(obj)<br>
+{<br>
+<br>
+}<br>
+<br>
+これは不要でし。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/03/15(月) 20:07:22</span><br>
+ポケ鬼！！ さんのフォーム部分をお借りして<br>
+----------------------------------------<br>
+function check(obj)<br>
+{<br>
+var check = obj.NUMBER.value;<br>
+var check2 = obj.NUMBER.value * 0;<br>
+<br>
+if(obj.NUMBER.value==""){<br>
+alert("入力がありません。");<br>
+}else if(check.indexOf(".")!=-1){<br>
+alert("数字以外の文字が含まれています。");<br>
+}else if(check2==0){<br>
+obj.submit();<br>
+}else{<br>
+alert("数字以外の文字が含まれています。");<br>
+}<br>
+}<br>
+----------------------------------------<br>
+というのはどうでしょう？<br>
+IE4とNC4では動作しました。<br>
+<hr>
+<span class=name>andi</span>
+<span class=time>1999/03/16(火) 02:12:03</span><br>
+isNaNっつー、数値かどうか調べてくれるのを見つけました。<br>
+同様にフォーム部分をお借りして。<br>
+<br>
+function check(obj){<br>
+var check = obj.NUMBER.value;<br>
+if(check == ""){<br>
+alert("入力がありません。");<br>
+}else if(isNaN(check)){<br>
+alert("数字以外の文字が含まれています。");<br>
+}else{<br>
+obj.submit();<br>
+}<br>
+}<br>
+<br>
+IE4,NS4で確認しましたが、物の本には他のブラウザで<br>
+エラーが出ると書いてあったので、<br>
+<br>
+function check(obj){<br>
+var check = obj.NUMBER.value;<br>
+if(check == ""){<br>
+alert("入力がありません。");<br>
+}else if(parseFloat(check)){<br>
+obj.submit();<br>
+}else{<br>
+alert("数字以外の文字が含まれています。");<br>
+}<br>
+}<br>
+<br>
+だと良いかもです。好きな方で。<br>
+<hr>
+<span class=name>ポケ鬼！！</span>
+<span class=time>1999/03/16(火) 02:26:36</span><br>
+なるほど。<br>
+徹底的に文字コードで調べようとしたら・・・便利な関数もあるんですね。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/03/16(火) 09:30:05</span><br>
+"isNaN()"て、もう普通に使えるんですね。<br>
+私の持ってる本には"isNan()"と書いてあって<br>
+UNIXのネスケのみ対応でした（らしい）<br>
+＃それとも全く別の関数なのかな？<br>
+<br>
+"."や"+"を許可するかは使う人しだいって感じで<br>
+＃しかし質問者の意図が文字列の中で数字が使われていた場合<br>
+＃それが全角だったらアラートを出したいとかだったらどうしよう。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030084.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030084.htm">[前に]</a>
+<a href="99030086.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030086.htm">[次に]</a>
+</body>
+</html>

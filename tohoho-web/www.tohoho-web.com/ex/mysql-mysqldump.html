@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>mysqldumpでバックアップ・リストアする - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>mysqldumpでバックアップ・リストアする</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="mysql.html" tppabs="http://www.tohoho-web.com/ex/mysql.html">MySQL/MariaDB</a> &gt;
+mysqldumpでバックアップ・リストアする
+
+<h4>バックアップ</h4>
+<div class="i">
+<p>mysqldump コマンドでデータベースダンプすることができます。ダンプファイルには、CREATE TABLE, INSERT 等の SQL 文が含まれます。大量データがの場合はバックアップ・リストアに時間がかかることがありあります。</p>
+<pre class="dos">
+# mysqldump -h localhost -u root -pパスワード データベース名 テーブル名... &gt; dump.sql
+# mysqldump -h localhost -u root -pパスワード --databases データベース名... &gt; dump.sql
+# mysqldump -h localhost -u root -pパスワード --all-databases &gt; dump.sql
+</pre>
+<p>おススメのオプションを下記に示します。--single-transaction の条件に注意して利用してください。</p>
+<pre class="dos">
+# mysqldump -h localhost -u root -pパスワード --databases データベース名 \
+  --flush-logs --single-transaction --master-data=2 &gt; dump.sql
+</pre>
+<dl class="dl1">
+<dt>--databases</dt>
+<dd>指定したデータベースをダンプします。ダンプファイルに CREATE DATABASE 文も加えられます。</dd>
+<dt>--all-databases</dt>
+<dd>MariaDB システムで利用する mysql データベースも含め、すべてのデータベースをダンプします。ダンプファイルに CREATE DATABASE 文も加えられます。</dd>
+<dt>--flush-logs</dt>
+<dd>ダンプ前にログファイルをフラッシュします。</dd>
+<dt>--lock-all-tables</dt>
+<dd>ダンプ中全てのテーブルを書き込みロックします。ダンプ中のテーブルアクセスがロックされますが、無条件で一貫性が保たれたデータをダンプすることができます。</dd>
+<dt>--single-transaction</dt>
+<dd>ひとつのトランザクションとしてダンプします。対象データベースがすべて InnoDB であること、および、ダンプ中に CREATE TABLE, DROP TABLE, ALTER TABLE, TRUNCATE TABLE を実行しないことを条件に、一貫性が保たれたデータをダンプすることができます。--all-databases を使用する場合は、MariaDB が内部で使用している mysql データベースのテーブルが InnoDB ではなく、MyISAM や、その改良版である Aria であることに注意してください。</dd>
+<dt>--master-data=2</dt>
+<dd>ダンプ開始時点のポジション情報をコメントとして出力します。レプリケーションやバイナリログからのロールフォワードに役立ちます。
+</dd>
+</dl>
+</div>
+
+<h4>リストア</h4>
+<div class="i">
+<p>バックアップをリストアするには、ダンプファイルを単に SQL 文として実行します。</p>
+<pre class="dos">
+# mysql -h localhost -u root -pパスワード &lt; dump.sql
+</pre>
+</div>
+
+<h4 id="roll-forward">ロールフォワード</h4>
+<div class="i">
+<p>バイナリログが退避されていれば、さらに障害発生の直前まで、データをロールフォワードすることができます。例えば、誤ってテーブルを削除してしまったのを復旧するケースを考えます。まず、ダンプ時のバイナリログ名とポジションを確認します。</p>
+<pre class="dos">
+# grep "CHANGE MASTER TO" dump.sql
+-- CHANGE MASTER TO MASTER_LOG_FILE='<em>mariadb-bin.000005</em>', MASTER_LOG_POS=<em>389</em>;
+</pre>
+<p>退避したバイナリログをSQL文に変換します。</p>
+<pre class="dos">
+# mysqlbinlog /tmp/mariadb-bin.000005 &gt; binlog_000005.sql
+# vi binlog_00005.sql
+</pre>
+<p>「end_log_pos 番号」 から次の 「end_log_pos 番号」 までがひとつの処理です。</p>
+<pre class="dos">
+#191207 19:01:10 server id 1  end_log_pos <em>389</em> ...
+   :
+# at 389
+   :
+   :
+   :
+#191207 19:04:11 server id 1  end_log_pos <em>3553</em> ...
+   :
+insert into users ( id, name ) values ( 3, 'Takeda' )
+   :
+# at 3553
+#191207 19:04:11 server id 1  end_log_pos <em>3584</em> ...
+   :
+drop table sample
+   :
+# at 3584
+</pre>
+<p>389番の処理までは dump.sql でリストア済み。3584番の処理が誤ってテーブルを消してしまった処理なので、その直前の 3553番の処理までを SQL 文にして、流し込みます。</p>
+<pre class="dos">
+# mysqlbinlog --start-position=<em>389</em> --stop-position=<em>3553</em> mariadb-bin.000005 &gt; binlog_000005.sql
+# mysql -h localhost -u root -pパスワード &lt; binlog_000005.sql
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年12月8日 最終更新:2019年12月8日</div>
+<div>http://www.tohoho-web.com/ex/mysql-mysqldump.html</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>JSONP - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>JSONP</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+JSONP
+
+<h4>JSONPとは</h4>
+<div class=i>
+<p>JSONP (JSON with padding) は、クロスサイト環境で他のオリジンから JSON データを取得するために考案された仕組みです。</p>
+<p>通常、あるオリジン (site-a.example.com) から、他のオリジン (site-b.example.com) で生成された JSON データを読み出そうとしても、<a href="same-origin-policy.html" tppabs="http://www.tohoho-web.com/ex/same-origin-policy.html">同一生成元ポリシー(Same-Origin Policy)</a> により、取得した JSON データへのアクセスは拒否されます。</p>
+<div class="title-tab">test.json</div>
+<pre class="c2">
+{ "name": "Yamada", "age": 26 }
+</pre>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;script&gt;
+window.onload = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                console.log(xhr.responseText);
+            } else {
+                <em>console.log("Can't get");     // status = 0</em>
+            }
+        }
+    }
+    xhr.open("POST", "http://site-b.example.com/test.json");
+    xhr.setRequestHeader("Content-Type" , "application/x-www-form-urlencoded");
+    xhr.send();
+}
+&lt;/script&gt;
+</pre>
+<p>しかし、&lt;script src="..."&gt; では他のオリジンの JavaScript を読み込めることを利用し、site-a が用意したコールバック関数を site-b のスクリプトが呼び出すことで、他オリジンが生成した JSON データを読み出すことを可能としています。裏技の様なものですね。</p>
+<div class="title-tab">site-b: test.jsonp</div>
+<pre class="c2">
+callback({ "name": "Yamada", "age": 26 });
+</pre>
+<div class="title-tab">site-a: HTML</div>
+<pre class="c2">
+&lt;script&gt;
+var callback = function(json) {
+    console.log(json.name);
+    console.log(json.age);
+}
+&lt;/script&gt;
+&lt;script src="http://site-b.example.com/test.jsonp"&gt;&lt;/script&gt;
+</pre>
+<p>上記では、コールバック関数名に callback という固定の関数名を用いていますが、下記の様にコールバック関数名をパラメータとして渡せるように実装することもできます。</p>
+<div class="title-tab">site-a: HTML</div>
+<pre class="c2">
+&lt;script src="http://site-b.example.com/test.jsonp<em>?callback=getTestJson</em>"&gt;&lt;/script&gt;
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年12月30日 最終更新:2018年12月30日</div>
+<div>http://www.tohoho-web.com/ex/jsonp.html</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ジャバスクリプトの戻り値を拾うには</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ジャバスクリプトの戻り値を拾うには</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040156.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040156.htm">[前に]</a>
+<a href="99040158.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040158.htm">[次に]</a>
+<hr>
+<span class=name>ゆっけ</span>
+<span class=time>1999/04/21(水) 22:05:25</span><br>
+イメージをフォームとしてＣＧＩを起動する際にジャバスクリプトで<br>
+あるチェックをかけて真であればそのまま起動、偽であればアラート<br>
+を出して元の画面に戻るというふうにしたいのですがうまく行きません。<br>
+アラートが出るには出るのですがそのあとさらにＣＧＩを呼び出してしまいます。<br>
+ソースは以下のとおりです。<br>
+&lt;FORM ACTION="xxx.cgi" METHOD=POST&gt;<br>
+&lt;input type="IMAGE" src="xxx.gif" BORDER="0" ALT="xxx" NAME="xxx" onClick="CHK();"&gt;<br>
+&lt;INPUT TYPE="HIDDEN" NAME="COL000" VALUE="\$000\"&gt;<br>
+&lt;INPUT TYPE="HIDDEN" NAME="COL999" VALUE="\$999\"&gt;<br>
+&lt;/FORM&gt;<br>
+<br>
+ジャバスクリプトでは<br>
+function CHK(){<br>
+<br>
+	if ～{<br>
+		alert("処理できません。");<br>
+		return false;<br>
+	}else{<br>
+		return true;<br>
+	}<br>
+}<br>
+としています。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/04/21(水) 23:03:29</span><br>
+&lt;input type="IMAGE" src="xxx.gif" BORDER="0" ALT="xxx" NAME="xxx" onClick="CHK();return false;"&gt;<br>
+<br>
+とりあえず、onClickの方では return false を書いておいて（こうすると飛ばない）、<br>
+CHK()の方で<br>
+}else{<br>
+document.フォームの名前.submit();<br>
+return true;<br>
+}<br>
+<br>
+としてサブミットさせてやればよろしいかと。<br>
+（フォームに名前を付けるのを忘れずに）<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/04/21(水) 23:20:59</span><br>
+あ、この方法だと、イメージのx,y座標が xxx.x とか xxx.y とかでは<br>
+取れないみたいですね・・・<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/04/22(木) 00:42:22</span><br>
+onClick="return CHK();"<br>
+でどうでしょう？<br>
+試す環境がないのでうまくいくかわかりませんが・・・<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/04/22(木) 00:43:59</span><br>
+おっと、すいません。補足です。<br>
+この方法だと<br>
+document.フォームの名前.submit();<br>
+の文は必要ないはずです。<br>
+<hr>
+<span class=name>ゆっけ</span>
+<span class=time>1999/04/22(木) 13:31:43</span><br>
+<span class=resolv>[[解決]]</span><br>
+とりあえず、ふじさんの方法で解決です。<br>
+どうもありがとうございました。<br>
+onClick="CHK();return false;"という方法があるんですね。<br>
+これは使える。<br>
+Nobu3さんの方法も試してみますね。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040156.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040156.htm">[前に]</a>
+<a href="99040158.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040158.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>リサイズすると文字が化けちゃうんです</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>リサイズすると文字が化けちゃうんです</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199806/index.htm">[上に]</a>
+<a href="98060024.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060024.htm">[前に]</a>
+<a href="98060026.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060026.htm">[次に]</a>
+<hr>
+<span class=name>pro</span>
+<span class=email><a href="mailto:proton@po.ntts.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/11(木) 20:58:22</span><br>
+こんにちは<br>
+<br>
+私はCGIをPerlでかいてるんですが、ブラウザをリサイズすると<br>
+CGIがはいたHTMLが文字化けをしてしまいます。<br>
+<br>
+文字化け対策としてやってみたこと。<br>
+１．print 'Content-type: text/html; charset="EUC-JP"';<br>
+　　print "\n\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;を行って文字コードを宣言。もちろんリサイズする前は文字化けしないが<br>
+　　リサイズ後はPerlを再実行するわけではないので有効じゃない。<br>
+<br>
+２．おまじないを最初に書く<br>
+　　&lt;!--糺の神--&gt;ってのを最初の方に埋め込みました。<br>
+　　＃どうしてかは<a href="javascript:if(confirm('http://www.cup.com/negi/tips/99070317.htm  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.cup.com/negi/tips/99070317.htm'" tppabs="http://www.cup.com/negi/tips/mojibake.html">http://www.cup.com/negi/tips/mojibake.html</a>を参照。<br>
+　　　これを入れると文字化けを防げるそうな。<br>
+　　でもだめでした。<br>
+<br>
+３．文字化けする文字の後ろに\をつける<br>
+　　　やっぱりだめでした。<br>
+<br>
+何か、情報を知ってる方、助けて下さい。<br>
+おねがいします。。。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/06/12(金) 05:44:44</span><br>
+根本的解決じゃないかもしれませんが、僕はJISが一番<br>
+化けにくいという認識を持っているので、CGIの先頭に<br>
+<br>
+open(STDOUT,"|nkf -j");<br>
+<br>
+ってのを書いてます。<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/12(金) 13:25:53</span><br>
+ドキュメントのコードは EUC ですか？<br>
+Content-type: text/html; charset="EUC-JP"<br>
+とかいて SJIS で出力してるってことはないですか？<br>
+<br>
+また、EUC で出力すると、確実に文字化けしないようにするってことはできない<br>
+みたいです。以前、Windows で文字化けする問題を解決しようとしましたが、<br>
+EUC だと無理みたいです。どうもブラウザのバグかもしれません。<br>
+<br>
+# 最近、Content-type: text/html; charset="ISO-2022-JP" と書いて SJIS で<br>
+# 保存されてるページをよく見かけるようになって困ってます。<br>
+# UNIX 上の NN3 でみると文字化けして読めないのです。<br>
+# さらに困ったことに、SGI の 4Dwm という Window マネージャは、<br>
+# 化けた &lt;TITLE&gt; を出力しようとして core dump てしまいます。<br>
+<hr>
+<span class=name>pro</span>
+<span class=email><a href="mailto:proton@po.ntts.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/12(金) 13:55:22</span><br>
+proです。<br>
+<br>
+PerlはUNIXで動いているのでEUCで結果を出力しているはずです。<br>
+ブラウザはNetScape3.01[JA]でWindowsNTみてます。<br>
+<br>
+EUCはよくないんですかね。コードを変えてみようかな。<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/06/12(金) 19:48:09</span><br>
+<font color="#CC8000">&gt;PerlはUNIXで動いているのでEUCで結果を出力しているはずです。</font><br>
+うちのサーバーのperlもunixで動いてますが、Shift-JISを出力します。<br>
+（このラウンジのCGIもその筈…）<br>
+もちろんこれは、私がShift-JISを使ったからで、perlが何を出力するかは、<br>
+pro さんがperlのソース上でどの文字コードを使ったかによって決まってきます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/06/12(金) 19:52:27</span><br>
+<font color="#CC8000">&gt; PerlはUNIXで動いているのでEUCで結果を出力しているはずです。</font><br>
+<br>
+UNIXだからってEUCとは限りません。スクリプトをJISで書けば<br>
+JISになるし、SJISで書けばSJISが出力されます。<br>
+<hr>
+<span class=name>pro</span>
+<span class=email><a href="mailto:proton@po.ntts.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/12(金) 20:04:31</span><br>
+<font color="#CC8000">&gt;UNIXだからってEUCとは限りません。スクリプトをJISで書けば</font><br>
+<font color="#CC8000">&gt;JISになるし、SJISで書けばSJISが出力されます。</font><br>
+<br>
+これって、今あるソースファイルをnkfなりなんなりでSJISとかJISにかえれば<br>
+いいってことですか？<br>
+＃もちろんContent-typeは変えますけど。<br>
+<br>
+いろいろ試してみたいと思います。<br>
+mmさん、B-Cusさんありがとうございます！<br>
+<hr>
+<span class=name>pro</span>
+<span class=email><a href="mailto:proton@po.ntts.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/12(金) 21:04:34</span><br>
+<font color="#CC8000">&gt;UNIXだからってEUCとは限りません。スクリプトをJISで書けば</font><br>
+<font color="#CC8000">&gt;JISになるし、SJISで書けばSJISが出力されます。</font><br>
+<br>
+これって、今あるソースファイルをnkfなりなんなりでSJISとかJISにかえれば<br>
+いいってことですか？<br>
+＃もちろんContent-typeは変えますけど。<br>
+<br>
+いろいろ試してみたいと思います。<br>
+mmさん、B-Cusさんありがとうございます！<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1998/06/12(金) 22:43:11</span><br>
+まずは、proさんが書かれたperlのソースの日本語のコードがなんであるかが<br>
+問題でしょう。<br>
+本当にEUCで書かれているかどうかを教えてください。もし間違いなくEUCなら、<br>
+moさんのメッセージを見るかぎり、コードを変換した方がいいようですね。<br>
+charsetを変えて、ソースのコードを変換するか、B-Cusさんの方法でやるのが<br>
+いいのかな…<br>
+ソースのコードを変換するなら、わざわざunixに行ってnkfを使わなくても、<br>
+WindowsNT上のエディタでもできると思うのですが…<br>
+<br>
+でも、WindowsNTはよく知らないのですが、普通にperlのソースを作成すれば<br>
+日本語はShift-JISになるのでは？<br>
+<hr>
+<span class=name>tetsuya</span>
+<span class=time>1998/06/15(月) 11:50:07</span><br>
+とりあえずsjisかjisにしてみたらいかがでしょ。<br>
+cat ****.*** |nkf -s &gt; ****.***.sjis<br>
+とか。大体は自動認識で勝手に変換（手抜き<br>
+<br>
+ちなみに普通にPerlソースを作成すればsjisになるのは<br>
+Windowsだけじゃないかと・・・・・。<br>
+muleで書いている場合は、一応自分の自由に設定できますし。<br>
+<hr>
+<span class=name>pro</span>
+<span class=email><a href="mailto:proton@po.ntts.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/15(月) 17:35:29</span><br>
+<span class=resolv>[[解決]]</span><br>
+proです。<br>
+私の作成したソースは間違いなくEUCでした。<br>
+で、ソースをSJISに変換して実行したところ<br>
+ブラウザをリサイズしても文字化けはおきませんでした。<br>
+しかし、UNIX上で作成しているのでSJISでファイルをもっているのは<br>
+不便きわまりないので、B-Cusのように<br>
+open(STDOUT,"|nkf -s");<br>
+ってかいてやってみました。<br>
+できました。(^o^)/<br>
+でも、ブラウザのメニューから表示-文書情報をやってみたら<br>
+ブラウザは見事にiso-2022-jpって判断してました。。。<br>
+<br>
+やっぱりおとなしくJISにします。<br>
+みなさんありがとうございました。<br>
+<hr>
+<span class=name>pro</span>
+<span class=email><a href="mailto:proton@po.ntts.co.jp">[E-Mail]</a></span>
+<span class=time>1998/06/15(月) 21:25:17</span><br>
+再びproです。。。<br>
+<br>
+nkfとかが入ってないシステム用に、<br>
+open(STDOUT,"| henkan.pl");<br>
+ってな感じで変換を行うPerlを書いてみたんです。<br>
+中身はこんなんです。<br>
+<br>
+require "jcode.pl";<br>
+while (&lt;&gt;) {<br>
+&nbsp;&nbsp;&nbsp;&amp;jcode'convert(*_,"sjis");<br>
+&nbsp;&nbsp;&nbsp;print $_;<br>
+}<br>
+exit;<br>
+<br>
+でも、これだと標準出力の最後が検知できないらしく<br>
+ブラウザではタイムアウトになってしまいます。<br>
+＃whileをぬけてくれない(T T)<br>
+<br>
+何か良い知恵ありますか？<br>
+<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199806/index.htm">[上に]</a>
+<a href="98060024.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060024.htm">[前に]</a>
+<a href="98060026.htm" tppabs="http://www.tohoho-web.com/lng/199806/98060026.htm">[次に]</a>
+</body>
+</html>

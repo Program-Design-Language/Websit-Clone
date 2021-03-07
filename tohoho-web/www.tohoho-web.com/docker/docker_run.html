@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Docker run/createコマンド - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Docker run/createコマンド</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+<a href="command.html" tppabs="http://www.tohoho-web.com/docker/command.html">コマンド</a> &gt;
+docker run/create
+
+<h4 id="run">docker run</h4>
+<div class="i">
+<p><b>docker run</b> はコンテナを起動状態で作成します。停止状態で作成するには <b>docker create</b> を使用します。下記は、httpd:latest イメージから、cont1 コンテナを作成します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker run</em> -d --name cont1 httpd:latest
+</pre>
+<p><b>-d</b> (<b>--detach</b>) オプションは、コンテナを作成後、コンテナプロセス(PID=1のプロセス)の標準入出力をコンソールからデタッチします。アタッチしたままコンテナを起動した場合は、デタッチキー (通常は Ctrl-P Ctrl-Q) を押すことでデタッチすることができます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run <em>-d</em> -it --name cont1 centos:7
+54c2db8ce51774dedbf74d03f302257635b38518e7de24198b752c9bb07fccfd
+# <span class="cm">デタッチしているのでホストのプロンプトに戻る</span>
+# docker run -it --name cont2 centos:7
+[root@f85deacb79f1 /]# <span class="cm">デタッチしていないのでコンテナのプロンプトになる</span>
+[root@f85deacb79f1 /]# Ctrl-P Ctrl-Q    <span class="cm">デタッチキーを押す</span>
+# <span class="cm">ホストのプロンプトに戻る</span>
+</pre>
+<p><b>-i</b> (<b>--interactive</b>) オプションは、コンテナプロセスの標準入力を開いたままにします。</p>
+<p><b>-t</b> (<b>--tty</b>) オプションは、コンテナプロセスに擬似TTYを割り当てます。</p>
+<p>コンテナプロセスが /bin/bash の様な標準入出力を対象とするプロセスの場合は -it オプションをつけ、httpd の様なソケット等を対象とするプロセスの場合は -it オプションをつけないのが一般的です。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run <em>-d -it</em> --name cont1 centos:7
+</pre>
+<p><b>--name</b> オプションはコンテナ名を指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it <em>--name cont1</em> centos:7
+</pre>
+<p><b>-h</b> (<b>--hostname</b>) オプションは、コンテナのホスト名を指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 <em>-h cont1</em> centos:7
+</pre>
+<p><b>-p</b> (<b>--port</b>) オプションは、ホストのポート番号とコンテナのポート番号をマッピングします。複数指定可能です。下記の例では、ホストの 8080番ポートを、コンテナの 80番ポートにマッピングしています。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d --name cont1 <em>-p 8080:80</em> httpd
+# curl http://localhost:8080/
+&lt;html&gt;&lt;body&gt;&lt;h1&gt;It works!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;
+</pre>
+<p><b>--add-host</b> はホスト名とIPアドレスをマッピングします。複数指定可能です。コンテナ内の /etc/hosts に書き込まれます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 <em>--add-host host1:192.168.0.1</em> centos:7
+# docker exec cont1 cat /etc/hosts | grep host1
+192.168.0.1    host1
+</pre>
+<p><b>--link</b> はホスト名とコンテナのIPアドレスをマッピングします。複数指定可能です。コンテナ内の /etc/hosts に書き込まれます。--link オプションの使用はあまり推奨されておらず、将来的に廃止される可能性があります。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 centos:7
+# docker run -d -it --name cont2 <em>--link cont1:host1</em> centos:7
+# docker exec cont2 cat /etc/hosts | grep host1
+172.17.0.2      host1 498e7c9d2736 cont1
+</pre>
+<p><b>-v</b> (<b>--volume</b>) オプションは、ホストのボリュームまたはディレクトリをコンテナに割り当てます。複数指定可能です。-v ホスト側:コンテナ側 で指定しますが、ホスト側が / で始まる名前の場合はディレクトリを指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# mkdir -p /var/docker/cont1/htdocs
+# echo '&lt;div&gt;Hello!!&lt;/div&gt;' &gt; /var/docker/cont1/htdocs/index.html
+# docker run -d -p 8080:80 <em>-v /var/docker/cont1/htdocs:/usr/local/apache2/htdocs</em> --name cont1 httpd
+# curl http://localhost:8080/
+&lt;div&gt;Hello!!&lt;/div&gt;
+</pre>
+<p>ホスト側が / で始まらない場合は名前付きのボリュームを指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker volume create disk1
+# docker run -d -it --name cont1 <em>-v disk1:/disk1</em> centos:7
+# docker volume ls
+</pre>
+<p>ホスト側を省略した場合は、名前無しのボリュームが自動的に作成されます。/var/lib/docker/volumes などの下に名前無しボリュームが作成されます。名前無しボリュームを作成した場合は、<a href="docker_start.html#rm" tppabs="http://www.tohoho-web.com/docker/docker_start.html#rm">docker rm</a> コマンドで -v オプションを指定しないと、名前無しボリュームが残ってしまいます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 <em>-v /disk1</em> centos:7
+# docker volume ls
+</pre>
+<p><b>--net</b> オプションは、<b>docker network</b> コマンドで作成した Dockerネットワークにコンテナを接続します。--net を省略した場合はデフォルトで bridge ネットワークに接続します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker network create network1 --subnet 192.168.0.0/24
+# docker run -d -it --name cont1 <em>--net network1</em> centos:7
+</pre>
+<p><b>--ip</b> オプションは、IPアドレスを指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 --net network1<em>--ip 192.168.0.200</em> centos:7
+</pre>
+<p><b>-w</b> (<b>--workdir</b>) オプションは、コンテナ内のプロセスのワークディレクトリを指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 <em>-w /opt/workdir</em> centos:7
+# docker exec cont1 pwd
+/opt/workdir
+</pre>
+<p><b>-e</b> (<b>--env</b>) オプションは、コンテナの環境変数を設定します。複数指定可能です。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 <em>-e TZ=Aaia/Tokyo</em> centos:7
+# docker exec cont1 env | grep TZ
+TZ=Asia/Tokyo
+</pre>
+<p><b>--env-file</b> オプションは、環境変数をファイルで指定します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# cat ./envfile
+TZ=Asia/Tokyo
+LANG=en_US.UTF-8
+# docker run -d -it --name cont1 <em>--env-file ./envfile</em> centos:7
+</pre>
+<p><b>--log-opt</b> オプションは、コンテナが吐き出すログ (コンテナプロセスの標準出力) に関するオプションを指定します。下記の例では、100KB 毎に最大 10個までログをローテートします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d --name cont1 <em>--log-opt max-size=100k --log-opt max-file=10</em> httpd
+</pre>
+<p>その他のオプションは <b>--help</b> を参照してください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run <em>--help</em>
+</pre>
+</div>
+
+<h4 id="create">docker create</h4>
+<div class="i">
+<p><b>docker create</b> コマンドは、コンテナを停止状態 (stop した状態) で作成する以外は、<a href="#run">run</a> コマンドと同等です。オプションは <a href="#run">run</a> コマンドを参照してください。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# <em>docker create</em> -d -it --name cont1 centos:7
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class="i">
+<ul>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/popper.js  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/popper.js'" tppabs="http://docs.docker.jp/engine/reference/commandline/run.html">http://docs.docker.jp/engine/reference/commandline/run.html</a>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/engine/reference/commandline/==typeof define&&define.amd?define([  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/engine/reference/commandline/==typeof define&&define.amd?define(['" tppabs="http://docs.docker.jp/engine/reference/commandline/create.html">http://docs.docker.jp/engine/reference/commandline/create.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年9月1日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/docker_run.html</div>
+</body>
+</html>

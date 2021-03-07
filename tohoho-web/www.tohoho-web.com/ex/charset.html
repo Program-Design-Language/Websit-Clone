@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>文字コード入門 - とほほのWWW入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<style>
+.local-ascii-table th,
+.local-ascii-table td {
+  font-size: 85%;
+  width: 1.8rem;
+}
+.xp {
+  background-color: #fcc;
+}
+</style>
+<script src="../../code.jquery.com/jquery-3.4.1.min.js" tppabs="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="../lib/canvas.js" tppabs="http://www.tohoho-web.com/lib/canvas.js"></script>
+</head>
+<body>
+
+<h2>文字コード入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+文字コード入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">文字コードとは</a>
+<li><a href="#charset_and_encoding">主な文字集合と符号化方式</a>
+<li><a href="#ascii">ASCII</a>
+<li><a href="#iso-iec-646">ISO/IEC 646 (ASCIIの国際規格版)</a>
+<li><a href="#jis-x-0201">JIS X 0201 (半角英数・半角カナ)</a>
+<li><a href="#iso-8859">ISO-8859 (欧州系8ビット文字)</a>
+<li><a href="#iso-iec-6429">ISO/IEC 6429:1992 (制御文字)</a>
+<li><a href="#jix-x-0211">JIS X 0211 (制御文字)</a>
+<li><a href="#jis-x-0208">JIS X 0208 (第一水準・第二水準漢字)</a>
+<li><a href="#jis-x-0212">JIS X 0212 (補助漢字)</a>
+<li><a href="#jis-x-0213">JIS X 0213 (第三水準・第四水準漢字)</a>
+<li><a href="#iso-2022-jp">ISO-2022-JP (JISコード)</a>
+<li><a href="#euc-jp">EUC-JP (EUC)</a>
+<li><a href="#shift_jis">Shift_JIS (シフトJIS)</a>
+<li><a href="#jis">JIS系コードマップ</a>
+<li><a href="#unicode">Unicode</a>
+<li><a href="#utf-8">UTF-8</a>
+<li><a href="#utf-16">UTF-16</a>
+<li><a href="#utf-32">UTF-32</a>
+<li><a href="#surrogates">サロゲートペア</a>
+<li><a href="#byte-order">バイトオーダー</a>
+<li><a href="#bom">BOM(バイトオーダーマーク)</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="about">文字コードとは</h4>
+<div class="i">
+<p>「文字コード」とは、文字をコンピューターで表現する際にどのようなバイト表現にするかを定めるもので、下記の概念を持ちます。</p>
+<table class="tb1">
+ <tr>
+  <th>用語</th>
+  <th>説明</th>
+ </tr>
+ <tr>
+  <td class="nw"><b>文字集合</b></td>
+  <td><b>符号化文字集合</b>(CCS:Coded Caracter Set)、<b>キャラクタセット</b> とも呼びます。文字に番号を割り振ります。主な文字集合として <b>JIS X 0208</b> や <b>Unicode</b> があります。これらの規約では、文字に「<b>群・面・区・点</b>」の番号を割り振ります。群は 0～127、面・区・点は 0～255 の数値をとります。すべて使用すると 128×256×256×256＝2,147,483,648文字を表すことができますが、JIS X 0208 では1～94区×1～94点のみの 94×94＝8,836文字、Unicode では 0～16面×0～255区×0～255点の 17×256×256＝1,114,112文字の範囲で文字を定義しています。例えば文字の「あ」は、JIS X 0208 では「4区1点」、Unicodeでは「0面48区66点」の番号を割り振っています。</td>
+ </tr>
+ <tr>
+  <td class="nw"><b>符号化方式</b></td>
+  <td><b>文字符号化方式</b>(CES:Character Encoding Scheme)、<b>エンコーディングルール</b> とも呼びます。文字集合で定義した「群・面・区・点」の番号を、どのようなバイト列に変換するかのルールを決めます。JIS X 0208 を符号化する方式としては、<b>ISO-2022-JP</b>(俗にいうJISコード)、<b>Shift_JIS</b>、<b>EUC</b> など、Unicode を符号化する方式としては、<b>UTF-8</b>, <b>UTF-16</b> などがあります。</td>
+ </tr>
+</table>
+</div>
+
+<h4 id="charset_and_encoding">主な文字集合と符号化方式</h4>
+<div class="i">
+<table class="tb1">
+ <tr>
+  <th>大分類</th>
+  <th>文字集合</th>
+  <th>符号化方式</th>
+  <th>説明</th>
+ </tr>
+ <tr>
+  <td rowspan="4">半角系</td>
+  <td colspan="2"><a href="#ascii">ASCII</a></td>
+  <td>米国規約。半角英数記号文字を定義したもの。7ビット。</td>
+ </tr>
+ <tr>
+  <td colspan="2"><a href="#iso-iec-646">ISO/IEC 646</a></td>
+  <td>国際規格。ASCIIを各国語に拡張したもの。7ビット。</td>
+ </tr>
+ <tr>
+  <td colspan="2"><a href="javascript:if(confirm('http://www.tohoho-web.com/ex/jis-x-0201  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������������ļ�δ�ҵ���  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/ex/jis-x-0201'" tppabs="http://www.tohoho-web.com/ex/jis-x-0201">JIS X 0201</a></td>
+  <td>ISO/IEC 646 の日本カスタマイズ版。英数字・記号・半角カナを定義。旧称 JIS C 6220。</td>
+ </tr>
+ <tr>
+  <td colspan="2"><a href="javascript:if(confirm('http://www.tohoho-web.com/ex/iso-8859  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������������ļ�δ�ҵ���  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/ex/iso-8859'" tppabs="http://www.tohoho-web.com/ex/iso-8859">ISO-8859</a></td>
+  <td>欧州系の文字を定めたもの。8ビット。</td>
+ </tr>
+ <tr>
+  <td rowspan="2">制御文字</td>
+  <td colspan="2" class="nw"><a href="#iso-iec-6429">ISO/IEC 6429</a></td>
+  <td>制御文字を定義。</td>
+ </tr>
+ <tr>
+  <td colspan="2"><a href="javascript:if(confirm('http://www.tohoho-web.com/ex/jis-x-0201  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������������ļ�δ�ҵ���  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/ex/jis-x-0201'" tppabs="http://www.tohoho-web.com/ex/jis-x-0201">JIS X 0211</a></td>
+  <td>ISO/IEC 6429 の日本版。旧称 JIS C 6223。</td>
+ </tr>
+ <tr>
+  <td rowspan="6">JIS系</td>
+  <td rowspan="4" class="nw"><a href="#jis-x-0208">JIS X 0208</a></td>
+  <td class="local-no-left-border"></td>
+  <td>平仮名、片仮名、漢字などの日本語を定義。</td>
+ </tr>
+ <tr>
+  <td class="nw"><a href="#iso-2022-jp">ISO-2022-JP</a></td>
+  <td>主に電子メールで利用される。俗にいう <b>JISコード</b>。</td>
+ </tr>
+ <tr>
+  <td><a href="#euc-jp">EUC-JP</a></td>
+  <td>主に Linux 系システムで使用される。</td>
+ </tr>
+ <tr>
+  <td><a href="#shift_jis">Shift_JIS</a></td>
+  <td>主に Windows 系システムで使用される。</td>
+ </tr>
+ <tr>
+  <td><a href="#jis-x-0212">JIS X 0212</a></td>
+  <td></td>
+  <td>通称「JIS補助漢字」。あまり使用されていない。</td>
+ </tr> 
+ <tr>
+  <td><a href="#jis-x-0213">JIS X 0213</a></td>
+  <td></td>
+  <td>通称「JIS2000」「JIS2004」。第三水準・第四水準漢字を定義。</td>
+ </tr> 
+ <tr>
+  <td rowspan="3">Unicode系</td>
+  <td rowspan="3"><a href="#unicode">Unicode</a></td>
+  <td><a href="#utf-8">UTF-8</a></td>
+  <td>Unicode で一番よく利用される形式。ASCIIは1バイト、日本語は3バイトで表現。</td>
+ </tr>
+ <tr>
+  <td><a href="#utf-16">UTF-16</a></td>
+  <td>Unicode を 16ビットで表現。</td>
+ </tr>
+ <tr>
+  <td><a href="#utf-16">UTF-32</a></td>
+  <td>Unicode を 32ビットで表現。</td>
+ </tr>
+</table>
+<p>関連用語：</p>
+<ul>
+<li><a href="#surrogates">サロゲートペア</a>
+<li><a href="#byte-order">バイトオーダー</a>
+<li><a href="#bom">BOM</a>
+</ul>
+</div>
+
+<h4 id="ascii">ASCII</h4>
+<div class="i">
+<p>American Standard Code for Information Interchangeの略です。1963年に米国のASA(現在のANSI)が制定した 7ビット文字集合です。0x00～0x7F のバイトコードの中に 33文字の制御文字と、95文字の半角英数記号文字を定義しています。まだ文字集合と符号化方式という概念が生まれる前の文字コード体系です。最初は小文字の定義もなく、制御文字も異なっていましたが、1967年の改定でほぼ現在の定義になりました。</p>
+<table class="tb0 center local-ascii-table">
+<tr><th colspan=2 rowspan=2><br></th><th colspan=8>上位４ビット</th></tr>
+<tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+<tr><th rowspan=16>下<br>位<br>４<br>ビ<br>ッ<br>ト</th><th>0</th><td>NUL</td><td>DLE</td><td>SP</td><td>0</td><td>@</td><td>P</td><td>`</td><td>p</td></tr>
+<tr><th>1</th><td>SOH</td><td>DC1</td><td>!</td><td>1</td><td>A</td><td>Q</td><td>a</td><td>q</td></tr>
+<tr><th>2</th><td>STX</td><td>DC2</td><td>&quot;</td><td>2</td><td>B</td><td>R</td><td>b</td><td>r</td></tr>
+<tr><th>3</th><td>ETX</td><td>DC3</td><td>#</td><td>3</td><td>C</td><td>S</td><td>c</td><td>s</td></tr>
+<tr><th>4</th><td>EOT</td><td>DC4</td><td>$</td><td>4</td><td>D</td><td>T</td><td>d</td><td>t</td></tr>
+<tr><th>5</th><td>ENQ</td><td>NAK</td><td>%</td><td>5</td><td>E</td><td>U</td><td>e</td><td>u</td></tr>
+<tr><th>6</th><td>ACK</td><td>SYN</td><td>&amp;</td><td>6</td><td>F</td><td>V</td><td>f</td><td>v</td></tr>
+<tr><th>7</th><td>BEL</td><td>ETB</td><td>'</td><td>7</td><td>G</td><td>W</td><td>g</td><td>w</td></tr>
+<tr><th>8</th><td>BS</td><td>CAN</td><td>(</td><td>8</td><td>H</td><td>X</td><td>h</td><td>x</td></tr>
+<tr><th>9</th><td>HT</td><td>EM</td><td>)</td><td>9</td><td>I</td><td>Y</td><td>i</td><td>y</td></tr>
+<tr><th>A</th><td>LF</td><td>SUB</td><td>*</td><td>:</td><td>J</td><td>Z</td><td>j</td><td>z</td></tr>
+<tr><th>B</th><td>VT</td><td>ESC</td><td>+</td><td>;</td><td>K</td><td>[</td><td>k</td><td>{</td></tr>
+<tr><th>C</th><td>FF</td><td>FS</td><td>,</td><td>&lt;</td><td>L</td><td>\</td><td>l</td><td>|</td></tr>
+<tr><th>D</th><td>CR</td><td>GS</td><td>-</td><td>=</td><td>M</td><td>]</td><td>m</td><td>}</td></tr>
+<tr><th>E</th><td>SO</td><td>RS</td><td>.</td><td>&gt;</td><td>N</td><td>^</td><td>n</td><td>~</td></tr>
+<tr><th>F</th><td>SI</td><td>US</td><td>/</td><td>?</td><td>O</td><td>_</td><td>o</td><td>DEL</td></tr>
+</table>
+<p>下記の版があります。</p>
+<ul>
+<li>ASA X3.4-1963：米国ASA(American Standards Association)が制定。まだ小文字もなく制御コードも異なっていた。
+<li>USAS X3.4-1967：ASAがUSA SI(USA Standards Institue)に名称変更。内容改定しほぼ今の形式に。
+<li>ANSI X3.4-1968：USA SIがANSI(Amarican National Standards Institute)に名称変更。微修正。
+<li>ANSI X3.4-1986：改版。
+<li><a target="_top" href="javascript:if(confirm('http://unicode.org/L2/L2006/06388-review-incits4.pdf  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://unicode.org/L2/L2006/06388-review-incits4.pdf'" tppabs="http://unicode.org/L2/L2006/06388-review-incits4.pdf">ANSI INCITS 4-1986</a>：規格番号変更。
+</ul>
+</div>
+
+<h4 id="iso-iec-646">ISO/IEC 646 (ASCIIの国際規格版)</h4>
+<div class="i">
+<p>ASCII の規約を取り込みながら 1967年に ISO が制定した国際規格です。欧州でもほぼ同等の <b>ECMA-6</b> を制定しています。当初は番号記号(#)が国際通貨記号(¤)に、チルダ(~)がオーバーライン(&oline;)になっている点が異なっていましたが、1991年の改定で番号記号(#) とチルダ(~)に変更されました。ただし、下記で色付きの文字(2/3-4, 4/0, 5/11-14, 6/0, 7/11-14) は推奨文字であり、各言語で別の文字を割り当ててもよいと規定されました。日本ではこの規格をベースに <a href="#jis-x-0201">JIS X 0201</a> を制定しました。欧州各国でも同様の規格が制定されましたが、あまり使用されず、代わりに8ビット領域を使用した ISO/IEC 8859 が使用されています。</p>
+<table class="tb0 center local-ascii-table">
+<tr><th colspan=2 rowspan=2><br></th><th colspan=8>上位４ビット</th></tr>
+<tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+<tr><th rowspan=16>下<br>位<br>４<br>ビ<br>ッ<br>ト</th><th>0</th><td>NUL</td><td>DLE</td><td>SP</td><td>0</td><td class="xp">@</td><td>P</td><td class="xp">`</td><td>p</td></tr>
+<tr><th>1</th><td>SOH</td><td>DC1</td><td>!</td><td>1</td><td>A</td><td>Q</td><td>a</td><td>q</td></tr>
+<tr><th>2</th><td>STX</td><td>DC2</td><td>&quot;</td><td>2</td><td>B</td><td>R</td><td>b</td><td>r</td></tr>
+<tr><th>3</th><td>ETX</td><td>DC3</td><td class="xp">#</td><td>3</td><td>C</td><td>S</td><td>c</td><td>s</td></tr>
+<tr><th>4</th><td>EOT</td><td>DC4</td><td class="xp">$</td><td>4</td><td>D</td><td>T</td><td>d</td><td>t</td></tr>
+<tr><th>5</th><td>ENQ</td><td>NAK</td><td>%</td><td>5</td><td>E</td><td>U</td><td>e</td><td>u</td></tr>
+<tr><th>6</th><td>ACK</td><td>SYN</td><td>&amp;</td><td>6</td><td>F</td><td>V</td><td>f</td><td>v</td></tr>
+<tr><th>7</th><td>BEL</td><td>ETB</td><td>'</td><td>7</td><td>G</td><td>W</td><td>g</td><td>w</td></tr>
+<tr><th>8</th><td>BS</td><td>CAN</td><td>(</td><td>8</td><td>H</td><td>X</td><td>h</td><td>x</td></tr>
+<tr><th>9</th><td>HT</td><td>EM</td><td>)</td><td>9</td><td>I</td><td>Y</td><td>i</td><td>y</td></tr>
+<tr><th>A</th><td>LF</td><td>SUB</td><td>*</td><td>:</td><td>J</td><td>Z</td><td>j</td><td>z</td></tr>
+<tr><th>B</th><td>VT</td><td>ESC</td><td>+</td><td>;</td><td>K</td><td class="xp">[</td><td>k</td><td class="xp">{</td></tr>
+<tr><th>C</th><td>FF</td><td>FS</td><td>,</td><td>&lt;</td><td>L</td><td class="xp">\</td><td>l</td><td class="xp">|</td></tr>
+<tr><th>D</th><td>CR</td><td>GS</td><td>-</td><td>=</td><td>M</td><td class="xp">]</td><td>m</td><td class="xp">}</td></tr>
+<tr><th>E</th><td>SO</td><td>RS</td><td>.</td><td>&gt;</td><td>N</td><td class="xp">^</td><td>n</td><td class="xp">~</td></tr>
+<tr><th>F</th><td>SI</td><td>US</td><td>/</td><td>?</td><td>O</td><td>_</td><td>o</td><td>DEL</td></tr>
+</table>
+<p>下記の版があります。</p>
+<ul>
+<li>ISO R 646:1967：初版制定。
+<li>ISO 646:1972：改版。
+<li>ISO 646:1983：改版。
+<li>ISO/IEC 646:1991：ISO/ICE に改名。推奨文字を ¤ と ‾ から、# と ~ に変更。
+</ul>
+<ul>
+<li>ECMA-6 (1965-04-30), 1st Edition：ISO 646 と並行して欧州で策定された規格。
+<li>ECMA-6 (1967-06), 2nd Edition：改版。
+<li>ECMA-6 (1970-07), 3rd Edition：改版。
+<li>ECMA-6 (1973-08), 4th Edition：改版。
+<li>ECMA-6 (1984-12, 1985-03), 5th Edition：改版。
+<li>ECMA-6 (1991-12, 1997-08), 6th Edition：改版。
+</ul>
+</div>
+
+<h4 id="jis-x-0201">JIS X 0201 (半角英数・半角カナ)</h4>
+<div class="i">
+<p>ISO/IEC 646 を日本向けにカスタマイズし、1969年に日本工業規格(JIS) が制定しました。制定当時は <b>JIS C 6220</b> でしたが、JIS の情緒部門(X)設立に伴い、JIS X 0201(ローマ字/半角カナ文字) に名称変更されました。ASCII とは、5/12 のバックスラッシュ(&#92;)が円記号(&yen;)に、7/14 のチルダ(~)がオーバーライン(&oline;)になっている点が異なります。また、8ビット空間を用いて半角カナ文字も定義しています。</p>
+<table class="tb0 center local-ascii-table">
+ <tr><th colspan=2 rowspan=2><br></th><th colspan=16>上位４ビット</th></tr>
+ <tr>
+  <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+  <th>8</th><th>9</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th>
+ </tr>
+ <tr>
+  <th rowspan=16>下<br>位<br>４<br>ビ<br>ッ<br>ト</th>
+  <th>0</th><td>NUL</td><td>DLE</td><td>SP</td><td>0</td><td>@</td><td>P</td><td>`</td><td>p</td>
+  <td></td><td></td><td></td><td>ｰ</td><td>ﾀ</td><td>ﾐ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>1</th><td>SOH</td><td>DC1</td><td>!</td><td>1</td><td>A</td><td>Q</td><td>a</td><td>q</td>
+  <td></td><td></td><td>｡</td><td>ｱ</td><td>ﾁ</td><td>ﾑ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>2</th><td>STX</td><td>DC2</td><td>&quot;</td><td>2</td><td>B</td><td>R</td><td>b</td><td>r</td>
+  <td></td><td></td><td>｢</td><td>ｲ</td><td>ﾂ</td><td>ﾒ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>3</th><td>ETX</td><td>DC3</td><td>#</td><td>3</td><td>C</td><td>S</td><td>c</td><td>s</td>
+  <td></td><td></td><td>｣</td><td>ｳ</td><td>ﾃ</td><td>ﾓ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>4</th><td>EOT</td><td>DC4</td><td>$</td><td>4</td><td>D</td><td>T</td><td>d</td><td>t</td>
+  <td></td><td></td><td>､</td><td>ｴ</td><td>ﾄ</td><td>ﾔ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>5</th><td>ENQ</td><td>NAK</td><td>%</td><td>5</td><td>E</td><td>U</td><td>e</td><td>u</td>
+  <td></td><td></td><td>･</td><td>ｵ</td><td>ﾅ</td><td>ﾕ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>6</th><td>ACK</td><td>SYN</td><td>&amp;</td><td>6</td><td>F</td><td>V</td><td>f</td><td>v</td>
+  <td></td><td></td><td>ｦ</td><td>ｶ</td><td>ﾆ</td><td>ﾖ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>7</th><td>BEL</td><td>ETB</td><td>'</td><td>7</td><td>G</td><td>W</td><td>g</td><td>w</td>
+  <td></td><td></td><td>ｧ</td><td>ｷ</td><td>ﾇ</td><td>ﾗ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>8</th><td>BS</td><td>CAN</td><td>(</td><td>8</td><td>H</td><td>X</td><td>h</td><td>x</td>
+  <td></td><td></td><td>ｨ</td><td>ｸ</td><td>ﾈ</td><td>ﾘ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>9</th><td>HT</td><td>EM</td><td>)</td><td>9</td><td>I</td><td>Y</td><td>i</td><td>y</td>
+  <td></td><td></td><td>ｩ</td><td>ｹ</td><td>ﾉ</td><td>ﾙ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>A</th><td>LF</td><td>SUB</td><td>*</td><td>:</td><td>J</td><td>Z</td><td>j</td><td>z</td>
+  <td></td><td></td><td>ｪ</td><td>ｺ</td><td>ﾊ</td><td>ﾚ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>B</th><td>VT</td><td>ESC</td><td>+</td><td>;</td><td>K</td><td>[</td><td>k</td><td>{</td>
+  <td></td><td></td><td>ｫ</td><td>ｻ</td><td>ﾋ</td><td>ﾛ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>C</th><td>FF</td><td>IS4</td><td>,</td><td>&lt;</td><td>L</td><td class="xp">&yen;</td><td>l</td><td>|</td>
+  <td></td><td></td><td>ｬ</td><td>ｼ</td><td>ﾌ</td><td>ﾜ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>D</th><td>CR</td><td>IS3</td><td>-</td><td>=</td><td>M</td><td>]</td><td>m</td><td>}</td>
+  <td></td><td></td><td>ｭ</td><td>ｽ</td><td>ﾍ</td><td>ﾝ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>E</th><td>SO</td><td>IS2</td><td>.</td><td>&gt;</td><td>N</td><td>^</td><td>n</td><td class="xp">&oline;</td>
+  <td></td><td></td><td>ｮ</td><td>ｾ</td><td>ﾎ</td><td>ﾞ</td><td></td><td></td>
+ </tr>
+ <tr>
+  <th>F</th><td>SI</td><td>IS1</td><td>/</td><td>?</td><td>O</td><td>_</td><td>o</td><td>DEL</td>
+  <td></td><td></td><td>ｯ</td><td>ｿ</td><td>ﾏ</td><td>ﾟ</td><td></td><td></td>
+ </tr>
+</table>
+<p>下記の版があります。</p>
+<ul>
+<li>JIS C 6220-1969：半角ローマ字および半角カナを制定。
+<li>JIS X 0201-1976：情報部門(X)新設に伴う名称変更。
+<li>JIS X 0201-1977：最新版。
+</ul>
+</div>
+
+<h4 id="iso-8859">ISO-8859 (欧州系8ビット文字)</h4>
+<div class="i">
+<p><a href="#iso-iec-646">ISO/IEC 646</a> ではカスタマイズできる文字数が少なすぎたため、欧州を中心に独自に制定した 8ビットコード体系です。</p>
+<table class="tb0">
+ <tr><th>規格</th><th>説明</th></tr>
+ <tr><td>ISO-8859-1</td><td>Latin-1 西欧諸語。英語、ドイツ、フランス、イタリア、スペイン、ポルトガル、オランダ、デンマーク、アイスランド、アイルランド、ノルウェー、スウェーデン語など。</td></tr>
+ <tr><td>ISO-8859-2</td><td>Latin-2 中央欧諸語。ボスニア、ポーランド、クロアチア、チェコ、スロバキア、スロベニア、ハンガリー語など。</td></tr>
+ <tr><td>ISO-8859-3</td><td>Latin-3 南欧諸語。トルコ、マルタ、エスペラント語など。</td></tr>
+ <tr><td>ISO-8859-4</td><td>Latin-4 北欧諸語。エストニア、ラトビア、リトアニア、グリーンランド語など。</td></tr>
+ <tr><td>ISO-8859-5</td><td>Cyrillic キリル文字。ロシア、ベラルーシ、ブルガリア、マケドニア、セルビア、ウクライナ語など。</td></tr>
+ <tr><td>ISO-8859-6</td><td>Arabic アラビア語</td></tr>
+ <tr><td>ISO-8859-7</td><td>Greek ギリシャ語</td></tr>
+ <tr><td>ISO-8859-8</td><td>Hebrew ヘブライ語</td></tr>
+ <tr><td>ISO-8859-9</td><td>Latin-5 トルコ語</td></tr>
+ <tr><td>ISO-8859-10</td><td>Latin-6 北欧語</td></tr>
+ <tr><td>ISO-8859-11</td><td>タイ語。</td></tr>
+ <tr><td>ISO-8859-12</td><td>予約</td></tr>
+ <tr><td>ISO-8859-13</td><td>Latin-7 Baltic Rim。</td></tr>
+ <tr><td>ISO-8859-14</td><td>Latin-8 Celtic。</td></tr>
+ <tr><td>ISO-8859-15</td><td>Latin-9 Latin-1の改定</td></tr>
+ <tr><td class="nw">ISO-8859-16</td><td>Latin-10 Latin-2の改定</td></tr>
+</table>
+</div>
+
+<h4 id="iso-iec-6429">ISO/IEC 6429:1992 (制御文字)</h4>
+<div class="i">
+<p>C0領域(0x00～0x1F)、C1領域(0x80～0x9F) の制御文字を定義します。</p>
+<table class="tb0 center local-ascii-table">
+<tr><th colspan=2 rowspan=2></th><th colspan="7">上位４ビット</th></tr>
+<tr><th>0</th><th>1</th><th>2</th><th>...</th><th>7</th><th>8</th><th>9</th></tr>
+<tr><th rowspan=16>下<br>位<br>４<br>ビ<br>ッ<br>ト</th>
+    <th>0</th><td>NUL</td><td>DLE</td><td></td><td>...</td><td></td><td>-</td><td>DCS</td></tr>
+<tr><th>1</th><td>SOH</td><td>DC1</td><td></td><td>...</td><td></td><td>-</td><td>PU1</td></tr>
+<tr><th>2</th><td>STX</td><td>DC2</td><td></td><td>...</td><td></td><td>BPH</td><td>PU2</td></tr>
+<tr><th>3</th><td>ETX</td><td>DC3</td><td></td><td>...</td><td></td><td>NBH</td><td>STS</td></tr>
+<tr><th>4</th><td>EOT</td><td>DC4</td><td></td><td>...</td><td></td><td>-</td><td>CCH</td></tr>
+<tr><th>5</th><td>ENQ</td><td>NAK</td><td></td><td>...</td><td></td><td>NEL</td><td>MW</td></tr>
+<tr><th>6</th><td>ACK</td><td>SYN</td><td></td><td>...</td><td></td><td>SSA</td><td>SPA</td></tr>
+<tr><th>7</th><td>BEL</td><td>ETB</td><td></td><td>...</td><td></td><td>ESA</td><td>EPA</td></tr>
+<tr><th>8</th><td>BS</td><td>CAN</td><td></td><td>...</td><td></td><td>HTS</td><td>SOS</td></tr>
+<tr><th>9</th><td>HT</td><td>EM</td><td></td><td>...</td><td></td><td>HTJ</td><td>-</td></tr>
+<tr><th>A</th><td>LF</td><td>SUB</td><td></td><td>...</td><td></td><td>VTS</td><td>SCI</td></tr>
+<tr><th>B</th><td>VT</td><td>ESC</td><td></td><td>...</td><td></td><td>PLD</td><td>CSI</td></tr>
+<tr><th>C</th><td>FF</td><td>IS4</td><td></td><td>...</td><td></td><td>PLU</td><td>ST</td></tr>
+<tr><th>D</th><td>CR</td><td>IS3</td><td></td><td>...</td><td></td><td>RI</td><td>OSC</td></tr>
+<tr><th>E</th><td>SO</td><td>IS2</td><td></td><td>...</td><td></td><td>SS2</td><td>PM</td></tr>
+<tr><th>F</th><td>SI</td><td>IS1</td><td></td><td>...</td><td>DEL</td><td>SS3</td><td>APC</td></tr>
+</table>
+<p>下記の版があります。</p>
+<ul>
+<li>ISO 6429:1983
+<li>ISO 6429:1988
+<li>ISO/IEC 6429:1992
+</ul>
+</div>
+
+<h4 id="jix-x-0211">JIS X 0211 (制御文字)</h4>
+<div class="i">
+<p><a href="#iso-iec-6429">ISO/IEC 6429</a> とほぼ同等内容の JIS 規格です。</p>
+<p>下記の版があります。</p>
+<ul>
+<li>JIS C 6223-1986：制御文字を制定。
+<li>JIS X 0211-1986：情報部門(X)新設に伴う名称変更。
+<li>JIS X 0211-1991：改版。
+<li><a target="_top" href="javascript:if(confirm('http://kikakurui.com/x0/X0211-1994-01.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://kikakurui.com/x0/X0211-1994-01.html'" tppabs="http://kikakurui.com/x0/X0211-1994-01.html">JIS X 0211-1994</a>：最新版。ISO/IEC 6429:1992 を日本語訳したもの。
+</ul>
+</div>
+
+<h4 id="jis-x-0208">JIS X 0208 (第一水準・第二水準漢字)</h4>
+<div class="i">
+<p>平仮名、片仮名、漢字などの日本語の文字コードを定義します。1～84区を使用し、各区には 1～94点までの文字を定義しています。1978年に <b>JIS C 6226</b> として定義され、後に <b>JIS X 0208</b> に名称変更しました。第一水準、第二水準と呼ばれる漢字を定義しています。1-2区に全角記号、3区全角数字・ローマ字、4区平仮名、5区片仮名、6区ギリシャ文字、7区キリル文字、8区罫線16～47区第一水準漢字、48～84区第二水準漢字を定義しています。</p>
+<p>下記の文字が定義されています。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://www.asahi-net.or.jp/~ax2s-kmtn/ref/jisx0208.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.asahi-net.or.jp/~ax2s-kmtn/ref/jisx0208.html'" tppabs="http://www.asahi-net.or.jp/~ax2s-kmtn/ref/jisx0208.html">JIS X 0208コード表</a> (by Cyber Librarian)
+</ul>
+<p>下記の版があります。</p>
+<ul>
+<li>JIS C 6116-1978：通称「78JIS」。非漢字(453字)、第一水準(2,965字)、第二水準(3,384字)、合計(6,802文)を定義。
+<li>JIS C 6226-1983：通称「83JIS」。2区記号(39字)、8区罫線(32字)追加。第一/第二水準の入替え(22組)、字形変化と移動(4字)。
+<li>JIS X 0208-1990：通称「90JIS」。第二水準に漢字追加(2字)、225文字を字形変更しました。
+<li>JIS X 0208-1997：通称「97JIS」。Shift_JIS, ISO-2022-JP, EUC-JP(に似たもの)の符号化方式を定義。
+</ul>
+<pre class="c tt">
+JIS C 6226-1983：2区：記号追加(39字)
+
+　∠ ⊥ ⌒ ∂ ∇ ≡ ≒ ≪ ≫ √
+　∽ ∝ ∵ ∫ ∬ ∈ ∋ ⊆ ⊇ ⊂
+　⊃ ∪ ∩ ∧ ∨ ￢ ⇒ ⇔ ∀ ∃
+　♯ ♭ ♪ † ‡ ¶ ◯ Å ‰
+
+JIS C 6226-1983：8区：罫線文字追加(32字)
+
+　─ │ ┌ ┐ ┘ └ ├ ┬ ┤ ┴ ┼ ━ ┃ ┏ ┓ ┛
+　┗ ┣ ┳ ┫ ┻ ╋ ┠ ┯ ┨ ┷ ┿ ┝ ┰ ┥ ┸ ╂
+
+JIS C 6226-1983：第一水準と第二水準入れ替え(22組)
+
+　鯵鰺　鴬鶯　蛎蠣　撹攪　竃竈　潅灌　諌諫　頚頸　砿礦　蕊蘂
+　靭靱　賎賤　壷壺　砺礪　梼檮　涛濤　迩邇　蝿蠅　桧檜　侭儘
+　薮藪　篭籠
+
+JIS C 6226-1983：第一水準の字形変化と旧字形を第二水準(84区)に移動(4字)
+
+　尭堯　槙槇　遥遙　瑶瑤
+
+JIS X 0208-1990：第二水準(84区)に漢字追加(2字)
+
+　凜 熙
+</pre>
+</div>
+
+<h4 id="jis-x-0212">JIS X 0212 (補助漢字)</h4>
+<div class="i">
+<p><a href="#jis-x-0208">JIS X 0208</a> に足りない文字を追加したもので、特殊文字(21字)、アルファベット(245字)、補助漢字(5,801字)、合計(6,067字)を定義しています。1990年に制定されましたが、<a href="#shift_jis">Shift_JIS</a> との相性が悪くあまり使用されていません。</p>
+<p>下記の版があります。</p>
+<ul>
+<li>JIS X 0212-1990：通称「JIS補助漢字」。
+</ul>
+</div>
+
+<h4 id="jis-x-0213">JIS X 0213 (第三水準・第四水準漢字)</h4>
+<div class="i">
+<p><a href="#jis-x-0212">JIS X 0212</a> の代わりに 2000年に制定されました。<a href="#jis-x-0208">JIS X 0208</a>(第1面) の空き領域に第三水準漢字を、また、第2面に第四水準漢字を定義しました。</p>
+<p>下記の文字が定義されています。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://ja.wikipedia.org/wiki/JIS_X_0213%E9%9D%9E%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://ja.wikipedia.org/wiki/JIS_X_0213%E9%9D%9E%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7'" tppabs="https://ja.wikipedia.org/wiki/JIS_X_0213%E9%9D%9E%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7">JIS X 0213 第1面(非漢字)一覧</a> (By Wikipedia)
+<li><a target="_top" href="javascript:if(confirm('https://ja.wikipedia.org/wiki/JIS_X_0213%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7%E3%81%AE1%E9%9D%A2  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://ja.wikipedia.org/wiki/JIS_X_0213%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7%E3%81%AE1%E9%9D%A2'" tppabs="https://ja.wikipedia.org/wiki/JIS_X_0213%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7%E3%81%AE1%E9%9D%A2">JIS X 0213 第1面(漢字)一覧</a> (By Wikipedia)
+<li><a target="_top" href="javascript:if(confirm('https://ja.wikipedia.org/wiki/JIS_X_0213%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7%E3%81%AE2%E9%9D%A2  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://ja.wikipedia.org/wiki/JIS_X_0213%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7%E3%81%AE2%E9%9D%A2'" tppabs="https://ja.wikipedia.org/wiki/JIS_X_0213%E6%BC%A2%E5%AD%97%E4%B8%80%E8%A6%A7%E3%81%AE2%E9%9D%A2">JIS X 0213 第2面(漢字)一覧</a> (By Wikipedia)
+</ul>
+<p>下記の版があります。</p>
+<ul>
+<li>JIS X 0213-2000：通称「JIS2000」。初版。
+<li>JIS X 0213-2004：通称「JIS2004」。第三水準(10字)を追加、字体変更(168字)。
+<li>JIS X 0213-2012：常用漢字との対応表追加。
+</ul>
+<p>文字数は下記の様に変化しています。</p>
+<table class="tb0">
+<tr><th>規格</th><th>俗称</th><th>非漢字</th><th>第一水準</th><th>第二水準</th><th>第三水準</th><th>第四水準</th><th>合計</th></tr>
+<tr><td>JIS C 6226-1978</td><td>JIS78、78JIS、旧JIS</td><td>453字</td><td rowspan="7">2,965字</td><td>3,384字</td><td rowspan=5></td><td rowspan=5></td><td>6,802字</td></tr>
+<tr><td>JIS C 6226-1983<td rowspan="2">JIS83、83JIS、新JIS</td><td rowspan=4>524字</td><td rowspan="2">3,388字</td><td rowspan="2">6,877字</td></tr>
+<tr><td>JIS X-0208-1983</td></tr>
+<tr><td>JIS X 0208-1990</td><td>JIS90、90JIS</td><td rowspan=4>3,390字</td><td rowspan=2>6,879字</td></tr>
+<tr><td>JIS X 0208-1997</td><td>JIS97、97JIS</td></tr>
+<tr><td>JIS X 0213-2000</td><td>JIS2000、2000JIS</td><td rowspan=2>1,183字</td><td>1,249字</td><td rowspan=2>2,436字</td><td>11,223字</td></tr>
+<tr><td>JIS X 0213-2004</td><td>JIS2004、2004JIS</td><td>1,259字</td><td>11,233字</td></tr>
+</table>
+</div>
+
+<h4 id="iso-2022-jp">ISO-2022-JP (JISコード)</h4>
+<div class="i">
+<p>電子メール等で利用される符号化方式です。俗にいう「<b>JISコード</b>」。<a href="#jis-x-0201">JIS X 0211</a> の制御文字、<a href="#jis-x-0201">JIS X 0201</a> のローマ字、<a href="#jis-x-0208">JIS X 0208</a> の文字をバイト列に符号化します。ESC(0x1B) で始まるエスケープシーケンスで、その後に続く文字集合を指定します。全角文字は、区番号、点番号にそれぞれ 0x20 を足します。すべてのバイトが 0x00～0x7F の範囲に収まります。</p>
+<table class="tb0 center">
+ <tr><th>A</th><th>B</th><th>C</th><th>(漢字)</th><th>あ</th><th>い</th><th>う</th><th>(ASCII)</th><th>X</th><th>Y</th><th>Z</th></tr>
+ <tr><td>41</td><td>42</td><td>43</td><td>1B 24 42</td><td>24 22</td><td>24 24</td><td>24 26</td><td>1B 28 42</td><td>58</td><td>59</td><td>5A</td></tr>
+</table>
+<p>エスケープシーケンスには下記などがあります。</p>
+<table class="tb0 nw">
+ <tr><th>規格</th><th>記号表記</th><th>16進表記</th><th>意味</th></tr>
+ <tr><td rowspan=4>ISO-2022-JP</td><td>ESC ( B</td><td>1B 28 42</td><td>ASCII。</td></tr>
+ <tr><td>ESC ( J</td><td>1B 28 4A</td><td>JIS X 6220(JIS X 0201)-1976 ラテン文字集合</td></tr>
+ <tr><td>ESC $ @</td><td>1B 24 40</td><td>JIS C 6226(JIS X 0208)-1978(通称：旧JIS)</td></tr>
+ <tr><td>ESC $ B</td><td>1B 24 42</td><td>JIS X 0208-1983(通称：新JIS) または JIS X 0208-1990</td></tr>
+ <tr><td>ISO-2022-JP-1 で追加</td><td>ESC $ ( D</td><td>1B 24 28 44</td><td>JIS X 0212-1990(JIS補助漢字)</td></tr>
+ <tr><td rowspan=4>ISO-2022-JP-2 で追加</td><td>ESC $ A</td><td>1B 24 41</td><td>GB 2312-80(中国語)</td></tr>
+ <tr><td>ESC $ ( C</td><td>1B 24 28 43</td><td>KS X 1001-1992(韓国語)</td></tr>
+ <tr><td>ESC . A</td><td>1B 2E 41</td><td>ISO/IEC 8859-1 の右半分</td></tr>
+ <tr><td>ESC . F</td><td>1B 2E 46</td><td>ISO/IEC 8859-7 の右半分</td></tr>
+ <tr><td rowspan=2>ISO-2022-JP-3 で追加</td><td>ESC $ ( O</td><td>1B 24 28 4F</td><td>JIS X 0213:2000の1面</td></tr>
+ <tr><td>ESC $ ( P</td><td>1B 24 28 50</td><td>JIS X 0213:2000の2面</td></tr>
+ <tr><td>ISO-2022-JP-2004</td><td>ESC $ ( Q</td><td>1B 24 28 51</td><td>JIS X 0213:2004の1面</td></tr>
+ <tr><td><a target="_top" href="javascript:if(confirm('https://www.itscj.ipsj.or.jp/iso-ir/013.pdf  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.itscj.ipsj.or.jp/iso-ir/013.pdf'" tppabs="https://www.itscj.ipsj.or.jp/iso-ir/013.pdf">ISO-IR 013</a></td><td>ESC ( I</td><td>1B 28 49</td><td>JIS X 0201(半角カナ) ... 一部のソフトでのみ利用</td></tr>
+</table>
+<p>ISO-2022-JP に類似した符号化方式には下記などがあります。</p>
+<table class="tb1">
+ <tr><th>規格</th><th>説明</th></tr>
+ <tr><td>CP50220</td><td>Microsoft による規格。ISO-2022-JP の Windows-31J版。半角カナを JIS X 0208 の全角カナに変換して表します。</td></tr>
+ <tr><td>CP50221</td><td>CP50220 と類似していますが、半角カナを ESC ( I でエスケープして表します。</td></tr>
+ <tr><td>CP50222</td><td>CP50220 と類似していますが、SO(0x0E)で半角カナの始まり、SI(0x0F)で終わりを示します。</td></tr>
+ <tr><td>ISO-2022-JP-MS</td><td>Linux陣営が規定した独自規格。半角カナは ESC ( I、外字を ESC $ ( ? でエスケープします。</td></tr>
+</table>
+</div>
+
+<h4 id="euc-jp">EUC-JP (EUC)</h4>
+<div class="i">
+<p>Extended UNIX Code Packed Format for Japanese の略。UNIX/Linix 系のシステムで使用される符号化方式です。<a href="#ascii">ASCII</a> と <a href="#jis-x-0208">JIS X 0208</a>(漢字)、<a href="#jis-x-0201">JIS X 0201</a>(半角カナ) を扱います。漢字は区点番号に 0xA0 を足すと EUC となります。例えば、「あ」(4区2点)は、0x04 0x02 ＋ 0xA0 0xA0 ＝ 0xA4 0xA2 で「あ」となります。半角カナは SS2(0x8E) を付加します。</p>
+<table class="tb0 center">
+ <tr><th>A</th><th>B</th><th>C</th><th>あ</th><th>い</th><th>う</th><th>ｱ</th><th>ｲ</th><th>ｳ</th></tr>
+ <tr><td>41</td><td>42</td><td>43</td><td>A4 A2</td><td>A4 A4</td><td>A4 A6</td><td>8E B1</td><td>8E B2</td><td>8E B3</td></tr>
+</table>
+</div>
+
+<h4 id="shift_jis">Shift_JIS (シフトJIS)</h4>
+<div class="i">
+<p>Windows 系で使用される符号化方式です。<a href="#jis-x-0208">JIS X 0208</a> の付属書で「シフト符号化表現」という名称で定義されています。半角文字(制御文字・英数記号・半角カナ)は <a href="#jis-x-0201">JIS X 0201</a> の文字をそのまま使用し、全角文字は、1バイト目を JIS X 0201 で未使用の 0x81～0x9F、0xE0～0xEF、2バイト目を 0x40～0x7E、0x80～0xFC の領域に計算式でシフトして符号化します。</p>
+<table class="tb0 center">
+ <tr><th>A</th><th>B</th><th>C</th><th>あ</th><th>い</th><th>う</th><th>ｱ</th><th>ｲ</th><th>ｳ</th></tr>
+ <tr><td>41</td><td>42</td><td>43</td><td>82 A0</td><td>82 A2</td><td>82 A4</td><td>B1</td><td>B2</td><td>B3</td></tr>
+</table>
+<p>文字の割り当ては次のようになります。</p>
+<table class="tb0">
+<tr><th>1バイト目</th><th>2バイト目</th><th>説明</th></tr>
+ <tr><td colspan="2">0x00～0x1F</td><td>制御文字</td></tr>
+ <tr><td colspan="2">0x20～0x7E</td><td>英数記号文字</td></tr>
+ <tr><td colspan="2">0x7F</td><td>制御文字(DEL)</td></tr>
+ <tr><td>0x81～0x9F</td><td>0x40～0x7E, 0x80～0xFC</td><td>JIS X 0213(1面:前半)</td></tr>
+ <tr><td colspan="2">0xA1～0xDF</td><td>半角カナ</td></tr>
+ <tr><td>0xE0～0xEF</td><td>0x40～0x7E, 0x80～0xFC</td><td>JIS X 0213(1面:後半)</td></tr>
+ <tr><td>0xF0～0xFC</td><td>0x40～0x7E, 0x80～0xFC</td><td>JIS X 0213(2面)</td></tr>
+</table>
+<p>区番号を c1、点番号を c2 とした場合、Shift_JIS の 1バイト目 b1、2バイト目 b2 は下記の計算で求められます。</p>
+<pre class="c">
+if (c1 % 2) {
+    b1 = int((c1 + 1) / 2) + 0x80;
+    b2 = c2 + 0x3f;
+} else {
+    b1 = int(c1 / 2) + 0x80;
+    b2 = c2 + 0x9d;
+}
+if (b1 >= 0xa0) { b1 = b1 + 0x40; }
+if (b2 >= 0x7f) { b2 = b2 + 1; }
+</pre>
+<p>Shift_JIS に関連した符号化方式には下記などがあります。</p>
+<table class="tb0">
+ <tr><th>符号化方式</th><th>説明</th></tr>
+ <tr><td class="nw"><b>MS漢字コード<br>(CP932)</b></td><td>マイクロソフトが 1982年に定めた文字コード。JIS C 6226-1978 で定義される文字集合を、半角カタカナが使用する 0xA1～0xDF、および DEL(0x7F) の領域を避けるように巧みにシフトさせたものです。ただし、未使用の領域に各社が独自の文字を割り当て、「NEC版CP932」 や 「IBM版CP932」が現れるなど、混乱が生じていました。</td></tr>
+ <tr><td class="nw"><b>Windows-31J<br>(MS932)</b></td><td>マイクロソフトが 1993年に定めた文字コード。上記の混乱を収拾するために各社独自実装の内、広く使用されているものだけを仕様に取り込み、以後の各社独自実装を禁止したものです。JIS X 0208-1990 をベースとし、13区に83字の「NEC特殊文字」を、89～92区に374字の「NEC選定IBM拡張文字」を、115～119区に 388字の「IBM拡張文字」を追加しています。CP932 と区別するために MS932 とも呼ばれます。</td></tr>
+ <tr><td class="nw"><b>Shift_JISX0213</b></td><td><a href="#jis-x-0213">JIS X 0213</a> に対応したもの。</td></tr>
+ <tr><td><b>Shift_JIS-2004</b></td><td><a href="#jis-x-0213">JIS X 0213:2004</a> の改定に対応したもの。</td></tr>
+</table>
+</div>
+
+<h4 id="jis">JIS系コードマップ</h4>
+<div class="i">
+<p>JIS系文字集合のそれぞれの符号化方式によるマッピングは次のようになります。</p>
+<canvas id="cv1" width=320 height=320 class="box gray"></canvas>
+<script>
+$(function() {
+  new Canvas("cv1")
+  .box(0, 0, 320, 320, {bgcolor:"#eee"})
+  .box(4, 4, 118, 118, {bgcolor:"#ffd", text: "JIS X 0208(区・点)", top:0, left:2})
+  .box(40, 40, 118, 118, {bgcolor:"#dfd", text: "ISO-2022-JP(JIS)", top:0, left:2})
+  .box(78, 160, 80, 34, {bgcolor:"#fcc", text:"Shift_JIS", top:0, left:2})
+  .box(198, 198, 118, 118, {bgcolor:"#ddf", text:"EUC-JP", top:4, left:2})
+  .box(164, 160, 152, 34, {bgcolor:"#fcc"})
+  .box(78, 282, 80, 34, {bgcolor:"#fcc"})
+  .box(164, 282, 152, 34, {bgcolor:"#fcc"})
+  .text("+0x20, +0x20", 50, 66)
+  .text("+0xA0, +0xA0", 209, 223)
+  .text("１", 10, 160)
+  .text("バ", 10, 174)
+  .text("イ", 10, 188)
+  .text("ト", 10, 202)
+  .text("目", 10, 216)
+  .text("２バイト目", 160, 15);
+});
+</script>
+</div>
+
+<h4 id="unicode">Unicode</h4>
+<div class="i">
+<p>世界中の文字を一つのコード体系で表現しようとして制定されたものです。日本で定義された文字も取り込まれていますが、CJK(中国語・日本語・韓国語)で字形の似たものを統一するなどしています。JIS系のコードとは変換表を用いて変換します。当初は、16ビット＝256区×256点＝65,535字の中に収めようとしていましたが、現在では0面～16面を使用し、21ビット＝17面×256区×256点＝1,114,112字の領域に拡大しています。例えば日本語の「あ」は「0面48区66点」と定義されています。「0-48-66」の様に表現したり、48 → 0x30、66 → 0x42 と 16進数に変換して「U+3042」の様に表したりします。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF'" tppabs="https://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF">Unicode文字の一覧</a>
+</ul>
+</div>
+
+<h4 id="utf-8">UTF-8</h4>
+<div class="i">
+<p>Unicode系で一番利用されている符号化方式です。ASCII文字を 1バイトで表現できるように、U+007F までの文字は 1バイト、U+07FF までの文字は 2バイト、U+FFFF までの文字は 3バイトで表現します。U+10000～U+10FFFF の文字は、0xF0～0xF7 を使用する符号化も定義されていますが、実際には <a href="#surrogates">サロゲートペア</a> という仕組みを用いて 1文字を 2文字に変換し、これを 3バイト＋3バイトの6バイトで表現します。</p>
+<table class="tb0">
+ <tr><th>範囲</th><th>ビット数</th><th>変換元ビット</th><th>変換後ビット</th></tr>
+ <tr class="tt"><td class="nw">U+0000～U+007F</td><td>7bits</td><td class="r">0xxxxxxx</td><td>0xxxxxxx<br>(00-7F)</td></tr>
+ <tr class="tt"><td class="nw">U+0080～U+07FF</td><td>11bits</td><td class="r">00000yyy xxxxxxxx</td><td>110yyyxx 10xxxxxx<br>(C0-DF)&nbsp;&nbsp;(80-BF)</td></tr>
+ <tr class="tt"><td class="nw">U+0800～U+FFFF</td><td>16bits</td><td class="r">yyyyyyyy xxxxxxxx</td><td>1110yyyy 10yyyyxx 10xxxxxx<br>(E0-EF)&nbsp;&nbsp;(80-BF)&nbsp;&nbsp;(80-BF)</td></tr>
+ <tr class="tt"><td class="nw">U+10000～U+10FFFF<br><small class="mr">(あまり使用されない方式)</small></td><td>21bits</td><td>zzzzz yyyyyyyy xxxxxxxx</td><td>11110zzz 10zzyyyy 10yyyyxx 10xxxxxx<br>(F0-F7)&nbsp;&nbsp;(80-BF)&nbsp;&nbsp;(80-BF)&nbsp;&nbsp;(80-BF)</td></tr>
+ <tr class="tt">
+  <td class="nw">U+10000～U+10FFFF<br><small class="mr">(サロゲートペア方式)</small></td>
+  <td>21bits</td>
+  <td>zzzzz yyyyyyyy xxxxxxxx<br>&nbsp;&nbsp;↓ (wwww = zzzzz-1)<br>High:110110ww wwyyyyyy<br>Low:&nbsp;110111yy xxxxxxxx</td>
+  <td>
+   High:11101101 1010wwww 10yyyyyy<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CD)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A0-AF)&nbsp;&nbsp;(80-BF)<br>
+   Low:&nbsp;11101101 1011yyxx 10xxxxxx<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CD)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(B0-BF)&nbsp;&nbsp;(80-BF)<br>
+  </td>
+ </tr>
+</table>
+<ul>
+<li>UTF-8N：BOM無しの UTF-8。
+</ul>
+</div>
+
+<h4 id="utf-16">UTF-16</h4>
+<div class="i">
+<p>U+0000～U+FFFF をそのまま16ビットで表現します。U+10000～U+10FFFF の文字は <a href="#surrogates">サロゲートペア</a> を用いて表します。</p>
+<table class="tb0">
+ <tr><th>範囲</th><th>ビット数</th><th>変換元ビット</th><th>変換後ビット</th></tr>
+ <tr class="tt"><td>U+0000～U+FFFF</td><td>16bits</td><td class="r">yyyyyyyy xxxxxxxx</td><td>yyyyyyyy xxxxxxxx<br>(00-FF)&nbsp;&nbsp;(00-FF)</td></tr>
+ <tr class="tt">
+  <td class="nw">U+10000～U+10FFFF</td>
+  <td>21bits</td>
+  <td>zzzzz yyyyyyyy xxxxxxxx<br>&nbsp;&nbsp;↓ (wwww = zzzzz-1)<br>High:110110ww wwyyyyyy<br>Low:&nbsp;110111yy xxxxxxxx</td>
+  <td>
+   High:110110ww wwyyyyyy<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(D8-DB)&nbsp;&nbsp;(00-FF)<br>
+   Low:&nbsp;110111yy xxxxxxxx<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DC-DF)&nbsp;&nbsp;(00-FF)
+  </td>
+ </tr>
+</table>
+<ul>
+<li>UTF-16：UTF-16 をリトルまたはビッグエンディアンで格納。BOMがあればBOMで判断。なければ通常ビッグエンディアン。
+<li>UTF-16LE：UTF-16を <a href="#byte-order">リトルエンディアン</a> で格納。BOM無し。
+<li>UTF-16BE：UTF-16を <a href="#byte-order">ビッグエンディアン</a> で格納。BOM無し。
+</ul>
+</div>
+
+<h4 id="utf-32">UTF-32</h4>
+<div class="i">
+<p>Unicodeで定義されるすべての文字を32ビットで表現します。メモリ効率がよくないためあまり使用されていません。</p>
+<table class="tb0">
+ <tr><th>範囲</th><th>ビット数</th><th>変換元ビット</th><th>変換後ビット</th></tr>
+ <tr class="tt"><td>U+0000～U+FFFF</td><td>16bits</td><td class="r">yyyyyyyy xxxxxxxx</td><td>00000000 00000000 yyyyyyyy xxxxxxxx<br>(00)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(00)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(00-FF)&nbsp;&nbsp;(00-FF)</td></tr>
+ <tr class="tt"><td class="nw">U+10000～U+10FFFF</td><td>21bits</td><td>zzzzz yyyyyyyy xxxxxxxx</td><td>00000000 000zzzzz yyyyyyyy xxxxxxxx<br>(00)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(00-10)&nbsp;&nbsp;(00-FF)&nbsp;&nbsp;(00-FF)</td>
+ </tr>
+</table>
+<ul>
+<li>UTF-32：UTF-32 をリトルまたはビッグエンディアンで格納。BOMがあればBOMで判断。なければ通常ビッグエンディアン。
+<li>UTF-32LE：UTF-32を <a href="#byte-order">リトルエンディアン</a> で格納。BOM無し。
+<li>UTF-32BE：UTF-32を <a href="#byte-order">ビッグエンディアン</a> で格納。BOM無し。
+</ul>
+</div>
+
+<h4 id="surrogates">サロゲートペア</h4>
+<div class="i">
+<p>Unicode が16→21ビットに拡張されたことに伴い U+10000～U+10FFFF の文字を表現する必要が生じました。U+D800～U+DFFF の領域がまだ使用されていなかったことから、U+10000～U+10FFFF の範囲の文字は、1文字目が U+D800～U+DBFF、2文字目が U+DC00～U+DFFF の 2つの文字に変換し、これを UTF-8 や UTF-16 でコード化することになりました。この 2文字のペアをサロゲートペアと呼びます。</p>
+<ul>
+<li>21ビットを「zzzzz yyyyyyyy xxxxxxxx」の様に分ける。
+<li>zzzzz から 1を引いて wwww とする。(zzzz は 0x01～0x10 の範囲なので1を引けば4ビットに収まる)
+<li>1文字目を「110110ww wwyyyyyy」、2文字目を「110111yy xxxxxxxx」とする。
+</ul>
+<p>例えば魚の𩸽(ほっけ:U+29E3D)という文字は、次のように変換します。</p>
+<pre class="c">
+29E3D
+→ 00010 10011110 00111101			// 29E3Dを21ビットの2進数に変換
+→ 0001 10011110 00111101 			// zzzzzから1引いて4ビットにする
+→ [110110] 0001 100111 [110111]10 00111101	// 110110ww wwyyyyyy 110111yy xxxxxxxx 形式にする
+→ 1101 1000 0110 0111 1101 1110 0011 1101	// 4ビット毎に整形
+→ D867 DC3D					// 16進数に変換
+→ U+D867 U+DE3D					// 2文字分のコードで𩸽(U+29E3D)を表す
+</pre>
+<p>これにより、U+10000～U+10FFFF 領域の文字に対応していないプログラムでも、U+0000～U+FFFF 領域の文字として扱うことが可能となります。ただし、文字数をカウントする際に1文字を2文字とカウントしたり、区切ってはならない箇所で区切ったりなどの問題は発生します。</p>
+</div>
+
+<h4 id="byte-order">バイトオーダー</h4>
+<div class="i">
+<p>16ビットや32ビットの値をファイルやネットワークに書き出す際に、上位バイトから書き出す方式（<b>ビッグエンディアン</b>）と下位バイトから書き出す方式（<b>リトルエンディアン</b>）があります。例えば「あ(U+3042)」を UTF-16 で符号化し、ビッグエンディアンで書き出すと 0x30 0x42 の順序となりますが、リトルエンディアンで書き出すと 0x42 0x30 の順序となります。ネットワークでは通常ビッグエンディアンが使用されます。ファイルでは Windows 系が x86系CPU が効率的に扱えるリトルエンディアンを使用していることから、リトルエンディアンが主流となっています。UTF-8 の場合はバイトオーダーの概念はありません。</p>
+</div>
+
+<h4 id="bom">BOM(バイトオーダーマーク)</h4>
+<div class="i">
+<p>UTF-16 や UTF-32 のバイトオーダーを示すために、ファイルの先頭にオプションとして付加する、U+FFFE (ZERO WIDTH NO-BREAK SPACE) 文字に相当する数バイトのデータです。</p>
+<table class="tb0">
+ <tr><th>符号化方式</th><th>BOMの有無</th><th>エンディアン</th><th>BOM</th><th>備考</th></tr>
+ <tr><td>UTF-8</td><td>省略可</td><td>－</td><td>0xEF 0xBB 0xBF</td><td>UTF-8 にはエンディアンの概念が無いがつけることがある。</td></tr>
+ <tr><td>UTF-8N</td><td>無し</td><td>－</td><td></td><td>BOM無しの UTF-8 を UTF-8N と呼ぶ。</td></tr>
+ <tr><td rowspan="2">UTF-16</td><td rowspan="2">省略可</td><td>BE</td><td>0xFE 0xFF</td><td>省略時はビッグエンディアン推奨。</td></tr>
+ <tr><td>LE</td><td>0xFF 0xFE</td><td></td></tr>
+ <tr><td>UTF-16BE</td><td>無し</td><td>BE</td><td></td><td>利用者間で予め合意しておく。</td></tr>
+ <tr><td>UTF-16LE</td><td>無し</td><td>LE</td><td></td><td>利用者間で予め合意しておく。</td></tr>
+ <tr><td rowspan="2">UTF-32</td><td rowspan="2">省略可</td><td>BE</td><td>0x00 0x00 0xFE 0xFF</td><td>省略時はビッグエンディアン推奨。</td></tr>
+ <tr><td>LE</td><td>0xFF 0xFE 0x00 0x00</td><td></td></tr>
+ <tr><td>UTF-32BE</td><td>無し</td><td>BE</td><td></td><td>利用者間で予め合意しておく。</td></tr>
+ <tr><td>UTF-32LE</td><td>無し</td><td>LE</td><td></td><td>利用者間で予め合意しておく。</td></tr>
+</table>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://www.jisc.go.jp/app/jis/general/GnrJISSearch.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.jisc.go.jp/app/jis/general/GnrJISSearch.html'" tppabs="http://www.jisc.go.jp/app/jis/general/GnrJISSearch.html">JIS規格検索</a>
+<li><a target="_top" href="javascript:if(confirm('http://fujimura2.fiw-web.net/java/lang/JIS02XX.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://fujimura2.fiw-web.net/java/lang/JIS02XX.html'" tppabs="http://fujimura2.fiw-web.net/java/lang/JIS02XX.html">http://fujimura2.fiw-web.net/java/lang/JIS02XX.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年3月1日 最終更新:2020年3月1日</div>
+<div>http://www.tohoho-web.com/ex/charset.html</div>
+</body>
+</html>

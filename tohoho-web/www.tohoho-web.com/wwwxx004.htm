@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>サーバープッシュ(自動再表示) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>サーバープッシュ(自動再表示)</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+サーバープッシュ(自動再表示)
+
+<div class="warning">
+本頁で説明している multipart/x-mixed-replace によるサーバープッシュは、Firefox, Opera, Safari などはサポートしていますが、Internet Explorer ではサポートされていません。代わりに、Long polling や WebSocket API などが利用されています。(2018年1月7日追記)
+</div>
+
+<h4>サーバープッシュ</h4>
+<div class=i>
+<p>Netscape Navigatorでは、クライアントプルと同様、サーバープッシュ(ServerPush)という技術を用いても、ページを自動的に再表示することができます。CGIスクリプトを利用するので設定は多少面倒ですが、任意のタイミング（誰かが掲示板に新規メッセージを書き込んだなど）で再表示可能ですので、サーバーとブラウザの間の通信を抑制することができます。</p>
+<p>以下のようなCGIスクリプトを nph-push.cgi のように nph- で始まるファイル名で設置して呼び出してください。(→<a href="wwwcgi4.htm#NphScript" tppabs="http://www.tohoho-web.com/wwwcgi4.htm#NphScript">NPHスクリプト</a>)CGIの設置方法に関しては「<a href="wwwcgi.htm" tppabs="http://www.tohoho-web.com/wwwcgi.htm">とほほのCGI入門</a>」などを参照してください。</p>
+<p>---ThisIsRandomString--- の部分は、本文中にたまたま現れることの無さそうな適当な文字列を指定してください。</p>
+<pre class=c>
+#!/usr/local/bin/perl
+
+$| = 1;
+$boundary = "---ThisIsRandomString---";
+
+print "HTTP/1.0 200 OK\n";
+print "Content-type: multipart/x-mixed-replace;";
+print "boundary=$boundary\n";
+print "\n";
+print "$boundary\n";
+while (1) {
+    unless (print "") {
+        last;
+    }
+    print "Content-type: text/html\n";
+    print "\n";
+    print "&lt;html&gt;\n";
+    print "&lt;head&gt;\n";
+    print "&lt;title&gt;;サーバープッシュ&lt;/title&gt;\n";
+    print "&lt;/head&gt;\n";
+    print "&lt;body&gt;\n";
+    print "現在の時刻は\n";
+    ($sec, $min, $hour, $mday, $mon, $year)
+        = localtime(time());
+    printf("%4d/%02d/%02d %02d:%02d:%02d\n",
+        $year + 1900, $mon + 1,
+        $mday, $hour, $min, $sec);
+    print "です。";
+    print "&lt;/body&gt;\n";
+    print "&lt;/html&gt;\n";
+    print "$boundary\n";
+    sleep(5);
+}
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 1998 杜甫々</div>
+<div>1998年5月24日</div>
+<div>http://www.tohoho-web.com/wwwxx004.htm</div>
+</body>
+</html>

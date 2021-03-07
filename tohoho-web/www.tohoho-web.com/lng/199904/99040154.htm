@@ -1,0 +1,407 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ファイル名orアドレスを隠す方法</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ファイル名orアドレスを隠す方法</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040153.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040153.htm">[前に]</a>
+<a href="99040155.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040155.htm">[次に]</a>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/21(水) 13:22:46</span><br>
+よそのサイトのダウンロード用ファイルに直リンク張り倒して<br>
+「よそも違法にファイル作っているからいいんだ！」とか<br>
+のたまっているお脳あたたかめなサイトを発見しました。いやあ、春ですね。<br>
+<br>
+（そのファイル作成自体は違法でもなんでもないのですが～。困ったもんだ。）<br>
+<br>
+まあ正当性云々はここでは関係ないのでおいといて、<br>
+直リンクというのは大変迷惑です。可愛げがないです。<br>
+で、こういうサイトを直接叩いても意味がないので（トリだし）<br>
+自衛手段としてファイルやフォルダ名を不定期に変えてしまう、というのが<br>
+実に効果的だろうとは思うのですが、ファイルが多いと面倒ですので<br>
+アドレスやファイル名をわかりにくくするいい方法、アイデアが<br>
+ありましたら教えて下さい。<br>
+<br>
+できればリンク自体は普通に出来るようにしたいので、<br>
+外部から見て構造がわかりにくいフォルダの作り方とかでも結構です。<br>
+CGIとか使えないサイトも多いですのでできればHTMLとJavaScriptだけで出来るといいのですが。<br>
+<br>
+（何度かこういう質問は見たのですが関係ないな～と思ってログとか取ってありませんでした。すいません）<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/21(水) 14:51:29</span><br>
+お脳あたたかめなサイトに遊びに行ったら、私で64人目でした（笑）<br>
+<br>
+ほんでもってサンプル（対象”../download/item/hoge.zip”の場合）<br>
+---------------------------------------<br>
+&lt;script&gt;<br>
+var a = "wn";<br>
+var o = "oad";<br>
+var k = "l";<br>
+var t = "do";<br>
+<br>
+function download(ika){<br>
+url = "../"+t+a+k+o+"/item/"+ika+".zip";<br>
+location.href = url;<br>
+}<br>
+&lt;/script&gt;<br>
+<br>
+&lt;a href="http://ダミーURL" onClick="download('hoge');return false"&gt;D/L&lt;/a&gt;<br>
+---------------------------------------<br>
+<br>
+よっぽどソースとにらめっこするのが好きな人でなければ<br>
+こんな感じでフォルダ名をバラバラにされるとツライと思いますよ。<br>
+JavaScript分からん人ならダミーURLにひっかかるだろうし・・・<br>
+<br>
+どうでしょう？<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/21(水) 15:08:29</span><br>
+<font color="#CC8000">＞たこすけさん</font><br>
+<br>
+あ、なるほど。一瞬私もひっかかりました（おいおい）。<br>
+これじゃどっかへジャンプしちゃうのではーと思ったら<br>
+false返している訳ですね。ソネットにつないじゃえ（笑）。<br>
+<br>
+これくらいだとスクリプトわかんない人でも使いやすいかも。<br>
+<br>
+でもネタ的にこういうの結構面白い気がするので<br>
+もう少し他にもアイデアありましたら皆様お聞かせ下さい。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/04/21(水) 15:54:58</span><br>
+<font color="#CC8000">＞ファイルが多いと面倒ですので</font><br>
+<br>
+という一言があるので、ファイル名を暗号化もどきにすると、<br>
+たくさんあっても結構イケそうです。<br>
+--------------------------------------sample------<br>
+function file_name(pass){<br>
+　ret = "";loop = 0;idx = 0;<br>
+　wstr = "abcdefghijklmnopqrstuvwxyz";<br>
+　wstr = wstr + "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890._-";<br>
+<br>
+　for (loop = 0;loop &lt; pass.length;loop = loop + 2){<br>
+　　idx = substr(pass,loop,2);<br>
+　　ret = ret + substr(wstr,idx,1);<br>
+　}<br>
+　return ret;<br>
+}<br>
+function download(f_number){<br>
+　//f_numberで、urlに入れるヤツを色々変える<br>
+　location.href = file_name("0001020361050704");<br>
+}<br>
+<br>
+&lt;a href="だみ～" onClick="download(1);return false"&gt;file&lt;/a&gt;<br>
+--------------------------------------sample-end--<br>
+テストしてないんで、そのままで動く保証はありません。(^_^;)<br>
+これは私が実際使ってるインチキ暗号化の一部です。<br>
+wstrの文字列の中身はテキトウに入れ替えた方がよいです。<br>
+（サンプルは、分かりやすく並べてるだけですので）<br>
+あと、ダウンロードさせるファイル名は、できるだけ長いほうがいいです。<br>
+<br>
+ちなみに、サンプルのファイル名は、”abcd.gif"とかってなると思う。<br>
+（自信ないです）<br>
+あんまし難しくすると、今度は自分が困るので・・・(^_^;)<br>
+パッと見わからなきゃいいかな～なんて。<br>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/04/21(水) 16:19:37</span><br>
+ごめん。substrはＰｅｒｌだった。(^_^;)<br>
+wstr.charAt(loop)とかに置き換えてね。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/04/21(水) 16:30:08</span><br>
+↑これ私ね。<br>
+なんか無責任っぽい（笑）ので、ちゃんと書きます。<br>
+forループの中身ね。<br>
+<br>
+idx = pass.substring(loop,loop+2) * 1;<br>
+ret = ret + wstr.charAt(idx);<br>
+<br>
+こんな感じ？(^_^;)<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/21(水) 16:59:25</span><br>
+<font color="#CC8000">&gt; ごめん。substrはＰｅｒｌだった。(^_^;)</font><br>
+ありゃ？、そうだったんですか？<br>
+NC4ではsubstr使えるんで<br>
+　　idx = pass.substr(loop,2);<br>
+　　ret = ret + wstr.substr(idx,1);<br>
+と直して実験してました（笑）<br>
+<br>
+<font color="#CC8000">&gt; idx = pass.substring(loop,loop+2) * 1;</font><br>
+<font color="#CC8000">&gt; ret = ret + wstr.charAt(idx);</font><br>
+あ～こうすれば良かったのか！馬鹿ね（←私）<br>
+<br>
+ところで"abcd.gif"→"0001020362060805"ですよね？<br>
+細かいツッコミですけど、スクリプトを正しく理解しているか<br>
+自信が無いもので・・・・<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/21(水) 17:01:58</span><br>
+<font color="#CC8000">＞ 無責任艦長さん</font><br>
+<br>
+すいません、わからなくて今本呼んでます（涙）。<br>
+基本はたこすけさんと同じ考えで、ファイルを更に暗号化させてるんですよね。<br>
+charAtを今始めて見ました（不安）。<br>
+あ、なるほど。一つ置きに取り出すんですよ...ね？<br>
+解読するのは大変ですが自分で書くのも大変そうですね...。<br>
+個人的には使えるかも。ありがとうございます。<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/21(水) 17:06:48</span><br>
+<font color="#CC8000">＞一つ置きに取り出すんですよ...ね？</font><br>
+<br>
+ちがう。違っていることだけはわかる（涙）。<br>
+とりあえずアルファベットを数値に置き換えてるんですよね。<br>
+ループ勉強し直します。<br>
+<br>
+<font color="#CC8000">＞NC4ではsubstr使えるんで</font><br>
+バージョン1.0ではとりあえず substringみたいです。<br>
+（と本にある...）誰だ、ここに栞はさんでるの...。（独り言）<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/21(水) 17:22:37</span><br>
+<font color="#CC8000">&gt; 解読するのは大変ですが自分で書くのも大変そうですね...。</font><br>
+無責任官庁さんに断らずに作った暗号解読用スクリプト<br>
+wstrの中身が1バイト文字に限り有効です<br>
+<br>
+---------------------<br>
+&lt;script&gt;<br>
+wstr = "abcdefghijklmnopqrstuvwxyz";<br>
+wstr = wstr + "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890._-";<br>
+<br>
+for(i=0; i&lt;wstr.length; i++){<br>
+if(i&lt;10){<br>
+document.write("0"+i+" = "+wstr.charAt(i)+"&lt;BR&gt;");<br>
+}else{<br>
+document.write(i+" = "+wstr.charAt(i)+"&lt;BR&gt;");<br>
+}<br>
+}<br>
+&lt;/script&gt;<br>
+---------------------<br>
+<br>
+本当はテキストボックス2個作って<br>
+片方にファイル名を入力したら<br>
+もう片方に暗号化させて表示とかしたかったんだけど・・・<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/21(水) 17:30:52</span><br>
+<font color="#CC8000">＞ 0001020361050704</font><br>
+これだと「abc0fhe」ですね？！<br>
+突っ込みじゃなくて考えている意味があっているかどうか確認したいんですが。<br>
+（ずら～っと暗号列書き出して番号打って...やりました。）<br>
+これが何故数字二桁ずつ並べていいのか分かってないのですが。<br>
+そういうもんなんですか。<br>
+<br>
+なんだか自分で聞いて置いてこのていたらく...。<br>
+他にも私程度が理解できそうなアイデアがありましたら（涙）お願いします。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/04/21(水) 23:04:29</span><br>
+<font color="#CC8000">&gt;&gt; 0001020361050704</font><br>
+<font color="#CC8000">&gt;これだと「abc0fhe」ですね？！</font><br>
+<br>
+その通りです。(^_^;)<br>
+まあ、そんな感じでオリジナルな暗号にすると、解読するのに<br>
+苦労するから、ほとんどの人はあきらめてくれるかなぁ・・・なんてね。<br>
+<br>
+<font color="#CC8000">&gt;これが何故数字二桁ずつ並べていいのか分かってないのですが。</font><br>
+<br>
+単純に、wstr文字列の長さが２ケタだから、２ケタにすると<br>
+substringで取りだしやすいかなぁ・・・ってだけです。<br>
+wstr文字列の長さを３ケタにした場合は、当然３ケタずつ並べないと<br>
+うまくいかないです。<br>
+<br>
+<font color="#CC8000">&gt;無責任官庁さんに断らずに作った暗号解読用スクリプト</font><br>
+<br>
+ぜんぜんおっけ～です。(^_^;)<br>
+暗号化としてはかなり古典的な手法なんで、<br>
+プログラムも分かりやすいと思ったのですが・・・<br>
+<hr>
+<span class=name>おぱく堂</span>
+<span class=time>1999/04/21(水) 23:39:08</span><br>
+フレームを使うってのはどうでしょ。<br>
+<br>
+file0＜frameset rows="100%,*"＞<br>
+├ file1(表示)<br>
+└ flie2(隠し)<br>
+<br>
+……として、隠しのfile2から、location.href=a+b+c+d+"/download.lzh"とか<br>
+やります。で、<br>
+a は、file2のあるフレーム名を使用。<br>
+b は、file2の中でややこしい計算をさせる。<br>
+c は、親であるfile0に記述して file2から参照させる。<br>
+d は、引数にして file1から渡す。<br>
+<br>
+さらに……<br>
+c は最初ウソを書いておいて、file1または file2の onLoadイベントで、正しい値に<br>
+書き換える、と。<br>
+<br>
+もっといえば……<br>
+file0そのものも、なんらかのフレームの中に入れ子で置いておく、と。すると<br>
+ソースが非常に見づらくなる。<br>
+<br>
+さらにさらに、ソースの中にコメントとして……<br>
+＜!--<br>
+xyz/download.lzh<br>
+--＞<br>
+とか、ウソのフォルダを書いておいたりして。<br>
+それだけだとすぐにバレるので、ウソのフォルダを実際に作ってウソの<br>
+ファイルとかも置いてみるとか。解凍すると「わっはっはっ」とかいう<br>
+だみ声おやじの音声ファイルだったりするとか。<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=email><a href="mailto:minco@postpet.so-net.ne.jp">[E-Mail]</a></span>
+<span class=url><a href="javascript:if(confirm('http://www.incl.ne.jp/~aqua/kumahp/  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.incl.ne.jp/~aqua/kumahp/'" tppabs="http://www.incl.ne.jp/~aqua/kumahp/">[HomePage]</a></span>
+<span class=time>1999/04/22(木) 09:22:57</span><br>
+<span class=resolv>[[解決]]</span><br>
+とりあえず。<br>
+皆様ありがとうございました。<br>
+なんか他同じ内容ののツリーと比べて妙に熱いのは気のせいですか。<br>
+<br>
+暗号化のファイルを別ファイルで取り込むだけでも結構効果的かしら、とも<br>
+思ったのですが。フレームもいいですね。（使いすぎると怒る人もいますが）<br>
+わけ分からなくする方法っていろいろあって面白いです（笑）。<br>
+とりあえず、ダミーのリンク先（so-net推奨）とダミーファイル（音声ファイルも大変重そうで魅力的です）は楽しそうです。<br>
+これだけで「ほんものをさがせ！」ゲームができますね（笑）。<br>
+<br>
+で、教えていただいたスクリプトは「対直接リンク案」として公開させてもらって<br>
+よろしいでしょうか？（少し作り替えるかも知れませんが）<br>
+何か不都合がありましたらご連絡下さい。<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=email><a href="mailto:fwkw1424@mb.infoweb.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/22(木) 10:21:05</span><br>
+私のは一向にかまいません。みなさんで自由に使用してください。<br>
+<br>
+ただ、「暗号解読用スクリプト」とか、そういう解説は<br>
+やめといた方が・・・<br>
+<br>
+＃そういや訂正発言しといて、それでもなお間違ってる・・・<br>
+＃おバカな私。(T_T)<br>
+＃pass.substring(loop,loop+2)じゃあ３桁とっちゃうじゃないの・・・<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/22(木) 10:48:53</span><br>
+<font color="#CC8000">＞みんこさん</font><br>
+私も一向にかまいませんが、ダミーのリンク先URLは<br>
+JavaScriptを切ってる人の事も考慮した方が良いと思います。<br>
+（本当にダウンロードさせたい人もso-net行っちゃいます）<br>
+<br>
+<font color="#CC8000">＞無責任官庁さん</font><br>
+<font color="#CC8000">&gt; ３桁とっちゃうじゃないの・・・</font><br>
+substring(from,to)はfromから "toの直前" までの<br>
+文字列を抜き出すので大丈夫ですよ。・・・・・多分。<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/22(木) 16:07:41</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございますです。<br>
+<br>
+解読スクリプトは勿論隠しておきます。<br>
+うちはリンクのあるファイル自体がスクリプトで開いているので<br>
+問題ないのですが、ダミー先は考慮します。<br>
+元のファイル名そのまま残して偽物入れておいてもいいですね。<br>
+<br>
+<font color="#CC8000">＞３桁とっちゃうじゃないの・・・</font><br>
+確認しました（断言）。大丈夫です。toの直前までですから２桁です。<br>
+ちなみに本には「(to,from)の場合はfromからtoまで」と<br>
+あったのですが確認したらやはりfromから"toの直前まで"でした。<br>
+だめじゃん（いばりモード）。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/22(木) 18:27:48</span><br>
+<font color="#CC8000">&gt; 本当はテキストボックス2個作って</font><br>
+<font color="#CC8000">&gt; 片方にファイル名を入力したら</font><br>
+<font color="#CC8000">&gt; もう片方に暗号化させて表示とかしたかったんだけど・・・</font><br>
+今更ですけど、作っちゃいました（笑）<br>
+<br>
+---------------------<br>
+&lt;SCRIPT&gt;<br>
+wstr = "abcdefghijklmnopqrstuvwxyz";<br>
+wstr = wstr + "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890._-:/~";<br>
+<br>
+function ango(){<br>
+document.F.T2.value = "";<br>
+for(i=0; i&lt;document.F.T1.value.length; i++){<br>
+m = wstr.indexOf(document.F.T1.value.charAt(i))<br>
+if(m &lt; 10){<br>
+document.F.T2.value += "0" + m;<br>
+}else{<br>
+document.F.T2.value += m;<br>
+}<br>
+}<br>
+}<br>
+<br>
+&lt;/SCRIPT&gt;<br>
+&lt;FORM NAME=F&gt;<br>
+↓ここにファイル名&lt;BR&gt;<br>
+&lt;INPUT TYPE=TEXT NAME=T1 SIZE=50&gt;&lt;BR&gt;<br>
+↓結果はコチラ&lt;BR&gt;<br>
+&lt;INPUT TYPE=TEXT NAME=T2 SIZE=50&gt;&lt;BR&gt;<br>
+&lt;INPUT TYPE=BUTTON VALUE="暗号作成" onClick="ango()"&gt;<br>
+&lt;/FORM&gt;<br>
+---------------------<br>
+<hr>
+<span class=name>みんこ</span>
+<span class=time>1999/04/23(金) 09:10:54</span><br>
+みんなが直リンクされたフォルダの名前を変え始めたので<br>
+例のサイトももう時間の問題って感じなのですが.....<br>
+<br>
+とりあえず、まとめてアップしてみました。<br>
+ただ、まるまる公開すると意味がないので今のところ<br>
+パスワード制限しています。興味ありましたらどうぞ。<br>
+<br>
+パスワード：みんこの使用しているパソコンのメーカーは？（笑）<br>
+<hr>
+<span class=name>れん＋</span>
+<span class=email><a href="mailto:renna-mail@geocities.co.jp">[E-Mail]</a></span>
+<span class=time>2000/03/18(土) 12:21:13</span><br>
+1999/04/21(水) 15:54:58の無責任官庁さんレスが、やってみたんですが、エラーがでてしまって・・・・。<br>
+<br>
+-------------------------------------------<br>
+&lt;script&gt;<br>
+function file_name(pass){<br>
+　ret = "";loop = 0;idx = 0;<br>
+　wstr = "abcdefghijklmnopqrstuvwxyz";<br>
+　wstr = wstr + "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890._-";<br>
+<br>
+　for (loop = 0;loop &lt; pass.length;loop = loop + 2){<br>
+	idx = pass.substring(loop,loop+2) * 1;<br>
+	ret = ret + wstr.charAt(idx);<br>
+　}<br>
+　return ret;<br>
+}<br>
+function download(f_number){<br>
+　//f_numberで、urlに入れるヤツを色々変える<br>
+　location.href = file_name("0001020362060805");<br>
+}<br>
+&lt;/script&gt;<br>
+&lt;a href="だみ～" onClick="download(1);return false"&gt;file&lt;/a&gt;<br>
+-------------------------------------------<br>
+<br>
+こんな感じでやってみたんですが。。<br>
+私が凄く簡単なミスしてそうな気がするんですが・・・・。<br>
+間違ってるところがあれば、教えていただけないでしょうか。<br>
+<hr>
+<span class=name>れん＋</span>
+<span class=email><a href="mailto:renna-mail@geocities.co.jp">[E-Mail]</a></span>
+<span class=time>2000/03/18(土) 12:44:40</span><br>
+あっ・・・・<br>
+解決済みなのに蒸し返してすいませんm(_ _)m<br>
+<hr>
+<span class=name>れん＋</span>
+<span class=email><a href="mailto:renna-mail@geocities.co.jp">[E-Mail]</a></span>
+<span class=time>2000/03/19(日) 06:07:15</span><br>
+ありがとうございました。解決できました。（＾＾）<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040153.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040153.htm">[前に]</a>
+<a href="99040155.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040155.htm">[次に]</a>
+</body>
+</html>

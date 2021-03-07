@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Dockerのチュートリアル - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Dockerのチュートリアル</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+チュートリアル
+
+<h4>イメージを管理する</h4>
+<div class="i">
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">DockerHub からイメージを検索する</span>
+# docker <em>search</em> centos
+
+<span class="cm">イメージをダウンロードする</span>
+# docker <em>pull</em> centos:7
+
+<span class="cm">ダウンロード済みのイメージ一覧を表示する</span>
+# docker <em>images</em>
+
+<span class="cm">イメージを削除する</span>
+# docker <em>rmi</em> centos:7
+</pre>
+</div>
+
+<h4>コンテナを管理する</h4>
+<div class="i">
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">コンテナを起動する</span>
+# docker <em>run</em> -d -it --name cont1 centos:7
+
+<span class="cm">コンテナの一覧を表示する (-a は停止中もすべて)</span>
+# docker <em>ps</em> -a
+
+<span class="cm">コンテナを開始・停止・再起動・削除・リネームする</span>
+# docker <em>start</em> cont1
+# docker <em>stop</em> cont1
+# docker <em>restart</em> cont1
+# docker <em>rm</em> cont1
+# docker <em>rename</em> cont1 cont2
+</pre>
+<p>コンテナ起動(run)時には下記などのオプションを指定することができます。</p>
+<table class="tb1">
+<tr><th>オプション</th><th>説明</th></tr>
+<tr><td><b>-d</b></td><td>コンテナのメインプロセスを端末からデタッチします。</td></tr>
+<tr><td><b>-i</b></td><td>コンテナの標準入力を開いたままにします。</td></tr>
+<tr><td><b>-t</b></td><td>端末を割り当てたままにします。</td></tr>
+<tr><td><b>--name</b> 名前</td><td>コンテナ名を指定します。</td></tr>
+<tr><td><b>-p</b> <i>hPort</i>:<i>cPort</i></td><td>ホストOSのポート番号(<i>hPort</i>)を、コンテナ内のポート番号(<i>cPort</i>)にバインドします。(例: -p 8080:80)</td></tr>
+<tr><td><b>-v</b> <i>hVolume</i>:<i>cVolume</i></td><td>ホストのボリューム(<i>hVolume</i>)を、コンテナ内のボリューム(<i>cVolume</i>)にバインドします。(例: -v /var/cont1/app:/opt/app)</td></tr>
+<tr><td><b>--rm</b></td><td>コンテナのメインプロセス終了時にコンテナを自動的に削除します。</td></tr>
+</table>
+</div>
+
+<h4>コンテナに接続する</h4>
+<div class="i">
+<p>centos イメージなど、起動時に -it オプションをつけ、メインプロセスが /bin/bash 等であるコンテナに対しては、メインプロセスに直接アタッチすることができます。この場合、exit や Ctrl-D 等でぬけると、メインプロセス(＝コンテナ)自体が終了してしまします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">コンテナのメインプロセスにアタッチする</span>
+# docker <em>attach</em> cont1
+[root@db80ea8860ff /]# <em>Ctrl-P Ctrl-Q</em>   <span class="cm">デタッチするには Ctrl-P Ctrl-Q を押す</span>
+</pre>
+<p>httpd イメージなど、メインプロセスが httpd 等のコンテナの場合、メインプロセスとは別に、もう一つ別の /bin/bash 等を起動して、それにアタッチすることも可能です。この場合、exit や Ctrl-D で抜けても /bin/bash が終了するのみで、メインプロセス(＝コンテナ)は終了しません。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">コンテナにもうひとつ別の /bin/bash を起動して接続する</span>
+# docker <em>exec</em> -it cont1 /bin/bash
+[root@db80ea8860ff /]# <em>exit</em>
+</pre>
+</div>
+
+<h4>ホストのディレクトリをマウントする</h4>
+<div class="i">
+<div class="title-tab">Shell</div>
+<pre class="c2">
+<span class="cm">SELinuxを無効化する</span>
+# vi /etc/selinux/config
+SELINUX=<em>disabled</em>
+
+# setenforce 0
+
+<span class="cm">-vオプションでホストの /mnt/cont1 をコンテナの /mnt にマウントする</span>
+# docker run -d -it --name cont1 -v /mnt/cont1:/mnt centos:centos6
+</pre>
+</div>
+
+<h4>ホストの8080ポートをコンテナの80にマッピングする</h4>
+<div class="i">
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker run -d -it --name cont1 -p 8080:80 centos:centos6
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2016-2019 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/tutorial.html</div>
+</body>
+</html>

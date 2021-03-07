@@ -1,0 +1,332 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>カンマ編集はできますか？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>カンマ編集はできますか？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060238.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060238.htm">[前に]</a>
+<a href="99060240.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060240.htm">[次に]</a>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/24(木) 13:35:45</span><br>
+例えば、テキストに「1,000」と入力されていて<br>
+セットフォーカスでカンマ編集を外し、<br>
+ロストフォーカスでカンマ編集をする方法は<br>
+あるのでしょうか？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/24(木) 16:43:30</span><br>
+おもしろそうだったのでカンマを加える関数をぱっと考えてみました。<br>
+数字かどうかのチェックは省略してますが，1,000,000の単位のカンマにまで対応し，<br>
+小数にも対応させてます。不要なら解読して適当に改変してください。<br>
+それと，NN3で作ったので（動作確認済み）substringを使ってますが，<br>
+substrを使ったりすればもっときれいなソースになると思います。<br>
+<br>
+カンマを除く方は，replaceでやれば簡単ではないかと思いますが，NN3<br>
+未対応の命令なので確認してません。<br>
+<br>
+&lt;script language="javascript"&gt;<br>
+function func(str){<br>
+<br>
+Num=parseFloat(str);<br>
+RetStr="";<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (Num&gt;=1000000){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a=Math.floor(Num/1000000);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a.toString;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RetStr=RetStr+a+",";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OFflag=true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(Num&gt;=1000){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a=Math.floor(Num/1000)%1000000;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a.toString;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (Num&gt;=1000000){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a='00'+a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a=a.substring(a.length-3,a.length)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OFflag=true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RetStr=RetStr+a+",";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+a=Math.floor(Num%1000);<br>
+a.toString<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (Num&gt;=1000){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a='00'+a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a=a.substring(a.length-3,a.length)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+RetStr=RetStr+a;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (str.indexOf('.') != -1) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RetStr=RetStr+str.substring(str.indexOf('.'),str.length);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+return RetStr;<br>
+}<br>
+&lt;/script&gt;<br>
+<br>
+&lt;form name="form1"&gt;<br>
+&lt;input type="text" name="text1" value="10000"&gt;<br>
+&lt;input type="button" name="button2" onClick="this.form.text1.value=func(this.form.text1.value);" value="Push"&gt;<br>
+&lt;/form&gt;<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/24(木) 16:50:00</span><br>
+半角スペースで頭下げしてたせいで無効になってしまった（涙）<br>
+それとOFflag=trueというのが２箇所に出てきてますが，不要です（消し忘れ）<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/24(木) 17:46:07</span><br>
+改良版。ループ処理にしてソース短縮＆上限アップ＆負数に対応<br>
+<br>
+function func(str){<br>
+<br>
+Num=parseFloat(str);<br>
+RetStr=(str.indexOf(".")==-1)?"":str.substring(str.indexOf("."),str.length);<br>
+i=1000;<br>
+while (Math.abs(Num) &gt;= i) {<br>
+a=Math.floor((Math.abs(Num) / i*1000) % i);<br>
+a.toString;<br>
+a="00"+a;<br>
+RetStr=","+a.substring(a.length-3,a.length)+RetStr;<br>
+i=i*1000;<br>
+}<br>
+a=Math.floor(Math.abs(Num) / i*1000);<br>
+a.toString;<br>
+RetStr=a+RetStr;<br>
+<br>
+if (Num&lt;0) {<br>
+RetStr="-"+RetStr;<br>
+}<br>
+<br>
+return RetStr;<br>
+}<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/24(木) 17:53:43</span><br>
+<br>
+function func(str){<br>
+	var dot=0;<br>
+	if(-1&lt;str.indexOf('.')){<br>
+		dot=str.indexOf('.');<br>
+	}else{<br>
+		dot=str.length;<br>
+	}<br>
+	for(i=1;i&lt;dot/3;i++){<br>
+		str=str.substring(0,dot-i*3)+','+str.substring(dot-i*3,str.length);<br>
+	}<br>
+	return str;<br>
+}<br>
+<br>
+こういうのはどうでしょう？<br>
+抜くのは簡単なのであえて書きませんが。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/24(木) 18:06:13</span><br>
+<br>
+function func(str){<br>
+	var sig='';<br>
+	var renum='';<br>
+	num=parseFloat(str);<br>
+	if(num&lt;0)sig='-';<br>
+	numstr=num.toString();<br>
+	if(sig=='-')numstr=numstr.substring(1);<br>
+	var dot=0;<br>
+	if(-1&lt;numstr.indexOf('.')){<br>
+		dot=numstr.indexOf('.');<br>
+	}else{<br>
+		dot=numstr.length;<br>
+	}<br>
+	if(1&lt;dot/3){<br>
+		for(i=1;i&lt;dot/3;i++){<br>
+			renum=numstr.substring(0,dot-i*3)+','+numstr.substring(dot-i*3,numstr.length);<br>
+		}<br>
+	}else{<br>
+		renum=numstr;<br>
+	}<br>
+	renum=sig+renum;<br>
+	return renum;<br>
+}<br>
+<br>
+欠陥だらけでした。<br>
+たぶん直ってると思う・・・。<br>
+不要な「0」は消えるようにしたのと、負の数にも対応。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/24(木) 18:12:31</span><br>
+そう言えば、最初のは1000未満だと消えてしまいました（笑）<br>
+あのままだと恥ずかしいので一応訂正しました。<br>
+Tmbさんは、少し仕組みが違うので面白いですね。<br>
+他の人のスクリプトを見ると勉強になります。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/24(木) 18:22:15</span><br>
+<br>
+function func(str){<br>
+	var sig='';<br>
+	var renum='';<br>
+	num=parseFloat(str);<br>
+	if(num&lt;0)sig='-';<br>
+	numstr=num.toString();<br>
+	if(sig=='-')numstr=numstr.substring(1);<br>
+	var dot=0;<br>
+	if(-1&lt;numstr.indexOf('.')){<br>
+		dot=numstr.indexOf('.');<br>
+	}else{<br>
+		dot=numstr.length;<br>
+	}<br>
+	for(i=1;i&lt;dot/3;i++){<br>
+		numstr=numstr.substring(0,dot-i*3)+','+numstr.substring(dot-i*3,numstr.length);<br>
+	}<br>
+	renum=sig+numstr;<br>
+	return renum;<br>
+}<br>
+すいません。<br>
+なんか違ってました。<br>
+もう、わけわからない・・・長いのを何度もすいません。<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/25(金) 10:18:32</span><br>
+Nobu3さん、Tmbさんありがとうございます。<br>
+カンマを付けることは出来ました。<br>
+しかし、外すのができません。<br>
+何度も頼って申し訳ないのですが、<br>
+簡単なサンプルがあれば助かります。<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 10:35:09</span><br>
+replaceは使ってみましたか？<br>
+<br>
+str="abcabcabc";<br>
+alert(str);<br>
+str.replace("c","X");<br>
+alert(str);<br>
+str.replace("X","");<br>
+alert(str);<br>
+<br>
+replaceの挙動がテストできないのですが，そちらの環境なら使えるのでは？<br>
+駄目ならindexOfとsubstringの合わせ技で解決できます。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 10:51:48</span><br>
+あ，そうだ。<br>
+カンマを付ける方で，最初にstrをカンマを除く関数に通してやると，<br>
+万一入力する人が気を利かせてカンマ付きにした場合でも対応できます。<br>
+<br>
+僕が作ったソースは<br>
+a.toString<br>
+の部分は変数の型を変化させてしまうので，どうもエレガントではないですから<br>
+AddStr=a.toString()<br>
+などとした方がよかったです。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/06/25(金) 11:09:25</span><br>
+&lt;script language="JavaScript"&gt;<br>
+function func2(aaa){<br>
+bbb = aaa.split(",");ccc = bbb.join("");return ccc<br>
+}<br>
+&lt;/script&gt;<br>
+<br>
+&lt;form&gt;<br>
+&lt;input type="text" value="10,000" onFocus="this.value=func2(this.value);"&gt;<br>
+&lt;/form&gt;<br>
+<br>
+カンマ外すだけならこんなもんで・・・<br>
+<font color="#CC8000">&gt; indexOfとsubstringの合わせ技で解決できます。</font><br>
+ひねくれ者なので使ってません（笑）<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/25(金) 11:12:17</span><br>
+あのー<br>
+str.replace("c","X");<br>
+で、cとかxには何が入るのですか？<br>
+strはテキストに入力されている値が入るのは<br>
+分かるんですが・・・<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 11:29:45</span><br>
+<font color="#CC8000">&gt;cとかXとかには何が入る</font><br>
+何でしょうね（笑）　いやいや，これはヒントにすぎないので<br>
+"abcabcabc".replace("c","X")<br>
+が，"abXabXabX"を返すか，"abXabcabc"を返すかを確認して欲しかったわけでして。<br>
+<br>
+やろうとしていることを整理してみてください。<br>
+「カンマ付きの数字」というものは数値と見做されないので，文字列として<br>
+扱わねばなりません。<br>
+カンマを取り除くには，その文字列の中のカンマを""で置き換えればいいだけです。<br>
+<br>
+<font color="#CC8000">&gt;たこすけさん</font><br>
+splitとjoinを使うとは思いつきもしなかったです。まさに目からウロコ。<br>
+あいかわらず凄いですね (^^;<br>
+<br>
+ちなみに僕の考えてたアルゴリズムは<br>
+function func2(str){<br>
+return str.replace(",","")<br>
+}<br>
+あるいは<br>
+function func2(str){<br>
+while (str.indexOf(",") != -1){<br>
+str=str.substring(0,str.indexOf(","))+str.substring(str.indexOf(",")+1,str.length);<br>
+}<br>
+return str;<br>
+}<br>
+でした。<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/25(金) 13:55:20</span><br>
+<span class=resolv>[[解決]]</span><br>
+皆様ありがとうございます。無事解決しました。<br>
+結局Tmbさんのソースを真似てみました。<br>
+ちなみにIE4でreplaceを使ってみたら、<br>
+以下のようになりました。<br>
+<br>
+str="abcabcabc";<br>
+str.replace("c","X");　←abxabcabc<br>
+str.replace("X","");　←ababcabc<br>
+<br>
+このやり方だともしカンマが２個以上あったら<br>
+１個しか消えないということですね。<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/25(金) 14:45:20</span><br>
+問題発生です。<br>
+テキストに何も入っていない状態でフォーカスを外すと、<br>
+'ＮａＮ'と入力されてしまうのです。<br>
+ちなみにソースはTmbさんのを使いました。<br>
+<br>
+function func2(str){<br>
+while (str.indexOf(",") != -1){<br>
+str=str.substring(0,str.indexOf(","))+str.substring(str.indexOf(",")+1,str.length);<br>
+}<br>
+return str;<br>
+}<br>
+<br>
+※どのソースを使っても同じ結果になってしまいます。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 14:56:33</span><br>
+ああ，そうか。忘れてました。最初に例外処理が必要ですね。<br>
+関数の初めに<br>
+str==""ならば，return str<br>
+という処理を足せばいいですね。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 15:00:59</span><br>
+<font color="#CC8000">&gt;例外処理</font><br>
+カンマを付ける関数にも同様の処理をしておいてください。<br>
+僕のソースだと無限ループに入ってしまうおそれが (^^;<br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/25(金) 15:12:42</span><br>
+ああなるほど。<br>
+Tmbさん度々ありがとうございます。<br>
+これで本当（？）に解決です。たぶん。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060238.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060238.htm">[前に]</a>
+<a href="99060240.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060240.htm">[次に]</a>
+</body>
+</html>

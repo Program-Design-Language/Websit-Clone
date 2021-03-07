@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>同一生成元ポリシー(Same-Origin Policy) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>同一生成元ポリシー(Same-Origin Policy)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+同一生成元ポリシー(Same-Origin Policy)
+
+<h4>同一生成元ポリシーとは</h4>
+<div class=i>
+<p>クロスサイトリクエストフォージェリ(CSRF)などのセキュリティ攻撃を防止するために、ブラウザは「同一生成元ポリシー(Same-Origin Policy)」という仕組みを実装しています。異なるオリジンのリソースへのアクセスに制約をかけるものです。制約はまた、<a href="jsonp.html" tppabs="http://www.tohoho-web.com/ex/jsonp.html">JSONP</a> や <a href="cors.html" tppabs="http://www.tohoho-web.com/ex/cors.html">CORS(Cross-Origin Resource Sharing)</a> と呼ばれる仕組みを利用することで一部解除することができます。</p>
+</div>
+
+<h4>オリジンとは</h4>
+<div class=i>
+<p>オリジン(Origin)は、スキーム、ホスト、ポート番号の組み合わせです。下記は同じオリジンとみなされます。</p>
+<pre class="c2">
+http://site-a.example.com/
+http://site-a.example.com:80/
+http://site-a.example.com/example.html
+</pre>
+<p>下記は異なるオリジンとみなされます。</p>
+<pre class="c2">
+https://site-a.example.com/      ← スキームが異なる
+http://site-b.example.com/       ← ホストが異なる
+http://site-a.example.com:8080/  ← ポート番号が異なる
+</pre>
+<p>ただし、Internet Explorer では、ポート番号のみが異なる場合は同じオリジンとみなします。</p>
+</div>
+
+<h4>制約の例(XMLHttpRequest)</h4>
+<div class=i>
+<p>異なるオリジン(例えば site-a.example.com から site-b.example.com) に対する XMLHttpRequest や Fetch API を発行しても、その結果を responseText で読み出すことができません。呼び出せないのではなく、呼び出せてもその結果を取得できないことに注意してください。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;script&gt;
+window.onload = function() {
+    var xhr = <em>new XMLHttpRequest()</em>;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            <em>console.log("status = " + xhr.status);  // status = 0</em>
+            <em>console.log(xhr.responseText);          // Can not access</em>
+        }
+    }
+    xhr.open("POST", "http://site-b.example.com/");
+    xhr.setRequestHeader("Content-Type" , "application/x-www-form-urlencoded");
+    xhr.send("a=b&c=d");
+}
+&lt;/script&gt;
+</pre>
+<p>この制約が発生すると、ブラウザのコンソールに下記の様なエラーメッセージが表示されます。</p>
+<div class="title-tab">HTML</div>
+<div class="c2">
+Access to XMLHttpRequest at 'http://site-b.example.com/' from origin 'http://site-a.example.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+</div>
+<p>site-b 側で <a href="#access-control-allow-origin">Access-Control-Allow-Origin</a> ヘッダを返却することにより、この制約を解除することができます。</p>
+</div>
+
+<h4>制約の例(Canvas)</h4>
+<div class=i>
+<p>異なるオリジン(例えば site-a.example.com から site-b.example.com) の画像を Canvas に描画すると、Canvas は汚染された(tainted)とみなされ、canvas に対する toBlob(), toDataURL(), getImageData() などのアクセスが制限されます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;script&gt;
+window.onload = function() {
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    var img = new Image();
+    img.src = "http://site-b.example.com/img/test.png" + "?" + new Date().getTime();
+    img.onload = function() {
+        context.drawImage(img, 40, 40);
+        <em>var base64 = canvas.toDataURL("image/png");    // Error</em>
+        console.log(base64);
+    }
+}
+&lt;/script&gt;
+&lt;canvas id="canvas" width=100 height=100 style="border:1px solid gray;"&gt;&lt;/canvas&gt;
+</pre>
+<p>この制約が発生すると、ブラウザのコンソールに下記の様なエラーメッセージが表示されます。</p>
+<div class="title-tab">Error</div>
+<div class="c2">
+Access to image at 'http://site-b.example.com/img/test.png' from origin 'http://site-a.example.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+</div>
+<p>site-b 側で <a href="#access-control-allow-origin">Access-Control-Allow-Origin</a> ヘッダを返却し、イメージに <a href="../html/attr/crossorigin.htm" tppabs="http://www.tohoho-web.com/html/attr/crossorigin.htm">crossorigin</a> を設定することにより、この制約を解除することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+    var img = new Image();
+    <em>img.crossOrigin = "anonymous";</em>
+    img.src = "http://site-b.example.com/img/test.png" + "?" + new Date().getTime();
+</pre>
+</div>
+
+<h4>制約の例(Iframe)</h4>
+<div class=i>
+<p>異なるオリジン(例えば site-a.example.com から site-b.example.com) のコンテンツを <a href="../html/iframe.htm" tppabs="http://www.tohoho-web.com/html/iframe.htm">iframe</a> に表示した場合、そのフレームに対する contentWindow アクセスが制限されます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;script&gt;
+window.onload = function() {
+    var iframe = document.getElementById("iframe");
+    <em>var doc = iframe.contentWindow.document;    // Error</em>
+    console.log(doc);
+}
+&lt;/script&gt;
+&lt;iframe src="http://site-b.example.com/" id="iframe"&lt;&gt;/iframe&gt;
+</pre>
+<p>この制約が発生すると、ブラウザのコンソールに下記の様なエラーメッセージが表示されます。</p>
+<div class="title-tab">Error</div>
+<div class="c2">
+Uncaught DOMException: Blocked a frame with origin "http://site-a.example.com" from accessing a cross-origin frame.
+</div>
+<p>この制約は解除することができないようです。</p>
+</div>
+
+<h4>その他の制約</h4>
+<div class=i>
+<p>上記の他にも @font-face による外部フォントアクセス、WebGL によるアクセス、スクリプトに対する onerror による詳細エラー情報取得などに制約があるようです。制約の条件や範囲はブラウザの実装により異なります。</p>
+</div>
+
+<h4 id="access-control-allow-origin">Access-Control-Allow-Origin ヘッダ</h4>
+<div class=i>
+<p>異なるオリジン間の制限を解除するために、Origin や Access-Control-Allow-Origin ヘッダを使用します。site-a.example.com から、site-b.example.com のリソースにアクセスする際、XMLHttpRequest や、<a href="../html/attr/crossorigin.htm" tppabs="http://www.tohoho-web.com/html/attr/crossorigin.htm">crossorigin</a>="anonymous" が指定された &lt;img&gt;, &lt;script&gt;, &lt;audio&gt;, &lt;video&gt;, &lt;link&gt; では、クライアントからサーバに対して下記の HTTP ヘッダが送信されます。</p>
+<div class="title-tab">HTTP Header</div>
+<pre class="c2">
+Origin: http://site-a.example.com
+</pre>
+<p>これに対し、サーバから下記のヘッダが返却されると、ブラウザは、他のオリジンからのアクセスを許可されたリソースであると判断し、XMLHttpRequest や Canvas などの制約を解除します。</p>
+<div class="title-tab">HTTP Header</div>
+<pre class="c2">
+Access-Control-Allow-Origin: *
+</pre>
+<p>特定のサイトにのみ制限を解除する場合は、下記の様に許可する対象のオリジンを返却します。</p>
+<div class="title-tab">HTTP Header</div>
+<pre class="c2">
+Access-Control-Allow-Origin: http://site-a.example.com
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年12月29日 最終更新:2018年12月29日</div>
+<div>http://www.tohoho-web.com/ex/same-origin-policy.html</div>
+</body>
+</html>

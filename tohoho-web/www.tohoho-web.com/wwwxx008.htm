@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>キャッシュされないようにするには？ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>キャッシュされないようにするには？</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+キャッシュされないようにするには？
+
+<h4 id="About">キャッシュとは？</h4>
+<div class=i>
+<p>ブラウザでページを見るときの体感速度を向上させるために、ブラウザは通常、一度表示したデータをハードディスク内に一時的に保存しておき、次に表示するときはサーバーからダウンロードしないで、ハードディスク内のデータを表示します。これを「キャッシュデータ」とか「一時ファイル」とか呼びます。</p>
+<p>Internet Explorer の場合は、[ツール]→[インターネットオプション]→[全般]→[インターネット一時ファイル] で、Netscape 6.1 の場合は [編集]→[設定]→[詳細]→[キャッシュ] でキャッシュに関する設定を行います。</p>
+</div>
+
+<h4 id="NoCache">キャッシュされないようにするには</h4>
+<div class=i>
+<p>頻繁に更新する文書や、CGI などで動的に生成する文書など、WWWブラウザ側でキャッシュされてしまうと好ましくない場合があります。この場合、HTTP のヘッダに次の項目を加える事によって、ブラウザにキャッシュされないように指定することができます。（ただし、この機能に対応していないブラウザやプロキシサーバーもあります。）</p>
+<pre class=c>
+Pragma: no-cache
+Cache-Control: no-cache
+Expires: Thu, 01 Dec 1994 16:00:00 GMT
+</pre>
+<p>HTML 文書で指定する場合は文書のヘッダ部（&lt;head&gt;～&lt;/head&gt;の間）に以下の3行を追記してください。</p>
+<pre class=c>
+&lt;meta http-equiv="Pragma" content="no-cache"&gt;
+&lt;meta http-equiv="Cache-Control" content="no-cache"&gt;
+&lt;meta http-equiv="Expires" content="Thu, 01 Dec 1994 16:00:00 GMT"&gt;
+</pre>
+<p>Perl による CGI スクリプトで指定する場合は次のようにします。</p>
+<pre class=c>
+print "Content-type: text/html\n";
+print "Pragma: no-cache\n";
+print "Cache-Control: no-cache\n";
+print "Expires: Thu, 01 Dec 1994 16:00:00 GMT\n";
+print "\n";
+</pre>
+<p>Word（*.doc）や Excel（*.xls）ファイルがキャッシュされてしまうのを防ぐには、HTTPサーバーの設定を変更して、Expires などのヘッダを追加してやる方法があります。例えば、Apache では、Apache の設定ファイルに下記のような行を追加してやります。</p>
+<pre class=c>
+&lt;Files ~ "\.(doc|xls)$"&gt;
+  Header set Pragma no-cache
+  Header set Cache-Control no-cache
+  Header set Expires "Thu, 01 Dec 1994 16:00:00 GMT"
+&lt;/Files&gt;
+</pre>
+<p>ただし、これによってキャッシュを完全に抑止できる訳ではありません。ブラウザの種類やバージョンやバグによって、上記の指定が無効だったり、途中のプロキシサーバーがキャッシュしてしまったりする場合があります。また、キャッシュしないということは、毎回ダウンロードしてしまう＝ページの表示が遅い＝イラツクという結果にもなりかねないので注意してください。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 1998-2002 杜甫々</div>
+<div>初版：1998年5月24日、最終更新：2002年11月18日</div>
+<div>http://www.tohoho-web.com/wwwxx008.htm</div>
+</body>
+</html>

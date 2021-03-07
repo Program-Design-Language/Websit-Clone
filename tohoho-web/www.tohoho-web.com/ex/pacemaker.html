@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Pacemaker＋Corosyncメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Pacemaker＋Corosyncメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Pacemaker＋Corosyncメモ
+
+<h4>環境</h4>
+<div class="i">
+<ul>
+<li>ハイパーバイザ: Oracle VM VirtualBox 5.0.20
+<li>ホストOS: Windows 10
+<li>ゲストOS: CentOS 7.2
+ <ul>
+ <li>centos7a: 10.0.2.15(NAT:enp0s3) 192.168.56.110(HostOnly:enp0s8)
+ <li>centos7b: 10.0.2.15(NAT:enp0s3) 192.168.56.111(HostOnly:enp0s8)
+ <li>VIP: 192.168.56.112
+ </ul>
+</ul>
+</div>
+
+<h4>Pacemaker/Heartbeat/Corosync とは</h4>
+<div class="i">
+<p>Pacemaker/Heartbeat/Corosync は Linux をクラスタ化する際に使用されるツールです。</p>
+<table class="tb1">
+ <tr><th>ツール</th><th>説明</th></tr>
+ <tr><td><b>Heartbeat</b></td><td>Linux-HA グループによって提供される Linux 用のクラスタソフト。クラスタ内のノードを監視し、障害発生時に VIP などのリソースを他のノードに移動させる機能を持ちます。監視機能と、クラスタリソース管理機能(CRM)から構成されていましたが、V3 からは CRM が Pacemaker として独立しました。</td></tr>
+ <tr><td><b>Corosync</b></td><td>Heartbeat と同様の監視機能を持つ OSS です。RHEL6/CentOS6 では Heartbeat＋Pacemaker が一般的でしたが、RHEL7/CentOS7 では Corosync＋Pacemaker の組み合わせがよく利用されているようです。</td></tr>
+ <tr><td><b>Pacemaker</b></td><td>Heartbeat＋Pacemaner または Corosync＋Pacemaker の組み合わせで使用します。Heartbeat のクラスタリソース管理(CRM)が独立強化されたもので、Corosync など他の監視ツールから起動され、リソースの制御を行います。</td></tr>
+ <tr><td><b>pcs</b></td><td>Pacemaker Configuration Tool。Corosync＋Pacemaker を操作するコマンドラインツールです。</td></tr>
+</table>
+<p>以下では、2台の CentOS 7.2 (centos7a, centos7b) に Corosync＋Pacemaker の環境を構築する手順を示します。</p>
+</div>
+
+<h4>インストール</h4>
+<div class="i">
+<p>centos7a で、IPv6 を無効にし、corosync, pacemaker, pcs をインストールし、pcsd を起動後、/etc/hosts にホスト情報を登録します。</p>
+<pre class="dos">
+centos7a# echo "net.ipv6.conf.all.disable_ipv6 = 1" &gt;&gt; /etc/sysctl.conf
+centos7a# echo "net.ipv6.conf.default.disable_ipv6 = 1" &gt;&gt; /etc/sysctl.conf
+centos7a# systemctl restart network
+centos7a# yum -y install corosync pacemaker resource-agents pcs fence-agents-all
+centos7a# passwd hacluster
+centos7a# systemctl enable pcsd
+centos7a# systemctl start pcsd
+centos7a# vi /etc/hosts
+192.168.56.110 centos7a
+192.168.56.111 centos7b
+</pre>
+<p>centos7b にも同様のインストールを行います。</p>
+<pre class="dos">
+centos7b# echo "net.ipv6.conf.all.disable_ipv6 = 1" &gt;&gt; /etc/sysctl.conf
+centos7b# echo "net.ipv6.conf.default.disable_ipv6 = 1" &gt;&gt; /etc/sysctl.conf
+centos7b# systemctl restart network
+centos7b# yum -y install corosync pacemaker resource-agents pcs fence-agents-all
+centos7b# passwd hacluster
+centos7b# systemctl enable pcsd
+centos7b# systemctl start pcsd
+centos7b# vi /etc/hosts
+192.168.56.110 centos7a
+192.168.56.111 centos7b
+</pre>
+<p>以降の操作は、centos7a でのみ行います。今回は STONITH(不安定ノードの強制停止/再起動機能) は使用しない設定にしています。</p>
+<pre class="dos">
+centos7a# pcs cluster auth centos7a centos7b -u hacluster
+centos7a# pcs cluster setup --name testcluster centos7a centos7b
+centos7a# pcs cluster start --all
+centos7a# pcs property set stonith-enabled=false
+centos7a# pcs resource create VIP ocf:heartbeat:IPaddr2 ip=192.168.56.112 cidr_netmask=24 op monitor interval=10s
+</pre>
+<p>クラスタの状態を表示します。testcluster というクラスタの中に、2つのノード(centos7a, centos7b)と、1つのリソース(VIP:192.168.56.112) が定義されています。centos7a, centos7b は共にオンラインで、VIP は centos7a で動作しています。</p>
+<pre class="dos">
+centos7a# pcs status
+Cluster name: testcluster
+Last updated: Sun Jun 12 01:58:00 2016          Last change: Sun Jun 12 01:39:58 2016 by root via cibadmin on centos7a
+Stack: corosync
+Current DC: centos7a (version 1.1.13-10.el7_2.2-44eb2dd) - partition with quorum
+2 nodes and 1 resource configured
+
+Online: [ centos7a centos7b ]
+
+Full list of resources:
+
+ VIP    (ocf::heartbeat:IPaddr2):       Started centos7a
+
+PCSD Status:
+  centos7a: Online
+  centos7b: Online
+
+Daemon Status:
+  corosync: active/disabled
+  pacemaker: active/disabled
+  pcsd: active/enabled
+</pre>
+<p>アドレス情報を見ると、VIP:192.168.56.112 が enp0s8 のセカンダリIPとして設定されています。</p>
+<pre class="dos">
+centos7a# ip addr | grep "inet "
+inet 127.0.0.1/8 scope host lo
+inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic enp0s3
+inet 192.168.56.110/24 brd 192.168.56.255 scope global dynamic enp0s8
+inet 192.168.56.112/24 brd 192.168.56.255 scope global secondary enp0s8
+</pre>
+<p>centos7a をシャットダウンすると、VIP:192.168.56.112 が centos7b にフェイルオーバーします。</p>
+<pre class="dos">
+centos7b# ip addr | grep "inet "
+inet 127.0.0.1/8 scope host lo
+inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic enp0s3
+inet 192.168.56.110/24 brd 192.168.56.255 scope global dynamic enp0s8
+inet 192.168.56.112/24 brd 192.168.56.255 scope global secondary enp0s8
+</pre>
+<p>下記に運用で使用する主な pcs コマンドを示します。</p>
+<pre class="dos">
+<span class="cm">クラスタの状態を見る</span>
+# pcs status
+
+<span class="cm">すべてのノードを起動する</span>
+# pcs cluster start --all
+
+<span class="cm">特定ノードを起動する</span>
+# pcs cluster start centos7a
+
+<span class="cm">特定ノードを停止する</span>
+# pcs cluster stop centos7a
+
+<span class="cm">特定ノードをスタンバイにする</span>
+# pcs cluster standby centos7a
+
+<span class="cm">特定ノードをスタンバイから復帰する</span>
+# pcs cluster unstandby centos7a
+
+<span class="cm">リソース(例:VIP)を特定ノードに移動する</span>
+# pcs resource move VIP centos7b
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2016 杜甫々</div>
+<div>初版:2016年6月12日 最終更新:2016年6月12日</div>
+<div>http://www.tohoho-web.com/ex/pacemaker.html</div>
+</body>
+</html>

@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset=utf-8"utf-8">
+<title>Rust入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Rust入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Rust入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">Rustとは</a>
+<li><a href="#install">インストール</a>
+<li><a href="#hello-world">Hello world</a>
+<li><a href="#cargo-project">Cargoプロジェクト</a>
+<li><a href="#keywords">キーワード</a>
+<li><a href="#comments">コメント(//)</a>
+<li><a href="#data-types">データタイプ</a>
+<li><a href="#values">値</a>
+<li><a href="#variables">変数・定数(let, mut, const)</a>
+<li><a href="#as">型変換(as)</a>
+<li><a href="#operators">演算子(+ - ...)</a>
+<li><a href="#struct">構造体(struct)</a>
+<li><a href="#union">共用体(union)</a>
+<li><a href="#enum">列挙型(enum)</a>
+<li><a href="#tuple">タプル(tup)</a>
+<li><a href="#array">配列(array)</a>
+<li><a href="#vector">ベクタ(vec)</a>
+<li><a href="#hashmap">ハッシュマップ(HashMap)</a>
+<li><a href="#string">文字列(&amp;str, String)</a>
+<li><a href="#heap">ヒープ領域(Box)</a>
+<li><a href="#slice">スライス(&amp;<i>var</i>[<i>n</i>..<i>m</i>])</a>
+<li><a href="#functions">関数(fn)</a>
+<li><a href="#closure">クロージャー(|...|{...})</a>
+<li><a href="#macro">マクロ(macro_rules!)</a>
+<li><a href="#if">条件分岐(if)</a>
+<li><a href="#while">繰り返し(while)</a>
+<li><a href="#for">繰り返し(for)</a>
+<li><a href="#loop">ループ(loop)</a>
+<li><a href="#break-continue">ループ制御(break, continue)</a>
+<li><a href="#match">マッチ(match)</a>
+<li><a href="#implementation">インプリメンテーション(impl)</a>
+<li><a href="#trait">トレイト(trait)</a>
+<li><a href="#iterator">イテレータ(Iterator)</a>
+<li><a href="#thread">マルチスレッド(thread)</a>
+<li><a href="#async-await">非同期関数(async, await)</a>
+<li><a href="#crate">クレート(crate)</a>
+<li><a href="#modules">モジュール(mod, pub, use, as)</a>
+<li><a href="#reference">参照型(&amp;, *)</a>
+<li><a href="#ownership">所有権・移動・参照・借用</a>
+<li><a href="#type">関連型(type)</a>
+<li><a href="#typeof">型を調べる(typeof)</a>
+<li><a href="#extern">外部関数の呼び出し(extern)</a>
+<li><a href="#static">静的変数(static)</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="about">Rustとは</h4>
+<div class="i">
+<ul>
+<li>「ラスト」と読みます。
+<li>Mozilla に従事するグレイドン・ホアレが個人的に開発していましたが、のちに Mozilla の公式プロジェクトとなりました。
+<li>2021年には、AWS, Google, Huawei, Microsoft, Mozilla がメンバーとなる <b>Rust Foundation</b> に権利が委譲されました。
+<li>Rust は「錆(さび)」を意味します。開発チームに自転車乗りが多く、ロゴも自転車のさび付きチェーリングを元にしています。
+<li>C言語やC++に変わる言語として開発されました。
+<li>Stack Overflow で2016～2019年の間「最も愛されているプログラミング言語」として1位を獲得しています。
+<li>Firefox の Servo(HTMLレンダリングエンジン)も Rust で開発されています。
+<li>if ... や while ... なども式として評価することができます。
+<li>変数はデフォルトでイミュータブル(変更不能)など、かなりストイックな言語です。
+<li>ガベージコレクションは行われません。
+<li>メモリは唯一の所有者が保持し、所有者がスコープアウトした時点で解放されます。
+<li>文字列を扱うにはメモリ配置を意識する必要があるなど、すこし学習難易度は高い言語です。
+<li>高速な処理が求められるプログラムに向いています。
+<li>Cargo というパッケージマネージャが同梱されています。
+<li>アセンブラは「低級言語」、Pythonなどは「高級言語」と言われます。私見ですが、C言語は「高級言語」というよりは「高級アセンブラ」に近い「中級言語」。Rust は、基本的にはC言語レベルなのだけど、メモリ破壊やマルチスレッド時のミスに対して事細かく注意してくれる「中の上言語」という気がしています。コンパイラが出すエラーやワーニングに対して「なんでじゃー」ではなく、「なるほどー」と思えるようになると強いけど、そこまでたどり着くのがちょっと大変。大変だけど思えるようになると強い言語。
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<p>Linux や macOS では次の様にしてインストールできます。</p>
+<pre class="c">
+$ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+$ export PATH="$HOME/.cargo/bin:$PATH"
+</pre>
+<p>下記などのコマンドがインストールされます。</p>
+<pre class="c">
+rustc		<span class="cm">// Rustコンパイラ</span>
+rustup		<span class="cm">// Rustインストーラ・アップデータ</span>
+cargo		<span class="cm">// Rustパッケージマネージャ</span>
+rustdoc		<span class="cm">// ドキュメント生成ツール(rustdoc)</span>
+rustfmt		<span class="cm">// コーディングスタイル整形ツール</span>
+</pre>
+</div>
+
+<h4 id="hello-world">Hello world</h4>
+<div class="i">
+<p>おなじみの Hello world は下記になります。拡張子は *.rs で作成します。</p>
+<pre class="c">
+fn main() {
+    println!("Hello, world!");
+}
+</pre>
+<p>コンパイルには <b>rustc</b> コマンドを使用します。<b>gcc</b> が必要です。</p>
+<pre class="c">
+$ rustc main.rs
+$ ./main
+</pre>
+</div>
+
+<h4 id="cargo-project">Cargoプロジェクト</h4>
+<div class="i">
+<p>Hello world を Cargo のプロジェクトとして作成する方法を紹介しておきます。</p>
+<pre class="c">
+$ <em>cargo new hello --bin</em>	<span class="cm">// プロジェクトを作成する</span>
+$ cd hello
+</pre>
+<p>src/main.rs がひな型として作成されています。</p>
+<pre class="c">
+fn main() {
+    println!("Hello, world!");
+}
+</pre>
+<p>コンパイルだけ行うには <b>build</b> を、コンパイルして実行するには <b>run</b> を行います。</p>
+<pre class="c">
+$ <em>cargo build</em>		<span class="cm">// コンパイルだけ行う</span>
+$ <em>cargo run</em>		<span class="cm">// コンパイルして実行する</span>
+</pre>
+<p>上記のコンパイルはデバッグ機能を含めた、開発用のコンパイルになっています。<b>--release</b> をつけることで、リリース用のコンパクトで高速なバイナリを作成することができます。</p>
+<pre class="c">
+$ cargo build <em>--release</em>
+</pre>
+</div>
+
+<h4 id="keywords">キーワード</h4>
+<div class="i">
+<pre class="c">
+<a href="#as">as</a>		<span class="cm">// 型変換</span>
+<a href="#modules">as</a>		<span class="cm">// モジュールの別名</span>
+<a href="#async-await">async</a>		<span class="cm">// 非同期処理</span>
+<a href="#async-await">await</a>		<span class="cm">// 非同期処理</span>
+<a href="#break-continue">break</a>		<span class="cm">// ループから抜ける</span>
+<a href="#variables">const</a>		<span class="cm">// 変数・定数</span>
+<a href="#break-continue">continue</a>	<span class="cm">// 次のループを続ける</span>
+<a href="#modules">crate</a>		<span class="cm">// ルートモジュール</span>
+<a href="#trait">dyn</a>		<span class="cm">// トレイトの直接利用</span>
+<a href="#if">else</a>		<span class="cm">// 条件分岐</span>
+<a href="#enum">enum</a>		<span class="cm">// 列挙型</span>
+<a href="#extern">extern</a>		<span class="cm">// 外部ライブラリ</span>
+<a href="#data-types">false</a>		<span class="cm">// 真偽値の偽</span>
+<a href="#fn">fn</a>		<span class="cm">// 関数</span>
+<a href="#for">for</a>		<span class="cm">// 繰り返し</span>
+<a href="#if">if</a>		<span class="cm">// 条件分岐</span>
+<a href="#implementation">impl</a>		<span class="cm">// インプリメンテーション</span>
+<a href="#for">in</a>		<span class="cm">// 繰り返し</span>
+<a href="#variables">let</a>		<span class="cm">// 変数・定数</span>
+<a href="#loop">loop</a>		<span class="cm">// ループ</span>
+<a href="#match">match</a>		<span class="cm">// マッチ</span>
+<a href="#modules">mod</a>		<span class="cm">// モジュール定義</span>
+<a href="#closure">move</a>		<span class="cm">// クロージャーに所有権を引き渡す</span>
+<a href="#variables">mut</a>		<span class="cm">// 変数・定数</span>
+<a href="#modules">pub</a>		<span class="cm">// モジュール外公開</span>
+<a href="#reference">ref</a>		<span class="cm">// 参照型</span>
+<a href="#functions">return</a>		<span class="cm">// 関数の戻り値</span>
+<a href="#iterator">Self</a>		<span class="cm">// 実装における自分の型</span>
+<a href="#implementation">self</a>		<span class="cm">// 自オブジェクト</span>
+<a href="#modules">self</a>		<span class="cm">// 自モジュール</span>
+<a href="#static">static</a>		<span class="cm">// 静的変数</span>
+<a href="#struct">struct</a>		<span class="cm">// 構造体</span>
+<a href="#modules">super</a>		<span class="cm">// 親モジュール</span>
+<a href="#trait">trait</a>		<span class="cm">// トレイト</span>
+<a href="#data-types">true</a>		<span class="cm">// 真偽値の真</span>
+<a href="#type">type</a>		<span class="cm">// 型エイリアス</span>
+<a href="#union">union</a>		<span class="cm">// 共用体</span>
+<a href="#extern">unsafe</a>		<span class="cm">// 非安全コード</span>
+<a href="#modules">use</a>		<span class="cm">// モジュール使用</span>
+<a href="#trait">where</a>		<span class="cm">// 型を強要する</span>
+<a href="#while">while</a>		<span class="cm">// 繰り返し</span>
+</pre>
+</div>
+
+<h4 id="comments">コメント(//)</h4>
+<div class="i">
+<pre class="c">
+<em>//</em> ラインコメント
+
+<em>/*</em> 複数行
+   コメント <em>*/</em>
+
+<em>///</em> 3連スラッシュはrustdocによるドキュメンテーションに利用されます
+</pre>
+</div>
+
+<h4 id="data-types">データタイプ</h4>
+<div class="i">
+<pre class="c">
+<em>bool</em>			<span class="cm">// 真偽値(true/false)</span>
+<em>i8</em>			<span class="cm">// 符号付き8ビット整数</span>
+<em>u8</em>			<span class="cm">// 符号無し8ビット整数</span>
+<em>i16</em>			<span class="cm">// 符号付き16ビット整数</span>
+<em>u16</em>			<span class="cm">// 符号無し16ビット整数</span>
+<em>i32</em>			<span class="cm">// 符号付き32ビット整数</span>
+<em>u32</em>			<span class="cm">// 符号無し32ビット整数</span>
+<em>i64</em>			<span class="cm">// 符号付き64ビット整数</span>
+<em>u64</em>			<span class="cm">// 符号無し64ビット整数</span>
+<em>i128</em>			<span class="cm">// 符号付き128ビット整数</span>
+<em>u128</em>			<span class="cm">// 符号無し128ビット整数</span>
+<em>isize</em>			<span class="cm">// ポインタサイズと同じ符号付き整数</span>
+<em>usize</em>			<span class="cm">// ポインタサイズと同じ符号無し整数</span>
+<em>f32</em>			<span class="cm">// 32ビット浮動小数点数</span>
+<em>f64</em>			<span class="cm">// 64ビット浮動小数点数</span>
+<em>char</em>			<span class="cm">// 文字(U+0000～U+D7FF, U+E000～U+10FFFF)</span>
+<em>str</em>			<span class="cm">// 文字列(&amp;strとして使用することが多い)</span>
+<em>(</em><i>type</i><em>,</em> <i>type</i><em>,</em> ...<em>)</em>	<span class="cm">// タプル</span>
+<em>[</em><i>type</i><em>;</em> <i>len</i><em>]</em>		<span class="cm">// 配列</span>
+<em>Vec&lt;</em><i>type</i><em>&gt;</em>		<span class="cm">// ベクタ</span>
+<em>&amp;</em><i>type</i>			<span class="cm">// <i>type</i>への参照</span>
+<em>&amp;mut</em> <i>type</i>		<span class="cm">// <i>type</i>へのミュータブルな参照</span>
+<em>&amp;[</em><i>type</i><em>]</em>			<span class="cm">// <i>type</i>型要素を持つスライス</span>
+</pre>
+</div>
+
+<h4 id="values">値</h4>
+<div class="i">
+<pre class="c">
+<em>true</em>		<span class="cm">// 真偽値の真(bool)</span>
+<em>false</em>		<span class="cm">// 真偽値の偽(bool)</span>
+12345		<span class="cm">// 整数</span>
+12<em>_</em>345<em>_</em>678	<span class="cm">// カンマの代わりに_を使用して読みやすく</span>
+12345<em>u32</em>	<span class="cm">// u32型の12345</span>
+<em>0x</em>fff		<span class="cm">// 16進数</span>
+<em>0o</em>777		<span class="cm">// 8進数</span>
+<em>0b</em>11001100	<span class="cm">// 2進数</span>
+<em>'</em>あ<em>'</em>		<span class="cm">// 文字(char)</span>
+<em>"</em>...<em>"</em>		<span class="cm">// 文字列(&amp;str)</span>
+<em>r"</em>...<em>"</em>		<span class="cm">// raw文字列</span>
+<em>r#"</em>...<em>"#</em>	<span class="cm">// ダブルクォートをそのまま使用できる文字列</span>
+<em>b'</em>a<em>'</em>		<span class="cm">// 1バイト文字(u8)</span>
+<em>b"</em>abc<em>"</em>		<span class="cm">// バイト配列(&amp;[u8])</span>
+<em>br"</em>...<em>"</em>		<span class="cm">// rawバイト配列(&amp;[u8])</span>
+</pre>
+</div>
+
+<h4 id="variables">変数・定数(let, mut, const)</h4>
+<div class="i">
+<p>変数を宣言するには <b>let</b> を使用しますが、Rust ではイミュータブルな(作成後に変更することができない)オブジェクトとして生成されます。</p>
+<pre class="c">
+<em>let</em> n = 0;
+</pre>
+<p>変更可能な(ミュータブルな)変数を宣言するには <b>mut</b> を使用する必要があります。</p>
+<pre class="c">
+let <em>mut</em> n = 0;
+</pre>
+<p>定数を定義するには <b>const</b> を用います。</p>
+<pre class="c">
+<em>const</em> MAX_POINTS: u32 = 100_000;
+</pre>
+</div>
+
+<h4 id="as">型変換(as)</h4>
+<div class="i">
+<p>暗黙の型変換は行ってくれません。<b>as</b> を用いて明示的に型変換します。</p>
+<pre class="c">
+let x: i32 = 123;
+let y: i64 = x <em>as</em> i64;
+</pre>
+</div>
+
+<h4 id="operators">演算子(+ - ...)</h4>
+<div class="i">
+<pre class="c">
+<em>-</em><i>expr</i>			<span class="cm">// 負数</span>
+<i>expr</i> <em>+</em> <i>expr</i>		<span class="cm">// 加算</span>
+<i>expr</i> <em>-</em> <i>expr</i>		<span class="cm">// 減算</span>
+<i>expr</i> <em>*</em> <i>expr</i>		<span class="cm">// 乗算</span>
+<i>expr</i> <em>/</em> <i>expr</i>		<span class="cm">// 除算</span>
+<i>expr</i> <em>%</em> <i>expr</i>		<span class="cm">// 剰余</span>
+<i>expr</i> <em>&amp;</em> <i>expr</i>		<span class="cm">// 論理積(AND)</span>
+<i>expr</i> <em>|</em> <i>expr</i>		<span class="cm">// 論理和(OR)</span>
+<i>expr</i> <em>^</em> <i>expr</i>		<span class="cm">// 排他的論理和(XOR)</span>
+<i>expr</i> <em>&lt;&lt;</em> <i>expr</i>		<span class="cm">// ビット左シフト</span>
+<i>expr</i> <em>&gt;&gt;</em> <i>expr</i>		<span class="cm">// ビット右シフト</span>
+<i>var</i> <em>=</em> <i>expr</i>		<span class="cm">// 代入</span>
+<i>var</i> <em>+=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> + <i>expr</i> と同義</span>
+<i>var</i> <em>-=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> - <i>expr</i> と同義</span>
+<i>var</i> <em>*=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> * <i>expr</i> と同義</span>
+<i>var</i> <em>/=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> / <i>expr</i> と同義</span>
+<i>var</i> <em>%=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> % <i>expr</i> と同義</span>
+<i>var</i> <em>&amp;=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> &amp; <i>expr</i> と同義</span>
+<i>var</i> <em>|=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> | <i>expr</i> と同義</span>
+<i>var</i> <em>^=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> ^ <i>expr</i> と同義</span>
+<i>var</i> <em>&lt;&lt;=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> &lt;&lt; <i>expr</i> と同義</span>
+<i>var</i> <em>&gt;&gt;=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> &gt;&gt; <i>expr</i> と同義</span>
+<i>expr</i> <em>==</em> <i>expr</i>		<span class="cm">// 比較：等しい</span>
+<i>expr</i> <em>!=</em> <i>expr</i>		<span class="cm">// 比較：等しくない</span>
+<i>expr</i> <em>&lt;</em> <i>expr</i>		<span class="cm">// 比較：より大きい</span>
+<i>expr</i> <em>&lt;=</em> <i>expr</i>		<span class="cm">// 比較：以上</span>
+<i>expr</i> <em>&gt;</em> <i>expr</i>		<span class="cm">// 比較：より小さい</span>
+<i>expr</i> <em>&gt;=</em> <i>expr</i>		<span class="cm">// 比較：以下</span>
+<i>expr</i> <em>&amp;&amp;</em> <i>expr</i>		<span class="cm">// かつ(AND)</span>
+<i>expr</i> <em>||</em> <i>expr</i>		<span class="cm">// または(OR)</span>
+<em>!</em><i>expr</i>			<span class="cm">// 否定(NOT)</span>
+
+<i>fn(...)</i> <em>-&gt;</em> <i>type</i>	<span class="cm">// 関数の型定義</span>
+<i>expr</i><em>;</em>			<span class="cm">// 行の終わり</span>
+<em>'</em><i>label</i>			<span class="cm">// ラベル</span>
+<i>expr</i><em>..</em><i>expr</i>		<span class="cm">// 範囲</span>
+<i>macro</i><em>!</em>(...)		<span class="cm">// マクロ呼び出し</span>
+<i>macro</i><em>!</em>[...]		<span class="cm">// マクロ呼び出し</span>
+<i>macro</i><em>!</em>{...}		<span class="cm">// マクロ呼び出し</span>
+[<i>type</i><em>;</em> <i>len</i>]		<span class="cm">// 配列</span>
+
+
+<i>pat</i> <em>=&gt;</em> <i>expr</i>
+<i>expr</i><em>?</em>
+<em>&amp;</em><i>expr</i>
+<em>&amp;</em><i>type</i>
+<em>*</em><i>expr</i>
+<em>*</em><i>type</i>
+<i>trait</i> <em>+</em> <i>trait</i>
+<i>expr</i> <em>,</em> <i>expr</i>
+<i>expr</i><em>.</em><i>ident</i>
+<i>expr</i><em>..=</em><i>expr</i>
+<em>..</em><i>expr</i>
+<i>variant(</i><em>..</em><i>)</i>
+<i>expr</i><em>...</em><i>expr</i>
+<i>ident</i><em>:</em> <i>expr</i>
+<i>ident</i> <em>@</em>
+<i>pat</i> <em>|</em> <i>pat</i>
+</pre>
+</div>
+
+<h4 id="struct">構造体(struct)</h4>
+<div class="i">
+<p><b>struct</b> は <b>構造体</b> を定義します。他言語のクラスに相当する機能は Rust では構造体で定義します。</p>
+<pre class="c">
+<em>struct</em> Point <em>{</em>
+    x: i32,
+    y: i32,
+<em>}</em>
+
+fn main() {
+    let p = Point { x: 100, y: 200 };
+    println!("{} {}", p.x, p.y);
+}
+</pre>
+</div>
+
+<h4 id="union">共用体(union)</h4>
+<div class="i">
+<p><b>union</b> は <b>共用体</b> を定義します。C言語と連携する際などに使用されます。構造体では x: i32, y: i32 という合計 8バイトの領域が確保されますが、共用体の場合は f1 と f2 は同じメモリを共用します。利用者は、f1 か f2 のいずれかのアドレスを使用することになります。共用体からの値読み出しは安全(スレッドセーフ)ではないため、<b>unsafe</b> ブロックの中で使用する必要があります。</p>
+<pre class="c">
+<em>union</em> MyUnion <em>{</em>
+    f1: u32,
+    f2: u32,
+<em>}</em>
+
+fn main() {
+    let u = MyUnion { f1: 123 };
+    unsafe {
+        println!("{}", u.f1);
+        println!("{}", u.f2);	<span class="cm">// メモリを共用しているのでこちらも123と表示される</span>
+    }
+}
+</pre>
+</div>
+
+<h4 id="enum">列挙型(enum)</h4>
+<div class="i">
+<pre class="c">
+<em>enum</em> Color <em>{</em>
+    Red,
+    Green,
+    Blue,
+<em>}</em>
+let color = Color<em>::</em>Red;
+</pre>
+</div>
+
+<h4 id="tuple">タプル(tup)</h4>
+<div class="i">
+<p>タプルは下記の様に宣言・利用します。型の異なる要素を含むことができます。要素数は固定です。インデックスに変数を使用することができません。</p>
+<pre class="c">
+let tup = <em>(10, "20", 30)</em>;
+println!("{} {} {}", tup<em>.0</em>, tup<em>.1</em>, tup<em>.2</em>);
+</pre>
+</div>
+
+<h4 id="array">配列(array)</h4>
+<div class="i">
+<p>配列は下記の様に宣言・利用します。型の異なる要素を含むことはできません。要素数は固定です。インデックスに変数を使用することができます。</p>
+<pre class="c">
+let arr = <em>[10, 20, 30]</em>;
+println!("{} {} {}", arr<em>[0]</em>, arr<em>[1]</em>, arr<em>[2]</em>);
+
+for v in &amp;arr {
+    println!("{}", v);
+}
+</pre>
+</div>
+
+<h4 id="vector">ベクタ(vec)</h4>
+<div class="i">
+<p>ベクタは下記の様に宣言・利用します。型の異なる要素を含むことはできません。要素数は可変です。インデックスに変数を使用することができます。</p>
+<pre class="c">
+let mut vect = <em>vec![10, 20, 30]</em>;
+vect.push(40);
+println!("{} {} {} {}", vect<em>[0]</em>, vect<em>[1]</em>, vect<em>[2]</em>, vect<em>[3]</em>);
+
+for v in &amp;vect {
+    println!("{}", v);
+}
+</pre>
+</div>
+
+<h4 id="hashmap">ハッシュマップ(HashMap)</h4>
+<div class="i">
+<p>ハッシュマップでは文字列を添字に使用することができます。他の言語で連想配列と呼ばれるものです。</p>
+<pre class="c">
+use std::collections::HashMap;
+let mut map = <em>HashMap::new()</em>;
+map.insert("x", 10);
+map.insert("y", 20);
+map.insert("z", 30);
+println!("{} {} {}", map<em>["x"]</em>, map<em>["y"]</em>, map<em>["z"]</em>);
+
+for (k, v) in &amp;map {
+    println!("{} {}", k, v);
+}
+</pre>
+</div>
+
+<h4 id="string">文字列(&amp;str, String)</h4>
+<div class="i">
+<p><b>str</b> は文字列を示しますが、Rust の基本的な文字列型としては <b>&amp;str</b> を使用します。変数に文字列を代入しているというより、スタック領域に確保した文字列のメモリへのポインタを変更している感じになります。</p>
+<pre class="c">
+let mut name: <em>&amp;str</em> = "Yamada";
+name = "Tanaka";
+</pre>
+<p>ライブラリとして提供される文字列型に <b>String</b> があります。こちらは、文字列の連結などが可能です。</p>
+<pre class="c">
+<span class="cm">// 文字列を初期化する</span>
+let mut name = <em>String::from(</em>"Yamada"<em>)</em>;
+<span class="cm">// 別の文字列を設定する</span>
+name = "Tanaka"<em>.to_string()</em>;
+<span class="cm">// 文字列に追加する</span>
+name<em>.push_str(</em>" Taro"<em>)</em>;
+</pre>
+</div>
+
+<h4 id="heap">ヒープ領域(Box)</h4>
+<div class="i">
+<p>関数内で使用する <i>i32</i> や <i>&amp;str</i> などの変数は通常スタック領域にメモリを確保します。スタックは関数が呼ばれると積み重なっていき、関数が終わると解放されます。これに対し、String や Vec などの型はヒープ領域にメモリを確保します。ヒープ領域は関数が終わっても存在することができます。ヒープ領域のメモリを確保する汎用的な型として <b>Box&lt;T&gt;</b> が定義されています。ヒープ領域のメモリは、<a href="#ownership">所有者</a> が居なくなった時点で解放されます。</p>
+<pre class="c">
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let p: <em>Box&lt;Point&gt;</em> = <em>Box::new(</em>Point { x: 100, y: 200 }<em>)</em>;
+    println!("{} {}", p.x, p.y);
+}
+</pre>
+<p>Drop <a href="#trait">トレイト</a> を実装すると、メモリ解放時に後処理関数(俗にいうデストラクタ)を呼び出すことができます。</p>
+<pre class="c">
+<em>impl Drop for Point</em> {
+    fn drop(&amp;mut self) {	<span class="cm">// Pointが解放される際に呼び出される</span>
+        println!("Bye!");
+    }
+}
+</pre>
+</div>
+
+<h4 id="slice">スライス(&amp;<i>var</i>[<i>n</i>..<i>m</i>])</h4>
+<div class="i">
+<p><b>&amp;</b><i>var</i><b>[</b><i>n</i><b>..</b><i>m</i><b>]</b> は、配列 <i>var</i> の中から <i>n</i>番目から <i>m</i>番目の手前までの要素を参照するスライスを返します。<i>n</i> を省略すると先頭から、<i>m</i> を省略すると最後までを参照します。</p>
+<pre class="c">
+let s = String::from("ABCDEFGH");
+let s1 = <em>&amp;s[0..3]</em>;		<span class="cm">// 0番目から3番目の手前までのスライス("ABC")</span>
+let s2 = <em>&amp;s[3..6]</em>;		<span class="cm">// 3番目から6番目の手前までのスライス("DEF")</span>
+println!("{} {}", s1, s2);	<span class="cm">// =&gt; ABC DEF</span>
+
+let a = [10, 20, 30, 40, 50, 60, 70, 80];
+let a1 = <em>&amp;a[0..3]</em>;		<span class="cm">// 0番目から3番目の手前までのスライス[10, 20, 30]</span>
+let a2 = <em>&amp;a[3..6]</em>;		<span class="cm">// 0番目から3番目の手前までのスライス[40, 50, 60]</span>
+println!("{:?} {:?}", a1, a2);<span class="cm">// =&gt; [10, 20, 30] [40, 50, 60]</span>
+</pre>
+</div>
+
+<h4 id="functions">関数(fn)</h4>
+<div class="i">
+<p>関数は下記の様に定義します。<b>return</b> は戻り値を呼び出し元に返します。</p>
+<pre class="c">
+<em>fn</em> add(x: i32, y: i32) <em>-&gt;</em> i32 <em>{</em>
+    return x + y;
+<em>}</em>
+</pre>
+<p><b>return</b> されない場合は、最後の式が戻り値として返されます。最後のセミコロン <b>;</b> は記述してはなりません。</p>
+<pre class="c">
+fn add(x: i32, y: i32) -&gt; i32 {
+    <em>x + y</em>	<span class="cm">// セミコロン(;)無し</span>
+}
+</pre>
+</div>
+
+<h4 id="closure">クロージャー(|...|{...})</h4>
+<div class="i">
+<p><b>クロージャー</b> は他の言語で言うところの無名関数やラムダ式に似ています。下記の例では x を受け取り、その二乗を返却するクロージャーを square 変数に代入し、使用しています。</p>
+<pre class="c">
+let square = <em>| x: i32 | {</em>
+    x * x
+<em>}</em>;
+println!("{}", square(9));
+</pre>
+<p><b>move</b> は、クロージャー内で参照するクロージャー外変数が存在する場合、その所有権をクロージャーに移動させることを宣言します。</p>
+<pre class="c">
+let <em>msg</em> = String::from("Hello");	<span class="cm">// クロージャー外変数msg</span>
+let func = <em>move</em> || {			<span class="cm">// 所有権をクロージャーに移動すること宣言</span>
+    println!("{}", <em>msg</em>);		<span class="cm">// 参照したクロージャー外変数の所有権はクロージャーに移動</span>
+};					<span class="cm">// クロージャー終了時に所有者が不在となり解放される</span>
+func();					<span class="cm">// クロージャーを呼び出す</span>
+// println!("{}", <em>msg</em>);		<span class="cm">// 解放済領域を参照しようとするのでエラー</span>
+</pre>
+</div>
+
+<h4 id="macro">マクロ(macro_rules!)</h4>
+<div class="i">
+<pre class="c">
+<span class="cm">// マクロを定義する</span>
+<em>macro_rules!</em> log <em>{</em>
+    ($x:expr) =&gt; { println!("{}", $x); }
+<em>}</em>
+
+fn main() {
+    <span class="cm">// マクロ名! でマクロを呼び出す</span>
+    <em>log!</em>("ABC...");
+}
+</pre>
+</div>
+
+<h4 id="if">条件分岐(if)</h4>
+<div class="i">
+<pre class="c">
+<em>if</em> n == 1 <em>{</em>
+    println!("One");
+<em>} else if</em> n == 2 <em>{</em>
+    println!("Two");
+<em>} else {</em>
+    println!("Other");
+<em>}</em>
+</pre>
+<p>if文も式なので、次のようにも書けます。</p>
+<pre class="c">
+let s = <em>if</em> n == 1 <em>{</em> "OK!" <em>} else {</em> "NG!" <em>}</em>;
+</pre>
+</div>
+
+<h4 id="while">繰り返し(while)</h4>
+<div class="i">
+<pre class="c">
+let mut n = 0;
+<em>while</em> n &lt; 10 <em>{</em>
+    n += 1;
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="for">繰り返し(for)</h4>
+<div class="i">
+<pre class="c">
+<em>for</em> i <em>in</em> 0..10 <em>{</em>
+    println!("{}", i);
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="loop">ループ(loop)</h4>
+<div class="i">
+<pre class="c">
+let mut n = 0;
+<em>loop {</em>
+    n += 1;
+    if n == 10 {
+        break;
+    }
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="break-continue">ループ制御(break, continue)</h4>
+<div class="i">
+<p><b>break</b> はループを抜けます。<b>continue</b> は次のループを繰り返します。</p>
+<pre class="c">
+let mut n = 0;
+loop {
+    n += 1;
+    if n == 2 {
+        <em>continue;</em>
+    }
+    if n == 8 {
+        <em>break;</em>
+    }
+    println!("{}", n);
+}
+</pre>
+</div>
+
+<h4 id="match">マッチ(match)</h4>
+<div class="i">
+<pre class="c">
+let x = 2;
+<em>match</em> x <em>{</em>
+    1 <em>=&gt;</em> println!("One"),
+    2 <em>=&gt;</em> println!("Two"),
+    3 <em>=&gt;</em> println!("Three"),
+    <em>_ =&gt;</em> println!("More"),
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="implementation">インプリメンテーション(impl)</h4>
+<div class="i">
+<p>Rust ではクラスはサポートされていませんが、<b>impl</b> によって構造体にメソッドを加えることができます。<b>self</b> は自オブジェクトを示します。</p>
+<pre class="c">
+struct Rect { width: u32, height: u32 }
+
+<em>impl</em> Rect {
+    fn area(&amp;self) -&gt; u32 {
+        self.width * self.height
+    }
+}
+
+fn main() {
+    let r = Rect { width: 200, height: 300 };
+    println!("{}", <em>r.area()</em>);
+}
+</pre>
+</div>
+
+<h4 id="trait">トレイト(trait)</h4>
+<div class="i">
+<p><b>trait</b> は特質の意味で、構造体が実装すべきメソッドを定義します。他言語の <b>インタフェース</b>(<b>interface</b>) に似ています。例えば、<b>std::fmt::Display</b> トレイトを実装した構造体は println!() の "<b>{}</b>" で、<b>std::fmt::Debug</b> トレイトを実装した構造体は "<b>{:?}</b>" で書き出すことが可能です。</p>
+<pre class="c">
+struct Rect { width: u32, height: u32 }
+
+<em>trait</em> Printable <em>{</em> fn print(&amp;self); <em>}</em>
+impl <em>Printable for</em> Rect {
+    fn print(&amp;self) {
+        println!("width:{}, height:{}", self.width, self.height)
+    }
+}
+
+fn main() {
+    let r = Rect { width: 200, height: 300 };
+    r.print();
+}
+</pre>
+<p>上記の例では u64 を扱う Rect も用意するには impl Printable for RectU32 { ... } と impl Printable for RectU64 { ... } の二つを実装する必要がありますが、下記の様にして、任意の型を持つ実装を行うことができます。<b>where</b> はその型が、指定したトレイトを実装している時のみ利用可能であることを示します。</p>
+<pre class="c">
+struct Rect<em>&lt;T&gt;</em> { width: T, height: T, }
+
+trait Printable { fn print(&amp;self); }
+impl<em>&lt;T&gt;</em> Printable for Rect<em>&lt;T&gt; where T: std::fmt::Display</em> {
+    fn print(self<em>: &amp;Rect&lt;T&gt;</em>) {
+        println!("{}x{}", self.width, self.height);
+    }
+}
+
+fn main() {
+    let r1: Rect<em>&lt;i32&gt;</em> = Rect{ width: 100, height: 200 };
+    let r2: Rect<em>&lt;i64&gt;</em> = Rect{ width: 100, height: 200 };
+    r1.print();
+    r2.print();
+}
+</pre>
+<p><b>&lt;T&gt;</b> など、通常型を指定する箇所に、型(type)ではなくトレイト(trait)を指定する場合は、トレイトであることを明示するために <b>dyn</b> を指定するようになりました。</p>
+<pre class="c">
+use std::boxed::Box;
+
+struct Dog {}
+struct Cat {}
+trait <em>Animal</em> { fn cry(&amp;self); }
+impl Animal for Dog { fn cry(&amp;self) { println!("Bow-wow"); } }
+impl Animal for Cat { fn cry(&amp;self) { println!("Miaow"); } }
+
+fn get_animal(animal_type: &amp;str) -&gt; Box&lt;<em>dyn Animal</em>&gt; {
+    if animal_type == "dog" {
+        return Box::new(Dog {});
+    } else {
+        return Box::new(Cat {});
+    }
+}
+
+fn main() {
+    get_animal("dog").cry();
+    get_animal("cat").cry();
+}
+</pre>
+</div>
+
+<h4 id="iterator">イテレータ(Iterator)</h4>
+<div class="i">
+<p><b>Iterator</b>トレイトを実装するオブジェクトを <b>イテレーター</b> と呼びます。イテレータは <a href="#for">for</a> で利用することができます。Iterator トレイトでは、next() により次のオブジェクトを返却し、最後に達すると None を返却します。<b>Self</b> は <b>impl</b> における自分自身の型を示します。</p>
+<pre class="c">
+struct Counter {
+    max: u32,
+    count: u32,
+}
+
+impl Counter {
+    fn new(max: u32) -&gt; Counter {
+        Counter { max: max, count: 0 }
+    }
+}
+
+<em>impl Iterator</em> for Counter {
+    type Item = u32;
+    <em>fn next(</em>&amp;mut self<em>)</em> -&gt; Option&lt;Self::Item&gt; {
+        self.count += 1;
+        if self.count &lt; self.max {
+            Some(self.count)
+        } else {
+            None
+        }
+    }
+}
+
+fn main() {
+    let counter = Counter::new(10);
+    for c in counter {
+        println!("{}", c);
+    }
+}
+</pre>
+</div>
+
+<h4 id="thread">マルチスレッド(thread)</h4>
+<div class="i">
+<p>Rust はマルチスレッドに強い言語です。スレッドは次のように記述します。</p>
+<pre class="c">
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    <span class="cm">// スレッドを起動する</span>
+    <span class="cm">// 引数にクロージャー(ラムダ関数)を指定</span>
+    let th = <em>thread::spawn</em>(|| {
+        for _i in 1..10 {
+            println!("A");
+            thread::sleep(Duration::from_millis(100));
+        }
+    });
+    th.join().unwrap();
+    println!("Finished");
+}
+</pre>
+<p>スレッドからスレッド外の変数を参照するには、<b>move</b> によって変数の所有権をスレッドに引き渡すことを明示する必要があります。</p>
+<pre class="c">
+fn main() {
+    let <em>str</em> = String::from("ABC");
+    let th = thread::spawn(<em>move</em> || {	<span class="cm">// 所有権を引き渡すことを明示</span>
+        for _i in 1..10 {
+            println!("{}", <em>str</em>);	<span class="cm">// strの所有権を得る</span>
+            thread::sleep(Duration::from_millis(100));
+        }
+    });
+    th.join().unwrap();
+    println!("Finished");
+    // println!("{}", <em>str</em>);		<span class="cm">// 所有権移動済のためエラー</span>
+}
+</pre>
+</div>
+
+<h4 id="async-await">非同期関数(async, await)</h4>
+<div class="i">
+<p><b>async</b>, <b>await</b> を用いて非同期関数を利用することができます。下記は、<a href="javascript:if(confirm('https://rust-lang.github.io/async-book/01_getting_started/04_async_await_primer.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://rust-lang.github.io/async-book/01_getting_started/04_async_await_primer.html'" tppabs="https://rust-lang.github.io/async-book/01_getting_started/04_async_await_primer.html">Rustの説明書</a> に記載されているサンプルで、歌を歌いながらダンスができるように書かれているのですが、どうも、歌い終わってからでないとダンスしないみたいで、もう少し分かりやすいシンプルなサンプルを提供できる方はお願いします。</p>
+<pre class="c">
+use futures::executor::block_on;
+
+struct Song {
+    lyric: String,
+}
+
+<em>async</em> fn learn_and_sing() {
+    let song = learn_song()<em>.await</em>;
+    sing_song(song)<em>.await</em>;
+}
+
+<em>async</em> fn learn_song() -&gt; Song {
+    let song = Song { lyric: String::from("La la la...") };
+    println!("Learned song");
+    return song;
+}
+
+<em>async</em> fn sing_song(song: Song) {
+    println!("{}", song.lyric);
+}
+
+<em>async</em> fn dance() {
+    println!("Dance");
+}
+
+<em>async</em> fn async_main() {
+    let f1 = learn_and_sing();	<span class="cm">// 歌を習って歌う</span>
+    let f2 = dance();			<span class="cm">// ダンスする</span>
+    <em>futures::join!(f1, f2)</em>;
+}
+
+fn main() {
+    <em>block_on(</em>async_main()<em>)</em>;
+}
+</pre>
+</div>
+
+<h4 id="crate">クレート(crate)</h4>
+<div class="i">
+<p><b>クレート</b> は聞きなれない言葉ですが「木箱」の意味で、他言語で言うところのパッケージ、モジュール、ライブラリを意味します(私はカープのクレートさんを思い出しますが)。例えばランダム値を生成する <b>rand</b> クレートを使用するには次のようにします。</p>
+<pre class="c">
+<em>use rand::Rng;</em>
+
+fn main() {
+    let mut rng = rand::thread_rng();
+    for _i in 1..10 {
+        println!("{}", rng.gen_range(1, 101));
+    }
+}
+</pre>
+<p>上記だけだと <b>E0432(unresolved import)</b> エラーが出てしまいますので、Cargo プロジェクトで作成した Cargo.toml に次の1行を追記します。追記後、<b>cargo build</b> または <b>cargo run</b> すると必要なクレートが自動的にダウンロードされてコンパイルされます。</p>
+<pre class="c">
+[dependencies]
+<em>rand = "0.7"</em>
+</pre>
+<p>クレートの最新バージョンは <b>cargo search</b> で検索することができます。</p>
+<pre class="c">
+$ <em>cargo search rand</em>
+  :
+rand = "0.7.3"
+</pre>
+</div>
+
+<h4 id="modules">モジュール(mod, pub, use, as)</h4>
+<div class="i">
+<p>プログラムを複数のファイルに分割するにはモジュールを用います。<b>mod</b> はモジュールを使用することを宣言します。<b>pub</b> はモジュール外からもその名前にアクセスするために必要です。</p>
+<div class="tab">./src/main.rs</div>
+<pre class="c2">
+<em>mod</em> foo;
+
+fn main() {
+    foo::foo_func();
+}
+</pre>
+<div class="tab">./src/foo.rs</div>
+<pre class="c2">
+<em>pub</em> fn foo_func() {
+    println!("Foo!");
+}
+</pre>
+<p>階層的に分割するには次のようにします。</p>
+<div class="tab">./src/main.rs</div>
+<pre class="c2">
+mod foo;
+
+fn main() {
+    foo::bar::bar_func();
+}
+</pre>
+<div class="tab">./src/foo.rs</div>
+<pre class="c2">
+pub mod bar;
+</pre>
+<div class="tab">./src/foo/bar.rs</div>
+<pre class="c2">
+pub fn bar_func() {
+    println!("Bar!");
+}
+</pre>
+<p><b>use</b> により使用するモジュールのパスを省略することができます。</p>
+<div class="tab">./src/main.rs</div>
+<pre class="c2">
+<em>use</em> foo::bar;	<span class="cm">// foo::bar を bar として参照可能になる</span>
+fn main() {
+    bar::bar_func();
+}
+</pre>
+<p><b>as</b> によりモジュール名に別名をつけることもできます。名前の重複を回避することができます。</p>
+<div class="tab">./src/main.rs</div>
+<pre class="c2">
+use foo::bar <em>as</em> bbaarr;
+fn main() {
+    bbaarr::bar_func();
+}
+</pre>
+<p><b>*</b> を指定すると子要素をすべて使用できるようになります。</p>
+<div class="tab">./src/main.rs</div>
+<pre class="c2">
+use foo::bar<em>::*</em>;
+fn main() {
+    bar_func();
+}
+</pre>
+<p><b>crate</b> はルートモジュール(トップモジュール)を示します。<b>super</b> は親モジュールを示します。<b>self</b> は自モジュールを示します。パス名で言うところのルートディレクトリ(<b>/</b>)や、親ディレクトリ(<b>..</b>)や、カレントディレクトリ(<b>.</b>) に相当します。</p>
+<div class="tab">./src/foo/bar.rs</div>
+<pre class="c2">
+pub fn bar_func() {
+    <em>crate</em>::foo::bar::bar_hello();	<span class="cm">// ルートモジュールのfooのbarのbar_hello()</span>
+    <em>super</em>::bar::bar_hello();		<span class="cm">// 親モジュールのbarのbar_hello()</span>
+    <em>self</em>::bar_hello();			<span class="cm">// 自モジュールのbar_hello()</span>
+}
+
+pub fn bar_hello() {
+    println!("Hello!");
+}
+</pre>
+</div>
+
+<h4 id="reference">参照型(&amp;, *)</h4>
+<div class="i">
+<p><b>&amp;</b> はその変数が指し示す値への参照を示します。参照はポインタとも呼ばれます。<b>*</b> は参照が指し示す値を示します。</p>
+<pre class="c">
+let a = 123;
+let p = <em>&amp;</em>a;		<span class="cm">// 123という値が格納された領域への参照をpに代入する</span>
+println!("{}", <em>*</em>p);	<span class="cm">// pが参照する領域の値(123)を出力する</span>
+</pre>
+<p><b>ref</b> を使用して次のようにも書けます。</p>
+<pre class="c">
+let a = 123;
+let <em>ref</em> p = a;
+println!("{}", <em>*</em>p);	<span class="cm">// =&gt; 123</span>
+</pre>
+<p>ミュータブルな参照を用いることで、参照先の値を変更することが可能となります。</p>
+<pre class="c">
+let <em>mut</em> a = 123;	<span class="cm">// ミュータブルな変数aを定義</span>
+let p = <em>&amp;mut</em> a;	<span class="cm">// ミュータブルな参照pを定義</span>
+*p = 456;		<span class="cm">// 参照先の値を456に書き換える</span>
+println!("{}", a);	<span class="cm">// =&gt; 456</span>
+</pre>
+</div>
+
+<h4 id="ownership">所有権・移動・参照・借用</h4>
+<div class="i">
+<p><b>Java</b> や <b>JavaScript</b> などでは、ヒープ領域に確保したメモリは、誰からも参照されなくなった後にガベージコレクションによって解放されますが、<b>Rust</b> では、ただひとつの変数がヒープ上のメモリの <b>所有権</b>(<b>ownership</b>) を持ち、所有者がスコープから消えた時点でヒープ領域も開放されます。</p>
+<pre class="c">
+fn func1() {
+    let <em>name</em> = String::from("ABC");	<span class="cm">// nameがStringの所有権を持つ</span>
+    println!("{}", name);
+}					<span class="cm">// nameがスコープアウトしたので解放される</span>
+</pre>
+<p>関数に変数を渡すと所有権が <b>移動</b>(<b>move</b>) してしまいます。</p>
+<pre class="c">
+fn func1() {
+    let name = String::from("ABC");
+    println!("{}", name);
+    func2(<em>name</em>);			<span class="cm">// ここで所有権がfunc2()のnameに移動してしまう</span>
+    println!("{}", <em>name</em>);		<span class="cm">// func2()終了時に開放済の領域を参照しているのでエラー</span>
+}
+
+fn func2(<em>name</em>: String) {		<span class="cm">// func1()から所有権を奪い取る</span>
+    println!("{}", name);
+}					<span class="cm">// この時点でヒープ領域が解放されてしまう</span>
+</pre>
+<p>func2() から戻り値として所有権を返してもらうこともできます。</p>
+<pre class="c">
+fn func1() {
+    let mut name = String::from("ABC");
+    println!("{}", name);
+    <em>name</em> = func2(name);		<span class="cm">// 所有権を渡した後、返却してもらう</span>
+    println!("{}", name);
+}
+
+fn func2(name: String)<em> -&gt; String</em> {
+    println!("{}", name);
+    <em>name</em>				<span class="cm">// 所有権を返却する</span>
+}
+</pre>
+<p><b>&amp;</b> で <b>参照</b>(<b>references</b>) を渡すことで、所有権を渡さないまま関数を呼び出すこともできます。これを <b>借用</b>(<b>borrowing</b>) とも呼びます。</p>
+<pre class="c">
+fn func1() {
+    let name = String::from("ABC");
+    println!("{}", name);
+    func2(<em>&amp;</em>name);			<span class="cm">// 参照のみを渡して所有権は渡さない</span>
+    println!("{}", name);		<span class="cm">// 所有権が残っているので参照可能</span>
+}
+
+fn func2(name: <em>&amp;</em>String) {		<span class="cm">// func1()から参照のみを借用する</span>
+    println!("{}", name);
+}					<span class="cm">// 参照のみなのでヒープ領域は解放されない</span>
+</pre>
+<p>関数内で他の変数に渡しただけでも所有権の移動が発生します。</p>
+<pre class="c">
+fn func1() {
+    let s1 = String::from("ABC");
+    {
+        let <em>s2 = s1</em>;		<span class="cm">// 所有権がs1からs2に移動</span>
+        println!("{}", s2);
+    }				<span class="cm">// 所有者が居なくなるので解放される</span>
+    println!("{}", s1);	<span class="cm">// エラー</span>
+}
+</pre>
+</div>
+
+<h4 id="type">型エイリアス(type)</h4>
+<div class="i">
+<p><b>type</b> を用いて型に <b>型エイリアス</b> という別名をつけることができます。ただし、異なる別名間の比較や代入でワーニングやエラーを出すことは無いようです。</p>
+<pre class="c">
+<em>type</em> Meter = u32;
+<em>type</em> Millimeter = u32;
+let m: Meter = 12;
+let mm: Millimeter = 12000;
+println!("{} {}", m, mm);
+</pre>
+</div>
+
+<h4 id="typeof">型を調べる(typeof)</h4>
+<div class="i">
+<p><b>typeof</b> というキーワードが予約されているので、今後実装されるのでしょうが、現状の Rust で変数の型を調べるには下記の様にします。</p>
+<pre class="c">
+fn main() {
+    let x = 123;
+    println!("{}", <em>type_of(x)</em>);
+}
+
+fn <em>type_of&lt;T&gt;(_: T)</em> -&gt; &amp;'static str {
+    std::any::type_name::&lt;T&gt;()
+}
+</pre>
+</div>
+
+<h4 id="extern">外部関数の呼び出し(extern)</h4>
+<div class="i">
+<p><b>extern</b> によりC言語ライブラリなど他の言語のライブラリを呼び出すことができます。呼び出しは <b>unsafe</b> であることを意識する必要があります。</p>
+<pre class="c">
+<em>extern "C" {</em>
+    fn abs(x: i32) -&gt; i32;		<span class="cm">// C言語のabc()ライブラリを定義</span>
+<em>}</em>
+
+fn main() {
+    <em>unsafe {</em>
+        println!("{}", <em>abs(-123)</em>);
+    <em>}</em>
+}
+</pre>
+</div>
+
+<h4 id="static">静的変数(static)</h4>
+<div class="i">
+<p><b>static</b> は静的変数を定義します。値は変動してもよいのですが、変数の位置が固定で複数のスレッドから共通に参照することができます。</p>
+<pre class="c">
+<em>static</em> COUNTER;
+</pre>
+<p>ただし、単に <b>mut</b> をつけてミュータブル(変更可能)にするとスレッドセーフではない危険な変更となり、<b>unsafe</b> ブロック内でしか読み書きできなくなります。</p>
+<pre class="c">
+static <em>mut</em> COUNTER: u32 = 0;
+
+fn main() {
+    <em>unsafe {</em>
+        println!("{}", COUNTER);
+        COUNTER += 1;
+        println!("{}", COUNTER);
+    <em>}</em>
+}
+</pre>
+<p>安全に読み書きするには、下記の様に、アトミック性を保証する参照・変更を用いることになります。</p>
+<pre class="c">
+use std::sync::atomic::{self, AtomicU32, Ordering};
+<em>static COUNTER: AtomicU32 = AtomicU32::new(0);</em>
+fn count_up() { COUNTER.fetch_add(1, atomic::Ordering::SeqCst); }
+fn get_count() -> u32 { return COUNTER.load(Ordering::SeqCst); }
+
+fn main() {
+    println!("{}", get_count());
+    count_up();
+    println!("{}", get_count());
+}
+</pre>
+<p>約30年くらい前のプロジェクトで、下記のたった1行のC言語プログラムのバグに悩まされたことを思い出します。</p>
+<pre class="c">
+<span class="cm">/* スレッドセーフではないので、プログラム的には1行だけど、
+ * メモリから読み出す、カウントアップする、メモリに書き戻すという動作であり、
+ * 複数スレッドが同時に行うと、カウンターが壊れてしまう。*/</span>
+counter++;
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.rust-lang.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.rust-lang.org/'" tppabs="https://www.rust-lang.org/">Rust</a> (英語)
+<li><a target="_top" href="javascript:if(confirm('https://doc.rust-lang.org/book/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://doc.rust-lang.org/book/'" tppabs="https://doc.rust-lang.org/book/">The Rust Programming Language</a> (英語)
+<li><a target="_top" href="javascript:if(confirm('https://doc.rust-jp.rs/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://doc.rust-jp.rs/'" tppabs="https://doc.rust-jp.rs/">Rust</a> (日本語)
+<li><a target="_top" href="javascript:if(confirm('https://doc.rust-jp.rs/book/second-edition/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://doc.rust-jp.rs/book/second-edition/'" tppabs="https://doc.rust-jp.rs/book/second-edition/">The Rust Programming Language</a> (日本語)
+</ul>
+</div>
+
+<!--
+○http://www.nct9.ne.jp/m_hiroi/linux/rustabc02.html
+○rustdoc
+○ライフタイム
+-->
+
+<hr>
+<div>Copyright (C) 2020-2021 杜甫々</div>
+<div>初版:2020年5月24日 最終更新:2021年2月9日</div>
+<div>http://www.tohoho-web.com/ex/rust.html</div>
+</body>
+</html>

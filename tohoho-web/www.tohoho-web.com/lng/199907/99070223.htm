@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>flockで、ファイルがない場合は？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>flockで、ファイルがない場合は？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070222.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070222.htm">[前に]</a>
+<a href="99070224.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070224.htm">[次に]</a>
+<hr>
+<span class=name>デストロイヤー初心者</span>
+<span class=time>1999/07/21(水) 19:53:00</span><br>
+ファイルに書きこむときのflockは、オープンの時に ＞ を使わず、<br>
+open(FH, "+&lt; Filename");<br>
+で、あーだこーだするとよいそうですが、これだと<br>
+そのファイルがないとオープンエラーになりますよね。<br>
+<br>
+ファイルがない場合でも、同等な処理をできる方法ありますか？<br>
+もちろん、しっかり排他処理ができる方法で。<br>
+<br>
+この３日間、これをずっと考えてましたが、さっぱりわかりません。<br>
+助けてください。お願いします。<br>
+<hr>
+<span class=name>無印良品</span>
+<span class=time>1999/07/21(水) 22:17:47</span><br>
+if文の中でエラー処理すれば？<br>
+if(!open(FH, "+&lt; Filename")){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;エラー時の処理<br>
+}<br>
+いろんな所のフリースクリプトでどう処理されているか調べれば<br>
+沢山の方法が見つかりますよ。<br>
+<hr>
+<span class=name>月</span>
+<span class=time>1999/07/21(水) 22:22:29</span><br>
+<font color="#CC8000">＞そのファイルがないとオープンエラーになりますよね。</font><br>
+やったことないので、これについては、コメントできないけど．．．<br>
+<br>
+最初にファイルチェックして、なかったらファイルをつくれば．．<br>
+<br>
+if (-e $Filename){<br>
+　真の処理<br>
+} else {<br>
+　open (FH, "&lt; $Filename");<br>
+&nbsp;&nbsp;close (FH);<br>
+}<br>
+<br>
+#検証してないです。。失礼<br>
+<hr>
+<span class=name>deepie</span>
+<span class=time>1999/07/23(金) 06:31:32</span><br>
+細かいですが、<br>
+<font color="#CC8000">＞if (-e $Filename) {</font><br>
+'e'より'f'の方が気持ちいいです。<br>
+<a href="../../wwwperl1.htm#FileTest" tppabs="http://www.tohoho-web.com/wwwperl1.htm#FileTest">http://www.tohoho-web.com/wwwperl1.htm#FileTest</a><br>
+<br>
+if (-f $Filename) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;open(FH, "+&lt; $Filename") || die "cannot open\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;読み書き処理<br>
+} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;open(FH, "&gt; $Filename") || die "cannot open\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;新しく作って書き込み処理<br>
+}<br>
+close(FH);<br>
+<hr>
+<span class=name>徳明</span>
+<span class=time>1999/07/29(木) 12:53:15</span><br>
+細かいですが、<br>
+<font color="#CC8000">&gt; open(FH, "&gt; $Filename") || die "cannot open\n";</font><br>
+をやってしまうと、if ... else を行っているわずかの隙間に<br>
+別のプロセスが作成したファイルを壊してしまう可能性が・・・<br>
+<br>
+open(FH, "&gt;&gt; $Filename");<br>
+close(FH);<br>
+open(FH, "+&lt; $Filename");<br>
+はいかが？<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070222.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070222.htm">[前に]</a>
+<a href="99070224.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070224.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CGIにタグの自動閉じ機能をつけるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CGIにタグの自動閉じ機能をつけるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050125.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050125.htm">[前に]</a>
+<a href="99050127.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050127.htm">[次に]</a>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/23(日) 21:53:43</span><br>
+CGIにタグの自動閉じ機能をつけようと思っています。<br>
+基本的にはタグの使用を禁止してfontタグのみの使用を可能にしようと思っています。<br>
+１行だけメッセージを書き込む掲示板に付けようと思っているので、少々処理がややこしくなっても、それほど問題ではないと思っています。<br>
+それで現在、まず一度、<br>
+<br>
+$msg =~ s/&lt;/&amp;lt;/g;<br>
+$msg =~ s/&gt;/&amp;gt;/g;<br>
+<br>
+というふうにして、一度すべてのタグを禁止してから、<br>
+<br>
+$k = 0;<br>
+while($f_msg =~ /(.*)&amp;lt;(\s*font.+?)&amp;gt;(.*)/i){<br>
+　　　　$f_msg = "$1&lt;$2&gt;$3";<br>
+　　　　$k++;<br>
+}<br>
+<br>
+while($f_msg =~ /(.*)&amp;lt;(\s*\/\s*font\s*)&amp;gt;(.*)/i){<br>
+　　　　$f_msg = "$1&lt;$2&gt;$3";<br>
+　　　　$k--;<br>
+}<br>
+<br>
+while($k &gt; 0){<br>
+　　　　$f_msg .="&lt;/font&gt;";<br>
+　　　　$k--;<br>
+}<br>
+<br>
+というふうにしてfontタグのみを許可しようと思っています。（多分効率的な問題で大いに間違っていると思います。まだ、あまり正規表現について詳しくないので、前方参照とかがよくわからなくて、なんか回りくどいことをやっていると思います。できれば、ご指摘のほうお願いします。）<br>
+<br>
+しかし、一番初めの置き換えのときに、<br>
+<br>
+$msg =~ s/"/&amp;quot;/g;<br>
+<br>
+という処理を行っているので、fontタグの中の &amp;quot を \" に置きかえる作業をしようと思いました。それで、<br>
+<br>
+while($f_msg =~ /(.*)&amp;lt;(\s*\/\s*font\s*)&amp;gt;(.*)/i){<br>
+<br>
+のあとに、<br>
+<br>
+$2 =~ s/&amp;quot;/\"/g;<br>
+<br>
+という処理を追加したら、サーバーエラーになりました。この処理で間違っている部分を教えてください。（多分はじめから間違いだらけだと思いますが、、、^^;)<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/23(日) 23:46:38</span><br>
+<font color="#CC8000">&gt; $2 =~ s/&amp;quot;/\"/g;</font><br>
+<font color="#CC8000">&gt; という処理を追加したら、サーバーエラーになりました。</font><br>
+<br>
+$1や$2は書き換えできません。一度別の変数に代入してから<br>
+書き換えましょう。手元にperlをインストールしておけば、<br>
+こういうperlのミスがすぐに検出できて便利かと思います。<br>
+<br>
+<font color="#CC8000">&gt; &amp;lt;(\s*font</font><br>
+「&lt; font」って、タグとして有効だったっけ…?<br>
+<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/23(日) 23:51:36</span><br>
+<font color="#CC8000">＞「&lt; font」って、タグとして有効だったっけ…?</font><br>
+<br>
+無効でした^^;。さっきテストをしたところ、fontの前には空白があってはだめでした。知識がなくてすいません。^^;<br>
+<br>
+<font color="#CC8000">＞$1や$2は書き換えできません。</font><br>
+そうでしたか。謎が解けました。<br>
+<br>
+しかし、、上記の方法でタグの自動閉じをするのはなんかすごい効率が悪いような気がするのですが、、、どうでしょう？<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/24(月) 00:29:44</span><br>
+一度変数に代入しなおしてから処理を行ったのですが、、またまた、おかしなことが、、、<br>
+<br>
+$k = 0;<br>
+while($f_msg =~ /(.*)&amp;lt;(font.+?)&amp;gt;(.*)/i){<br>
+　　$d2 = $2;<br>
+　　$d2 =~ s/&amp;quot;/\"/g;<br>
+　　$f_msg = "$1&lt;$d2&gt;$3";<br>
+　　$k++;<br>
+}<br>
+<br>
+while($f_msg =~ /(.*)&amp;lt;(\/font\s*)&amp;gt;(.*)/i){<br>
+　　$f_msg = "$1&lt;$2&gt;$3";<br>
+　　$k--;<br>
+}<br>
+<br>
+while($k &gt; 0){<br>
+　　$f_msg .="&lt;/font&gt;";<br>
+　　$k--;<br>
+}<br>
+<br>
+たぶん、<br>
+　　$f_msg = "$1&lt;$d2&gt;$3";<br>
+の部分が間違っていると思うのですが、、<br>
+<br>
+修正する前は、<br>
+<br>
+&lt;font color="blue"&gt;テスト<br>
+<br>
+と入力してソースをみると、<br>
+<br>
+&lt;font color=&amp;quot;blue&amp;quot;&gt;テスト&lt;/font&gt;<br>
+<br>
+となったのですが、修正後は、<br>
+<br>
+&lt;font color="blue"&gt;&lt;/font&gt;<br>
+<br>
+となって、肝心のコメントが省かれていました。何が原因なのでしょうか？<br>
+<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/24(月) 02:54:03</span><br>
+<span class=resolv>[[解決]]</span><br>
+自己フォローです。<br>
+while($f_msg =~ /(.*)&amp;lt;(font.+?)&amp;gt;(.*)/i){<br>
+　　$d2 = $2;<br>
+　　$d2 =~ s/&amp;quot;/\"/g;<br>
+　　$f_msg = "$1&lt;$d2&gt;$3";<br>
+　　$k++;<br>
+}<br>
+<br>
+これでは<br>
+<br>
+$f_msg =~ /(.*)&amp;lt;(font.+?)&amp;gt;(.*)/i<br>
+<br>
+の部分での$1と$2と$3が、<br>
+<br>
+　　$d2 =~ s/&amp;quot;/\"/g;<br>
+<br>
+の処理を行ったときに初期化されていたのですね…。<br>
+なぜ気づかなかったのでしょう、、。お恥ずかしい。<br>
+<br>
+ちなみに、もっと効率的なほうほうがあれば教えてください。（多分余裕であると思いますが。^^;)<br>
+一応解決を押しておきます。<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/24(月) 12:38:24</span><br>
+こんなんどうです。<br>
+<br>
+$n_ftag = $msg =~ s/&amp;lt;font(\s.*?)?&amp;gt;/&lt;font$1&gt;/ig;<br>
+$n_btag = $msg =~ s!&amp;lt;/font(\s.*?)?&amp;gt;!&lt;/font&gt;!ig;<br>
+if ($n_ftag - $n_btag &gt; 0){<br>
+	$msg .= '&lt;/font&gt;' x ($n_ftag - $n_btag);<br>
+}<br>
+<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/24(月) 15:28:47</span><br>
+あっ、、<br>
+<br>
+$n_ftag = $msg =~ s/&amp;lt;font(\s.*?)?&amp;gt;/&lt;font$1&gt;/ig;<br>
+<br>
+では、$n_ftagにはマッチした数が格納されるんですね。<br>
+それならばそちらのほうがずっときれいですね。<br>
+<br>
+ちなみに、、<br>
+<br>
+&lt;/font aaa&gt;<br>
+<br>
+これでも、閉じれるんですね、、、。なんかぜんぜん知識が無くて、、、。<br>
+<br>
+どうもありがとうございました。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/24(月) 15:35:27</span><br>
+すいません。。。<br>
+<br>
+$n_ftag = $f_msg =~ s/&amp;lt;font(\s.*?)?&amp;gt;/&lt;font$1&gt;/ig;<br>
+<br>
+の部分で、$1の中の&amp;quot;を " に変換する作業はどうやればいいでしょうか？<br>
+あと、$1というのはそういうふうにも参照することができるんですね。<br>
+一度試してみたのですが、サーバーエラーになってしまいだめなのかと思ってました。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/24(月) 15:44:42</span><br>
+$n_ftag = $msg =~ s/&amp;lt;font(\s.*?)?&amp;gt;/&lt;font$1&gt;/ig;<br>
+$msg =~ s/&lt;(font\s.*?)?&amp;quot;(.*?)?&amp;quot;(.*?)?&gt;/$1"$2"$3/ig;<br>
+$n_btag = $msg =~ s!&amp;lt;/font(\s.*?)?&amp;gt;!&lt;/font&gt;!ig;<br>
+if ($n_ftag - $n_btag &gt; 0){<br>
+$msg .= '&lt;/font&gt;' x ($n_ftag - $n_btag);<br>
+}<br>
+<br>
+これでいいんですかね、、、？<br>
+でも、、また、なんか遠回りなことしてるような気がしてきました、、、。<br>
+う～ん、、正しくはどうすればいいのでしょう？<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/24(月) 16:38:36</span><br>
+$n_ftag = $msg =~ s/&amp;lt;font(\s.*?)?&amp;gt;/'&lt;font'.&amp;quot($1).'&gt;'/ige;<br>
+$n_btag = $msg =~ s!&amp;lt;/font(\s.*?)?&amp;gt;!&lt;/font&gt;!ig;<br>
+if ($n_ftag - $n_btag &gt; 0){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$msg .= '&lt;/font&gt;' x ($n_ftag - $n_btag);<br>
+}<br>
+<br>
+sub quot{<br>
+	my($buf) = $_[0];<br>
+	$buf =~ s/&amp;quot;/"/g;<br>
+	$buf;<br>
+}<br>
+う、ちょっと苦しくなってきた(^_^;<br>
+もっとスマートなやり方無いかなぁ。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/24(月) 17:02:19</span><br>
+ああ、、なるほど。<br>
+正規表現の中でもサブルーチンを入れることができるんですね。<br>
+とりあえずは、それを使わせてもらいます。<br>
+もっとスマートなやり方、、あるんですかね、、？<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050125.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050125.htm">[前に]</a>
+<a href="99050127.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050127.htm">[次に]</a>
+</body>
+</html>

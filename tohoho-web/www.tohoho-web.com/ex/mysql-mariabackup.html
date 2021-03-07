@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>mariabackupでバックアップ・リストアする - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>mariabackupでバックアップ・リストアする</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="mysql.html" tppabs="http://www.tohoho-web.com/ex/mysql.html">MySQL/MariaDB</a> &gt;
+mariabackupでバックアップ・リストアする
+
+<h4>mariabackupとは</h4>
+<div class="i">
+<p><a href="mysql-mysqldump.html" tppabs="http://www.tohoho-web.com/ex/mysql-mysqldump.html">mysqldump</a> は、データベースの中身を SQL 文としてダンプし、SQL 文としてリストアするため、大量データのバックアップ・リストアにかなりの時間を要することがあります。データによっては、ダンプは15分で終わるけど、リストアに数日かかるケースなんてのもあります。</p>
+<p>SQL 文をダンプする代わりに、/var/lib/mysql などのデータディレクトリをファイルごと高速にバックアップするツールを、Perconna社が XtraBackup という名前で公開しています。</p>
+<ul>
+<li><a href="javascript:if(confirm('https://www.percona.com/software/mysql-database/wwwhpmd.cgi?dsp+1094.txt  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.percona.com/software/mysql-database/wwwhpmd.cgi?dsp+1094.txt'" tppabs="https://www.percona.com/software/mysql-database/percona-xtrabackup">https://www.percona.com/software/mysql-database/percona-xtrabackup</a>
+</ul>
+<p>XtraBackup は MySQL 向けのツールですが、MariaDB では MySQL との互換性が一部失われてきていますので、MariaDB では、XtraBackup をベースとした mariabackup を開発し、MariaDB に同梱しています。</p>
+<ul>
+<li><a href="javascript:if(confirm('https://mariadb.com/kb/en/library/mariabackup/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://mariadb.com/kb/en/library/mariabackup/'" tppabs="https://mariadb.com/kb/en/library/mariabackup/">https://mariadb.com/kb/en/library/mariabackup/</a>
+</ul>
+</div>
+
+<h4>バックアップ</h4>
+<div class="i">
+<p>バックアップするには、--backup オプションを使用します。</p>
+<pre class="dos">
+# mariabackup --backup -u root -pパスワード --target-dir /tmp/backup
+</pre>
+<p>バックアップ中は FLUSH TABLES WITH READ LOCK で全テーブルがロックされます。--no-lock でロックしないようにできますが、自分で静止点を考慮する必要があります。</p>
+</div>
+
+<h4>一貫性の確認</h4>
+<div class="i">
+<p>--prepare オプションで、バックアップデータの一貫性が保たれているかチェックすることができます。</p>
+<pre class="dos">
+# mariabackup --prepare --target-dir /tmp/backup
+  :
+191208 03:16:33 <em>completed OK!</em>
+</pre>
+</div>
+
+<h4>リストア</h4>
+<div class="i">
+<p>--copy-back オプションでリストアします。</p>
+<pre class="dos">
+# systemctl stop mariadb
+# rm -rf /var/lib/mysql/*
+# mariabackup --copy-back --target-dir /tmp/backup
+# chown -R mysql:mysql /var/lib/mysql/*
+# systemctl start mariadb
+</pre>
+</div>
+
+<h4>ロールフォワード</h4>
+<div class="i">
+<p>バイナリログが退避されていれば、障害発生直前の状態までロールフォワードすることが可能です。xtrabackup_binlog_info にバイナリログのファイル名とポジション番号が記録されています。手順は <a href="mysql-mysqldump.html#roll-forward" tppabs="http://www.tohoho-web.com/ex/mysql-mysqldump.html#roll-forward">mysqldump</a> を参照してください。</p>
+<pre class="dos">
+# cat /tmp/backup/xtrabackup_binlog_info
+<em>mariadb-bin.000005</em>   <em>389</em>
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年12月8日 最終更新:2019年12月8日</div>
+<div>http://www.tohoho-web.com/ex/mysql-mariabackup.html</div>
+</body>
+</html>

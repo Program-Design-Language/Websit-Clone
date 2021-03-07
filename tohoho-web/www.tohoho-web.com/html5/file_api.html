@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HTML5 - File API - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>HTML5 - File API</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/html5/index.html">HTML5</a> &gt;
+File API
+
+<h4 id="features">File APIとは</h4>
+<div class=i>
+<p>File API とは、JavaScript からクライアント側のファイルにアクセスするための API です。下記で仕様が検討されています。</p>
+<ul>
+<li>最新版: <a target="_top" href="javascript:if(confirm('http://www.w3.org/TR/FileAPI/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.w3.org/TR/FileAPI/'" tppabs="http://www.w3.org/TR/FileAPI/">http://www.w3.org/TR/FileAPI/</a>
+<li>ワーキングドラフト: <a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/2017/WD-FileAPI-20171026/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/2017/WD-FileAPI-20171026/'" tppabs="https://www.w3.org/TR/2017/WD-FileAPI-20171026/">https://www.w3.org/TR/2017/WD-FileAPI-20171026/</a> [WD]
+</ul>
+<p>ただし、セキュリティを考慮して、アクセス可能なのは、利用者が意識的に選択、あるいはドラッグ＆ドロップしたファイルのみに限られます。</p>
+<p>現時点では下記のブラウザでサポートされています。</p>
+<ul>
+<li>Internet Explorer 10
+<li>Firefox 3.6
+<li>Google Chrome 6
+<li>Safari 6
+<li>Edge 12
+<li>Opera 11.5
+</ul>
+</div>
+
+<h4>サンプル</h4>
+<div class=i>
+<p>File API のサンプルを下記に示します。ファイル選択部品で、UTF-8 で保存されたテキストファイルを指定すると、そのファイルの中身を表示します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="file1"&gt;&lt;/div&gt;
+&lt;div&gt;&lt;output id="output1"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("file1").addEventListener("change", function() {
+    var files = <em>document.getElementById('file1').files;</em>
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+      console.log("Name: " + file.name);
+      console.log("Size: " + file.size);
+      console.log("Type: " + file.type);
+      console.log("Date: " + file.lastModified);
+      console.log("Date: " + file.lastModifiedDate);
+      var reader = <em>new FileReader();</em>
+      reader.<em>onprogress</em> = function(evt) {
+        console.log("State: " + target.readyState);
+        console.log("Loaded: " + evt.loaded);
+        console.log("Total: " + evt.total);
+      };;
+      reader.<em>onload</em> = function(evt) {
+        console.log("State: " + evt.target.readyState);
+        console.log("Result: " + evt.target.result);
+        document.getElementById("output1").innerHTML = evt.target.result;
+      };
+      reader.<em>onerror</em> = function(evt) {
+        console.log(evt.target.error.name);
+      };
+      <em>reader.readAsText(file, "utf-8");</em>
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div><input type="file" id="file1"></div>
+<div><output id="output1"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("file1").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      console.log("Name: " + file.name);
+      console.log("Size: " + file.size);
+      console.log("Type: " + file.type);
+      console.log("Date: " + file.lastModified);
+      console.log("Date: " + file.lastModifiedDate);
+      var reader = new FileReader();
+      reader.onprogress = function(evt) {
+        console.log("State: " + evt.target.readyState);
+        console.log("Loaded: " + evt.loaded);
+        console.log("Total: " + evt.total);
+      };;
+      reader.onload = function(evt) {
+        console.log(evt.target);
+        console.log("State: " + evt.target.readyState);
+        console.log("Result: " + evt.target.result);
+        document.getElementById("output1").innerHTML = evt.target.result;
+      };
+      reader.onerror = function(evt) {
+        console.log(evt.target.error.name);
+      };
+      reader.readAsText(file, "utf-8");
+    }
+  });
+});
+</script>
+</div>
+</div>
+
+<h4>インタフェース定義</h4>
+<div class=i>
+<div class="tab">インタフェース定義</div>
+<pre class=c2>
+interface <a href="#FileList">FileList</a> {
+  readonly attribute unsigned long <a href="#length">length</a>;
+  getter File <a href="#item">item</a>(unsigned long index);
+};
+
+interface <a href="#Blob">Blob</a> {
+  readonly attribute unsigned long long <a href="#size">size</a>;
+  readonly attribute DOMString <a href="#type">type</a>;
+  Blob <a href="#slice">slice</a>(
+    optional long long start,
+    optional long long end,
+    optional DOMString contentType);
+};
+
+interface <a href="#File">File</a> : Blob {
+  readonly attribute DOMString <a href="#name">name</a>;
+  readonly attribute long long <a href="#lastModified">lastModified</a>;
+};
+
+interface FileReader : EventTarget {
+  readonly attribute unsigned short <a href="#readyState">readyState</a>;
+  const unsigned short EMPTY = 0;
+  const unsigned short LOADING = 1;
+  const unsigned short DONE = 2;
+  readonly attribute (DOMString or ArrayBuffer) <a href="#result">result</a>;
+  readonly attribute DOMException <a href="#error">error</a>;
+
+  void <a href="#readAsArrayBuffer">readAsArrayBuffer</a>(Blob blob);
+  void <a href="#readAsBinaryString">readAsBinaryString</a>(Blob blob);
+  void <a href="#reasAsText">readAsText</a>(Blob blob, optional DOMString encoding);
+  void <a href="#readAsDataURL">readAsDataURL</a>(Blob blob);
+
+  attribute EventHandler <a href="#onloadstart">onloadstart</a>;
+  attribute EventHandler <a href="#onprogress">onprogress</a>;
+  attribute EventHandler <a href="#onload">onload</a>;
+  attribute EventHandler <a href="#onabort">onabort</a>;
+  attribute EventHandler <a href="#onerror">onerror</a>;
+  attribute EventHandler <a href="#onloadend">onloadend</a>;
+};
+</pre>
+</div>
+
+<h4 id="FileList">FileList オブジェクト</h4>
+<div class=i>
+<p><b>FileList</b> オブジェクトは下記のプロパティ、メソッドを持ちます。</p>
+</div>
+
+<h5>プロパティ</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="length">length</dt>
+<dd>ファイルオブジェクトの個数。</dd>
+</dl>
+</div>
+
+<h5>メソッド</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="item">item(<i>index</i>)</dt>
+<dd>0 から数えて <i>index</i> 番目ファイルオブジェクト。</dd>
+</dl>
+</div>
+
+<h4 id="Blob">Blob オブジェクト</h4>
+<div class=i>
+<p><b>Blob</b> オブジェクトは下記のプロパティ、メソッドを持ちます。</p>
+</div>
+
+<h5>プロパティ</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="size"><i>blob</i>.size</dt>
+<dd>ファイルサイズ(バイト数単位)。</dd>
+<dt id="type"><i>blob</i>.type</dt>
+<dd>text/plain, image/png などのファイル種別。</dd>
+</dl>
+</div>
+
+<h5>メソッド</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="slice"><i>blob</i>.slice(<i>start</i>, <i>stop</i>, <i>contentType</i>)</dt>
+<dd>ファイルを複数のスライスに分割して読み込む際に使用します。</dd>
+</dl>
+</div>
+
+<h4 id="File">File オブジェクト</h4>
+<div class=i>
+<p><b>File</b> オブジェクトは、Blob が持つプロパティ、メソッドに加え、下記のプロパティを持ちます。</p>
+</div>
+
+<h5>プロパティ</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="name"><i>file</i>.name</dt>
+<dd>ファイル名。</dd>
+<dt id="lastModified"><i>file</i>.lastModified</dt>
+<dd>最終更新日時。new Date(file.lastModified) で Date オブジェクトに変換可能。</dd>
+</dl>
+</div>
+
+<h4 id="FileReader">FileReader オブジェクト</h4>
+<div class=i>
+<p><b>FileReader</b> オブジェクトは、下記のプロパティ、メソッド、イベントハンドラを持ちます。</p>
+</div>
+
+<h5>プロパティ</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="readyState"><i>reader</i>.readyState</dt>
+<dd>読み込み状態を示します。EMPTY(0), LODAING(1), DONE(2) いずれかの値を持ちます。</dd>
+<dt id="result"><i>reader</i>.result</dt>
+<dd>読み込み結果を保持します。読み込み形式(readAsXxxx) によって形式が異なります。</dd>
+<dt id="error"><i>reader</i>.error</dt>
+<dd>エラーが発生した際の DOMExtension オブジェクトを保持します。</dd>
+</dl>
+</div>
+
+<h5>メソッド</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="readAsArrayBuffer"><i>reader</i>.readAsArrayBuffer(<i>file</i>)</dt>
+<dd>ファイルの内容を ArrayBuffer 形式で読み込みます。</dd>
+<dt id="readAsBinaryString"><i>reader</i>.readAsBinaryString(<i>file</i>)</dt>
+<dd>ファイルの内容をバイナリ形式で読み込みます。</dd>
+<dt id="readAsText"><i>reader</i>.readAsText(<i>file</i>, <i>encoding</i>)</dt>
+<dd>ファイルの内容をテキスト形式で読み込みます。<i>encoding</i> には "utf-8" などの文字コードを指定します。省略時は "utf-8" とみなされます。</dd>
+<dt id="readAsDataURL"><i>reader</i>.readAsDataURL(<i>file</i>)</dt>
+<dd>ファイルの内容をデータURL形式で読み込みます。</dd>
+<dt id="abort"><i>reader</i>.abort()</dt>
+<dd>ファイルの読み込みを中断します。</dd>
+</dl>
+</div>
+
+<h5>イベントハンドラ</h5>
+<div class=i>
+<dl class="htmlattr">
+<dt id="onloadstart"><i>reader</i>.onloadstart</dt>
+<dd>読み込みが開始した際に呼ばれます。</dd>
+<dt id="onprogress"><i>reader</i>.onprogress</dt>
+<dd>途中経過の際に呼ばれます。FileReader オブジェクトの readyState 属性に状態が、total 属性に総バイト数、loaded 属性に読み込み済バイト数が設定されます。</dd>
+<dt id="onload"><i>reader</i>.onload</dt>
+<dd>読み込みが完了した際に呼ばれます。FileReader オブジェクトの result 属性に、読み込みを行ったメソッドに応じた読み込み結果が格納されます。</dd>
+<dt id="onabort"><i>reader</i>.onabort</dt>
+<dd>読み込みが中断した際に呼ばれます。</dd>
+<dt id="onerror"><i>reader</i>.onerror</dt>
+<dd>読み込みがエラーとなった際に呼ばれます。FileReader オブジェクトの error 属性が DOMException オブジェクトを示し、その name 属性が "NotDoundError", "SecurityError", "NoReadableError" などのエラー種別を示します。</dd>
+<dt id="onloadend"><i>reader</i>.onloadend</dt>
+<dd>読み込みが終了した際に呼ばれます。onload が成功した場合のみに呼び出されるのに対し、onloadend は成功・失敗に関わらず呼び出されます。</dd>
+</dl>
+</div>
+
+<h4>ファイル取得</h4>
+<div class=i>
+<p>読み込み可能なファイルを取得するには、2通りの方法があります。</p>
+<ul>
+<li>ファイル選択部品で選択する
+<li>ファイルをドラッグ＆ドロップする
+</ul>
+<p>ファイル選択部品で選択するには次のようにします。ファイル選択部品(&lt;input type="file"&gt;) が変更された時点でハンドラが呼び出され、イベントターゲットであるファイル選択部品(e.target) の files 属性を参照します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="fileF1"&gt;&lt;/div&gt;
+&lt;div&gt;&lt;output id="outputF1"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("fileF1").addEventListener("change", function(e) {
+    var files = <em>e.target.files;</em>
+    for (var i = 0; i &lt; files.length; i++) {
+      document.getElementById("outputF1").innerHTML += "&lt;div&gt;" + files[i].name + "&lt;/div&gt;";
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div><input type="file" id="fileF1"></div>
+<div><output id="outputF1"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("fileF1").addEventListener("change", function(evt) {
+    var files = evt.target.files;
+    for (var i = 0; i < files.length; i++) {
+      document.getElementById("outputF1").innerHTML += "<div>" + files[i].name + "</div>";
+    }
+  });
+});
+</script>
+</div>
+<p>ドラッグ＆ドロップでファイルを取得するには次のようにします。イベントターゲットであるドロップ領域の dataTransfer.files 属性を参照します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div id="dropF2" style="height:50px; border: 1px solid gray;"&gt;
+  ここにファイルをドロップしてくさい
+&lt;/div&gt;
+&lt;div&gt;&lt;output id="outputF2"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("dropF2").addEventListener("<em>dragover</em>", function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = "copy";
+  });
+  document.getElementById("dropF2").addEventListener("<em>drop</em>", function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    var files = <em>evt.dataTransfer.files;</em>
+    for (var i = 0; i &lt; files.length; i++) {
+      document.getElementById("outputF2").innerHTML += "&lt;div&gt;" + files[i].name + "&lt;/div&gt;";
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div id="dropF2" style="height:50px; border: 1px solid gray;">
+  ここにファイルをドロップしてくさい
+</div>
+<div><output id="outputF2"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("dropF2").addEventListener("dragover", function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = "copy";
+  });
+  document.getElementById("dropF2").addEventListener("drop", function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    var files = evt.dataTransfer.files;
+    for (var i = 0; i < files.length; i++) {
+      document.getElementById("outputF2").innerHTML += "<div>" + files[i].name + "</div>";
+    }
+  });
+});
+</script>
+</div>
+</div>
+
+<h4>ファイル読み込み</h4>
+<div class=i>
+<p>ファイルを読み込み方として、下記の 4通りの方法がサポートされています。</p>
+<ul>
+<li><b>readAsText()</b> : テキストとして読み込む
+<li><b>readAsDataURL()</b> : データURL形式で読み込む
+<li><b>readAsBinaryString()</b> : バイナリデータとして読み込む
+<li><b>readAsArrayBuffer()</b> : ArrayBuffer 形式で読み込む
+</ul>
+<p><b>readAsText(</b><i>file</i>, <i>encoding</i><b>)</b> は、ファイルをテキストファイルとみなして読み込みます。<i>encoding</i> には、"utf-8", "Shift_JIS", "euc-jp", "iso-2022-jp" などの文字コードを指定します。省略時時は "utf-8" とみなされます。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="fileR1"&gt;&lt;/div&gt;
+&lt;div&gt;&lt;output id="outputR1"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("fileR1").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("outputR1").innerHTML = <em>evt.target.result</em>;
+      };
+      <em>reader.readAsText(file, "utf-8");</em>
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div><input type="file" id="fileR1"></div>
+<div><output id="outputR1"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("fileR1").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("outputR1").innerHTML = evt.target.result;
+      };
+      reader.readAsText(file, "utf-8");
+    }
+  });
+});
+</script>
+</div>
+<p><b>readAsDataURL(</b><i>file</i><b>)</b> は、URL の代わりに指定可能な形式で読み込みます。テキストの場合は data:text/plain;base64,77u/44GC44GE44GGDQo=、画像の場合は data:image/png;base64,iVBORw0... のような形式で読み込まれます。ここで得られた文字列を <a href="../html/img.htm" tppabs="http://www.tohoho-web.com/html/img.htm">&lt;img&gt;</a> の src 属性に指定することで、画像を表示することができます。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="fileR2"&gt;&lt;/div&gt;
+&lt;div&gt;&lt;output id="outputR2"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("fileR2").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("outputR2").innerHTML = <em>evt.target.result</em>;
+      };
+      <em>reader.readAsDataURL(file);</em>
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div><input type="file" id="fileR2"></div>
+<div><output id="outputR2"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("fileR2").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("outputR2").innerHTML = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+});
+</script>
+</div>
+<p><b>readAsBinaryString(</b><i>file</i><b>)</b> は、ファイルをバイナリ形式で読み込みます。Internet Explorer 11 ではサポートされていません。現時点では、readAsBinaryString() は後方互換性のために残されており、代わりに readAsArrayBuffer() を使用することが推奨されています。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="fileR3"&gt;&lt;/div&gt;
+&lt;div&gt;&lt;output id="outputR3"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("fileR3").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("outputR3").innerHTML = <em>window.btoa(evt.target.result)</em>;
+      };
+      <em>reader.readAsBinaryString(file);</em>
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div><input type="file" id="fileR3"></div>
+<div><output id="outputR3"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("fileR3").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("outputR3").innerHTML = window.btoa(evt.target.result);
+      };
+      reader.readAsBinaryString(file);
+    }
+  });
+});
+</script>
+</div>
+<p><b>readAsArrayBuffer(</b><i>file</i><b>)</b> は、ファイルを ArrayBuffer 形式で読み込みます。ArrayBuffer は、Uint8Array(), Uint16Array(), Uint32Array(), Float64Array() などのビューオブジェクトを用いてアクセスします。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="fileR4"&gt;&lt;/div&gt;
+&lt;div&gt;&lt;output id="outputR4"&gt;&lt;/output&gt;&lt;/div&gt;
+&lt;script&gt;
+window.addEventListener("load", function() {
+  document.getElementById("fileR4").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        <em>var data = new Uint8Array(evt.target.result);</em>
+        for (var j = 0; j &lt; data.length; j++) {
+          document.getElementById("outputR4").innerHTML += (<em>data[j]</em> + " ");
+          console.log(data[j]);
+        }
+      };
+      <em>reader.readAsArrayBuffer(file);</em>
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<div><input type="file" id="fileR4"></div>
+<div><output id="outputR4"></output></div>
+<script>
+window.addEventListener("load", function() {
+  document.getElementById("fileR4").addEventListener("change", function(e) {
+    var files = e.target.files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        var data = new Uint8Array(evt.target.result);
+        for (var j = 0; j < data.length; j++) {
+          document.getElementById("outputR4").innerHTML += (data[j] + " ");
+          console.log(data[j]);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  });
+});
+</script>
+</div>
+</div>
+
+<h4>ファイルのスライス読み込み</h4>
+<div class=i>
+<p>ファイルを複数のスライスに分割し、断片的に読み込むことで、巨大なファイルを複数の HTTP 通信に分割して送信することが可能となります。下記の例では、ファイルを 1024 バイトずつ読み込んでいます。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;div&gt;&lt;input type="file" id="fileS1"&gt;&lt;/div&gt;
+&lt;script&gt;
+<em>var splitSize = 1024;</em>
+window.addEventListener("load", function() {
+  document.getElementById("fileS1").addEventListener("change", function(e) {
+    var files = document.getElementById("fileS1").files;
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+      for (var j = 0; j &lt; file.size; j += splitSize) {
+        <em>blob = file.slice(j, j + splitSize);</em>
+        var reader = new FileReader(blob);
+        reader.onload = function (e) {
+          // e.target.result を Ajux 等でサーバに送信する
+        }
+        reader.readAsBinaryString(<em>blob</em>);
+      }
+    }
+  });
+});
+&lt;/script&gt;
+</pre>
+</div>
+
+
+<div class=c>
+<div><input type="file" id="fileS1"></div>
+<div><output id="outputS1"></output></div>
+<script>
+var splitSize = 10;
+window.addEventListener("load", function() {
+  document.getElementById("fileS1").addEventListener("change", function(e) {
+    var files = document.getElementById("fileS1").files;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      for (var j = 0; j < file.size; j += splitSize) {
+        blob = file.slice(j, j + splitSize);
+        var reader = new FileReader(blob);
+        reader.onload = function (e) {
+          // e.target.result を Ajux 等でサーバに送信する
+          document.getElementById("outputS1").innerHTML += (e.target.result + "<br>");
+        }
+        reader.readAsBinaryString(blob);
+      }
+    }
+  });
+});
+</script>
+</div>
+
+<h4><a id="links">リンク</a></h4>
+<div class=i>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://www.w3.org/TR/FileAPI/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.w3.org/TR/FileAPI/'" tppabs="http://www.w3.org/TR/FileAPI/">http://www.w3.org/TR/FileAPI/</a>
+<li><a target="_top" href="javascript:if(confirm('https://caniuse.com/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://caniuse.com/#search=File%20API'" tppabs="https://caniuse.com/#search=File%20API">https://caniuse.com/#search=File%20API</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2012-2018 杜甫々</div>
+<div>初版：2012年5月6日、最終更新：2018年1月7日</div>
+<div>http://www.tohoho-web.com/html5/index.html</div>
+</body>
+</html>

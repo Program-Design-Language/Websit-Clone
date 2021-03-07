@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>数値（Number） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>数値（Number）</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="builtin.htm" tppabs="http://www.tohoho-web.com/js/builtin.htm">[prev]</a>
+<a href="string.htm" tppabs="http://www.tohoho-web.com/js/string.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#BigInt">BigInt</a>,
+<a href="#format">format()</a>,
+<a href="#isFinite">isFinite()</a>,
+<a href="#isInteger">isInteger()</a>,
+<a href="#isNaN">isNaN()</a>,
+<a href="#isSafeInteger">isSafeInteger()</a>,
+<a href="#EPSILON">EPSILON</a>,
+<a href="#MAX_SAFE_INTEGER">MAX_SAFE_INTEGER</a>,
+<a href="#MAX_VALUE">MAX_VALUE</a>,
+<a href="#MIN_SAFE_INTEGER">MIN_SAFE_INTEGER</a>,
+<a href="#MIN_VALUE">MIN_VALUE</a>,
+<a href="#NaN">NaN</a>,
+<a href="#NEGATIVE_INFINITY">NEGATIVE_INFINITY</a>,
+<a href="#newNumber">Number()</a>,
+<a href="#format">NumberFormat()</a>,
+<a href="#parseFloat">parseFloat()</a>,
+<a href="#parseInt">parseInt()</a>,
+<a href="#POSITIVE_INFINITY">POSITIVE_INFINITY</a>,
+<a href="#toExponential">toExponential()</a>,
+<a href="#toFixed">toFixed()</a>,
+<a href="#toPrecision">toPrecision()</a>,
+<a href="#toString">toString()</a>
+</div>
+
+<h4 id="Number">数値</h4>
+<div class=i>
+<p>JavaScript では数値として10進数、16進数、実数、浮動小数等を使用できます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+12345    <span class="comment">// 10進数の12345</span>
+1.23     <span class="comment">// 実数の 1.23</span>
+1.23e4   <span class="comment">// 1.23 × 10の4乗</span>
+1.23E4   <span class="comment">// 1.23 × 10の4乗</span>
+</pre>
+<p>0x(または0X)で始まる数字は16進数と解釈されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+0xff88   <span class="comment">// 16進数のFF88</span>
+0Xff88   <span class="comment">// 16進数のFF88</span>
+</pre>
+<p>以前は 0(ゼロ) で始まる数値を8進数としていましたが廃止され、代わりに <a href="what.htm#es2015" tppabs="http://www.tohoho-web.com/js/what.htm#es2015">ES2015(ES6)</a> では、0o(ゼロオー) で始まる8進数や、0b(ゼロビー) で始まる2進数がサポートされました。Chrome, Firefox, Edge ではサポートされていますが、IE11 ではサポートされていません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+0b1101   <span class="comment">// 2進数の1101(＝10進数の13)</span>
+0B1101   <span class="comment">// 2進数の1101(＝10進数の13)</span>
+0o755    <span class="comment">// 8進数の755(＝10進数の493)</span>
+0O755    <span class="comment">// 8進数の755(＝10進数の493)</span>
+</pre>
+<p>0(ゼロ)で始まる数字は、後に続く数字がすべて 0～7 であれば 8進数として、8～9 を含んでいれば10進数として解釈されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+0755    <span class="comment">// 8進数の755(＝10進数の493)</span>
+0855    <span class="comment">// 10進数の855</span>
+</pre>
+<p>数値は内部的には、IEEE754 に準拠した64ビット倍精度浮動小数点数として扱われます。</p>
+</div>
+
+<h4 id="objNumber">数値オブジェクト</h4>
+
+<h5 id="newNumber">◆ <i>number</i> = new Number(<i>value</i>)</h5>
+<div class=i>
+<p><i>value</i> を値として持つ数値オブジェクトを生成します。「すべての型をオブジェクトタイプとして実装する」というポリシーで用意されていますが、あまり用いられることはありません。数値と数値オブジェクトは厳密には異なります。次項で説明する 「xx = Number(value)」は、文字列を数値に変換するビルトイン関数で、new Number() とは異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(typeof(new Number(123)));  <span class="comment">// object（数値オブジェクト）</span>
+console.log(typeof(Number(123)));      <span class="comment">// number（数値）</span>
+console.log(typeof(123));              <span class="comment">// number（数値）</span>
+</pre>
+</div>
+<script>
+console.log(typeof(new Number(123)));
+console.log(typeof(Number(123)));
+console.log(typeof(123));
+</script>
+
+<h4 id="str2num">文字列を数値に変換する</h4>
+<h5 id="number">◆ <i>number</i> = Number(<i>value</i>)</h5>
+<h5 id="parseInt">◆ <i>number</i> = parseInt(<i>str</i>, <i>radix</i>)</h5>
+<h5 id="parseFloat">◆ <i>number</i> = parseFloat(<i>str</i>)</h5>
+<h5>◆ <i>number</i> = Number.parseInt(<i>str</i>, <i>radix</i>)</h5>
+<h5>◆ <i>number</i> = Number.parseFloat(<i>str</i>)</h5>
+<div class=i>
+<p>文字列を数値に変換するにはビルトイン関数の parseInt()、parseFloat()、Number() を用いるか、0 を減算することによっても、変換できます。0 を加算すると文字列の連結になってしまうため、数値には変換できません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+str = "123.4";
+num1 = Number(str);        <span class="comment">// 数値123.4に変換する</span>
+num2 = parseInt(str);      <span class="comment">// 整数123に変換する</span>
+num3 = parseFloat(str);    <span class="comment">// 数値123.4に変換する</span>
+num4 = str - 0;            <span class="comment">// 数値123.4に変換する</span>
+num5 = str + 0;            <span class="comment">// 文字列 "123.40" になってしまう</span>
+</pre>
+<p>下記などの様にフォームから取得した値は文字列ですので、加算などを行うと 123 + 100 = 223 ではなく、"123100" という文字列になってしまうので注意してください。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function func() {
+  alert(document.form1.text1.value + 100);   <span class="comment">// "123100" となってしまう</span>
+}
+&lt;/script&gt;
+&lt;form name="form1"&gt;
+  &lt;input type="text" name="text1" value="123"&gt;
+  &lt;input type="button" value="OK" onclick="func()"&gt;
+&lt;/form&gt;
+</pre>
+<p>parseInt() は文字列 <i>str</i> を、整数に変換します。parseFloat() は浮動小数点数に変換します。元々は parseFloat() や parseInt() などグローバル関数として定義されていましたが、グローバル関数縮小化の流れから、<a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES2015(ES6)</a> からは Number.parseFloat() や Number.parseFloat() などのクラスメソッドとして定義されています。動作は同等です。ただし、IE11 はクラスメソッド版をまだサポートしていないため、当面はグローバル関数版を使用することになります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(parseInt("123"));         <span class="comment">// =&gt; 123 (整数文字→整数)</span>
+console.log(parseFloat("123.45"));    <span class="comment">// =&gt; 123.45 (浮動小数点数)</span>
+console.log(parseFloat("1.2345e3"));  <span class="comment">// =&gt; 123.45 (浮動小数点数)</span>
+</pre>
+<p>parseInt() の <i>radix</i> には、数値文字を何進数とみなすかを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(parseInt("10", 10));         <span class="comment">// =&gt; 10 (10進数)</span>
+console.log(parseInt("10", 16));         <span class="comment">// =&gt; 16 (16進数)</span>
+console.log(parseInt("10", 2));          <span class="comment">// =&gt; 8 (8進数)</span>
+console.log(parseInt("10", 8));          <span class="comment">// =&gt; 2 (2進数)</span>
+</pre>
+<p>0 で始まる文字列を指定する場合は注意が必要です。0x は16進数とみなされますが、0b や 0o はサポートされていません。0 ＋ 数値の場合は、ブラウザやバージョンによって 10進数とみなされたり、8進数とみなされたりするようです。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(parseInt("0x10"));         <span class="comment">// =&gt; 16 (16進数)</span>
+console.log(parseInt("0b10"));         <span class="comment">// =&gt; 0 (2進数としては解釈されない)</span>
+console.log(parseInt("0o10"));         <span class="comment">// =&gt; 0 (8進数としては解釈されない)</span>
+console.log(parseInt("010"));          <span class="comment">// =&gt; 10 or 8 (10進数とみなされたり8進数とみなされたり)</span>
+</pre>
+<p>JavaScript の <a href="number.htm#Number" tppabs="http://www.tohoho-web.com/js/number.htm#Number">数値</a> と同じ解釈を行うには、下記の様にします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(myParseInt("10"));         <span class="comment">// =&gt; 10 (10進数)</span>
+console.log(myParseInt("0x10"));       <span class="comment">// =&gt; 16 (16進数)</span>
+console.log(myParseInt("0b10"));       <span class="comment">// =&gt; 2 (2進数)</span>
+console.log(myParseInt("0o10"));       <span class="comment">// =&gt; 8 (8進数)</span>
+console.log(myParseInt("017"));        <span class="comment">// =&gt; 15 (8進数)</span>
+console.log(myParseInt("018"));        <span class="comment">// =&gt; 18 (10進数)</span>
+
+function myParseInt(str) {
+  var radix = 10;
+  if (str.match(/^0x[0-9a-f]+$/i)) {
+    radix = 16;
+    str = str.substring(2);
+  } else if (str.match(/^0b[01]+$/i)) {
+    radix = 2;
+    str = str.substring(2);
+  } else if (str.match(/^0o[0-7]+$/i)) {
+    radix = 8;
+    str = str.substring(2);
+  } else if (str.match(/^0[0-7]+$/)) {
+    radix = 8;
+    str = str.substring(1);
+  } else if (str.match(/^[0-9]+$/)) {
+    radix = 10;
+  } else {
+    return Number.NaN;
+  }
+  return parseInt(str, radix);
+}
+</pre>
+</div>
+
+<h4 id="NotANumber">非数</h4>
+
+<h5 id="NaN">◆ NaN</h5>
+<h5 id="Number-NaN">◆ Number.NaN</h5>
+<div class=i>
+<p>NaN および Number.NaN は、無効な数値を示す特別値です。下記など、結果を数値で表すことができない数値を求めようとした場合、結果が NaN となります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(NaN);               <span class="comment">// =&gt; NaN</span>
+console.log(Number.NaN);        <span class="comment">// =&gt; NaN</span>
+console.log(0 / 0);             <span class="comment">// =&gt; NaN</span>
+console.log(parseInt("ABC"));   <span class="comment">// =&gt; NaN</span>
+console.log(Math.sqrt(-1));     <span class="comment">// =&gt; NaN</span>
+</pre>
+</div>
+
+<h5 id="isNaN">◆ isNaN(<i>value</i>)</h5>
+<h5 id="Number-isNaN">◆ Number.isNaN(<i>value</i>)</h5>
+<div class=i>
+<p>NaN は == や === などの比較演算子で比較することができません。結果が NaN となったか否かは、isNaN() グローバル関数、または <a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ES2015(ES6)</a> で規定された Number.isNaN() クラスメソッドを用います。両者の動作は多少異なります。isNaN() は数値変換により NaN と判定される値をすべて true と判定しますが、Number.isNaN() はすでに NaN であると判定された値のみを true と判定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(isNaN(NaN));               <span class="comment">// =&gt; true</span>
+console.log(Number.isNaN(NaN));        <span class="comment">// =&gt; true</span>
+
+console.log(isNaN(0 / 0));             <span class="comment">// =&gt; true</span>
+console.log(Number.isNaN(0 / 0));      <span class="comment">// =&gt; 演算した結果を検証するので true</span>
+
+console.log(isNaN("ABC"));             <span class="comment">// =&gt; "ABC" を数値変換すると NaN になるので true</span>
+console.log(Number.isNaN("ABC"));      <span class="comment">// =&gt; まだ NaN になっていないので false</span>
+</pre>
+</div>
+
+<h4 id="MAX">限界値</h4>
+
+<h5 id="MAX_VALUE">◆ Number.MAX_VALUE</h5>
+<h5 id="MIN_VALUE">◆ Number.MIN_VALUE</h5>
+<div class=i>
+<p>MAX_VALUE は利用可能な最大値（約 1.79769e308）。MIN_VALUE は利用可能な最小値（約5e-324）を示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 1.8 * 1.0e308;
+if (xx &gt;= Number.MAX_VALUE) {
+   alert("計算可能な範囲を超えました");
+}
+</pre>
+</div>
+
+<h5 id="POSITIVE_INFINITY">◆ Number.POSITIVE_INFINITY</h5>
+<h5 id="NEGATIVE_INFINITY">◆ Number.NEGATIVE_INFINITY</h5>
+<div class=i>
+<p>POSITIVE_INFINITY は正の無限大を示す特別な数値。NEGATIVE_INFINITY は負の無限大を示す特別な数値を示します。乗算などの演算が、JavaScript で扱える値の範囲を超えた場合をチェックすることができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 1.8 * 1.0e308;
+if ((xx == Number.POSITIVE_INFINITY)
+ || (xx == Number.NEGATIVE_INFINITY)) {
+   alert("計算可能な範囲を超えました");
+}
+</pre>
+</div>
+
+<h5 id="isFinite">◆ isFinite(<i>value</i>)</h5>
+<h5 id="Number-isFinite">◆ Number.isFinite(<i>value</i>)</h5>
+<div class=i>
+<p>isFinite() や Number.isFinite() は、<i>value</i> が有効な数値(有理数)であることを検査します。isFinite() はグローバル関数、Number.isFinite() はクラスメソッドとして定義されていますが、同じ動きをします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(isFinite(1.23e999));                  <span class="comment">// =&gt; false</span>
+console.log(isFinite(Infinity));                  <span class="comment">// =&gt; false</span>
+console.log(isFinite(-Infinity));                 <span class="comment">// =&gt; false</span>
+console.log(isFinite(NaN));                       <span class="comment">// =&gt; false</span>
+console.log(isFinite(Number.NEGATIVE_INFINITY));  <span class="comment">// =&gt; false</span>
+console.log(isFinite(Number.POSITIVE_INFINITY));  <span class="comment">// =&gt; false</span>
+
+console.log(isFinite(0));                         <span class="comment">// =&gt; true</span>
+console.log(isFinite(1.23e45));                   <span class="comment">// =&gt; true</span>
+console.log(isFinite(Number.MAX_VALUE));          <span class="comment">// =&gt; true</span>
+console.log(isFinite(Number.MIN_VALUE));          <span class="comment">// =&gt; true</span>
+</pre>
+</div>
+
+<h5 id="isInteger">◆ Number.isInteger(<i>value</i>)</h5>
+<div class=i>
+<p>isInteger() は、<i>value</i> が有効な整数、-MAX_VALUE ～ MAX_VALUE の間の整数であるかどうかを検査します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(Number.isInteger(1.798e308));          <span class="comment">// =&gt; false (大きすぎ)</span>
+console.log(Number.isInteger(1.797e308));          <span class="comment">// =&gt; true</span>
+console.log(Number.isInteger(-1.797e308));         <span class="comment">// =&gt; true</span>
+console.log(Number.isInteger(-1.798e308));         <span class="comment">// =&gt; false (小さすぎ)</span>
+</pre>
+</div>
+
+<h4 id="rounding-error">丸め誤差</h4>
+<div class=i>
+<p>浮動小数では2進数を用いた近似値を用いるため、丸め誤差が発生します。下記の様に 0.1 と 0.2 を足しても正確な 0.3 にはなりません。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 0.1 + 0.2;
+console.log(xx);          <span class="comment">// =&gt; 0.30000000000000004</span>
+console.log(xx == 0.3);   <span class="comment">// 当然結果は false となる</span>
+</pre>
+<p>特に、演算を何度も繰り返していくと丸め誤差も積算されていきます。丸め誤差の問題を回避するには、<a target="_top" href="javascript:if(confirm('https://github.com/MikeMcl/bignumber.js/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://github.com/MikeMcl/bignumber.js/'" tppabs="https://github.com/MikeMcl/bignumber.js/">bignumber.js</a> などのライブラリを使用するか、計算の度に有効桁を考慮して四捨五入していくことをお勧めします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 0.0;
+yy = 0.0;
+for (var i = 0; i &lt; 100000; i++) {
+  xx = xx + 0.1;                             <span class="comment">// 丸め誤差が積算していく</span>
+  yy = Math.round((yy + 0.1) * 100) / 100;   <span class="comment">// 小数第三位で四捨五入</span>
+}
+console.log(xx);   <span class="comment">// 10000.000000018848 (不正確)</span>
+console.log(yy);   <span class="comment">// 10000 (正確)</span>
+</pre>
+</div>
+
+<h5 id="EPSILON">◆ Number.EPSILON</h5>
+<div class=i>
+<p>Number.EPSILON は、1 と 1 より大きい浮動小数点の最小値との差を表します。簡単に言うと、1回の演算で発生する可能性のある丸め誤差を表します。約 2.22e-16、正確には 2 <sup><small>-52</small></sup> を示します。丸め誤差を許容する比較を行うと下記の様になります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 0.1 + 0.2;
+console.log(xx);                     <span class="comment">// =&gt; 0.30000000000000004</span>
+console.log(0.3 - Number.EPSILON);   <span class="comment">// =&gt; 0.29999999999999977</span>
+console.log(0.3 + Number.EPSILON);   <span class="comment">// =&gt; 0.3000000000000002</span>
+console.log((0.3 - Number.EPSILON &lt;= xx) && (xx &gt;= 0.3 + Number.EPSILON));  <span class="comment">// true</span>
+</pre>
+</div>
+
+<h5 id="MIN_SAFE_INTEGER">◆ Number.MIN_SAFE_INTEGER</h5>
+<h5 id="MAX_SAFE_INTEGER">◆ Number.MAX_SAFE_INTEGER</h5>
+<div class=i>
+<p>Number.MIN_SAFE_INTEGER, Number.MAZ_SAFE_INTEGER は、丸め誤差なく正確に計算できる整数の最小値と最大値を示します。それぞれ、-2<sup><small>53</small></sup> + 1 および 2<sup><small>53</small></sup> - 1 を示します。数値がこの両者の範囲内にある整数であれば、丸め誤差なく演算することが可能です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(Number.MIN_SAFE_INTEGER);     <span class="comment">// =&gt; -9007199254740991</span>
+console.log(Number.MAX_SAFE_INTEGER);     <span class="comment">// =&gt; 9007199254740991</span>
+</pre>
+</div>
+
+<h5 id="isSafeInteger">◆ Number.isSafeInteger(<i>value</i>)</h5>
+<div class=i>
+<p>isSafeInteger() は、<i>value</i> が、丸め誤差なしに扱える整数、つまり、MIN_SAFE_INTEGER 以上 MAX_SAFE_INTEGER 以下の整数であるかどうかを検査します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(Number.isSafeInteger(9007199254740992));    <span class="comment">// =&gt; false</span>
+console.log(Number.isSafeInteger(9007199254740991));    <span class="comment">// =&gt; true</span>
+console.log(Number.isSafeInteger(-9007199254740991));   <span class="comment">// =&gt; true</span>
+console.log(Number.isSafeInteger(-9007199254740992));   <span class="comment">// =&gt; false</span>
+</pre>
+</div>
+
+<h4 id="toXxx">表記変換</h4>
+
+<h5 id="toString">◆ <i>number</i>.toString(<i>radix</i>)</h5>
+<div class=i>
+<p>toString() を用いて、数値を <i>radix</i> 進数（2～36。省略時は10）の文字列に変換することができます。例えば下記の例では、65535 を 16 進数を示す文字列 "ffff" に変換します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 65535;
+console.log(xx.toString(16));
+</pre>
+</div>
+
+<h5 id="toExponential">◆ <i>number</i>.toExponential(<span class="nb">[<i>digit</i>]</span>)</h5>
+<div class=i>
+<p><i>number</i> を 1.23e4 の様な指数表記の文字列に変換します。<i>digit</i> には小数以下の桁数を指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var xx = 123456;
+console.log(xx.toExponential());     <span class="comment">// =&gt; 1.23456e+5</span>
+console.log(xx.toExponential(2));    <span class="comment">// =&gt; 1.23e+5</span>
+</pre>
+</div>
+
+<h5 id="toFixed">◆ <i>number</i>.toFixed(<span class="nb">[<i>digit</i>]</span>)</h5>
+<div class=i>
+<p><i>number</i> を 1.23 の様な整数または固定小数点表記の文字列に変換します。<i>digit</i> には小数以下の桁数を指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var xx = 1.234e5;
+console.log(xx.toFixed());     <span class="comment">// =&gt; 123400</span>
+console.log(xx.toFixed(2));    <span class="comment">// =&gt; 123400.00</span>
+</pre>
+</div>
+
+<h5 id="toPrecision">◆ <i>number</i>.toPrecision(<span class="nb">[<i>precision</i>]</span>)</h5>
+<div class=i>
+<p><i>number</i> を <i>precision</i> で指定した有効桁の表記の文字列に変換します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+xx = 123456789;
+console.log(xx.toPrecision());     <span class="comment">// =&gt; 123456789</span>
+console.log(xx.toPrecision(3));    <span class="comment">// =&gt; 1.23e+8</span>
+xx = 1.23456789;
+console.log(xx.toPrecision(3));    <span class="comment">// =&gt; 1.23</span>
+xx = 0.0000123456789;
+console.log(xx.toPrecision(3));    <span class="comment">// =&gt; 0.0000123</span>
+xx = 1.23456789e30;
+console.log(xx.toPrecision(3));    <span class="comment">// =&gt; 1.23e+30</span>
+</pre>
+</div>
+
+<h4 id="format">言語依存フォーマット</h4>
+<h5 id="NumberFormat">◆ Intl.NumberFormat()</h5>
+<div class=i>
+<p><a href="what.htm#version" tppabs="http://www.tohoho-web.com/js/what.htm#version">ECMA-402 1st Edition</a> では、カンマ区切りの数値を簡単にフォーマットできるようになりました。Chrome, Firefox, Safari, IE11 で利用可能です。詳細の説明は割愛しますが、オプションを指定することで、各国に応じた通貨記号を付加することなども可能です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var ja = new Intl.NumberFormat("ja-JP");
+console.log(ja.format(1234567.89));         <span class="cm">// 1,234,567.89 (日本様式)</span>
+
+var en = new Intl.NumberFormat("en-US");
+console.log(en.format(1234567.89));         <span class="cm">// 1,234,567.89 (米国様式)</span>
+
+var de = new Intl.NumberFormat("de-DE");
+console.log(de.format(1234567.89));         <span class="cm">// 1.234.567,89 (ドイツ様式)</span>
+
+var jpy = new Intl.NumberFormat("ja-JP", { style: 'currency', currency: 'JPY' });
+console.log(jpy.format(1234567.89));         <span class="cm">// ￥1,234,567.89 (日本円)</span>
+</pre>
+</div>
+
+<h4 id="BigInt">BigInt</h4>
+<div class="i">
+<p>通常の Number 型は 2^53 の精度を持ちますが、<a href="what.htm#es2020" tppabs="http://www.tohoho-web.com/js/what.htm#es2020">ES2020</a> で追加された <b>BigInt</b> を用いると任意精度の整数を扱うことが可能となります。BigInt では整数の末尾に n を付加します。Number を BigInt に変換するには BigInt() を使用します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+console.log(123456789012345678901234567890<em>n</em>);	<span class="cm">// 123456789012345678901234567890n</span>
+console.log(<em>BigInt(</em>12345<em>)</em>);			<span class="cm">// 12345n</span>
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="builtin.htm" tppabs="http://www.tohoho-web.com/js/builtin.htm">[prev]</a>
+<a href="string.htm" tppabs="http://www.tohoho-web.com/js/string.htm">[next]</a>
+<div>Copyright (C) 1996-2019 杜甫々</div>
+<div>改訂版初版：2001年5月20日、最終更新：2019年2月24日</div>
+<div>http://www.tohoho-web.com/js/number.htm</div>
+</body>
+</html>

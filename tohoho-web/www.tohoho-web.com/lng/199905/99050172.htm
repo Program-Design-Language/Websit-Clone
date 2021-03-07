@@ -1,0 +1,324 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ログ先頭の一行読み出して文字を追加するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ログ先頭の一行読み出して文字を追加するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050171.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050171.htm">[前に]</a>
+<a href="99050173.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050173.htm">[次に]</a>
+<hr>
+<span class=name>/../</span>
+<span class=time>1999/05/27(木) 21:43:36</span><br>
+本体のスクリプトに<br>
+&lt;form action="./res.cgi" method=POST&gt;<br>
+レス&lt;input type=text name=res size=40&gt;<br>
+&lt;input type=submit value="返信する"&gt;&lt;/form&gt;<br>
+というふうにフォームを作ってres.cgiを呼び出すようにしました。<br>
+res.cgiは、<br>
+#!/usr/bin/perl<br>
+<br>
+require "./jcode.pl";<br>
+$datafile = './gb.dat'; #ログファイル<br>
+<br>
+$res = $form{'res'};<br>
+	&amp;jcode'convert(*res,"sjis");<br>
+open(DATA,&gt;$datafile);<br>
+$value = &lt;DATA&gt;;<br>
+chop;($no,$name,$msg,$mail,$url) = split(/,/, $value);<br>
+<br>
+$msg = "$msg&lt;br&gt;$res"; #レスを追加<br>
+print "$no,$name,$msg,$mail,$url";<br>
+close(DATA);<br>
+	exit;<br>
+と書いたのですが動いていないようなのです。記述間違っているんでしょうか？<br>
+最終的にはログの一行目を書き換える作業をして、<br>
+処理が終わると「書き込みありがとう」の一行を表示したいのです<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/27(木) 21:59:04</span><br>
+<font color="#CC8000">&gt; 動いていないようなのです。</font><br>
+動いてないとはどういう意味ですか? エラーになるんですか?<br>
+<font color="#CC8000">&gt; $res = $form{'res'};</font><br>
+どこで$formに値を代入してるんですか?(省略しただけなら失礼)<br>
+<font color="#CC8000">&gt; open(DATA,&gt;$datafile);</font><br>
+ファイルに書き込みたいのですか?<br>
+というか、これってクォーティングしないと文法エラーになりませんか?<br>
+<font color="#CC8000">&gt; chop;($no,$name,$msg,$mail,$url) = split(/,/, $value);</font><br>
+この chop、意図通りに動いてますか?<br>
+<br>
+あと、Content-typeの出力は?(省略しただけなら失礼)<br>
+<br>
+まず、手元にhttpdとperlを入れましょう。<br>
+いちいち人に聞いてると、開発効率上がらんでしょう。<br>
+<hr>
+<span class=name>/../</span>
+<span class=time>1999/05/28(金) 03:23:18</span><br>
+お返事ありがとうございます。<br>
+このように↓書き直してみたのですが、<br>
+#!/usr/local/bin/perl<br>
+<br>
+require "./cgi-lib.pl";<br>
+require "./jcode.pl";<br>
+&amp;ReadParse;<br>
+$txtfile = './gb.dat';<br>
+<br>
+$res = $in{"res"};<br>
+&amp;jcode'convert(*res,"sjis");<br>
+<br>
+open(OUT,"&gt;$txtfile");<br>
+$line = &lt;OUT&gt;;<br>
+($no,$name,$msg,$mail,$url) = split(/,/, $line);<br>
+$msg = "$msg&lt;br&gt;$res"; #レスを追加<br>
+print OUT "$no,$name,$msg,$mail,$url";<br>
+close(OUT);<br>
+<br>
+		print "Content-type: text/html\n\n";<br>
+		print "&lt;html&gt;&lt;head&gt;&lt;title&gt;かきこみ完了&lt;/title&gt;&lt;/head&gt;\n";<br>
+		print "\n";<br>
+		print "&lt;h1&gt;かきこみ完了&lt;/h1&gt;\n";<br>
+exit;<br>
+<br>
+「1,2,3,4,5」と書いたgb.datに「テスト」と編集してみたところ、<br>
+「,,3テスト,,」というふうに$msg以外は空の値が返ってきちゃいます。<br>
+ローカルで本と、にらめっこしながらやってるのですが<br>
+うまくいかないので教えてください。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/28(金) 03:41:36</span><br>
+もとのスクリプトをテキスト形式にしてアップしてもらったほうが良さそうな気がします、、。<br>
+原因のわからないものはどこに原因があるかわかりませんから。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/28(金) 03:45:10</span><br>
+<font color="#CC8000">&gt; open(OUT,"&gt;$txtfile");</font><br>
+<font color="#CC8000">&gt; $line = &lt;OUT&gt;;</font><br>
+open(IN,"$txtfile");<br>
+$line = &lt;IN&gt;;<br>
+close(IN);<br>
+<br>
+<font color="#CC8000">&gt; print OUT "$no,$name,$msg,$mail,$url";</font><br>
+open(OUT,"&gt;$txtfile");<br>
+print OUT "$no,$name,$msg,$mail,$url";<br>
+<br>
+…と思ったら、<br>
+<font color="#CC8000">&gt; ,,3テスト,,</font><br>
+はて、3だけ読めてるのは何故?<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/28(金) 08:32:24</span><br>
+<font color="#CC8000">&gt;最終的にはログの一行目を書き換える作業をして</font><br>
+これって要するにファイルの途中にデータを挿入するってことになりますよね。<br>
+残念ながらそういうことはできません。(CPANを探せばそういうモジュールがあるかもしれないですけど)<br>
+ですのでファイルの中身を全て読み込んで、一行目の部分を書き換えて、全て書き出すということになります。<br>
+<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/28(金) 08:35:48</span><br>
+ちなみに<br>
+<font color="#CC8000">&gt;open(OUT,"&gt;$txtfile");</font><br>
+この開き方だと、開いたときにファイルの中身全て消えます。<br>
+<font color="#CC8000">&gt;,,3テスト,,」というふうに$msg以外は空の値が返ってきちゃいます。</font><br>
+なぜ３だけ読めてるんでしょ？多分バグ？ですね(^_^;<br>
+<hr>
+<span class=name>/../</span>
+<span class=time>1999/05/28(金) 10:19:22</span><br>
+みなさんありがとうございます。<br>
+#!/usr/local/bin/perl<br>
+<br>
+require "./cgi-lib.pl";<br>
+require "./jcode.pl";<br>
+&amp;ReadParse;<br>
+<br>
+$txtfile = './gb.dat';<br>
+$tempfile = "temp";<br>
+$res = $in{"res"};<br>
+	&amp;jcode'convert(*res,"sjis");<br>
+<br>
+open(IN,"$txtfile");<br>
+	$line = &lt;IN&gt;;<br>
+close(IN);<br>
+<br>
+($no,$name,$msg,$mail,$url) = split(/,/, $line);<br>
+$msg = "$msg&lt;br&gt;$res"; #レスを追加<br>
+<br>
+open(TMP,"&gt;$tempfile");<br>
+print TMP "$no,$name,$msg,$mail,$url";<br>
+<br>
+open(DATA,$txtfile);<br>
+while (&lt;DATA&gt;) {<br>
+print TMP $_;<br>
+}<br>
+close(DATA);<br>
+close(TMP);<br>
+rename($tempfile,$txtfile);<br>
+<br>
+		print "Content-type: text/html\n\n";<br>
+		print "&lt;html&gt;&lt;head&gt;&lt;title&gt;かきこみ完了&lt;/title&gt;&lt;/head&gt;\n";<br>
+		print "\n";<br>
+		print "&lt;h1&gt;かきこみ完了&lt;/h1&gt;\n";<br>
+exit;<br>
+一番上に編集した行を追加するように変更して、<br>
+これで完成だと思ったのですが、<br>
+これだと編集前の記事も残っちゃってて<br>
+返信するたびに編集前の記事が生まれてきます(;´Д`)<br>
+<br>
+ログの先頭の一行を読み込んだあとに、その行を削除するような<br>
+処理はできるのでしょうか・・？<br>
+<br>
+テストするときはフォーム部分のみを書いたHTMLと、<br>
+このres.cgiと、ログファイルのgb.datの３つだけで行っています。<br>
+<hr>
+<span class=name>いわた</span>
+<span class=time>1999/05/28(金) 10:43:57</span><br>
+<font color="#CC8000">＞open(DATA,$txtfile);</font><br>
+<font color="#CC8000">＞while (&lt;DATA&gt;) {</font><br>
+<font color="#CC8000">＞print TMP $_;</font><br>
+<font color="#CC8000">＞}</font><br>
+<font color="#CC8000">＞close(DATA);</font><br>
+ここで編集前のものを書き込んでます。<br>
+これいらないんじゃないですか?<br>
+<hr>
+<span class=name>いわた</span>
+<span class=time>1999/05/28(金) 10:57:14</span><br>
+失礼。勘違いしていました。<br>
+<br>
+<font color="#CC8000">＞ログの先頭の一行を読み込んだあとに、その行を削除するような</font><br>
+<font color="#CC8000">＞処理はできるのでしょうか・・？</font><br>
+<br>
+open(DATA,$txtfile);<br>
+@hoge = &lt;DATA&gt;;<br>
+close(DATA);<br>
+for($i=1;$i&lt;=$#hoge;$i++) {<br>
+&nbsp;&nbsp;print TMP $hoge[$i];<br>
+}<br>
+<br>
+というように$hoge[0]をよまないようにするとか?<br>
+ほかにもやり方はいろいろありますね。shiftとか。<br>
+<br>
+あと、気になっているんですが、<br>
+<br>
+<font color="#CC8000">＞print TMP "$no,$name,$msg,$mail,$url";</font><br>
+<br>
+は改行コードはいらないんでしょうか?<br>
+<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/28(金) 13:28:10</span><br>
+#!/usr/local/bin/perl<br>
+<br>
+require "./cgi-lib.pl";<br>
+require "./jcode.pl";<br>
+&amp;ReadParse;<br>
+<br>
+$txtfile = './gb.dat';<br>
+$tempfile = "temp";<br>
+$res = $in{"res"};<br>
+&amp;jcode'convert(*res,"sjis");<br>
+<br>
+open(TMP, "+&gt; $tempfile");<br>
+flock(TMP, 2);<br>
+<br>
+open(IN, "$txtfile");<br>
+flock(IN, 1);<br>
+<br>
+$line=&lt;IN&gt;;<br>
+<br>
+($no,$name,$msg,$mail,$url) = split(/,/, $line);<br>
+$msg = "$msg&lt;br&gt;$res"; #レスを追加<br>
+<br>
+print TMP join(",", ($no,$name,$msg,$mail,$url));<br>
+<br>
+while ($line = &lt;IN&gt;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print TMP $line;<br>
+}<br>
+<br>
+close(IN);<br>
+<br>
+open(OUT, "&gt; $txtfile);<br>
+flock(OUT, 2);<br>
+<br>
+seek(TMP, 0, 0);<br>
+<br>
+while ($line = &lt;TMP&gt;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print OUT $line;<br>
+}<br>
+<br>
+close(OUT);<br>
+<br>
+close(TMP);<br>
+open(IN, $txtfile);<br>
+<br>
+print "Content-type: text/html\n\n";<br>
+print "&lt;html&gt;&lt;head&gt;&lt;title&gt;かきこみ完了&lt;/title&gt;&lt;/head&gt;\n";<br>
+print "\n";<br>
+print "&lt;h1&gt;かきこみ完了&lt;/h1&gt;\n";<br>
+exit;<br>
+<br>
+こんな具合ですね。<br>
+<hr>
+<span class=name>なえ</span>
+<span class=time>1999/05/28(金) 13:42:29</span><br>
+ちょい修正。<br>
+#!/usr/local/bin/perl<br>
+<br>
+require "./cgi-lib.pl";<br>
+require "./jcode.pl";<br>
+&amp;ReadParse;<br>
+<br>
+$txtfile = './gb.dat';<br>
+$tempfile = "temp";<br>
+$res = $in{"res"};<br>
+&amp;jcode'convert(*res,"sjis");<br>
+<br>
+open(TMP, "+&lt; $tempfile"); # -- 修正 --<br>
+flock(TMP, 2);<br>
+truncate(TMP, 0); # -- 修正 --<br>
+seek(TMP, 0, 0); # -- 修正 --<br>
+<br>
+open(IO, "+&lt; $txtfile"); # -- 修正 --<br>
+flock(IO, 1); # -- 修正 --<br>
+<br>
+$line=&lt;IO&gt;; # -- 修正 --<br>
+<br>
+($no,$name,$msg,$mail,$url) = split(/,/, $line);<br>
+$msg = "$msg&lt;br&gt;$res";<br>
+<br>
+print TMP join(",", ($no,$name,$msg,$mail,$url));<br>
+<br>
+while ($line = &lt;IO&gt;){ # -- 修正 --<br>
+print TMP $line;<br>
+}<br>
+<br>
+# close(IN); -- 削除 --<br>
+<br>
+# open(OUT, "&gt; $txtfile); -- 削除 --<br>
+# flock(OUT, 2); -- 削除 --<br>
+<br>
+truncate(IO, 0); # -- 追加 --<br>
+seek(IO, 0, 0); # -- 追加 --<br>
+seek(TMP, 0, 0);<br>
+<br>
+while ($line = &lt;TMP&gt;){<br>
+print IO $line; # -- 修正 --<br>
+}<br>
+<br>
+close(IO); # -- 修正 --<br>
+<br>
+close(TMP);<br>
+# open(IN, $txtfile); # -- 間違ってコピーしちゃった --<br>
+<br>
+print "Content-type: text/html\n\n";<br>
+print "&lt;html&gt;&lt;head&gt;&lt;title&gt;かきこみ完了&lt;/title&gt;&lt;/head&gt;\n";<br>
+print "\n";<br>
+print "&lt;h1&gt;かきこみ完了&lt;/h1&gt;\n";<br>
+exit;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050171.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050171.htm">[前に]</a>
+<a href="99050173.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050173.htm">[次に]</a>
+</body>
+</html>

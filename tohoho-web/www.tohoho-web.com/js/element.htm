@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>エレメント（Element） - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>エレメント（Element）</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="document.htm" tppabs="http://www.tohoho-web.com/js/document.htm">[prev]</a>
+<a href="dom.htm" tppabs="http://www.tohoho-web.com/js/dom.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#className">className</a>,
+<a href="#click">click()</a>,
+<a href="#id">id</a>,
+<a href="#innerHTML">innerHTML</a>,
+<a href="#innerText">innerText</a>,
+<a href="#lang">lang</a>,
+<a href="#language">language</a>,
+<a href="#parentElement">parentElement</a>,
+<a href="#tagName">tagName</a>,
+<a href="#title">title</a>
+</div>
+
+<h4 id="Dhtml">IE4.0のダイナミックHTML</h4>
+<div class=i>
+<p>Internet Explorer 4.0 では、JavaScript から HTML 文書内のすべての要素にアクセスし、変更する機能を備えています。詳細な仕様は説明は以下のページに紹介されています。</p>
+<ul>
+<li>MSDN Web Workshop
+<a target="_top" href="javascript:if(confirm('http://msdn.microsoft.com/workshop/default.asp  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://msdn.microsoft.com/workshop/default.asp'" tppabs="http://msdn.microsoft.com/workshop/default.asp">http://msdn.microsoft.com/workshop/default.asp</a>
+</ul>
+<p>例えば、次の例では ABC という ID を持つ img 要素の各パラメータを表示します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;テスト&lt;/title&gt;
+&lt;script&gt;
+function func() {
+  alert("tagName=" + document.all.abc.tagName +
+       " id=" + document.all.abc.id +
+       " src=" + document.all.abc.src +
+       " width=" + document.all.abc.width +
+       " height=" + document.all.abc.height);
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;img id="ABC" src="xx.gif" width=20 height=20 alt="xx"&gt;
+&lt;input type="button" value="OK" onclick="func()"&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>ID を変数で指定するには次のようにします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+id = "ABC";
+document.all.item(id);
+</pre>
+<p>同じ ID を持つ要素が複数存在する時は次のようにしてアクセスします。要素が単一のときと複数の時でアクセス方法を変更する必要があるので注意してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var srclist = "";
+var id = "ABC";
+if (document.all.item(id).length) {
+  for (i = 0; i &lt; document.all.item(id).length; i++) {
+    srclist += document.all.item(id, i).src;
+    srclist += " ";
+  }
+} else {
+  srclist += document.all.item("ABC").src;
+}
+alert(srclist);
+</pre>
+<p>IMG などのタグ名を用いてアクセスすることもできます。この場合は、要素が単一の時も複数の時も同じようにアクセス可能です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var srclist = "";
+for (i = 0; i &lt; document.all.tags("IMG").length; i++) {
+  srclist += document.all.tags("IMG")(i).src;
+  srclist += " "
+}
+alert(srclist);
+</pre>
+<p>また、全ての要素の配列 all(<i>n</i>) を用いる方法もあります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var taglist = "";
+for (i = 0; i &lt; document.all.length; i++) {
+  taglist += document.all(i).tagName;
+  taglist += " ";
+}
+alert(taglist);
+</pre>
+</div>
+
+<h4 id="Element">要素オブジェクト</h4>
+
+<h5 class="b0" id="all">◆ <i>window</i>.document.all.<i>id</i></h5>
+<h5 class="t0 b0" id="all2">◆ <i>window</i>.document.all(<i>n</i>)</h5>
+<h5 class="t0" id="length">◆ <i>window</i>.document.all.length</h5>
+<div class=i>
+<p>ドキュメント中の要素の配列です。<i>id</i> には各要素の ID 属性で指定した名前を指定してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+obj = document.all.ABC;
+for (i = 0; i &lt; document.all.length; i++) {
+  obj = document.all(i);
+}
+</pre>
+</div>
+
+<h5 class="b0" id="item">◆ <i>window</i>.document.all.item(<i>id</i>)</h5>
+<h5 class="t0 b0" id="item2">◆ <i>window</i>.document.all.item(<i>id</i>, <i>n</i>)</h5>
+<h5 class="t0" id="length2">◆ <i>window</i>.document.all.item(<i>id</i>).length</h5>
+<div class=i>
+<p>ドキュメント中の要素、もしくは要素の配列です。<i>id</i> には各要素の ID 属性で指定した名前を指定してください。対象要素が複数の時と単数の時でアクセス方法が異なるので注意してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+obj = document.all.item("ABC");
+if (document.all.item(id).length) {
+  for (i = 0; i &lt; document.all.item(id).length; i++) {
+    obj = document.all.item(id, i);
+  }
+} else {
+  obj = document.all.item(id);
+}
+</pre>
+</div>
+
+<h5 class="b0" id="tags1">◆ <i>window</i>.document.all.tags(<i>tag</i>)</h5>
+<h5 class="t0 b0" id="tags2">◆ <i>window</i>.document.all.tags(<i>tag</i>)(<i>n</i>)</h5>
+<h5 class="t0" id="length3">◆ <i>window</i>.document.all.tags(<i>tag</i>).length</h5>
+<div class=i>
+<p>ドキュメント中の要素の配列です。<i>tag</i> にはタグ名を指定してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+for (i = 0; i &lt; document.all.tags("IMG").length; i++) {
+  obj = document.all.tags("IMG")(i);
+}
+</pre>
+</div>
+
+<h5 id="style">◆ <i>element</i>.style</h5>
+<div class=i>
+<p><a href="style.htm" tppabs="http://www.tohoho-web.com/js/style.htm">スタイル</a>オブジェクトを示します。下記の例ではドキュメント中のすべての H1 要素の色を変更します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+for (i = 0; i &lt; document.all.tags("H1").length; i++) {
+  elm = document.all.tags("H1")(i);
+  elm.style.color = "#FF0000";
+}
+</pre>
+</div>
+
+<h5 class="b0" id="innerHTML">◆ <i>element</i>.innerHTML</h5>
+<h5 class="t0" id="innerText">◆ <i>element</i>.innerText</h5>
+<div class=i>
+<p>この要素の中の文字列、あるいはHTMLソースを示します。この値に文字列を代入することにより、要素の中身をダイナミックに変更することができます。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script"&gt;
+function func() {
+  document.all.ABC.innerHTML = "&lt;b&gt;おやすみ&lt;/b&gt;";
+}
+&lt;/script&gt;
+&lt;div id="ABC"&gt;おはよう&lt;/div&gt;
+&lt;button onclick="func()"&gt;OK&lt;/button&gt;
+</pre>
+</div>
+
+<h5 class="b0" id="tagName">◆ <i>element</i>.tagName</h5>
+<h5 class="t0 b0" id="title">◆ <i>element</i>.title</h5>
+<h5 class="t0 b0" id="className">◆ <i>element</i>.className</h5>
+<h5 class="t0 b0" id="id">◆ <i>element</i>.id</h5>
+<h5 class="t0 b0" id="lang">◆ <i>element</i>.lang</h5>
+<h5 class="t0" id="language">◆ <i>element</i>.language</h5>
+<div class=i>
+<p>tagName はタグの名前、title、className、id、lang、language はそれぞれ、title、class、id、lang、language 属性に対応する値を示します。</p>
+</div>
+
+<h5 id="parentElement">◆ <i>element</i>.parentElement</h5>
+<div class=i>
+<p>ひとつ親の要素を示します。</p>
+</div>
+
+<h5 id="click">◆ <i>element</i>.click()</h5>
+<div class=i>
+<p>要素をクリックしたことにします。</p>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="document.htm" tppabs="http://www.tohoho-web.com/js/document.htm">[prev]</a>
+<a href="dom.htm" tppabs="http://www.tohoho-web.com/js/dom.htm">[next]</a>
+<div>Copyright (C) 1996-2001 杜甫々</div><div>改訂版初版：2008年7月19日</div>
+<div>http://www.tohoho-web.com/js/element.htm</div>
+</body>
+</html>

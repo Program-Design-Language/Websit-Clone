@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>配列をファイルに記録するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>配列をファイルに記録するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050078.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050078.htm">[前に]</a>
+<a href="99050082.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050082.htm">[次に]</a>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/16(日) 23:57:59</span><br>
+要素が2つだけの配列があるんですが、それをファイルに記録するのに、<br>
+print OUT "@a[0]";<br>
+print OUT "@a[1]";<br>
+ってやってるんですが、どうも変な気がしたので質問してみました。<br>
+もっと簡単にする方法を教えてください。<br>
+ちなみにPerlの話です。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/17(月) 00:22:45</span><br>
+　print OUT @a;<br>
+　print OUT "@a";<br>
+　print OUT join(",",@a);<br>
+　print OUT join("\n",@a);<br>
+などなど。それぞれ結果が違うので試してみてください。<br>
+<br>
+<font color="#CC8000">&gt; print OUT "@a[0]";</font><br>
+<br>
+そもそもこれは間違いです。-w オプションを付けてコマンドラインで<br>
+実行すると warning がでます。<br>
+　print OUT "$a[0]";<br>
+が正解。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/17(月) 01:09:21</span><br>
+<span class=resolv>[[解決]]</span><br>
+@a[0]<br>
+・・・やってしまいました。（笑）<br>
+スクリプトのほうではちゃんと$a[0]ってやってるんですけどね。<br>
+たぶん僕がやりたいのは<br>
+　print OUT "@a";<br>
+のような気がします。<br>
+どうもありがとうございました。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/17(月) 01:13:14</span><br>
+あっ、、すいません。解決を押してしまったのですが、、<br>
+　print OUT @a;<br>
+と、<br>
+　print OUT "@a";<br>
+はどう違うのですか？<br>
+<br>
+下の二つが違うのはわかります。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/17(月) 01:36:45</span><br>
+とりあえず結果報告します。<br>
+　print OUT @a;<br>
+のほうでうまくいきました。<br>
+　print OUT "@a";<br>
+のほうではうまく動作しませんでした。<br>
+何が違うのでしょうか、、？<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/05/17(月) 06:21:53</span><br>
+僕も、気になっていたんですが。<br>
+掲示板などを作って配列に、データをいれて、<br>
+print OUT "@data";<br>
+と、すると勝手にインデントしてしまう。<br>
+name,addr,url,msg<br>
+--name,addr,url,msg<br>
+----....<br>
+..<br>
+なぜでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/17(月) 17:50:45</span><br>
+<font color="#CC8000">&gt; 　print OUT "@a";</font><br>
+<font color="#CC8000">&gt; のほうではうまく動作しませんでした。</font><br>
+<br>
+定義済の配列に対して<br>
+　print OUT "@a";<br>
+とすれば動くはずですので、試して違いを確かめてみてください。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/17(月) 22:37:20</span><br>
+定義済みの配列というのはどういうことですか？（理解力に乏しくてすいません。）<br>
+上のtreさんと同じ疑問なのですが、配列を<br>
+print OUT "@a";<br>
+でファイルに保存すると勝手に空白が入ってしまいます。<br>
+なぜなのでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/18(火) 01:46:03</span><br>
+<font color="#CC8000">&gt; 定義済みの配列というのはどういうことですか？</font><br>
+<br>
+perl4では<br>
+　#!path_of_perl4<br>
+　print "@a";<br>
+はエラーになりませんが、perl5では<br>
+　#!path_of_perl5<br>
+　print "@a";<br>
+はエラーになります。未定義(という用語が適切かどうかわかりませんが)の<br>
+@aという配列を参照しているからです。<br>
+<br>
+ですから、<br>
+　#!path_of_perl5<br>
+　@a=(1,2,3);<br>
+　print "@a";<br>
+などと一度@aを定義してから、それを参照してほしいという意味で<br>
+「定義済の配列」と書きました。<br>
+<br>
+<font color="#CC8000">&gt; 勝手に空白が入ってしまいます。</font><br>
+<br>
+そういう仕様である、ということでしょうね。<br>
+　print OUT @a ＝ print OUT join("",@a)<br>
+　print OUT "@a" ＝ print OUT join(" ",@a)<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/05/18(火) 02:19:19</span><br>
+なるほど。そういう仕様なんですね。<br>
+とてもわかりやすいご説明どうもありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050078.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050078.htm">[前に]</a>
+<a href="99050082.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050082.htm">[次に]</a>
+</body>
+</html>

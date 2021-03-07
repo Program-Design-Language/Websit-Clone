@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>検索エンジン一発で表示するするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>検索エンジン一発で表示するするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199811/index.htm">[上に]</a>
+<a href="98110012.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110012.htm">[前に]</a>
+<a href="98110014.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110014.htm">[次に]</a>
+<hr>
+<span class=name>チャモア</span>
+<span class=time>1998/11/04(水) 17:28:15</span><br>
+くだらない質問ですいません。<br>
+下のような検索エンジンもどきを作ってみたものの<br>
+超初心者の私には訳が分らなくなってきてしまいました。<br>
+結果はコレでも出るんですが一回ボタンと言うリンクを押さないと<br>
+表示されません。<br>
+コレを一発で表示できるようにしたいんですが。<br>
+どうか教えて下さい。<br>
+<br>
+<br>
+#!opt/bin/perl/<br>
+<br>
+###################################### 初期設定 ################################################<br>
+<br>
+#$InDat = "/cgi-bin/jyutaku/folder.dat";								# 読み込みファイルを設定<br>
+$InDat = "folder.dat";													# 読み込みファイルを設定<br>
+<br>
+################################################################################################<br>
+<br>
+# フォームからの入力データを読み込んで $FORM{'XXXX'} に設定する<br>
+<br>
+	if ($ENV{'REQUEST_METHOD'} eq "POST") {<br>
+		read(STDIN, $query_string, $ENV{'CONTENT_LENGTH'});<br>
+	} else {<br>
+		$query_string = $ENV{'QUERY_STRING'};<br>
+	}<br>
+	@a = split(/&amp;/, $query_string);<br>
+	foreach $x (@a) {<br>
+		($name, $value) = split(/=/, $x);<br>
+		$value =~ tr/+/ /;<br>
+		$value =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C", hex($1))/eg;<br>
+#		$value =~ s/%(\w\w)/pack("C", hex($1))/eg;<br>
+		$FORM{$name} = $value;<br>
+	}<br>
+<br>
+open(INDATA,"&lt;$InDat");													# 読み込みファイルのオープン<br>
+<br>
+$i=0;																	# 配列の初期化<br>
+<br>
+while (&lt;INDATA&gt;){														# レコードを分割し配列に入力<br>
+	($J[$i],$E[$i])=split(/\t/,$_);<br>
+		if ($J[$i]=~ /\Q$FORM{ search }\E/){							# 入力データの判定<br>
+			$kekka = $E[$i];											# 変数にファイル名を入力<br>
+			$result="1";<br>
+			last;<br>
+		}<br>
+		else{<br>
+			$result="0";<br>
+		}<br>
+	$i++;<br>
+}<br>
+<br>
+close(INDATA);															# ファイルクローズ<br>
+<br>
+<br>
+if($result=="0"){														# エラー判定<br>
+	print "HTTP/1.0 200 ok\n";<br>
+	print "Content-type: text/html\n\n";<br>
+	print "&lt;html&gt;\n";<br>
+	print "&lt;body bgcolor=#ffffff&gt;\n";<br>
+	print "該当するキーワードがありません！！\n";<br>
+	print "&lt;/body&gt;\n";<br>
+}<br>
+elsif($result=="1"){<br>
+<br>
+#	$OutDat = "/www/jyutaku/$kekka.html";								# 検索結果ファイルを設定<br>
+#	open(OUTDATA,"&lt;$OutDat");											# 読み込みファイルのオープン<br>
+<br>
+#	while ($_ = &lt;OUTDATE&gt;) {<br>
+#		$hyoji = $_;<br>
+#		print $hyoji;<br>
+#	}<br>
+<br>
+	print "HTTP/1.0 200 ok\n";<br>
+	print "Content-type: text/html\n\n";<br>
+	print "&lt;html&gt;\n";<br>
+	print "&lt;body bgcolor=#ffffff&gt;\n";<br>
+	print "&lt;center&gt;\n";<br>
+	print "&lt;a href=\"/www/jyutaku/$kekka.html\"&gt;ボタン&lt;/A&gt;\n";<br>
+	print "&lt;/center&gt;&lt;/body&gt;\n";<br>
+}<br>
+<br>
+close(OUTDATA);															# ファイルクローズ<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/11/04(水) 17:59:30</span><br>
+print "&lt;html&gt;\n";<br>
+…<br>
+print "&lt;/center&gt;&lt;/body&gt;\n";<br>
+<br>
+をコメントアウトして、<br>
+<br>
+$OutDat = "/www/jyutaku/$kekka.html"; # 検索結果ファイルを設定<br>
+open(OUTDATA,"&lt;$OutDat"); # 読み込みファイルのオープン<br>
+print &lt;OUTDATA&gt;;<br>
+<br>
+を追加すればいいんじゃないでしょうか?<br>
+<br>
+<font color="#CC8000">&gt; 下のような検索エンジンもどきを作ってみたものの</font><br>
+<br>
+自作のスクリプトならわかると思うんですが。<br>
+だって自分でコメントアウトしてるじゃない。<br>
+<hr>
+<span class=name>チャモア</span>
+<span class=time>1998/11/05(木) 09:25:12</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございました。<br>
+できました。<br>
+感謝します。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199811/index.htm">[上に]</a>
+<a href="98110012.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110012.htm">[前に]</a>
+<a href="98110014.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110014.htm">[次に]</a>
+</body>
+</html>

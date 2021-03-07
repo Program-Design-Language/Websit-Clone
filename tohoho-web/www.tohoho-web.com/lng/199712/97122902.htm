@@ -1,0 +1,98 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Status204を送ると出るダイアログを消すには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Status204を送ると出るダイアログを消すには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199712/index.htm">[上に]</a>
+<a href="97122901.htm" tppabs="http://www.tohoho-web.com/lng/199712/97122901.htm">[前に]</a>
+[次に]
+<hr>
+<span class=name>片松 祐司</span>
+<span class=email><a href="mailto:katama2@interlink.or.jp">[E-Mail]</a></span>
+<span class=time>1997/12/29(月) 23:24:01</span><br>
+HTTP1.0では<br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;204 No Response</font><br>
+<font color="#CC8000">&gt;</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;メソッド:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GET, HEAD, POST</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;要求されるメタ情報&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;なし</font><br>
+<font color="#CC8000">&gt;</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;サーバーはリクエストを受けとったが返す情報がない。クライアントは同じ文書</font><br>
+<font color="#CC8000">&gt; を表示した状態のままでいる必要がある。このステータスコードは、主として文書</font><br>
+<font color="#CC8000">&gt; を表示したままの状態で、スクリプトへの入力を可能とするためのものである。</font><br>
+<font color="#CC8000">&gt;翻&nbsp;&nbsp;訳&nbsp;&nbsp;者&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;：木内貴弘(kiuchi-tky@umin.u-tokyo.ac.jp)</font><br>
+<font color="#CC8000">&gt;原文</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;204 No Content</font><br>
+<font color="#CC8000">&gt;</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;The server has fulfilled the request but there is no new</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;information to send back. If the client is a user agent, it should</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;not change its document view from that which caused the request to</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;be generated. This response is primarily intended to allow input</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;for scripts or other actions to take place without causing a change</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;to the user agent's active document view. The response may include</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;new metainformation in the form of entity headers, which should</font><br>
+<font color="#CC8000">&gt;&nbsp;&nbsp;&nbsp;&nbsp;apply to the document currently in the user agent's active view.</font><br>
+<font color="#CC8000">&gt;</font><br>
+と書いてあります。<br>
+確かに「エラーメッセージを出すな！」とはかかれていませんが、<br>
+以下のようなダイアログボックスを表示されてしまうと、<br>
+「文書を表示したままの状態で、スクリプトへの入力」<br>
+に支障をきたしている様な気がするのですが…<br>
+(「HTTP1.0の文書に沿わなくてはならないという事はない。」<br>
+という事は知っています。その辺のご指摘はご勘弁を)<br>
+<br>
+・NN3.03[ja] 曰く<br>
+	文章にﾃﾞｰﾀが含まれていません。<br>
+<br>
+・IE3.02[ja] 曰く<br>
+	ｲﾝﾀｰﾈｯﾄ ｻｲﾄ http://……/nph-test204.cgi を開けません。<br>
+	処理は正常に終了しました。<br>
+<br>
+それとも私のスクリプトが間違っていて<br>
+ちゃんとした回避方法があるのでしょうか？<br>
+<br>
+以下に私のソースを書きます。(perlです)<br>
+(試される方はファイル名の先頭に "nph-" をつけてください。)<br>
+--------ここから(nph-test204.cgi)<br>
+#!/usr/bin/perl<br>
+<br>
+print "HTTP/1.0 204 NoResponse\n";<br>
+print "Server: $ENV{'SERVER_SOFTWARE'} $ENV{'SERVER_NAME'}\n";<br>
+my($sec,$min,$hour,$mday,$mon,$year,$wday,$ydat,$isdst) = gmtime();<br>
+$mon = ("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec") [$mon];<br>
+$wday = ("Sun","Mon","Tue","Wed","Thu","Fri","Sat") [$wday];<br>
+print "Date: $wday, $mday $mon 19$year $hour:$min:$sec GMT\n\n";<br>
+--------ここまで<br>
+<hr>
+<span class=name>tommy</span>
+<span class=time>1998/01/05(月) 19:24:48</span><br>
+ただ単に、Content-type: の出力がないからじゃないですか？<br>
+<hr>
+<span class=name>片松祐司</span>
+<span class=email><a href="mailto:katama2@interlink.or.jp">[E-Mail]</a></span>
+<span class=time>1998/01/06(火) 00:13:44</span><br>
+申し訳ありません。質問の内容がわかりにくかったようで…<br>
+<br>
+先のHTTP1.0の引用から私は<br>
+･コードナンバー204は Content(本文) そのものを出力しなくてよい<br>
+と理解しました。<br>
+(度忘れしてしまいましたが、私が見た数冊のCGIの解説本でも<br>
+コード204のサンプルスクリプトは Content-type: は書かれていません。)<br>
+<br>
+そこで以下の事を答えて欲しいのです。<br>
+<br>
+1.Status204でも Content(本文)が必要なのか？<br>
+<br>
+2.今現在表示している入力フォームを読み込み直さずにそのまま表示したまま<br>
+ "エラーメッセージを出さずに" スクリプトを動作させる事はできないのか？<br>
+(エラーメッセージを気にしなければ目的は達成しているのです。)<br>
+<br>
+よろしくお願いします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199712/index.htm">[上に]</a>
+<a href="97122901.htm" tppabs="http://www.tohoho-web.com/lng/199712/97122901.htm">[前に]</a>
+[次に]
+</body>
+</html>

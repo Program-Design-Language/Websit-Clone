@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>レスが付くと一番上に来るには？？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>レスが付くと一番上に来るには？？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060184.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060184.htm">[前に]</a>
+<a href="99060186.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060186.htm">[次に]</a>
+<hr>
+<span class=name>レス太郎</span>
+<span class=time>1999/06/18(金) 23:13:30</span><br>
+レスが付くと記事が一番上にくるようにしたいです。<br>
+掲示板のトップはindex.shtmlで、<br>
+ログファイルをSSIで呼び出すようにしています。<br>
+こんなかんじです↓<br>
+ &lt;!--#include file="5.html"--&gt;<br>
+ &lt;!--#include file="4.html"--&gt;<br>
+ &lt;!--#include file="3.html"--&gt;<br>
+ &lt;!--#include file="2.html"--&gt;<br>
+ &lt;!--#include file="1.html"--&gt;<br>
+<br>
+たとえば3.htmlにレスが付いた場合、<br>
+上に追加書き込みすることで上に持ってくる事はできるんですが、<br>
+<br>
+ &lt;!--#include file="3.html"--&gt;<br>
+ &lt;!--#include file="5.html"--&gt;<br>
+ &lt;!--#include file="4.html"--&gt;<br>
+ &lt;!--#include file="3.html"--&gt;<br>
+ &lt;!--#include file="2.html"--&gt;<br>
+このように、3.htmlの表示が２つになってしまいます。<br>
+何とかして下の3.htmlのほうの行を消す方法はないでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/19(土) 07:08:02</span><br>
+<font color="#CC8000">&gt; 上に追加書き込みすることで上に持ってくる事はできるんですが、</font><br>
+という処理を行うCGIやSSIの中で、先頭に書いたものと同じものが出てきたら<br>
+スキップする、というのではダメでしょうか。<br>
+<br>
+あるいは include fileの代わりに<br>
+　&lt;!--#exec cmd="listup.pl"--&gt;<br>
+などとして、その中で適当に順番を変えるとか。<br>
+<hr>
+<span class=name>レス太郎</span>
+<span class=time>1999/06/19(土) 09:57:25</span><br>
+スキップというのはどの関数を使用すれば良いのでしょうか・・・？<br>
+なるべく、読み込みの際には処理を少なくしたいです<br>
+お願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/19(土) 16:13:28</span><br>
+処理を飛ばすようなアルゴリズムを考える、ということです。<br>
+そもそも<br>
+<font color="#CC8000">&gt; 上に追加書き込みすることで上に持ってくる事はできるんですが、</font><br>
+というのは、手動でやろうとしているんですか? もちろんそうじゃなくて<br>
+自動処理させるつもりですよね?<br>
+<br>
+方法はいろいろあると思いますが、一例として、最終更新時刻の順に<br>
+ファイルをソートして表示する例。<br>
+<br>
+pendir(DIR,"./");<br>
+@files = grep(/^\d+\.html$/,readdir(DIR));<br>
+foreach (@files){<br>
+　$table{$_}= (stat("$_"))[9];<br>
+}<br>
+foreach ( reverse sort {$table{$a}&lt;=&gt;$table{$b}} keys %table){<br>
+　print "&lt;!--#include file="$_--&gt;\n";<br>
+}<br>
+<hr>
+<span class=name>レス太郎</span>
+<span class=time>1999/06/19(土) 17:40:20</span><br>
+お返事ありがとうございます。<br>
+すいません、状況の報告不足でした。<br>
+<br>
+スレッド１つが１つのHTMLファイルになるようにしています。<br>
+ログが貯まると困るので、表示するのは２０個にしたいです。<br>
+それで、レスが付くとレスの処理のときに、<br>
+そのHTMLが一番上でinclude fileで呼び出されるように<br>
+このように↓書きました。<br>
+<br>
+$datafile = "./log.html";<br>
+$tempfile = "temp";<br>
+<br>
+open(TMP,"&gt;$tempfile");<br>
+print TMP "&lt;\!--\#include file=\"$html\"--\&gt;\n";<br>
+open(DATA,$datafile);<br>
+@DATA=&lt;DATA&gt;;<br>
+for ($i=0; $i&lt;19; $i++) {<br>
+print TMP $DATA[$i];<br>
+}<br>
+<br>
+close(DATA);<br>
+close(TMP);<br>
+<br>
+rename($tempfile,$datafile);<br>
+<br>
+でもこれだと同じスレッドにレスが付き続けると、<br>
+&lt;!--#include file="3.html"--&gt;<br>
+&lt;!--#include file="3.html"--&gt;<br>
+&lt;!--#include file="3.html"--&gt;<br>
+&lt;!--#include file="3.html"--&gt;<br>
+というように同じHTMLファイルでページが埋まっちゃって困ってるんです・・。<br>
+書き込みのときに同じ記述がある場合はそれを消して、<br>
+それから上に追加書き込みする方法はないでしょうか・・？<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/19(土) 18:39:58</span><br>
+for ($i=0; $i&lt;19; $i++) {<br>
+　if ( "$i.html" eq "$html" ){ next; }<br>
+　print TMP $DATA[$i];<br>
+}<br>
+とか。<br>
+<hr>
+<span class=name>レス太郎</span>
+<span class=time>1999/06/19(土) 19:50:36</span><br>
+これだと、<br>
+行とファイル名が一致したときだけスキップするだけと<br>
+思うんですが・・・。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/20(日) 17:50:52</span><br>
+上のスクリプトを見る限り、「$html＝書き込みがあったスレッド」と思えたので、<br>
+「書き込みがあったスレッドはスキップ」のつもりだったのですが、違うの?<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060184.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060184.htm">[前に]</a>
+<a href="99060186.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060186.htm">[次に]</a>
+</body>
+</html>

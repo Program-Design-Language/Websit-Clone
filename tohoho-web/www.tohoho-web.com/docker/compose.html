@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Docker Compose - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Docker Compose</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/docker/index.html">Docker</a> &gt;
+Docker Compose
+
+<h4 id="abou">Docker Composeとは</h4>
+<div class="i">
+<p>Docker Compose は、Webサーバコンテナと DBサーバコンテナなど、関連する複数のコンテナをまとめて管理するツールです。</p>
+</div>
+
+<h4 id="install">Docker Composeをインストールする</h4>
+<div class="i">
+<p><a href="javascript:if(confirm('https://github.com/docker/compose/04.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://github.com/docker/compose/04.htm'" tppabs="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a> の記述に従い、インストールします。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# curl -L \
+  https://github.com/docker/compose/releases/download/1.25.0-rc2/docker-compose-`uname -s`-`uname -m` \
+  -o /usr/local/bin/docker-compose
+# chmod +x /usr/local/bin/docker-compose
+</pre>
+</div>
+
+<h4 id="tutorial">チュートリアル</h4>
+<div class="i">
+<p>ワークディレクトリ work1 を作成します。このディレクトリ名は、イメージ名、コンテナ名、ネットワーク名などのプレフィックスとして使用されます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# mkdir ./work1
+# cd ./work1
+</pre>
+<p>Docker Compose に必要なファイルを作成します。このサンプルでは、Python ベースの Webアプリケーションコンテナ(web)と、メモリキャッシュコンテナ(radis)の 2つのコンテナを作成します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# ls -l
+-rw-r--r--. 1 root root  96  9月  4 21:30 Dockerfile
+-rw-r--r--. 1 root root 309  9月  4 21:30 app.py
+-rw-r--r--. 1 root root 156  9月  4 21:30 docker-compose.yml
+-rw-r--r--. 1 root root  12  9月  4 21:30 requirements.txt
+</pre>
+<p>まず app.py を作成します。メモリキャッシュ(redis)からアクセス回数を読み取り、アクセス回数をメッセージに含めて返却する簡単な Webアプリケーションです。</p>
+<div class="title-tab">app.py</div>
+<pre class="c2">
+from flask import Flask
+from redis import Redis
+
+app = Flask(__name__)
+redis = Redis(host='redis', port=6379)
+
+@app.route('/')
+def hello():
+    redis.incr('hits')
+    return 'Hello World! I have been seen %s times.\n' % redis.get('hits').decode()
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
+</pre>
+<p>app.py を実行するのに必要となる Python パッケージを列挙します。</p>
+<div class="title-tab">requirements.txt</div>
+<pre class="c2">
+flask
+redis
+</pre>
+<p>app.py を組み込む webコンテナをビルドするための Dockerfile を作成します。</p>
+<div class="title-tab">Dockerfile</div>
+<pre class="c2">
+FROM python:3.6
+ADD . /code
+WORKDIR /code
+RUN pip install -r requirements.txt
+CMD python app.py
+</pre>
+<p>上記で作成する web コンテナと、標準の redis コンテナからなるサービスを定義します。</p>
+<div class="title-tab">docker-compose.yml</div>
+<pre class="c2">
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+     - "5000:5000"
+    volumes:
+     - .:/code
+    depends_on:
+     - redis
+  redis:
+    image: redis
+</pre>
+<p>docker-compose コマンドを用いて、web コンテナと redis コンテナを起動します。必要に応じてダウンロード、ビルドなどが自動的に行われます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker-compose up -d
+</pre>
+<p>http://localhost:5000/ にアクセスすることで、web アプリケーションを実行することができます。アクセスす度に、メモリキャッシュに保存されたアクセス回数がカウントアップしていきます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# curl http://localhost:5000/
+Hello World! I have been seen 1 times.
+# curl http://localhost:5000/
+Hello World! I have been seen 2 times.
+# curl http://localhost:5000/
+Hello World! I have been seen 3 times.
+</pre>
+<p>下記で確認すると、work1_web_1, work1_redis_1 コンテナ、work1_web イメージなどが作成されていることが分かります。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# docker ps             <span class="cm">=&gt; work1_web_1, work1_redis_1 コンテナ</span>
+# docker images         <span class="cm">=&gt; work1_web イメージ</span>
+# docker network ls     <span class="cm">=&gt; work1_default ネットワーク</span>
+# docker volume ls      <span class="cm">=&gt; 名無しボリューム</span>
+</pre>
+<p>app.py を少し修正して再度 docker-compose up すると、修正がコンテナに反映されます。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# vi ./app.py
+# docker-compose up -d             <span class="cm">Hello! を Hello!!! に修正</span>
+# curl http://localhost:5000/
+Hello World!!! I have been seen 4 times.
+</pre>
+<p>docker-compose.yml ファイルの詳細については下記のリンクを参照してください。</p>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/compose/cgi_h.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/compose/cgi_h.htm'" tppabs="http://docs.docker.jp/compose/compose-file.html">http://docs.docker.jp/compose/compose-file.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2019 杜甫々</div>
+<div>初版:2019年9月1日 最終更新:2019年9月1日</div>
+<div>http://www.tohoho-web.com/docker/compose.html</div>
+</body>
+</html>

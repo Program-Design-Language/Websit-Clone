@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>selectの複数選択のデータ</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>selectの複数選択のデータ</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199810/index.htm">[上に]</a>
+<a href="98100077.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100077.htm">[前に]</a>
+<a href="98100079.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100079.htm">[次に]</a>
+<hr>
+<span class=name>Tiot</span>
+<span class=time>1998/10/29(木) 15:15:52</span><br>
+Formからcgiにデータを転送する場合に<br>
+<br>
+&lt;select name="nantoka" multiple&gt;<br>
+&lt;option value="first"&gt;1つめ<br>
+&lt;option value="second"&gt;2つめ<br>
+&lt;option value="third"&gt;3つめ<br>
+&lt;/select&gt;<br>
+<br>
+のように、プルダウンメニューの複数選択を許可した場合、<br>
+cgiに送られる値はどのような形式になるのでしょうか？<br>
+送られてきたデータをcgi-lib.plのReadParseサブルーチンで解釈して表示する<br>
+簡単なスクリプトを作って試してみたのですが、<br>
+NN4.0eでは2つ以上選択した場合でも、一つ（上にある方）だけしか表示されません。<br>
+IE3.0では値がならべられて表示されました。<br>
+上の例で言えば、1つめと2つめを選択した場合でも、NNでは値はfirstにしかなりません。<br>
+IE3.0ですとfirstsecondになります。<br>
+下に書いたのが実験に使ったスクリプトです。<br>
+<br>
+#!/usr/bin/perl<br>
+require 'cgi-lib.pl';<br>
+&amp;ReadParse;<br>
+print "Content-type: text/html\n\n";<br>
+print $in{"nantoka"};<br>
+<br>
+これはそういった物だとあきらめてチェックボックスを使うなり、<br>
+何なりの別の方法にした方がよいのでしょうか。<br>
+それとも僕がなにか根本的なformの使い方を間違っていたりするのでしょうか。<br>
+良い方法をご存知でしたら教えて下さい。<br>
+<br>
+蛇足ですがselectに関してはこちらを。<br>
+<a href="../../html/select.htm" tppabs="http://www.tohoho-web.com/html/select.htm">http://www.tohoho-web.com/select.htm</a><br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/10/30(金) 00:05:05</span><br>
+GETで送って、URLの?以降を見るとどうなってますか？<br>
+# print $ENV{QUERY_STRING};でもいいですけど。<br>
+<br>
+で、NNやIEのデータの送り方を調べて、&amp;ReadParseの<br>
+代わりに自分で引数解析部分を書くことをお勧めします。<br>
+<br>
+# ちなみにNN3.04(FreeBSD)ではnantoka=first&amp;nantoka=second<br>
+# という形式でした。<br>
+<hr>
+<span class=name>Tiot</span>
+<span class=time>1998/10/30(金) 00:40:16</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございます。<br>
+<font color="#CC8000">&gt;# ちなみにNN3.04(FreeBSD)ではnantoka=first&amp;nantoka=second</font><br>
+<font color="#CC8000">&gt;# という形式でした。</font><br>
+NN4.04とIEの3.0でも同じでした。<br>
+nantokaが同じ場合、別の変数に値を代入する部分を<br>
+自分で作るようにします。<br>
+＃でも、どうしてIE3.0だとfirstsecondになるのかな？データの形式は同じなのに。<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/10/30(金) 22:16:33</span><br>
+@vals = split(/\0/, $in{"nantoka"});<br>
+print join(',', @vals), "\n";<br>
+としてもダメですか？<br>
+cgi-lib.pl は、データが複数ある場合は確か "\0" がセパレータ<br>
+になってたと思うので。<br>
+<hr>
+<span class=name>Tiot</span>
+<span class=time>1998/10/30(金) 23:05:55</span><br>
+<span class=resolv>[[解決]]</span><br>
+moさんのおっしゃるとおりで、\0がセパレータに使われていました。<br>
+下がcgi-lib.plのコメントにあったものを載せておきます。<br>
+# ReadParse<br>
+# Reads in GET or POST data, converts it to unescaped text, and puts<br>
+# key/value pairs in %in, using "\0" to separate multiple selections<br>
+<br>
+IE3.0だと値がfirstsecondになって<br>
+NN4.04だとfirstだけになるというのは<br>
+IEだと\0を無視（？）して表示するけれど、 ----"aaa\0bbb"の表示は"aaabbb"<br>
+NNだと\0以降が表示しない----"aaa\0bbb"の表示は"aaa"<br>
+というのが原因になっているようです。<br>
+moさんの方法のように、\0を別のものに置き換える（なり何なりする）と、<br>
+どちらでもうまく表示されました。<br>
+<br>
+これで不明だった点もはっきりしました。<br>
+ありがとうございます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199810/index.htm">[上に]</a>
+<a href="98100077.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100077.htm">[前に]</a>
+<a href="98100079.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100079.htm">[次に]</a>
+</body>
+</html>

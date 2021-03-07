@@ -1,0 +1,246 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>多重投稿を防止するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>多重投稿を防止するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199803/index.htm">[上に]</a>
+<a href="98030015.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030015.htm">[前に]</a>
+<a href="98030017.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030017.htm">[次に]</a>
+<hr>
+<span class=name>きょーこ</span>
+<span class=email><a href="mailto:iwataka@quartz.ocn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/03/07(土) 19:39:03</span><br>
+掲示板に、ある特定の人達が同一内容を連続的に書き込みをして、元のメッセージがページ外へ押し出されてしまい困っています。そこで同一アドレスからは一定時間を置かないと書き込みできないようにしたいのですが、それは可能ですか。もしそうならば具体的な方法が知りたいのですが。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/03/08(日) 02:37:20</span><br>
+$message に本文が入っているとします。<br>
+<br>
+# $prev_message に前回の書き込み内容を読み込む<br>
+$prev_message = "";<br>
+open(IN,"prev-message.dat");<br>
+while (&lt;IN&gt;){ $prev_message .= $_; }<br>
+close(IN);<br>
+<br>
+if ( $prev_message eq $message ){<br>
+　print "二度書きです。"\n;<br>
+　終了処理<br>
+}<br>
+<br>
+二度書きではないので、書き込み処理を行う。<br>
+<br>
+# 今回書き込まれた内容を prev-message.dat に保存<br>
+open(OUT,"&gt;prev-message.dat");<br>
+print OUT $message;<br>
+close(OUT);<br>
+<br>
+ってなところでしょうか。ただし改行の扱いなど、<br>
+(&lt;BR&gt;をつけるかどうか。一つの書き込みに対して<br>
+　一行で保存するかどうか)は実際のスクリプトに即して<br>
+変更してください。<br>
+<br>
+<br>
+また、１つの書き込みがとても大きいなら、MD5などの<br>
+メッセージ要約関数(2つの異なる文字列をMD5に通すと、<br>
+MD5の出力も異なる結果になる。特にMD5の結果が同じに<br>
+なる文字列を見つけるのは事実上不可能)を通して、<br>
+その結果を照合すれば前回と同じ書き込みかどうか<br>
+チェックできます。<br>
+<br>
+また、MD5なら1件あたりの文字列の長さが短いので、<br>
+過去100件をチェック、っていうことも簡単でしょう。<br>
+<br>
+$md5 = `/usr/bin/md5 $message`;<br>
+<br>
+あるいは<br>
+<br>
+$md5 = `/usr/bin/md5sum $message`;<br>
+<br>
+あたりかな？<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/08(日) 05:52:22</span><br>
+これって、イタズラ防止ですよね。先に書き込んだ人のリモート・ホスト(REMOTE_ADDR)やブラウザ(HTTP_USER_AGENT)の情報から、同一人と思われる人(cookie を使えれば確実なんだろうけど、受け入れないように設定されれば終わり？)の一定時間内の再書き込みを禁止しようということだと思ったのですが…<br>
+B-Cus さんの方法では、１回ごとに本文に例えば改行を１個ずつ増やすだけでも書き込めちゃうと思うのですが、それでも十分には面倒な作業になるのかな？　それともこういうイタズラはオートでやるものなのでしょうか…にしても、書き込みの度にメッセージを少しずつ変化させるくらいの変更は簡単にできそうな気もします。<br>
+（MD5ってなんだろう？　固定長の文字列を返すhash関数みたいなものなのかな…）<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/03/08(日) 06:07:23</span><br>
+<font color="#CC8000">&gt; これって、イタズラ防止ですよね。先に書き込んだ人のリモート・</font><br>
+<font color="#CC8000">&gt; ホスト(REMOTE_ADDR)やブラウザ(HTTP_USER_AGENT)の情報から、</font><br>
+<font color="#CC8000">&gt; 同一人と思われる人(cookie を使えれば確実なんだろうけど、</font><br>
+<font color="#CC8000">&gt; 受け入れないように設定されれば終わり？)の一定時間内の再</font><br>
+<font color="#CC8000">&gt; 書き込みを禁止しようということだと思ったのですが…</font><br>
+<br>
+僕もそういうつもりでいたずら防止策として書き込みました。<br>
+ただ本気でやろうとしたら、外部からアクセス可能なproxyの<br>
+リストを用意してそれらを順に使ったり、HTTP_USER_AGENT<br>
+はクライアント側が勝手に用意できる文字列だから、適当な<br>
+文字列を使ったり、もちろん本文だって毎回違うものにしたり、、、<br>
+<br>
+やろうと思えばどれだけでも手の込んだことができるんで、<br>
+根本的には対応策はないといっていいでしょう。それでも<br>
+書き込みボタンを連打するような知識のない荒らしくらいは<br>
+撃退できるんじゃないかと思います。<br>
+<br>
+<font color="#CC8000">&gt; （MD5ってなんだろう？　固定長の文字列を返すhash関数みたいな</font><br>
+<font color="#CC8000">&gt; ものなのかな…）</font><br>
+<br>
+ですです。こんな感じ。<br>
+<br>
+% echo 'test1' | md5sum -t<br>
+3e7705498e8be60520841409ebc69bc1&nbsp;&nbsp;-<br>
+% echo 'test2' | md5sum -t<br>
+126a8a51b9d1bbd07fddc65819a542c3&nbsp;&nbsp;-<br>
+% echo 'test3' | md5sum -t<br>
+3bc3be114fb6323adc5b0ad7422d193a&nbsp;&nbsp;-<br>
+<br>
+「md5sum 文字列」ではうまくいかない環境もあるようなので、<br>
+$md5 = `echo $message|md5`;<br>
+(あるいはmd5sum)がいいと思います。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/03/08(日) 06:24:39</span><br>
+ああ、でもきょーこさんの望んでいる対応策の答えにはなってない<br>
+ことに気づきました(ちゃんと読んでなかった(^^;)<br>
+<br>
+考え方としては同じで、<br>
+open(IN,"prev-message.dat");<br>
+($prev_addr,$prev_time) = split(/ /,scalar(&lt;IN&gt;);<br>
+close(IN);<br>
+<br>
+if ( $prev_addr eq $ENV{'REMOTE_ADDR'} &amp;&amp;<br>
+　　　$prev_time - time() &lt; 60 ){<br>
+　print "60秒以内の書き込みなのでエラー\n";<br>
+　終了処理<br>
+}<br>
+<br>
+open(OUT,"&gt;prev-message.dat");<br>
+print "$ENV{'REMOTE_ADDR'} ",time();<br>
+close(OUT);<br>
+<br>
+こんなもんでどうかな？　実際に動かしてないのでscalarの<br>
+あたりとか怪しいな～<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/08(日) 14:51:19</span><br>
+<font color="#CC8000">&gt;僕もそういうつもりでいたずら防止策として書き込みました。</font><br>
+<br>
+すいません、「いたずら防止」の部分ではなく（これは大前提の確認のつもりでした）、同一人による書き込みを禁止したいという意図ではないのでしょうか、というつもりでした。<br>
+<br>
+<font color="#CC8000">&gt;ただ本気でやろうとしたら、外部からアクセス可能なproxyの</font><br>
+<font color="#CC8000">&gt;リストを用意してそれらを順に使ったり、</font><br>
+<font color="#CC8000">&gt;やろうと思えばどれだけでも手の込んだことができるんで、</font><br>
+<font color="#CC8000">&gt;根本的には対応策はないといっていいでしょう。それでも</font><br>
+<font color="#CC8000">&gt;書き込みボタンを連打するような知識のない荒らしくらいは</font><br>
+<font color="#CC8000">&gt;撃退できるんじゃないかと思います。</font><br>
+<br>
+proxyでの排除については知識がないのですが、いずれにしても、CGIでは、ある程度は可能だけど完全には無理なので、きょーこさんの質問を読んだときに、どの程度のレベルのものが必要なのか（どの程度根性のあるいたずら者なのか）を教えてもらわないと、具体例は書きにくいなぁと思ってたのです。（制限を厳しくすると、本来の書き込みをしてくれる人にも迷惑がかかるかも知れないし）<br>
+<br>
+<font color="#CC8000">&gt;HTTP_USER_AGENT</font><br>
+<font color="#CC8000">&gt;はクライアント側が勝手に用意できる文字列だから、適当な</font><br>
+<font color="#CC8000">&gt;文字列を使ったり、</font><br>
+<br>
+あっ、なるほど、ブラウザの自己申告ですから、アテにはならないですね。<br>
+<br>
+<font color="#CC8000">&gt;　print "60秒以内の書き込みなのでエラー\n";</font><br>
+<br>
+私も、とりあえずはそんなものを考えてました。ただ、もっと長い時間を考えてたので、再度接続し直して来たらとか、いろいろ考えてたのですが、これでも書き込みボタンの連打に比べればはるかに面倒な作業になりますね。<br>
+<br>
+<font color="#CC8000">&gt;こんなもんでどうかな？　実際に動かしてないのでscalarの</font><br>
+<font color="#CC8000">&gt;あたりとか怪しいな～</font><br>
+<br>
+scalarは大丈夫でした。ひょっとして万が一行数が返るかなとも思ったので、試してみました（苦笑）。<br>
+ただ、)やOUTが足りないとか、time()が逆とか、些細な問題はありました（笑い）。<br>
+<br>
+<br>
+<font color="#CC8000">&gt;&gt; （MD5ってなんだろう？　固定長の文字列を返すhash関数みたいなものなのかな…）</font><br>
+<font color="#CC8000">&gt;ですです。こんな感じ。</font><br>
+<br>
+ありがとうございます。ついでにもう一つ聞いていいですか？　本来は何につかうものなのでしょうか？（バイナリも渡せるならウイルスチェック用かなとも思ったのですが…）<br>
+<br>
+P.S.<br>
+なんかまた質問者をほったらかしにしてるような気も…（苦笑）<br>
+割り込んですいません、こんな感じでご要望に叶うでしょうか？＞きょーこさん<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/03/09(月) 02:03:02</span><br>
+<font color="#CC8000">&gt; ただ、)やOUTが足りないとか、time()が逆とか、些細な</font><br>
+<font color="#CC8000">&gt; 問題はありました（笑い）</font><br>
+<br>
+ははは、些細な問題です(^^;<br>
+もしわからなかったら、また聞いてください＞きょーこさん<br>
+<br>
+<br>
+<font color="#CC8000">&gt; 本来は何につかうものなのでしょうか？（バイナリも渡せるなら</font><br>
+<font color="#CC8000">&gt; ウイルスチェック用かなとも思ったのですが…）</font><br>
+<br>
+一方向ハッシュ関数である、というだけで、別に用途は<br>
+決まっていないんじゃないでしょうか。<br>
+<br>
+というか、一方向ハッシュ関数があると、ユーザ認証や<br>
+チェックサム的なことができますよね。で、バイナリも<br>
+喰わせられます。FreeBSDではバイナリ配布している<br>
+ファイルのチェックサムとして使われています。<br>
+<br>
+どうでもいいですが、perlにはcryptってのがあります<br>
+(というか、UNIXのcryptを実装してるだけですけど)。<br>
+<br>
+--------------<br>
+print crypt("test1","XX")."\n";<br>
+print crypt("test1","YY")."\n";<br>
+print crypt("test2","XX")."\n";<br>
+<br>
+XX55cakH2S5Dk<br>
+YYsWvkQDzFgfk<br>
+XXqUWMh1ACkzw<br>
+----------------<br>
+cryptはキーワード(XXとかYY)と組み合わせて使います。<br>
+しかしこれはログイン時の認証に使われている(いた？)<br>
+関係か、9文字以降は無視してしまいます。一方、MD5は<br>
+全データを読んで結果を返します。<br>
+<br>
+結局、MD5はcryptより強力な一方向ハッシュ関数である、<br>
+という認識でいいと思います<br>
+# ちなみに開発元はRSAのようです。<br>
+# (NNの起動時に表示されますよね)<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/09(月) 03:33:55</span><br>
+<font color="#CC8000">&gt;一方向ハッシュ関数である、というだけで、別に用途は</font><br>
+<font color="#CC8000">&gt;決まっていないんじゃないでしょうか。</font><br>
+<font color="#CC8000">&gt;結局、MD5はcryptより強力な一方向ハッシュ関数である、</font><br>
+<font color="#CC8000">&gt;という認識でいいと思います</font><br>
+<br>
+あちゃ～、UNIX TOOL の用途を聞くなんて、お恥ずかしいかぎりです（苦笑）。<br>
+<br>
+<font color="#CC8000">&gt;というか、一方向ハッシュ関数があると、ユーザ認証や</font><br>
+<font color="#CC8000">&gt;チェックサム的なことができますよね。で、バイナリも</font><br>
+<br>
+賢いウイルスは単純なチェックサムには引っかからないようにファイルに変更を加えるって話を聞いたことがあるもんで、それでウイルスチェッカを連想したのですが、別にこれに限る必要はぜんぜんありませんでした。とにかくcryptとの関係も含めた解説のおかげでたぶん理解できたと思います（暗号関係はちゃんとは分かってないのですが…）。勉強になりました、ありがとうございます。<br>
+<br>
+<font color="#CC8000">&gt;# ちなみに開発元はRSAのようです。</font><br>
+RSAって社名でもあるのか…向こうの会社は、そのまんまやないか～<br>
+# (NNの起動時に表示されますよね)<br>
+えっ、知らなかった。今度目を凝らして見てみます。<br>
+<hr>
+<span class=name>きょーこ</span>
+<span class=time>1998/03/09(月) 03:58:49</span><br>
+B-Cusさん、miyashiroさん、ありがとうございます。<br>
+言われたとおり早速やってみます。<br>
+<hr>
+<span class=name>きょーこ</span>
+<span class=time>1998/03/10(火) 02:12:01</span><br>
+<span class=resolv>[[解決]]</span><br>
+なんとかコードを埋め込むことに成功しました。<br>
+これで嫌がらせもかなりやりづらくなったと思います。<br>
+B-Cusさん、miyashiroさん、ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199803/index.htm">[上に]</a>
+<a href="98030015.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030015.htm">[前に]</a>
+<a href="98030017.htm" tppabs="http://www.tohoho-web.com/lng/199803/98030017.htm">[次に]</a>
+</body>
+</html>

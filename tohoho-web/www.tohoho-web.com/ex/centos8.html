@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>CentOS 8入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>CentOS 8入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+CentOS 8入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#index">目次</a>
+<li><a href="#whatis">CentOS 8 とは</a>
+<li><a href="#change_of_policy">CentOSの方針転換</a>
+<li><a href="#standard_version">CentOS 7 と　CentOS 8 のバージョンの違い</a>
+<li><a href="#dnf">yum から dnf への変更</a>
+<li><a href="#python">Python が 2 から 3 に</a>
+<li><a href="#ja">日本語を使用できるようにする</a>
+<li><a href="#nftables">iptables から nftables に</a>
+<li><a href="#ntp">NTPを設定する</a>
+<li><a href="#docker">Docker から podman に</a>
+<li><a href="#tld">TLS 1.0 と TLS 1.1 が廃止</a>
+<li><a href="#cockpit">Cockpit</a>
+</ul>
+</div>
+
+<h4 id="whatis">CentOS 8 とは</h4>
+<div class="i">
+<ul>
+<li><b>Red Hat Enterprise Linux 8</b> (<b>RHEL8</b>) から商用パッケージ等を除去した無償版です。
+<li>2019年5月7日にリリースされた RHEL8 をベースに 2019年9月24日に <b>CentOS 8.0</b> がリリースされました。
+<li>現時点(2020年12月)の最新版は <b>CentOS 8.3</b> です。
+</ul>
+</div>
+
+<h4 id="change_of_policy">CentOSの方針転換</h4>
+<div class="i">
+<p>これまで、<b>Fedora</b> が先行的なパッケージを取り込み、安定したものを <b>RHEL</b> として有償サポート付きでリリースし、それを無償化＆無サポート化したものが <b>CentOS</b> という位置づけでしたが、2021年末からは、<b>CentOS</b> は <b>CentOS Stream</b> に名前を変え、RHEL の開発バージョン、つまり、<b>Fedora</b> と <b>RHEL</b> の中間的な存在に変わることが発表されました。また、これまでの <b>CentOS</b> の位置づけを後継するプロジェクトとして <b>Rocky Linux</b> が発表されました。</p>
+<pre class="c">
+Before：<b>Fedora</b> →(安定版)→ <b>Red Hat Enterprise Linux</b> → (無償化)→ <b>CentOS</b>
+After： <b>Fedora</b> →(開発版)→ <b>CentOS Stream</b> →(安定版) <b>Red Hat Enterprise Linux</b> → (無償化)→ <b>Rocky Linux</b>
+</pre>
+</div>
+
+<h4 id="standard_version">CentOS 7 と　CentOS 8 のバージョンの違い</h4>
+<div class="i">
+<p>CentOS 7 と CentOS 8 では下記などのバージョンが変わっています。CentOS 7 で * がついているものは、標準パッケージではなく EPEL による提供でした。</p>
+<pre class="c">
+Linux Kernel	3.10	→	4.18
+Python		2.7	→	3.6
+PHP		5.4	→	7.2
+Perl		5.16	→	5.26
+Ruby		2.0	→	2.5
+Node.js		6.17 *	→	10.21
+MariaDB		5.5	→	10.3
+PostgreSQL	9.2	→	10.14
+Redis		3.2 *	→	5.0
+git		1.8	→	2.27
+gcc		4.8	→	8.3
+httpd		2.4	→	2.4
+Nginx		1.16 *	→	1.14
+</pre>
+</div>
+
+<h4 id="dnf">yum から dnf への変更</h4>
+<div class="i">
+<p>パッケージ管理システムが <b>yum</b> から <b>dnf</b> に変更となりました。<b>DaNdiFied yum</b> (ダンディなYum) という意味だそうです。yum は Python 2 ベースでしたが、Python 3 ベースで書き直されたものが dnf です。コマンド名は変わりましたが、オプションや利用方法はあまり変わりません。yum コマンドは dnf にシンボリックリンクされているので、yum コマンドも利用できます。</p>
+<pre class="c">
+CentOS7# yum -y install httpd
+CentOS8# dnf -y install httpd
+</pre>
+</div>
+
+<h4 id="python">Python が 2 から 3 に</h4>
+<div class="i">
+<p>CentOS 7 の Python は 2.7 でしたが、CentOS 8 では、4つのバージョンの Python が存在します。platform-python は必須パッケージとしてインストールされています。必要に応じて、python2, python36, python38 を追加インストールします。</p>
+<table class="tb1">
+<tr><th>パッケージ</th><th>パス</th><th>説明</th></tr>
+<tr><td>platform-python</td><td>/usr/libexec/platform-python</td><td>システムが使用するPython (3.6)</td></tr>
+<tr><td>python2</td><td>/usr/bin/python2<br>/usr/bin/python2.7</td><td>Python 2.7</td></tr>
+<tr><td>python36</td><td>/usr/bin/python3<br>/usr/bin/python3.6</td><td>Python 3.6 (標準)</td></tr>
+<tr><td>python38</td><td>/usr/bin/python3.8</td><td>Python 3.8</td></tr>
+</table>
+<p>標準では /usr/bin/python は存在しません。<b>alternatives</b> コマンドで、/usr/bin/python を python2 または python3(3.6) または python3.8 のシンボリックリンクとして作成することができます。</p>
+<pre class="c">
+# alternatives --config python
+
+There are 4 programs which provide 'python'.
+
+  Selection    Command
+-----------------------------------------------
+*+ 1           /usr/libexec/no-python
+   2           /usr/bin/python2
+   3           /usr/bin/python3
+   4           /usr/bin/python3.8
+
+Enter to keep the current selection[+], or type selection number: 3
+</pre>
+</div>
+
+<h4 id="ja">日本語を使用できるようにする</h4>
+<div class="i">
+<p>日本語を使用できるようにするためには下記のパッケージをインストールする必要があります。</p>
+<pre class="c">
+# dnf -y install glibc-langpack-ja
+</pre>
+<p>コマンドの実行結果を日本語で表示するにはさらに下記の環境変数を設定します。</p>
+<pre class="c">
+export LANG=ja_JP.UTF-8
+</pre>
+</div>
+
+<h4 id="nftables">iptables から nftables に</h4>
+<div class="i">
+<p>パケットフィルタ機能が <b>iptables</b> から <b>nftables</b> に変わりました。</p>
+<pre class="c">
+# dnf -y install nftables
+# systemctl start nftables
+# nft list ruleset
+</pre>
+</div>
+
+<h4 id="ntp">NTPを設定する</h4>
+<div class="i">
+<p>CentOS 7 から NTP は ntpd ではなく chronyd に変わりました。</p>
+<pre class="c">
+# yum -y install chrony
+# vi /etc/chrony.conf
+server 0.centos.pool.ntp.org iburst
+server 1.centos.pool.ntp.org iburst
+server 2.centos.pool.ntp.org iburst
+server 3.centos.pool.ntp.org iburst
+(以下略)
+# systemctl restart chronyd
+</pre>
+</div>
+
+<h4 id="docker">Docker から podman に</h4>
+<div class="i">
+<p><b>iptables</b> が <b>nftables</b> に変わった影響もあり、CentOS 8 での <b>Docker CE</b> はまだ安定していないようです。代わりに、Red Hat が CentOS 7.6 以降で Docker の後継として開発した <b>Podman</b> が利用できます。Docker とほぼ同等の機能を備えており、かつ、デーモンが不要(Dockerデーモンダウンで全コンテナがダウンすることが無い)、一般ユーザーでも利用できる、複数のコンテナを Pod として管理する機能が追加されているなどの利点を持ちます。podman-docker をインストールすることで、docker 互換コマンドをインストールすることもできます。</p>
+<pre class="c">
+# dnf -y install podman-docker
+# docker run -d -it --name centos8 -h centos8 centos:8
+</pre>
+<p>コンテナ内で Ctrl-p がシェルのヒストリとコンテナのデタッチでバッティングしてしまう場合は、下記の設定を行いますが何故か効かない。バグかな... <a target="_top" href="javascript:if(confirm('https://github.com/containers/podman/pull/4651  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://github.com/containers/podman/pull/4651'" tppabs="https://github.com/containers/podman/pull/4651">#4651</a>。</p>
+<pre class="c">
+$ vi ~/.config/containers/containers.conf
+[engine]
+detach_keys="ctrl-\\"
+</pre>
+<p>-v で volume をマウントしても Permission denied で書き込みができない場合は、ホスト側で、対象ディレクトリに container_file_t コンテキストを設定してください。</p>
+<pre class="c">
+# chcon -R -h -t container_file_t /foo/baa/target_dir
+</pre>
+<p>Docker が対応していて、Podman が対応していないのは下記のコマンドだそうです。network は別のアプローチがあるのかな。rename は本当になくて、コンテナの作り直しが必要だそうです。</p>
+<pre class="c">
+network  node  plugin  rename  secret  service  stack  swarm
+</pre>
+</div>
+
+<h4 id="tld">TLS 1.0 と TLS 1.1 が廃止</h4>
+<div class="i">
+<p><b>TLS 1.0</b> と <b>TLS 1.1</b> がデフォルトで廃止されました。どうしても TLS 1.0 や 1.1 を有効にしたい時は下記のコマンドを実行します。</p>
+<pre class="c">
+# update-crypto-policies --show
+DEFAULT
+# sudo update-crypto-policies --set LEGACY
+# update-crypto-policies --show
+LEGACY
+</pre>
+</div>
+
+<h4 id="cockpit">Cockpit</h4>
+<div class="i">
+<p>CentOS8 にログインすると下記の様なメッセージが表示されることがあります。</p>
+<pre class="c">
+Activate the web console with: systemctl enable --now cockpit.socket
+</pre>
+<p>CentoS 8 からは <b>cockpit</b> というWeb管理画面機能が標準装備されていて、それを有効化しろとのメッセージです。使用する場合は systemctl で有効化。使用しない場合は削除しても問題ありません。</p>
+<pre class="c">
+<span class="cm"># 使用する場合</span>
+# systemctl enable --now cockpit.socket
+
+<span class="cm"># 使用しない場合</span>
+# systemctl stop cockpit.socket
+# dnf -y remove cockpit
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2021 杜甫々</div>
+<div>初版:2021年1月3日 最終更新:2021年1月3日</div>
+<div>http://www.tohoho-web.com/ex/centos8.html</div>
+</body>
+</html>

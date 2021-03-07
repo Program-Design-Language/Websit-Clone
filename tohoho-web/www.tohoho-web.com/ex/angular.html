@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Angular入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<style>
+.app { width: 600px; border: 1px solid gray; }
+.app table { border-collapse: collapse; width: 90%; margin-top: 2px; }
+.app table th { border: 1px solid #ccc; background-color: #ccc; text-align: left; }
+.app table td { border: 1px solid #ccc; }
+.app .link { text-decoration: underline; }
+.app .link:hover { cursor: pointer; }
+.app .icon { color: #f00; }
+.app .header { padding: 2px; background-color: #000; color: #fff; }
+.app .menu { padding: 2px; background-color: #ccc; }
+.app .main { padding: 2px; background-color: #fff; border: 1px solid #ddd; height: 200px }
+.app .main .h1 { font-size: 120%; font-weight: bold; }
+.app .main button { width: 80px; }
+.app #main-dashboard { display: block; }
+.app #main-user-list { display: none; }
+.app #main-user-edit { display: none; }
+.app #confirm-dialog { display: none; border: 1px solid gray; position: relative; top: -50px; left: 100px; background-color: #fff; width:200px; padding: 10px; }
+</style>
+</head>
+<body>
+
+<h2>Angular入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Angular入門
+
+<h4>目次</h4>
+<div class=i>
+<ul>
+<li><a href="#whatis">Angular とは</a></li>
+<li><a href="#tutrial-image">チュートリアルのイメージ</a></li>
+<li><a href="#install">インストール</a></li>
+<li><a href="#new-application">アプリケーションを作成する</a></li>
+<li><a href="#start-server">サーバを起動する</a></li>
+<li><a href="#edit-html-css">HTMLやCSSを編集する</a></li>
+<li><a href="#add-component">コンポーネントを追加する</a></li>
+<li><a href="#display-variables">変数の値を表示する</a></li>
+<li><a href="#routing">ルーティングモジュールを追加する</a></li>
+<li><a href="#display-list">リストを表示する</a></li>
+<li><a href="#create-service">サービスを作成する</a></li>
+<li><a href="#forms">フォームを作成する</a></li>
+<li><a href="#mat-dialog">モーダルダイアログを表示する</a></li>
+<li><a href="#rest-api">簡単な REST-API サーバを作る</a></li>
+<li><a href="#rxjs">RxJS で非同期通信を行う</a></li>
+</ul>
+</div>
+
+<h4 id="whatis">Angular とは</h4>
+<div class=i>
+<ul>
+<li>「アンギュラー」と読みます。
+<li>Google を中心としたコミュニティで開発・公開されています。
+<li>ライセンスは基本的には MIT ライセンス/商用利用可能です。
+<li>SPA (Single Page Application) を実現する JavaScript 系フレームワークの一つです。
+<li>MVC (Model View Controller) や MVVM (Model-View-ViewModel) アーキテクチャーを実現します。
+<li>MEAN (MongoDB, Express, Angular, Node.js) スタックの一角を担います。
+<li>2012年に公開された AngularJS 1.x を AngularJS または Angular 1 と呼びます。
+<li>2016年に公開された Angular 2.x を Angular 2 と呼びます。Angular 1 とはまったく互換性の無いものになりました。
+<li>現在(2020年6月)は Angular 10.x までリリースされていて、単に Angular と呼ぶようになりました。
+<li>JavaScript を拡張した TypeScript (JavaScript に型定義や ES6 文法などを加えた拡張言語)を使用しています。
+<li>TypeScript で作成したスクリプトを、ES5 レベルの JavaScript にコンバートして、ブラウザに読み込ませます。
+<li><a href="vuejs.html" tppabs="http://www.tohoho-web.com/ex/vuejs.html">Vue.js</a> や <a href="react.html" tppabs="http://www.tohoho-web.com/ex/react.html">React</a> とよく比較されます。両者に比べて初期学習コストは高いですが、機能も豊富で、企業向け大規模開発向きと言われています。
+<li>ネットで検索すると AngularJS (Angular 1系)のものと、Angular (Angular 2系) のものが混在して検索されてしまいます。AngularJS (JS 付き)や $scope や、ng- (ハイフンあり) があると、Angular 1 に関する古い記事として無視する必要があります。
+<li>Angular (JS 無し)や、ngXxxx (ハイフン無し) であれば、Angular 2 以降の記事である可能性が高いです。
+<li>Angular 自体の進化も早いので、1年以上古い記事は当てにならないことがあります。最新の英語リファレンスを参照するのが早道だったりします。
+<li>Angular を勉強するには、英語の記事を読みこなすスキルは必要になるかも。
+<li>入力フィールド、表示フィールド、モデルを双方向にバインドする、双方向バイディングをサポートします。
+<li>Ajax などの非同期イベントの処理ライブラリとして、<a target="_top" href="javascript:if(confirm('http://reactivex.io/rxjs/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://reactivex.io/rxjs/'" tppabs="http://reactivex.io/rxjs/">RxJS</a> を採用しています。
+<li>ダイアログなどの UI 部品をサポートする <a target="_top" href="javascript:if(confirm('https://material.angular.io/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://material.angular.io/'" tppabs="https://material.angular.io/">Angular Material</a> が公開されています。
+</ul>
+</div>
+
+<h4 id="tutrial-image">チュートリアルのイメージ</h4>
+<div class=i>
+<p>下記の環境で検証しています。</p>
+<pre class="c">
+OS: CentOS 7.8.2
+Node.js: 12.18.1
+npm: 6.14.5
+Angular CLI: 10.0.0
+</pre>
+<p>このチュートリアルでは、最終的に下記の様なイメージの画面を作成します。メニューやユーザ名をクリックしてください。値までは変化しませんが、これから作成する画面のおおよそのイメージをつかむことができます。</p>
+<script>
+function goPage(id) {
+  document.getElementById('main-dashboard').style.display = 'none';
+  document.getElementById('main-user-list').style.display = 'none';
+  document.getElementById('main-user-edit').style.display = 'none';
+  document.getElementById('confirm-dialog').style.display = 'none';
+  document.getElementById(id).style.display = 'block';
+}
+function showDialog(id) {
+  document.getElementById(id).style.display = 'block';
+}  
+</script>
+<div class="app">
+ <div class="header"><span class="icon">◆</span> Angular Sample Console</div>
+ <div class="menu">
+  <span class="link" onclick="goPage('main-dashboard')">Dashboard</span>
+  <span class="link" onclick="goPage('main-user-list')">Users</span>
+ </div>
+ <div class="main">
+  <div id="main-dashboard">
+   <div class="h1">Dashboard</div>
+   <p>This is a sample of Angular application.</p>
+  </div>
+  <div id="main-user-list">
+   <div class="h1">Users</div>
+   <table>
+    <tr><th>Id</th><th>Name</th><th>Email</th></tr>
+    <tr><td>1</td><td><span class="link" onclick="goPage('main-user-edit')">Yamada</span></td><td>yamada@example.com</td></tr>
+    <tr><td>2</td><td><span class="link" onclick="goPage('main-user-edit')">Suzuki</span></td><td>suzuki@example.com</td></tr>
+    <tr><td>3</td><td><span class="link" onclick="goPage('main-user-edit')">Tanaka</span></td><td>tanaka@example.com</td></tr>
+   </table>
+  </div>  
+  <div id="main-user-edit">
+   <div class="h1">User edit</div>
+   <table style="margin-bottom:2px">
+    <tr><th>Id</th><td>1</td></tr>
+    <tr><th>Name</th><td><input type="text" value="Yamada"></td></tr>
+    <tr><th>Email</th><td><input type="text" value="yamada@example.com"></td></tr>
+   </table>
+   <button onclick="showDialog('confirm-dialog')">OK</button>
+   <button onclick="goPage('main-user-list')">Cancel</button>
+  </div>
+  <div id="confirm-dialog">
+   <div class="h1">Confirm</div>
+   <p>Are you sure you want to update this user?</p>
+   <button onclick="goPage('main-user-list')">OK</button>
+   <button onclick="goPage('main-user-edit')">Cancel</button>
+  </div>
+ </div>
+</div>
+<p>チュートリアルで作成するソースコードは下記からダウンロードできます。</p>
+<ul>
+<li><a href="angular-sample-1.zip" tppabs="http://www.tohoho-web.com/ex/angular-sample-1.zip">angular-sample-1.zip</a> : ローカルのみで完結する版
+<li><a href="angular-sample-2.zip" tppabs="http://www.tohoho-web.com/ex/angular-sample-2.zip">angular-sample-2.zip</a> : サーバと REST-API 通信する版
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class=i>
+<p><a href="nodejs.html" tppabs="http://www.tohoho-web.com/ex/nodejs.html">Node.js</a> 系のパッケージ管理ツール <a href="npm.html" tppabs="http://www.tohoho-web.com/ex/npm.html">npm</a> を使用して、Angular の CLI (Command Line Interface) をインストールします。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>npm install -g @angular/cli</em>
+    :
+how to change this setting, see http://angular.io/analytics. (y/N) <em>N</em>
+</pre>
+</div>
+
+<h4 id="new-application">アプリケーションを作成する</h4>
+<div class=i>
+<p><b>ng</b> コマンドで新しいアプリケーションを作成します。<b>my-app</b> は作成するアプリケーション名となります。<b>Angular routing</b> は後程利用するので <b>y</b> と答えてください。スタイルシートを CSS, SCSS などから選べます。オススメは <a href="sass.html" tppabs="http://www.tohoho-web.com/ex/sass.html">SCSS</a> ですが、とりあえずデフォルトの CSS で。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>ng new my-app</em>
+? Would you like to add Angular routing? (y/N) <em>y</em>
+? Which stylesheet format would you like to use? <em>CSS</em>	<span class="cm"># カーソル移動キーで選択してEnter</span>
+</pre>
+</div>
+
+<h4 id="start-server">サーバを起動する</h4>
+<div class=i>
+<p>アプリケーションをビルドして開発用簡易サーバを起動します。起動にはしばらく時間がかかります。ブラウザでアクセスすると、Angular のサンプル画面が表示されます。LISTEN する IPアドレスやポート番号を変更するには、<b>--host</b>, <b>--port</b> オプションを指定します。他のマシンからアクセスする際は、<b>firewall-cmd</b> などでポートの穴あけが必要な場合があります。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ cd my-app
+$ <em>ng serve --host 0.0.0.0 --port 8080</em>
+</pre>
+<p>ブラウザから http://{サーバアドレス}:8080/ にアクセスして Angular の画面が表示されれば成功です。</p>
+</div>
+
+<h4 id="edit-html-css">HTMLやCSSを編集する</h4>
+<div class=i>
+<p>ソースを下記の様に書き換え、Hello world! を表示します。サーバが起動していれば、ソースファイルを修正すると自動的にリビルドと、ブラウザの再表示が行われます。</p>
+<div class="tab">src/app/app.component.html</div>
+<pre class=c2>
+&lt;h1&gt;Hello world!&lt;/h1&gt;
+</pre>
+<div class="tab">src/styles.css</div>
+<pre class=c2>
+* {
+  margin: 0;
+  padding: 0;
+}
+h1 {
+  font-size: 1.4em;
+}
+</pre>
+<p>ブラウザが自動的にリロードされ、Hello world! が表示されます。</p>
+</div>
+
+<h4 id="add-component">コンポーネントを追加する</h4>
+<div class=i>
+<p>ヘッダ、メニュー、ダッシュボードなどの画面要素をコンポーネントとして追加します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ ng generate component header
+$ ng generate component menu
+$ ng generate component dashboard
+</pre>
+<p>app コンポーネントの HTML を下記の様に書き換えます。</p>
+<div class="tab">src/app/app.component.html</div>
+<pre class=c2>
+&lt;app-header&gt;&lt;/app-header&gt;
+&lt;app-menu&gt;&lt;/app-menu&gt;
+&lt;app-dashboard&gt;&lt;/app-dashboard&gt;
+</pre>
+<p>ヘッダは黒地に白文字とし、Angular のアイコンを表示します。</p>
+<div class="tab">src/app/header/header.component.html</div>
+<pre class=c2>
+&lt;div class="header"&gt;
+  &lt;img src="../favicon.ico" alt="Angular"&gt; Angular Sample Console
+&lt;/div&gt;
+</pre>
+<div class="tab">src/app/header/header.component.css</div>
+<pre class=c2>
+.header {
+  padding: 4px;
+  background-color: #000;
+  color: #fff;
+}
+.header img {
+  width: 18px;
+  vertical-align: middle;
+}
+</pre>
+<p>メニューには Dashboar メニューを記述します。</p>
+<div class="tab">src/app/menu/menu.component.html</div>
+<pre class=c2>
+&lt;div class="menu"&gt;
+  &lt;ul&gt;
+  &lt;li&gt;&lt;a href="/"&gt;Dashboard&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+<div class="tab">src/app/menu/menu.component.css</div>
+<pre class=c2>
+.menu {
+  background-color: #ccc;
+}
+.menu li {
+  padding: 4px 8px;
+  display: inline-block;
+}
+</pre>
+<p>ダッシュボードにはタイトルを表示します。</p>
+<div class="tab">src/app/dashboard/dashboard.component.html</div>
+<pre class=c2>
+&lt;h1&gt;Dashboard&lt;/h1&gt;
+</pre>
+<p>ヘッダ、メニューバー、ダッシュボードタイトルが表示されれば成功です。</p>
+</div>
+
+<h4 id="display-variables">変数の値を表示する</h4>
+<div class=i>
+<p>{{変数名}} で、コンポーネントが持つ変数を表示することができます。各ソースを下記の様に修正してください。</p>
+<div class="tab">src/app/dashboard/dashboard.component.ts</div>
+<pre class=c2>
+  :
+export class DashboardComponent implements OnInit {
+  <em>message: string;</em>
+
+  constructor() {
+    <em>this.message = 'This is a sample of Angular application.';</em>
+  }
+  :
+</pre>
+<div class="tab">src/app/dashboard/dashboard.component.html</div>
+<pre class=c2>
+&lt;h1&gt;Dashboard&lt;/h1&gt;
+<em>&lt;p&gt;{{message}}&lt;/p&gt;</em>
+</pre>
+<p>Dashboard 画面にコンポーネントで定義した message 変数の値が表示されれば成功です。</p>
+</div>
+
+<h4 id="routing">ルーティングモジュールを追加する</h4>
+<div class=i>
+<p>URL によって下記の様に表示を切り替えます。表示の切り替えにはルーティングモジュールを使用します。</p>
+<ul>
+<li>http://～/ → Dashboard にリダイレクト
+<li>http://～/dashbord → Dashboard を表示
+<li>http://～/users → ユーザ一覧を表示
+<li>http://～/users/{user_id}/edit → ユーザ更新画面を表示
+</ul>
+<p>アプリケーション作成時にルーティングモジュールの追加を行っていない場合は、ルーティングモジュールを追加します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>ng generate module app-routing --flat --module=app</em>
+</pre>
+<p>ユーザ一覧、ユーザ編集コンポーネントを追加します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>ng generate component user/user-list</em>
+$ <em>ng generate component user/user-edit</em>
+</pre>
+<p>各ファイルを下記の様に修正します。</p>
+<div class="tab">src/app/app-routing.module.ts</div>
+<pre class=c2>
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+<em>import { DashboardComponent } from './dashboard/dashboard.component';</em>
+<em>import { UserListComponent } from './user/user-list/user-list.component';</em>
+<em>import { UserEditComponent } from './user/user-edit/user-edit.component';</em>
+
+const routes: Routes = [
+  <em>{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'users', component: UserListComponent },
+  { path: 'users/:id/edit', component: UserEditComponent },</em>
+];
+    :
+</pre>
+<div class="tab">src/app/app.component.html</div>
+<pre class=c2>
+&lt;app-header&gt;&lt;/app-header&gt;
+&lt;app-menu&gt;&lt;/app-menu&gt;
+<em>&lt;div class="main"&gt;</em>
+  <em>&lt;router-outlet&gt;&lt;/router-outlet&gt;</em>
+<em>&lt;/div&gt;</em>
+</pre>
+<div class="tab">src/app/menu/menu.component.html</div>
+<pre class=c2>
+&lt;div class="menu"&gt;
+  &lt;ul&gt;
+  &lt;li&gt;&lt;a <em>routerLink</em>="/"&gt;Dashboard&lt;/a&gt;&lt;/li&gt;
+  <em>&lt;li&gt;&lt;a routerLink="/users"&gt;Users&lt;/a&gt;&lt;/li&gt;</em>
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+<div class="tab">src/app/user/user-list/user-list.component.html</div>
+<pre class=c2>
+<em>&lt;h1&gt;Users&lt;/h1&gt;</em>
+</pre>
+<p>Dashboard メニューをクリックすると Dashboard 画面が、Users メニューをクリックすると Users 画面(タイトルのみ)が表示されれば成功です。</p>
+</div>
+
+<h4 id="display-list">リストを表示する</h4>
+<div class=i>
+<p>Users 画面にユーザ一覧を表示します。まず、User オブジェクトのクラスを定義します。</p>
+<div class="tab">src/app/user/user.ts</div>
+<pre class=c2>
+<em>export class User {
+  id: number;
+  name: string;
+  email: string;
+}</em>
+</pre>
+<p>UserList コンポーネントで users リストを初期化します。</p>
+<div class="tab">src/app/user/user-list/user-list.component.ts</div>
+<pre class=c2>
+import { Component, OnInit } from '@angular/core';
+<em>import { User } from '../user';</em>
+
+@Component({
+  selector: 'app-user-list',
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.css']
+})
+export class UserListComponent implements OnInit {
+  <em>users: User[];</em>
+
+  constructor() { }
+
+  ngOnInit(): void {
+    <em>this.users = [
+      { id: 1, name: 'Yamada', email: 'yamada@example.com' },
+      { id: 2, name: 'Suzuki', email: 'suzuki@example.com' },
+      { id: 3, name: 'Tanaka', email: 'tanaka@example.com' },
+    ];</em>
+  }
+
+}
+</pre>
+<p>UserList 画面で、users リストを表示します。*ngFor は配列を繰り返し表示する際に使用されるディレクティブです。</p>
+<div class="tab">src/app/user/user-list/user-list.component.html</div>
+<pre class=c2>
+&lt;h1&gt;Users&lt;/h1&gt;
+<em>&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr *ngFor="let user of users"&gt;
+    &lt;td&gt;{{user.id}}&lt;/td&gt;
+    &lt;td&gt;{{user.name}}&lt;/td&gt;
+    &lt;td&gt;{{user.email}}&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</em>
+</pre>
+<p>すこし、見栄えを整えてやります。</p>
+<div class="tab">src/styles.css</div>
+<pre class=c2>
+* {
+  margin: 0;
+  padding: 0;
+}
+h1 {
+  font-size: 1.4em;
+}
+<em>a:link,
+a:visited {
+  color: #000;
+}
+.main {
+  padding: 8px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+table th,
+table td {
+  border: 1px solid #ccc;
+  padding: 4px;
+}
+table th {
+  background-color: #ddd;
+  text-align: left;
+}</em>
+</pre>
+<p>Users 画面に、ユーザの一覧が表示されれば成功です。</p>
+</div>
+
+<h4 id="create-service">サービスを作成する</h4>
+<div class=i>
+<p>コンポーネント間でデータを共有したりするために、サービスを作成します。下記の例では、ユーザ一覧画面、ユーザ編集画面で共有するユーザ情報を管理する user サービスを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>ng generate service user/user</em>
+</pre>
+<p>app.module.ts に user サービスを追加します。</p>
+<div class="tab">src/app/app.module.ts</div>
+<pre class=c2>
+  :
+import { DashboardComponent } from './dashboard/dashboard.component';
+<em>import { UserService } from './user/user.service';</em>
+import { UserListComponent } from './user/user-list/user-list.component';
+  :
+
+@NgModule({
+  :
+  providers: [
+    <em>UserService</em>
+  ],
+  :
+</pre>
+<p>サービスに、初期化、一覧取得、詳細取得、設定用のメソッドを追加します。</p>
+<div class="tab">src/app/user/user.service.ts</div>
+<pre class=c2>
+import { Injectable } from '@angular/core';
+<em>import { User } from './user';</em>
+
+@Injectable()
+export class UserService {
+  <em>users: User[];</em>
+
+  constructor() {
+    <em>this.users = [
+      { id: 1, name: 'Yamada', email: 'yamada@example.com' },
+      { id: 2, name: 'Suzuki', email: 'suzuki@example.com' },
+      { id: 3, name: 'Tanaka', email: 'tanaka@example.com' },
+    ];</em>
+  }
+
+  <em>getUsers(): User[] {
+    return this.users;
+  }
+
+  getUser(id: number): User {
+    return this.users.find(user => user.id === id);
+  }
+
+  setUser(user: User): void {
+    for (let i = 0; i &lt; this.users.length; i++) {
+      if (this.users[i].id === user.id) {
+        this.users[i] = user;
+      }
+    }
+  }</em>
+}
+</pre>
+<div class="tab">src/app/user/user-list/user-list.component.ts</div>
+<pre class=c2>
+import { Component, OnInit } from '@angular/core';
+import { User } from '../user';
+<em>import { UserService } from '../user.service';</em>
+
+  :
+export class UserListComponent implements OnInit {
+  users: User[];
+
+  constructor(
+    <em>private service: UserService</em>
+  ) { }
+
+  ngOnInit(): void {
+    <em>this.users = this.service.getUsers();</em>
+  }
+}
+</pre>
+<p>画面には変動はありませんが、サービスからデータを取得するようになりました。</p>
+</div>
+
+<h4 id="forms">フォームを作成する</h4>
+<div class=i>
+<p>ユーザ編集画面でフォームを取り扱います。まず、名前をクリックすると、/users/:id/edit に割り当てられたユーザ編集画面に遷移するようにします。</p>
+<div class="tab">src/app/user/user-list/user-list.component.html</div>
+<pre class=c2>
+&lt;h1&gt;Users&lt;/h1&gt;
+&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr *ngFor="let user of users"&gt;
+    &lt;td&gt;{{user.id}}&lt;/td&gt;
+    <em>&lt;td&gt;&lt;a routerLink="/users/{{user.id}}/edit"&gt;{{user.name}}&lt;/a&gt;&lt;/td&gt;</em>
+    &lt;td&gt;{{user.email}}&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>app.modules.ts に FormsModule を組み込みます。</p>
+<div class="tab">src/app/app.module.ts</div>
+<pre class=c2>
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+<em>import { FormsModule } from '@angular/forms';</em>
+  :
+@NgModule({
+  :
+  imports: [
+    BrowserModule,
+    AppRoutingModule<em>,
+    FormsModule</em>
+  ],
+  :
+</pre>
+<p>ユーザ編集画面のコンポーネントを定義します。</p>
+<div class="tab">src/app/user/user-edit/user-edit.component.ts</div>
+<pre class=c2>
+import { Component, OnInit } from '@angular/core';
+<em>import { ActivatedRoute, Router } from '@angular/router';</em>
+
+<em>import { User } from '../user';</em>
+<em>import { UserService } from '../user.service';</em>
+
+@Component({
+  selector: 'app-user-edit',
+  templateUrl: './user-edit.component.html',
+  styleUrls: ['./user-edit.component.css']
+})
+
+export class UserEditComponent implements OnInit {
+  <em>user: User;</em>
+
+  constructor(
+    <em>private route: ActivatedRoute,
+    private router: Router,
+    private service: UserService</em>
+  ) { }
+
+  ngOnInit(): void {
+    <em>const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.user = this.service.getUser(id);</em>
+  }
+
+  <em>onSubmit(form: any): void {
+    let user = {
+      id: form.id,
+      name: form.name,
+      email: form.email
+    };
+    this.service.setUser(user);
+    this.router.navigate(["/users"]);
+  }</em>
+}
+</pre>
+<p>ユーザ編集画面の HTML を下記の様に書き換えます。</p>
+<div class="tab">src/app/user/user-edit/user-edit.component.html</div>
+<pre class=c2>
+<em>&lt;form #f="ngForm" (ngSubmit)="onSubmit(f.value)"&gt;
+  &lt;input type="hidden" name="id" [ngModel]="user.id"&gt;
+  &lt;table&gt;
+    &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;td&gt;{{user.id}}&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;td&gt;&lt;input type="text" name="name" [ngModel]="user.name"&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;th&gt;Email&lt;/th&gt;&lt;td&gt;&lt;input type="text" name="email" [ngModel]="user.email"&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;button type="submit"&gt;OK&lt;/button&gt;
+  &lt;button routerLink="/users"&gt;Cancel&lt;/button&gt;
+&lt;/form&gt;</em>
+</pre>
+<p>見栄えを少し追記。</p>
+<div class="tab">src/styles.css</div>
+<pre class=c2>
+  :
+<em>button {
+  margin-top: 4px;
+  margin-right: 4px;
+  padding: 4px;
+  min-width: 120px;
+}
+input[type="text"] {
+  padding: 4px;
+  width: 300px;
+}</em>
+</pre>
+<p>ユーザ名をクリックするとユーザ編集画面が表示され、名前やメールアドレスを修正すると、一覧に反映されるようになれば成功です。</p>
+</div>
+
+<h4 id="mat-dialog">モーダルダイアログを表示する</h4>
+<div class=i>
+<p>Angular Material という部品群の中から MatDialog というモーダルダイアログを利用してみます。まず、Angular/material と Angular/CDK (Component Dev. Kit) をインストールします。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>npm install --save @angular/material @angular/cdk</em>
+</pre>
+<p>Angular Material 用の CSS ファイルを読み込みます。</p>
+<div class="tab">src/styles.css</div>
+<pre class=c2>
+<em>@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';</em>
+* {
+  margin: 0;
+  padding: 0;
+}
+</pre>
+<p>モーダルダイアログのサンプルとして、コンファームダイアログコンポーネントを作成してみます。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ <em>ng generate component tools/confirm-dialog</em>
+</pre>
+<p>各ファイルを次のように修正してください。</p>
+<div class="tab">src/app/app.module.ts</div>
+<pre class=c2>
+  :
+import { FormsModule } from '@angular/forms';
+<em>import { MatDialogModule } from '@angular/material/dialog';</em>
+<em>import { BrowserAnimationsModule } from '@angular/platform-browser/animations';</em>
+  :
+
+@NgModule({
+  :
+  imports: [
+    :
+    FormsModule<em>,
+    MatDialogModule,
+    BrowserAnimationsModule</em>
+  ],
+  providers: [
+    UserService
+  ],
+  <em>entryComponents: [
+    ConfirmDialogComponent
+  ],</em>
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+</pre>
+<div class="tab">src/app/tools/confirm-dialog/confirm-dialog.component.ts</div>
+<pre class=c2>
+import { Component, OnInit<em>, Inject</em> } from '@angular/core';
+<em>import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';</em>
+
+@Component({
+  selector: 'app-confirm-dialog',
+  templateUrl: './confirm-dialog.component.html',
+  styleUrls: ['./confirm-dialog.component.css']
+})
+export class ConfirmDialogComponent implements OnInit {
+
+  constructor(
+    <em>public dialogRef: MatDialogRef&lt;ConfirmDialogComponent&gt;,
+    @Inject(MAT_DIALOG_DATA) public data: any</em>
+  ) { }
+
+  ngOnInit(): void {
+  }
+
+  <em>closeDialog(result) {
+    this.dialogRef.close(result);
+  }</em>
+}
+</pre>
+<div class="tab">src/app/tools/confirm-dialog/confirm-dialog.component.html</div>
+<pre class=c2>
+<em>&lt;h1&gt;{{data.title}}&lt;/h1&gt;
+&lt;p&gt;{{data.message}}&lt;/p&gt;
+&lt;button (click)="closeDialog(false)"&gt;Cancel&lt;/button&gt;
+&lt;button (click)="closeDialog(true)"&gt;OK&lt;/button&gt;</em>
+</pre>
+<div class="tab">src/app/user/user-edit/user-edit.component.ts</div>
+<pre class=c2>
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+<em>import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../tools/confirm-dialog/confirm-dialog.component';</em>
+  :
+
+export class UserEditComponent implements OnInit {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private service: UserService<em>,
+    private dialog: MatDialog</em>
+  ) { }
+
+  :
+  
+  onSubmit(form: any): void {
+    let user = {
+      id: form.id,
+      name: form.name,
+      email: form.email
+    };
+
+    <em>let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Confirm',
+        message: 'Are you sure you want to update this user?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result =&gt; {
+      if (result === true) {
+        this.service.setUser(user);
+        this.router.navigate(["/users"]);
+      }
+    });</em>
+  }
+</pre>
+<p>ユーザ編集画面で [OK] ボタンを押した際、本当に変更するか確認ダイアログが表示されれば成功です。ここまでのソースを、<a href="angular-sample-1.zip" tppabs="http://www.tohoho-web.com/ex/angular-sample-1.zip">angular-sample-1.zip</a> としてまとめてあります。</p>
+</div>
+
+<h4 id="rest-api">簡単な REST-API サーバを作る</h4>
+<div class=i>
+<p>上記までの例では、ブラウザ側の JavaScript 内にダミーデータを保持し、それを書き換えるのみでしたが、ユーザ情報をサーバから REST-API で読み出し・格納できるように拡張していきます。まず、Express を用いて簡単な REST-API サーバを作成します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ mkdir ~/rest-test
+$ cd ~/rest-test
+$ npm init                        <span class="cm">// 質問にはすべて Enter</span>
+$ npm install express
+$ vi index.js
+</pre>
+<div class="warning">
+下記の例では、Access-Control-Allow-Origin を用いて他オリジンからのアクセスを許可していますが、セキュリティ上のリスクがあります。実際に使用する際には適切なオリジンを指定するなどのセキュリティ対策を十分に行ってください。
+</div>
+<div class="tab">index.js</div>
+<pre class=c2>
+var express = require('express');
+var bodyParser = require('body-parser');
+var app = express();
+app.listen(8888);
+app.use(bodyParser.json());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");     <span class="cm">// セキュリティリスク有り</span>
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+let users = [
+  { id: 1, name: "Yamada", email: "yamada@example.com" },
+  { id: 2, name: "Tanaka", email: "tanaka@example.com" },
+  { id: 3, name: "Suzuki", email: "suzuki@example.com" }
+];
+
+app.get('/users', function(req, res) {
+  res.send(JSON.stringify(users));
+});
+
+app.post('/users', function(req, res) {
+  users.push(req.body);
+  res.end();
+});
+
+app.get('/users/:id', function(req, res) {
+  for (let i = 0; i &lt; users.length; i++) {
+    if (users[i].id == req.params.id) {
+      res.send(JSON.stringify(users[i]));
+    }
+  }
+});
+
+app.post('/users/:id', function(req, res) {
+  for (let i = 0; i &lt; users.length; i++) {
+    if (users[i].id == req.params.id) {
+      users[i] = req.body;
+    }
+  }
+  res.end();
+});
+
+app.delete('/users/:id', function(req, res) {
+  for (let i = 0; i &lt; users.length; i++) {
+    if (users[i].id == req.params.id) {
+      users.splice(i, 1);
+    }
+  }
+  res.end();
+});
+</pre>
+<div class="tab">Shell</div>
+<pre class=c2>
+$ node index.js
+</pre>
+<p>別のコンソールから動作を確認します。</p>
+<div class="tab">Shell</div>
+<pre class=c2>
+<span class="cm"># ユーザ一覧</span>
+$ curl -s -X GET http://localhost:8888/users | python -mjson.tool
+
+<span class="cm"># ユーザ追加</span>
+$ curl -s -X POST -H 'Content-Type: application/json' \
+  -d '{"id":4,"name":"Sasaki","email":"sasaki@example.com"}' \
+  http://127.0.0.1:8888/users
+
+<span class="cm"># ユーザ更新</span>
+$ curl -s -X POST -H 'Content-Type: application/json' \
+  -d '{"id":4,"name":"Sasaki2","email":"sasaki2@example.com"}' \
+  http://127.0.0.1:8888/users/4
+
+<span class="cm"># ユーザ削除</span>
+$ curl -s -X DELETE http://127.0.0.1:8888/users/4
+</pre>
+</div>
+
+<h4 id="rxjs">RxJS で非同期通信を行う</h4>
+<div class=i>
+<p>REST-API サーバと非同期通信を行うために、RxJS というライブラリを利用します。</p>
+<div class="tab">src/app/app.module.ts</div>
+<pre class=c2>
+  :
+import { FormsModule } from '@angular/forms';
+<em>import { HttpClientModule } from '@angular/common/http';</em>
+  :
+@NgModule({
+  :
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    <em>HttpClientModule,</em>
+    :
+  ],
+  :
+</pre>
+<p><b>url</b> に指定するアドレスは適切に変更してください。サーバからではなくブラウザから見た RESTサーバのアドレスを指定します。</p>
+<div class="tab">src/app/user/user.service.ts</div>
+<pre class=c2>
+import { Injectable } from '@angular/core';
+<em>import { HttpClient } from '@angular/common/http';</em>
+<em>import { Observable, of } from 'rxjs';</em>
+<em>import { catchError, map, tap } from 'rxjs/operators';</em>
+import { User } from './user';jj
+
+@Injectable()
+export class UserService {
+  users: User[];
+  <em>private url = 'http://127.0.0.1:8888';</em>     <span class="cm">// 適切に変更してください</span>
+
+  constructor(
+    <em>private http: HttpClient</em>
+  ) { }
+
+  getUsers(): <em>Observable&lt;User[]&gt;</em> {
+    return <em>this.http.get&lt;User[]&gt;(`${this.url}/users`)
+      .pipe(
+        catchError(this.handleError('getUsers', []))
+      );</em>
+  }
+
+  getUser(id: number): <em>Observable&lt;User&gt;</em> {
+    return <em>this.http.get&lt;User&gt;(`${this.url}/users/${id}`)
+      .pipe(
+        catchError(this.handleError&lt;User&gt;(`getUser id=${id}`))
+      );</em>
+  }
+
+  setUser(user: User): <em>Observable&lt;User&gt;</em> {
+    <em>const id = user.id;</em>
+    return <em>this.http.post&lt;User&gt;(`${this.url}/users/${id}`, user)
+      .pipe(
+        catchError(this.handleError&lt;User&gt;(`setUser id=${id}`))
+      );</em>
+  }
+
+  <em>private handleError&lt;T&gt; (operation = 'operation', result?: T) {
+    return (error: any): Observable&lt;T&gt; =&gt; {
+      console.error(error);
+      console.log(`${operation} failed: ${error.message}`);
+      return of(result as T);
+    };
+  }</em>
+}
+</pre>
+<div class="tab">src/app/user/user-list/user-list.component.ts</div>
+<pre class=c2>
+import { Component, OnInit } from '@angular/core';
+import { User } from '../user';
+import { UserService } from '../user.service';
+
+@Component({
+  selector: 'app-user-list',
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.css']
+})
+
+export class UserListComponent implements OnInit {
+  users: User[];
+
+  constructor(
+    private service: UserService
+  ) { }
+
+  ngOnInit(): voi {
+    <em>this.service.getUsers().subscribe(res => {
+      this.users = res;
+    });</em>
+  }
+}
+</pre>
+<div class="tab">src/app/user/user-edit/user-edit.component.ts</div>
+<pre class=c2>
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { User } from '../user';
+import { UserService } from '../user.service';
+
+@Component({
+  selector: 'app-user-edit',
+  templateUrl: './user-edit.component.html',
+  styleUrls: ['./user-edit.component.css']
+})
+export class UserEditComponent implements OnInit {
+  user: User <em>= { id: 0, name: '', email: '' }</em>;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private service: UserService,
+    private dialog: MatDialog
+  ) { }
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    <em>this.service.getUser(id).subscribe(res => {
+      this.user = res;
+    });</em>
+  }
+
+  onSubmit(form: any): void {
+    :
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        <em>this.service.setUser(user).subscribe(() => {
+          this.router.navigate(["/users"]);
+        });</em>
+      }
+    });
+  }
+}
+</pre>
+<p>サーバが保持するユーザデータを、一覧表示、編集することが可能となりました。ここまでのプログラム(src)配下を <a href="angular-sample-2.zip" tppabs="http://www.tohoho-web.com/ex/angular-sample-2.zip">angular-sample-2.zip</a> としてダウンロードできます。</p>
+</div>
+
+<hr>
+<div>Copyright (C) 2018-2020 杜甫々</div>
+<div>初版:2018年2月4日 最終更新:2020年6月27日</div>
+<div>http://www.tohoho-web.com/ex/angular.html</div>
+</body>
+</html>

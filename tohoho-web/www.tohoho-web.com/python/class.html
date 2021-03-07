@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのPython入門 - クラス - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのPython入門 -  クラス</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/python/index.html">Python入門</a> &gt;
+クラス
+
+<h4 id="class">クラス(class)</h4>
+<div class=i>
+<p>Python の <b>クラス</b>(<b>class</b>)は次のように定義します。クラス名は慣習的に大文字で始めます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>class MyClass:</em>
+    """A simple example class"""         # 三重クォートによるコメント
+
+    def __init__(self):                  # コンストラクタ
+        self.name = ""
+
+    def getName(self):                   # getName()メソッド
+        return self.name
+
+    def setName(self, name):             # setName()メソッド
+        self.name = name
+
+a = MyClass()                            # クラスのインスタンスを生成
+a.setName("Tanaka")                      # setName()メソッドをコール
+print a.getName()                        # getName()メソッドをコール
+</pre>
+<p>クラス定義の冒頭には、"""...""" で <a href="variables.html#docstring" tppabs="http://www.tohoho-web.com/python/variables.html#docstring">ドキュメントストリング</a> を記述することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def MyClass:
+    <em>"""A sample class"""</em>
+    (略)
+</pre>
+</div>
+
+<h4 id="attribute">クラス変数・インスタンス変数(attribute)</h4>
+<div class=i>
+<p>クラスは、<b>インスタンス変数</b> と <b>クラス変数</b> を持つことができます。インスタンス変数は「インスタンス.変数名」で表され、インスタンス毎に独立の変数です。コンストラクタ __init__(後述)の中で初期化することをお勧めします。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def __init__(self):
+        <em>self.name = ""</em>              # インスタンス変数
+
+a1 = MyClass()
+<em>a1.name</em> = "Tanaka"
+
+a2 = MyClass()
+<em>a2.name</em> = "Suzuki"
+
+print <em>a1.name</em>                        #=&gt; Tanaka
+print <em>a2.name</em>                        #=&gt; Suzuki
+</pre>
+<p>クラス変数は「クラス名.変数名」で表され、すべてのインスタンスで共通の変数です。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    <em>PI = 3.14</em>                        #=&gt; クラス変数
+
+print <em>MyClass.PI</em>                     #=&gt; 3.14
+</pre>
+<p>下記は、クラス変数を用いてインスタンスの個数をカウントアップするサンプルです。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    <em>count = 0</em>                       # クラス変数を初期化
+
+    def __init__(self):
+        <em>MyClass.count += 1</em>          # クラス変数をカウントアップ
+
+a1 = MyClass()
+a2 = MyClass()
+<em>print MyClass.count</em>                 #=&gt; 2
+</pre>
+<p>クラス変数やインスタンス変数は、動的に追加することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    pass
+
+a1 = MyClass()
+<em>a1.name2 = "Tanaka"</em>                 # インスタンス変数の追加
+<em>MyClass.PI2 = 3.141593</em>              # クラス変数の追加
+</pre>
+<p>インスタンス変数が存在しない場合、「インスタンス.変数名」はクラス変数を参照することに注意してください。「インスタンス.変数名」に値を代入した時点でインスタンス変数が生成され、以降はインスタンス変数が参照されます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    PI = 3.14
+
+a1 = MyClass()
+a2 = MyClass()
+<em>print a1.PI</em>                         # クラス変数 MyClass.PI(3.14) が参照される
+<em>a1.PI = 3.141593</em>                    # インスタンス変数 a1.PI が生成される
+<em>print a1.PI</em>                         # インスタンス変数 a1.PI(3.141593)が参照される
+<em>print a2.PI</em>                         # クラス変数 MyClass.PI(3.14) が参照される
+</pre>
+
+
+<p>Python では private や protected などのスコープを制御する機構は実装されておらず、クラス変数、インスタンス変数はすべてどこからでも参照可能(public)となります。</p>
+</div>
+
+<h4 id="method">メソッド(method)</h4>
+<div class=i>
+<p>クラスが持つ関数は <b>メソッド</b> と呼ばれます。メソッドもまた、どこからでも参照可能(public)です。メソッドの第一引数には、クラスのインスタンスを指定し、第二引数以降で、メソッドの引数を受け取ります。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    name = ""
+    <em>def setName(self, name):</em>     # 第一引数は自インスタンス(self)
+        self.name = name
+
+a = MyClass()
+<em>a.setName("Tanaka")</em>
+</pre>
+</div>
+
+<h4 id="protected">アクセス制限(_, __)</h4>
+<div class=i>
+<p>Python では private や protected などのアクセス修飾子はサポートされていません。アンダーバー(<b>_</b>)で始まる変数や関数は外から参照しないという慣習的ルールがあります。アンダーバー2個(<b>__</b>)で始まる変数や関数は参照が制限されます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def __init__(self):
+        self.name = "tanaka"
+        <em>self._name</em> = "yamada"
+        <em>self.__name</em> = "suzuki"
+
+    def hello(self): print 'hello'
+    def <em>_hello(self)</em>: print 'hello'
+    def <em>__hello(self)</em>: print 'hello'
+
+a = MyClass()
+
+print a.name            # 参照できる
+print a._name           # 参照できるが慣習的に参照しない
+# print a.__name        # 参照できない(AttributeError例外)
+
+a.hello()               # 参照できる
+a._hello()              # 参照できるが慣習的に参照しない
+# a.__hello()           # 参照できない(AttributeError例外)
+</pre>
+<p>とは言っても、__ で始まる変数や関数も、_クラス名__変数名 に名前変換されるだけで、下記の様にするとアクセスできてしまうそうです。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+print a._MyClass__name
+a._MyClass__hello()
+</pre>
+</div>
+
+<h4 id="init">コンストラクタ(__init__)</h4>
+<div class=i>
+<p><b>__init__()</b> メソッドは、クラスのインスタンスが生成された際に呼び出されます。<b>コンストラクタ</b> とも呼ばれます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    <em>def __init__(self, name):</em>
+        <em>self.name = name</em>
+    def getName(self):
+        return self.name
+
+a = MyClass("Tanaka")
+print a.getName()                      #=&gt; Tanaka
+</pre>
+</div>
+
+<h4 id="del">デストラクタ(__del__)</h4>
+<div class=i>
+<p><b>__del__()</b> メソッドは、クラスのインスタンスが消滅する際に呼び出されます。<b>デストラクタ</b> とも呼ばれます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def __init__(self):
+        print "INIT!"
+    <em>def __del__(self):</em>
+        <em>print "DEL!"</em>
+
+a = MyClass()           #=&gt; INIT!
+del a                   #=&gt; DEL!
+</pre>
+</div>
+
+<h4 id="str">文字列化(__str__)</h4>
+<div class=i>
+<p><b>__str__()</b> は、インスタンスを暗黙的に文字列に変換する際の変換処理を定義します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def __init__(self, name):
+        self.name = name
+
+    <em>def __str__(self):</em>
+        <em>return "My name is " + self.name</em>
+
+a = MyClass("Yamada")
+print a                        #=&gt; My name is Yamada
+</pre>
+</div>
+
+<h4 id="inheritance">継承(inheritance)</h4>
+<div class=i>
+<p>他のオブジェクト指向言語と同様、クラスを継承することもできます。下記の例では、MyClassクラスを継承した、MyClass2サブクラスを定義しています。サブクラスでは、親クラスが持つアトリビュートやメソッドを継承して利用することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def hello(self):
+        print "Hello"
+
+<em>class MyClass2(MyClass):</em>
+    def world(self):
+        print "World"
+
+a = MyClass2()
+a.hello()                   #=&gt; Hello
+a.world()                   #=&gt; World
+</pre>
+<p>サブクラスでは、親クラスのメソッドを上書き(オーバーライド)することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def hello(self):
+        print "Hello"
+
+class MyClass2(MyClass):
+    <em>def hello(self):</em>        # 親クラスのhello()メソッドをオーバーライド
+        print "HELLO"
+
+a = MyClass2()
+a.hello()                   #=&gt; HELLO
+</pre>
+</div>
+
+<h4 id="super">親クラス(super())</h4>
+<div class=i>
+<p><b>super()</b> は <b>親クラス</b> を参照します。第一引数にはクラス、第二引数にはインスタンスを指定します。下記の例では、サブクラスのコンストラクタの中で、親クラスのコンストラクタを呼び出しています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass1(object):
+    def __init__(self):
+       self.val1 = 123
+
+class MyClass2(MyClass1):
+    def __init__(self):
+        <em>super(MyClass2, self).__init__()</em>
+        self.val2 = 456
+
+a = MyClass2()
+print a.val1                #=&gt; 123
+print a.val2                #=&gt; 456
+</pre>
+</div>
+
+<h4 id="multiple">多重継承</h4>
+<div class=i>
+<p>Python では多重継承がサポートされています。下記では、MyClassA, MyClassB 両方を継承する MyClassC を定義しています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClassA:
+    def funcA(self):
+        print "MyClassA:funcA"
+
+class MyClassB:
+    def funcB(self):
+        print "MyClassB:funcB"
+
+<em>class MyClassC(MyClassA, MyClassB):</em>
+    pass
+
+a = MyClassC()
+a.funcA()                    # MyClassA のメソッドも
+a.funcB()                    # MyClassB のメソッドも使用できる
+</pre>
+</div>
+
+<h4 id="classtree">クラス階層</h4>
+<div class=i>
+<p>Python のクラスはすべて、object をルートとするクラス階層を構成しています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+object
+ +- int
+ |   +- bool
+ +- long
+ +- float
+ +- complex
+ +- basestring
+ |   +- str
+ |   +- unicode
+ +- list
+ +- tuple
+ +- dict
+ +- file
+ +- BaseException
+     +- SystemExit
+     +- KeyboardInterrupt
+     +- GeneratorExit
+     +- Exception
+         +- StopIteration
+         +- StandardError
+         |   +- BufferError
+         |   +- ArithmeticError
+         |   |   +- FloatingPointError
+         |   |   +- OverflowError
+         |   |   +- ZeroDivisionError
+         |   +- AssertionError
+         |   +- AttributeError
+         |   +- EnvironmentError
+         |   |   +- IOError
+         |   |   +- OSError
+         |   |       +- WindowsError (Windows)
+         |   |       +- VMSError (VMS)
+         |   +- EOFError
+         |   +- ImportError
+         |   +- LookupError
+         |   |   +- IndexError
+         |   |   +- KeyError
+         |   +- MemoryError
+         |   +- NameError
+         |   |   +- UnboundLocalError
+         |   +- ReferenceError
+         |   +- RuntimeError
+         |   |   +- NotImplementedError
+         |   +- SyntaxError
+         |   |   +- IndentationError
+         |   |       +- TabError
+         |   +- SystemError
+         |   +- TypeError
+         |   +- ValueError
+         |       +- UnicodeError
+         |           +- UnicodeDecodeError
+         |           +- UnicodeEncodeError
+         |           +- UnicodeTranslateError
+         +- Warning
+             +- DeprecationWarning
+             +- PendingDeprecationWarning
+             +- RuntimeWarning
+             +- SyntaxWarning
+             +- UserWarning
+             +- FutureWarning
+             +- ImportWarning
+             +- UnicodeWarning
+             +- BytesWarning
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2014 杜甫々</div>
+<div>初版：2014年12月30日、最終更新：2014年12月30日</div>
+<div>http://www.tohoho-web.com/python/class.html</div>
+</body>
+</html>
+

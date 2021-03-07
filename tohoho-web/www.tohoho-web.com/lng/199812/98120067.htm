@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>再開した親にデータを送りたい</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>再開した親にデータを送りたい</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120066.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120066.htm">[前に]</a>
+<a href="98120068.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120068.htm">[次に]</a>
+<hr>
+<span class=name>omi</span>
+<span class=email><a href="mailto:omi@07.alphatec.or.jp">[E-Mail]</a></span>
+<span class=time>1998/12/10(木) 23:23:05</span><br>
+親のフォームの値を見ている子ウィンドウが、<br>
+親が立ち上げ直されると、エラーしてしまいます。<br>
+NN4では、エラーしません。<br>
+子が親を見るとき、相対的な opner から、 絶対的な "menu" で<br>
+オブジェクト指定できればいいのかもしれませんが、その方法が不明です。<br>
+親の生死が判るだけでもいいんですが。<br>
+以下を実行して、<br>
+親を一旦閉じて再開しても、子がエラーしなければ良いのですが、。<br>
+みなさまのお知恵をお貸し下さい。&lt;(_ _)&gt;<br>
+<br>
+&lt;HTML&gt;&lt;BODY&gt;親のい居るフレーム名は"menu"です&lt;BR&gt;<br>
+&lt;FORM name='Fparent'&gt;<br>
+親 &lt;INPUT name='A1' type=button size=10 value='　　　　　　' onClick="w.close()"&gt;<br>
+&lt;/FORM&gt;<br>
+&lt;SCRIPT&gt;<br>
+w = window.open('','dmyA','');<br>
+w.document.write("&lt;HTML&gt;&lt;BODY&gt;&lt;FORM name='Fchild'&gt;");<br>
+w.document.write("子 &lt;INPUT name='B1' type=text&gt;&lt;/FORM&gt;\n&lt;SCRIPT&gt;\n");<br>
+w.document.write("setTimeout(\"window.opener.document.Fparent.A1.value =' Good bye '; document.Fchild.B1.value =' Good bye '\", 2000); ");<br>
+w.document.write("&lt;\/SCRIPT&gt;&lt;/BODY&gt;&lt;/HTML&gt;");<br>
+w.document.close();<br>
+&lt;/SCRIPT&gt;<br>
+&lt;/BODY&gt;&lt;/HTML&gt;<br>
+<hr>
+<span class=name>mura</span>
+<span class=email><a href="mailto:mura@cools.com">[E-Mail]</a></span>
+<span class=time>1998/12/11(金) 07:22:31</span><br>
+うーん、リロードされると子供はopenerを失うわけですね。メモメモ…。<br>
+<br>
+親と子に変数を用意して値をtrueにし、それぞれのonUnloadでfalseに<br>
+するっていうのはどうでしょう?<br>
+[親]<br>
+childalive=true; // ←これをw.document.open()の前あたりに持っていく<br>
+&lt;BODY onUnload="if(childalive) w.parentalive=false;"&gt;<br>
+<br>
+あともちろん&lt;INPUT&gt;でw.close()する時にいっしょにchildalive=falseをやって下さい。<br>
+childalive=falseしてからw.closeする方がリスクが少ないですね。(実際は変わらないかもしれませんが)<br>
+<br>
+[子]<br>
+parentalive=true; // ←これを親のw.document.write()の中で書く<br>
+&lt;BODY onUnload="if(parentalive) window.opener.childalive=false;"&gt;<br>
+<br>
+setTimeoutの前に「if(parentalive)」を一発かましてやって下さい。<br>
+<br>
+ちょっと考えただけですので、もっといい方法がある(あるいは上記方法だとバグがある)と思います。<br>
+もーっと簡単に、親のBODY onUnloadに「w.close();」と書くのはだめなんでしょうか?<br>
+<hr>
+<span class=name>omi</span>
+<span class=time>1998/12/11(金) 21:31:30</span><br>
+mura さん、ありがとうございます。<br>
+<br>
+双方がフラグを持つのは、いいアイデアですね。メモメモ…。<br>
+でも、アルゴリズムが複雑ですねー。完成には、もう一段 if文が必要な気がします。<br>
+とりあえず、親に &lt;BODY onUnload="if (childalive) w.close();" を組んでみます。<br>
+タイミングに因って、close しなかったり、windows98 のシステムエラーが発生します。<br>
+w = window.open('','dmyA','dependent=yes');が有効に働けば問題ないんですが、。<br>
+<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120066.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120066.htm">[前に]</a>
+<a href="98120068.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120068.htm">[次に]</a>
+</body>
+</html>

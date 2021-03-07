@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HTTP入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>HTTP入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+HTTP入門
+
+<h4 id="contents">目次</h4>
+<ul>
+<li><a href="#whatis">HTTPとは？</a>
+<li><a href="#sample">HTTPのサンプル</a>
+<li><a href="#message">メッセージ構文</a>
+<li><a href="#request">リクエスト行</a>
+<li><a href="#response">レスポンス行</a>
+<li><a href="#methods">メソッド</a>
+<li><a href="#status">ステータス番号</a>
+<li><a href="#headers">ヘッダ</a>
+<li><a href="#virtualHost">仮想ホスト</a>
+<li><a href="#persistent">持続的接続</a>
+<li><a href="#chunk">チャンク</a>
+<li><a href="#basic">BASIC認証</a>
+<li><a href="#refdoc">参考文献</a>
+</ul>
+
+<h4 id="whatis">HTTPとは？</h4>
+<div class=i>
+<p>HTTP（HyperText Transfer Protocol）は、Web のサーバと、クライアント（ブラウザ）の間で、ウェブページを送受信するためのプロトコルです。基本的にはテキストメッセージを交換することにより、実現されています。</p>
+</div>
+
+<h4 id="sample">HTTPのサンプル</h4>
+<div class=i>
+<p>ブラウザで Webページを開く際、ブラウザはサーバに下記のような要求メッセージを送信します。</p>
+<div class="tab">HTTP</div>
+<pre class=c2>
+GET / HTTP/1.1
+Accept: image/gif, image/jpeg, */*
+Accept-Language: ja
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (Compatible; MSIE 6.0; Windows NT 5.1;)
+Host: www.xxx.zzz
+Connection: Keep-Alive
+
+</pre>
+<p>これに対してサーバは下記のような応答メッセージを返します。</p>
+<div class="tab">HTTP</div>
+<pre class=c2>
+HTTP/1.1 200 OK
+Date: Sun, 11 Jan 2004 16:06:23 GMT
+Server: Apache/1.3.22 (Unix) (Red-Hat/Linux)
+Last-Modified: Sun, 07 Dec 2003 12:34:18 GMT
+ETag: "1dba6-131b-3fd31e4a"
+Accept-Ranges: bytes
+Content-Length: 4891
+Keep-Alive: timeout=15, max=100
+Connection: Keep-Alive
+Content-Type: text/html
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  :
+&lt;/html&gt;
+</pre>
+</div>
+
+<h4 id="message">メッセージ構文</h4>
+<div class=i>
+<p>要求メッセージは、次の構文から構成されます。</p>
+<div class="tab">HTTP</div>
+<div class=c2>
+<pre class=c style="margin:0 0 4px 0">
+GET / HTTP/1.1   <span class="gray">リクエスト行</span>
+</pre>
+<pre class=c style="margin:0 0 4px 0">
+Accept: image/gif, image/jpeg, */*     <span class="gray">ヘッダ</span>
+Accept-Language: ja
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (Compatible; MSIE 6.0; Windows NT 5.1;)
+Host: www.xxx.zzz
+Connection: Keep-Alive
+</pre>
+<pre class=c style="margin:0 0 4px 0">
+<span class="gray">空行</span>
+</pre>
+<pre class=c style="margin:0 0 4px 0">
+<span class="gray">メッセージボディ（POSTメソッドなどで使用）</span>
+
+
+</pre>
+</div>
+<p>応答メッセージは、次の構文から構成されます。</p>
+<div class="tab">HTTP</div>
+<div class=c2>
+<pre class=c style="margin:0 0 4px 0">
+HTTP/1.1 200 OK    <span class="gray">レスポンス行</span>
+</pre>
+<pre class=c style="margin:0 0 4px 0">
+Date: Sun, 11 Jan 2004 16:06:23 GMT     <span class="gray">ヘッダ</span>
+Server: Apache/1.3.22 (Unix) (Red-Hat/Linux)
+Last-Modified: Sun, 07 Dec 2003 12:34:18 GMT
+ETag: "1dba6-131b-3fd31e4a"
+Accept-Ranges: bytes
+Content-Length: 4891
+Keep-Alive: timeout=15, max=100
+Connection: Keep-Alive
+Content-Type: text/html
+</pre>
+<pre class=c style="margin:0 0 4px 0">
+<span class="gray">空行</span>
+</pre>
+<pre class=c style="margin:0 0 4px 0">
+&lt;!DOCTYPE html&gt;        <span class="gray">メッセージボディ</span>
+&lt;html&gt;
+  :
+&lt;/html&gt;
+</pre>
+</div>
+<p>改行コードは Windows 形式の CR LF（"\r\n"）です。1行目に <a href="#request">リクエスト行</a> または <a href="#response">レスポンス行</a> があり、次に <a href="#headers">ヘッダ</a> が数行あり、次に空行が1行あり、次にメッセージボディが複数行あります。</p>
+</div>
+
+<h4 id="request">リクエスト行</h4>
+<div class=i>
+<p>リクエスト行は下記の書式で表します。</p>
+<div class="tab">リクエスト行</div>
+<pre class=c2>
+<a href="#methods">メソッド</a> パス名 HTTP/バージョン
+</pre>
+<p>パス名は通常、/aaa/bbb/ccc.html のような、スラッシュで始まるパス名や、http:// などで始まる URL が指定されます。バージョンは現在は 1.1 が主流です。</p>
+</div>
+
+<h4 id="response">レスポンス行</h4>
+<div class=i>
+<p>レスポンス行は下記の書式で表します。</p>
+<div class="tab">レスポンス行</div>
+<pre class=c2>
+HTTP/バージョン <a href="#status">ステータス番号</a> 補足メッセージ
+</pre>
+<p>補足メッセージには、OK や Not Found など、ステータス番号の意味や詳細を補足するメッセージが返されます。</p>
+</div>
+
+<h4 id="methods">メソッド</h4>
+<div class=i>
+<p>HTTP/1.0、HTTP/1.1 でサポートされているメソッドを下記に示します。</p>
+<table class="tb1">
+<tr>
+ <th rowspan=2>メソッド</th>
+ <th colspan=2>HTTP</th>
+ <th rowspan=2>説明</th>
+</tr>
+<tr>
+ <th>1.0</th>
+ <th>1.1</th>
+</tr>
+<tr>
+ <td id="GET"><b>GET</b></td>
+ <td>◎</td>
+ <td>◎</td>
+ <td>最も一般的に使用されるメソッドです。ブラウザはサーバに対してページの取得を要求します。</td>
+</tr>
+<tr>
+ <td id="HEAD"><b>HEAD</b></td>
+ <td>◎</td>
+ <td>◎</td>
+ <td>ヘッダのみの情報を要求します。サーバは GET メソッドと HEAD メソッドは必ずサポートしなければなりません。</td>
+</tr>
+<tr>
+ <td id="POST"><b>POST</b></td>
+ <td>○</td>
+ <td>○</td>
+ <td>CGI でよく使用されるメソッドです。method="POST" を指定したフォームに入力したデータをサーバに転送する際に使用されます。</td>
+</tr>
+<tr>
+ <td id="PUT"><b>PUT</b></td>
+ <td>○</td>
+ <td>○</td>
+ <td>ファイルをサーバにアップロードする際に用いられます。</td>
+</tr>
+<tr>
+ <td id="DELETE"><b>DELETE</b></td>
+ <td>○</td>
+ <td>○</td>
+ <td>指定したリソースを削除することをサーバに要求します。</td>
+</tr>
+<tr>
+ <td id="CONNECT"><b>CONNECT</b></td>
+ <td>×</td>
+ <td>○</td>
+ <td>プロキシサーバを経由して SSL 通信する際などに使用します。</td>
+</tr>
+<tr>
+ <td id="OPTIONS"><b>OPTIONS</b></td>
+ <td>×</td>
+ <td>○</td>
+ <td>サーバがサポートしているメソッドやオプションを調べる際に用います。</td>
+</tr>
+<tr>
+ <td id="TRACE"><b>TRACE</b></td>
+ <td>×</td>
+ <td>○</td>
+ <td>HTTP要求がどのプロキシサーバを経由して送信されるかなど、HTTP の動作をトレースする際に用います。このメッセージを受け取った最後のサーバは、要求メッセージに含まれるエンティティ（通常はヘッダ＋メッセージボディ）をそのまま返します。</td>
+</tr>
+<tr>
+ <td id="LINK"><b>LINK</b></td>
+ <td>○</td>
+ <td>×</td>
+ <td>指定した URL とリソースにリンク関係を結びます。HTTP/1.1 では廃止されました。</td>
+</tr>
+<tr>
+ <td id="UNLINK"><b>UNLINK</b></td>
+ <td>○</td>
+ <td>×</td>
+ <td>指定した URL とリソースの間のリンク関係を解除します。HTTP/1.1 では廃止されました。</td>
+</tr>
+</table>
+<div>（◎：必須、○：サポート、×：未サポート）</div>
+<p>Apache では上記の他にも PATCH、PROPFIND、PROPPATCH、MKCOL、COPY、MOVE、LOCK、UNLOCK などのメソッドをサポートしているようです。</p>
+</div>
+
+<h4 id="status">ステータス番号</h4>
+<div class=i>
+<p>応答メッセージにはステータス番号が含まれます。</p>
+<table class="tb1">
+<tr><th>分類</th><th>番号</th><th>メッセージ</th><th>説明</th></tr>
+<tr><td rowspan=2>情報</td><td>100</td><td>Continue</td><td>処理を継続しています。続きのリクエストを送信してください。</td></tr>
+<tr><td>101</td><td>Switching Protocols</td><td>Upgrade ヘッダで指定したプロトコルに変更して再要求してください。</td></tr>
+<tr><td rowspan=7>成功</td><td>200</td><td>OK</td><td>成功しました。</td></tr>
+<tr><td>201</td><td>Created</td><td>Location ヘッダで指定した場所に新しいコンテンツが作成されました。</td></tr>
+<tr><td>202</td><td>Accepted</td><td>要求は受理されました。ただし処理は完了していません。</td></tr>
+<tr><td>203</td><td>Non-Authoritative Information</td><td>応答ヘッダはオリジナルサーバーが返したものとは異なりますが、処理は成功です。</td></tr>
+<tr><td>204</td><td>No Content</td><td>コンテンツはありませんが、処理は成功しました。</td></tr>
+<tr><td>205</td><td>Reset Content</td><td>要求を受理したので、現在のコンテンツ（画面）を破棄してください。。</td></tr>
+<tr><td>206</td><td>Partial Content</td><td>コンテンツを一部のみ返却します。</td></tr>
+<tr><td rowspan=8>転送</td><td>300</td><td>Multiple Choices</td><td>コンテンツ入手方法について複数の選択肢があります。</td></tr>
+<tr><td>301</td><td>Moved Permanently</td><td>Location ヘッダで指定された別の場所に移動しました。</td></tr>
+<tr><td>302</td><td>Found</td><td>Location ヘッダで指定された別の場所に見つかりました。そちらを見てください。</td></tr>
+<tr><td>303</td><td>See Other</td><td>Location ヘッダで指定された他の場所を見てください。</td></tr>
+<tr><td>304</td><td>Not Modified</td><td>更新されていません。If-Modified-Since ヘッダを用いた場合に返却されます。</td></tr>
+<tr><td>305</td><td>Use Proxy</td><td>Location ヘッダで指定したプロキシを使用してください。</td></tr>
+<tr><td>306</td><td>(Unused)</td><td>未使用。</td></tr>
+<tr><td>307</td><td>Temporary Redirect</td><td>別の場所に一時的に移動しています。</td></tr>
+<tr><td rowspan=18>クライアントエラー</td><td>400</td><td>Bad Request</td><td>要求が不正です。</td></tr>
+<tr><td>401</td><td>Unauthorized</td><td>認証されていません。</td></tr>
+<tr><td>402</td><td>Payment Required</td><td>支払いが必要です。</td></tr>
+<tr><td>403</td><td>Forbidden</td><td>アクセスが認められていません。</td></tr>
+<tr><td>404</td><td>Not Found</td><td>見つかりません。</td></tr>
+<tr><td>405</td><td>Method Not Allowed</td><td>指定したメソッドはサポートされていません。</td></tr>
+<tr><td>406</td><td>Not Acceptable</td><td>許可されていません。</td></tr>
+<tr><td>407</td><td>Proxy Authentication Required</td><td>プロキシ認証が必要です。</td></tr>
+<tr><td>408</td><td>Request Timeout</td><td>リクエストがタイムアウトしました。</td></tr>
+<tr><td>409</td><td>Conflict</td><td>リクエストがコンフリクト（衝突・矛盾）しました。</td></tr>
+<tr><td>410</td><td>Gone</td><td>要求されたコンテンツは無くなってしまいました。</td></tr>
+<tr><td>411</td><td>Length Required</td><td>Content-Length ヘッダを付加して要求してください。</td></tr>
+<tr><td>412</td><td>Precondition Failed</td><td>If-... ヘッダで指定された条件に合致しませんでした。</td></tr>
+<tr><td>413</td><td>Request Entity Too Large</td><td>要求されたエンティティが大きすぎます。</td></tr>
+<tr><td>414</td><td>Request-URI Too Long</td><td>要求された URI が長すぎます。</td></tr>
+<tr><td>415</td><td>Unsupported Media Type</td><td>サポートされていないメディアタイプです。</td></tr>
+<tr><td>416</td><td>Requested Range Not Satisfiable</td><td>要求されたレンジが不正です。</td></tr>
+<tr><td>417</td><td>Expectation Failed</td><td>Expect ヘッダで指定された拡張要求は失敗しました。</td></tr>
+<tr><td rowspan=6>サーバーエラー</td><td>500</td><td>Internal Server Error</td><td>サーバーで予期しないエラーが発生しました。</td></tr>
+<tr><td>501</td><td>Not Implemented</td><td>実装されていません。</td></tr>
+<tr><td>502</td><td>Bad Gateway</td><td>ゲートウェイが不正です。</td></tr>
+<tr><td>503</td><td>Service Unavailable</td><td>サービスは利用可能ではありません。</td></tr>
+<tr><td>504</td><td>Gateway Timeout</td><td>ゲートウェイがタイムアウトしました。</td></tr>
+<tr><td>505</td><td>HTTP Version Not Supported</td><td>このHTTPバージョンはサポートされていません。</td></tr>
+</table>
+
+</div>
+
+<h4 id="headers">ヘッダ</h4>
+<div class=i>
+<table class="tb1">
+<tr>
+ <th>カテゴリ</th>
+ <th class="nw">要求</th>
+ <th class="nw">応答</th>
+ <th>ヘッダ</th>
+</tr>
+<tr><td>一般ヘッダ</td><td>○</td><td>○</td><td>
+<a href="#Cache-Control">Cache-Control</a>,
+<a href="#Connection">Connection</a>,
+<a href="#Date">Date</a>,
+<a href="#Pragma">Pragma</a>,
+<a href="#Trailer">Trailer</a>,
+<a href="#Transfer-Encoding">Transfer-Encoding</a>,
+<a href="#Upgrade">Upgrade</a>,
+<a href="#Via">Via</a>,
+<a href="#Warning">Warning</a>
+</td></tr>
+<tr><td class="nowrap">要求ヘッダ</td><td>○</td><td>×</td><td>
+<a href="#Accept">Accept</a>,
+<a href="#Accept-Charset">Accept-Charset</a>,
+<a href="#Accept-Encoding">Accept-Encoding</a>,
+<a href="#Accept-Language">Accept-Language</a>,
+<a href="#Authorization">Authorization</a>,
+<a href="#Expect">Expect</a>,
+<a href="#From">From</a>,
+<a href="#Host">Host</a>,
+<a href="#If-Match">If-Match</a>,
+<a href="#If-Modified-Since">If-Modified-Since</a>,
+<a href="#If-None-Match">If-None-Match</a>,
+<a href="#If-Range">If-Range</a>,
+<a href="#If-Unmodified-Since">If-Unmodified-Since</a>,
+<a href="#Max-Forwards">Max-Forwards</a>,
+<a href="#Proxy-Authorization">Proxy-Authorization</a>,
+<a href="#Range">Range</a>,
+<a href="#Referer">Referer</a>,
+<a href="#TE">TE</a>,
+<a href="#User-Agent">User-Agent</a>
+</td></tr>
+<tr><td class="nowrap">応答ヘッダ</td><td>×</td><td>○</td><td>
+<a href="#Accept-Ranges">Accept-Ranges</a>,
+<a href="#Age">Age</a>,
+<a href="#ETag">ETag</a>,
+<a href="#Location">Location</a>,
+<a href="#Proxy-Authenticate">Proxy-Authenticate</a>,
+<a href="#Retry-After">Retry-After</a>,
+<a href="#Server">Server</a>,
+<a href="#Vary">Vary</a>,
+<a href="#WWW-Authenticate">WWW-Authenticate</a>
+</td></tr>
+<tr><td class="nowrap">要素ヘッダ</td><td>○</td><td>○</td><td>
+<a href="#Allow">Allow</a>,
+<a href="#Content-Encoding">Content-Encoding</a>,
+<a href="#Content-Language">Content-Language</a>,
+<a href="#Content-Length">Content-Length</a>,
+<a href="#Content-Location">Content-Location</a>,
+<a href="#Content-MD5">Content-MD5</a>,
+<a href="#Content-Range">Content-Range</a>,
+<a href="#Content-Type">Content-Type</a>,
+<a href="#Expires">Expires</a>,
+<a href="#Last-Modified">Last-Modified</a>,
+<a href="#extension-header"><i>extension-header</i></a>
+</td></tr>
+</table>
+</div>
+
+<h5 id="Accept">◆ Accept <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>ブラウザが受信可能なデータ形式（MIMEタイプ）をサーバに伝えます。アスタリスク（*）は「すべて」を意味します。下記は、ブラウザが GIF や JPEG、その他どんな形式のデータでも受信可能であることを示します。（→ <a href="#Content-Type">Content-Type</a>）</p>
+<pre class=c>
+<em>Accept:</em> image/gif, image/jpeg, */*
+</pre>
+</div>
+
+<h5 id="Accept-Charset">◆ Accept-Charset <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>ブラウザが受信可能な文字セットをサーバに伝えます。下記は、ブラウザが iso-8859-5 と Shift_JIS のみを受信可能であることを示します。（→ <a href="#Content-Type">Content-Type</a>）</p>
+<pre class=c>
+<em>Accept-Charset:</em> iso-8859-5, Shift_JIS
+</pre>
+</div>
+
+<h5 id="Accept-Encoding">◆ Accept-Encoding <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>ブラウザが受信可能なエンコード方式をサーバに伝えます。例えば、ブラウザが gzip 形式をサポートしていることをサーバに伝え、サーバはメッセージボディを自動的に gzip 圧縮してブラウザに送り、ブラウザ側がこれを自動的に解凍して画面に表示します。こうした機構により、通信負荷を低減することが可能です。（→ <a href="#Content-Encoding">Content-Encoding</a>）</p>
+<pre class=c>
+<em>Accept-Encoding:</em> gzip, deflate
+</pre>
+</div>
+
+<h5 id="Accept-Language">◆ Accept-Language <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>ブラウザが受信可能な言語をサーバに伝えます。下記は、ブラウザが日本語のみを受信可能であることを意味します。（→ <a href="#Content-Language">Content-Language</a>）</p>
+<pre class=c>
+<em>Accept-Language:</em> ja
+</pre>
+</div>
+
+<h5 id="Accept-Ranges">◆ Accept-Ranges <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>Range 要求において使用可能な単位をクライアントに伝えます。現在定義されているのは bytes のみです。（→ <a href="#Range">Range</a>、<a href="#Content-Range">Content-Range</a>）</p>
+<pre class=c>
+<em>Accept-Ranges:</em> bytes
+</pre>
+</div>
+
+<h5 id="Age">◆ Age <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>エンティティが生成されてからの予測経過時間（秒）を示します。下記の例では、このエンティティがおそらく、プロキシサーバで 30秒間程度保持されたもの、つまり、30秒程度古いデータであることを示します。</p>
+<pre class=c>
+<em>Age:</em> 30
+</pre>
+</div>
+
+<h5 id="Allow">◆ Allow <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>要求URL で示すリソースに対して使用可能なメソッドの一覧を示します。下記の例では、このリソースに対して GET、HEAD、PUT メソッドを使用可能であることを示します。</p>
+<pre class=c>
+<em>Allow:</em> GET, HEAD, PUT
+</pre>
+</div>
+
+<h5 id="Authorization">◆ Authorization <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>認証が必要なリソースに対して認証情報を伝えます。例えば、BASIC認証の場合は、Basic の文字と、ユーザ名とパスワードをコロン（:）で連結したものを BASE64 形式にエンコードしたものを転送します。（→ <a href="#WWW-Authenticate">WWW-Authenticate</a>）</p>
+<pre class=c>
+<em>Authorization:</em> Basic dGFuYWthOmhpbWl0c3U=
+</pre>
+</div>
+
+<h5 id="Cache-Control">◆ Cache-Control <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>キャッシュに関する指示を表します。下記の例では、プロキシサーバやクライアントがこのリソースをキャッシュしてはならないことを示しています。HTTP/1.0 では Pragma: no-cache が使用されます。（→ <a href="#Pragma">Pragma</a>）</p>
+<pre class=c>
+<em>Cache-Control:</em> no-cache
+</pre>
+</div>
+
+<h5 id="Connection">◆ Connection <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>HTTP/1.1 でサポートされた持続接続機能をブラウザがサポートしている場合、その旨を相手に伝えます。持続接続を用いることにより、1回の接続で複数のリクエスト/レスポンスを発行することが可能になります。</p>
+<pre class=c>
+<em>Connection:</em> Keep-Alive
+</pre>
+<p>持続接続を完了する場合、サーバは close を返却します。</p>
+<pre class=c>
+<em>Connection:</em> close
+</pre>
+<p>その他にも、サーバ・プロキシ間、プロキシ・クライアント間のような直接接続にのみ有効なヘッダの一覧を示すために用いられます。プロキシサーバはこのヘッダで指定されたヘッダ情報を削除して、転送しなくてはなりません。</p>
+<pre class=c>
+<em>Connection:</em> Upgrade
+</pre>
+</div>
+
+<h5 id="Content-Encoding">◆ Content-Encoding <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>コンテンツのエンコード方式を示します。下記は、コンテンツが gzip 形式で圧縮されていることを示します。（→ <a href="#Accept-Encoding">Accept-Encoding</a>）</p>
+<pre class=c>
+<em>Content-Encoding:</em> gzip
+</pre>
+</div>
+
+<h5 id="Content-Language">◆ Content-Language <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>コンテンツの言語を en（英語）、ja（日本語）などで示します。</p>
+<pre class=c>
+<em>Content-Language:</em> ja
+</pre>
+</div>
+
+<h5 id="Content-Length">◆ Content-Length <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>コンテンツ（＝メッセージボディ）の長さをバイト単位で示します。ヘッダとメッセージボディの間の改行のバイト数は除きます。</p>
+<pre class=c>
+<em>Content-Length:</em> 4891
+</pre>
+</div>
+
+<h5 id="Content-Location">◆ Content-Location <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>コンテンツが別の URL でもアクセス可能なとき、そのエンティティの URL を絶対URL または相対URL で示します。（→ <a href="#Location">Location</a>）</p>
+<pre class=c>
+<em>Location:</em> http://xxx.yyy.zzz/index.htm
+</pre>
+</div>
+
+<h5 id="Content-MD5">◆ Content-MD5 <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>コンテンツが通信途中で改変されていないかをチェックするために、コンテンツに関するチェックデータ（128ビットのMD5ダイジェストをBASE64エンコードしたもの）を示します。</p>
+<pre class=c>
+<em>Content-MD5:</em> GitH4qFa4GasgWxJs8ha5Q==
+</pre>
+</div>
+
+<h5 id="Content-Range">◆ Content-Range <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>相手に送信するコンテンツの範囲を示します。下記の例では、コンテンツ全体は 12345バイトあり、その中の 0バイト目から 999バイト目の部分を送信していることを示します。（→ <a href="#Range">Range</a>、<a href="#Accept-Ranges">Accept-Ranges</a>）</p>
+<pre class=c>
+<em>Content-Range:</em> bytes 0-999/12345
+</pre>
+</div>
+
+<h5 id="Content-Type">◆ Content-Type <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>コンテンツの種別を MIMEタイプで示します。下記は、コンテンツの内容がテキスト（HTML）形式であることを示します。</p>
+<pre class=c>
+<em>Content-Type:</em> text/html
+</pre>
+<p>加えて、文字コード（Shift_JIS、euc-jp、ISO-2022-JP、UTF-8 など）を示すこともできます。</p>
+<pre class=c>
+<em>Content-Type:</em> text/html; charset=Shift_JIS
+</pre>
+</div>
+
+<h5 id="Date">◆ Date <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>応答を返す時刻を示します。曜日（Sun,）は省略可能です。日付は 1 でも 01 でも構いません。年は 2桁でも 4桁でも構いませんが 4桁が推奨されています。秒（:23）は省略可能です。時間帯は GMT（グリニッジ標準時）を用いることが多いようです。</p>
+<pre class=c>
+<em>Date:</em> Sun, 04 Jan 2004 16:06:23 GMT
+</pre>
+</div>
+
+<h5 id="ETag">◆ ETag <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>エンティティとそのバージョンを一意に識別する識別子を示します。識別子は、ファイル識別子やサイズ、更新時刻などの情報から計算されます。（→ <a href="#If-Match">If-Match</a>、<a href="#If-None-Match">If-None-Match</a>、<a href="#If-Range">If-Range</a>）</p>
+<pre class=c>
+<em>ETag:</em> "1dba6-131b-3fd31e4a"
+</pre>
+</div>
+
+<h5 id="Expect">◆ Expect <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>いろいろな目的で使用されます。</p>
+<pre class=c>
+<em>Expect:</em> 100-continue
+</pre>
+</div>
+
+<h5 id="Expires">◆ Expires <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>エンティティの有効期限を示します。有効期限を過ぎたエンティティはキャッシュから削除されます。</p>
+<pre class=c>
+<em>Expires:</em> Thu, 01 Dec 1994 16:00:00 GMT
+</pre>
+</div>
+
+<h5 id="From">◆ From <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>この要求を行った人のメールアドレスを指定します。検索エンジンがロボットで探索する場合に、探索に関する問い合わせ先のメールアドレスを通知する際などに利用されます。</p>
+<pre class=c>
+<em>From:</em> aaa@xxx.yyy.zzz
+</pre>
+</div>
+
+<h5 id="Host">◆ Host <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>HTTP/1.1 で唯一の必須ヘッダです。ブラウザからサーバに対して、サーバ名を送信します。サーバが名前ベースの仮想ホストをサポートしている場合、この名前を手がかりにどのサーバとして振舞うか決定されます。例えば、http://aaa.sample.dom/ と http://bbb.sample.dom/ は実は同じサーバ（IPアドレス：61.206.47.206）ですが、Host ヘッダでホスト名を指定することにより、仮想的に 2つのサーバとして振舞うことが可能になります。</p>
+<pre class=c>
+<em>Host:</em> aaa.sample.dom
+</pre>
+</div>
+
+<h5 id="If-Match">◆ If-Match <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>指定した ETag にマッチする場合にのみ、メソッドを実行することをサーバに依頼します。（→ <a href="#ETag">ETag</a>、<a href="#If-None-Match">If-None-Match</a>）</p>
+<pre class=c>
+<em>If-Match:</em> "1dba6-131b-3fd31e4a"
+</pre>
+</div>
+
+<h5 id="If-Modified-Since">◆ If-Modified-Since <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>クライアント側がすでにキャッシュを持っている場合、キャッシュの日付をサーバに通知し、「この日付よりも新しいものがあれば転送してくれ」と要求します。もし、更新されていなければサーバは 304（not modified）ステータスを返し、ブラウザはキャッシュしていたデータを表示します。（→ <a href="#If-Unmodified-Since">If-Unmodified-Since</a>）</p>
+<pre class=c>
+<em>If-Modified-Since:</em> Sat, 29 Oct 1994 19:43:31 GMT
+</pre>
+</div>
+
+<h5 id="If-None-Match">◆ If-None-Match <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>指定した ETag にマッチしない場合にのみ、メソッドを実行することをサーバに依頼します。（→ <a href="#ETag">ETag</a>、<a href="#If-Match">If-Match</a>）</p>
+<pre class=c>
+<em>If-None-Match:</em> "1dba6-131b-3fd31e4a"
+</pre>
+</div>
+
+<h5 id="If-Range">◆ If-Range <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>クライアントが、エンティティの一部をすでに保持している場合に、「もし、この ETag で指定したエンティティの一部が最新のものであるならば、残りのすべてを、さもなくば全体を送信してくれ」の意味で要求します。Range ヘッダと組み合わせて使用します。（→ <a href="#ETag">ETag</a>、<a href="#Range">Range</a>）</p>
+<pre class=c>
+Range: bytes=0-1023
+<em>If-Range:</em> "1dba6-131b-3fd31e4a"
+</pre>
+</div>
+
+<h5 id="If-Unmodified-Since">◆ If-Unmodified-Since <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>エンティティが、指定した日付よりもあとに更新されていなければ、要求を処理します。更新されている場合、サーバは 412（Precondition Failed）ステータスを返します。（→ <a href="#If-Modified-Since">If-Modified-Since</a>）</p>
+<pre class=c>
+<em>If-Modified-Since:</em> Sat, 29 Oct 1994 19:43:31 GMT
+</pre>
+</div>
+
+<h5 id="Last-Modified">◆ Last-Modified <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>エンティティが最後に更新された時刻を示します。（→ <a href="#If-Modified-Since">If-Modified-Since</a>）</p>
+<pre class=c>
+<em>Last-Modified:</em> Sun, 07 Dec 2003 12:34:18 GMT
+</pre>
+</div>
+
+<h5 id="Location">◆ Location <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>エンティティの場所が移動した場合など、ブラウザが要求した URL とは別の URL にジャンプさせたい場合に使用します。URL には http:// や https:// で始まる絶対URL を指定します。（→ <a href="#Content-Location">Content-Location</a>）</p>
+<pre class=c>
+<em>Location:</em> http://www.yyy.zzz/aaa.html
+</pre>
+</div>
+
+<h5 id="Max-Forwards">◆ Max-Forwards <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>OPTIONS や TRACE メソッドにおいて、プロキシサーバの最大ホップ数を指定します。プロキシサーバはこの値をひとつ減算して、次のプロキシサーバに転送します。この値が 0 になると、プロキシサーバは最後の受信者として応答を返します。</p>
+<pre class=c>
+<em>Max-Forwards:</em> 16
+</pre>
+</div>
+
+<h5 id="Pragma">◆ Pragma <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>様々な目的で使用されます。例えば、下記はキャッシュを禁止する旨をプロキシサーバやクライアントに通知します。（→ <a href="#Cache-Control">Cache-Control</a>）</p>
+<pre class=c>
+<em>Pragma:</em> no-cache
+</pre>
+</div>
+
+<h5 id="Proxy-Authenticate">◆ Proxy-Authenticate <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>プロキシサーバとクライアントの間で認証が必要であることを示します。（→ <a href="#Proxy-Authorization">Proxy-Authorization</a>、<a href="#WWW-Authenticate">WWW-Authenticate</a>）</p>
+<pre class=c>
+<em>Proxy-Authenticate:</em> Basic realm="XXXXXX"
+</pre>
+</div>
+
+<h5 id="Proxy-Authorization">◆ Proxy-Authorization <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>プロキシサーバとクライアント間の認証情報を渡します。（→ <a href="#Proxy-Authenticate">Proxy-Authenticate</a>、<a href="#Authorization">Authorization</a>）</p>
+<pre class=c>
+<em>Proxy-Authorization:</em> Basic dGFuYWthOmhpbWl0c3U=
+</pre>
+</div>
+
+<h5 id="Range">◆ Range <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>クライアントからサーバに対して、エンティティの一部のみを要求します。下記の例では、ページの最初の 1000バイト（0バイト目から 999バイト目）のみを要求しています。（→ <a href="#Accept-Ranges">Accept-Ranges</a>、<a href="#Content-Range">Content-Range</a>、<a href="#If-Range">If-Range</a>）</p>
+<pre class=c>
+<em>Range:</em> bytes=0-999
+</pre>
+</div>
+
+<h5 id="Referer">◆ Referer <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>この要求の元となったページの URL（通常はリンク元のURL）を通知します。</p>
+<pre class=c>
+<em>Referer:</em> http://xxx.yyy.zzz/index.html
+</pre>
+</div>
+
+<h5 id="Retry-After">◆ Retry-After <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>数秒後に再度要求してくれという意味で、503（Service Unavailable）や 3xx（Redirection）ステータスとともに返されます。下記は、後120秒後に再要求してくれの意味を持ちます。Date: 形式の絶対時刻が返されることもあります。</p>
+<pre class=c>
+<em>Retry-After:</em> 120
+</pre>
+</div>
+
+<h5 id="Server">◆ Server <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>サーバからブラウザに対してサーバ情報を返します。フォーマットは特に規定はありません。</p>
+<pre class=c>
+<em>Server:</em> Apache/1.3.22 (Unix) (Red-Hat/Linux)
+</pre>
+</div>
+
+<h5 id="TE">◆ TE <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>ブラウザが処理可能な拡張転送コーディング方式（chunked など）や、チャンク転送の際の trailer フィールドを解釈可能かどうかをサーバに伝えます。</p>
+<pre class=c>
+<em>TE:</em> trailers
+</pre>
+</div>
+
+<h5 id="Trailer">◆ Trailer <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>ヘッダ情報をコンテンツの先頭ではなく、チャンク形式で分割送信されたコンテンツの後ろに付加する場合、そこに付加されたヘッダの一覧を示します。これは、CGI がデータ送信した後に Content-Length ヘッダを付加したい場合などに役立ちます。</p>
+<pre class=c>
+<em>Trailer:</em> Content-Length
+</pre>
+</div>
+
+<h5 id="Transfer-Encoding">◆ Transfer-Encoding <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>転送に使用されるエンコード形式を示します。</p>
+<pre class=c>
+<em>Transfer-Encoding:</em> chunked
+</pre>
+</div>
+
+<h5 id="Upgrade">◆ Upgrade <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>別のプロトコルを用いることを推奨する旨を相手に伝えます。クライアント・プロキシ間のような直接接続にのみ有効です。</p>
+<pre class=c>
+<em>Upgrade:</em> HTTP/2.0, SHTTP/1.3
+</pre>
+</div>
+
+<h5 id="User-Agent">◆ User-Agent <span class="gray">（要求）</span></h5>
+<div class=i>
+<p>ブラウザ（＝ユーザエージェント）の情報をサーバに伝えます。フォーマットは特に規定はありません。ブラウザの種別やバージョン、プラットフォームなどの情報が含まれます。下記は、Mozilla/4.0（＝Netscape Navigator 4.0）と互換性のある Microsoft の IE 6.0 で、OS は Windows NT 5.1（＝Windows XP）であることを示しています。（→ <a href="#Server">Server</a>）</p>
+<pre class=c>
+<em>User-Agent:</em> Mozilla/4.0 (Compatible; MSIE 6.0; Windows NT 5.1;)
+</pre>
+</div>
+
+<h5 id="Vary">◆ Vary <span class="gray">（応答）</span></h5>
+<div class=i>
+<p><a href="#Accept">Accept</a>、<a href="#Accept-Charset">Accept-Charset</a>、<a href="#Accept-Language">Accept-Language</a> など、サーバ主導型ネゴシエーションで使用されたヘッダ情報を示します。これは、キャッシュの有効性を判断する際に役立ちます。例えば、下記の例には Accept-Language が含まれています。これは、ブラウザが Accept-Language: ja を送信したためにサーバーが日本語のコンテンツを返却している可能性があり、Accept-Language: en で要求すると別の別のコンテンツが返却される可能性があることを示します。</p>
+<pre class=c>
+<em>Vary:</em> Accept-Charset, Accept-Language
+</pre>
+</div>
+
+<h5 id="Via">◆ Via <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>メッセージの転送経路を示します。下記の例では、メッセージが aaa → bbb → ccc というプロキシを経路して転送されたことを示します。1.1 はプロトコルバージョンです。</p>
+<pre class=c>
+<em>Via:</em> 1.1 aaa, 1.1 bbb, 1.1 ccc
+</pre>
+</div>
+
+<h5 id="Warning">◆ Warning <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>ステータス行に付加されるワーニングコードとメッセージを伝えます。</p>
+<pre class=c>
+<em>Warning:</em> 110 xxxsv "Response is stale"
+</pre>
+</div>
+
+<h5 id="WWW-Authenticate">◆ WWW-Authenticate <span class="gray">（応答）</span></h5>
+<div class=i>
+<p>認証が必要であることを示します。下記の例では、このリソースが BASIC認証という、HTTP で最も基本的な方式で保護されていることを示します。XXXXXX の部分にはこの認証に関する説明文が入ります。（→ <a href="#Authorization">Authorization</a>）</p>
+<pre class=c>
+<em>WWW-Authenticate:</em> Basic realm="XXXXXX"
+</pre>
+</div>
+
+<h5 id="extension-header">◆ extension-header <span class="gray">（要求/応答）</span></h5>
+<div class=i>
+<p>上記の他にも、サーバの実装により様々なヘッダが実装されています。</p>
+</div>
+
+<h4 id="virtualHost">仮想ホスト</h4>
+<div class=i>
+<p>HTTP/1.1 では仮想ホストがサポートされました。HTTP/1.1 のクライアントは Host ヘッダでホスト名を送信しなくてはなりません。サーバーは、仮想ホストに対応したコンテンツを応答します。これにより、1台のサーバーで複数のWebサイトをサポートすることが可能になりました。</p>
+<div class="tab">要求</div>
+<pre class=c2>
+GET / HTTP/1.1
+<em>Host: www.tohoho-web.com</em>
+
+</pre>
+</div>
+
+<h4 id="persistent">持続的接続</h4>
+<div class=i>
+<p>HTTP/1.1 では持続的接続が標準となりました。クライアントは下記のように 1回の TCP接続で複数のコンテンツを要求することにより、通信パフォーマンスを向上させることができます。持続接続を継続する場合には通常 Connection ヘッダで Keep-Alive を、最後の要求には close を指定します。</p>
+<div class="tab">要求</div>
+<pre class=c2>
+GET /aaa.html HTTP/1.1
+Host: www.tohoho-web.com
+<em>Connection: Keep-Alive</em>
+
+GET /bbb.html HTTP/1.1
+Host: www.tohoho-web.com
+<em>Connection: close</em>
+</pre>
+<p>これに対し、サーバーは Content-Length やチャンク（後述）などで複数のコンテンツの境界が明示されたコンテンツを返却します。timeout には次の要求が来ない場合にタイムアウトを発生させる時間（秒数）、max にはこの持続接続で要求可能な要求の残り回数が指定されます。</p>
+<div class="tab">応答</div>
+<pre class=c2>
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 1234
+<em>Keep-Alive: timeout=5, max=100</em>
+<em>Connection: Keep-Alive</em>
+
+（aaa.html のコンテンツ）
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 1234
+<em>Keep-Alive: timeout=5, max=99</em>
+<em>Connection: close</em>
+
+（bbb.html のコンテンツ）
+</pre>
+</div>
+
+<h4 id="chunk">チャンク</h4>
+<div class=i>
+<p>CGI の結果返却でコンテンツ生成時にはまだコンテンツの長さが分からない場合など、サーバーはチャンク形式のデータを返却することができます。チャンク形式のデータでは、継続するデータのバイト数が 16進数で示されます。0 はデータの終わりを意味します。</p>
+<div class="tab">応答</div>
+<pre class=c2>
+HTTP/1.1 200 OK
+Content-Type: text/html
+<em>Transfer-Encoding: chunked</em>
+
+<em>1234</em>
+（16進数で1234バイトのデータ）
+<em>9ab</em>
+（16進数で9abバイトのデータ）
+<em>0</em>
+（コンテンツの終了）
+</pre>
+</div>
+
+<h4 id="basic">BASIC認証</h4>
+<div class=i>
+<p>HTTP のベーシック認証を用いた場合、サーバーは、クライアントからの要求に対して WWW-Authenticate ヘッダを返します。</p>
+<div class="tab">応答</div>
+<pre class=c2>
+HTTP/1.1 200 OK
+<em>WWW-Authenticate: Basic realm="HIMITSU No PAGE"</em>
+
+</pre>
+<p>クライアントは、WWW-Authenticate ヘッダを受け取るとログイン名とパスワードの入力を促すダイアログを表示し、ユーザーが入力したログイン名とパスワードをエンコードして再度コンテンツの取得を試みます。</p>
+<div class="tab">要求</div>
+<pre class=c2>
+HTTP/1.1 200 OK
+Host: www.tohoho-web.com
+<em>Authorization: Basic abcdEFGhiJklM==</em>
+
+</pre>
+</div>
+
+<h4 id="refdoc">参考文献</h4>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://www.ietf.org/rfc/rfc1945.txt  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.ietf.org/rfc/rfc1945.txt'" tppabs="http://www.ietf.org/rfc/rfc1945.txt">RFC1945（HTTP/1.0）</a> [英]
+<li><a target="_top" href="javascript:if(confirm('http://www.ietf.org/rfc/rfc2616.txt  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.ietf.org/rfc/rfc2616.txt'" tppabs="http://www.ietf.org/rfc/rfc2616.txt">RFC2616（HTTP/1.1）</a> [英]
+<li><a target="_top" href="javascript:if(confirm('http://www.studyinghttp.net/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.studyinghttp.net/'" tppabs="http://www.studyinghttp.net/">Studying HTTP</a> [日]
+</ul>
+
+<hr>
+<div>Copyright (C) 2005 杜甫々</div>
+<div>初版：2005年3月20日、最終更新：2005年4月3日</div>
+<div>http://www.tohoho-web.com/ex/http.htm</div>
+</body>
+</html>

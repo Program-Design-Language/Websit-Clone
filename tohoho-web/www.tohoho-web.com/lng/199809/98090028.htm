@@ -1,0 +1,230 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>最終行と比較してエラー表示をさせるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>最終行と比較してエラー表示をさせるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090027.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090027.htm">[前に]</a>
+<a href="98090029.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090029.htm">[次に]</a>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/10(木) 02:14:54</span><br>
+何度も質問をして、すみません。<br>
+<br>
+open(IN, './fzr.dat');<br>
+while (&lt;IN&gt;) {<br>
+	chop;<br>
+	push(@datas,$_);<br>
+	splice(@datas,99);<br>
+}<br>
+close(IN);<br>
+<br>
+push(@datas,"$min,");<br>
+<br>
+open(OUT, '&gt;./fzr.dat');<br>
+	foreach ( sort @datas ) {　print OUT "$_\n";　}<br>
+close(OUT);<br>
+<br>
+このプログラムに追加するものと考えているのですが<br>
+<br>
+やりたいことは<br>
+「fzr.dat」に１行から１００行までのデータが入っていた場合で<br>
+例えば１から始まって、１００までの数字が入っているとします。<br>
+<br>
+そこへ１０１のデータが入ってくる場合に<br>
+当然１００行までの表示しか許さないので、登録不可のエラーメッセージを<br>
+出したいと考えています。<br>
+<br>
+ようするに、最終行の数値と比較して、１００行内に入らないならエラーと<br>
+したいのです。<br>
+<br>
+自分なりの解釈などで、試したのですが<br>
+fzr.datに登録したデータがそっくり消えてしまったりと、どうもうまく組めません。<br>
+<br>
+上記のプログラムを実行すると<br>
+１０１と入力したものが１００のところに入り<br>
+<br>
+　９９<br>
+１０１<br>
+<br>
+と、このように最終行の数値を入れ替えてしまうのです。<br>
+<br>
+聞いてばかりで、失礼かと思いますが<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/09/10(木) 02:23:33</span><br>
+<font color="#CC8000">&gt; ようするに、最終行の数値と比較して、１００行内に入らないならエラーと</font><br>
+<font color="#CC8000">&gt; したいのです。</font><br>
+<br>
+この方針とプログラムの書き方が全く違うのでよくわからんのですが、<br>
+# どこを見てもエラーで弾こうとしていない。<br>
+<br>
+$#で配列の個数を調べて、それが既に100ならエラーではじくのは<br>
+どうですか。<br>
+<br>
+　@foo=(0,1);<br>
+　print $#foo;<br>
+<br>
+だと 1 が表示されます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/09/10(木) 02:38:50</span><br>
+<font color="#CC8000">&gt; それが既に100なら</font><br>
+<br>
+失礼、99ですね。で、<br>
+<br>
+open(IN, './fzr.dat');<br>
+while (&lt;IN&gt;) {<br>
+　chop;<br>
+　push(@datas,$_);<br>
+}<br>
+close(IN);<br>
+<br>
+if ( $#datas &gt;= 99 ){<br>
+　既に100個以上登録済。exit;<br>
+}<br>
+<br>
+push(@datas,"$min");<br>
+<br>
+みたいな感じでいかがかと。<br>
+<br>
+…なんか、読んでるうちに、<br>
+　「ソートした結果、追加したものが100番以内に入らなかったらエラー」<br>
+というのが目的なのかなと思えてきたんですが、だったら<br>
+<br>
+if ( $min &gt; $datas[$#datas] ){<br>
+　エラー。<br>
+}<br>
+<br>
+ですかね。比較に &gt; と &gt;= のどちらを使うかは目的による、<br>
+ということで。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/10(木) 15:20:07</span><br>
+<font color="#CC8000">&gt;…なんか、読んでるうちに、</font><br>
+<font color="#CC8000">&gt;　「ソートした結果、追加したものが100番以内に入らなかったらエラー」</font><br>
+<font color="#CC8000">&gt;というのが目的なのかなと思えてきたんですが、だったら</font><br>
+<br>
+　すみません！　説明不十分でご迷惑をお掛けしました。<br>
+<br>
+<font color="#CC8000">&gt;if ( $min &gt; $datas[$#datas] ){</font><br>
+<font color="#CC8000">&gt;　エラー。</font><br>
+<font color="#CC8000">&gt;}</font><br>
+<br>
+　この文を使ったら出来るようになりました。<br>
+<br>
+　今試しに、教えて頂いた分を使って「$min」「$sec」「$msec」の３つの変数を<br>
+　使って組んでいるのですが、どういうわけか、思ったような反応をしてくれません。<br>
+<br>
+　fzr.datの最終である１００行目に「2,05.999」が入っていたとして<br>
+　フォームの入力値は「2,05,009」として、送信ボタンを押すと<br>
+<br>
+　「$min」でエラーが発生するという状態になってしまいます。<br>
+<br>
+if ($min &gt; @datas[$#datas]) {<br>
+	$text = "エラー\n";<br>
+	&amp;error_html;<br>
+} elsif ($sec &gt; @datas[$#datas]) {<br>
+	$text = "エラー２\n";<br>
+	&amp;error_html;<br>
+} elsif ($msec &gt; @datas[$#datas]) {<br>
+	$text = "エラー３\n";<br>
+	&amp;error_html;<br>
+}<br>
+<br>
+と、このようにして見たのですが、上記の通り、エラーが出てしまい<br>
+結果が得られません。<br>
+<br>
+これはデータの保存方法そのものを変えないと駄目なのでしょうか？<br>
+その場合のテストをしようとリファレンスをみて「substr」が<br>
+使えるかと思ったのですが、正確な表記の仕方が分からず・・・。<br>
+<br>
+なんとなくで（これが駄目なんですよね）やってみたのですが<br>
+何も表示されませんでした。<br>
+<br>
+ちょっと説明が足りないかも知れませんが<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/10(木) 15:22:58</span><br>
+if ($min &gt; @datas[$#datas]) {は<br>
+元のif ($min &gt; $datas[$#datas]) {でも<br>
+エラー表示されてしまいます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/09/10(木) 21:11:20</span><br>
+<font color="#CC8000">&gt;　fzr.datの最終である１００行目に「2,05.999」が入っていたとして</font><br>
+<font color="#CC8000">&gt;　フォームの入力値は「2,05,009」として、送信ボタンを押すと</font><br>
+<br>
+としたときに、「$min」「$sec」「$msec」はそれぞれどういうふうに<br>
+設定されるのですか？ $min=2、$sec=5、$msec=999？<br>
+<br>
+また、「2,05.999」は「.」を使ってますが、「2,05,009」は<br>
+「,」のみですが、これは正しい使い方ですか？<br>
+<br>
+これはperlうんぬんではなく、作成者のがんまさんしか知らないこと<br>
+なので、そういうことはできるだけ詳しく説明するようにしてください。<br>
+<br>
+<font color="#CC8000">&gt; if ($min &gt; @datas[$#datas]) {は</font><br>
+<font color="#CC8000">&gt; 元のif ($min &gt; $datas[$#datas]) {でも</font><br>
+<br>
+CGIで実行するとわからないと思いますが、コマンドラインから<br>
+　#!/usr/local/bin/perl -w<br>
+と、-wオプションを付けて実行すると、<br>
+　Scalar value @datas[$#datas] better written as $datas[$#datas]<br>
+というwarningが出ると思います。<br>
+　「スカラー値なんだから、@datas[$#datas]じゃなくて$datas[$#datas]と<br>
+　　書いた方がいいんでない？」<br>
+という意味ですね。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/09/10(木) 23:33:31</span><br>
+うーん、すみません・・・質問の内容がＱ＆Ａではなく、個人指導の場<br>
+になっている感じがしてきたので、すみませんが、この手の質問は、私<br>
+個人宛て（B-CasさんがOKすればB-Casさんも?)のメールでお願いいたし<br>
+ます。<br>
+<br>
+第三者が「ラウンジ」を見た時の情報密度を高めたいのと、ディスク消<br>
+費量をおさえたいのがねらいです。すみません。よろしくお願いいたし<br>
+ます。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/10(木) 23:55:34</span><br>
+確かに、そうですね。<br>
+趣旨に反した行動をしてしまったようで、すみませんでした。<br>
+<br>
+それでは、メールを送りますので<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/09/11(金) 01:24:10</span><br>
+失礼しました＞とほほさん<br>
+<br>
+えっと、僕はfj.comp.lang.perlや <a href="javascript:if(confirm('http://www.sega.co.jp/sega/p_cafe/97061700.htm  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.sega.co.jp/sega/p_cafe/97061700.htm'" tppabs="http://www.sega.co.jp/sega/p_cafe/bbs.html">http://www.sega.co.jp/sega/p_cafe/bbs.html</a><br>
+などのBBSに投稿していただければ、この続きをさせていただきます。<br>
+<br>
+あと、アルゴリズムについての一般的な質問は、質問する前に<br>
+2、3日一人で悩んでみる、というのも手です＞がんまさん。<br>
+それで解決することも多いですよ。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=time>1998/09/11(金) 10:22:01</span><br>
+ご迷惑をお掛けしてすみません、B-Cusさん。<br>
+<br>
+<font color="#CC8000">&gt;あと、アルゴリズムについての一般的な質問は、質問する前に</font><br>
+<font color="#CC8000">&gt;2、3日一人で悩んでみる、というのも手です＞がんまさん。</font><br>
+<br>
+そうですね。　確かに何でもかんでも聞いていたら<br>
+自分の為にもならないですからね。<br>
+<br>
+今後、そのようにして行きます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199809/index.htm">[上に]</a>
+<a href="98090027.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090027.htm">[前に]</a>
+<a href="98090029.htm" tppabs="http://www.tohoho-web.com/lng/199809/98090029.htm">[次に]</a>
+</body>
+</html>

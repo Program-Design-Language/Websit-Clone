@@ -1,0 +1,136 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>引用文の色を変えるのに /g が使えません。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>引用文の色を変えるのに /g が使えません。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060123.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060123.htm">[前に]</a>
+<a href="99060125.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060125.htm">[次に]</a>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/14(月) 04:00:21</span><br>
+引用文の色を変えようと思って、<br>
+<br>
+$f_msg =~ s/(^|&lt;BR&gt;)((&amp;gt;|＞).+?)(&lt;BR&gt;|$)/$1&lt;font color=\"#6a5acd\"&gt;$2&lt;\/font&gt;$4/g;<br>
+<br>
+としたのですが、これでは、一度引用文の終わりのしるしである&lt;BR&gt;までマッチしたら、次は&lt;BR&gt;を飛ばしてマッチングを開始するので、<br>
+たとえば、<br>
+<br>
+<font color="#CC8000">＞テスト</font><br>
+<font color="#CC8000">＞テスト</font><br>
+<br>
+と、2回続けて＞を使った場合に、はじめの＞テストの色だけが変わり、2行目の＞テストの色が変わりません。それで、現在<br>
+<br>
+while($f_msg =~ s/(^|&lt;BR&gt;)((&amp;gt;|＞).+?)(&lt;BR&gt;|$)/$1&lt;font color=\"#6a5acd\"&gt;$2&lt;\/font&gt;$4/){}<br>
+<br>
+という処理で1時しのぎしています。<br>
+正しい方法を教えてください。<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/14(月) 05:22:54</span><br>
+正規表現は苦手なので間違ってるかもしれないですけど、、<br>
+このように、&lt;br&gt;で分けて処理すれば簡単なのでは？<br>
+<br>
+foreach $pair ( split(/&lt;br&gt;|&lt;BR&gt;/, $f_msg) ) {<br>
+	$pair =~ s/^([&gt;|&amp;gt;].*)/&lt;Font&gt;$1&lt;\/Font&gt;/;<br>
+	push(@tmp, $pair);<br>
+}<br>
+$f_msg = join('&lt;br&gt;', @tmp);<br>
+print $f_msg;<br>
+<br>
+的外れだったらごめんなさい・・<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/14(月) 13:21:25</span><br>
+treさん、どうもありがとうございます。<br>
+う～む、、そういう方法もありますね、、。<br>
+しかし、、もうちっと簡単にはできないんでしょうかね、、。。<br>
+引用文の数が少ない分には、<br>
+<br>
+while($f_msg =~ s/(^|&lt;BR&gt;)((&amp;gt;|＞).+?)(&lt;BR&gt;|$)/$1&lt;font color=\"#6a5acd\"&gt;$2&lt;\/font&gt;$4/){}<br>
+<br>
+これでも問題無いんですけどね、、。<br>
+関数一つ一つの速さがわからないんで、treさんの方法がどの程度の早さなのかはわからないのですが、、一つの式だけでもっと簡単に何とかならないんでしょうかね？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/14(月) 16:17:12</span><br>
+どうも毎回小さなことにこだわっていらっしゃいますねぇ。<br>
+根本的なアルゴリズムならともかく、数行の書換え次第で変わるような<br>
+速度だとか効率なんてのは、最後の最後に考えればいいのでは?<br>
+<br>
+それに速度にこだわっておられる割には、自分で実行速度を<br>
+計測してみるつもりはないようですし。<br>
+<br>
+<font color="#CC8000">&gt; はじめの＞テストの色だけが変わり、2行目の＞テストの色が変わりません。</font><br>
+という状況が再現できなかったのでよくわかりませんが<br>
+($f_msgの初期値がわからんので)、<br>
+　s///gm<br>
+とかじゃなくて?<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/14(月) 16:36:05</span><br>
+<font color="#CC8000">&gt;それに速度にこだわっておられる割には、自分で実行速度を</font><br>
+<font color="#CC8000">&gt;計測してみるつもりはないようですし。</font><br>
+引用文というのは毎回決まった回数使うわけではないので、速度計算をどのように行うかが難しいです。引用文を何回使ってメッセージはどれくらいの長さで、、というのがはっきりしてないので、、。<br>
+まあ、だから小さいことにこだわるな、、と言われればそれまでですが、、。<br>
+<br>
+<font color="#CC8000">＞$f_msgの初期値</font><br>
+改行はすべて削除、もしくは&lt;BR&gt;に置き換えています。<br>
+ひとつのメッセージを1行ずつファイルに保存する処理を行っているので。<br>
+はじめは、<br>
+要するに、文字列の最初、もしくは&lt;BR&gt;のすぐ後ろに&amp;gt;もしくは＞が来ていたら、次の&lt;BR&gt;まで色を変える処理を行おうと思っています。<br>
+<br>
+それではじめに記述した通りにすると、/g の特質のせいか、<br>
+<font color="#CC8000">＞テスト&lt;BR&gt;</font><br>
+<font color="#CC8000">＞テスト&lt;BR&gt;</font><br>
+<br>
+という文字列の場合にうまくいきません。<br>
+例えば、<br>
+<font color="#CC8000">＞テスト&lt;BR&gt;</font><br>
+<font color="#CC8000">＞テスト&lt;BR&gt;</font><br>
+<font color="#CC8000">＞テスト&lt;BR&gt;</font><br>
+<font color="#CC8000">＞テスト&lt;BR&gt;</font><br>
+とすると、一行おきに色が変わります。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/14(月) 16:42:29</span><br>
+ああ、なるほど。<br>
+　$f_msg="＞テスト&lt;BR&gt;＞テスト&lt;BR&gt;"<br>
+ってことね。<br>
+<br>
+<font color="#CC8000">&gt; 改行はすべて削除、もしくは&lt;BR&gt;に置き換えています。</font><br>
+をする前なら<br>
+　$f_msg="＞テスト\n＞テスト\n"<br>
+となっているでしょうから、そこでs///g か s///gm すればいいのでは。<br>
+<br>
+<font color="#CC8000">&gt; 速度計算をどのように行うかが難しいです。</font><br>
+でもさ、速度にこだわるなら、ある文章を変換するのにどれくらい時間が<br>
+かかるかを試すのは当然だと思いますよ。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/14(月) 16:44:18</span><br>
+<font color="#CC8000">＞はじめは、</font><br>
+<font color="#CC8000">＞要するに、文字列の…</font><br>
+”はじめは、”は記述ミスです。無視してください。<br>
+<br>
+ちなみに、スクリプト自体は完成しています。それでずっと使っていたのですが、この前引用文の色が正しく変わらないことを発見しました。<br>
+どうしても、/gを使ってうまくやることができなかったので、ずっと悩んでいました。別に今行っている1時しのぎの方法でもぜんぜん問題ないんですが、、、処理速度を少しでも速めたい、、、というか、単にもっと簡単に記述する方法が知りたかったので、、。<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/14(月) 17:02:06</span><br>
+<span class=resolv>[[解決]]</span><br>
+できました。<br>
+どうも、考えすぎてたみたいでした、、。<br>
+&lt;BR&gt;を区切りに、、というなんか変ないじみたいなのがあって改行を&lt;BR&gt;に変更する前に引用文の色を変えるということが頭の中にありませんでした。^^;<br>
+<br>
+どうもありがとうございました。m(_ _)m<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060123.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060123.htm">[前に]</a>
+<a href="99060125.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060125.htm">[次に]</a>
+</body>
+</html>

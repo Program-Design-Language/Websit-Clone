@@ -1,0 +1,332 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Perlで複数行の置き換えは？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Perlで複数行の置き換えは？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060044.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060044.htm">[前に]</a>
+<a href="99060046.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060046.htm">[次に]</a>
+<hr>
+<span class=name>J.Naka</span>
+<span class=email><a href="mailto:jnaka@silver.ocn.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/05(土) 15:20:48</span><br>
+Perlで複数行の置き換え（＝削除）が旨くいきません。<br>
+下のコードはテーブル全てを削除するコードのつもりです。<br>
+動作修飾子の /gs を /gs とか /gsmとかしてもダメでした。<br>
+<br>
+$x =~ s/^&lt;table width=500&gt;.*&lt;br&gt;$/\n\n&lt;!-- Kill --&gt;\n\n/gs;<br>
+<br>
+参考文献：<br>
+とほほＷＷＷ<br>
+「ＣＧＩ＆Ｐｅｒｌ」ポケットリファレンス　技術評論社<br>
+<hr>
+<span class=name>J.Naka</span>
+<span class=email><a href="mailto:jnaka@silver.ocn.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/05(土) 16:24:37</span><br>
+検索パターンのメタ文字 .* を、.*? とすると<br>
+置き換え出来ました。<br>
+しかし、なぜそのようなメタ文字の組み合わせに<br>
+なるか分からない(^^?<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/05(土) 21:34:45</span><br>
+どういう処理なのかいまいちよくわかりませんが、.*?というのはPerl5で使える最小マッチの方法です。<br>
+例えば、<br>
+<br>
+$hoge = "&lt;table&gt;test&lt;br&gt;&lt;table&gt;test2&lt;br&gt;";<br>
+<br>
+$hoge =~ s/^&lt;table&gt;.*?&lt;br&gt;//ig;<br>
+<br>
+とした場合は、$hogeはたった一回しかマッチしません。それは、そういう仕様で、Perlは.*と書いた場合、できるだけ長い文字列をマッチをさせようとするからです。<br>
+それで、それでは困る場合に.*?と記述すれば、できるだけ短い文字列のマッチ（最小マッチ）を行うのです。<br>
+<br>
+、、、というか、、そういうことではないのでしょうか？<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/05(土) 21:38:17</span><br>
+すいません。記述ミスしました。<br>
+<br>
+$hoge = "&lt;table&gt;test&lt;br&gt;&lt;table&gt;test2&lt;br&gt;";<br>
+<br>
+$hoge =~ s/^&lt;table&gt;.*&lt;br&gt;//ig;<br>
+<br>
+と書いた場合は、<br>
+<br>
+ここから→&lt;table&gt;test&lt;br&gt;&lt;table&gt;test2&lt;br&gt;←ここまでマッチします。<br>
+しかし、<br>
+<br>
+$hoge = "&lt;table&gt;test&lt;br&gt;&lt;table&gt;test2&lt;br&gt;";<br>
+<br>
+$hoge =~ s/^&lt;table&gt;.*?&lt;br&gt;//ig;<br>
+<br>
+こうした場合は、<br>
+<br>
+ここから→&lt;table&gt;test&lt;br&gt;←ここまで<br>
+ここから→&lt;table&gt;test2&lt;br&gt;←ここまで<br>
+<br>
+この二つがマッチするのです。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/06(日) 01:12:53</span><br>
+ちょっと強引な気もしますが・・・(^^;<br>
+改行を含む場合は<br>
+#------------<br>
+<br>
+$htm =&lt;&lt;HTM;<br>
+&lt;HTML&gt;&lt;body&gt;<br>
+&lt;table&gt;<br>
+　&lt;tr bgcolor="red"&gt;<br>
+　&lt;td width="40"&gt;test1&lt;/td&gt;<br>
+　&lt;td width="80"&gt;test2&lt;/td&gt;<br>
+　&lt;/tr&gt;<br>
+　&lt;tr bgcolor="blue"&gt;<br>
+　&lt;td width="40"&gt;test3&lt;/td&gt;<br>
+　&lt;td width="80"&gt;test4&lt;/td&gt;　&lt;/tr&gt;<br>
+&lt;/table&gt;<br>
+&lt;BR&gt;<br>
+----------<br>
+&lt;table&gt;　<br>
+　&lt;tr bgcolor="red"&gt;<br>
+　&lt;td width="40"&gt;test1&lt;/td&gt;<br>
+　&lt;td width="80"&gt;test2&lt;/td&gt;<br>
+　&lt;/tr&gt;<br>
+　&lt;tr bgcolor="blue"&gt;<br>
+　&lt;td width="40"&gt;test3&lt;/td&gt;<br>
+　&lt;td width="80"&gt;test4&lt;/td&gt;<br>
+　&lt;/tr&gt;<br>
+&lt;/table&gt;<br>
+&lt;BR&gt;<br>
+&lt;/body&gt;&lt;/HTML&gt;<br>
+HTM<br>
+$htm =~ s/&lt;table[\w\W]*?&lt;br&gt;/\n\n&lt;!-- Kill --&gt;\n\n/gi;<br>
+print $htm;<br>
+<br>
+#------------<br>
+<br>
+とか。あんまりスマートじゃないかも？<br>
+＃どういう意味で^（文字列の先頭）と$（文字列の末尾）を付けている<br>
+＃のかわからなかったので無視しました。<br>
+<br>
+想像ですが、*単独の場合復帰的にマッチさせているんじゃないで<br>
+しょうか？んで、*?の場合は復帰無くただ一度だけマッチさせる<br>
+って意味のような・・？<br>
+うーん、B-Cusさんあたりならわかるかも？（←他人任せ^^;）<br>
+<hr>
+<span class=name>じぇい</span>
+<span class=time>1999/06/06(日) 04:04:36</span><br>
+すいません。まず謝っておきます。<br>
+ピントがずれてた上にでたらめ書いてました。<br>
+<br>
+$hoge = "&lt;table&gt;test&lt;br&gt;&lt;table&gt;test2&lt;br&gt;";<br>
+<br>
+$hoge =~ s/^&lt;table&gt;.*?&lt;br&gt;//ig;<br>
+<br>
+これで2回マッチするなんて書きましたけど、、これでも1回しかマッチしませんね。 ^ 　なんて余計なものつけてました。<br>
+<br>
+しかも、、質問の内容とぜんぜん違った回答してましたね…。<br>
+<hr>
+<span class=name>J.Naka</span>
+<span class=email><a href="mailto:jnaka@silver.ocn.ne.jp">[E-Mail]</a></span>
+<span class=url><a href="javascript:if(confirm('http://www.interq.or.jp/www1/jnaka/  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.interq.or.jp/www1/jnaka/'" tppabs="http://www.interq.or.jp/www1/jnaka/">[HomePage]</a></span>
+<span class=time>1999/06/06(日) 22:30:50</span><br>
+ども、じぇいさん　羽崎さん。<br>
+まず、自分はPerlを遣り始めて一週間程度という事です。<br>
+「ＣＧＩ＆Ｐｅｒｌ」ポケットリファレンスも二日前に<br>
+購入したところです。ですから知識としては拾い読み程<br>
+度の抜けだらけの知識です。<br>
+<br>
+<br>
+Re:じぇいさん<br>
+　最小マッチを知りませんでした。(^^;<br>
+「ＣＧＩ＆Ｐｅｒｌ」ポケットリファレンスでみると、<br>
+最長マッチと最短マッチの記述あります。<br>
+じぇいさんの云う「最小マッチ」とは最短マッチのことのようです。<br>
+Perlはデフォルトでは最長マッチを行い、量指定子（メタ文字？）<br>
+の直後に ? を置くと最小マッチするということらしいです。<br>
+　ついでに[P135]を引用します。<br>
+------------------<br>
+量指定子は、その前に置かれた文字などのアトムを繰り返すパターンを表します。<br>
+くり返し回数が指定される{n}を除き、通常量指定子は最長マッチを行います。<br>
+つまり、文字列中でマッチするものの中で最も末尾に近いものにマッチします。<br>
+量指定子の直後に ? を置くと、最短マッチを行うようになります。つまり、<br>
+文字列中でマッチするものの中で最も先頭に近いものにマッチするようにな<br>
+ります。<br>
+------------------<br>
+という事で、<br>
+「最長マッチ」はマッチする最長。「最短マッチ」は最も短いマッチ。<br>
+というように用語をストレートに解釈するのとは少し意味が違うよ<br>
+うです。(^^;やっややこしいぞー(笑)<br>
+<br>
+<br>
+<font color="#CC8000">&gt;これで2回マッチするなんて書きましたけど、、これでも1回しかマッチしませんね。</font><br>
+<font color="#CC8000">&gt; ^ 　なんて余計なものつけてました。</font><br>
+いや最短マッチを二回してると言えると思います。<br>
+<br>
+<font color="#CC8000">&gt;しかも、、質問の内容とぜんぜん違った回答してましたね…。</font><br>
+飛んでも御座いません。疑問のあるときは色々なアプローチが理解のヒントになります。<br>
+<br>
+＃Ｃ／Ｃ＋＋のポインタ演算に劣らず負けずメタ文字は使用シチュ<br>
+　エーションでその意味が違ってくるのですね。。。ややこしいぞ(^^;<br>
+<br>
+Re:羽崎さん<br>
+<font color="#CC8000">&gt;＃どういう意味で^（文字列の先頭）と$（文字列の末尾）を付けている</font><br>
+<font color="#CC8000">&gt;＃のかわからなかったので無視しました。</font><br>
+これは、「ＣＧＩ＆Ｐｅｒｌ」ポケットリファレンスの[P144]に、<br>
+------------------<br>
+●m修飾子<br>
+　パターンが複数行になっている場合、正規表現の ^ は文字列の先頭以外に改<br>
+　行文字の直後にマッチするようになり、正規表現の $ は文字列の末尾以外に<br>
+　改行文字の直前にマッチするようになります。<br>
+------------------<br>
+との事なので、これは、<br>
+　パターンが複数行の場合、^ は、複数行の先頭のみでなく、途中<br>
+行の先頭にもマッチすると解釈してるんですが、動作的になんか変<br>
+なのですよ(笑)<br>
+<br>
+　ここでいう、複数行パターンとは、検索される未知の文字列では<br>
+なく、それに対する既知の検索文字列の事で、自分はそれを反対に<br>
+取り違えていたようです(笑)(^^;<br>
+<br>
+■総論。。。おっナマイキ(^^;<br>
+　総じて、ポイントはじぇいさんの行っておられる事が一番的に近いと思いますが、<br>
+「最長マッチ」「最短マッチ」がその言葉通りの動作では無いのがミソのようです。<br>
+今回は自分にとってかなり勉強になりました。有り難う御座いますぅ(_ _)<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/07(月) 00:48:32</span><br>
+<font color="#CC8000">&gt; 「最長マッチ」はマッチする最長。「最短マッチ」は最も短いマッチ。</font><br>
+<font color="#CC8000">&gt; というように用語をストレートに解釈するのとは少し意味が違うよ</font><br>
+<font color="#CC8000">&gt; うです。(^^;やっややこしいぞー(笑)</font><br>
+いや、最長/最短という言葉通りの解釈でいいんじゃないかしら。<br>
+最長であろうが最短であろうが、マッチする起点は変わらないわけですから。<br>
+<br>
+　「つまり、文字列中でマッチするものの中で最も末尾に近いものにマッチします。」<br>
+　「つまり、文字列中でマッチするものの中で最も先頭に近いものにマッチするようになります。」<br>
+これってわかりにくいというか、間違っているというか…。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/06/07(月) 03:01:43</span><br>
+<font color="#CC8000">＞J.Nakaさん</font><br>
+私、理解が悪いのでいくつか疑問点を・・・<br>
+<br>
+まず、私のやり方ではなにか問題があったんでしょうか？(^^;<br>
+方法論として、J.Nakaさんの目指していた方法と違ったのででしょうか？<br>
+<br>
+<font color="#CC8000">&gt;●m修飾子</font><br>
+これについてはらくだ本（Perl5を未サポートのPerlリファレンス）<br>
+には載っていなかったので（←たぶん）私は知りませんでした。<br>
+J.Nakaさん言うのとおりに解釈するとたとえば次のコードは<br>
+<br>
+#============<br>
+<br>
+$test="aaaaabbbbb\naaabbb\naaabbb\n";<br>
+$test =~ s/^a*b*$/ooo/m;<br>
+print $test;<br>
+#============<br>
+<br>
+ooo<br>
+ooo<br>
+ooo<br>
+<br>
+と出力されると想像しましたが実際は<br>
+<br>
+ooo<br>
+aaabbb<br>
+aaabbb<br>
+<br>
+と出力されました。<br>
+そこで、おそらくgオプションをつけない場合、マッチするのは<br>
+ただの一回のみと考えます。<br>
+そこでgオプションをつけてみました。(mg)<br>
+<br>
+ooo<br>
+ooo<br>
+ooo<br>
+<br>
+と出力しました。<br>
+さらにmオプションをとると（g)<br>
+<br>
+aaaaabbbbb<br>
+aaabbb<br>
+aaabbb<br>
+<br>
+と出力しました。（マッチしていない）<br>
+<br>
+以上から、途中行にもマッチしています。<br>
+重要なのは、mオプションのときは改行文字\nによって文字列を分けて<br>
+解釈している点です。上の例でmオプションがない場合は\nのために<br>
+置換ができていません。<br>
+<br>
+こういう意味でいいでしょうか？<br>
+<br>
+<font color="#CC8000">&gt;いや、最長/最短という言葉通りの解釈でいいんじゃないかしら。</font><br>
+はい。マッチする起点から最短か最長かって意味でしょうね。<br>
+<br>
+$test = "aaabaaab";<br>
+<br>
+のとき<br>
+<br>
+$test =~ s/a\w*b/ooo/g;<br>
+なら<br>
+ooo<br>
+<br>
+$test =~ s/a\w*?b/ooo/g;<br>
+なら<br>
+oooooo<br>
+<br>
+となるはず。<br>
+<br>
+私も今回はマッチについて、勉強になりました。:-)<br>
+<hr>
+<span class=name>J.Naka</span>
+<span class=email><a href="mailto:jnaka@silver.ocn.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/10(木) 20:34:32</span><br>
+<span class=resolv>[[解決]]</span><br>
+おっとと、随分遅い最終書き込みになってしまいました。(笑)<br>
+さて、自分の混乱の原因は、B-Cus指摘の部分ですね。<br>
+書籍の記述がまずいです。<br>
+早速出版社に文句出します。＃方法が葉書きにしてって(笑)。<br>
+<br>
+書籍から自分の解釈では、<br>
+　最長マッチとは文字列中の最も長いマッチで<br>
+　基点はマッチ毎に不定。<br>
+という物でしたが、これは間違いで、最初にマッチした<br>
+箇所の基点が以降のマッチの基点となる。<br>
+という解釈が正解のようですね。<br>
+＃（＾＾；どうか違ってないように(笑)<br>
+<hr>
+<span class=name>J.Naka</span>
+<span class=email><a href="mailto:jnaka@silver.ocn.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/10(木) 20:44:54</span><br>
+<font color="#CC8000">&gt;て、自分の混乱の原因は、B-Cus指摘の部分ですね。</font><br>
+平に訂正。<br>
+て、自分の混乱の原因は、B-Cusさん指摘の部分ですね。<br>
+I am sory.<br>
+<hr>
+<span class=name>mm</span>
+<span class=time>1999/06/10(木) 23:01:10</span><br>
+<font color="#CC8000">&gt;さて、自分の混乱の原因は、B-Cusさん指摘の部分ですね。</font><br>
+<font color="#CC8000">&gt;書籍の記述がまずいです。</font><br>
+本当に書籍の記述がまずいのでしょうか？<br>
+「ＣＧＩ＆Ｐｅｒｌ」ポケットリファレンスという本を持ってる訳ではない<br>
+のですが、J.Naka さんが引用されている個所は、量指定子の部分ですよね。<br>
+その前の方に、最も左寄り（最左）でマッチするという記述はありませんか？<br>
+perlの正規表現のマッチは、最も左寄りが大前提になります。これに対して、<br>
+最長は、二義的な原則です。例えば、この左寄りの原則は、| を超えて適用<br>
+されますが、最長の原則は、| を超えません。<br>
+従って、最も左寄りでマッチするという前提で、先の引用文を読むなら、<br>
+「文字列中でマッチするものの中で」という表現には一考の余地はありそう<br>
+ですが、必ずしも間違いとは言いきれないと思うのです。<br>
+技術評論社には何の縁もないのですが、このままではダメ本の烙印が押されて<br>
+しまいそうなので、ちょっとでしゃばらせて頂きました。<br>
+もし、最も左寄りでマッチするという記述がないなら、お詫び致します<br>
+（もしそうなら、そんな本は捨ててしまってもいいと思います…）。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060044.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060044.htm">[前に]</a>
+<a href="99060046.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060046.htm">[次に]</a>
+</body>
+</html>

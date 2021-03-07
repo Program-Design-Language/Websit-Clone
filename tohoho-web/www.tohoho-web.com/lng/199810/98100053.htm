@@ -1,0 +1,109 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ラウンジの最終更新日を最初に書き込んだ人の日時にするには?</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ラウンジの最終更新日を最初に書き込んだ人の日時にするには?</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199810/index.htm">[上に]</a>
+<a href="98100052.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100052.htm">[前に]</a>
+<a href="98100055.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100055.htm">[次に]</a>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1998/10/21(水) 23:46:55</span><br>
+ラウンジを利用させていただいています。<br>
+以前ラウンジで、「最終発言者」とは別に「最初の質問者」を表示したいのですが？という質問がありましたが、それと同じように、最終更新日の部分を最初に書き込んだ人の日時に出来ないものでしょうか。<br>
+ここでのポイントは、年月日だけじゃなくて、その後の（曜日）時分もいっしょにつけれないか??ということです。<br>
+出来れば、表示部分は、<br>
+例　９８年０９月０１日（日）１１時５４分<br>
+の様にです。<br>
+もしご教授いただけたら幸いです。<br>
+<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/10/22(木) 02:29:13</span><br>
+この質問もそうですが、<br>
+<br>
+<font color="#CC8000">&gt; ラウンジの一覧表示で、項目の並び替えは出来ますか？また書き込み数</font><br>
+<font color="#CC8000">&gt; （○○件）の部分を別な項目として独立させるには??</font><br>
+<br>
+<font color="#CC8000">&gt; ラウンジの最終更新日を最初に書き込んだ人の日時にするには?</font><br>
+<br>
+などなど、できれば自分でできるだけソースをいじってみて、<br>
+　「ここをこういう風にしたがうまくいかない」<br>
+とか、あるいはソースを示さないまでも<br>
+　「こういうアルゴリズムだとうまくいきそうなんですがどうでしょう？」<br>
+と質問した方がレスも付きやすいと思いますよ。<br>
+<br>
+最初から頼るのではなく、自分なりに努力したことを<br>
+ちゃんとアピールしてくれる人には、アドバイスしたくなります。<br>
+<br>
+まぁ個人的な意見ですけど、できればよろしく。<br>
+<br>
+<br>
+<font color="#CC8000">&gt; その後の（曜日）時分もいっしょにつけれないか??</font><br>
+<br>
+せっかくだから、これだけ回答しておきます。<br>
+<br>
+# 年、月、日を与えると曜日を返す<br>
+sub dayofweek($$$) {<br>
+　local($year,$month,$date) = @_;<br>
+　local(@table) = (0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4);<br>
+　local(@week_list) = ('日','月','火','水','木','金','土');<br>
+　$year -= ($month&lt;3);<br>
+　return $week_list[($year + $year/4 - $year/100 + $year/400<br>
+　　　　　　　　　+ $table[$month-1] + $date) % 7];<br>
+}<br>
+<br>
+# 原典はC言語FAQ。ネット上にたくさんころがってます。<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=email><a href="mailto:jrm@fureai.or.jp">[E-Mail]</a></span>
+<span class=time>1998/10/22(木) 03:06:59</span><br>
+確かに最初から頼りきりというのは私も好みませんが<br>
+ここに発言した以上は自身でどうしようもなかったと見なしまして<br>
+<br>
+L300（最新版の場合）を<br>
+<br>
+if (($_ =~ /^Date:/)&amp;&amp;($date ne "")) {<br>
+<br>
+こんな感じに括りなおしてやればいいんじゃないでしょうか<br>
+動作確認はとっていません<br>
+この前に変数が使われていないことを祈ります<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/10/22(木) 04:46:36</span><br>
+<font color="#CC8000">&gt;&gt; その後の（曜日）時分もいっしょにつけれないか??</font><br>
+<font color="#CC8000">&gt; せっかくだから、これだけ回答しておきます。</font><br>
+<br>
+あ、失礼。そんなことしなくても今のラウンジは<br>
+各書き込みの曜日を記録してますね。<br>
+<br>
+Auraiさんのアドバイスと同じ場所ですが、念のため他に影響がないように<br>
+$date_and_timeという変数を新しく作るとして、<br>
+　if (($_ =~ /^Date:/)&amp;&amp;($date ne "")) {<br>
+　　$date = substr($_, 8,&nbsp;&nbsp;8);<br>
+　　$time = substr($_, 21, 8);<br>
+　　$date_and_time = substr($_, 8, 21); # データファイルってSJISですよね？<br>
+　}<br>
+として、その後の<br>
+　$date, $file, $file, $solved,<br>
+を<br>
+　$date_and_time, $file, $file, $solved,<br>
+とすればいいでしょう。<br>
+<br>
+僕好みに書けば<br>
+　　($date_and_time,$date,$time)<br>
+　　　 = m|^Date: \d\d((\d\d/\d+/\d+)\([^\)]+\)) (\d+:\d+:\d+)$|;<br>
+ですけど。<br>
+<br>
+<font color="#CC8000">&gt; 動作確認はとっていません</font><br>
+<br>
+同じく。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199810/index.htm">[上に]</a>
+<a href="98100052.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100052.htm">[前に]</a>
+<a href="98100055.htm" tppabs="http://www.tohoho-web.com/lng/199810/98100055.htm">[次に]</a>
+</body>
+</html>

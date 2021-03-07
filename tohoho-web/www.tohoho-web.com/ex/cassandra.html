@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Cassandraメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Cassandraメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Cassandraメモ
+
+<h4>環境</h4>
+<div class="i">
+<ul>
+<li>実施日: 2016年6月26日</li>
+<li>ホストOS: Windows 10</li>
+<li>ゲストOS: CentOS 7.2</li>
+<li>ハイパーバイザ: VirtualBox 5.0.22</li>
+<li>Cassandra 2.2.6</li>
+</ul>
+</div>
+
+<h4>Cassandra とは</h4>
+<div class="i">
+<ul>
+<li>Facebook社で開発された分散データベース。
+<li>現在は Apache プロジェクトの一つ、Apache Cassandra として開発されている。
+<li>ライセンスは Apache License 2.0。
+<li>データを複数のサーバに分散配置することで、単一障害点を持たず、一部のサーバが故障しても稼働し続けることが可能。
+<li>稼働中にサーバを増設・減設することも可能。
+<li>トランザクション(START TRANSACTION, ROLLBACK, COMMIT)はサポートしない。
+<li>厳密なデータベースに求められるACID特性の内、A:原子性(atomic)、I:独立性(isolated)、D:永続性(durable) はサポートするが、C:整合性(consistency) を犠牲にすることで、分散・大容量・高速性を実現している。
+<li>列思考型(カラム思考型)データベース。
+<li>行(row)毎に異なったカラム(列)を作成することができる。
+<li>NoSQL(列思考DB) として開発されたが、現在では SQL ライクな CQL (Cassandra Query Language) もサポートされている。
+<li>Cassandra 2.2 では JSON に対応。
+</ul>
+</div>
+
+<h4>Cassandraをインストールする</h4>
+<div class="i">
+<pre class="dos">
+# yum -y install java
+# vi /etc/yum.repos.d/datastax.repo
+
+[datastax]
+name = DataStax Repo for Apache Cassandra
+baseurl = http://rpm.datastax.com/community
+enabled = 1
+gpgcheck = 0
+
+# yum -y install dsc22
+# systemctl enable cassandra
+# systemctl start cassandra
+# cqlsh
+cqlsh&gt; quit
+</pre>
+</div>
+
+<h4>サンプル</h4>
+<div class="i">
+<pre class="dos">
+cqlsh&gt; create keyspace myspace with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+cqlsh&gt; use mySpace;
+cqlsh:myspace&gt; create table users ( user_id int PRIMARY KEY, user_name text );
+cqlsh:myspace&gt; insert into users ( user_id, user_name ) values ( 101, 'yamada' );
+cqlsh:myspace&gt; insert into users ( user_id, user_name ) values ( 102, 'suzuki' );
+cqlsh:myspace&gt; insert into users ( user_id, user_name ) values ( 103, 'tanaka' );
+cqlsh:myspace&gt; select * from users;
+</pre>
+</div>
+
+<h4>MySQL と Cassandra の用語の対比</h4>
+<div class="i">
+<table class="tb1">
+ <tr><th>MySQL</th><th>Cassandra</th></tr>
+ <tr><td>データベース</td><td>キースペース</td></tr>
+ <tr><td>テーブル</td><td>カラムファミリー</td></tr>
+ <tr><td>主キー</td><td>キー</td></tr>
+ <tr><td>－</td><td>(スーパーカラム)</td></tr>
+ <tr><td>フィールド(カラム)</td><td>カラム</td></tr>
+</table>
+</div>
+
+<h4>キースペースの操作</h4>
+<div class="i">
+<pre class="dos">
+cqlsh&gt; create keyspace キースペース名;
+cqlsh&gt; drop keyspace キースペース名;
+cqlsh&gt; use キースペース名;
+cqlsh&gt; describe keyspace;
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('http://docs.datastax.com/ja/landing_page-jajp/doc/landing_page/current.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.datastax.com/ja/landing_page-jajp/doc/landing_page/current.html'" tppabs="http://docs.datastax.com/ja/landing_page-jajp/doc/landing_page/current.html">http://docs.datastax.com/ja/landing_page-jajp/doc/landing_page/current.html</a>
+<li><a target="_top" href="javascript:if(confirm('http://docs.datastax.com/ja/cql-jajp/3.1/cql/cql_reference/cqlReferenceTOC.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.datastax.com/ja/cql-jajp/3.1/cql/cql_reference/cqlReferenceTOC.html'" tppabs="http://docs.datastax.com/ja/cql-jajp/3.1/cql/cql_reference/cqlReferenceTOC.html">http://docs.datastax.com/ja/cql-jajp/3.1/cql/cql_reference/cqlReferenceTOC.html</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2016 杜甫々</div>
+<div>初版:2016年6月26日 最終更新:2016年6月26日</div>
+<div>http://www.tohoho-web.com/ex/cassandra.html</div>
+</body>
+</html>

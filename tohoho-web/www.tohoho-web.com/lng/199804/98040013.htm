@@ -1,0 +1,257 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ｗｗｗｃｈａｔ．ｃｇｉでＩＰまたはホスト名を表示～するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ｗｗｗｃｈａｔ．ｃｇｉでＩＰまたはホスト名を表示～するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040012.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040012.htm">[前に]</a>
+<a href="98040014.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040014.htm">[次に]</a>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/05(日) 02:20:43</span><br>
+ｗｗｗｃｈａｔ．ｃｇｉで、ＩＰまたはホスト名を表示出来たらいいなと思うのですが・・・。<br>
+可能であれば、教えて下さい。<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/05(日) 04:05:13</span><br>
+曖昧な発言でしたので、改めて書きました。<br>
+ＩＰではなくて、ＤＮＳだったのです。<br>
+例）１２３．４５６．７８９．ａｂｃ．ｎｅ．ｊｐなどと言うように・・・。<br>
+失礼致しました。（＾＾；<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/05(日) 04:29:48</span><br>
+NTサーバで動かしてますか？<br>
+<br>
+$ipにIPアドレスが入っていたとしたら<br>
+$host = gethostbyaddr(pack('C4',split(/\./,$ip)),2) || $_;<br>
+で変換できると思います。<br>
+<br>
+<font color="#CC8000">&gt; ＩＰではなくて、ＤＮＳだったのです。</font><br>
+<br>
+DNSというのはドメインネームをIPアドレスに変換する(あるいは<br>
+その逆も)システムです。この場合はドメインネームとかFQDNとか<br>
+言った方が適当です。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/05(日) 06:26:00</span><br>
+あ、もしかしてそれ以前の問題でしたか？<br>
+<br>
+基本的に、環境変数REMOTE_HOSTにはFQDNが、REMOTE_ADDRには<br>
+IPアドレスが入ります。FQDNを持たないホストだと両方IPアドレス<br>
+となります。<br>
+<br>
+サーバがNTだと(IISかな?)常に両方IPアドレスが格納されている<br>
+ようなので、gethostbyaddrで変換するといいでしょう。<br>
+でもサーバがapacheやNSCAなどであれば原則通り<br>
+「環境変数REMOTE_HOSTにはFQDN、REMOTE_ADDRにはIPアドレス」<br>
+です。<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/06(月) 00:29:10</span><br>
+あまり詳しい事は解らないのですが、使っているのはＷｉｎ９５／ＮＴではありません。Ｗｉｎ９５です。<br>
+ｗｗｗｃｈａｔ．ｃｇｉで発言内容の後にＤＮＳを表示させたいのです。<br>
+例）<br>
+－－－－－－－－－－－－－－－－－－－－－－－<br>
+ＫＭＲ&nbsp;&nbsp;４月６日（日） ０時２５分<br>
+こんにちわ。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;１２３．４５６．７８９．ａｂｃ．ｎｅ．ｊｐ ←これなのですが・・・。<br>
+－－－－－－－－－－－－－－－－－－－－－－－<br>
+可能でしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/06(月) 00:48:42</span><br>
+とりあえず<br>
+<br>
+print "$ENV{'REMOTE_HOST'}($ENV{'REMOTE_HOST'})";<br>
+<br>
+をどこかに放り込んでみてください。どこに書き込めばいいのかは<br>
+ソースを眺めていろいろ試してみてください。<br>
+<br>
+<font color="#CC8000">&gt; ＤＮＳを表示させたいのです。</font><br>
+<br>
+DNSではなく、ドメインネームかFQDNが適当です、ってば。<br>
+<br>
+<font color="#CC8000">&gt; 使っているのはＷｉｎ９５／ＮＴではありません。Ｗｉｎ９５です。</font><br>
+<br>
+あなたが使っているOSではなく、WWWサーバのOSのことです。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/04/06(月) 00:49:48</span><br>
+あー失礼。<br>
+<br>
+<font color="#CC8000">&gt; print "$ENV{'REMOTE_HOST'}($ENV{'REMOTE_HOST'})";</font><br>
+<br>
+print "$ENV{'REMOTE_HOST'}($ENV{'REMOTE_ADDR'})";<br>
+<br>
+です。<br>
+<hr>
+<span class=name>Omi</span>
+<span class=email><a href="mailto:omi@07.alphatec.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/07(火) 13:46:20</span><br>
+MiniBBSv8に、こんな行がありましたよ。<br>
+<br>
+	$host = $ENV{'REMOTE_HOST'};<br>
+	$addr = $ENV{'REMOTE_ADDR'};<br>
+	if ($host eq $addr) { $host = gethostbyaddr(pack('C4',split(/\./,$host)),2) || $addr; }<br>
+<br>
+お恥ずかしながら、これは perl？ java？ という頭脳レベルなんですー。(･_;)<br>
+何をしているんでしょうねぇ。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/08(水) 01:53:02</span><br>
+java ではなく perl です。で、B-Cus さんがおっしゃってることと同じことをしてます。<br>
+<br>
+つまり、REMOTE_HOSTがドメインネームであれば、これを $host に格納し、<br>
+REMOTE_HOSTとREMOTE_ADDRが同じなら（即ち、REMOTE_HOSTが<br>
+ドメインネームではなく、REMOTE_ADDRと同じIPアドレスだった場合には）、<br>
+このIPアドレスをgethostbyaddrでドメインネームに変換し $host に格納し<br>
+ます。また、gethostbyaddrによる取得に失敗した場合には、 $host に<br>
+REMOTE_ADDRのIPアドレスが格納されます（つまり、この場合のみ<br>
+数字とピリオドだけの表示になります）。<br>
+ちょっとややこしいですが、この３行はそのままカットアンドコピーできます。<br>
+そして、$hostを表示すればOKです。<br>
+<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/08(水) 01:55:43</span><br>
+あっ、書き忘れです。<br>
+コピー先のスクリプトで $host と $addr の変数名が先に使われて<br>
+いるなら、適当に変更する必要があります。<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/08(水) 04:00:35</span><br>
+ｍｉｙａｓｉｒｏさんへ<br>
+色々行ってみましたが、初心者なので良く解らないのです。（＾＾；<br>
+<font color="#CC8000">＞ちょっとややこしいですが、この３行はそのままカットアンドコピーできます。</font><br>
+<font color="#CC8000">＞そして、$hostを表示すればOKです。</font><br>
+よろしければ”ｗｗｗｃｈａｔ．ｃｇｉ”のスクリプトで、この部分をこう書きかえる様に指示を<br>
+頂ければ助かるのですが・・・。<br>
+宜しくお願いします。&nbsp;&nbsp;ｍ（＿＿）ｍ<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/08(水) 19:03:02</span><br>
+コピーする３行は、どこでもいいんですが、例えば<br>
+# Write current message.<br>
+#<br>
+の次の行でしょうか。<br>
+<br>
+そして、その数行後にある３個所の print OUT の後の文字列中の<br>
+$FORM{'FROM'}\n や $FORM{'FROM'}&lt;/A&gt;\n を<br>
+$FORM{'FROM'}[$host]\n や $FORM{'FROM'}&lt;/A&gt;[$host]\n にすれば<br>
+いいんじゃないかな？<br>
+試した訳ではないので、表示文字列が長すぎてテーブルが変になるかも知れませんが…<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/09(木) 00:53:11</span><br>
+ｍｉｙａｓｉｒｏさんへ<br>
+指示された通りやってみましたが、うまく行きませんでした。<br>
+チャットネームが消えてしまいます。<br>
+ｈｏｓｔも表示されませんでした。<br>
+困ったなぁ。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/09(木) 04:37:00</span><br>
+なんかドジしたかなと思って、試しにうちでやってみたら、できましたよ？<br>
+# Write current message.<br>
+より下の修正した部分を書き込んで見せてもらえます？<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/10(金) 01:14:46</span><br>
+ｍｉｙａｓｉｒｏさんへ<br>
+え？&nbsp;&nbsp;うまく行きましたか・・・。<br>
+と言う事は、私が間違っているのでしょうね。（＾＾；<br>
+私は、次の様にしました。<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Write current message.<br>
+	#<br>
+	$FORM{'MESSAGE'} =~ s/\r*$//g;<br>
+	$FORM{'MESSAGE'} =~ s/\r/&lt;BR&gt;/g;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	open(OUT, "&gt;wwwchat.tmp");<br>
+	if ($FORM{'URL'} eq "") {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print OUT "__XXX__ $date $FORM{'FROM'}[$host]\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} elsif ($FORM{'URL'} =~ /^http:/) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print OUT "__XXX__ $date &lt;A HREF=\"$FORM{'URL'}\"&gt;$FORM{'FROM'}&lt;/A&gt;[$host]\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print OUT "__XXX__ $date &lt;A HREF=\"mailto:$FORM{'URL'}\"&gt;$FORM{'FROM'}&lt;/A&gt;[$host]\n";<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+この他に、何か手を加えるのでしょうか？<br>
+お手数をお掛けして、スイマセン。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/10(金) 09:43:54</span><br>
+あれ？　コピーの３行は？<br>
+KMRさんの変更に加えて、下のように３行を追加してください。<br>
+<br>
+	# Write current message.<br>
+	#<br>
+	$host = $ENV{'REMOTE_HOST'}; # 挿入する<br>
+	$addr = $ENV{'REMOTE_ADDR'};; # 挿入する<br>
+	if ($host eq $addr) { $host = gethostbyaddr(pack('C4',split(/\./,$host)),2) || $addr; }; # 挿入する<br>
+	$FORM{'MESSAGE'} =~ s/\r*$//g;<br>
+	$FORM{'MESSAGE'} =~ s/\r/&lt;BR&gt;/g;<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/11(土) 01:43:26</span><br>
+ｍｉｙａｓｉｒｏさんへ<br>
+上記の通りやってみましたが、うまく行きません。<br>
+やはり、チャットネーム、ホスト名が表示されません。<br>
+そして、上記の３行を消すとチャットネームが正常に表示されます。（純正なパターンのチャットです。）<br>
+まだ何かおかしい様です。Ｎｅｔｓｃａｐｅ Ｃｏｍｍｕｎｉｃａｔｏｒ ４．０４（ｊａ） がいけないのでしょうか。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/11(土) 03:37:25</span><br>
+んなアホな～！　と思ってたら、私のミスでした。すいませんm(_._)m<br>
+perl5をお使いですね。<br>
+$FORM{'FROM'}[$host] が配列のハッシュとして扱われていました。<br>
+つまり、$FORM{'FROM'}に配列へのリファレンスが格納されていると解釈されたため、<br>
+チャットネームもホスト名も消えてしまったのです。<br>
+<br>
+で、対策ですが、たとえば下のように [ の直前に \ を入れて下さい。<br>
+$FORM{'FROM'}\[$host]<br>
+$FORM{'FROM'}の直後に [ があるのが問題なので、\ の代わりに空白でもいいし、<br>
+[ 自体を別の安全な文字に変えてもＯＫです。<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/12(日) 02:37:14</span><br>
+ｍｉｙａｓｉｒｏさんへ<br>
+うまくいきました。（＾０＾）<br>
+バッチリですね。ありがとうございます。<br>
+勝手な質問で、大変申し訳なく思っています。<br>
+ついでに、もう１つお聞きしたいのですが、ホスト名で頭の記号と数字は何を表しているのでしょうか。<br>
+例えば、ａｂｃ．２３２．ｘｘｘ．ｎｅ．ｊｐの場合ａｂｃと２３２です。<br>
+ご存知でしたらお教え下さい。お願いします。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/04/12(日) 03:08:23</span><br>
+ドメインネームの頭の記号と数字ですか…<br>
+申し訳ない、実は私はインターネットのことをあまりよく知らないんです(^^;<br>
+どなたか、ご存知の方、いらっしゃいませんでしょうか？<br>
+<br>
+ところで、最初の質問は、発言内容の後にドメインネームを付けるんでしたよね。<br>
+その場合は、$host は上の場所ではなく、その直ぐ下の行の<br>
+print OUT "$FORM{'MESSAGE'} [$host]\n";<br>
+に付けてください。<br>
+（この場合も $FORM{'MESSAGE'} と [$host] の間には空白や \ などを忘れずに！）<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/04/12(日) 14:52:19</span><br>
+abc.232.xxx.ne.jp の場合、最初の名前(abc)がマシン名、それ以降<br>
+はすべて(232もxxxもneもjpも)グループや組織を表す名前となります。<br>
+232の部分が何を意味するかは、プロバイダによって異なります。<br>
+<hr>
+<span class=name>ＫＭＲ</span>
+<span class=time>1998/04/12(日) 23:55:22</span><br>
+<span class=resolv>[[解決]]</span><br>
+みなさん、ご親切にどうも有り難うございました。これにて、解決と致します。<br>
+特にｍｉｙａｓｉｒｏさんには、最後まで御指導頂き本当に感謝しております。<br>
+また解らない事が有った場合、よろしくお願い致します。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040012.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040012.htm">[前に]</a>
+<a href="98040014.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040014.htm">[次に]</a>
+</body>
+</html>

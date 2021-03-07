@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html data-ng-app="myApp">
+<head>
+<meta charset="utf-8">
+<title>AngularJS入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script src="../../ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js" tppabs="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+<script>
+var app = angular.module("myApp", []);
+app.controller("myControllerOld", function($scope) {
+  $scope.message = "Hello world!!";
+});
+app.controller("myController", function() {
+  this.message = "Hello world!!";
+  this.members = [
+    { name: 'Tanaka', age: 36 },
+    { name: 'Suzuki', age: 16 },
+    { name: 'Yamada', age: 26 }
+  ];
+  this.count = 0;
+  this.inc = function() { this.count++; }
+  this.dec = function() { this.count--; }
+});
+app.controller("myController2", function() {
+  this.members = [
+    { name: 'Tanaka', age: 36 },
+    { name: 'Suzuki', age: 16 },
+    { name: 'Yamada', age: 26 }
+  ];
+  this.onAdd = function() {
+    this.members.push({ name:this.name, age:this.age });
+    this.name = this.age = "";
+  };
+  this.onDel = function() {
+    for (var i = 0; i < this.members.length; i++) {
+      if (this.members[i].checked) {
+        this.members.splice(i--, 1);
+      }
+    }
+  };
+});
+</script>
+</head>
+<body>
+<h2>AngularJS入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+AngularJS入門
+
+<h4 id="contents">目次</h4>
+<ul>
+<li><a href="#whatis">AngularJSとは？</a>
+<li><a href="#sample">サンプル</a>
+<li><a href="#filter">フィルタ</a>
+<li><a href="#moduleController">モジュールとコントローラ</a>
+<li><a href="#list">リスト</a>
+<li><a href="#listFilter">リストフィルタ</a>
+<li><a href="#action">アクション</a>
+<li><a href="#formValidation">フォームバリデーション</a>
+<li><a href="#Sample2">もう少し複雑なサンプル</a>
+<li><a href="#escapeCurlyBracket" class="ng-non-bindable">{{...}} をそのまま表示するには</a>
+<li><a href="#links">リンク</a>
+</ul>
+
+<h4 id="whatis">AngularJSとは？</h4>
+<div class=i>
+<p>AngularJS は、下記の様な特徴を持つ JavaScript フレームワークのひとつです。</p>
+<ul>
+<li>Google社とコミュニティが開発するJavaScriptフレームワーク
+<li>ライセンスはMIT License。オープンソース。商用利用可能。
+<li>今現在(2015年8月15日)の最新版は 1.4.4。
+<li>JavaScriptでクライアントサイドのMVC(Model-View-Controller)モデルを実現します。
+</ul>
+<p>これまでのWebサービスでは、サーバ側で画面(HTML/DOM)を生成していたのに対し、最近のWebサービスでは、サーバ側はDB操作のみを処理し、クライアント－サーバ間をAjaxでJSON交換し、画面(HTML/DOM)はクライアント側で生成する方式が増えてきました。AngularJSは、クライアント側 JavaScript のコントローラでデータモデルを管理し、画面(ビュー)とリアルタイムにデータを交換するのに適したフレームワークです。</p>
+</div>
+
+<h4 id="sample">サンプル</h4>
+<div class=i>
+<p class="ng-non-bindable">AngularJSの簡単なサンプルを下記に示します。AngularJSは、ng-app を指定した要素の中で使用します。ng-model="yourName" に入力した文字列が、{{yourName}} の箇所に表示されます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html <em>ng-app</em>&gt;
+&lt;head&gt;
+<em>&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;</em>
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div&gt;
+  &lt;p&gt;&lt;input type="text" <em>ng-model="yourName"</em>&gt;&lt;/p&gt;
+  &lt;p&gt;Hello <em>{{yourName}}</em>!&lt;/p&gt;
+ &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+  <p><input type="text" data-ng-model="yourName"></p>
+  <p>Hello {{yourName}}!</p>
+</div>
+<p class="ng-non-bindable">下記の様に、{{...}} の中で、JavaScript の式を記述することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html ng-app&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div&gt;&lt;input type="text" ng-model="x"&gt;&lt;/div&gt;
+ &lt;div&gt;&lt;input type="text" ng-model="y"&gt;&lt;/div&gt;
+ &lt;div&gt;{{x}} vs {{y}} : {{<em>( x &gt; y ) ? x : y</em>}} is big.&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class="c2 ng-bindable">
+ <div><input type="text" data-ng-model="x"></div>
+ <div><input type="text" data-ng-model="y"></div>
+ <div>{{x}} vs {{y}} : {{ ( x &gt; y ) ? x : y }} is big</div>
+</div>
+</div>
+
+<h4 id="filter">フィルタ</h4>
+<div class=i>
+<p>値を表示する際に、いくつかのフィルタを使用することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html ng-app&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+{{12345678<em>|number</em>}}                         // カンマ区切り =&gt; 12,345,678
+{{12.34<em>|number:4</em>}}                          // 少数以下4桁 =&gt; 12.3400
+{{12.34<em>|currency</em>}}                          // 通貨 =&gt; $12.34
+{{1234<em>|currency:'&amp;yen;'</em>}}                   // 通貨(円記号) =&gt; &yen;1,234.00
+{{'2099-12-31T12:59:59'<em>|date</em>}}              // 日付フォーマット =&gt; Dec 31, 2099
+{{'2099-12-31T12:59:59'<em>|date:'yyyy/MM/dd'</em>}} // 日付フォーマット =&gt; 2099/12/31
+{{[1,2,3,4]<em>|limitTo:3</em>}}                     // 最初の3件のみ表示 =&gt; [1,2,3]
+{{"Yamada"<em>|lowercase</em>}}                      // 小文字変換 =&gt; yamada
+{{"Yamada"<em>|uppercase</em>}}                      // 大文字変換 =&gt; YAMADA
+{{{name:"Yamada", age:36}<em>|json</em>}}            // JSON形式で表示 =&gt; { "name": "Yamada", "age": 26 }
+{{[1,3,5,2,4]<em>|orderBy</em>}}                     // ソートして表示 =&gt; [1,2,3,4,5]
+{{[1,3,5,2,4]<em>|orderBy:'':true</em>}}             // 逆順ソートして表示 =&gt; [5,4,3,2,1]
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>フィルターに関する詳細は下記を参照してください。</p>
+<ul>
+<li>Filter components in ng<br>
+<a href="javascript:if(confirm('https://code.angularjs.org/1.4.4/docs/api/ng/filter  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://code.angularjs.org/1.4.4/docs/api/ng/filter'" tppabs="https://code.angularjs.org/1.4.4/docs/api/ng/filter">https://code.angularjs.org/1.4.4/docs/api/ng/filter</a>
+</ul>
+</div>
+
+<h4 id="moduleController">モジュールとコントローラ</h4>
+<div class=i>
+<p class="ng-non-bindable">下記では、モジュールとコントローラを利用した例を示します。ng-app でアプリケーションを指定し、ng-controller でコントローラを指定します。コントローラの中で $scope に定義した変数を {{...}} で使用することができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+<em>var app = angular.module('myApp', []);</em>
+<em>app.controller('myController', function($scope) {</em>
+<em>  $scope.message = 'Hello world!';</em>
+<em>});</em>
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div <em>ng-app="myApp"</em>&gt;
+  &lt;div <em>ng-controller="myController"</em>&gt;
+   <em>{{message}}</em>
+  &lt;/div&gt;
+ &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+ <div data-ng-controller="myControllerOld">
+  {{message}}
+ </div>
+</div>
+<p>AngularJS 1.2 以降では、$scope ではなく this を用いて、次のように記述することが可能で、最近ではこの記法が主に使用されています。呼び出す側は as を用いてオブジェクトを定義し、オブジェクトのプロパティとして値を参照します。この形式により、複数のコントローラを利用する場合に $scope の範囲が不明確になるのを防ぐことができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+var app = angular.module('myApp', []);
+app.controller('myController', <em>function()</em> {
+  <em>this.</em>message = 'Hello world!';
+});
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div ng-app="myApp"&gt;
+  &lt;div ng-controller="myController <em>as myCtrl</em>"&gt;
+   {{<em>myCtrl.</em>message}}
+  &lt;/div&gt;
+ &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+ <div data-ng-controller="myController as myCtrl">
+  {{myCtrl.message}}
+ </div>
+</div>
+</div>
+
+<h4 id="list">リスト</h4>
+<div class=i>
+<p>ng-repeat を用いて、リスト操作を行うことができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html ng-app="myApp"&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+var app = angular.module('myApp', []);
+app.controller('myController', function() {
+    <em>this.members = [
+        { name: 'Tanaka', age: 36 },
+        { name: 'Suzuki', age: 16 },
+        { name: 'Yamada', age: 26 }
+    ];</em>
+});
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div ng-controller="myController as myCtrl"&gt;
+  &lt;ul&gt;
+  &lt;li <em>ng-repeat="member in myCtrl.members"</em>&gt;<em>{{member.name}}</em> <em>{{member.age}}</em>&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div&gt;<em>{{myCtrl.members.length}}</em> members&lt;/div&gt;
+ &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+ <div data-ng-controller="myController as myCtrl">
+  <ul>
+  <li data-ng-repeat="member in myCtrl.members">{{member.name}} {{member.age}}</li>
+  </ul>
+  <div>{{myCtrl.members.length}} members</div>
+ </div>
+</div>
+<p>orderByフィルタを用いて、age でソートして表示することが可能です。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+  &lt;li ng-repeat="member in myCtrl.members<em>|orderBy:'age'</em>"&gt;{{member.name}} {{member.age}}&lt;/li&gt;
+</pre>
+<p>orderByフィルタの第二引数に true を指定すると逆順にソートします。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+  &lt;li ng-repeat="member in myCtrl.members|orderBy:'age'<em>:true</em>"&gt;{{member.name}} {{member.age}}&lt;/li&gt;
+</pre>
+</div>
+
+<h4 id="listFilter">リストフィルタ</h4>
+<div class=i>
+<p>filter を用いることで、要素をフィルタリングして表示することができます。下記の例では、テキストフィールドに入力した文字にマッチする要素のみを表示します。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html ng-app="myApp"&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+var app = angular.module('myApp', []);
+app.controller('myController', function() {
+    this.members = [
+        { name: 'Tanaka', age: 36 },
+        { name: 'Suzuki', age: 16 },
+        { name: 'Yamada', age: 26 }
+    ];
+});
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div ng-controller="myController as myCtrl"&gt;
+  <em>&lt;input type="text" ng-model="searchText"&gt;</em>
+  &lt;ul&gt;
+  &lt;li ng-repeat="member in myCtrl.members<em>|filter:searchText</em>"&gt;{{member.name}} {{member.age}}&lt;/li&gt;
+  &lt;/ul&gt;
+ &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+ <div data-ng-controller="myController as myCtrl">
+  <input type="text" data-ng-model="searchText">
+  <ul>
+  <li data-ng-repeat="member in myCtrl.members|filter:searchText">{{member.name}} {{member.age}}</li>
+  </ul>
+ </div>
+</div>
+</div>
+
+<h4 id="action">アクション</h4>
+<div class=i>
+<p>ng-click などで、コントローラに定義したアクションを呼び出すことができます。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html ng-app="myApp"&gt;
+&lt;head&gt;
+&lt;title&gt;TEST&lt;/title&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+var app = angular.module("myApp", []);
+app.controller('myController', function() {
+  this.count = 0;
+  <em>this.inc = function() { this.count++; }</em>
+  <em>this.dec = function() { this.count--; }</em>
+});
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div ng-controller="myController as myCtrl"&gt;
+  {{myCtrl.count}}
+  &lt;button <em>ng-click="myCtrl.inc()"</em>&gt;+1&lt;/button&gt;
+  &lt;button <em>ng-click="myCtrl.dec()"</em>&gt;-1&lt;/button&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+ <div data-ng-controller="myController as myCtrl">
+  {{myCtrl.count}}
+  <button data-ng-click="myCtrl.inc()">+1</button>
+  <button data-ng-click="myCtrl.dec()">-1</button>
+</div>
+</div>
+</div>
+
+<h4 id="formValidation">フォームバリデーション</h4>
+<div class=i>
+<p>フォームに対して様々なバリデーションルールを記述することができます。下記の例では、テキストが必須(required)であること、最少文字数(minlength)が3文字、最大文字数(maxlength)が8文字であることを示しています。それぞれのバリデーションがエラーになると、対応するエラーメッセージを表示します。novalidate は HTML 本来のバリデーションを実行せず、AngularJS のバリデーションにまかせることを意味します。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html ng-app&gt;
+&lt;head&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;form name="myForm" <em>novalidate</em>&gt;
+  &lt;div&gt;&lt;input type="text" name="text1" <em>ng-model="sampleText" ng-required="true" ng-minlength=3 ng-maxlength=8</em>&gt;&lt;/div&gt;
+  &lt;div <em>ng-show="myForm.text1.$error.required"</em>&gt;Required!&lt;/div&gt;
+  &lt;div <em>ng-show="myForm.text1.$error.minlength"</em>&gt;Too short!&lt;/div&gt;
+  &lt;div <em>ng-show="myForm.text1.$error.maxlength"</em>&gt;Too long!&lt;/div&gt;
+ &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+ <div data-ng-controller="myController as myCtrl">
+  <form name="myForm" novalidate>
+   <div><input type="text" name="text1" data-ng-model="sampleText" data-ng-required="true" data-ng-minlength=3 data-ng-maxlength=8></div>
+   <div data-ng-show="myForm.text1.$error.required">Required!</div>
+   <div data-ng-show="myForm.text1.$error.minlength">Too short!</div>
+   <div data-ng-show="myForm.text1.$error.maxlength">Too long!</div>
+  </form>
+ </div>
+</div>
+<p>各フォームで使用可能なバリデーションルールは、下記等を参照してください。</p>
+<ul>
+<li>AngularJS API Reference<br>
+<a href="javascript:if(confirm('https://code.angularjs.org/1.4.4/docs/api/ng/input  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://code.angularjs.org/1.4.4/docs/api/ng/input'" tppabs="https://code.angularjs.org/1.4.4/docs/api/ng/input">https://code.angularjs.org/1.4.4/docs/api/ng/input</a>
+</ul>
+</div>
+
+<h4 id="Sample2">もう少し複雑なサンプル</h4>
+<div class=i>
+<p class="ng-non-bindable">下記は、名前と年齢を入力して Add ボタンを押すとリストに追加し、チェックボックスをチェックして Del ボタンを押すとリストから削除するサンプルです。最後に {{myCtrl|json}} でコントローラの内容をデバッグ用に表示しています。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+&lt;!doctype html&gt;
+&lt;html <em>ng-app="myApp"</em>&gt;
+&lt;head&gt;
+<em>&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"&gt;&lt;/script&gt;</em>
+&lt;script&gt;
+<em>var app = angular.module("myApp", []);</em>
+<em>app.controller("myController"</em>, function() {
+  <em>this.members</em> = [
+    { name:"Tanaka", age:16 },
+    { name:"Yamada", age:26 },
+    { name:"Suzuki", age:36 },
+  ];
+  <em>this.onAdd</em> = function() {
+    this.members.push({ name:this.name, age:this.age });
+    this.name = this.age = "";
+  };
+  <em>this.onDel</em> = function() {
+    for (var i = 0; i &lt; this.members.length; i++) {
+      if (this.members[i].checked) {
+        this.members.splice(i--, 1);
+      }
+    }
+  };
+});
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body <em>ng-controller="myController as myCtrl"</em>&gt;
+ &lt;div&gt;
+  &lt;input type="text" <em>ng-model="myCtrl.name"</em>&gt;(&lt;input type="text" <em>ng-model="myCtrl.age"</em>&gt;)
+  &lt;button <em>ng-click="myCtrl.onAdd()"</em>&gt;Add&lt;/button&gt;
+ &lt;/div&gt;
+ &lt;div <em>ng-repeat="member in myCtrl.members"</em>&gt;
+  &lt;input type="checkbox" <em>ng-model="member.checked"</em>&gt;<em>{{member.name}}</em>({{<em>member.age</em>}})
+ &lt;/div&gt;
+ &lt;div&gt;&lt;button <em>ng-click="myCtrl.onDel()"</em>&gt;Del&lt;/button&gt;&lt;/div&gt;
+ &lt;hr&gt;&lt;pre&gt;<em>{{myCtrl|json}}</em>&lt;/pre&gt;&lt;hr&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="title-tab">Sample</div>
+<div class=c2>
+<div data-ng-controller="myController2 as myCtrl">
+ <div>
+  <input type="text" data-ng-model="myCtrl.name">(<input type="text" data-ng-model="myCtrl.age">)
+  <button data-ng-click="myCtrl.onAdd()">Add</button>
+ </div>
+ <div data-ng-repeat="member in myCtrl.members">
+  <input type="checkbox" data-ng-model="member.checked">{{member.name}}({{member.age}})
+ </div>
+ <div><button data-ng-click="myCtrl.onDel()">Del</button></div>
+ <hr><pre>{{myCtrl|json}}</pre><hr>
+</div>
+</div>
+</div>
+
+<h4 class="ng-non-bindable" id="escapeCurlyBracket">{{...}} をそのまま表示するには</h4>
+<div class=i>
+<p class="ng-non-bindable">ng-app を指定した要素の中では、{{ ... }} が AngularJS により解釈されてしまいます。解釈せずに表示するには、下記の様に、バックスラッシュ(\)でエスケープした文字で表示する、}} の間にHTMLのコメントを挿入する、ngNonBindable ディレクティブを用いるなどの方法があります。(ngBindable がサポートされていれば、デフォルトで NonBindable にして、解釈したい箇所だけ Bindable にできるのですが・・・)</p>
+<div class="title-tab">HTML</div>
+<pre class="c2 ng-non-bindable">
+{{<em>'\{\{</em>name<em>\}\}'</em>}}
+{{name}<em>&lt;!-- --&gt;</em>}
+&lt;span <em>class="ng-non-bindable"</em>&gt;{{name}}&lt;/span&gt;
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class=i>
+<ul>
+<li>AngularJS<br>
+<a href="javascript:if(confirm('https://angularjs.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://angularjs.org/'" tppabs="https://angularjs.org/">https://angularjs.org/</a>
+<li>AngularJS API Reference<br>
+<a href="javascript:if(confirm('https://docs.angularjs.org/api  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.angularjs.org/api'" tppabs="https://docs.angularjs.org/api">https://docs.angularjs.org/api</a>
+<li>js STUDIO<br>
+<a href="javascript:if(confirm('http://js.studio-kingdom.com/angularjs  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://js.studio-kingdom.com/angularjs'" tppabs="http://js.studio-kingdom.com/angularjs">http://js.studio-kingdom.com/angularjs</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2015 杜甫々</div>
+<div>初版：2015年8月15日、最終更新：2015年8月15日</div>
+<div>http://www.tohoho-web.com/ex/angularjs.html</div>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>MongoDBメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>MongoDBメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+MongoDBメモ
+
+<h4>環境</h4>
+<div class="i">
+<ul>
+<li>実施日: 2016年6月4日</li>
+<li>ホストOS: Windows 10</li>
+<li>ゲストOS: CentOS 7.1</li>
+<li>ハイパーバイザ: VirtualBox 5.0.12</li>
+<li>MongoDB: MongoDB 3.0.12</li>
+</ul>
+</div>
+
+<h4>用語</h4>
+<div class="i">
+<p>MongoDB 用語と MySQL 用語の対比</p>
+<ul>
+<li>データベース = データベース</li>
+<li>コレクション = テーブル</li>
+<li>ドキュメント = レコード</li>
+<li>フィールド = カラム</li>
+</ul>
+</div>
+
+<h4>MongoDB をインストールする</h4>
+<div class="i">
+<pre class="dos">
+# vi /etc/yum.repos.d/mongodb-org-3.0.repo
+[mongodb-org-3.0]
+name=MongoDB Repository
+baseurl=http://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.0/x86_64/
+gpgcheck=0
+enabled=1
+
+# yum -y install mongodb-org
+# chkconfig mongod on
+# systemctl start mongod
+</pre>
+</div>
+
+<h4>対話シェル</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">対話シェルを起動する</span>
+# mongo
+
+<span class="cm">対話シェルを終了する</span>
+&gt; exit
+</pre>
+</div>
+
+<h4>データベース</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">データベースの一覧を表示する</span>
+&gt; show dbs
+
+<span class="cm">データベースを使用する (未作成のデータベースであれば作成される)</span>
+&gt; use test1
+
+<span class="cm">使用中のデータベースを表示する</span>
+&gt; db
+
+<span class="cm">使用中のデータベースを削除する</span>
+&gt; db.dropDatabase()
+</pre>
+</div>
+
+<h4>コレクション</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">コレクションの一覧を表示する</span>
+&gt; show collections
+
+<span class="cm">コレクションを作成する (作成せずに直接 insert することも可)</span>
+&gt; db.createCollection('users');
+
+<span class="cm">コレクションを削除する</span>
+&gt; db.users.drop();
+</pre>
+</div>
+
+<h4>ドキュメント</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">ドキュメントを挿入する</span>
+&gt; db.users.insert({name: "Tanaka", age: 26});
+&gt; db.users.insert({name: "Suzuki", age: 32});
+
+<span class="cm">ドキュメントを全件表示する</span>
+&gt; db.users.find();
+
+<span class="cm">ドキュメントを全件削除する</span>
+&gt; db.users.remove({});
+</pre>
+</div>
+
+<h4>ドキュメントを更新する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">ドキュメントを更新する (プロパティ更新)</span>
+&gt; db.users.update({name: "Tanaka"}, { $set: { age: 27 }});
+
+<span class="cm">ドキュメントを更新する (プロパティ削除)</span>
+&gt; db.users.update({name: "Tanaka"}, { $unset: { age: "" }});
+
+<span class="cm">ドキュメントを更新する (プロパティに1を加算)</span>
+&gt; db.users.update({name: "Tanaka"}, { $inc: { age: 1 }});
+
+<span class="cm">ドキュメントを更新する (プロパティ名を変更)</span>
+&gt; db.users.update({name: "Tanaka"}, { $rename: { age: "nenrei" }});
+
+<span class="cm">すべてのドキュメントを更新する (multi:true をつけないと、最初にマッチした 1件しか更新しない)</span>
+&gt; db.users.update({}, { $set: { age: 28 } }, { multi: true });
+</pre>
+</div>
+
+<h4>ドキュメントを検索する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">ドキュメントを検索する</span>
+&gt; db.users.find({name:"Tanaka"});
+
+<span class="cm">ドキュメントを検索する(正規表現一致)</span>
+&gt; db.users.find({name: /ka/ });
+
+<span class="cm">数値の大小比較 ($gt, $gte, $lt, $lte)</span>
+&gt; db.users.find({age:{$gt:30}});
+
+<span class="cm">異なるもの</span>
+&gt; db.users.find({age:{$ne:32}});
+
+<span class="cm">AND検索</span>
+&gt; db.users.find({name:"Tanaka", age:26});
+&gt; db.users.find({$and: [{name:"Tanaka"}, {age:26}] });
+
+<span class="cm">OR検索</span>
+&gt; db.users.find({$or: [{name:"Tanaka"}, {age:32}] });
+
+<span class="cm">どれかにマッチすれば</span>
+&gt; db.users.find({age: {$in: [ 26, 32 ]}});
+
+<span class="cm">nameプロパティのみ表示</span>
+&gt; db.users.find({}, { _id:0, name:1 });
+
+<span class="cm">1件のみ表示する</span>
+&gt; db.users.findOne();
+
+<span class="cm">10件のみ表示する</span>
+&gt; db.users.find().limit(10);
+
+<span class="cm">ソートする (1:昇順、-1:降順)</span>
+&gt; db.users.find({}).sort({name:1});
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2016 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2016年6月4日</div>
+<div>http://www.tohoho-web.com/ex/mongodb.html</div>
+</body>
+</html>

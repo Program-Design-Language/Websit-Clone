@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>.cgiファイルのソースを表示させるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>.cgiファイルのソースを表示させるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060068.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060068.htm">[前に]</a>
+<a href="99060070.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060070.htm">[次に]</a>
+<hr>
+<span class=name>さと</span>
+<span class=time>1999/06/08(火) 00:03:35</span><br>
+普通、CGIファイルを実行させるために、.htaccessを<br>
+設置しますが、逆に、拡張子が.cgiであっても実行させずに<br>
+ソースを確認できるようにすることはできるのでしょうか？<br>
+htaccessで AddType text/plain .cgiとやってみましたが<br>
+駄目でした。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/08(火) 01:18:58</span><br>
+WWWサーバのソフトウェア名をちゃんと書きましょうよ。<br>
+「サーバはapacheです」とか。<br>
+# わからんかったらURL書いてくれればこっちで調べます。<br>
+<br>
+CGI動作させる拡張子を決めるには2種類の方法があります。管理者の設定で<br>
+　AddType application/x-httpd-cgi .cgi<br>
+となっているなら、<br>
+　&lt;files a.cgi&gt;<br>
+　　AddType text/plain .cgi<br>
+　&lt;/files&gt;<br>
+でOKなはずです。<br>
+<br>
+一方、管理者の設定が<br>
+　AddHandler cgi-script .cgi<br>
+なら、<br>
+　&lt;files a.cgi&gt;<br>
+　　SetHandler text/plain<br>
+　&lt;/files&gt;<br>
+でいけるようです。<br>
+# SetHandlerの引数としては、text/plainは不適当なのかもしれない。<br>
+# でもうちの apache1.3.0ではとりあえず動いてます。<br>
+<hr>
+<span class=name>さと</span>
+<span class=time>1999/06/08(火) 08:25:21</span><br>
+ご返事、ありがとうございます。<br>
+SERVER_SOFTWARE=Apache/1.3.3 (Unix)でした。<br>
+すみません。<br>
+<br>
+サーバで設置している標準の.htaccessでは<br>
+AddHandler cgi-script .cgi<br>
+となっているので、<br>
+<br>
+&lt;files *.cgi&gt;<br>
+SetHandler text/plain<br>
+&lt;/files&gt;<br>
+<br>
+としてみたところ、テキスト表示できました。<br>
+ありがとうございます。<br>
+<br>
+ただ、*.plの場合は、&lt;files *.pl&gt;としても駄目でした。<br>
+.plの場合は、別の方法なのでしょうか。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/08(火) 17:34:43</span><br>
+　AddType text/plain .pl<br>
+と<br>
+　&lt;files *.pl&gt;<br>
+　　SetHandler text/plain<br>
+　&lt;/files&gt;<br>
+の両方ともダメですか?<br>
+<br>
+適当な場所に<br>
+　Options -ExecCGI<br>
+とするのでもいけるかも。<br>
+<hr>
+<span class=name>さと</span>
+<span class=time>1999/06/09(水) 07:42:08</span><br>
+ありがとうございます。<br>
+<br>
+Options -ExecCGI<br>
+AddType text/plain .pl<br>
+&lt;Files *.pl&gt;<br>
+SetHandler text/plain<br>
+&lt;/Files&gt;<br>
+<br>
+で試してみました<br>
+すると、呼び出したときは、Forbiddenと出るのですが<br>
+ブラウザ(IE4)でリロードするとソースが出てきます。<br>
+ブラウザの設定は「ページを表示するごとに確認する」に<br>
+しているのですが、なぜなのでしょう。<br>
+ちなみに、<br>
+&lt;Files *.pl&gt;<br>
+SetHandler text/plain<br>
+&lt;/Files&gt;<br>
+だけでも同じ現象になることが分かりました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060068.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060068.htm">[前に]</a>
+<a href="99060070.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060070.htm">[次に]</a>
+</body>
+</html>

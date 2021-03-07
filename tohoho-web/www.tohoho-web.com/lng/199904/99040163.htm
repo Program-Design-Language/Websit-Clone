@@ -1,0 +1,61 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>wwwcountのカウントアップをLAN+proxy環境に対応させるには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>wwwcountのカウントアップをLAN+proxy環境に対応させるには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040162.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040162.htm">[前に]</a>
+<a href="99040164.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040164.htm">[次に]</a>
+<hr>
+<span class=name>NF</span>
+<span class=time>1999/04/22(木) 16:52:19</span><br>
+はじめまして。<br>
+htmlの基礎からここのページで勉強させていただき、書籍を買わずにすんだNFと申します。<br>
+実はこのたび大学仲間と一緒にホームページを立ち上げました。<br>
+そこでこちらのwwwcountをカウンターとして使わせていただいているのですが、<br>
+カウントアップに際して少し問題が発生したので質問させてください。<br>
+<br>
+リロードのたびにカウント数が増えるのはインチキ臭いということで、<br>
+同一IPチェック機能を使用して運用をはじめました。<br>
+ところが、主なアクセス元である大学が同じproxy接続であるために、<br>
+複数アクセスがあってもカウントされないという事が起こったのです。<br>
+そこで、HTTP_X_FORWARDED_FORを取って学内LANのパソコンごとのIPを<br>
+チェックするよう設定しようと考えたのですが、<br>
+これでは逆にproxyを介さない接続がカウントされなくなってしまいます。<br>
+（具体的には「# アクセスログを記録する」の部分に、<br>
+print(OUT "ADDR2 = $ENV{'HTTP_X_FORWARDED_FOR'}\n");を書き加えて、<br>
+「# すでに同アドレスからのアクセスがあればカウントアップしない」を<br>
+$_ eq "ADDR2 = $ENV{'HTTP_X_FORWARDED_FOR'}\n"にしてみました）<br>
+<br>
+おそらくREMOTE_ADDRとHTTP_X_FORWARDED_FORの両方をチェックすれば上手くいくのでしょうが、<br>
+Perlの知識に乏しいため、簡単な改造は施せてもコマンド自体をいじることが殆どできません。<br>
+（改造してみたのですが上手くいきませんでした）<br>
+どなたかご教授していただければ幸いです。<br>
+また、もっと効率よく処理できる方法があればお教えいただけないでしょうか。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/22(木) 17:07:07</span><br>
+$ENV{'REMOTE_ADDR'}の代わりに、<br>
+　$ENV{'REMOTE_ADDR'}と $ENV{'HTTP_X_FORWARDED_FOR'}<br>
+を結合したもの、つまりperlで書くなら、<br>
+&nbsp;&nbsp;$ENV{'REMOTE_ADDR'}.$ENV{'HTTP_X_FORWARDED_FOR'}<br>
+あるいは<br>
+&nbsp;&nbsp;"$ENV{'REMOTE_ADDR'}$ENV{'HTTP_X_FORWARDED_FOR'}"<br>
+を使えばいいと思います。<br>
+<hr>
+<span class=name>NF</span>
+<span class=time>1999/04/23(金) 13:12:03</span><br>
+<span class=resolv>[[解決]]</span><br>
+どうもお手数おかけしました。<br>
+下手に考えすぎて、失敗していたようです。<br>
+ご助言のとおりに家の環境で試してみたところ、成功しました。<br>
+どうもありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040162.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040162.htm">[前に]</a>
+<a href="99040164.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040164.htm">[次に]</a>
+</body>
+</html>

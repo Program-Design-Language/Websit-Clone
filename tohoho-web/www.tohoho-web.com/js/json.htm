@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JSON - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>JSON</h2>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="regexp.htm" tppabs="http://www.tohoho-web.com/js/regexp.htm">[prev]</a>
+<a href="symbol.htm" tppabs="http://www.tohoho-web.com/js/symbol.htm">[next]</a>
+
+<h4>一覧</h4>
+<div class=i>
+<a href="#parse">parse()</a>,
+<a href="#stringify">stringify()</a>
+</div>
+
+<h4 id="json">JSONの概要</h4>
+<div class="i">
+<p>JSON は JavaScript Object Notation の略で、JavaScript におけるオブジェクト記法をベースとするデータ記述言語です。現在では、JavaScript に限らず、様々な言語間のデータ交換などで用いられています。詳細は 「<a href="../ex/json.html" tppabs="http://www.tohoho-web.com/ex/json.html">JSON入門</a>」 を参照してください。</p>
+</div>
+
+<h4 id="encode_decode">エンコードとデコード</h4>
+
+<h5 id="stringify">◆ JSON.stringify(<span class="nb"><i>object</i>[, <i>replacer</i>[, <i>space</i>]]</span>)</h5>
+<div class=i>
+<p>オブジェクトを JSON文字列にエンコードします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x: 123, y: 234};
+var str = <em>JSON.stringify(obj)</em>;
+console.log(str);                    <span class="cm">// =&gt; {"x":123, "y":234}</span>
+</pre>
+<p><i>replacer</i> は関数または配列です。関数の場合、関数は <i>key</i> と <i>value</i> を受け取り、必要に応じて値を変換し、返却します。undefined を返却した場合、そのキーと値のペアは、文字列へのエンコードから除外されます。下記の場合、変換関数は key="", value={x:123, y:234}, key="x", value=123, key="y", value=234 の 3回呼ばれることに注意してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function replacer(key, value) {
+    return typeof value === "number" ? value * 2 : value;
+}
+var obj = {x: 123, y: 234};
+var str = JSON.stringify(obj, <em>replacer</em>);
+console.log(str);                    <span class="cm">// =&gt; {"x":246, "y":468}</span>
+</pre>
+<p><i>replacer</i> に配列を指定した場合は、配列に含まれるキーのみが JSON文字列にエンコードされます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x: 123, y: 234};
+var str = JSON.stringify(obj, <em>["x"]</em>);
+console.log(str);                    <span class="cm">// =&gt; {"x":123}</span>
+</pre>
+<p><i>space</i> には JSON の可読性を高めるための数値または文字列を指定します。1以上の数値を指定した場合、JSON文字列は改行され、数値個数分の空白文字でインデントされます。文字列(通常は空白文字かタブ文字)を指定した場合、JSON文字列は改行され、指定した文字列でインデントされます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {x: 123, y: 234};
+console.log(JSON.stringify(obj, null, <em>2</em>));
+console.log(JSON.stringify(obj, null, <em>"  "</em>));
+</pre>
+</div>
+
+<h5 id="parse">◆ JSON.parse(<span class="nb"><i>text</i>[, <i>reviver</i>]</span>)</h5>
+<div class=i>
+<p>JSON文字列をオブジェクトにデコードします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var str = '{"x": 123, "y": 234}';
+var obj = <em>JSON.parse(str)</em>;
+console.log(obj);                    <span class="cm">// =&gt; {x: 123, y: 234}</span>
+</pre>
+<p><i>reviver</i> は <i>key</i> と <i>value</i> を受け取る変換関数で、デコードの際に値を変換することができます。下記の場合、変換関数は key="x", value=123, key="y", value=234, key="", value={x:123, y:234} の 3回呼ばれます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+function reviver(key, value) {
+    return typeof value === 'number' ? value * 2 : value;
+}
+var str = '{"x": 123, "y": 234}';
+var obj = JSON.parse(str, <em>reviver</em>);
+console.log(obj);                    <span class="cm">// =&gt; {x: 246, y: 468}</span>
+</pre>
+</div>
+
+<h4 id="unicode">Unicodeの扱い</h4>
+
+<h5 id="json_superset">JSON superset</h5>
+<div class="i">
+<p>JSON規格(RFC 8259)では U+2028(LINE SEPARATOR) と U+2029(PARAGRAPH SEPARATOR) を通常文字として扱うのに対し、JavaScript 文字列ではこれらをメタ文字として扱い、"\u2028", "\u2029" と表記するか、バックスラッシュでエスケープする必要がありました。<a href="what.htm#es2019" tppabs="http://www.tohoho-web.com/js/what.htm#es2019">ES2019(ES10)</a> では、JSON規格に合わせてこの2文字をエスケープ不要としました。これにより、JavaScript はJSON規格の完全なスーパーセット(上位互換)となりました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<span class="cm">// JSONスーパセット化対応ブラウザでは true を返す</span>
+<span class="cm">// JSONスーパセット化未対応ブラウザでは SyntaxError となる</span>
+console.log(eval('"\u2028"') === "\u2028");
+</pre>
+</div>
+
+<h5 id="well-formed">Well-formed JSON.stringify</h5>
+<div class="i">
+<p>Unicode のサロゲートペア文字(U+10000～U+10FFFF)は、UTF-8 では上位サロゲート(\uD800～\uDBFF)と下位サロゲート(\uDC00～\uDFFF)のペアで表現されます。上位のみ、下位のみ、上位と下位が逆転など、サロゲートペア文字として成立していない文字が来た場合、片方だけでも無理矢理 "\uXXXX" の形式に変換していましたが、<a href="what.htm#es2019" tppabs="http://www.tohoho-web.com/js/what.htm#es2019">ES2019(ES10)</a> では JSON 規格として正しい文字列になるように、"\\uXXXX" の形式にエンコードするようになりました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<span class="cm">// 上位のみ。対応ブラウザでは true、非対応ブラウザでは false</span>
+console.log(JSON.stringify('\uD834') === '"\\ud834"');
+<span class="cm">// 下位のみ。対応ブラウザでは true、非対応ブラウザでは false</span>
+console.log(JSON.stringify('\uDF06') === '"\\udf06"');
+<span class="cm">// 上位と下位が逆転。対応ブラウザでは true、非対応ブラウザでは false</span>
+console.log(JSON.stringify('\uDF06\uD834') === '"\\udf06\\ud834"');
+</pre>
+</div>
+
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/index.htm">[up]</a>
+<a href="regexp.htm" tppabs="http://www.tohoho-web.com/js/regexp.htm">[prev]</a>
+<a href="symbol.htm" tppabs="http://www.tohoho-web.com/js/symbol.htm">[next]</a>
+<div>Copyright (C) 2019 杜甫々</div
+><div>改訂版初版：2019年12月1日、最終更新：2019年12月1日</div>
+<div>http://www.tohoho-web.com/js/json.htm</div>
+</body>
+</html>

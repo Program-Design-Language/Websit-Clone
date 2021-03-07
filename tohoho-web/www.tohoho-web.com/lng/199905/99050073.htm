@@ -1,0 +1,216 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>cgiとホームディレクトリ</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>cgiとホームディレクトリ</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050072.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050072.htm">[前に]</a>
+<a href="99050074.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050074.htm">[次に]</a>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/05/15(土) 12:52:08</span><br>
+unixのホームディレクトリとCGI（Perlスクリプト？）の関係でいまいち理解していないので質問したいことがあります。<br>
+以下のスクリプトで<br>
+<br>
+open(FILE, "&gt;~/public_html/fuga.html");<br>
+@file = &lt;FILE&gt;;<br>
+close(FILE);<br>
+print "Content-type: text/html\n\n";<br>
+foreach (@file){<br>
+	print;<br>
+}<br>
+<br>
+（"~"の正しいパスは"/home/hoge"）<br>
+とした場合、あるユーザの"~/public_html/fuga.html"というパスにあるファイルを読み出して表示するというものですが、<br>
+/home/hoge/public_html/fuga.html<br>
+のファイルを読みに行っていません。<br>
+これはCGIがユーザ"hoge"として実行されていないからなのででしょうか？<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/05/15(土) 13:32:40</span><br>
+自己レスです。<br>
+<br>
+×　open(FILE, "&gt;~/public_html/fuga.html");<br>
+○　open(FILE, "~/public_html/fuga.html");<br>
+<br>
+あと、CGIはnobodyとして実行されるというふうな理解でいいのか、<br>
+CGIで作成されたものは所有者がnobodyになるのか、よくわかりません。どうぞよろしくお願いします。<br>
+<hr>
+<span class=name>\n</span>
+<span class=time>1999/05/15(土) 15:25:56</span><br>
+実際にファイルを生成してそのファイルのステータスを見るのでは<br>
+だめですか？<br>
+そうでなければ、print getpwuid($&gt;)で実行ユーザーが取得できます。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/05/16(日) 00:56:46</span><br>
+リプライありがとうございます。<br>
+なるほど、getpwuidで確認できました。<br>
+どうやらcgiはnobody権限で動いているようでした。<br>
+<br>
+"~"（チルダ)ではシェルのようにホームディレクトリを表せないんですね。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/16(日) 01:09:13</span><br>
+<font color="#CC8000">&gt; "~"（チルダ)ではシェルのようにホームディレクトリを表せないんですね。</font><br>
+<br>
+想像ですが、perlはopen(...)内がコマンドとして解釈できる場合だけ<br>
+shに処理をまかせます。shは ~ を展開してくれますが、perl自身は ~ の<br>
+展開を行いません。ですから、shに処理が渡れば ~ はホームディレクトリに<br>
+展開されます。<br>
+<br>
+例えば<br>
+　open(IN,"~/file");<br>
+はダメですが、<br>
+　open(IN,"cat ~/file|");<br>
+は展開されます。<br>
+<br>
+<font color="#CC8000">&gt; どうやらcgiはnobody権限で動いているようでした。</font><br>
+<br>
+まぁ、こういう場合は、CGIでは ~/ は /home/nobody/ に<br>
+展開されるでしょうから、~ を使えるメリットは減りますけどね。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/16(日) 04:19:21</span><br>
+<font color="#CC8000">&gt; ~/ は /home/nobody/ に展開されるでしょうから</font><br>
+<br>
+あ、これ嘘。<br>
+<br>
+普通、nobodyのホームディレクトリは /nonexistent や / に<br>
+なっているので(/etc/passwd で定義されている)、/home/nobody には<br>
+展開されません。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/05/17(月) 01:33:50</span><br>
+<font color="#CC8000">＞open(...)内がコマンドとして解釈できる場合だけ</font><br>
+<font color="#CC8000">＞shに処理をまかせます</font><br>
+なるほど。Perlが処理する場合、誰が処理するってことにかかわらずshに渡すわけですね。<br>
+<br>
+<font color="#CC8000">＞　open(IN,"cat ~/file|");</font><br>
+<font color="#CC8000">＞は展開されます。</font><br>
+ということは、telnetで同じスクリプトを実行したとき、~/は/home/hogeと展開されるのが正しい動きでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/17(月) 17:28:59</span><br>
+<font color="#CC8000">&gt; telnetで同じスクリプトを実行したとき、</font><br>
+<font color="#CC8000">&gt; ~/は/home/hogeと展開されるのが正しい動きでしょうか？</font><br>
+<br>
+　open(IN,"~/file");<br>
+は展開されませんが、<br>
+　open(IN,"cat ~/file|");<br>
+は展開されます。<br>
+<hr>
+<span class=name>ちゃわ</span>
+<span class=email><a href="mailto:chawanya@fix-inc.co.jp">[E-Mail]</a></span>
+<span class=time>1999/05/17(月) 21:30:07</span><br>
+・~（チルダ）の扱いについて<br>
+<br>
+/etc/passwdファイルで fuga というユーザーが登録されている場合、<br>
+~ユーザー名 ( ~fuga ) で、ユーザー fuga のホーム・ディレクトリを指します。<br>
+もし fuga のホーム・ディレクトリが /home/hoge/fuga であれば、<br>
+~fuga は '/home/hoge/fuga' という文字列に展開されます。<br>
+<br>
+・nobody について<br>
+<br>
+これはサーバーの設定によって決まるものです。<br>
+サーバーを立ち上げるときの設定ファイルに、/etc/passwd に登録されている<br>
+どのユーザーでサーバーのプロセスを起動するかという項目があります。<br>
+一般的なサーバーでは、ここを nobody に設定していることが多いのです。<br>
+ＣＧＩはサーバーのプロセスから子プロセスとして起動されますが、<br>
+サーバー・プロセス自体が nobody の所有になっているため、そのプロセスが<br>
+新たに生成した子プロセス（ＣＧＩ）も、親と同じ実行ユーザー nobody<br>
+という環境を引き継ぎます。それで、一般のサーバーでは nobody という<br>
+実行ユーザーでプロセスが動くわけです。あくまでもこれは、そうしている<br>
+サーバーが多いというだけの話しです。<br>
+<br>
+・~nobody について<br>
+<br>
+大抵のＵＮＩＸでは、nobody のホーム・ディレクトリは / となっています。<br>
+この場合 ~nobody は '/' という文字列に展開されます。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/05/18(火) 01:00:06</span><br>
+なるほど、納得しました。＞B-Cusさん、ちゃわさん<br>
+<br>
+<font color="#CC8000">＞これはサーバーの設定によって決まるものです。</font><br>
+<br>
+とすれば、サーバの設定次第でnobodyでなくユーザの権限で実行されるサーバもありというわけですね。（webserverの仕様書を読んだことがない上での発言お許しを）<br>
+<br>
+<font color="#CC8000">＞ ~nobody は '/' という文字列に展開されます。</font><br>
+<br>
+とすると ~ は<br>
+open(FILE, "~/public_html/fuga.html");<br>
+の場合<br>
+open(FILE, "/public_html/fuga.html");<br>
+と同じ事となるわけですね。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/05/18(火) 02:04:10</span><br>
+<font color="#CC8000">&gt; とすれば、サーバの設定次第でnobodyでなくユーザの権限で実行されるサーバも</font><br>
+<font color="#CC8000">&gt; ありというわけですね。</font><br>
+<br>
+例えば apacheならcgiwraperやsuExecを仕込むことで、<br>
+CGIやSSIのが各ユーザ権限で動きます。<br>
+<br>
+<font color="#CC8000">&gt; webserverの仕様書を読んだことがない上での発言お許しを</font><br>
+<br>
+ここらへんの動作についての仕様書は存在しません。<br>
+RFCで決まっているのはHTTPの仕様のみで、プロセスが<br>
+どの権限で動くかは各ソフトウェアの実装次第です。<br>
+<br>
+<br>
+<font color="#CC8000">&gt; open(FILE, "~/public_html/fuga.html");</font><br>
+<font color="#CC8000">&gt; の場合</font><br>
+<font color="#CC8000">&gt; open(FILE, "/public_html/fuga.html");</font><br>
+<font color="#CC8000">&gt; と同じ事となるわけですね。</font><br>
+<br>
+違います。この場合perlはshを使わないので ~は展開されず、<br>
+カレントディレクトリにある ~ というディレクトリの下を<br>
+見にいきます。<br>
+　mkdir \~<br>
+　mkdir \~/public_html<br>
+　echo hoge &gt; \~/public_html/fuga.html<br>
+などと ~ をエスケープしながらファイルを作成すると、そのファイルを<br>
+読みにいくことがわかるでしょう。<br>
+<br>
+<br>
+一方、<br>
+　open(FILE,"cat ~/public_html/fuga.html");<br>
+なら ~ は展開されますが、以下のパターンが考えられます。<br>
+<br>
+(1) もし nobody 権限で動いていて、nobodyのホームディレクトリが / なら<br>
+　open(FILE,"cat //public_html/fuga.html");<br>
+と展開されます。// は / と同じ意味なので、結局 cat は<br>
+　/public_html/fuga.html<br>
+を読もうとします。<br>
+<br>
+(2) もし nobody 権限で動いていて、nobodyのホームディレクトリが /nonexistent なら<br>
+　open(FILE,"cat /nonexistent/public_html/fuga.html");<br>
+と展開されます。<br>
+<br>
+(3) もし各ユーザの権限で動いていたら、<br>
+　open(FILE,"cat /home/user/public_html/fuga.html");<br>
+などと展開され、羽崎さんの希望通りの動作をします。<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/05/18(火) 22:05:20</span><br>
+<span class=resolv>[[解決]]</span><br>
+失礼しました。<br>
+<br>
+<font color="#CC8000">＞ここらへんの動作についての仕様書は存在しません。</font><br>
+<font color="#CC8000">＞RFCで決まっているのはHTTPの仕様のみで、プロセスが</font><br>
+<font color="#CC8000">＞どの権限で動くかは各ソフトウェアの実装次第です。</font><br>
+<br>
+HTTP1.0の（かの有名なRFC日本語化サイトの）日本語訳の仕様書は少々読んだことがありますが、そういった実装の部分での仕様には触れていませんでしたね。<br>
+<br>
+つまり、nobody権限で動いているサーバのCGIで~を使っても<br>
+そのCGIスクリプトの所有者のホームディレクトリは表さない、ということですね。つまり、パスははしょらずちゃんと書け、ということですね。^^;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050072.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050072.htm">[前に]</a>
+<a href="99050074.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050074.htm">[次に]</a>
+</body>
+</html>

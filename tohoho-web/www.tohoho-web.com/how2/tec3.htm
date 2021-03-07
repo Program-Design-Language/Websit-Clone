@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>その他のテクニック(3) - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>その他のテクニック(3)</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.htm" tppabs="http://www.tohoho-web.com/how2/index.htm">逆引きリファレンス</a> &gt;
+その他のテクニック(3)
+
+<h4 id="lastModified">ページの更新日を表示するには</h4>
+<!-- 2003.11.16 -->
+<div class=i>
+<p>ページの更新日を表示するには、JavaScript の <a href="../js/document.htm#lastModified" tppabs="http://www.tohoho-web.com/js/document.htm#lastModified">lastModified</a> を用います。表示される書式はブラウザやバージョンによって異なります。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+document.writeln("最終更新：" + <em>document.lastModified</em>);
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<script>
+document.writeln("最終更新：" + document.lastModified);
+</script>
+</div>
+</div>
+
+<h4 id="time">期間限定のメッセージを表示するには</h4>
+<!-- 2003.11.23 -->
+<div class=i>
+<p>○月○日から△月△月までの間だけメッセージを表示したいという場合、次のようなスクリプトを用います。d1 には開始日時、d3 には終了日時を指定してください。月には 1月から順に Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec を指定します。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+var d1 = new Date("Nov 1, 2003 00:00:00");
+var d2 = new Date();
+var d3 = new Date("Dec 1, 2003 00:00:00");
+if ((d1.getTime() &lt;= d2.getTime()) &amp;&amp; (d2.getTime() &lt; d3.getTime())) {
+  document.write("期間限定○○だよ。");
+}
+&lt;/script&gt;
+</pre>
+</div>
+
+<h4 id="addElem">動的に文字や画像などを追加するには</h4>
+<!-- 2003.12.14 -->
+<div class=i>
+<p>要素の innerHTML 属性に文字やタグを文字列として追加することにより、文字や画像などの要素を動的に追加することが可能になります。下記の例では OK ボタンを押すごとに [Click!] が増えていきます。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function func() {
+  document.getElementById("a123").innerHTML += "[Click!] ";
+}
+&lt;/script&gt;
+&lt;button onclick="func()"&gt;OK&lt;/button&gt;
+&lt;div id="a123"&gt;&lt;/div&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<script>
+function func() {
+  document.getElementById("a123").innerHTML += "[Click!] ";
+}
+</script>
+<button onclick="func()">OK</button>
+<div id="a123"></div>
+</div>
+</div>
+
+<h4 id="mouseStalker">マウスストーカーをつけるには</h4>
+<!-- 2004.3.7 -->
+<div class=i>
+<p>マウスストーカー(小さなアイコンがマウスを追いかけるもの)をつけるには、基本的には下記のテクニックを利用します。マウスを動かす度に、画像の位置をマウスの位置に移動させています。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+function startMouseStalker() {
+  document.onmousemove = function(e) {
+    img1.style.left = (event.pageX + 10) + "px";
+    img1.style.top = (event.pageY + 10) + "px";
+  };
+}
+function stopMouseStalker() {
+  document.onmousemove = function(e) {};
+}
+&lt;/script&gt;
+&lt;input type="button" onclick="startMouseStalker()" value="Start"&gt;
+&lt;input type="button" onclick="stopMouseStalker()" value="Stop"&gt;
+&lt;img alt="" id="img1" src="../image/popase.gif" style="position:absolute"&gt;
+</pre>
+<div class="tab">HTML</div>
+<div class=c2>
+<script>
+function startMouseStalker() {
+  document.onmousemove = function(e) {
+    img1.style.left = (event.pageX + 10) + "px";
+    img1.style.top = (event.pageY + 10) + "px";
+  };
+}
+function stopMouseStalker() {
+  document.onmousemove = function(e) {};
+}
+</script>
+<input type="button" onclick="startMouseStalker()" value="Start">
+<input type="button" onclick="stopMouseStalker()" value="Stop">
+<img alt="" id="img1" src="../image/popase.gif" tppabs="http://www.tohoho-web.com/image/popase.gif" style="position:absolute">
+</div>
+<p>マウスに遅れて追いかけるようにするには下記のようにします。マウス移動時にマウスの位置を覚えておき、10ミリ秒毎に、アイコンの位置をマウスの方向に向けて 1ピクセルずつ移動させています。アルゴリズムを変えることにより、もっといろいろな動きをさせることが可能になります。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+var icoX = 0, icoY = 0;   // アイコンの位置
+var mouX = 0, mouY = 0;   // マウスの位置
+var timer;
+function onMouseMove() {
+  mouX = event.pageX;
+  mouY = event.pageY;
+}
+function startMouseStalker2() {
+  icoX = event.pageX;
+  icoY = event.pageY;
+  document.onmousemove = onMouseMove;
+  timer = setInterval(function() {
+    icoX += (icoX &lt; mouX) ? 1 : -1;
+    icoY += (icoY &lt; mouY) ? 1 : -1;
+    img2.style.left = icoX + "px";
+    img2.style.top  = icoY + "px";
+  }, 10);
+}
+function stopMouseStalker2() {
+  document.onmousemove = null;
+  clearInterval(timer);
+}
+&lt;/script&gt;
+&lt;input type="button" value="Start" onclick="startMouseStalker2()"&gt;
+&lt;input type="button" value="Stop" onclick="stopMouseStalker2()"&gt;
+&lt;img alt="" id="img2" src="../image/popase.gif" style="position:absolute"&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<script>
+var icoX = 0, icoY = 0;   // アイコンの位置
+var mouX = 0, mouY = 0;   // マウスの位置
+var timer;
+function onMouseMove() {
+  mouX = event.pageX;
+  mouY = event.pageY;
+}
+function startMouseStalker2() {
+  icoX = event.pageX;
+  icoY = event.pageY;
+  document.onmousemove = onMouseMove;
+  timer = setInterval(function() {
+    icoX += (icoX < mouX) ? 1 : -1;
+    icoY += (icoY < mouY) ? 1 : -1;
+    img2.style.left = icoX + "px";
+    img2.style.top  = icoY + "px";
+  }, 10);
+}
+function stopMouseStalker2() {
+  document.onmousemove = null;
+  clearInterval(timer);
+}
+</script>
+<input type="button" value="Start" onclick="startMouseStalker2()">
+<input type="button" value="Stop" onclick="stopMouseStalker2()">
+<img alt="" id="img2" src="../image/popase.gif" tppabs="http://www.tohoho-web.com/image/popase.gif" style="position:absolute">
+</div>
+</div>
+
+<h4 id="randomImage">ランダムな絵や文字を表示するには</h4>
+<!-- 2004.3.7 -->
+<div class=i>
+<p>表示する度にランダムなメッセージを表示するには次のようにします。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;script&gt;
+var n = 0;
+var msg = new Array();
+msg[n++] = 'こんにちわ。いらっしゃい。';
+msg[n++] = 'やっほ～～～～。';
+msg[n++] = 'おいでやす。';
+document.write(msg[Math.floor(Math.random() * n)]);
+&lt;/script&gt;
+</pre>
+<div class="tab">表示</div>
+<div class=c2>
+<script>
+var n = 0;
+var msg = new Array();
+msg[n++] = 'こんにちわ。いらっしゃい。';
+msg[n++] = 'やっほ～～～～。';
+msg[n++] = 'おいでやす。';
+document.write(msg[Math.floor(Math.random() * n)]);
+</script>
+</div>
+</div>
+
+<hr>
+<div>Copyright (C) 2003-2017 杜甫々</div>
+<div>初版： 2003年11月16日、最終更新：2017年12月24日</div>
+<div>http://www.tohoho-web.com/how2/tec3.htm</div>
+</body>
+</html>

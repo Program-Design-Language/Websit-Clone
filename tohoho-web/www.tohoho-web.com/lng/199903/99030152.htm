@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Perlで半角のカタカナ・漢字・平仮名をチェックするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Perlで半角のカタカナ・漢字・平仮名をチェックするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030151.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030151.htm">[前に]</a>
+<a href="99030153.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030153.htm">[次に]</a>
+<hr>
+<span class=name>まる</span>
+<span class=email><a href="mailto:maruyama@techno-brain.co.jp">[E-Mail]</a></span>
+<span class=time>1999/03/26(金) 13:10:59</span><br>
+現在、ホームページから入力してもらったデータをDBに保存する<br>
+CGIプログラムをPerlで作成しています。<br>
+入力してもらう日本語データのみを全角に統一し、半角の日本語データを入力した場合は、エラー表示したいのですが、半角日本語データを<br>
+検出する方法がありますか？<br>
+良い方法があったら教えてください。<br>
+<hr>
+<span class=name>通り掛かり</span>
+<span class=time>1999/03/27(土) 18:42:04</span><br>
+緊急回避ですよ？<br>
+jcode.plを使って、h2zで全角に変換、<br>
+元データと比較して違ってたらはじく。<br>
+<br>
+漢字・平仮名まではじきたければ素直に<br>
+=~ /[A-Za-z0-9&nbsp;&nbsp;&nbsp;&nbsp;]*$<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑<br>
+この後考えられる記号を全部列記<br>
+<br>
+jcode.plのh2zって、ちょっと動作があやしいので、<br>
+本来変換したい文字列に、日本語文字列をちょこっと<br>
+くっつけて変換しないと駄目かな？。<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=email><a href="mailto:jrm@fureai.or.jp">[E-Mail]</a></span>
+<span class=time>1999/03/28(日) 07:03:54</span><br>
+$str がチェックする文字列<br>
+漢字コードはSJISとします<br>
+<br>
+if ((" ".$str) =~ /[^\x81-\xFF][\xA0-\xDF]/) {<br>
+&nbsp;&nbsp;print "半角カタカナ発見";<br>
+}<br>
+<br>
+これで大丈夫だと思います<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1999/03/28(日) 17:34:13</span><br>
+<font color="#CC8000">&gt; jcode.plのh2zって、ちょっと動作があやしい。</font><br>
+<br>
+・半角カタカナのみから成り立つ SJIS 文字列は EUC であると誤認式する確率が高い。<br>
+・SI/SO (ascii 0x0f/0x0e) の半角カタカナを認識しない。<br>
+<br>
+という不都合があります。<br>
+<hr>
+<span class=name>通りがかり</span>
+<span class=time>1999/03/28(日) 21:57:58</span><br>
+moさん、jcode.plの不都合の指摘、どうもありがとうございました。<br>
+日本語を付加してから変換というのは最初の、半角カタカナに<br>
+ひっかかってたんですね。納得。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199903/index.htm">[上に]</a>
+<a href="99030151.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030151.htm">[前に]</a>
+<a href="99030153.htm" tppabs="http://www.tohoho-web.com/lng/199903/99030153.htm">[次に]</a>
+</body>
+</html>

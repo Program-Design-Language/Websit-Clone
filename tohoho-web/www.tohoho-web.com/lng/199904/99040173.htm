@@ -1,0 +1,124 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>IEとNNのJavaScriptの違い？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>IEとNNのJavaScriptの違い？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040172.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040172.htm">[前に]</a>
+<a href="99040174.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040174.htm">[次に]</a>
+<hr>
+<span class=name>ゆっけ</span>
+<span class=email><a href="mailto:hiruta@lac.co.jp">[E-Mail]</a></span>
+<span class=time>1999/04/23(金) 21:46:29</span><br>
+毎度すみません。<br>
+ここ何日か悩んでいて何度か投稿して以下のようなプログラムができました。<br>
+<br>
+・サンプルプログラムは3つのチェックボックスがあり、<br>
+&nbsp;&nbsp;1つ目だけがチェックされていたら"100"という文字列にして<br>
+&nbsp;&nbsp;固定パラメータとともにCGIを呼び出すものです。<br>
+&nbsp;&nbsp;まずはフォームがチェックボックスかどうかを調べ、<br>
+&nbsp;&nbsp;そうであればチェックされているかどうかを調べ<br>
+&nbsp;&nbsp;アラートを出す。<br>
+&nbsp;&nbsp;その後に文字列を連結してパラメータとしてCGIに引き渡す。<br>
+<br>
+&nbsp;&nbsp;以上のような処理です。<br>
+<br>
+これがIE4.xxでは動くのですが、NN4.xxだと動きません。<br>
+JavaScriptの仕様の違いのせいでしょうか？<br>
+どなたかお助けください。<br>
+<br>
+&lt;SCRIPT LANGUAGE="JavaScript"&gt;<br>
+&lt;!--<br>
+function check() {<br>
+<br>
+	chk = 0;<br>
+	var chdata = "0";<br>
+	var execaction;<br>
+<br>
+	for(i = 0; i &lt; document.form.elements.length - 4; i++)<br>
+	{<br>
+<br>
+		if((document.form.elements[i].name == "chkbx")<br>
+		&amp;&amp; (document.form.elements[i].checked))<br>
+		{<br>
+			chk = 1;<br>
+			chdata = chdata + "1";<br>
+		} else {<br>
+			chdata = chdata + "0";<br>
+		}<br>
+	}<br>
+<br>
+	if(!(chk))<br>
+	{<br>
+		alert("選択してください");<br>
+		return false;<br>
+	}else<br>
+	{<br>
+		form.chk.value = chdata;<br>
+	 	execaction = "xxx.cgi"<br>
+	 		+ form.chk.value<br>
+	 		+ "&amp;"<br>
+	 		+ form.COL1.value<br>
+	 		+ "&amp;"<br>
+	 		+ form.COL2.value;<br>
+		form.action = execaction;<br>
+		form.submit();<br>
+		return true;<br>
+	}<br>
+<br>
+}<br>
+// --&gt;<br>
+&lt;/SCRIPT&gt;<br>
+<br>
+&lt;FORM NAME="form" METHOD="POST"&gt;<br>
+	&lt;INPUT TYPE="CHECKBOX" NAME="chkbx" VALUE=""&gt;<br>
+	&lt;INPUT TYPE="CHECKBOX" NAME="chkbx" VALUE=""&gt;<br>
+	&lt;INPUT TYPE="CHECKBOX" NAME="chkbx" VALUE=""&gt;<br>
+	&lt;INPUT TYPE="IMAGE" SRC="../image/xxx.gif" onClick="return check()"&gt;<br>
+	&lt;INPUT TYPE="HIDDEN" NAME="chk" VALUE=""&gt;<br>
+	&lt;INPUT TYPE="HIDDEN" NAME="COL0" VALUE="0"&gt;<br>
+	&lt;INPUT TYPE="HIDDEN" NAME="COL1" VALUE="1"&gt;<br>
+	&lt;INPUT TYPE="HIDDEN" NAME="COL2" VALUE="2"&gt;<br>
+&lt;/FORM&gt;<br>
+<hr>
+<span class=name>ゆっけ</span>
+<span class=time>1999/04/23(金) 21:47:20</span><br>
+非常に長くてすみません。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/04/23(金) 22:22:16</span><br>
+とりあえず check 関数で単に form となっているところを<br>
+document.form として（単に form だと、NNには「定義されてないよ」って怒られます）、<br>
+更に<br>
+<br>
+&lt;FORM NAME="form" METHOD="POST" onSubmit="return check();"&gt;<br>
+&lt;INPUT TYPE="IMAGE" SRC="../image/xxx.gif"&gt;<br>
+とすれば、NNでも動くようです。<br>
+<br>
+あと、<br>
+execaction = "xxx.cgi"<br>
+は<br>
+execaction = "xxx.cgi?"<br>
+ですね。<br>
+<hr>
+<span class=name>でで</span>
+<span class=time>1999/04/26(月) 13:21:29</span><br>
+フォームの名前はformとか予約語っぽいのは<br>
+さけたほうがいいです。<br>
+<hr>
+<span class=name>ゆっけ</span>
+<span class=time>1999/04/26(月) 15:20:13</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございます。<br>
+あっさり動きました。<br>
+JavaScriptでの細かい定義が必要なんですね。<br>
+(本当はもともときちんと定義してあげないといけないですよね。)<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040172.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040172.htm">[前に]</a>
+<a href="99040174.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040174.htm">[次に]</a>
+</body>
+</html>

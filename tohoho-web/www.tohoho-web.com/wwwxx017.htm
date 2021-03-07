@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>escape()でシフトJISエンコードする - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>escape()でシフトJISエンコードする</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+escape()でシフトJISエンコードする
+
+<h4>概要</h4>
+<div class=i>
+<p>JavaScript において、Internet Explorer と Netscape ブラウザでは、escape() の動作が異なります。たとえば、シフトJISで "いろは" という文字をエンコードすると次のようになります。</p>
+<table class="tb1">
+<tr><th>ブラウザ</th><th>エンコード例</th><th>説明</th></tr>
+<tr><td>Netscape</td><td class="nowrap">%82%A2%82%EB%82CD</td><td>シフトJISのまま8ビットずつ16進変換。</td></tr>
+<tr><td>IE4.0～</td><td class="nowrap">%u3044%u308D%u306F</td><td>Unicodeに変換して16ビットずつ16進変換。</td></tr>
+</table>
+<p>CGI 側で Unicode に対応すればよいのですが、Unicode からシフトJIS への変換は巨大な変換テーブルが必要で、ちょっと骨が折れます。そこで、なんとかして、IE でも Netscape と同じようなエンコード結果を得る方法を考えてみました。</p>
+</div>
+
+<h4>サンプル</h4>
+<div class=i>
+<script>
+var flag = 0;
+function conv1(str) {
+    if (document.all) {
+        document.action = location.href;
+        document.form1.t1.value = str;
+        document.form1.submit();
+        flag = 1;
+        conv2();
+    } else {
+        alert(escape(str));
+    }
+}
+function conv2() {
+    var n = frame1.location.href.indexOf("=");
+    if (n != -1) {
+        if (flag == 1) {
+            alert(frame1.location.href.substr(n + 1));
+            flag = 0;
+        }
+    } else {
+        setTimeout("conv2()", 10);
+    }
+}
+</script>
+
+<form name="form1" target="frame1" method="GET">
+<input type="hidden" name="t1">
+</form>
+
+<iframe name="frame1" onload="conv2()"
+        width=0 height=0 style="visibility:hidden"></iframe>
+
+<form>
+<input type="text" name="t1" value="いろは">
+<input type="button" value="OK" onclick="conv1(this.form.t1.value)">
+</form>
+</div>
+
+<h4>コード</h4>
+<div class=i>
+<p>コードを下記に示します。受け取った文字列を隠しフォーム（form1）に代入してサブミットし、結果を隠しフレーム（frame1）に表示しています。フレームの URL は test.htm?t1=%82%A2%82%EB%82CD のようにエンコードされるので、ここから、%82%A2%82%EB%82CD の部分を取り出して表示しています。</p>
+<pre class=c>
+&lt;script&gt;
+var flag = 0;
+function conv1(str) {
+    if (document.all) {
+        document.action = location.href;
+        document.form1.t1.value = str;
+        document.form1.submit();
+        flag = 1;
+        conv2();
+    } else {
+        alert(escape(str));
+    }
+}
+function conv2() {
+    var n = frame1.location.href.indexOf("=");
+    if (n != -1) {
+        if (flag == 1) {
+            alert(frame1.location.href.substr(n + 1));
+            flag = 0;
+        }
+    } else {
+        setTimeout("conv2()", 10);
+    }
+}
+&lt;/script&gt;
+
+&lt;form name="form1" target="frame1" method="GET"&gt;
+&lt;input type="hidden" name="t1"&gt;
+&lt;/form&gt;
+
+&lt;iframe name="frame1" onload="conv2()"
+        width=0 height=0 style="visibility:hidden"&gt;&lt;/iframe&gt;
+
+&lt;form&gt;
+&lt;input type="text" name="t1" value="いろは"&gt;
+&lt;input type="button" value="OK" onclick="conv1(this.form.t1.value)"&gt;
+&lt;/form&gt;
+</pre>
+<p>IE5.0 が &lt;iframe&gt; の onload に対応していなかったので、setTimeout() でロードが完了するのを見張るように修正しました。（2003.3.21）</p>
+<p>結果表示のダイアログが 2～3回表示されてしまう不具合を修正しました。(2004.11.23）</p>
+</div>
+
+<hr>
+<div>Copyright (C) 2002-2004 杜甫々</div>
+<div>初版：2002年7月14日、最終更新：2004年11月23日</div>
+<div>http://www.tohoho-web.com/wwwxx017.htm</div>
+</body>
+</html>

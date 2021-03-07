@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PHP入門 - クラス - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>PHP入門 - クラス</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/php/index.html">PHP入門</a> &gt;
+クラス
+
+<h4 id="class">クラス(class)</h4>
+<div class=i>
+<p><b>class</b> はクラスを定義します。PHPも他のオブジェクト指向言語と同様、クラスやクラスの継承をサポートします。下記の例は MyMember クラスを定義しています。MyMember クラスはプロパティとして $name を持ちます。また、メソッドとして $name に値を設定する setName() と、$name の値を参照する getName() を持ちます。$this は特別な値で、自分自身のオブジェクトを指します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>class MyMember {</em>
+    private <em>$name;</em>
+
+    function <em>setName($name)</em> {
+        $this-&gt;name = $name;
+    }
+    function <em>getName()</em> {
+        return $this-&gt;name;
+    }
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="new">オブジェクトの生成(new)</h4>
+<div class=i>
+<p><b>new</b> 演算子でオブジェクトを生成し、setName() メソッドを呼び出して名前を設定し、getName() メソッドでその値を参照しています。オブジェクトのプロパティやメソッドを参照するには、-&gt; を用います。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+$foo = <em>new</em> MyMember();
+$foo-&gt;<em>setName("Tanaka")</em>;
+echo $foo-&gt;<em>getName()</em> . "\n";
+</pre>
+</div>
+
+<h4 id="extends">継承(extends)</h4>
+<div class=i>
+<p><b>extends</b> はクラスを継承する際の親クラスを指定します。下記の例で、	MyMember2クラスは、MyMemberクラスを継承するサブクラスとして定義されています。MyMember2クラスは、MyMemberクラスが持つ $nameプロパティ、setName()メソッド、getName()メソッドを引き継ぎ、加えて、$addrプロパティ、setAddr()メソッド、getAddr()メソッドを持ちます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyMember {
+    private $name;
+
+    function setName($name) {
+        $this-&gt;name = $name;
+    }
+    function getName() {
+        return $this-&gt;name;
+    }
+}
+
+class MyMember2 <em>extends MyMember</em> {
+    private $addr;
+
+    function setAddr($addr) {
+        $this-&gt;addr = $addr;
+    }
+    function getAddr() {
+        return $this-&gt;addr;
+    }
+}
+
+$foo = new MyMember2();
+$foo-&gt;setName("Tanaka");
+$foo-&gt;setAddr("Tokyo");
+echo "name = {$foo-&gt;getName()}\n";
+echo "addr = {$foo-&gt;getAddr()}\n";
+</pre>
+</div>
+
+<h4 id="const">クラス定数(const)</h4>
+<div class=i>
+<p><b>const</b> はクラス定数を定義します。クラス定数はインスタンス化しなくても参照可能です。クラス名::定数名 で参照します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyMath {
+    <em>const PI = 3.14;</em>
+}
+
+echo <em>MyMath::PI</em>;
+</pre>
+</div>
+
+<h4 id="static_value">スタティック変数(static)</h4>
+<div class=i>
+<p><b>static</b> はスタティック変数を定義します。スタティック変数はインスタンス化しなくても参照可能です。クラス名::$変数名 で参照します。定義後でも変更可能である点がクラス定数と異なります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyMath {
+    <em>public static $debug_level = 0;</em>
+}
+
+<em>MyMath::$debug_level</em> = 9;
+echo <em>MyMath::$debug_level</em> . "\n";
+</pre>
+</div>
+
+<h4 id="static_method">スタティックメソッド(static)</h4>
+<div class=i>
+<p><b>static</b> はまた、スタティックメソッドを定義します。スタティックメソッドもインスタンス化しなくても利用可能です。クラス名::メソッド名() で参照します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyMath {
+    <em>public static function add($x, $y)</em> {
+        return $x + $y;
+    }
+}
+
+echo <em>MyMath::add(3, 5);</em>
+</pre>
+</div>
+
+<h4 id="scope">スコープ演算子(::, self, parent)</h4>
+<div class=i>
+<p>スコープ演算子(<b>::</b>)は、クラス定数、スタティック変数、スタティックメソッドにアクセスする際に用いられます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyMath {
+    <em>const</em> PI = 3.14;
+    public <em>static</em> $debug_level = 0;
+    public <em>static</em> function add($x, $y) { return $x + $y; }
+}
+
+echo <em>MyMath::PI</em> . "\n";
+echo <em>MyMath::$debug_level</em> . "\n";
+echo <em>MyMath::add(3, 5)</em> . "\n";
+</pre>
+<p><b>self::</b> は、自クラスを示します。クラス定数、スタティック変数、スタティックメソッドについては、インスタンス化せずに使用するため、$this は使用できず、代わりに self を使用します。
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyMath {
+    <em>const</em> PI = 3.14;
+    public <em>static</em> $debug_level = 0;
+    public <em>static</em> function add($x, $y) { return $x + $y; }
+
+    function test() {
+        echo <em>self::PI</em> . "\n";
+        echo <em>self::$debug_level</em> . "\n";
+        echo <em>self::add(3, 5)</em> . "\n";
+    }
+}
+</pre>
+<p><b>parent::</b> は、親クラスを示します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass1 {
+    function func1() { echo "func1()\n"; }
+}
+class MyClass2 extends MyClass1 {
+    function func2() { <em>parent::</em>func1(); }
+}
+</pre>
+</div>
+
+<h4 id="access">アクセス権(var, public, protected, private)</h4>
+<div class=i>
+<p>クラスが持つプロパティの宣言は、PHP 4 までは <b>var</b> を用いていましたが、PHP 5 からは、<b>public</b>、<b>protected</b>、<b>private</b> のいずれかを使用することが推奨されています。public はどこからでもアクセスできます。protected は、そのクラス自身、継承したクラス、親クラスからアクセスできます。private はそのクラス自身からのみアクセスできます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass1 {                            // 親クラス
+    function func1() {
+        echo $this-&gt;var;
+        echo $this-&gt;pub;
+        echo $this-&gt;pro;
+        # echo $this-&gt;pri;     // アクセスできない
+    }
+}
+
+class MyClass2 extends MyClass1 {           // 自クラス
+    <em>var</em> $var = "var\n";
+    <em>public</em> $pub = "public\n";
+    <em>protected</em> $pro = "protected\n";
+    <em>private</em> $pri = "private\n";
+
+    function func2() {
+        echo $this-&gt;var;
+        echo $this-&gt;pub;
+        echo $this-&gt;pro;
+        echo $this-&gt;pri;
+    }
+}
+
+class MyClass3 extends MyClass2 {          // 子孫クラス
+    function func3() {
+        echo $this-&gt;var;
+        echo $this-&gt;pub;
+        echo $this-&gt;pro;
+        # echo $this-&gt;pri;    // アクセスできない
+    }
+}
+
+$obj = new MyClass3();
+$obj-&gt;func1();
+$obj-&gt;func2();
+$obj-&gt;func3();
+
+echo $obj-&gt;var;
+echo $obj-&gt;pub;
+# echo $obj-&gt;pro;     // アクセスできない
+# echo $obj-&gt;pri;     // アクセスできない
+</pre>
+<table class="tb1">
+<tr>
+  <th style="width:20%"></th>
+  <th style="width:20%">var</th>
+  <th style="width:20%">public</th>
+  <th style="width:20%">protected</th>
+  <th style="width:20%">private</th>
+</tr>
+<tr><td>親クラス</td><td>○</td><td>○</td><td>○</td><td>×</td></tr>
+<tr><td>自クラス</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+<tr><td>子孫クラス</td><td>○</td><td>○</td><td>○</td><td>×</td></tr>
+<tr><td>その他</td><td>○</td><td>○</td><td>×</td><td>×</td></tr>
+</table>
+</div>
+
+<h4 id="construct">コンストラクタ(__construct())</h4>
+<div class=i>
+<p><b>__construct()</b> はコンストラクタと呼ばれ、オブジェクト生成時に暗黙的に呼び出されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass {
+    function <em>__construct()</em> {
+        echo "Constructer of MyClass\n";
+    }
+}
+
+$obj = new MyClass();   // オブジェクト生成時に自動的に __construct() メソッドが呼ばれます
+</pre>
+<p>祖先となるクラスがコンストラクタを持っている場合は、子孫クラスは parent::__construct() を明示的に呼び出す必要があります。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass1 {
+    function __construct() {
+        echo "MyClass1\n";
+    }
+}
+
+class MyClass2 extends MyClass1 {
+    function __construct() {
+        <em>parent::__construct();</em>
+        echo "MyClass2\n";
+    }
+}
+
+$obj = new MyClass2();
+</pre>
+</div>
+
+<h4 id="destruct">デストラクタ(__destruct())</h4>
+<div class=i>
+<p><b>__destuct()</b> はデストラクタと呼ばれ、オブジェクト消滅時に暗黙的に呼び出されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass1 {
+    function <em>__destruct()</em> {
+        echo "MyClass1\n";
+    }
+}
+
+class MyClass2 extends MyClass1 {
+    function __destruct() {
+        <em>parent::__destruct();</em>
+        echo "MyClass2\n";
+    }
+}
+
+$obj = new MyClass2();
+unset($obj);             // オブジェクト消滅時にデストラクタが呼ばれる
+</pre>
+</div>
+
+<h4 id="override">オーバーライド</h4>
+<div class=i>
+<p>クラスのプロパティやメソッドは、サブクラスでオーバーライド(上書き)することができます。下記の例では、親クラスが持つ func() というメソッドを、サブクラスがオーバーライドしています。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass1 {
+    <em>public function func()</em> {
+        echo "AAA\n";
+    }
+}
+
+class MyClass2 extends MyClass1 {
+    <em>public function func()</em> {
+        echo "BBB\n";
+    }
+}
+
+$obj = new MyClass2();
+$obj-&gt;func();                // BBB と表示される
+</pre>
+</div>
+
+<h4 id="final">オーバーライド禁止(final)</h4>
+<div class=i>
+<p><b>final</b> をつけたメソッドは、サブクラスでオーバーライドすることができません。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass1 {
+    <em>final</em> public function func() {
+        echo "AAA\n";
+    }
+}
+
+class MyClass2 extends MyClass1 {
+    # <em>public function func()</em> { echo "BBB\n"; }   // オーバーライドが禁止される
+}
+
+$obj = new MyClass2();
+$obj-&gt;func();                // BBB と表示される
+</pre>
+</div>
+
+<h4 id="abstract">抽象クラス(abstract)</h4>
+<div class=i>
+<p><b>abstract</b> は、抽象クラスを定義します。抽象クラスはそのままではオブジェクト化することができず、必ずそのサブクラスを定義してオブジェクト化します。抽象クラスは、サブクラスが必ず定義しなくてはならない抽象メソッドを定義します。サブクラスで定義を怠ると、PHP文法エラーとなります。これにより、抽象クラスを継承するすべてのサブクラスが、必要なメソッドを持っていることが保障されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>abstract</em> class MyFileReader {      // 抽象クラスとして定義
+    protected $file_name;
+    protected $fp;
+    function __construct($file) {
+        // 初期化処理(ファイルのオープンなど)
+    }
+    <em>abstract public function read();</em>   // ひとつ以上の抽象メソッドを定義
+    function close() {
+        // ファイルのクローズ処理
+    }
+}
+
+class MyCsvFileReader extends MyFileReader {
+    <em>public function read()</em> {                  // 抽象メソッドを具現化
+        // CSVファイル読み込み処理
+    }
+}
+
+class MyXmlFileReader extends MyFileReader {
+    <em>public function read()</em> {                  // 抽象メソッドを具現化
+        // XMLファイル読み込み処理
+    }
+}
+
+$fr = new MyCsvFileReader("sample.csv");
+$csv = $fr-&gt;read();
+$fr-&gt;close();
+</pre>
+</div>
+
+<h4 id="interface">インタフェース(interface)</h4>
+<div class=i>
+<p><b>interface</b> は、インタフェースを定義します。インタフェースはそのままではオブジェクト化することができず、必ずそのインタフェースを実装するクラスを定義してオブジェクト化します。インタフェースは、実装クラスが必ず定義しなくてはならないメソッドを定義します。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>interface</em> MyFileReader {      // インタフェースとして定義
+    <em>public function read();</em>   // クラスが実装すべきメソッドを定義
+}
+
+class MyCsvFileReader <em>implements</em> MyFileReader {
+    <em>public function read()</em> {                  // メソッドを具現化
+        // CSVファイル読み込み処理
+    }
+}
+
+class MyXmlFileReader <em>implements</em> MyFileReader {
+    <em>public function read()</em> {                  // メソッドを具現化
+        // XMLファイル読み込み処理
+    }
+}
+
+$fr = new MyCsvFileReader("sample.csv");
+$csv = $fr-&gt;read();
+$fr-&gt;close();
+</pre>
+<p>抽象クラスとインタフェースは似ていますが、抽象クラスがメソッドの実態を定義できるのに対し、インタフェースは実態を定義することはできません。その代わりに、抽象クラスはひとつしか継承できないのに対し、インタフェースは複数実装することが可能です。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+class MyClass <em>implements MyInterface1, MyInterface2</em> {
+    public function func1() { /* func1()の実装 */ }
+    public function func2() { /* func2()の実装 */ }
+}
+</pre>
+</div>
+
+<h4 id="typehinting">タイプヒンティング</h4>
+<div class=i>
+<p>PHP5 では、メソッドに引数の型を指定することが可能となりました。異なる型の引数を指定するとPHPエラーが発生します。これにより、プログラム引数のミスを抑制することができます。ただし、型として指定できるのは、クラス名(PHP5～)、インタフェース名(PHP5～)、配列(array)(PHP 5.1～)、コールバック関数(<b>callable</b>)(PHP5.4～)のみで、int, integer, string などのスカラー型を指定することはできません。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+
+class MyClass1 {
+    public function greet() { echo "Hello\n"; }
+}
+
+class MyClass2 {
+    public function greet() { echo "Guten Tag\n"; }
+}
+
+class MyClass3 {
+    public function test(<em>MyClass1</em> $obj) {
+        $obj-&gt;greet();
+    }
+}
+
+$obj1 = new MyClass1();
+$obj2 = new MyClass2();
+$obj3 = new MyClass3();
+
+$obj3-&gt;test($obj1);    // 型が合っているので呼び出せる
+# $obj3-&gt;test($obj2);  // 型が合っていないのでエラーとなる
+</pre>
+</div>
+
+<h4 id="autoloading">オートローディング</h4>
+<div class=i>
+<p>オートローディング機能を用いることで、クラスが定義されたファイルを自動的に読み込むことが可能です。new でクラスが生成される際、該当するクラスが定義されてなければ、<b>__autoload()</b> 関数が呼ばれます。下記の例では、MyClass1 を new する際に、MyClass1.php ファイルが自動的にインクルードされます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>function __autoload($class_name)</em> {
+    include("{$class_name}.php");
+}
+
+$obj = new MyClass1();
+</pre>
+<p>PHP 5.1.2 以降では、__autoload() の代わりに <b>spl_autoload_register()</b> を使用するようになりました。__autoload() は一度しか定義できませんが、spl_autoload_register() は状況に応じて読み込み方法を変更することが可能です。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+<em>spl_autoload_register(function($class_name)</em> {
+    include("{$class_name}.php");
+});
+
+$obj1 = new MyClass1();
+</pre>
+<p>下記の例では、Model_MyClass1.php を new すると、Model/MyClass1.php が読み込まれます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+spl_autoload_register(function($class_name) {
+    include(<em>str_replace("_", "/", $class_name) . ".php"</em>);
+});
+
+$obj1 = new Model_MyClass1();
+</pre>
+</div>
+
+<h4 id="clone">オブジェクトの複製(clone)</h4>
+<div class=i>
+<p>= 演算子でオブジェクトを代入すると、オブジェクトへの参照が代入されます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass { public $name; }
+
+$obj1 = new MyClass();
+$obj1-&gt;name = "AAA";
+
+<em>$obj2 = $obj1;</em>              // $obj2 は $obj1 と同じオブジェクトを示す
+$obj2-&gt;name = "BBB";
+
+echo $obj1-&gt;name . "\n";    // BBB と表示される
+echo $obj2-&gt;name . "\n";    // BBB と表示される
+</pre>
+<p><b>clone</b> を用いることで、オブジェクトの複製(クローン)を作成することができます。</p>
+<div class="tab">PHP</div>
+<pre class=c2>
+&lt;?php
+class MyClass { public $name; }
+
+$obj1 = new MyClass();
+$obj1-&gt;name = "AAA";
+
+<em>$obj2 = clone $obj1;</em>              // $obj1 とは別のオブジェクトが生成される
+$obj2-&gt;name = "BBB";
+
+echo $obj1-&gt;name . "\n";    // AAA と表示される
+echo $obj2-&gt;name . "\n";    // BBB と表示される
+</pre>
+
+</div>
+
+<hr>
+<div>Copyright(C) 2013 杜甫々</div>
+<div>初版：2013年5月12日、最終更新：2013年5月12日</div>
+<div>http://www.tohoho-web.com/php/class.html</div>
+</body>
+</html>

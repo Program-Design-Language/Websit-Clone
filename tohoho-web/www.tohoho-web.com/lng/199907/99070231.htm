@@ -1,0 +1,58 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>open(F,"&lt;file.txt");の時もflock(F,2);すべき？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>open(F,"&lt;file.txt");の時もflock(F,2);すべき？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070230.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070230.htm">[前に]</a>
+<a href="99070232.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070232.htm">[次に]</a>
+<hr>
+<span class=name>ＫＡＮ</span>
+<span class=time>1999/07/22(木) 10:39:57</span><br>
+　極端な例ですが、巨大なサイズのfile.txtを$newへコピーする時、<br>
+<br>
+open(F,"&lt;file.txt");<br>
+open(G,"&gt;$new");<br>
+while(&lt;F&gt;){<br>
+&nbsp;&nbsp;&nbsp;print G $_;<br>
+}<br>
+<br>
+のような時に、flock(F,2)はすべきでしょうか？<br>
+別プロセスによるファイルポインタの移動を阻止するために、排他ロック<br>
+をかけたほうが良いと思えるのですが、本で読んだサンプルなどでは、読<br>
+み込み時にflockを使う例を見ません。<br>
+&nbsp;&nbsp;それとも、私のファイルポインタへの理解が誤っているのでしょうか？<br>
+<hr>
+<span class=name>deepie</span>
+<span class=time>1999/07/27(火) 05:25:40</span><br>
+open(F, "file.txt");<br>
+flock(F, 1);<br>
+# 読み込むだけなら操作モードを「2」にする必要はないと思う。<br>
+# 「1」は読み込みならできる、「2」は読み書き禁止、という意味だったような気がします。<br>
+open(G, "+&lt;$new");<br>
+flock(G, 2);<br>
+truncate(G, 0);<br>
+seek(G, 0, 0);<br>
+while (&lt;F&gt;) {<br>
+print G $_;<br>
+}<br>
+<hr>
+<span class=name>deepie</span>
+<span class=time>1999/07/27(火) 05:28:46</span><br>
+あ、$newっていうくらいだから新規ファイルの作成ですよね。<br>
+open(G, "+&lt;$new");じゃだめですね、すいませんm(__ __)m<br>
+<hr>
+<span class=name>deepie</span>
+<span class=time>1999/07/27(火) 05:33:57</span><br>
+ごめんなさい、論点がずれてますね(笑)<br>
+<br>
+「flock関数使うべき」でしょう。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070230.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070230.htm">[前に]</a>
+<a href="99070232.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070232.htm">[次に]</a>
+</body>
+</html>

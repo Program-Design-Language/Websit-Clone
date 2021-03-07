@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほの正規表現入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<style>
+.xi { margin-left: 1.5em; }
+</style>
+</head>
+<body>
+<h2>とほほの正規表現入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+とほほの正規表現入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">正規表現とは</a>
+<li><a href="#gimmick">正規表現の落とし穴</a>
+<li><a href="#syntax">本書における記法</a>
+<li><a href="#char">文字(<i>A</i>)</a>
+<li><a href="#any_char">任意文字(.)</a>
+<li><a href="#biginning_end">行頭・行末(^, $)</a>
+<li><a href="#one_of">いずれかの文字([...])</a>
+<li><a href="#grouping">グルーピング((...))</a>
+<li><a href="#or">AまたはB(<i>A</i>|<i>B</i>)</a>
+<li><a href="#repeat">繰り返し(+, *, ?, {<i>n</i>, <i>m</i>})</a>
+<li><a href="#non-greedy">最短マッチング(...?)</a>
+<li><a href="#escape">エスケープシーケンス(\r, \n, ...)</a>
+<li><a href="#defined_regexp">定義済み正規表現(\d, \w, ...)</a>
+<li><a href="#capture_group">キャプチャグループ(\1, \2, ...)</a>
+<li><a href="#extra_begging_end">拡張先頭・末尾判断(\b, \A, ...)</a>
+<li><a href="#comment">コメント(?#...)</a>
+<li><a href="#lookaround_assertion">後読み・先読みアサーション(?=...)</a>
+<li><a href="#named_capture_group">名前付きキャプチャグループ(?P&lt;...&gt;)</a>
+<li><a href="#condition">条件マッチング(?(<i>...</i>))</a>
+<li><a href="#unicode">ユニコード</a>
+<li><a href="#text_modifirers">文字変換(\U...\E)</a>
+<li><a href="#regex_text_modifirers">修飾子(/.../<i>x</i>)</a>
+<li><a href="#posix">POSIX正規表現</a>
+<li><a href="#other">その他</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="about">正規表現とは</h4>
+<div class="i">
+<ul>
+<li>英語では <b>regular expression</b> と呼びます。
+<li>文字列が「～を含んでいる」や、「～にマッチする」、「4文字の数字」など、指定したパターンにマッチするか否かを評価します。
+<li>利用する言語やライブラリやバージョンによってサポートされているものが異なります。
+</ul>
+</div>
+
+<h4 id="gimmick">正規表現の落とし穴</h4>
+<div class="i">
+<p>まず最初に、正規表現で見落としてしまいがちな落とし穴について触れておきます。</p>
+<ul>
+<li>メタ文字に注意が必要。PHP や Python では正規表現を文字列で扱う際に、\ などが文字列のメタ文字として解釈され、正規表現としてもメタ文字として見なされないケースがある。
+<li>末尾を示す $ は、末尾に改行(\n)があってもマッチしてしまう。例えば、/^ABC$/ は、"ABC" や "ABC\n" にマッチする。Perl, PHP, Python など。JavaScript はマッチしない。これを防ぐには /.../D や /...\z/ や /...\Z/ を使用する。
+<li>文字(\w)、数字(\d)、空白(\s) はマルチバイト文字にもマッチしてしまう。例えば、/^\d+$/ は、"123" や "１２３" にマッチする。Perl と Python。ASCII 文字にのみマッチさせるには /.../a を使用する。
+</ul>
+</div>
+
+<h4 id="syntax">本書における記法</h4>
+<div class="i">
+<p>本書では下記の仮想的なマッチ関数で表現します。正規表現の部分は、\ や $ などが文字列としてのメタ文字として扱われない raw文字列 であることを想定しています。また、マッチしたか否かは真偽値で判定し、マッチした文字列全体を $0、グルーピング(...)にマッチした文字列を $1, $2, $3, ... で参照できるものと仮定します。</p>
+<pre class="c">
+<em>match(/</em>正規表現<em>/</em>修飾子<em>,</em> <em>"</em>対象文字列<em>")</em>	// =&gt; $0, $1, $2, $3, ...
+</pre>
+<p>それぞれの言語では概ね下記のコードに相当しますが、正規表現の中でメタ文字として扱われる文字が若干異なります。Python で re.search() の代わりに re.match() を使用した場合は、先頭からのみのマッチング(^)になることに注意してください。</p>
+<pre class="c">
+<span class="cm">// Perl</span>
+"対象文字列" =~ /正規表現/修飾子			<span class="cm">// =&gt; $&amp;, $1, $2, $3, ...</span>
+print "$&amp;\n";
+for ($i = 1; $i &lt; @+; $i++) { print "$$i\n"; }
+
+<span class="cm">// PHP</span>
+preg_match('/正規表現/修飾子', "対象文字列", $m)	<span class="cm">// =&gt; $m[0], $m[1], $m[2], $m[3], ...</span>
+foreach ($m as $n) { echo "$n\n"; }
+
+<span class="cm">// Python</span>
+m = re.search(r"正規表現", "対象文字列", 修飾子)	<span class="cm">// =&gt; m.group(0), m.group(1), m.group(2), ...</span>
+print(m.group(0));
+for n in m.groups():
+    print(n)
+
+<span class="cm">// JavaScript</span>
+m = "対象文字列".match(/正規表現/修飾子)		<span class="cm">// =&gt; m[0], m[1], m[2], ...</span>
+m.forEach(n => console.log(n));
+</pre>
+<p>動作は下記のバージョンで確認しました。</p>
+<pre class="c">
+Perl 5.26
+PHP 7.24
+Python 3.6
+Node.js 14.15 (JavaScript)
+</pre>
+</div>
+
+<h4 id="char">文字(<i>A</i>)</h4>
+
+<h5 id="char1"><em><i>A</i></em></h5>
+<div class="xi">
+<p>文字 <i>A</i> にマッチします。正規表現にマッチする文字列が含まれていれば、マッチしたとみなします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>A</em>/, "A")		// マッチする
+match(/<em>A</em>/, "DAD")	// Aを含んでいるのでマッチする
+</pre>
+</div>
+
+<h5 id="chars"><em><i>ABC</i></em></h5>
+<div class="xi">
+<p>文字列 <i>ABC</i> にマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>ABC</em>/, "ABC")	// マッチする
+match(/<em>ABC</em>/, "DABCD")	// ABCを含んでいるのでマッチする
+</pre>
+</div>
+
+<h4 id="any_char">任意文字(.)</h4>
+
+<h5><em>.</em></h5>
+<div class="xi">
+<p>改行(LF:\n)を除く任意の1文字にマッチします。<a href="#mod_s">シングルラインモード(/.../s)</a>の時は、改行にもマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/A<em>...</em>A/, "AxyzA")		// 改行を除く任意の3文字にマッチする
+match(/A<em>.</em>A/, "A\nA")		// 改行(\n)にはマッチしない
+match(/A<em>.</em>A/<em>s</em>, "A\nA")		// 改行にもマッチする
+</pre>
+</div>
+
+<h4 id="biginning_end">行頭・行末(^, $)</h4>
+
+<h5 id="line_head"><em>^</em></h5>
+<div class="xi">
+<p>行頭にマッチします。通常は先頭行の行頭にのみマッチしますが、<a href="#mod_m">マルチラインモード(/.../m)</a>の時は、各行の行頭にマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>^</em>ABC/, "ABCDEF")		// 行頭なのでマッチする
+match(/<em>^</em>DEF/, "ABCDEF")		// 行頭ではないのでマッチしない
+match(/<em>^</em>DEF/, "ABC\nDEF")	// 先頭行ではないのでマッチしない
+match(/<em>^</em>DEF/<em>m</em>, "ABC\nDEF")	// 先頭行でなくてもマッチする
+</pre>
+<p></p>
+</div>
+
+<h5 id="line_tail"><em>$</em></h5>
+<div class="xi">
+<p>行末にマッチします。通常は最終行のみマッチしますが、<a href="#mod_m">マルチラインモード(/.../m)</a>の時は、各行の行末にマッチします。Perl, PHP, Python では、終端に改行(\n)があってもマッチしてしまうことに注意してください。Perl では /.../D 修飾子をつけることで、PHP では $ の代わりに \z を使用することで、Python では $ の代わりに \Z を使用することでこれを回避できます。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/DEF<em>$</em>/, "ABCDEF")		// 行末なのでマッチする
+match(/DEF<em>$</em>/, "ABCDEF\nXYZ")	// 最終行ではないのでマッチしない
+match(/DEF<em>$</em>/<em>m</em>, "ABCDEF\nXYZ")	// 最終行でなくてもマッチする
+
+match(/DEF<em>$</em>/, "ABCDEF<em>\n</em>")	// 最後に改行(\n)があってもマッチしてしまう(Perl, PHP, Python)
+match(/DEF$/<em>D</em>, "ABCDEF\n")	// 最後に改行(\n)があるとマッチしなくなる(Perl)
+match(/DEF<em>\z</em>/, "ABCDEF\n")	// 最後に改行(\n)があるとマッチしなくなる(PHP)
+match(/DEF<em>\Z</em>/, "ABCDEF\n")	// 最後に改行(\n)があるとマッチしなくなる(Python)
+</pre>
+</div>
+
+<h4 id="one_of">いずれかの文字([...])</h4>
+
+<h5><em>[</em><i>...</i><em>]</em></h5>
+<div class="xi">
+<p>[...] は ... のいずれかの文字にマッチします。[...] の中では ^ $ . + * / [ { } ( ) の文字は意味を失います。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>[</em>ABC<em>]</em>/, "B")	// AまたはBまたはCにマッチ
+</pre>
+<p>[A-Z] はアルファベット順に A～Z の間の1文字にマッチします。</p>
+<pre class="c">
+match(/[A<em>-</em>Za<em>-</em>z0<em>-</em>9]+/, "ABC123")		// 半角英数字にマッチ
+match(/[A<em>-</em>Za<em>-</em>z0<em>-</em>9_]+/, "ABC_123")	// アンダーバーを含む半角英数字にマッチ
+</pre>
+<p>[^...] は、... のいずれでもない1文字にマッチします。^ は [ の直後に記述する必要があります。行頭を意味する ^ とは別物です。</p>
+<pre class="c">
+match(/[<em>^</em>ABC]*/, "ABCDEF")		// ABC以外の文字(DEF)にマッチ
+match(/[<em>^</em>0-9]*/, "123DEF")		// 0～9以外の文字(DEF)にマッチ
+match(/(&lt;[<em>^</em>>]*&gt;)/, "&lt;ABC&gt;&lt;DEF&gt;")	// &lt;ABC&gt;にマッチ
+</pre>
+</div>
+
+<h4 id="grouping">グルーピング((...))</h4>
+
+<h5><em>(</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>(...) は、正規表現をいくつかのグループ(サブパターン)に分けます。グループは、+, *, ? の対象としたり、グループにマッチした文字列を、結果として個々に取り出したり、後続の正規表現で参照したり、置換表現で参照したりすることができます。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>(</em>ABC<em>)</em><em>(</em>DEF<em>)</em>/, "ABCDEF")		// ABCとDEFの2つのサブパターンに分けてマッチ
+match(/<em>(</em>ABC<em>)</em>+<em>(</em>DEF<em>)</em>/, "ABCABCABCDEF")	// ABCが1回以上の後、DEFが後続する文字列にマッチ
+</pre>
+</div>
+
+<h4 id="or">AまたはB(<i>A</i>|<i>B</i>)</h4>
+
+<h5><i>...</i><em>|</em><i>...</i></h5>
+<div class="xi">
+<p>A|B は、A または B を意味します。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/A<em>|</em>B/, "A")		// AまたはBにマッチ
+match(/ABC<em>|</em>DEF/, "DEF")		// ABCまたはDEFにマッチ
+</pre>
+</div>
+
+<h4 id="repeat">繰り返し(+, *, ?, {<i>n</i>, <i>m</i>})</h4>
+
+<h5><em>*</em></h5>
+<div class="xi">
+<p>直前の文字または [...] や (...) で囲まれたものが0個以上連続するものにマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/A<em>*</em>/, "AAA")		// AAAにマッチする
+match(/AB<em>*</em>C/, "ABC")		// ACでもABCでもABBCでもマッチする
+match(/[A-Z]<em>*</em>/, "ABC2021")	// ABCにマッチする
+match(/(A|B)<em>*</em>/, "ABBACD")	// ABBAにマッチする
+</pre>
+</div>
+
+<h5><em>+</em></h5>
+<div class="xi">
+<p>直前の文字または [...] や (...) で囲まれたものが1個以上連続するものにマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/AB<em>+</em>C/, "AC")	// 1個以上のBが無いのでマッチしない
+match(/AB<em>+</em>C/, "ABC")	// マッチする
+match(/AB<em>+</em>C/, "ABBC")	// マッチする
+</pre>
+</div>
+
+<h5><em>?</em></h5>
+<div class="xi">
+<p>直前の文字または [...] や (...) で囲まれたものが0個または1個のものにマッチします。省略可能な文字列にマッチさせる際に便利です。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/-<em>?</em>[0-9]+/, "123")	// 123にもマッチ
+match(/-<em>?</em>[0-9]+/, "-123")	// -123にもマッチ
+</pre>
+</div>
+
+<h5><em>{</em><i>n</i><em>}</em><br>
+<em>{</em><i>n</i><em>,}</em><br>
+<em>{</em><i>n</i><em>,</em><i>m</i><em>}</em></h5>
+<div class="xi">
+<p>直前の文字または [...] や (...) で囲まれたものが、{<i>n</i>} は <i>n</i>回、{<i>n</i>,} は <i>n</i>回以上、{<i>n</i>,<i>m</i>} は <i>n</i>～<i>m</i>回繰り返したものにマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/A<em>{</em>4<em>}</em>/, "AAAAAA")		// AAAAにマッチ
+match(/[0-9]{4}/, "2021")	// 2021にマッチ
+</pre>
+</div>
+
+<h4 id="non-greedy">最短マッチング(...?)</h4>
+
+<h5><em>*?</em></h5>
+<div class="xi">
+<p>* と似ていますが、* が最長マッチなのに対して、最短マッチでマッチングします。&lt; に対応する &gt; までをマッチさせる際に便利です。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/&lt;.<em>*</em>&gt;/, "&lt;ABC&gt;&lt;DEF&gt;")	// 最長マッチなので&lt;ABC&gt;&lt;DEF&gt;にマッチする
+match(/&lt;.<em>*?</em>&gt;/, "&lt;ABC&gt;&lt;DEF&gt;")	// 最短マッチなので&lt;ABC&gt;にマッチする
+</pre>
+</div>
+
+<h5><em>+?</em></h5>
+<div class="xi">
+<p>+ と似ていますが、+ が最長マッチなのに対して、最短マッチでマッチングします。&lt; に対応する &gt; までをマッチさせる際に便利です。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/&lt;.<em>+</em>&gt;/, "&lt;ABC&gt;&lt;DEF&gt;")	// 最長マッチなので&lt;ABC&gt;&lt;DEF&gt;にマッチする
+match(/&lt;.<em>+?</em>&gt;/, "&lt;ABC&gt;&lt;DEF&gt;")	// 最短マッチなので&lt;ABC&gt;にマッチする
+</pre>
+</div>
+
+<h5><em>??</em></h5>
+<div class="xi">
+<p>+ と似ていますが、+ が最長マッチなのに対して、最短マッチでマッチングします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/AB<em>?</em>/, "ABC")		// 最長マッチなのでABにマッチ
+match(/AB<em>??</em>/, "ABC")		// 最短マッチなのでAにマッチ
+</pre>
+</div>
+
+<h5><em>{</em><i>n</i><em>,</em><i>m</i><em>}?</em></h5>
+<div class="xi">
+<p>{n,m} と似ていますが、{n,m} が最長マッチなのに対して、最短マッチでマッチングします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/(A<em>{</em>3<em>,</em>5<em>}</em>)/,  "AAAAAAA")	// 最長マッチなのでAAAAAにマッチ
+match(/(A<em>{</em>3<em>,</em>5<em>}?</em>)/, "AAAAAAA")	// 最短マッチなのでAAAにマッチ
+</pre>
+</div>
+
+<h4 id="escape">エスケープシーケンス(\r, \n, ...)</h4>
+
+<h5><em>\</em>メタ文字</h5>
+<div class="xi">
+<p>正規表現中で意味を持つ文字(メタ文字)は、\ でその意味を無効化(エスケープ)することができます。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+<em>\^</em>		- ハット(^)
+<em>\$</em>		- ドル記号($)
+<em>\.</em>		- ピリオド(.)
+<em>\+</em>		- プラス(+)
+<em>\*</em>		- アスタリスク(*)
+<em>\/</em>		- スラッシュ(/)
+<em>\\</em>		- バックスラッシュ(\)
+<em>\[</em>		- 大括弧([)
+<em>\]</em>		- 大括弧(])
+<em>\{</em>		- 中括弧({)
+<em>\}</em>		- 中括弧(})
+<em>\(</em>		- 丸括弧(()
+<em>\)</em>		- 丸括弧())
+</pre>
+</div>
+
+<h5><em>\</em>制御文字</h5>
+<div class="xi">
+<p>下記のシーケンスで制御文字を表すことができます。バックスペースは単語の区切りを示す \b と重複するため、[...] の中に記載した時のみバックスペースの意味を持ちます。</p>
+<pre class="c">
+<em>\0</em>		- ヌル(NUL:\x00)		(Perl:○ PHP:○ Python:○ JS:○)
+<em>\a</em>		- ベル(BEL:\x07)		(Perl:○ PHP:○ Python:× JS:×)
+<em>[\b]</em>		- バックスペース(BS:\x08)	(Perl:○ PHP:○ Python:○ JS:○)
+<em>\t</em>		- タブ(TAB:\x09)		(Perl:○ PHP:○ Python:○ JS:○)
+<em>\f</em>		- フォームフィード(FF:\x0C)	(Perl:○ PHP:○ Python:○ JS:○)
+<em>\r</em>		- 復帰(CR:\x0D)		(Perl:○ PHP:○ Python:○ JS:○)
+<em>\n</em>		- 改行(LF:\x0A)		(Perl:○ PHP:○ Python:○ JS:○)
+<em>\v</em>		- 垂直タブ(VT:\x0B)	(Perl:○ PHP:○ Python:○ JS:○)
+<em>\e</em>		- エスケープ(ESC:\x1B)	(Perl:○ PHP:○ Python:× JS:○)
+<em>\c</em><i>X</i>		- Ctrl-<i>X</i>		(Perl:○ PHP:○ Python:× JS:○)
+</pre>
+</div>
+
+<h5><em>\</em>文字コード</h5>
+<div class="xi">
+<p>下記で1バイト文字を文字コードで表すことができます。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+<em>\</em><i>XXX</i>		- 1バイト文字コード(8進数)	(例:\101 = \x41 = A)
+<em>\x</em><i>XX</i>		- 1バイト文字コード(16進数)	(例:\x41 = A)
+</pre>
+</div>
+
+<h4 id="defined_regexp">定義済み正規表現(\d, \w, ...)</h4>
+
+<h5><em>\</em>定義済み表現</h5>
+<div class="xi">
+<p>下記の定義済み正規表現を使用することができます。ただし、言語やバージョンやロケール環境によって下記に示している文字以外にも、マッチする文字が様々に変わるので、利用する際には注意が必要です。<br>
+*1 マルチバイト文字(全角数字や全角空白文字等)も対象になることがあります。<br>
+*2 Perl だと [\r]、PHP だと [\r\n] 等異なります。<br>
+*3 Perl でサポートされていましたが廃止されました。</p>
+<pre class="c">
+<em>\d</em>	- 数字文字([0-9])<em>*1</em>		(Perl:○ PHP:○ Python:○ JS:○)
+<em>\D</em>	- \d以外の文字			(Perl:○ PHP:○ Python:○ JS:○)
+<em>\w</em>	- _を含む英数文字([a-zA-Z0-9_])<em>*1</em>	(Perl:○ PHP:○ Python:○ JS:○)
+<em>\W</em>	- \w以外の文字			(Perl:○ PHP:○ Python:○ JS:○)
+<em>\s</em>	- 空白文字 ([ \t\f\r\n\v])<em>*1</em>	(Perl:○ PHP:○ Python:○ JS:○)
+<em>\S</em>	- \s以外の文字			(Perl:○ PHP:○ Python:○ JS:○)
+<em>\h</em>	- 水平空白文字([ \t])<em>*1</em>		(Perl:○ PHP:○ Python:× JS:×)
+<em>\H</em>	- \h以外の文字			(Perl:○ PHP:○ Python:× JS:×)
+<em>\v</em>	- 垂直タブ文字([\v])		(Perl:○ PHP:○ Python:○ JS:○)
+<em>\V</em>	- \v以外の文字			(Perl:○ PHP:○ Python:× JS:×)
+<em>\R</em>	- 改行文字([\r\n])<em>*2</em>		(Perl:○ PHP:○ Python:× JS:×)
+<em>\N</em>	- \R以外の文字			(Perl:○ PHP:× Python:× JS:×)
+<em>\C</em>	- 1バイト文字<em>*3</em>			(Perl:× PHP:× Python:× JS:×)
+</pre>
+</div>
+
+<h4 id="capture_group">キャプチャグループ(\1, \2, ...)</h4>
+
+<h5><em>\1</em>, <em>\2</em>, ...</h5>
+<div class="xi">
+<p>(...) で囲んだ正規表現にマッチした文字列(グループ)を、\1, \2, ...\9 で参照することができます。\1 は 1番目の (...)、\2 は 2番目の (...) に対応します。正規表現の後続部や、置換文字列の中で使用できます。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/(ABC)(<em>\1</em>)/, "ABCABC")		// 1番目の(...)にマッチした文字列(ABC)にマッチ
+match(/(A)(B)(<em>\2</em>)/, "ABB")		// 2番目の(...)にマッチした文字列(B)にマッチ
+</pre>
+<p>キャプチャしたグループはまた、「<a href="#syntax">本書における記法</a>」で示したように、正規表現マッチングの後でも参照することができます。</p>
+<pre class="c">
+// JavaScriptでキャプチャグループを参照する例
+m = "2021-01-10".match(/<em>(</em>[0-9]{4}<em>)</em>-<em>(</em>[0-9]{2}<em>)</em>-<em>(</em>[0-9]{2}<em>)</em>/);
+console.log(<em>m[0]</em>);	// =&gt; 2021-01-10
+console.log(<em>m[1]</em>);	// =&gt; 2021
+console.log(<em>m[2]</em>);	// =&gt; 01
+console.log(<em>m[3]</em>);	// =&gt; 10
+</pre>
+</div>
+
+<h5><em>\g</em><i>n</i>, <em>\g{</em><i>n</i><em>}</em>, <em>\g&lt;</em><i>n</i><em>&gt;</em>, <em>(?</em><i>n</i><em>)</em></h5>
+<div class="xi">
+<p>\1 の代わりに \g{1} や (?1) などを使用できます。\g{10} や (?10) の様に2桁のグループ番号を指定することができます。JavaScript ではサポートされていません。</p>
+<pre class="c">
+match(/(ABC)<em>\g1</em>/, "ABCABC")	// ABCが2回繰り返すものにマッチ (Perl:○ PHP:○ Python:× JS:×)
+match(/(ABC)<em>\g{1}</em>/, "ABCABC")	// ABCが2回繰り返すものにマッチ (Perl:○ PHP:○ Python:× JS:×)
+match(/(ABC)<em>\g&lt;1&gt;</em>/, "ABCABC")	// ABCが2回繰り返すものにマッチ (Perl:× PHP:× Python:○ JS:×)
+match(/(ABC)<em>(?1)</em>/, "ABCABC")	// ABCが2回繰り返すものにマッチ (Perl:○ PHP:○ Python:○ JS:×)
+</pre>
+</div>
+
+<h5><em>\g-</em><i>n</i>, <em>\g{-</em><i>n</i><em>}</em>, <em>(?-</em><i>n</i><em>)</em></h5>
+<div class="xi">
+<p><i>n</i>個前の (... に対応するグループを \g-<i>n</i> や \g{-<i>n</i>) や (?-1) で表すことができます。Python や JavaScript ではサポートされていません。(... が何個も連なった複雑な正規表現で直前のグループを参照したい場合に便利です。</p>
+<pre class="c">
+match(/(ABC)<em>\g-1</em>/, "ABCABC")	// 1個前のグループ(ABC)にマッチ (Perl:○ PHP:○ Python:× JS:×)
+match(/(ABC)<em>\g{-1}</em>/, "ABCABC")	// 1個前のグループ(ABC)にマッチ (Perl:○ PHP:○ Python:× JS:×)
+match(/(ABC)<em>(?-1)</em>/, "ABCABC")	// 1個前のグループ(ABC)にマッチ (Perl:○ PHP:○ Python:× JS:×)
+</pre>
+</div>
+
+<h4 id="extra_begging_end">拡張先頭・末尾判断(\b, \A, ...)</h4>
+
+<h5><em>\b</em><br>
+<em>\B</em></h5>
+<div class="xi">
+<p>\b は単語の先頭か末尾である場合にマッチします。\B は単語の先頭でも末尾でもない場合にマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>\b</em>Java<em>\b</em>/, "I like Java.")	// \bが単語の先頭・末尾なのでマッチ
+match(/<em>\b</em>Java<em>\b</em>/, "I like JavaScript.")	// \bが単語の末尾ではないのでマッチしない
+</pre>
+</div>
+
+<h5><em>\&lt;</em><br>
+<em>\&gt;</em></h5>
+<div class="xi">
+<p>\&lt; は単語の先頭である場合に、\&gt; は単語の末尾である場合にマッチします。正規表現を説明したサイトで稀に見かけるのですが、今回調べた範囲ではサポートしている言語は無いようです。<br>
+(Perl:× / PHP:× / Python:× / JavaScript:×)</p>
+<pre class="c">
+match(/<em>\&lt;</em>XYZ/, "ABC XYZ")	// XYZが単語の先頭であるのでマッチ
+match(/<em>\&lt;</em>XYZ/, "ABCXYZ")	// XYZが単語の先頭ではないのでマッチしない
+</pre>
+</div>
+
+<h5><em>\A</em><br>
+<em>\z</em></h5>
+<div class="xi">
+<p>\A は先頭行の行頭にマッチします。\z は最終行の行末にマッチします。<a href="#mod_s">シングルラインモード(/.../s)</a>では ^ や $ と変わりありませんが、<a href="#mod_m">マルチラインモード(/.../m)</a>の時の動作が異なります。Python は \A のみをサポートしています。<br>
+(Perl:○ / PHP:○ / Python:△ / JavaScript:×)</p>
+<pre class="c">
+match(/<em>^</em>ABC/, "XYZ\nABC")	// ^は、2行目以降の行頭にはマッチしない
+match(/<em>^</em>ABC/m, "XYZ\nABC")	// ^は、マルチラインモードでは2行目以降にマッチする
+match(/<em>\A</em>ABC/, "XYZ\nABC")	// \Aも、2行目以降の行頭にはマッチしない
+match(/<em>\A</em>ABC/m, "XYZ\nABC")	// \Aは、マルチラインモードでも2行目以降にマッチしない
+</pre>
+</div>
+
+<h5><em>\Z</em></h5>
+<div class="xi">
+<p>\Z は最終行の行末、または、最終行の行末の改行(\n)のひとつ前にマッチします。Python は末尾の \n には対応していないようです。<br>
+(Perl:○ / PHP:○ / Python:△ / JavaScript:×)</p>
+<pre class="c">
+match(/XYZ<em>\Z</em>/, "ABC\nXYZ")	// 最終行の行末なのでマッチする
+match(/XYZ<em>\Z</em>/, "ABC\nXYZ\n")	// 最後に\nがあってもマッチする
+match(/XYZ<em>\Z</em>/, "ABC\nXYZ\r\n")	// \r\nの場合はマッチしない
+match(/XYZ<em>\Z</em>/, "ABC\nXYZ\n\n")	// \nが複数の場合はマッチしない
+</pre>
+</div>
+
+<h5><em>\G</em></h5>
+<div class="xi">
+<p>最初の行の行頭、もしくは、<a href="#mod_g">グローバルマッチ(/.../g)</a>におけるひとつ前のマッチの終了場所にマッチします。<br>
+(Perl:○ / PHP:× / Python:× / JavaScript:×)</p>
+<pre class="c">
+match(/<em>\G</em>(ABC)/g, "ABCABC")	// 2回目のABCも1回目マッチの直後なのでマッチする
+match(/<em>\G</em>(ABC)/g, "ABCXABC")	// 2回目のABCは1回目マッチの直後ではないのでマッチしない
+</pre>
+</div>
+
+<h4 id="comment">コメント(?#...)</h4>
+
+<h5><em>(?#</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>(?#...) はコメントとして扱われます。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:×)</p>
+<pre class="c">
+match(/(ABC)<em>(?#</em>This is comment<em>)</em>(DEF)/, "ABCDEF")	// マッチする
+</pre>
+</div>
+
+<h4 id="lookaround_assertion">後読み・先読みアサーション(?=...)</h4>
+
+<h5><em>(?=</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>先読みアサーション。下記の例では、ABC の後ろに DEF が継続する場合のみ ABC にマッチします。$0 や $1 の値は ABC になります。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/(ABC)<em>(?=</em>DEF<em>)</em>/, "ABCDEF")
+</pre>
+</div>
+
+<h5><em>(?!</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>否定先読みアサーション。下記の例では、ABC の後ろに DEF が継続しない場合のみ ABC にマッチします。$0 や $1 の値は ABC になります。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/(ABC)<em>(?!</em>DEF<em>)</em>/, "ABCXYZ")
+</pre>
+</div>
+
+<h5><em>(?&lt;=</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>後読みアサーション。下記の例では、DEF の前に ABC が存在する場合のみ DEF にマッチします。$0 や $1 の値は DEF になります。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>(?&lt;=</em>ABC<em>)</em>(DEF)/, "ABCDEF")
+</pre>
+</div>
+
+<h5><em>(?&lt;!</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>否定後読みアサーション。下記の例では、DEF の前に ABC が存在しない場合のみ DEF にマッチします。$0 や $1 の値は DEF になります。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:○)</p>
+<pre class="c">
+match(/<em>(?&lt;!</em>ABC<em>)</em>(DEF)/, "XYZDEF")
+</pre>
+</div>
+
+<h4 id="named_capture_group">名前付きキャプチャグループ(?P&lt;...&gt;)</h4>
+
+<h5><em>(?P&lt;</em><i>name</i><em>&gt;</em><i>...</i><em>)</em><br>
+<em>(?&lt;</em><i>name</i><em>&gt;</em><i>...</i><em>)</em><br>
+<em>(?'</em><i>name</i><em>'</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>(...) によるグループ(サブパターン) において、下記の様に指定することで、グループに名前を付けることができます。マッチした文字列は、Perl では $+{foo}、PHP では $m['foo']、Python では m.group('foo') で参照することができます。Python では re モジュールではなく regex モジュールを使用すると (?&lt;<i>name</i>&gt;...) 形式を利用可能となります。</p>
+<pre class="c">
+match(/<em>(?P&lt;</em>foo<em>&gt;</em>ABC<em>)</em>/, "ABC")	// ABCにマッチ (Perl:○ PHP:○ Python:○ JS:×)
+match(/<em>(?&lt;</em>foo<em>&gt;</em>ABC<em>)</em>/, "ABC")	// ABCにマッチ (Perl:○ PHP:○ Python:△ JS:×)
+match(/<em>(?'</em>foo<em>'</em>ABC<em>)</em>/, "ABC")	// ABCにマッチ (Perl:○ PHP:○ Python:× JS:×)
+</pre>
+</div>
+
+<h5><em>(?P=</em><i>name</i><em>)</em><br>
+<em>(?P&gt;</em><i>name</i><em>)</em><br>
+<em>(?&amp;</em><i>name</i><em>)</em><br>
+<em>\g&lt;</em><i>name</i><em>&gt;</em><br>
+<em>\g{</em><i>name</i><em>}</em><br>
+<em>\g'</em><i>name</i><em>'</em><br>
+<em>\k&lt;</em><i>name</i><em>&gt;</em><br>
+<em>\k{</em><i>name</i><em>}</em><br>
+<em>\k'</em><i>name</i><em>'</em></h5>
+<div class="xi">
+<p>名前付きキャプチャグループを参照します。</p>
+<pre class="c">
+match(/(?P&lt;foo&gt;ABC)<em>(?P=</em>foo<em>)</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:○ JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>(?P&gt;</em>foo<em>)</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>(?&amp;</em>foo<em>)</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>\g&lt;</em>foo<em>&gt;</em>/, "ABCABC")	// ABCを参照 (Perl:× PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>\g{</em>foo<em>}</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>\g'</em>foo<em>'</em>/, "ABCABC")	// ABCを参照 (Perl:× PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>\k&lt;</em>foo<em>&gt;</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>\k{</em>foo<em>}</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:× JS:×)
+match(/(?P&lt;foo&gt;ABC)<em>\k'</em>foo<em>'</em>/, "ABCABC")	// ABCを参照 (Perl:○ PHP:○ Python:× JS:×)
+</pre>
+</div>
+
+<h4 id="condition">条件マッチング(?(<i>...</i>))</h4>
+
+<h5><em>(?(</em><i>cond</i><em>)</em><i>A</i><em>|</em><i>B</i><em>)</em></h5>
+<div class="xi">
+<p>(?(1)<i>A</i>|<i>B</i>) は、\1 にマッチしたものがあれば <i>A</i>、なければ <i>B</i> にマッチします。最初の例では \1 が ABC にマッチしているので後半は DEF にマッチします。2番目、3番目の例では、対象文字列が &lt; で始まっていれば、&gt; で終わる場合にマッチします。<br>
+(Perl:○ / PHP:○ / Python:○ / JavaScript:×)</p>
+<pre class="c">
+match(/(ABC)<em>(?(</em>1<em>)</em>DEF<em>|</em>XYZ<em>)</em>/, "ABCDEF")				// マッチ
+match(/^(&lt;)?[-_.@a-zA-Z0-9]+<em>(?(</em>1<em>)</em>&gt;<em>|)</em>$/, "&lt;foo@example.com&gt;")	// マッチ
+match(/^(&lt;)?[-_.@a-zA-Z0-9]+<em>(?(</em>1<em>)</em>&gt;<em>|)</em>$/, "foo@example.com")	// マッチ
+</pre>
+</div>
+
+<h4 id="unicode">ユニコード</h4>
+
+<h5><em>\o{</em><i>XXXXX</i><em>}</em><br>
+<em>\x{</em><i>XXXX</i><em>}</em><br>
+<em>\u</em><i>XXXX</i><br>
+<em>\u{</em><i>XXXX</i><em>}</em><br>
+<em>\N{U+</em><i>XXXX</i><em>}</em></h5>
+<div class="xi">
+<p><i>XXXX</i> で指定したユニコードにマッチします。例えば \x{3042} は 「あ(U+3042)」 にマッチします。PHP では /.../u 修飾子が必要です。JavaScript では \u<i>XXXX</i> は修飾子不要ですが、\u{<i>XXXX</i>} は /.../u 修飾子が必要です。</p>
+<pre class="c">
+<em>\o{</em><i>XXXXX</i><em>}</em>	// Unicode文字(8進数)	(Perl:○ PHP:○ Python:× JS:×)
+<em>\x{</em><i>XXXX</i><em>}</em>	// Unicode文字(16進数)	(Perl:○ PHP:○ Python:× JS:×)
+<em>\u</em><i>XXXX</i>		// Unicode文字(16進数)	(Perl:× PHP:× Python:○ JS:○)
+<em>\u{</em><i>XXXX</i><em>}</em>	// Unicode文字(16進数)	(Perl:× PHP:× Python:× JS:○)
+<em>\N{U+</em><i>XXXX</i><em>}</em>	// Unicode文字(16進数)	(Perl:○ PHP:× Python:× JS:×)
+</pre>
+</div>
+
+<h5><em>\N{</em><i>name</i><em>}</em></h5>
+<div class="xi">
+<p>ユニコード文字をユニコード名で参照します。Python は 3.8 以降、または regex モジュールで利用できます。各文字のユニコード名は <a target="_top" href="javascript:if(confirm('https://decodeunicode.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://decodeunicode.org/'" tppabs="https://decodeunicode.org/">https://decodeunicode.org/</a> で調べることができます。</p>
+<pre class="c">
+match(/<em>\N{</em>HIRAGANA LETTER A<em>}</em>/, "あ")	// Unicode文字 (Perl:○ PHP:× Python:3.8～ JS:×)
+</pre>
+</div>
+
+<h5><em>\p</em><i>X</i><br>
+<em>\p{</em><i>XX</i><em>}</em><br>
+</h5>
+<div class="xi">
+<p>ユニコードプロパティを指定してマッチさせます。\p<i>X</i> は 1文字プロパティ、\p{<i>XX</i>} には 2文字プロパティやスクリプトを指定できます。Lu には半角大文字も全角大文字もマッチします。PHP と JavaScript でユニコードにマッチさせるには u 修飾子(/.../u) が必要です。Python では re モジュールではなく regex モジュールを利用することで可能となります。JavaScript ではプロパティのみ利用可能です。<b>Han</b>, <b>Hiragana</b>, <b>Katakana</b> には言語やバージョンによって長音、句読点が含まれたり含まれなかったりするので注意が必要です。</p>
+<pre class="c">
+match(/<em>\p</em>L/, "A")		// 文字にマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+match(/<em>\p{</em>Lu<em>}</em>/, "A")		// 大文字にマッチ	(Perl:○ PHP:○ Python:△ JS:○)
+match(/<em>\p{</em>Han<em>}</em>/, "A")		// 漢字にマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+match(/<em>\p{</em>Hiragana<em>}</em>/, "A")	// ひらがなにマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+match(/<em>\p{</em>Katakana<em>}</em>/, "A")	// カタカナにマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+</pre>
+<div>【プロパティ一覧】</div>
+<pre class="c">
+C	その他 (Other)	 
+ Cc	コントロール文字 (Control)	 
+ Cf	非可視整形用文字 (Format)	 
+ Cn	未定義コードポイント (Unassigned)	 
+ Co	私的利用領域 (Private use)	 
+ Cs	サロゲート (Surrogate)	 
+L	文字(数字や記号や区切り文字等を除く文字) (Letter)
+ Ll	小文字 (Lower case letter)	 
+ Lm	擬似文字 (Modifier letter)	 
+ Lo	その他の文字 (Other letter)	 
+ Lt	タイトル文字 (Title case letter)	 
+ Lu	大文字 (Upper case letter)	 
+M	記号 (Mark)	 
+ Mc	修飾文字 (Spacing mark)	 
+ Me	他の文字を囲むための文字 (Enclosing mark)	 
+ Mn	他の文字を修飾するための文字 (Non-spacing mark)	 
+N	数字 (Number)	 
+ Nd	10 進数字 (Decimal number)	 
+ Nl	数値を表す文字 (Letter number)	 
+ No	その他の数字 (Other number)	 
+P	句読記号 (Punctuation)	 
+ Pc	連結用句読記号 (Connector punctuation)	 
+ Pd	ダッシュ (Dash punctuation)	 
+ Pe	閉じ句読記号 (Close punctuation)	 
+ Pf	末尾句読記号 (Final punctuation)	 
+ Pi	先頭句読記号 (Initial punctuation)	 
+ Po	その他の句読記号 (Other punctuation)	 
+ Ps	開き句読記号 (Open punctuation)	 
+S	記号 (Symbol)	 
+ Sc	通貨記号 (Currency symbol)	 
+ Sk	合わせ文字 (Modifier symbol)	 
+ Sm	数学記号 (Mathematical symbol)	 
+ So	その他の記号 (Other symbol)	 
+Z	区切り文字 (Separator)	 
+ Zl	行区切り文字 (Line separator)	 
+ Zp	段落区切り文字 (Paragraph separator)	 
+ Zs	空白文字 (Space separator)
+</pre>
+<div>【スクリプト一覧】</div>
+<pre class="c">
+Arabic		Armenian	Avestan		Balinese
+Bamum		Batak		Bengali		Bopomofo
+Brahmi		Braille		Buginese	Buhid
+Canadian_Aboriginal		Carian		Chakma
+Cham		Cherokee	Common		Coptic
+Cuneiform	Cypriot		Cyrillic	Deseret
+Devanagari	Egyptian_Hieroglyphs		Ethiopic
+Georgian	Glagolitic	Gothic		Greek
+Gujarati	Gurmukhi	<em>Han</em>		Hangul
+Hanunoo		Hebrew		<em>Hiragana</em>	Imperial_Aramaic
+Inherited	Inscriptional_Pahlavi		Inscriptional_Parthian
+Javanese	Kaithi		Kannada		<em>Katakana</em>
+Kayah_Li	Kharoshthi	Khmer		Lao
+Latin		Lepcha		Limbu		Linear_B
+Lisu		Lycian		Lydian		Malayalam
+Mandaic		Meetei_Mayek	Meroitic_Cursive
+Meroitic_	Hieroglyphs	Miao		Mongolian
+Myanmar		New_Tai_Lue	Nko		Ogham
+Old_Italic	Old_Persian	Old_South_Arabian
+Old_Turkic	Ol_Chiki	Oriya		Osmanya
+Phags_Pa	Phoenician	Rejang		Runic
+Samaritan	Saurashtra	Sharada		Shavian
+Sinhala		Sora_Sompeng	Sundanese	Syloti_Nagri
+Syriac		Tagalog		Tagbanwa	Tai_Le
+Tai_Tham	Tai_Viet	Takri		Tamil
+Telugu		Thaana		Thai		Tibetan
+Tifinagh	Ugaritic
+</pre>
+</div>
+
+<h5><em>\P</em><i>X</i><br>
+<em>\P{</em><i>XX</i><em>}</em></h5>
+<div class="xi">
+<p>\p{...} 以外の文字にマッチします。例えば、\P{Lu} は大文字以外の文字にマッチします。<br>
+(Perl:○ / PHP:○ / Python:△ / JavaScript:○)</p>
+<pre class="c">
+match(/\PL/, "A")		// 文字以外にマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+match(/\P{Lu}/, "A")		// 大文字以外にマッチ	(Perl:○ PHP:○ Python:△ JS:○)
+match(/\P{Han}/, "A")		// 漢字以外にマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+match(/\P{Hiragana}/, "A")	// ひらがな以外にマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+match(/\P{Katakana}/, "A")	// カタカナ以外にマッチ	(Perl:○ PHP:○ Python:△ JS:×)
+</pre>
+</div>
+
+<h4 id="text_modifirers">文字変換(\U...\E)</h4>
+
+<h5><em>\</em>変換指定</h5>
+<div class="xi">
+<p>\u は次の1文字を大文字に変換します。\l は次の1文字を小文字に変換します。\U は \E までの文字を大文字に変換します。\L は \E までの文字を小文字に変換します。\Q は \E までのメタ文字を無効化します。<br>
+(Perl:○ / PHP:× / Python:× / JavaScript:×)</p>
+<pre class="c">
+match(/<em>\u</em>aBC/, "ABC")		// 次の文字(a)を大文字にする
+match(/<em>\l</em>ABC/, "aBC")		// 次の文字(A)を小文字にする
+match(/<em>\U</em>abc<em>\E</em>/, "ABC")		// \Eまでの文字を大文字にする
+match(/<em>\L</em>ABC<em>\E</em>/, "abc")		// \Eまでの文字を小文字にする
+match(/<em>\Q</em>[ABC]<em>\E</em>/, "[ABC]")	// \Eまでのメタ文字を無効化する
+</pre>
+</div>
+
+<h4 id="regex_text_modifirers">修飾子(/.../<i>x</i>)</h4>
+
+<h5>/<i>...</i>/修飾子</h5>
+<div class="xi">
+<p>正規表現の振る舞いを制御する修飾子として、下記を指定することができます。Python では re.search() の第3引数に re.I(=re.IGNORE)などのパラメータを指定します。</p>
+<pre class="c">
+/.../<em>i</em>		- 大文字・小文字無視モード		(Perl:○ PHP:○ Python:○ JS:○)
+/.../<em>m</em>		- マルチラインモード			(Perl:○ PHP:○ Python:○ JS:○)
+/.../<em>s</em>		- シングルラインモード		(Perl:○ PHP:○ Python:○ JS:○)
+/.../<em>g</em>		- グローバルマッチモード		(Perl:○ PHP:× Python:× JS:○)
+/.../<em>x</em>		- コメントモード			(Perl:○ PHP:○ Python:○ JS:×)
+/.../<em>xx</em>		- 拡張コメントモード			(Perl:○ PHP:× Python:× JS:×)
+/.../<em>a</em>		- \d \s \wがASCIIのみにマッチ	(Perl:○ PHP:× Python:○ JS:×)
+/.../<em>u</em>		- \d \s \wがUnicodeにもマッチ	(Perl:○ PHP:○ Python:× JS:×)
+/.../<em>u</em>		- 正規表現中の\u{XXXX}を許可する	(Perl:× PHP:× Python:× JS:○)
+/.../<em>l</em>		- \d \s \wがロケールに従ってマッチ	(Perl:○ PHP:× Python:○ JS:×)
+/.../<em>d</em>		- \d \s \wがデフォルトモードでマッチ	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>aa</em>		- ASCII/非ASCIIを同一化しない	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>n</em>		- \1などで参照できなくする		(Perl:○ PHP:× Python:× JS:×)
+/.../<em>e</em>		- 置換時に置換文字を式で指定	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>ee</em>		- 置換時に式結果を再度式として評価	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>o</em>		- 正規表現中の変数を一度だけ評価	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>p</em>		- マッチした文字列情報を保存		(Perl:○ PHP:× Python:× JS:×)
+/.../<em>r</em>		- 置換時に元の文字列は変更しない	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>c</em>		- 繰り返しマッチ時の位置を維持	(Perl:○ PHP:× Python:× JS:×)
+/.../<em>y</em>		- 繰り返しマッチ時の位置を維持	(Perl:× PHP:× Python:× JS:○)
+/.../<em>A</em>		- 先頭でのみマッチ			(Perl:× PHP:○ Python:× JS:×)
+/.../<em>D</em>		- $が改行を含めた行末にマッチ		(Perl:× PHP:○ Python:× JS:×)
+/.../<em>J</em>		- 重複した<i>name</i>を使用できるようにする	(Perl:× PHP:○ Python:× JS:×)
+/.../<em>L</em>		- ロケールに従ってマッチ		(Perl:× PHP:× Python:○ JS:×)
+/.../<em>S</em>		- パターンを最適化する		(Perl:× PHP:○ Python:× JS:×)
+/.../<em>U</em>		- 最短マッチと最長マッチを逆転		(Perl:× PHP:○ Python:× JS:×)
+/.../<em>X</em>		- \の後の未定義文字をエラーとする	(Perl:× PHP:○ Python:× JS:×)
+</pre>
+<p>修飾子は下記の様に正規表現中に記述することもできます。</p>
+<pre class="c">
+match(/<em>(?i)</em>abc/, "ABC")		// 大文字・小文字を無視してマッチ
+</pre>
+<p>また、マイナス記号(-)を用いてその修飾子を無効化することもできます。</p>
+<pre class="c">
+match(/<em>(?im-xs)</em>abc/, "ABC")		// iとm修飾子を有効化して、xとs修飾子を無効化
+</pre>
+<pre class="c">
+<em>(?i)</em>		- 大文字・小文字無視モード		(Perl:○ PHP:○ Python:○ JS:×)
+<em>(?m)</em>		- マルチラインモード			(Perl:○ PHP:○ Python:○ JS:×)
+<em>(?s)</em>		- シングルラインモード		(Perl:○ PHP:○ Python:○ JS:×)
+<em>(?g)</em>		- グローバルマッチモード		(Perl:× PHP:× Python:× JS:×)
+<em>(?x)</em>		- コメントモード			(Perl:○ PHP:○ Python:○ JS:×)
+<em>(?xx)</em>		- 拡張コメントモード			(Perl:○ PHP:× Python:× JS:×)
+<em>(?a)</em>		- \d \s \wがASCIIのみにマッチ	(Perl:○ PHP:× Python:○ JS:×)
+<em>(?u)</em>		- \d \s \wがUnicodeにもマッチ	(Perl:○ PHP:× Python:○ JS:×)
+<em>(?u)</em>		- 正規表現中の\u{XXXX}を許可する	(Perl:× PHP:× Python:× JS:×)
+<em>(?l)</em>		- \d \s \wがロケールに従ってマッチ	(Perl:○ PHP:× Python:× JS:×)
+<em>(?d)</em>		- \d \s \wがデフォルトモードでマッチ	(Perl:○ PHP:× Python:× JS:×)
+<em>(?aa)</em>		- ASCII/非ASCIIを同一化しない	(Perl:○ PHP:× Python:○ JS:×)
+<em>(?n)</em>		- \1などで参照できなくする		(Perl:○ PHP:× Python:× JS:×)
+<em>(?e)</em>		- 置換時に置換文字を式で指定	(Perl:× PHP:× Python:× JS:×)
+<em>(?ee)</em>		- 置換時に式結果を再度式として評価	(Perl:× PHP:× Python:× JS:×)
+<em>(?o)</em>		- 正規表現中の変数を一度だけ評価	(Perl:○ PHP:× Python:× JS:×)
+<em>(?p)</em>		- マッチした文字列情報を保存		(Perl:○ PHP:× Python:× JS:×)
+<em>(?p)</em>		- (...|...)を最長マッチさせる	(Perl:× PHP:× Python:○ JS:×)
+<em>(?r)</em>		- 置換時に元の文字列は変更しない	(Perl:× PHP:× Python:× JS:×)
+<em>(?c)</em>		- 繰り返しマッチ時の位置を維持	(Perl:× PHP:× Python:× JS:×)
+<em>(?y)</em>		- 繰り返しマッチ時の位置を維持	(Perl:× PHP:× Python:× JS:×)
+<em>(?A)</em>		- 先頭でのみマッチ			(Perl:× PHP:× Python:× JS:×)
+<em>(?D)</em>		- $が改行を含めた行末にマッチ		(Perl:× PHP:× Python:× JS:×)
+<em>(?J)</em>		- 重複した<i>name</i>を使用できるようにする	(Perl:× PHP:○ Python:× JS:×)
+<em>(?L)</em>		- ロケールに従ってマッチ		(Perl:× PHP:× Python:○ JS:×)
+<em>(?S)</em>		- パターンを最適化する		(Perl:× PHP:× Python:× JS:×)
+<em>(?U)</em>		- 最短マッチと最長マッチを逆転		(Perl:× PHP:○ Python:× JS:×)
+<em>(?X)</em>		- \の後の未定義文字をエラーとする	(Perl:× PHP:○ Python:× JS:×)
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>i</em></h5>
+<div class="xi">
+<p>大文字・小文字を区別せずにマッチングします。</p>
+<pre class="c">
+match(/abc/, "ABC")		// マッチしない
+match(/abc/<em>i</em>, "ABC")		// マッチする
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>m</em></h5>
+<div class="xi">
+<p>マルチラインモード。^、$、\A、\z が改行で区切られた各行の行頭・行末にマッチするようになります。</p>
+<pre class="c">
+match(/^XYZ/, "ABCDEF\nXYZ")	// 最初の行ではないのでマッチしない
+match(/^XYZ/<em>m</em>, "ABCDEF\nXYZ")	// 2行目以降であってもマッチする
+</pre>
+</div>
+
+<h5 id="mod_s">/<i>...</i>/<em>s</em></h5>
+<div class="xi">
+<p>シングルモード。ピリオド(.) が改行文字(\n)にもマッチするようになります。</p>
+<pre class="c">
+match(/./, "\n")		// 改行にはマッチしない
+match(/./<em>s</em>, "\n")		// 改行でもマッチする
+</pre>
+</div>
+
+<h5 id="mod_g">/<i>...</i>/<em>g</em></h5>
+<div class="xi">
+<p>グローバルマッチモード。対象文字列の先頭から最後までマッチングを連続的に行います。PHP の場合は preg_match() の代わりに preg_match_all() を使用します。Python の場合は re.search() の代わりに re.findall() を使用します。</p>
+<pre class="c">
+// Perl
+while ("2021-12-31" =~ /[0-9]+/<em>g</em>) { print "$&\n"; }
+
+// PHP
+preg_match_all("/[0-9]+/", "2021-01-10", $m);
+foreach ($m as $m2) { foreach ($m2 as $m3) { echo "$m3\n"; } }
+
+// Python
+m = re.findall("[0-9]+", "2021-12-31")
+for m2 in m:
+  print(m2)
+
+// JavaScript
+m = "2021-12-31".match(/[0-9]+/<em>g</em>);
+m.forEach(m2 => console.log(m2));
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>x</em></h5>
+<div class="xi">
+<p>コメントモード。正規表現中の空白、改行や # から行末までがコメントとして無視されます。正規表現を読みやすくします。</p>
+<pre class="c">
+match(/
+   A B C    # Comment...
+   D E F    # Comment...
+/<em>x</em>, "ABCDEF")			// ABCDEFにマッチ
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>xx</em></h5>
+<div class="xi">
+<p>拡張コメントモード。/.../x の動作に加えて [...] 中の空白も無視されるようになります。[...] 内の正規表現を読みやすくします。</p>
+<pre class="c">
+match(/^[A B]+$/, "AB AB")	// 空白を含むのでマッチ
+match(/^[A B]+$/x, "AB AB")	// 空白を含むのでマッチ
+match(/^[A B]+$/<em>xx</em>, "AB AB")	// 空白が無視されるのでマッチしなくなる
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>a</em><br>
+/<i>...</i>/<em>u</em><br>
+/<i>...</i>/<em>l</em><br>
+/<i>...</i>/<em>d</em></h5>
+<div class="xi">
+<p>\d, \w, \s などの振る舞いを制御します。/.../a はこれらが ASCII 文字にのみマッチするようになります。/.../u は Unicode にもマッチするようになります。/.../l はロケールに従ってマッチするようになります。/.../d はデフォルトモードでマッチするようになります。ロケールやデフォルトは言語や環境によって異なります。</p>
+<pre class="c">
+match(/^\d+$/<em>a</em>, "123")		// ASCII文字のみにマッチ	(Perl:○ PHP:× Python:○ JS:×)
+match(/^\d+$/<em>u</em>, "１２３")	// Unicode文字にもマッチ	(Perl:○ PHP:○ Python:× JS:×)
+match(/^\d+$/<em>l</em>, "１２３")	// ロケールに従ってマッチ	(Perl:○ PHP:× Python:× JS:×)
+match(/^\d+$/<em>d</em>, "１２３")	// デフォルトモードでマッチ	(Perl:○ PHP:× Python:× JS:×)
+</pre>
+<p>ただし、JavaScript での /.../u は意味が異なり、正規表現中で \u<i>XXXX</i> に加えて \u{<i>XXXX</i>} 形式のユニコードの利用を可能とします。</p>
+<pre class="c">
+// JavaScript
+"あ".match(/\u3042/);		// マッチする
+"あ".match(/\u{3042}/);		// マッチしない(\u{XXXX}は使用できない)
+"あ".match(/\u{3042}/<em>u</em>);		// マッチする(\u{XXXX}が使用可能となる)
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>aa</em></h5>
+<div class="xi">
+<p>/.../i による大文字・小文字の同一化において、ASCII と 非ASCII 間の同一化を禁止します。</p>
+<pre class="c">
+match(/\N{KELVIN SIGN}/ai, "k")		// 同一化が行われてマッチする
+match(/\N{KELVIN SIGN}/<em>aa</em>i, "k")	// 同一化が禁止されてマッチしなくなる
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>n</em></h5>
+<div class="xi">
+<p>(...) によるキャプチャグループを抑止します。</p>
+<pre class="c">
+match(/(ABC)/, "ABC")			// $1にABCが設定される
+match(/(ABC)/<em>n</em>, "ABC")			// $1にABCが設定されなくなる
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>e</em></h5>
+<div class="xi">
+<p>置換時に右側のブロックを Perl や PHP 等の式として評価し、その結果を置換文字とします。PHP では 5.5 で非推奨となり、PHP 7.0 で廃止されました。代わりに preg_replace_callback() を使用してください。</p>
+<pre class="c">
+replace(/(ABC)/lc($1)/, "ABC")		// =&gt; lc(ABC)
+replace(/(ABC)/lc($1)/<em>e</em>, "ABC")		// =&gt; abc
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>ee</em></h5>
+<div class="xi">
+<p>置換時に右側のブロックを Perl 等の式として評価し、その結果をさらにもう一度 Perl 等の式として評価し、その結果を置換文字とします。</p>
+<pre class="c">
+replace(/(\d+[-+*\/]\d+)/$1/<em>ee</em>, "3*5")	// =&gt; 15
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>o</em></h5>
+<div class="xi">
+<p>正規表現中に変数などが指定されてる場合、その変数の評価を最初の1回しか行いません。下記の例で、ループの中で変数 $pat を変更しても /.../o を指定している場合は反映されません。</p>
+<pre class="c">
+$pat = "[A-Z]";
+while (match(/$pat/<em>o</em>g, "ABCDEFG")) { print($1); $pat = "[A-C]" }
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>p</em></h5>
+<div class="xi">
+<p>Perl でサポートされているもので、マッチングの後、マッチ文字列を ${^MATCH}、その前の部分を ${^PREMATCH}, 後ろの部分を ${^POSTMATCH} で参照できるように保持します。Perl の正規表現結果を格納する $`, $&amp;, $' と同じです。Perl 5.20 からは保持するのがデフォルト動作となったため、p は無視されます。</p>
+<pre class="c">
+match(/(DEF)/<em>p</em>, "ABCDEFXYZ")	// ${^PREMATCH}, ${^MATCH}, ${^POSTMATCH}にABC, DEF, XYZを格納
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>r</em></h5>
+<div class="xi">
+<p>Perl において置換時に元の変数を変更せず、置換結果を置換式の戻り値として返却します。</p>
+<pre class="c">
+// Perl
+$str1 = "ABC"; $str1 =~ s/B/X/;		// $str1が置換される
+$str2 = "ABC"; $str2 =~ s/B/X/<em>r</em>;	// $str2は置換されず、式の戻り値として置換結果を返却
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>c</em></h5>
+<div class="xi">
+<p>Perl でサポートされているもので、<a href="#mod_g">グローバルマッチ(/.../g)</a>においてマッチするものが見つからなくてもマッチ位置をリセットしません。</p>
+<pre class="c">
+// Perl
+$str = "ABCDEF";
+while ($str =~ /[A-C]+/g) { print "$&amp;\n"; }	// ABCにマッチ後、位置をリセット
+while ($str =~ /[A-F]+/g) { print "$&amp;\n"; }	// 最初からマッチするのでABCDEFとなる
+
+while ($str =~ /[A-C]+/g<em>c</em>) { print "$&amp;\n"; }	// ABCにマッチ後、位置をリセットしない
+while ($str =~ /[A-F]+/g) { print "$&amp;\n"; }	// 途中からマッチするのでDEFとなる
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>y</em></h5>
+<div class="xi">
+<p>JavaScript でサポートされているもので、<a href="#mod_g">グローバルマッチ(/.../g)</a>においてマッチするものが見つからなくてもマッチ位置をリセットしません。</p>
+<pre class="c">
+// JavaScript
+str = "ABCDEF";
+reg = /[A-Z]{3}/y;
+console.log(str.match(reg));		// ABCにマッチ
+console.log(str.match(reg));		// DEFにマッチ
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>A</em></h5>
+<div class="xi">
+<p>先頭でのみマッチするようになります。<a href="#mod_m">マルチラインモード(/.../m)</a>でも各行の行頭にはマッチしません。正規表現の冒頭に \A をつけるのと同様の働きを持ちます。</p>
+<pre class="c">
+match(/DEF/, "ABCDEF")			// DEFを含んでいるのでマッチ
+match(/DEF/<em>A</em>, "ABCDEF")			// 先頭ではないのでマッチしない
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>D</em></h5>
+<div class="xi">
+<p>$ は通常は末尾、または末尾の改行(\n)のひとつ前にマッチしますが、/.../D を指定すると末尾に改行があるとマッチしなくなります。</p>
+<pre class="c">
+match(/ABC/, "ABC\n")			// 末尾の改行が1個であればマッチ
+match(/ABC/<em>D</em>, "ABC\n")			// 1個でもマッチしなくなる
+match(/ABC/m<em>D</em>, "ABC\nDEF")		// マルチラインであれば改行前でもマッチする
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>J</em></h5>
+<div class="xi">
+<p>(?P&lt;<i>name</i>&gt;) などの<a href="#named_capture_group">名前付きキャプチャグループ</a>で重複した名前の使用を許可します。</p>
+<pre class="c">
+match(/(?P&lt;foo&gt;ABC)(?P&lt;foo&gt;DEF)/, "ABCDEF")	// エラー
+match(/(?P&lt;foo&gt;ABC)(?P&lt;foo&gt;DEF)/<em>J</em>, "ABCDEF")	// 成功
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>L</em></h5>
+<div class="xi">
+<p>\w、\W、\b、\B および大文字と小文字を区別しないマッチング(/.../i)を、現在のロケールに依存させます。ロケールの仕組みは複雑で信頼できないためこのフラグの使用は非推奨とされました。</p>
+<pre class="c">
+match(/^\w+$/<em>L</em>, "ABC")			// ロケールに従ってマッチさせる
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>S</em></h5>
+<div class="xi">
+<p>正規表現を変動させながら繰り返し実行する際に、正規表現の最適化を行うこと許可します。</p>
+<pre class="c">
+while (match(/$pat$/g<em>S</em>, $str) {		// パターンの最適化を許可する
+    $pat = "..."; ...
+}
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>U</em></h5>
+<div class="xi">
+<p>* や + などは、通常最長マッチ、? をつけると最短マッチとなりますが、これを逆転させ、通常最短マッチ、? をつけると最長マッチするようにします。</p>
+<pre class="c">
+match(/A+/, "AAA")			// 最長マッチ
+match(/A+?/, "AAA")			// 最短マッチ
+match(/A+/<em>U</em>, "AAA")			// 最短マッチ
+match(/A+?/<em>U</em>, "AAA")			// 最長マッチ
+</pre>
+</div>
+
+<h5>/<i>...</i>/<em>X</em></h5>
+<div class="xi">
+<p>バックスラッシュの後ろにエスケープシーケンスとして未定義の文字が継続した場合にエラーやワーニングを発生させます。</p>
+<pre class="c">
+match(/\i/, "AAA")			// \iが未定義であればiと解釈
+match(/\i/<em>X</em>, "AAA")			// \iが未定義であればエラーやワーニング
+</pre>
+</div>
+
+<h4 id="posix">POSIX正規表現</h4>
+
+<h5>[[:<i>...</i>:]]</h5>
+<div class="xi">
+<p>POSIX で定められている正規表現です。</p>
+<pre class="c">
+match(/<em>[[:alnum:]]</em>+/, "ABC99")		// (Perl:○ PHP:○ Python:× JS:×)
+</pre>
+<pre class="c">
+<em>[[:upper:]]</em>	// 大文字([A-Z])
+<em>[[:lower:]]</em>	// 小文字([a-z])
+<em>[[:alpha:]]</em>	// アルファベット([A-Za-z])
+<em>[[:alnum:]]</em>	// アルファベット＋数字([A-Za-z0-9])
+<em>[[:digit:]]</em>	// 数字([0-9])
+<em>[[:xdigit:]]</em>	// 16進数字([0-9a-fA-F])
+<em>[[:punct:]]</em>	// 記号([!"#$%&'()*+,-./...])
+<em>[[:blank:]]</em>	// 空白とタブ([ \t])
+<em>[[:space:]]</em>	// 空白や改行([ \t\f\r\n])
+<em>[[:cntrl:]]</em>	// 制御文字([\x00-\x1F\x7F])
+<em>[[:graph:]]</em>	// 印刷可能文字(空白を除く)
+<em>[[:print:]]</em>	// 印刷可能文字(空白を含む)
+</pre>
+</div>
+
+<h4 id="other">その他</h4>
+
+<h5><em>(?:</em><i>...</i><em>)</em></h5>
+<div class="xi">
+<p>マッチングは通常に行われますが、マッチした文字列が \1 や $1 などにキャプチャされません。</p>
+<pre class="c">
+match(/(ABC)(?:DEF)(XYZ)/, "ABCDEFXYZ")	// $1=ABC, $2=XYZ	(Perl:○ PHP:○ Python:○ JS:○)
+</pre>
+</div>
+
+<h5><em>(?|</em>...<em>)</em></h5>
+<div class="xi">
+<p>通常は、( が現れる順番で $1, $2, $3, ... に割り当てられていくため、下記の例で A であれば $1, B であれば $2, C であれば $3 に割り当てられますが、(?|...) を使用することで、A でも B でも C でも $1 に割り当てるようになります。Python では re モジュールの代わりに regex モジュールを利用することででサポートされます。</p>
+<pre class="c">
+match(/(A)|(B)|(C)/, "A")	// $1=A
+match(/(A)|(B)|(C)/, "B")	// $2=B
+match(/(A)|(B)|(C)/, "C")	// $3=C
+
+match(/<em>(?|</em>(A)|(B)|(C)<em>)</em>/, "A")	// $1=A	(Perl:○ PHP:○ Python:△ JS:×)
+match(/<em>(?|</em>(A)|(B)|(C)<em>)</em>/, "B")	// $1=B
+match(/<em>(?|</em>(A)|(B)|(C)<em>)</em>/, "C")	// $1=C
+</pre>
+</div>
+
+<h5><em>(?{</em><i>code</i><em>})</em><br>
+<em>(??{</em><i>code</i><em>})</em></h5>
+<div class="xi">
+<p>Perl でサポートされているもので、(?{<i>code</i>}) は <i>code</i> を Perl のプログラムとして実行します。実行結果は正規表現には反映されません。(??{<i>code</i>}) は、実行結果を正規表現として反映します。</p>
+<pre class="c">
+// Perl
+"ABC" =~ /<em>(?{</em>print "."<em>})</em>ABC/	// print "." を実行。正規表現としては/ABC/と等価
+"abc" =~ /<em>(??{</em>lc("[A-Z]+")<em>})</em>/	// lc("[A-Z]")を実行。正規表現としては/[a-z]+/と等価
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://perldoc.perl.org/perlre  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://perldoc.perl.org/perlre'" tppabs="https://perldoc.perl.org/perlre">Perlの正規表現(英語)</a>
+<li><a target="_top" href="javascript:if(confirm('https://perldoc.jp/docs/perl/5.18.1/perlreref.pod  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://perldoc.jp/docs/perl/5.18.1/perlreref.pod'" tppabs="https://perldoc.jp/docs/perl/5.18.1/perlreref.pod">Perlの正規表現(日本語)</a>
+<li><a target="_top" href="javascript:if(confirm('https://www.php.net/manual/ja/book.pcre.php  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.php.net/manual/ja/book.pcre.php'" tppabs="https://www.php.net/manual/ja/book.pcre.php">PHPの正規表現(日本語)</a>
+<li><a target="_top" href="javascript:if(confirm('https://docs.python.org/ja/3/library/re.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.python.org/ja/3/library/re.html'" tppabs="https://docs.python.org/ja/3/library/re.html">Python 3の正規表現(日本語)</a>
+<li><a target="_top" href="javascript:if(confirm('https://docs.ruby-lang.org/ja/latest/doc/spec=2fregexp.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.ruby-lang.org/ja/latest/doc/spec=2fregexp.html'" tppabs="https://docs.ruby-lang.org/ja/latest/doc/spec=2fregexp.html">Rubyの正規表現(日本語)</a>
+<li><a target="_top" href="javascript:if(confirm('https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_Expressions  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_Expressions'" tppabs="https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_Expressions">JavaScriptの正規表現(日本語)</a>
+</ul>
+</div>
+
+<!--
+<em>(?R)</em> <em>(?0)</em>	- パターン全体の先頭に再帰(Perl:○)
+<em>\X</em>		- Unicodeの拡張書記素クラスタ(?)にマッチ(Perl:○ PHP:○)
+○http://www.kt.rim.or.jp/~kbk/regex/regex.html
+○http://www.kt.rim.or.jp/~kbk/regex/pythonre.html
+○https://murashun.jp/article/programming/regular-expression.html
+○http://www.tski.co.jp/php/reference.pcre.pattern.syntax.html
+-->
+
+<hr>
+<div>Copyright (C) 2021 杜甫々</div>
+<div>初版:2021年1月10日 最終更新:2021年1月10日</div>
+<div>http://www.tohoho-web.com/ex/regexp.html</div>
+</body>
+</html>

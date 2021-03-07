@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset=utf-8"utf-8">
+<title>Bash入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Bash入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Bash入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">Bashとは</a>
+<li><a href="#shells">シェルの種類</a>
+<li><a href="#prompt">プロンプト</a>
+<li><a href="#output">メッセージ出力(echo, printf)</a>
+<li><a href="#meta">メタ文字</a>
+<li><a href="#variables">シェル変数と環境変数($XXX)</a>
+<li><a href="#special">特殊変数($x)</a>
+<li><a href="#expansion">変数展開(${...})</a>
+<li><a href="#init-file">初期化ファイル</a>
+<li><a href="#in-out-redirect">入出力・リダイレクト(&gt;)</a>
+<li><a href="#pipe">パイプ(|)</a>
+<li><a href="#background">バックグラウンド実行(&amp;)</a>
+<li><a href="#history">ヒストリ(history)</a>
+<li><a href="#dirstack">ディレクトリスタック(dirs)</a>
+<li><a href="#condition">条件実行(; &amp;&amp; ||)</a>
+<li><a href="#if-statemant">if文</a>
+<li><a href="#for">for文</a>
+<li><a href="#while">while文</a>
+<li><a href="#until">until文</a>
+<li><a href="#case">case文</a>
+<li><a href="#select">select文</a>
+<li><a href="#alias">エイリアス(alias)</a>
+<li><a href="#function">関数(function)</a>
+<li><a href="#braceexpand">ブレース展開({...})</a>
+<li><a href="#array">配列</a>
+<li><a href="#options">シェルオプション(set)</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="about">Bashとは</h4>
+<div class="i">
+<ul>
+<li>Bashは、Linuxでサポートされるシェルのひとつです。
+<li>元々はキーボードからコマンドを入力・実行するための対話プログラムでしたが、変数、関数、制御構文、配列なども使用することができるため、簡易的なプログラミング言語(シェルプログラム)であるともいえます。
+</ul>
+</div>
+
+<h4 id="shells">シェルの種類</h4>
+<div class="i">
+<ul>
+<li><b>sh</b> : Bourne Shell とも呼ばれます。ベル研のスティーブン・ボーン氏が開発。最も基本的な機能を備えています。
+<li><b>csh</b> : C Shell と呼ばれます。カリフォルニア大学バークレー校のビル・ジョイ氏が開発。C言語ライクな機能を強化しています。
+<li><b>tcsh</b> : csh をさらに改良したものです。bash が出るまではかなり広く使用されていました。
+<li><b>ksh</b> : sh を改良したものです。ベル研のデビット・コーン氏が開発。csh の機能も一部取り入れています。
+<li><b>bash</b> : Bourne-Again Shell。sh を大幅に強化。現時点では最も広く使用されています。
+<li><b>zsh</b> : 最も高機能なシェル。bash, tcsh, ksh などの機能を多く取り込んでいます。
+</ul>
+<p>以降では、現時点で最も利用されている <b>bash</b> に絞って説明していきます。動作確認は <b>bash 4.2</b> で行っています。他のシェルや他のバージョンでは多少異なることがあります。</p>
+</div>
+
+<h4 id="prompt">プロンプト</h4>
+<div class="i">
+<p><b>プロンプト</b> は「うながす」の意味で、コマンドの入力を促するために表示されます。多くの場合、ユーザ名、ホスト名、カレントディレクトリなどの情報が含まれます。末尾は一般ユーザの場合は <b>$</b>、スーパーユーザーの場合は <b>#</b> となります。</p>
+<pre class="c">
+<em>[noda@msv02 ~]$</em> date
+Sun May 24 00:42:55 UTC 2020
+<em>[noda@msv02 ~]$</em>
+</pre>
+<p>プロンプトはシェル変数 <b>PS1</b> で変更できます。</p>
+<pre class="c">
+[noda@msv02 ~]$ <em>PS1='[\u@\h \W]\$ '</em>
+</pre>
+<p>使用可能な特殊文字は下記の通り。</p>
+<pre class="c">
+\a		<span class="cm"># ビープ音を鳴らす</span>
+\A		<span class="cm"># 24時間表記の時分(例:23:59)</span>
+\d		<span class="cm"># 曜日 月 日(例:Sun May 24)</span>
+\D{<i>fmt</i>}		<span class="cm"># %Y/%m/%d %H:%M:%S などのフォーマットで日時を指定</span>
+\e		<span class="cm"># エスケープ文字(ESC)</span>
+\h		<span class="cm"># ホスト名(例:msv02)</span>
+\H		<span class="cm"># ホスト名(例:msv02.example.com)</span>
+\j		<span class="cm"># バックグランドジョブの個数(例:2)</span>
+\l		<span class="cm"># ターミナル(例:/dev/pts/2)の最後のファイル名(例:2)</span>
+\n		<span class="cm"># 改行</span>
+\r		<span class="cm"># キャリッジリターン</span>
+\s		<span class="cm"># シェル名(例:bash)</span>
+\t		<span class="cm"># 24時間表記の時刻(例:23:59:59)</span>
+\T		<span class="cm"># 12時間表記の時刻(例:11:59:59)</span>
+\@		<span class="cm"># AM/PM付き12時間表記の時分(例:11:59 PM)</span>
+\u		<span class="cm"># ユーザ名(例:tanaka)</span>
+\v		<span class="cm"># bashのバージョン(例:4.2)</span>
+\V		<span class="cm"># bashのバージョン(例:4.2.46)</span>
+\w		<span class="cm"># カレントディレクトリ(例:~/bin)</span>
+\W		<span class="cm"># カレントディレクトリ(例:bin)</span>
+\!		<span class="cm"># ヒストリ番号(例:423)</span>
+\#		<span class="cm"># 現在のセッションにおけるヒストリ番号(例:21)</span>
+\$		<span class="cm"># ルート権限の場合は #、一般権限の場合は $</span>
+\nnn		<span class="cm"># 8進数nnnの文字</span>
+\\		<span class="cm"># バックスラッシュ</span>
+\[		<span class="cm"># 非表示シーケンスの始まり</span>
+\]		<span class="cm"># 非表示シーケンスの終了</span>
+</pre>
+<p>プロンプトの色を変更するには <b>\e[太さ;色番号m</b>、元に戻すには <b>\e[m</b> を、<b>\[</b> ... <b>\]</b> で挟んで指定します。太さは <b>0</b> が通常、<b>1</b> が太字、色は、黒(30)、赤(31)、緑(32)、黄色(33)、青(34)、マジェンダ(35)、シアン(36)、灰色(37)、白(97) などを指定できます。(→ <a target="_top" href="javascript:if(confirm('https://en.wikipedia.org/wiki/ANSI_escape_code  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://en.wikipedia.org/wiki/ANSI_escape_code#Colors'" tppabs="https://en.wikipedia.org/wiki/ANSI_escape_code#Colors">詳細</a>)</p>
+<pre class="c">
+[noda@msv02 ~]$ PS1='\[<em>\e[1;32m</em>\][\u@\h \W]\$ \[<em>\e[m</em>\]
+</pre>
+<p><b>`</b>...<b>`</b> を用いて、コマンドの実行結果をプロンプトに表示することもできます。</p>
+<pre class="c">
+[noda@msv02 ~]$ PS1='[<em>`hostname`</em>]\$ '
+</pre>
+</div>
+
+<h4 id="output">メッセージ出力(echo, printf)</h4>
+<div class="i">
+<p><b>echo</b> はメッセージを標準出力に書き出します。</p>
+<pre class="c">
+<em>echo "Message..."</em>
+</pre>
+<p><b>-n</b> オプションをつけると改行無しで書き出します。</p>
+<pre class="c">
+echo <em>-n</em> "Input your name: "
+</pre>
+<p><b>printf</b> は %d や %s などのフォーマットを用いてメッセージを書き出します。</p>
+<pre class="c">
+<em>printf</em> "name=%s/age=%d\n" "Yamada" 26
+</pre>
+</div>
+
+<h4 id="meta">メタ文字</h4>
+<div class="i">
+<p>シェルにおいて下記の文字は特別な意味を持つ文字(<b>メタ文字</b>)として扱われます。</p>
+<pre class="c">
+*	<span class="cm">ファイル名マッチで0文字以上の任意文字列にマッチ</span>
+?	<span class="cm">ファイル名マッチで1文字の任意文字にマッチ</span>
+~	<span class="cm">ホームディレクトリ</span>
+#	<span class="cm">コメント</span>
+\	<span class="cm">メタ文字を無効化 (\メタ文字)</span>
+$	<span class="cm">変数展開($FOO)</span>
+"	<span class="cm">文字列("...$FOO..." では変数展開が行われる)</span>
+'	<span class="cm">文字列('...$FOO...' では変数展開が行われない)</span>
+`	<span class="cm">コマンド実行結果参照(`<i>cmd</i>`)</span>
+!	<span class="cm">ヒストリ参照 (!<i>number</i>)</span>
+;	<span class="cm">コマンド区切り文字(<i>cmd1</i> ; <i>cmd2</i>)</span>
+|	<span class="cm">コマンドのの実行結果を次のコマンドに渡す(<i>cmd1</i> | <i>cmd2</i>)</span>
+&lt;	<span class="cm">リダイレクト受信(<i>cmd</i> &lt; <i>file</i>)</span>
+&gt;	<span class="cm">リダイレクト送信(<i>cmd</i> &gt; <i>file</i>)</span>
+&amp;	<span class="cm">コマンドをバックグランド実行(<i>cmd</i> &amp;)</span>
+( )	<span class="cm">コマンドをグループ化((<i>cmd1</i>; <i>cmd2</i>))</span>
+[ ]	<span class="cm">if文等で使用するテストコマンド</span>
+{ }	<span class="cm">変数展開 (${FOO})</span>
+</pre>
+<p>文字列 <b>"</b>...<b>"</b> の中では <b>\</b>, <b>$</b>, <b>"</b> のみがメタ文字となります。文字列 <b>'</b>...<b>'</b> の中では <b>'</b> のみがメタ文字となります。メタ文字を普通の文字として使用する時は、メタ文字の前に <b>\</b> をつけてエスケープします。メタ文字を完全無効化したい時は文字列を <b>'</b>...<b>'</b> で囲んで、<b>'</b> を <b>\'</b> にエスケープします。</p>
+<pre class="c">
+echo AT<em>\</em>&amp;T
+echo "Character <em>\</em>", <em>\</em>$ and <em>\</em>\ are ..."
+echo 'Character <em>\</em>' is ...'
+</pre>
+</div>
+
+<h4 id="variables">シェル変数と環境変数($XXX)</h4>
+<div class="i">
+<p><b>bash</b> には <b>シェル変数</b> と <b>環境変数</b> があります。シェル変数はそのシェルの中だけで使用できる変数、環境変数は子プロセスにも引き継がれる変数です。環境変数として定義された値はシェル変数としても参照できます。</p>
+<pre class="c">
+<em>set</em>			<span class="cm"># シェル変数を一覧表示する</span>
+<em>FOO=xxx</em>			<span class="cm"># シェル変数を設定する</span>
+<em>echo $FOO</em>		<span class="cm"># シェル変数を参照する</span>
+<em>unset FOO</em>		<span class="cm"># シェル変数をクリアする</span>
+
+<em>env</em>			<span class="cm"># 環境変数を一覧表示する</span>
+<em>export BAR=xxx</em>		<span class="cm"># 環境変数を設定する</span>
+<em>echo $BAR</em>		<span class="cm"># 環境変数を参照する</span>
+<em>unset BAR</em>		<span class="cm"># 環境変数をクリアする</span>
+</pre>
+<p>主な環境変数には下記などがあります。</p>
+<pre class="c">
+PATH	コマンドの検索パス(例:/usr/local/sbin:/usr/local/bin...)
+HOME	ホームディレクトリ(例:/home/noda)
+LANG	言語情報(例:en_US.UTF-8)
+PWD	カレントディレクトリ(例:/home/noda/tmp)
+_	前回実行したコマンドの最後の引数
+</pre>
+<p>下記の様にして実行コマンドに対して、一時的な環境変数を引き渡すことができます。</p>
+<pre class="c">
+[noda@msv02 ~]$ <em>BASE_PATH=/opt/base</em> anycommand arg1 arg2
+</pre>
+</div>
+
+<h4 id="special">特殊変数($x)</h4>
+<div class="i">
+<p>下記の特殊変数も使用できます。</p>
+<pre class="c">
+$0	<span class="cm"># シェルスクリプト名</span>
+$1～$9	<span class="cm"># 1番目～9番目の引数</span>
+$*	<span class="cm"># すべての引数(詳細後述)</span>
+$@	<span class="cm"># すべての引数(詳細後述)</span>
+$#	<span class="cm"># 引数の数</span>
+$?	<span class="cm"># 直前に実行したコマンドの終了ステータス。0は成功、0以外は失敗</span>
+$-	<span class="cm"># シェルの実行オプション (/bin/bash -<i>opt</i>)</span>
+$$	<span class="cm"># シェルのプロセスID</span>
+$!	<span class="cm"># 最後に実行したバックグランドプロセスのプロセスID</span>
+$_	<span class="cm"># 最後に実行したコマンドの最後の引数</span>
+</pre>
+<p>引数を受け取る際は、<b>"$*</b> <b>"$@"</b> <b>"$1"</b> の様に "..." で囲んだ方が安全です。囲まない場合、引数に <b>*</b> を含む文字を受け取った場合、カレントフォルダのファイル名に展開されてしまします。</p>
+<pre class="c">
+<i>command</i> <em>"$1"</em>		<span class="cm"># 安全。引数の * はそのまま参照できる</span>
+<i>command</i> <em>$1</em>		<span class="cm"># 危険。引数の * がファイル名に展開されてしまう</span>
+</pre>
+<p><b>$*</b> と <b>$@</b> は似ていますが、<b>"$*"</b> は <b>"$1 $2 $3</b> ...<b>"</b>と見なされるのに対し、<b>"$@"</b> は <b>"$1" "$2" "$3"</b> ... とみなされます。シェルスクリプトが3つの引数を受け取った場合、次のようになります。</p>
+<pre class="c">
+<i>command</i> <em>"$*"</em>	<span class="cm"># <i>command</i>は"$1 $2 $3"という1つの引数を受け取る</span>
+<i>command</i> <em>"$@"</em>	<span class="cm"># <i>command</i>は"$1" "$2" "$3"という3つの引数を受け取る</span>
+</pre>
+</div>
+
+<h4 id="expansion">変数展開(${...})</h4>
+<div class="i">
+<p>下記の例では、シェル変数 COLOR に1文字以上の値が設定されていればその値を、さもなくば white を BGCOLOR に代入します。</p>
+<pre class="c">
+BGCOLOR=<em>${COLOR:-white}</em>
+</pre>
+<p>変数展開には次のようなものがあります。ここで「定義済」とは変数が定義されていること、「設定済」とは変数が定義され1文字以上の文字を設定されていることを示します。</p>
+<pre class="c">
+${FOO}			<span class="cm"># FOOの値</span>
+${FOO:-word}		<span class="cm"># FOOが設定済であればその値、さもなくばword(FOOは未設定のまま)</span>
+${FOO:=word}		<span class="cm"># FOOが設定済であればその値、さもなくばword(FOOにもwordを設定)</span>
+${FOO-word}		<span class="cm"># FOOが定義済であればその値、さもなくばword(FOOは未設定のまま)</span>
+${FOO=word}		<span class="cm"># FOOが定義済であればその値、さもなくばword(FOOにもwordを設定)</span>
+${FOO:?word}		<span class="cm"># FOOが未設定であればwordを標準出力に出力してシェル終了</span>
+${FOO:+word}		<span class="cm"># FOOが設定済であればword、未設定時は空文字</span>
+${FOO:n}		<span class="cm"># FOOのn文字目(0始まり)以降の文字列</span>
+${FOO:n:m}		<span class="cm"># FOOのn文字目(0始まり)からm文字分の文字列</span>
+${FOO#word}		<span class="cm"># FOOの先頭からwordにマッチする部分を除外(最短マッチ)(*も使用可)</span>
+${FOO##word}		<span class="cm"># FOOの先頭からwordにマッチする部分を除外(最大マッチ)(*も使用可)</span>
+${FOO%word}		<span class="cm"># FOOの末尾からwordにマッチする部分を除外(最短マッチ)(*も使用可)</span>
+${FOO%%word}		<span class="cm"># FOOの末尾からwordにマッチする部分を除外(最大マッチ)(*も使用可)</span>
+${!FOO*}		<span class="cm"># FOOではじまる変数名の一覧</span>
+${!FOO@}		<span class="cm"># 同上</span>
+${#FOO}			<span class="cm"># FOOの文字数。未設定時は0</span>
+${FOO/ptn/word}	<span class="cm"># パターンptnへのマッチ部分をwordに置換(部分マッチ,1回のみ)(*も使用可)</span>
+${FOO//ptn/word}	<span class="cm"># パターンptnへのマッチ部分をwordに置換(部分マッチ,すべて)(*も使用可)</span>
+${FOO/#ptn/word}	<span class="cm"># パターンptnへのマッチ部分をwordに置換(先頭マッチ)(*も使用可)</span>
+${FOO/%ptn/word}	<span class="cm"># パターンptnへのマッチ部分をwordに置換(末尾マッチ)(*も使用可)</span>
+${FOO^}			<span class="cm"># 最初の1文字を大文字化</span>
+${FOO^^}		<span class="cm"># すべての文字を大文字化</span>
+${FOO,}			<span class="cm"># 最初の1文字を小文字化</span>
+${FOO,,}		<span class="cm"># すべての文字を小文字化</span>
+${FOO~}			<span class="cm"># 最初の1文字を大文字・小文字反転</span>
+${FOO~~}		<span class="cm"># すべての文字を大文字・小文字反転(何に使うんだろ...)</span>
+${FOO^[pattern]}	<span class="cm"># patternいずれかの文字と合致時のみ大小文字変換(^^ , ~等でも可)</span>
+${!FOO[*]}		<span class="cm"># 連想配列FOO[key]のキー一覧(連想配列はdeclare -A宣言が必要)</span>
+${!FOO[@]}		<span class="cm"># 同上</span>
+${FOO[*]}		<span class="cm"># 連想配列FOO[key]の値一覧(連想配列はdeclare -A宣言が必要)</span>
+${FOO[@]}		<span class="cm"># 同上</span>
+${#FOO[*]}		<span class="cm"># 連想配列FOO[key]の個数(連想配列はdeclare -A宣言が必要)</span>
+${#FOO[@]}		<span class="cm"># 同上</span>
+</pre>
+</div>
+
+<h4 id="init-file">初期化ファイル</h4>
+<div class="i">
+<p>ログイン時には次のファイルが実行されます。環境変数の設定や初期化などに使用されます。</p>
+<pre class="c">
+/etc/profile		ログイン時に実行される処理(全ユーザ)
+~/.bash_profile	ログイン時に一度だけ実行される処理(自分のみ)
+~/.bashrc		シェル起動時に毎回実行される処理(自分のみ)
+</pre>
+<p>ログアウト時には次のファイルが実行されます。</p>
+<pre class="c">
+/etc/bash.bash_logout	ログアウト時に実行される処理(全ユーザ)
+~/.bash_logout		ログアウト時に実行される処理(自分のみ)
+</pre>
+<p>ファイルを変更後、再読み込みするには、一度ログアウトして再ログインするか、<b>source</b> コマンドまたは <b>.</b> コマンドでファイルを読み込みます。</p>
+<pre class="c">
+[noda@msv02 ~]$ <em>source ~/.bashrc</em>
+[noda@msv02 ~]$ <em>. ~/.bashrc</em>
+</pre>
+</div>
+
+<h4 id="in-out-redirect">入出力・リダイレクト(&gt;)</h4>
+<div class="i">
+<p>コマンドは <b>標準入力(stdin)</b> から読み込み、<b>標準出力(stdout)</b>, <b>標準エラー出力(stderr)</b> に書き出すことができます。</p>
+<pre class="c">
+command <em>&lt;</em> file			<span class="cm"># fileの内容をcommandの標準入力に渡す</span>
+</pre>
+<p>コマンドの標準出力、標準エラー出力をファイルに書き出すには次のようにします。<b>1</b> は標準出力、<b>2</b> は標準エラー出力、<b>&amp;</b> は両方を意味します。<b>1&gt;</b> は <b>&gt;</b> と省略できます。</p>
+<pre class="c">
+command <em>&gt;</em> file			<span class="cm"># 標準出力をfileに書き出す</span>
+command <em>1&gt;</em> file		<span class="cm"># 標準出力をfileに書き出す(&gt;と等価)</span>
+command <em>2&gt;</em> file		<span class="cm"># 標準エラー出力をfileに書き出す</span>
+command <em>1&gt;</em> file1 <em>2&gt;</em> file2	<span class="cm"># 標準出力をfile1に、標準エラー出力をfile2に書き出す</span>
+command <em>&amp;&gt;</em> file		<span class="cm"># 標準出力と標準エラー出力をfileに書き出す</span>
+command <em>&gt;&amp;</em> file		<span class="cm"># &amp;&gt;と同義</span>
+</pre>
+<p><b>&gt;</b> を <b>&gt;&gt;</b> とするとファイルを上書きするのではなく、ファイルに追記するようになります。</p>
+<pre class="c">
+command <em>&gt;&gt;</em> file		<span class="cm"># 標準出力をfileに追記する</span>
+command <em>1&gt;&gt;</em> file		<span class="cm"># 標準出力をfileに追記する(&gt;&gt;と等価)</span>
+command <em>2&gt;&gt;</em> file		<span class="cm"># 標準エラー出力をfileに追記する</span>
+command <em>1&gt;&gt;</em> file1 <em>2&gt;&gt;</em> file2	<span class="cm"># 標準出力をfile1に、標準エラー出力をfile2に追記する</span>
+command <em>&amp;&gt;&gt;</em> file		<span class="cm"># 標準出力と標準エラー出力をfileに追記する</span>
+command <em>&gt;&gt;&amp;</em> file		<span class="cm"># &amp;&gt;&gt;と同義 ... と思ったら嘘。使用できない</span>
+</pre>
+<p><b>2&gt;&amp;1</b> は 2 の出力を 1 に、<b>1&gt;&amp;2</b> は 1 の出力を 2にマージすることを意味します。</p>
+<pre class="c">
+command <em>&gt;</em> file <em>2&gt;&amp;1</em>		<span class="cm"># &amp;&gt; と等価 (2を1の出力にマージする)</span>
+command <em>&gt;&gt;</em> file <em>2&gt;&amp;1</em>		<span class="cm"># &amp;&gt;&gt; と等価 (2を1の出力にマージする)</span>
+command <em>1&gt;&amp;2</em>			<span class="cm"># 標準出力を標準エラー出力に書き出す</span>
+</pre>
+</div>
+
+<h4 id="pipe">パイプ(|)</h4>
+<div class="i">
+<p><b>パイプ</b> を用いて、あるコマンドの出力を、次のコマンドの標準入力に渡すことができます。パイプでは <b>1|</b>, <b>2|</b>, <b>&amp;|</b> は使用できません。</p>
+<pre class="c">
+cmd1 <em>|</em> cmd2			<span class="cm"># cmd1の標準出力をcmd2の標準出力に渡す</span>
+cmd1 <em>|&amp;</em> cmd2			<span class="cm"># cmd1の標準出力と標準エラー出力をcmd2の標準出力に渡す</span>
+cmd1 <em>2&gt;&amp;1</em> | cmd2		<span class="cm"># &amp;|と同義</span>
+cmd1 <em>2&gt;</em> /dev/null <em>|</em> cmd2	<span class="cm"># cmd1の標準エラー出力のみをcmd2に渡す</span>
+</pre>
+<p>ファイルにも記録しながら画面でも確認したい時は <b>tee</b> コマンドが利用できます。</p>
+<pre class="c">
+cmd |&amp; <em>tee</em> file	<span class="cm"># 標準出力も標準エラー出力もfileに書き込みながら画面にも表示する</span>
+</pre>
+</div>
+
+<h4 id="background">バックグラウンド実行(&amp;)</h4>
+<div class="i">
+<p><b>&</b> を用いて、プロセスをバッググラウンドで実行することができます。プロセスがフォアグラウンドで起動中に <b>Ctrl-z</b> を押すと、プロセスは一時停止中の状態でバックグランドプロセス(ジョブ)になります。</p>
+<pre class="c">
+command <em>&</em>		<span class="cm"># コマンドをバックグラウンドで実行</span>
+<em>jobs</em>			<span class="cm"># バックグラウンドプロセスの一覧を表示</span>
+<em>fg</em> %2			<span class="cm"># 2番ののジョブをフォアグラウンドに</span>
+<em>wait</em> %2			<span class="cm"># 2番のジョブの終了を待つ</span>
+<em>kill</em> %2			<span class="cm"># 2番のジョブを停止</span>
+<em><i>Ctrl-z</i></em>			<span class="cm"># フォアグラウンド実行中プロセスを一時停止状態に</span>
+<em>bg</em> %2			<span class="cm"># 2番のジョブ(一時定期中)を再開</span>
+</pre>
+<p><b>jobs</b> で <b>+</b> 記号がついているのがカレントジョブ、<b>-</b> がついているのがひとつ前のジョブ。<b>%%</b> や <b>%+</b> はカレントジョブ番号、<b>%-</b> はひとつ前のジョブ番号、<b>%</b>文字列 は、コマンドラインの先頭が文字列にマッチするジョブ番号(複数マッチ時はエラー)を示します。</p>
+<pre class="c">
+kill <em>%-</em>			<span class="cm"># 直前に実行したジョブを停止</span>
+kill <em>%foo</em>		<span class="cm"># コマンドラインがfooで始まるジョブ(1つ)を停止</span>
+</pre>
+</div>
+
+<h4 id="history">ヒストリ(history)</h4>
+<div class="i">
+<p>下記のヒストリ機能を使用することができます。</p>
+<pre class="c">
+<em>history</em>		<span class="cm"># ヒストリの一覧を表示する</span>
+<em>↑</em>		<span class="cm"># ひとつ前のヒストリを表示する(Ctrl-pも可)</span>
+<em>↓</em>		<span class="cm"># ひとつ後のヒストリを表示する(Ctrl-nも可)</span>
+<em>^</em><i>str1</i><em>^</em><i>str1</i><em>^</em>	<span class="cm"># 直前コマンドの<i>str1</i>を<i>str2</i>に置換</span>
+<em>!#</em>		<span class="cm"># 現在入力中のコマンド</span>
+<em>Ctrl-r</em>		<span class="cm"># 履歴検索モードに移行</span>
+</pre>
+<p>下記のヒストリ参照を利用できます。</p>
+<pre class="c">
+<em>!!</em>		<span class="cm"># 直前のヒストリ</span>
+<em>!</em>123		<span class="cm"># 123番目のヒストリ</span>
+<em>!</em>-3		<span class="cm"># 3個前のヒストリ</span>
+<em>!</em><i>str</i>		<span class="cm"># <i>str</i>で始まる直近のヒストリ</span>
+<em>!?</em><i>str</i><em>?</em>		<span class="cm"># <i>str</i>を含む直近のヒストリ(<i>str</i>の後ろが改行の場合は最後の?は省略可)</span>
+</pre>
+<p>検索したヒストリに対して、下記の引数参照を利用できます。コマンド名は0番目の引数として扱われます。</p>
+<pre class="c">
+!!<em>:</em><i>n</i>		<span class="cm"># <i>n</i>番目の引数</span>
+!!<em>:^</em>		<span class="cm"># 最初の引数</span>
+!!<em>:$</em>		<span class="cm"># 最後の引数</span>
+!!<em>:</em><i>n</i><em>-</em><i>m</i>		<span class="cm"># <i>n</i>番目から<i>m</i>番目までの引数</span>
+!!<em>:</em>^<em>-</em><i>m</i>		<span class="cm"># 最初から<i>m</i>番目までの引数</span>
+!!<em>:</em><i>n</i><em>-</em>$		<span class="cm"># <i>n</i>番目から最後までの引数</span>
+!!<em>:*</em>		<span class="cm"># 最初から最後までの引数(1-$)</span>
+!!<em>:</em><i>n</i><em>*</em>		<span class="cm"># 最初から最後までの引数(<i>n</i>-$)</span>
+!!<em>:</em><i>n</i><em>-</em>		<span class="cm"># 最初から最後のひとつ前までの引数</span>
+!<em>:%</em>		<span class="cm"># 直近の?<i>str</i>?にマッチした引数</span>
+</pre>
+<p>検索したヒストリや引数に対して、さらに下記を付与することができます。<b>:</b>で連結して複数指定できます。</p>
+<pre class="c">
+<em>:h</em>		<span class="cm"># ファイル名を削除</span>
+<em>:t</em>		<span class="cm"># ディレクトリ名を削除</span>
+<em>:r</em>		<span class="cm"># 拡張子を削除</span>
+<em>:e</em>		<span class="cm"># 拡張子以外を削除</span>
+<em>:p</em>		<span class="cm"># 表示はするけど実行しない</span>
+<em>:q</em>		<span class="cm"># 全体を'...'で囲んで表示</span>
+<em>:x</em>		<span class="cm"># 単語毎に'...'で囲んで表示</span>
+<em>:s/</em><i>str1</i><em>/</em><i>str2</i><em>/</em>	<span class="cm"># <i>str1</i>を<i>str2</i>に置換(最初のひとつ)</span>
+<em>:gs/</em><i>str1</i><em>/</em><i>str2</i><em>/</em>	<span class="cm"># <i>str1</i>を<i>str2</i>に置換(全置換)</span>
+<em>:Gs/</em><i>str1</i><em>/</em><i>str2</i><em>/</em>	<span class="cm"># <i>str1</i>を<i>str2</i>に置換(単語毎にひとつ)</span>
+<em>:&amp;</em>		<span class="cm"># 直前の置換を繰り返す</span>
+</pre>
+</div>
+
+<h4 id="dirstack">ディレクトリスタック(dirs)</h4>
+<div class="i">
+<p>ディレクトリを移動しまくる時、ディレクトリスタックの機能を利用すると便利です。今いるディレクトリを覚えておきたいときは <b>pushd</b> <i>dir</i> で移動し、戻る時は <b>pupd</b>、スタックがいくつかある時は <b>pushd +</b><i>num</i> で移動します。<i>num</i>は0から数えます。スタックの0番目が常にカレントディレクトリとなります。</p>
+<pre class="c">
+<span class="cm"># スタックを表示する</span>
+<em>dirs</em>			<span class="cm"># スタックの一覧を表示する(1列表示)</span>
+<em>dirs -v</em>			<span class="cm"># スタックの一覧を表示する(複数行表示)</span>
+<span class="cm"># スタックを増やす</span>
+<em>pushd</em> <i>dir</i>		<span class="cm"># スタックの0番目に<i>dir</i>を追加する(先頭になるのでそこに移動する)</span>
+<em>pushd -n</em> <i>dir</i>		<span class="cm"># スタックの1番目に<i>dir</i>を追加する(先頭ではないのでそこには移動しない)</span>
+<span class="cm"># スタック全体を回転する</span>
+<em>pushd +</em><i>num</i>		<span class="cm"># 先頭から<i>num</i>番目のスタックが先頭になるように回転し、先頭スタックに移動</span>
+<em>pushd -</em><i>num</i>		<span class="cm"># 末尾から<i>num</i>番目のスタックが先頭になるように回転し、先頭スタックに移動</span>
+<span class="cm"># スタックを削除する</span>
+<em>popd</em>			<span class="cm"># 0番目のスタックを消す(必然的に1番目のスタックに移動する)</span>
+<em>popd +</em><i>num</i>		<span class="cm"># 先頭から<i>num</i>番目のスタックを削除する</span>
+<em>popd -</em><i>num</i>		<span class="cm"># 末尾から<i>num</i>番目のスタックを削除する</span>
+<em>popd -n</em>			<span class="cm"># 先頭から1番目のスタックを削除する</span>
+<em>dirs -c</em>			<span class="cm"># スタックをすべて削除する</span>
+</pre>
+</div>
+
+<h4 id="condition">条件実行(; &amp;&amp; ||)</h4>
+<div class="i">
+<p><b>;</b>, <b>&amp;&amp;</b>, <b>||</b> を用いて複数のコマンド実行条件を制御することができます。</p>
+<pre class="c">
+<i>cmd1</i> <em>;</em> <i>cmd2</i>		<span class="cm"># <i>cmd1</i>が終了したら<i>cmd2</i>を実行する</span>
+<i>cmd1</i> <em>&amp;&amp;</em> <i>cmd2</i>		<span class="cm"># <i>cmd1</i>が成功終了したら<i>cmd2</i>を実行する</span>
+<i>cmd1</i> <em>||</em> <i>cmd2</i>		<span class="cm"># <i>cmd1</i>の終了・成功・失敗に関わらず<i>cmd2</i>を並行実行する</span>
+</pre>
+</div>
+
+<h4 id="if-statemant">if文</h4>
+<div class="i">
+<p><b>if</b>文は、条件が真の場合に処理を実行します。</p>
+<pre class="c">
+<em>if</em> 条件; <em>then</em>
+    処理
+<em>fi</em>
+</pre>
+<p><b>elif</b> や <b>else</b> も使用できます。下記の例では条件1が真の時は処理1を、条件2が真の時は処理2を、さもなくは処理3を実行します。</p>
+<pre class="c">
+<em>if</em> 条件1; <em>then</em>
+    処理1
+<em>elif</em> 条件2; <em>then</em>
+    処理2
+<em>else</em>
+    処理3
+<em>fi</em>
+</pre>
+<p>条件の部分にはコマンドを指定します。コマンドが成功、つまり、コマンドの実行結果(<b>$?</b>)が 0 であれば真、0 以外であれば偽とみなします。</p>
+<pre class="c">
+if <em>command1</em>; then
+    echo "成功しました"
+fi
+</pre>
+<p><b>[</b> ... <b>]</b> は <b>test</b> コマンドの別名で、... に指定した引数を条件として判断し、合致すれば真となります。<b>if</b>文と組み合わせることで、条件判断ができるようになります。下記の例では、変数 TEMP が未設定または空文字であれば、/var/tmp を設定します。TEMP が未設定の場合にエラーにならないように、$TEMP を "..." で囲んでいます。</p>
+<pre class="c">
+<em>if [</em> "$TEMP" = "" <em>]; then</em>
+    TEMP=/var/tmp
+<em>fi</em>
+</pre>
+<p><b>bash</b> では、<b>[</b> ... <b>]</b> コマンドの代わりに、ビルトインの条件判断式 <b>[[</b> ... <b>]]</b> を使用することができます。<b>[</b> ... <b>]</b> よりも高速・高機能です。</p>
+<pre class="c">
+<em>if [[</em> "$TEMP" = "" <em>]]; then</em>
+    TEMP=/var/tmp
+<em>fi</em>
+</pre>
+<p><b>[</b> ... <b>]</b> の条件には下記などを使用できます。</p>
+<pre class="c">
+( <i>exp</i> )			<span class="cm"># <i>exp</i> をグルーピング</span>
+! <i>exp</i>			<span class="cm"># <i>exp</i> が偽であれば</span>
+<i>exp1</i> -a <i>exp2</i>		<span class="cm"># <i>exp1</i> かつ <i>exp2</i> であれば</span>
+<i>exp2</i> -o <i>exp2</i>		<span class="cm"># <i>exp1</i> または <i>exp2</i> であれば</span>
+<i>str1</i> = <i>str2</i>		<span class="cm"># 文字列 <i>str1</i> と <i>str2</i> が等しければ</span>
+<i>str1</i> != <i>str2</i>		<span class="cm"># 文字列 <i>str1</i> と <i>str2</i> が等しくなければ</span>>
+-z <i>str</i>			<span class="cm"># 文字列 <i>str</i> が0文字であれば(zero)</span>
+-n <i>str</i>			<span class="cm"># 文字列 <i>str</i> が0文字で以上であれば(not zero)</span>
+<i>str</i>			<span class="cm"># 文字列 <i>str</i> が0文字で以上であれば(-n <i>str</i> と同じ)</span>
+<i>num1</i> -eq <i>num2</i>		<span class="cm"># 数値 <i>num1</i> が <i>num2</i> と等しければ(equal)</span>
+<i>num1</i> -ne <i>num2</i>		<span class="cm"># 数値 <i>num1</i> が <i>num2</i> 異なっていれば(not equal)</span>
+<i>num1</i> -ge <i>num2</i>		<span class="cm"># 数値 <i>num1</i> が <i>num2</i> 以上であれば(grater than or equal)</span>
+<i>num1</i> -gt <i>num2</i>		<span class="cm"># 数値 <i>num1</i> が <i>num2</i> より大きければ(grater than)</span>
+<i>num1</i> -le <i>num2</i>		<span class="cm"># 数値 <i>num1</i> が <i>num2</i> 以下であれば(less than or equal)</span>
+<i>num1</i> -lt <i>num2</i>		<span class="cm"># 数値 <i>num1</i> が <i>num2</i> より小さければ(less than)</span>
+<i>file1</i> -ef <i>file2</i>	<span class="cm"># ファイル <i>file1</i> が <i>file2</i> と同一実体であれば(equal file)</span>
+<i>file1</i> -nt <i>file2</i>	<span class="cm"># ファイル <i>file1</i> が <i>file2</i> より新しければ(newer than)</span>
+<i>file1</i> -ot <i>file2</i>	<span class="cm"># ファイル <i>file1</i> が <i>file2</i> より古ければ(older than)</span>
+-e <i>file</i>			<span class="cm"># ファイル <i>file</i> が存在していれば</span>
+-s <i>file</i>			<span class="cm"># ファイル <i>file</i> が0バイト以上であれば</span>
+-f <i>file</i>			<span class="cm"># ファイル <i>file</i> がレギュラーファイルであれば</span>
+-r <i>file</i>			<span class="cm"># ファイル <i>file</i> が読み込み可能であれば</span>
+-w <i>file</i>			<span class="cm"># ファイル <i>file</i> が書き込み可能であれば</span>
+-x <i>file</i>			<span class="cm"># ファイル <i>file</i> が実行可能(ディレクトリの場合は移動可能)であれば</span>
+-d <i>file</i>			<span class="cm"># ファイル <i>file</i> がディレクトリであれば</span>
+-h <i>file</i>			<span class="cm"># ファイル <i>file</i> がシンボリックリンクファイルであれば(-Lと同義)</span>
+-L <i>file</i>			<span class="cm"># ファイル <i>file</i> がシンボリックリンクファイルであれば(-hと同義)</span>
+-b <i>file</i>			<span class="cm"># ファイル <i>file</i> がブロックデバイスファイルであれば</span>
+-c <i>file</i>			<span class="cm"># ファイル <i>file</i> がキャラクタデバイスファイルであれば</span>
+-p <i>file</i>			<span class="cm"># ファイル <i>file</i> が名前付きパイプであれば</span>
+-S <i>file</i>			<span class="cm"># ファイル <i>file</i> がソケットファイルであれば</span>
+-k <i>file</i>			<span class="cm"># ファイル <i>file</i> にスティッキービットが設定されていれば(chown o+t)</span>
+-u <i>file</i>			<span class="cm"># ファイル <i>file</i> にセットユーザIDビットが設定されていれば(chown u+s)</span>
+-g <i>file</i>			<span class="cm"># ファイル <i>file</i> にセットグループIDビットが設定されていれば(chown g+s)</span>
+-O <i>file</i>			<span class="cm"># ファイル <i>file</i> が実効ユーザIDに所有されていれば</span>
+-G <i>file</i>			<span class="cm"># ファイル <i>file</i> が実効グループIDに所有されていれば</span>
+-t <i>fd</i>			<span class="cm"># ファイルディスクリプタ <i>fd</i> がターミナルとして開かれていれば</span>
+</pre>
+<p><b>[[</b> ... <b>]]</b> の条件には追加で下記などを使用できます。</p>
+<pre class="c">
+<i>exp1</i> &amp;&amp; <i>exp2</i>		<span class="cm"># <i>exp1</i> かつ <i>exp2</i> であれば</span>
+<i>exp2</i> || <i>exp2</i>		<span class="cm"># <i>exp1</i> または <i>exp2</i> であれば</span>
+</pre>
+</div>
+
+<h4 id="for">for文</h4>
+<div class="i">
+<p><b>for</b> ... <b>in</b> 文は、リストをひとつずつ変数に格納しながらループします。下記の例では引数 <b>$@</b> を順番にひとつずつ処理していきます。引数の * や ? がファイル名に展開されないように <b>"</b>...<b>"</b> で囲んでいます。</p>
+<pre class="c">
+<em>for</em> i <em>in</em> "$@"
+<em>do</em>
+    echo "$i"
+<em>done</em>
+</pre>
+<p><b>{</b><i>n</i><b>..</b><i>m</i><b>}</b> は、<i>n</i>～<i>m</i>までの数値のリストを返却します。下記の例は 1～10 のループを回します。詳細は <a href="#braceexpand">ブレース展開</a> を参照してください。</p>
+<pre class="c">
+<em>for i in {1..10}</em>
+<em>do</em>
+    echo "$i"
+<em>done</em>
+</pre>
+<p><b>bash</b> では下記の様な記述もできます。</p>
+<pre class="c">
+<em>for ((i = 0; i &lt;= 10; i++)) {</em>
+    echo "$i"
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="while">while文</h4>
+<div class="i">
+<p><b>while</b>文は、条件が真の間処理をループします。次の例は標準入力から入力が無くなるまで <b>read</b> コマンドで1行ずつ読み込み、処理します。</p>
+<pre class="c">
+<em>while</em> read line
+<em>do</em>
+    echo $line
+<em>done</em>
+</pre>
+</div>
+
+<h4 id="until">until文</h4>
+<div class="i">
+<p><b>until</b>文は、条件が真になるまで処理をループします。下記の例は、0～9 のループを回します。</p>
+<pre class="c">
+i=1
+<em>until</em> [ $i -eq 10 ]
+<em>do</em>
+    echo $i
+    i=`expr $i + 1`
+<em>done</em>
+</pre>
+</div>
+
+<h4 id="case">case文</h4>
+<div class="i">
+<p><b>case</b>文は、文字列のパターンによって処理を振り分けます。パターンには <b>*</b> や <b>?</b> のワイルドカードも使用できます。</p>
+<pre class="c">
+<em>case</em> $FILENAME <em>in</em>
+  <em>*.txt)</em>  echo "Text file." <em>;;</em>
+  <em>*.html)</em> echo "HTML file." <em>;;</em>
+  <em>*)</em>      echo "Unknwown file." <em>;;</em>
+<em>esac</em>
+</pre>
+</div>
+
+<h4 id="select">select文</h4>
+<div class="i">
+<p><b>select</b>文は、選択肢を表示し、入力を受け取るループを回します。下記の例は色を選択してもらう例です。ループを抜けるには <b>break</b> します。</p>
+<pre class="c">
+<em>select</em> i <em>in</em> Red Green Blue
+<em>do</em>
+    case $i in
+      Red)   echo "Red!!"; <em>break</em> ;;
+      Green) echo "Green!!"; <em>break</em> ;;
+      Blue)  echo "Blue!!"; <em>break</em> ;;
+      *)     echo "Bad select!!" ;;
+    esac
+<em>done</em>
+</pre>
+<p>実行すると下記の様に表示し、選択を促します。</p>
+<pre class="c">
+1) Red
+2) Green
+3) Blue
+#?    <span class="cm">← 1 か 2 か 3 を入力して Enter</span>
+</pre>
+</div>
+
+<h4 id="alias">エイリアス(alias)</h4>
+<div class="i">
+<p>インタラクティブモードのシェルではエイリアスを使用することができます。</p>
+<pre class="c">
+<em>alias</em>			<span class="cm"># 定義済みエイリアス一覧を表示する</span>
+<em>alias ll='ls -l'</em>	<span class="cm"># エイリアスを定義する</span>
+<em>unalias ll</em>		<span class="cm"># エイリアスを削除する</span>
+</pre>
+</div>
+
+<h4 id="function">関数(function)</h4>
+<div class="i">
+<p>下記の様に関数を定義することができます。</p>
+<pre class="c">
+<em>function myfunc() {</em>
+    echo "func is called."
+<em>}</em>
+</pre>
+<p><b>function</b> は省略可能です。</p>
+<pre class="c">
+<em>myfunc() {</em>
+    echo "func is called."
+<em>}</em>
+</pre>
+<p>関数はコマンドの様に呼び出すことができます。</p>
+<pre class="c">
+<em>myfunc</em> arg1 arg2 arg3
+</pre>
+<p>引数は、<b>$0</b>, <b>$1</b>, <b>$2</b>, ... <b>$*</b>, <b>$@</b>, <b>$#</b> で参照します。</p>
+<pre class="c">
+myfunc() {
+    for i in <em>"$@"</em>
+    do
+        echo "[$i]"
+    done
+}
+</pre>
+</div>
+
+<h4 id="braceexpand">ブレース展開({...})</h4>
+<div class="i">
+<p>比較的新しくサポートされた機能ですが、ブレース <b>{</b>...<b>}</b> で囲まれた文字を展開できる機能があります。<a href="#for">for文</a> と組み合わせることにより威力を発揮します。</p>
+<pre class="c">
+<em>{1..10}</em>			<span class="cm"># 1 2 3 ...10 に展開</span>
+<em>{1..10..2}</em>		<span class="cm"># 2個とばしに 1 3 5 7 9 に展開</span>
+<em>{aa,bb,cc}</em>		<span class="cm"># aa bb cc に展開</span>
+<em>file.{txt,bak}</em>		<span class="cm"># file.txt file.back に展開</span>
+<em>file{1..3}.txt</em>		<span class="cm"># file1.txt file2.txt file3.txt に展開</span>
+<em>file{1..3}.{txt,bak}</em>	<span class="cm"># file1.txt file1.bak file2.txt ... に展開</span>
+</pre>
+</div>
+
+<h4 id="array">配列</h4>
+<div class="i">
+<p>下記の様にして配列変数を定義・参照することができます。<b>=</b> の前後に空白文字を入れないようにしてください。</p>
+<pre class="c">
+FOO1=<em>(</em> AAA BBB CCC <em>)</em>
+FOO2=<em>(</em>
+    AAA
+    BBB
+    CCC
+<em>)</em>
+
+echo<em> ${FOO1[0]}</em>
+echo ${FOO1[1]}
+echo ${FOO1[2]}
+
+for i in<em> ${FOO2[@]}</em>
+do
+    echo $i
+done
+</pre>
+</div>
+
+<h4 id="options">シェルオプション(set)</h4>
+<div class="i">
+<p><b>bask</b> の引数もしくは <b>set</b> コマンドで、シェル自体の動作に関するオプションを指定することができます。</p>
+<pre class="c">
+<em>/bin/bash -</em><i>opt</i>			<span class="cm"># シェル起動時のオプションで指定</span>
+<em>set -o</em>				<span class="cm"># シェルオプションの一覧を表示する</span>
+<em>set -</em><i>opt</i>			<span class="cm"># setコマンドで有効にする(例:set -a)</span>
+<em>set -o</em> <i>option</i>			<span class="cm"># setコマンドで有効にする(例:set -o allexport)</span>
+<em>set +</em><i>opt</i>			<span class="cm"># setコマンドで無効にする(例:set +a)</span>
+<em>set +o</em> <i>option</i>			<span class="cm"># setコマンドで無効にする(例:set +o allexport)</span>
+</pre>
+<p>例えばシェルスクリプトの中で下記の様にオプションを設定すると、コマンドの実行トレースを表示するようになります。</p>
+<pre class="c">
+#!/bin/bash <em>-x</em>
+<span class="cm">command...</span>
+</pre>
+<p>下記の様に <b>set</b> を用いると、オプションを設定した箇所以降でトレースが有効になります。</p>
+<pre class="c">
+#!/bin/bash
+<span class="cm">command...</span>
+<em>set -x</em>		<span class="cm"># set -o xtrace と同意</span>
+<span class="cm">command...</span>
+</pre>
+<p>指定可能なオプションには下記があります。</p>
+<pre class="c">
+<span class="cm"># 展開系</span>
+allexport(-a)			<span class="cm"># シェル変数が設定されたら環境変数に自動的にexportする</span>
+braceexpand(-B)			<span class="cm"># ブレース展開を有効にする</span>
+noglob(-f)			<span class="cm"># *や?のファイル名展開を無効にする</span>
+
+<span class="cm"># ヒストリ系</span>
+history				<span class="cm"># ヒストリ機能を有効にする</span>
+histexpand(-H)			<span class="cm"># !番号によるヒストリの参照を有効にする</span>
+
+<span class="cm"># 操作モード系</span>
+emacs				<span class="cm"># コマンド編集キーをEmacs風にする</span>
+vi				<span class="cm"># コマンド編集キーをvi風にする</span>
+posix				<span class="cm"># POSIX互換モードで動作する</span>
+
+<span class="cm"># デバッグ系</span>
+errexit(-e)			<span class="cm"># コマンドがひとつでもエラーになればシェルを終了する</span>
+pipefail			<span class="cm"># パイプライン中のコマンドがひとつでもエラーになればパイプを終了する</span>
+errtrace(-E)			<span class="cm"># エラートラップ(trace '...' ERR)を有効にする</span>
+functrace(-T)			<span class="cm"># 関数の中でもトラップを発生させる</span>
+xtrace(-x)			<span class="cm"># コマンド実行トレース表示機能を有効にする</span>
+verbose(-v)			<span class="cm"># シェル実行トレース表示機能を有効にする</span>
+noexec(-n)			<span class="cm"># 文法チェックのみ行い実行しない</span>
+
+<span class="cm"># 安全性</span>
+noclobber(-C)			<span class="cm"># リダイレクトによるファイルの上書きを禁止する</span>
+ignoreeof			<span class="cm"># Ctrl-D でログアウトしない</span>
+nounset(-u)			<span class="cm"># 未定義の変数参照をエラーとする($*,$@は除く)</span>
+physical(-P)			<span class="cm"># cdコマンド等でシンボリックリンクをたどらない</span>
+privileged(-p)			<span class="cm"># 特権モード。各種変数や実行ユーザIDを周りから受け取らない</span>
+interactive-comments		<span class="cm"># コメント(#)を利用可能にする(インタラクティブモードのみ)</span>
+
+<span class="cm"># 通知系</span>
+monitor(-m)			<span class="cm"># バックグラウンドプロセスの終了を通知する</span>
+notify(-b)			<span class="cm"># バックグラウンドプロセス終了時即座に通知する</span>
+
+<span class="cm"># その他</span>
+hashall(-h)			<span class="cm"># ディレクトリハッシュテーブルをすべて記録する</span>
+keyword(-k)			<span class="cm"># コマンド引数に指定した代入文も環境変数としてコマンドに渡す</span>
+onecmd(-t)			<span class="cm"># コマンドをひとつ読み込み、実行してから終了する(詳細不明)</span>
+nolog				<span class="cm"># 未使用</span>
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://linuxjm.osdn.jp/html/GNU_bash/man1/bash.1.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://linuxjm.osdn.jp/html/GNU_bash/man1/bash.1.html'" tppabs="https://linuxjm.osdn.jp/html/GNU_bash/man1/bash.1.html">Bashマニュアル(日本語)</a>
+</ul>
+</div>
+
+<!--
+●"..." と '...'
+●リダイレクト( > < 2>&1)
+●パイプ(|)
+●エスケープ
+●バックグランド実行(&)
+●条件実行(; && ||)
+●条件付き変数参照(${VAR:-VALUE})
+●ヒストリ(history)
+●Ctrl-r
+●{1..10}
+●(( expression ))
+●[[ expression ]]
+●関数(function)
+●echo/printf
+●エイリアス(alias)
+●ディレクトリスタック(dirs/popd/pushd)
+●ブレース展開({...})
+●set
+○コマンド編集(Ctrl-a, ...)
+○トラップ(ERR,RETUEN,EXIT,DEBUG)
+○(list)
+○{ list; }
+○$'\U3042'
+○ビルトインコマンド
+○bind
+○cd
+○pwd
+○read
+○exit
+○let
+○set
+○shift
+○suspend
+-->
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年5月24日 最終更新:2020年6月16日</div>
+<div>http://www.tohoho-web.com/ex/shell.html</div>
+</body>
+</html>

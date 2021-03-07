@@ -1,0 +1,233 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>キャッシュを完全に無効にさせたい</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>キャッシュを完全に無効にさせたい</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120044.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120044.htm">[前に]</a>
+<a href="98120046.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120046.htm">[次に]</a>
+<hr>
+<span class=name>やま</span>
+<span class=email><a href="mailto:yama@yama.net">[E-Mail]</a></span>
+<span class=time>1998/12/08(火) 01:44:56</span><br>
+クッキーを読み込んで、あるキーが設定されているかされていないかによって表示する内容を変えます（ＣＧＩを使用して同じＵＲＬで）。設定されていなければ、（Ａ）クッキーを設定するためのＩＤとパスを入力するためのフォームを表示し、認証されればクッキーを設定してLocation:を使用して元のＵＲＬへ戻り（Ｂ）クッキーが設定されている場合のページを表示させます。<br>
+ここで、（Ａ）（Ｂ）は同じＵＲＬなので、各ページはキャッシュされないように&lt;META HTTP-EQUIV="Pragma" CONTENT="no-cache"&gt;を挿入しました。<br>
+以上の方法で、Ｗｉｎ９８＋ＩＥ，ＮＮでの動作には成功したのですが、Ｍａｃ＋ＮＮで（Ｂ）が表示されるべき段階で、元の（Ａ）が表示され、リロードしなければ（Ｂ）が表示されないと言う現象が起きているようです。状況から考えてキャッシュが残っているのではないかと、素人の考えをしているのですが、どう思われるでしょうか。<br>
+また、Ｍａｃにキャッシュされない方法が他にあるようでしたら教えていただけませんでしょうか。<br>
+長文でややこしい説明ですいません。<br>
+<hr>
+<span class=name>moci</span>
+<span class=email><a href="mailto:moci@shift.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/12/08(火) 04:48:22</span><br>
+Mac+NNの環境で、クッキーを無効にしていたりしませんよね？<br>
+クッキーが必須である旨、通知されていますでしょうか。<br>
+<br>
+解決策は思い当たりませんが、試しにMETAではなく、<br>
+HTTPヘッダでキャッシュさせないようにしてみるというのは<br>
+どうでしょう。<br>
+<br>
+どうしようもなければ、(A)と(B)を分けるしかないような…<br>
+<hr>
+<span class=name>なべべ</span>
+<span class=time>1998/12/08(火) 23:15:58</span><br>
+横槍ですが<br>
+<br>
+HTTPヘッダでキャッシュさせないようにしてみるというのは具体的にはどうするのでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/12/08(火) 23:44:38</span><br>
+　print "Content-type: text/html\n";<br>
+　print "Pragma: no-cache\n\n";<br>
+ということだと思います。<br>
+<br>
+これでも無理なら「最初から認証OKのユーザ」と「そこで始めて認証のユーザ」で、<br>
+別URLに振る(トップページだけ)、とか。<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1998/12/09(水) 00:01:22</span><br>
+HTTPヘッダの方も結果は同じでした。やはり別ＵＲＬでなければだめなのでしょうかねぇ。もう少し考えてみます。<br>
+しかし、根本的にキャッシュに関する問題は解決したとはいえませんね。「解決発言」のチェックは控えておきます。引き続き、解決方法をご存じの方の情報をお待ちいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/12/09(水) 01:43:04</span><br>
+<font color="#CC8000">&gt; 「そこで始めて認証のユーザ」</font><br>
+<br>
+「初めて」でしたね。なさけな。<br>
+<br>
+根本的解決じゃないし、別URL案と同じようなものですけど、<br>
+(B)のURLに無意味な引数をくっつけて、必ず読みにいかせる<br>
+ようにする、というのは？<br>
+<br>
+例えば(A)がhoge.cgiなら、(B)はhoge.cgi?fugaとか。<br>
+<hr>
+<span class=name>mura</span>
+<span class=time>1998/12/09(水) 18:28:27</span><br>
+「もしかするとできるかも」レベルですが<br>
+(Mac+NN以外も含めて私はチェックしたことないです)、<br>
+Last-Modifiedヘッダで現在時刻を送るのはどうでしょう?<br>
+<br>
+参考までに、Last-Modifiedの書き方の例(RFC2068より):<br>
+Last-Modified: Tue, 15 Nov 1994 12:45:26 GMT<br>
+<hr>
+<span class=name>ばび</span>
+<span class=time>1998/12/11(金) 03:53:35</span><br>
+Locationヘッダの変わりに<br>
+print "Content-Type: text/html\n\n";<br>
+print "&lt;HTML&gt;\n&lt;HEAD&gt;\n";<br>
+print "&lt;META HTTP-EQUIV=\"Refresh\" CONTENT=\"0\"&gt;\n";<br>
+print "&lt;/HEAD&gt;\n&lt;BODY&gt;&lt;/BODY&gt;\n&lt;/HTML&gt;\n";<br>
+っていうのじゃだめですか？<br>
+Macは使ったことないからわかりませんけど<br>
+キャッシュから読むのを回避できるかもしれません。<br>
+<hr>
+<span class=name>しなのむし</span>
+<span class=time>1998/12/11(金) 07:40:14</span><br>
+<font color="#CC8000">&gt;認証されればクッキーを設定してLocation:を使用して元のＵＲＬへ戻り</font><br>
+<br>
+ここで元のURLに戻らずに<br>
+<br>
+- キーが設定されたか確認<br>
+- クッキーが設定されている場合のページの表示<br>
+<br>
+とするとか。<br>
+<br>
+キャッシュを無効するのではなく、キャッシュと関わらない方法を<br>
+とるというのはどうでしょう？<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1998/12/12(土) 03:34:11</span><br>
+みなさん、アドバイスありがとうございます。<br>
+しなのむしさんの方法もわかるのですが、（Ａ）－＞（Ｂ）だけではなく、その他の（Ｃ）や（Ｄ）からのリンクでも元のＵＲＬへ戻りたいので、やはりはじめの方法でなんとかうまくやりたいのです。わがままですが・・・。<br>
+最初にも書きましたように、Ｗｉｎではうまく動作しているので、Ｍａｃ版ＮＮのバグなのでしょうか。それともno-cacheを無視する設定があるのでしょうか。<br>
+ばびさんの方法、リフレッシュだけのためのページを出力するということですね。試していないのですがやってみる価値ありそうですね。<br>
+<hr>
+<span class=name>ζ</span>
+<span class=time>2000/04/04(火) 11:54:34</span><br>
+&lt;meta http-equiv="expires" content="0"&gt;<br>
+<hr>
+<span class=name>：-)</span>
+<span class=time>2000/04/04(火) 12:45:17</span><br>
+これで完璧ですが。Perl はよーわからんから PHP で。<br>
+<br>
+header("Content-Type: text/html; charset=EUC-JP");<br>
+header("Expires: Sat, 01 Jan 2000 00:00:00 GMT");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Date in the past<br>
+header("Last-Modified: ". gmdate("D, d M Y H:i:s"). " GMT");&nbsp;&nbsp;// always modified<br>
+header("Cache-Control: no-cache, must-revalidate");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// HTTP/1.1<br>
+header("Pragma: no-cache");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// HTTP/1.0<br>
+header("Refresh: 0; url=戻り先");<br>
+<br>
+Refresh の代わりに Location でもいいけど環境によっては<br>
+ダイアログでてきてウザいから、よろ。<br>
+<hr>
+<span class=name>：-)</span>
+<span class=time>2000/04/04(火) 13:12:39</span><br>
+きどりみたいな発言になってしまったのでちゃんと Perl で書いてみた。<br>
+<br>
+my (@wdays_en) = qw(Sun Mon Tue Wed Thu Fri Sat);<br>
+my (@mons_en)&nbsp;&nbsp;= qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);<br>
+my ($sec,$min,$hour,$day,$mon,$year,$wday) = gmtime(time);<br>
+my $gmtime = sprintf("%s, %02d %s %04d %02d:%02d:%02d GMT",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$wdays_en[$wday],$day,$mons_en[$mon],$year+1900,$hour,$min,$sec);<br>
+<br>
+print "Content-Type: text/html; charset=EUC-JP\n";<br>
+print "Expires: Sat, 01 Jan 2000 00:00:00 GMT\n";&nbsp;&nbsp;&nbsp;&nbsp;# Date in the past<br>
+print "Last-Modified: ". $gmtime\n";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# always modified<br>
+print "Cache-Control: no-cache, must-revalidate\n";&nbsp;&nbsp;# HTTP/1.1<br>
+print "Pragma: no-cache\n";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# HTTP/1.0<br>
+print "Refresh: 0; url=戻り先\n";<br>
+print "\n";<br>
+<br>
+でわでわ。<br>
+<hr>
+<span class=name>↑ここにもPHP使いが？</span>
+<span class=time>2000/04/04(火) 13:28:11</span><br>
+&lt;?php<br>
+header("Content-Type: text/html; charset=EUC-JP");<br>
+header("Expires: Sat, 01 Jan 2000 00:00:00 GMT");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Date in the past<br>
+header("Last-Modified: ". gmdate("D, d M Y H:i:s"). " GMT");&nbsp;&nbsp;// always modified<br>
+header("Cache-Control: no-cache, must-revalidate");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// HTTP/1.1<br>
+header("Pragma: no-cache");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// HTTP/1.0<br>
+header("Refresh: 0; url=戻り先");<br>
+<br>
+echo "&lt;html&gt;\n&lt;head&gt;\n";<br>
+echo "&lt;meta http-equiv='expires' content='0'&gt;";<br>
+echo "&lt;meta http-equiv='Pragma' content='no-cache'&gt;";<br>
+echo "&lt;/head&gt;";<br>
+echo "&lt;body&gt;\n";<br>
+echo "&lt;form ************&gt;<br>
+.......<br>
+.......<br>
+.......<br>
+echo "&lt;/form&gt;\n";<br>
+.......<br>
+.......<br>
+.......<br>
+echo "&lt;/body&gt;\n&lt;/html&gt;\n";<br>
+?&gt;<br>
+<hr>
+<span class=name>ペンネーム可</span>
+<span class=time>2000/04/04(火) 14:00:15</span><br>
+上記のPHPスクリプトを全部書いたページで今実験したら<br>
+Win-NT IE5.01の環境でキャッシュが効いていた。<br>
+完全にキャッシュをさせないっていうのは無理かも？<br>
+ASP,CGI,PHP....幾つつかえるんだ？ &gt; :-)<br>
+<hr>
+<span class=name>：-)</span>
+<span class=time>2000/04/04(火) 14:48:23</span><br>
+<font color="#CC8000">&gt; 上記のPHPスクリプトを全部書いたページで今実験したら</font><br>
+<font color="#CC8000">&gt; Win-NT IE5.01の環境でキャッシュが効いていた。</font><br>
+<br>
+そいつはおかしい。<br>
+ロヂックてきには問題ないはずだ。^^;<br>
+<br>
+質問の件、PHP なんですが要望どーりのスクリプトあります。<br>
+<br>
+php3_magicticket.tar.gz<br>
+<a href="javascript:if(confirm('http://www.happysize.co.jp/techie/  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.happysize.co.jp/techie/'" tppabs="http://www.happysize.co.jp/techie/">http://www.happysize.co.jp/techie/</a><br>
+<br>
+これでヤフーのようなクッキー認証も実現できるかも。<br>
+<br>
+でわでわ。<br>
+<hr>
+<span class=name>ヒソカ</span>
+<span class=time>2000/04/04(火) 15:42:31</span><br>
+キャッシュが効くのはブラウザの戻るボタンと<br>
+進むボタンを押したときだけなんだけどね。 ^_^<br>
+<br>
+php3_magicticket.tar.gz<br>
+これはセキュリティはどうなんだろ？<br>
+いつもphplib_7.2をつかってるんだけど。<br>
+データベースでユーザー認証する部分は自分で書けって<br>
+かいてるみたいだね。<br>
+<hr>
+<span class=name>：-)</span>
+<span class=time>2000/04/04(火) 18:08:41</span><br>
+<font color="#CC8000">&gt; php3_magicticket.tar.gz</font><br>
+<font color="#CC8000">&gt; これはセキュリティはどうなんだろ？</font><br>
+<br>
+md5(md5sum) でハッシュしてサーバーとクライアントで<br>
+やりとりしてるので Apache の Basic 認証よりはるかに安全。^^<br>
+<hr>
+<span class=name>ヒソカ</span>
+<span class=time>2000/04/04(火) 19:01:14</span><br>
+コード見たけど単純で使いやすそうな雰囲気！<br>
+クッキイーがだめでもフォームのhiddenでわたせそうだし・・・<br>
+Thank you good info!&nbsp;&nbsp;&gt; ：-)<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>2000/04/04(火) 23:46:54</span><br>
+<span class=resolv>[[解決]]</span><br>
+最初に発言した「やま」ですよ～。<br>
+１年以上も経って、通知のメールが来たのでびっくりしました。<br>
+自分ですら、この質問をしたのを忘れてました。<br>
+もうこの方法を使用したページはやめましたので、解決ですね（笑）。<br>
+解決チェックしておきます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120044.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120044.htm">[前に]</a>
+<a href="98120046.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120046.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>perlでパーミッションの変更をするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>perlでパーミッションの変更をするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050164.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050164.htm">[前に]</a>
+<a href="99050166.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050166.htm">[次に]</a>
+<hr>
+<span class=name>みくに</span>
+<span class=time>1999/05/27(木) 04:17:33</span><br>
+perlでパーミッションの変更を行いたいのですが<br>
+<br>
+chmod 0644, abc.txt;<br>
+<br>
+としても変更されません。。　私なりにいろいろ思考錯誤したの<br>
+ですがどうしても原因がわからないのでどなたか教えて下さい。<br>
+<br>
+chmod 0644, abc.txt;<br>
+chmod 0644, "abc.txt";<br>
+chmod 0644 abc.txt;　<br>
+↑この３つめの場合だと<br>
+Internal Server Error<br>
+The server encountered an internal error or misconfiguration and was unable to complete your request.<br>
+Please contact the server administrator, you@your.address and inform them of the time the error occurred, and<br>
+anything you might have done that may have caused the error.<br>
+が出てしまいます。。<br>
+<br>
+何が原因なのでしょうか。。。　よろしくおねがいします。<br>
+<br>
+<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/27(木) 04:23:23</span><br>
+chmod(0644, "abc.txt");<br>
+<br>
+chmodの後は、リスト。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/27(木) 04:27:54</span><br>
+あれ、もしかして、変更しようとしているファイルの所有者と、<br>
+Perlの実行権限のあるユーザーが違ってませんか？<br>
+＃例えば、FTPでアップロードしたファイルをCGIからパーミッション変更しようとしているとか？<br>
+<hr>
+<span class=name>みくに</span>
+<span class=time>1999/05/27(木) 04:36:08</span><br>
+はい。。　ＦＴＰでアップロードしたファイルをＣＧＩからパーミッションの<br>
+変更をしようとしております。。。<br>
+<br>
+この作業（ＦＴＰでアップロードしたファイルをＣＧＩからパーミッションの変更）は無理なのでしょうか・・。<br>
+無茶な質問で申し訳ありません。　よろしくおねがいします。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/05/27(木) 04:57:47</span><br>
+<font color="#CC8000">＞この作業（ＦＴＰでアップロードしたファイルをＣＧＩからパーミッションの変更）は無理なのでしょうか・・。</font><br>
+CGIが、その（設置者）の権限で動くように設定してあるサーバーでない限り、無理だと思います。<br>
+<br>
+どうしてもしたいなら、あらかじめそのファイルをCGIで作成して置けば、<br>
+変更できますが・・・<br>
+<br>
+#!/usr/local/bin/perl<br>
+<br>
+system("cp アップロードしたファイル パーミッションを変更したいファイル");<br>
+chmod (0664 , "パーミッションを変更したいファイル");<br>
+<br>
+こんな感じのCGIを作って一度動かせば、アップロードしたファイルがコピーされます<br>
+（所有者はCGIの実行権限者）から、以後、それについてはCGIからパーミッションの操作が出来るかと。<br>
+<hr>
+<span class=name>みくに</span>
+<span class=time>1999/05/27(木) 06:51:19</span><br>
+<span class=resolv>[[解決]]</span><br>
+ふじさん。　どうもありがとうございます。<br>
+<br>
+明確に理解できました。<br>
+詳しく方法まで記載していただき助かりましたっ。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050164.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050164.htm">[前に]</a>
+<a href="99050166.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050166.htm">[次に]</a>
+</body>
+</html>

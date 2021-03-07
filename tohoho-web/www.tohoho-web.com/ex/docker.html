@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Dockerメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Dockerメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Dockerメモ
+
+<div class="caution">
+この記事は古い内容です。最新情報は <a href="../docker/index.html" tppabs="http://www.tohoho-web.com/docker/index.html">こちら</a> を参照してください。
+</div>
+
+<h4>環境</h4>
+<div class="i">
+<ul>
+<li>実施日: 2019年8月18日</li>
+<li>ホストOS: Windows 10</li>
+<li>ゲストOS: CentOS 7.2</li>
+<li>ハイパーバイザ: VirtualBox 6.0</li>
+<li>Docker: Docker 1.9.1</li>
+</ul>
+</div>
+
+<h4>Dockerとは</h4>
+<div class="i">
+<ul>
+<li>Docker社が開発している、Linux をターゲットとするコンテナ管理基盤です。
+<li>VirtualBox, VMware, Hyper-V などのハイパーバイザ型仮想化がホストOS上でゲストOSを仮想的に起動させるのに対し、コンテナ型仮想化では、ホストOSとゲストコンテナでOSを共有し、ファイルシステムやプロセス空間、ネットワーク空間等のみを仮想化し、プロセスのみを起動します。
+<li>ハイパーバイザ型に対して、起動が早い、サイズが小さいなどの利点を持ちます。
+<li>通常、ひとつのコンテナでひとつのプロセスのみを起動します。
+<li>ハイパーバイザ型は仮想OSを動かすもの、コンテナ型はプロセス固有のファイルシステム等をまとったプロセスを動かすものだと考えれば理解が早いと思います。
+<li>無償版の「Docker CE(Community Edition)」や有償版の「Docker EE(Enterprise Edition)」などがあります。
+<li>最近では Mac や Windows でも Docker を動かせるようになってきました。
+<li>コンテナ内部のボリューム(ファイルシステム/ディレクトリ/ファイル)は基本的に揮発性です。コンテナが削除された時点で、コンテナ内のプロセスが書き込んだログファイルなどもすべて消えてしまいます。永続ボリュームを使用するには、run コマンドの -v オプションを使用します。
+</ul>
+</div>
+
+<h4>Docker CE をインストールする</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">CentOS 7</span>
+# yum install -y yum-utils device-mapper-persistent-data lvm2
+# yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+# yum install -y docker-ce docker-ce-cli containerd.io
+# systemctl enable docker
+# systemctl start docker
+# docker version
+# docker info
+</pre>
+</div>
+
+<h4>イメージを管理する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">DockerHub からイメージを検索する</span>
+# docker <em>search</em> centos
+
+<span class="cm">イメージをダウンロードする</span>
+# docker <em>pull</em> centos:7
+
+<span class="cm">ダウンロード済みのイメージ一覧を表示する</span>
+# docker <em>images</em>
+
+<span class="cm">イメージを削除する</span>
+# docker <em>rmi</em> centos:7
+</pre>
+</div>
+
+<h4>コンテナを管理する</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">コンテナを起動する</span>
+# docker <em>run</em> -d -it --name test1 centos:7
+
+<span class="cm">コンテナの一覧を表示する (-a は停止中もすべて)</span>
+# docker <em>ps</em> -a
+
+<span class="cm">コンテナを開始・停止・再起動・削除・リネームする</span>
+# docker <em>start</em> test1
+# docker <em>stop</em> test1
+# docker <em>restart</em> test1
+# docker <em>rm</em> test1
+# docker <em>rename</em> test1 test2
+</pre>
+<p>コンテナ起動(run)時には下記などのオプションを指定することができます。</p>
+<table class="tb1">
+<tr><th>オプション</th><th>説明</th></tr>
+<tr><td><b>-d</b></td><td>コンテナのメインプロセスを端末からデタッチします。</td></tr>
+<tr><td><b>-i</b></td><td>コンテナの標準入力を開いたままにします。</td></tr>
+<tr><td><b>-t</b></td><td>端末を割り当てたままにします。</td></tr>
+<tr><td><b>--name</b> 名前</td><td>コンテナ名を指定します。</td></tr>
+<tr><td><b>-p</b> <i>hPort</i>:<i>cPort</i></td><td>ホストOSのポート番号(<i>hPort</i>)を、コンテナ内のポート番号(<i>cPort</i>)にバインドします。(例: -p 8080:80)</td></tr>
+<tr><td><b>-v</b> <i>hVolume</i>:<i>cVolume</i></td><td>ホストのボリューム(<i>hVolume</i>)を、コンテナ内のボリューム(<i>cVolume</i>)にバインドします。(例: -v /var/test1/app:/opt/app)</td></tr>
+<tr><td><b>--rm</b></td><td>コンテナのメインプロセス終了時にコンテナを自動的に削除します。</td></tr>
+</table>
+</div>
+
+<h4>コンテナに接続する</h4>
+<div class="i">
+<p>centos イメージなど、起動時に -it オプションをつけ、メインプロセスが /bin/bash 等であるコンテナに対しては、メインプロセスに直接アタッチすることができます。この場合、exit や Ctrl-D 等でぬけると、メインプロセス(＝コンテナ)自体が終了してしまします。</p>
+<pre class="dos">
+<span class="cm">コンテナのメインプロセスにアタッチする</span>
+# docker <em>attach</em> test1
+[root@db80ea8860ff /]# <em>Ctrl-P Ctrl-Q</em>   <span class="cm">デタッチするには Ctrl-P Ctrl-Q を押す</span>
+</pre>
+<p>httpd イメージなど、メインプロセスが httpd 等のコンテナの場合、メインプロセスとは別に、もう一つ別の /bin/bash 等を起動して、それにアタッチすることも可能です。この場合、exit や Ctrl-D で抜けても /bin/bash が終了するのみで、メインプロセス(＝コンテナ)は終了しません。</p>
+<pre class="dos">
+<span class="cm">コンテナにもうひとつ別の /bin/bash を起動して接続する</span>
+# docker <em>exec</em> -it test1 /bin/bash
+[root@db80ea8860ff /]# <em>exit</em>
+</pre>
+</div>
+
+<h4>ホストのディレクトリをマウントする</h4>
+<div class="i">
+<pre class="dos">
+<span class="cm">SELinuxを無効化する</span>
+# vi /etc/selinux/config
+SELINUX=<em>disabled</em>
+
+# setenforce 0
+
+<span class="cm">-vオプションでホストの /mnt/test1 をコンテナの /mnt にマウントする</span>
+# docker run -dit -h test1 --name test1 -v /mnt/test1:/mnt centos:centos6
+</pre>
+</div>
+
+<h4>ホストの8080ポートをコンテナの80にマッピングする</h4>
+<div class="i">
+<pre class="dos">
+# docker run -dit -h test1 --name test1 -p 8080:80 centos:centos6
+</pre>
+</div>
+
+<h4>ループバックデバイスの警告を抑止する</h4>
+<div class="i">
+<p>コンテナ起動時に下記の警告が表示される場合は...</p>
+<pre class="dos">
+Usage of loopback devices is strongly discouraged for production use. Either use `--storage-opt dm.thinpooldev` or use `--storage-opt dm.no_warn_on_loop_devices=true` to suppress this warning.
+</pre>
+<p>Dockerストレージの起動オプションに下記を加える</p>
+<pre class="dos">
+# vi /etc/sysconfig/docker-storage
+DOCKER_STORAGE_OPTIONS=<em>"--storage-opt dm.no_warn_on_loop_devices=true"</em>
+
+# systemctl restart docker
+</pre>
+</div>
+
+<h4>コンテナログイン時にCtrl-Pを二度押さないと効かないのを改善する</h4>
+<div class="i">
+<p>Ctrl-P は、コンテナからデタッチする際のキーとして割り当てられているため、ホストOS側でこれを変更します。</p>
+<pre class="dos">
+# mkdir ~/.docker
+# cat &gt; ~/.docker/config.json &lt;&lt;EOF
+{
+    "detachKeys": "ctrl-\\"
+}
+EOF
+</pre>
+</div>
+
+<h4>コンテナにログインした際にvimで日本語が文字化けするのを改善する</h4>
+<div class="i">
+<p>コンテナ側で環境変数LANGを設定します。</p>
+<pre class="dos">
+# cat &gt;&gt; ~/.bashrc &lt;&lt;EOF
+export LANG=en_US.UTF-8
+EOF
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class="i">
+<ul>
+<li><a href="javascript:if(confirm('http://docs.docker.jp/index.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://docs.docker.jp/index.html'" tppabs="http://docs.docker.jp/index.html">http://docs.docker.jp/index.html</a>
+<li><a href="../docker/index.html" tppabs="http://www.tohoho-web.com/docker/index.html">詳細版(作成中)</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2016-2019 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2019年8月18日</div>
+<div>http://www.tohoho-web.com/ex/docker.html</div>
+</body>
+</html>

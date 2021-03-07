@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>npm入門 - とほほのWWW入門</title>
+<meta name="viewport" content="wih4h=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>npm入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+npm入門
+
+<h4 id="whatis">npm とは</h4>
+<div class=i>
+<ul>
+<li>Node Package Manager の略。
+<li>JavaScript 系のパッケージを管理するツール。
+<li>必要とするパッケージをインストールする際、依存するパッケージもまとめてインストールしてくれる。
+<li>ライセンスは Artistic License。GPL に似ているが、改造版を再配布する際に名称変更が必要な点が異なる。
+<li>npm パッケージを集めたリポジトリ (npmjs.com) が運営され、40万ものパッケージが登録されている。
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class=i>
+<p>npm のインストール方法は <a href="nodejs.html#install" tppabs="http://www.tohoho-web.com/ex/nodejs.html#install">Node.js のインストール</a> を参照してください。</p>
+</div>
+
+<h4>ヘルプ・バージョン</h4>
+<div class=i>
+<p>ヘルプを表示します。</p>
+<pre class=c>
+$ npm <em>help</em>
+$ npm <em>--help</em>
+$ npm <em>help</em> コマンド
+$ npm <em>-h</em> コマンド
+</pre>
+
+<p>npm のバージョンを表示します。</p>
+<pre class=c>
+$ npm <em>-v</em>
+$ npm <em>--version</em>
+$ npm <em>version</em>
+</pre>
+</div>
+
+<h4>プロジェクトディレクトリを作成する</h4>
+<div class=i>
+<p>npm で管理するプロジェクトディレクトリを作成します。<b>package.json</b> ファイルが生成されます。</p>
+<pre class=c>
+$ mkdir my-app
+$ cd ./my-app
+$ npm <em>init</em>
+(略)
+package name: (my-app) <span class="cm">[Enter]</span>
+version: (1.0.0) <span class="cm">[Enter]</span>
+description: <span class="cm">[Enter]</span>
+entry point: (index.js) <span class="cm">[Enter]</span>
+test command: <span class="cm">[Enter]</span>
+git repository: <span class="cm">[Enter]</span>
+keywords: <span class="cm">[Enter]</span>
+author: <span class="cm">[Enter]</span>
+license: (ISC) <span class="cm">[Enter]</span>
+(略)
+Is this ok? (yes) <span class="cm">[Enter]</span>
+$ ls -l
+-rw-rw-r--.  1 taro taro   298 Jan 18 00:05 package.json
+</pre>
+</div>
+
+<h4>パッケージインストール</h4>
+<div class=i>
+<p>カレントディレクトリ配下にインストールします。package.json ファイルが存在するディレクトリで実行します。</p>
+<pre class=c>
+$ npm <em>install</em> パッケージ
+</pre>
+
+<p>install の代わりに省略形の i も指定可能です。</p>
+<pre class=c>
+$ npm <em>i</em> パッケージ
+</pre>
+
+<p>バージョンを指定してインストールします。</p>
+<pre class=c>
+$ npm install パッケージ<em>@x.y.z</em>
+</pre>
+
+<p><b>-g</b> をつけるとグローバルインストールとなり、システムディレクトリにインストールされます。</p>
+<pre class=c>
+$ npm install <em>-g</em> パッケージ
+</pre>
+<dl class="dl1">
+<dt>ローカルインストール</dt>
+<dd>カレントディレクトリの node_modules 配下にインストールします。</dd>
+<dt>グローバルインストール</dt>
+<dd>システムディレクトリの node_modules 配下にインストールします。Node.js を yum でインストールしている場合は /usr/lib/node_modu、<a href="nodejs.html#nodebrew" tppabs="http://www.tohoho-web.com/ex/nodejs.html#nodebrew">nodebrew</a> でインストールしている場合は ~/nodebrew/node/バージョン/lib/node_modules 配下などにインストールされます。パッケージに依存するライブラリはローカルインストール、開発時に共通で利用するツールはグローバルインストールするケースも多い様です。</dd>
+</dl>
+
+<p>インストール後、package.json へのパッケージ情報追記を制御するには下記のオプションをつけます。</p>
+<pre class=c>
+$ npm install パッケージ <em>--no-save</em>            <span class="cm">// npm5～</span>
+$ npm install パッケージ <em>--save</em>
+$ npm install パッケージ <em>--save-optional</em>
+$ npm install パッケージ <em>--save-dev</em>
+</pre>
+<dl class="dl1">
+<dt>--no-save</dt>
+<dd>package.json に書き込まない場合に指定します。npm4 までは package.json に書き込まないのがデフォルトでしたが、npm5 からは --save がデフォルトとなりました。</dd>
+<dt>--save</dt>
+<dd>依存パッケージの場合に指定します。package.json の dependencies に記録されます。このパッケージを誰かが npm install したときに依存パッケージとしてインストールされます。</dd>
+<dt>--save-optional</dt>
+<dd>依存はするけれど必須ではないパッケージの場合に指定します。package.json の optionalDependencies に記録されます。npm install でインストールされますが、インストールに失敗してもスルーされます。</dd>
+<dt>--save-dev</dt>
+<dd>テストツールなど、開発者が使用するパッケージの場合に指定します。package.json の devDependencies に記録されます。このパッケージを npm install しても、インストールされません。ただし、パッケージを Git から clone して npm install した場合は開発者とみなされ、インストールされます。</dd>
+</dl>
+
+<p>package.json に記述されたパッケージを再度インストールするには、package.json が存在するディレクトリで下記を実行します。</p>
+<pre class=c>
+$ ls -l
+-rw-rw-r--.  1 taro taro   265 Jan 18 01:41 <em>package.json</em>
+$ npm <em>install</em>
+</pre>
+
+<p>ただし、インストールされるバージョンは、package.json 記載されたものではなく、最新版がインストールされます。固定のバージョンをインストールするには、npm4 までは shrinkwrap を利用していましたが、npm5 以降では package-lock.json ファイルを使用します。</p>
+<pre class=c>
+$ ls -l
+-rw-rw-r--.  1 taro taro 14032 Jan 18 01:41 <em>package-lock.json</em>
+-rw-rw-r--.  1 taro taro   265 Jan 18 01:41 package.json
+$ npm install
+</pre>
+
+<p>また、npm install では、インストールしたバージョンは、--save オプションをつけても package.json ファイルに反映されません。インストールしたパッケージのバージョンを package.json ファイルに反映するには後述の <a href="#ncu">npm-check-updates</a> を利用します。</p>
+</div>
+
+<h4>パッケージ情報</h4>
+<div class=i>
+<p>インストール済のパッケージの一覧を表示する</p>
+<pre class=c>
+$ npm <em>list</em>
+$ npm <em>ls</em>
+$ npm <em>la</em>
+$ npm <em>ll</em>
+</pre>
+
+<p>グローバルインストールされたパッケージの一覧を見る</p>
+<pre class=c>
+$ npm list <em>-g</em>
+</pre>
+
+<p>第一階層のパッケージ(直接インストールしたパッケージ)のみを表示する。</p>
+<pre class=c>
+$ npm list <em>--depth=0</em>
+</pre>
+
+</div>
+
+<h4>パッケージアップデート</h4>
+<div class=i>
+<p>インストール済みのものより新しいものがないか確認する。</p>
+<pre class=c>
+$ npm <em>outdated</em>
+$ npm <em>outdated</em> -g
+</pre>
+
+<p>パッケージをアップデートします。</p>
+<pre class=c>
+$ npm <em>update</em> パッケージ
+$ npm <em>update</em> パッケージ -g
+</pre>
+
+<p>パッケージ名を省略すると、package.json に記述されたすべてのパッケージをアップデートします。</p>
+<pre class=c>
+$ npm <em>update</em>
+</pre>
+
+<p id="ncu">一括アップデートには、npm-check-updates を使用することもあります。</p>
+<pre class=c>
+$ npm install -g <em>npm-check-updates</em>     <span class="cm">// ncu をインストールする</span>
+$ <em>ncu</em>                                  <span class="cm">// アップデート情報を表示する</span>
+$ ncu <em>-u</em>                               <span class="cm">// アップデート情報を package.json に書き込む</span>
+$ npm install                          <span class="cm">// 更新された package.json に従いアップデートする</span>
+$ ncu パッケージ名                        <span class="cm">// 特定のパッケージのみを調べる</span>
+$ ncu <em>-x</em> パッケージ名                     <span class="cm">// 指定したパッケージを除外する</span>
+$ ncu '/^xyz-.*$/'                     <span class="cm">// xyz- で始まるパッケージのみを調べる</span>
+</pre>
+</div>
+
+<h4>パッケージアンインストール</h4>
+<div class=i>
+<p>アンインストールする</p>
+<pre class=c>
+$ npm <em>uninstall</em> パッケージ
+$ npm <em>uninstall</em> パッケージ -g
+</pre>
+
+<p>アンインストールの結果を package.json に記録します。</p>
+<pre class=c>
+$ npm uninstall <em>--save</em>
+$ npm uninstall <em>--save-optional</em>
+$ npm uninstall <em>--save-dev</em>
+</pre>
+
+<p>uninstall の代わりに省略系の rm でも可能</p>
+<pre class=c>
+$ npm <em>rm</em> パッケージ
+</pre>
+</div>
+
+<h4>パッケージ検索</h4>
+<div class=i>
+<p>キーワードに関連するパッケージを npm リポジトリから検索します。</p>
+<pre class=c>
+$ npm <em>search</em> パッケージ
+</pre>
+
+<p>パッケージの詳細情報を表示します。</p>
+<pre class=c>
+$ npm <em>info</em> パッケージ
+$ npm <em>view</em> パッケージ
+$ npm <em>show</em> パッケージ
+</pre>
+
+<p>パッケージのバージョンを表示します。</p>
+<pre class=c>
+$ npm info パッケージ <em>version</em>  <span class="cm">// 最新バージョンを表示</span>
+$ npm info パッケージ <em>versions</em>  <span class="cm">// インストール可能なバージョン一欄を表示</span>
+</pre>
+</div>
+
+<h4>タスク実行</h4>
+<div class=i>
+<p>タスクは package.json の scripts: に記述しておきます。</p>
+<pre class=c>
+{
+  <em>"scripts"</em>: {
+    "build": "browserify src/main.js &gt; build/bundle.js"
+  }
+}
+</pre>
+
+<p>タスクを実行するには <b>run</b> コマンドを使用します。</p>
+<pre class=c>
+$ npm <em>run</em> build
+</pre>
+
+<p>引数なしで実行すると、タスクの一覧を表示します。</p>
+<pre class=c>
+$ npm run
+</pre>
+
+<p>よく使用されるタスクには下記のものがあります。</p>
+<pre class=c>
+$ npm run <em>build</em>   <span class="cm">// プロジェクトをビルドします</span>
+$ npm run <em>watch</em>   <span class="cm">// ファイルの更新を監視し、更新されたら自動ビルドします</span>
+$ npm run <em>serve</em>   <span class="cm">// 評価用テストサーバを起動します</span>
+</pre>
+<p>さらに、複数のタスクを自動実行するには、Grunt や Gulp などのタスクランナーを使用します。</p>
+</div>
+
+
+<h4>ディレクトリ</h4>
+<div class=i>
+<p>ローカル、グローバルのルートディレクトリ、コマンドディレクトリを表示します。</p>
+<pre class=c>
+$ npm root
+$ npm root -g
+$ npm bin
+$ npm bin -g
+</pre>
+</div>
+
+<h4>ショートカット</h4>
+<div class=i>
+<p>下記のショートカットを利用することができます。</p>
+<table class="tb0">
+<tr><th>コマンド</th><th>ショートカット</th></tr>
+<tr><td><b>install</b></td><td><b>i</b></td></tr>
+<tr><td><b>uninstall</b></td><td><b>rm r remove rm un unlink</b></td></tr>
+<tr><td><b>list</b></td><td><b>ls</b></td></tr>
+<tr><td><b>search</b></td><td><b>s se</b></td></tr>
+<tr><td><b>--global</b></td><td><b>-g</b></td></tr>
+<tr><td><b>--save</b></td><td><b>-S</b></td></tr>
+<tr><td><b>--save-dev</b></td><td><b>-D</b></td></tr>
+</table>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class=i>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.npmjs.com/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.npmjs.com/'" tppabs="https://www.npmjs.com/">https://www.npmjs.com/</a>
+<li><a target="_top" href="javascript:if(confirm('https://docs.npmjs.com/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://docs.npmjs.com/'" tppabs="https://docs.npmjs.com/">https://docs.npmjs.com/</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2018 杜甫々</div>
+<div>初版:2018年1月21日 最終更新:2018年1月21日</div>
+<div>http://www.tohoho-web.com/ex/npm.html</div>
+</body>
+</html>

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのjQuery入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<link rel="stylesheet" href="jquery.css" tppabs="http://www.tohoho-web.com/js/jquery/jquery.css">
+</head>
+<body>
+<h2>jQuery入門</h2>
+<a href="../../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/jquery/index.htm">jQuery</a> &gt;
+Event
+
+<h4>Event(Event Handler Attachment)</h4>
+
+<h5 id="bind">◆ <i>obj</i>.bind(<i>eventTypes</i>[, <i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.bind(<i>eventTypes</i>[, <i>eventData</i>][, <i>preventBubble</i>]) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.bind(<i>events</i>) <u>(1.4)</u></h5>
+<div class=i>
+<p><i>obj</i> にイベントハンドラを割り付けます。<i>eventTypes</i> にはイベントタイプ、<i>handler</i> にはイベントハンドラを指定します。下記の例では、b1ボタンを押した際に関数を実行し、ボタンの id属性の値を表示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("button#b1").<em>bind("click", function(e) {</em>
+    console.log($(this).attr("id"));        <span class="comment">// b1</span>
+<em>});</em>
+</pre>
+<p><i>eventTypes</i> には空白で区切って複数のイベントタイプを指定することが可能です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").bind("<em>mouseover mouseout</em>", function() { console.log("!!!"); });
+</pre>
+<p><i>eventTypes</i> には unbind() でイベントハンドラを識別しやすくするための名前空間を指定することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").bind("click<em>.myApp1</em>", function() { console.log("!!!"); });
+</pre>
+<p><i>eventData</i> にはベントハンドラに渡すデータを指定します。データは <i>eventObject</i>.data で受け取ります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("button#b1").bind("click", <em>{ a1: "AAA", a2: "BBB" }</em>, function(e) {
+    console.log(<em>e.data.a1</em>);        <span class="comment">// AAA</span>
+<em>});</em>
+</pre>
+<p>イベントハンドラが true を返すと、リンクジャンプやサブミットなどイベント発生時のデフォルトの動作や上位要素へのイベント伝播が行われます。false を返すとデフォルトの動作や上位要素へのイベント伝播が抑止されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("a#a1").bind("click", function(e) {
+    console.log($(this).attr("href"));
+    <em>return false;</em>         <span class="comment">// Don't jump to sample.html</span>
+});
+</pre>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+&lt;a id="a1" href="sample.html"&gt;Sample&lt;/a&gt;
+</pre>
+<p><i>preventBubble</i> に false を指定しておくと、イベントハンドラの戻り値に関わらず、イベント発生時のデフォルト動作や上位要素へのイベント伝搬が抑止されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("a#a1").bind("click", <em>false</em>);
+$("a#a1").bind("click", function(e) {
+    console.log($(this).attr("href"));
+});
+</pre>
+<p><i>events</i> には下記の様に、複数のイベントハンドラを一度に指定することもできます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").bind({
+    <em>mouseover:</em> function(e) {
+        $(this).css("color", "red");
+    },
+    <em>mouseout:</em> function(e) {
+        $(this).css("color", "black");
+    }
+});
+</pre>
+</div>
+
+<h5 id="unbind">◆ <i>obj</i>.unbind([<i>eventTypes</i>][, <i>handler</i>]) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.unbind(<i>eventObject</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.unbind(<i>eventTypes</i>, <i>false</i>) <u>(1.4.3)</u></h5>
+<div class=i>
+<p><i>obj</i> からイベントハンドラを削除します。引数無しの場合すべてのハンドラを削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>unbind()</em>;
+</pre>
+<p><i>eventTypes</i> を指定すると、指定したタイプのハンドラを削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>unbind("click")</em>;
+</pre>
+<p>bind() で名前空間を指定していれば、<i>eventTypes</i> にその名前空間を指定して削除することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").bind("click<em>.myApp1"</em>, fn1);
+$("#d1").bind("click<em>.myApp1</em>", fn2);
+$("#d1").unbind("click<em>.myApp1</em>");
+
+$("#d2").bind("mouseover<em>.myApp1"</em>, fn1);
+$("#d2").bind("mouseout<em>.myApp1</em>", fn2);
+$("#d2").unbind("<em>.myApp1</em>");
+</pre>
+<p><i>handler</i> を指定すると、指定したハンドラを削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var fn1 = function() { ... };
+$("#d1").bind("click", fn1);
+$("#d1").<em>unbind("click", fn1)</em>;
+</pre>
+<p>イベントハンドラの引数で受け取った <i>eventObject</i> を引数にして削除することもできます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").bind("click", function(event) {
+    console.log("Click!");
+    $(this).<em>unbind(event)</em>;
+});
+</pre>
+<p>bind("click", false) は、bind("click", function() { return false; }); と同様の意味を持ちますが、unbind("click", false) は、この false を返すハンドラを削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").bind("click", false);
+$("#d1").<em>unbind("click", false)</em>;
+</pre>
+</div>
+
+<h5 id="live">◆ <i>obj</i>.live(<i>eventTypes</i>, <i>handler(eventObject)</i>) <u>(1.3/廃止:1.9)</u></h5>
+<h5>◆ <i>obj</i>.live(<i>eventTypes</i>, <i>eventData</i>, <i>handler(eventObject)</i>) <u>(1.4/廃止:1.9)</u></h5>
+<h5>◆ <i>obj</i>.live(<i>eventMaps</i>) <u>(1.4.3/廃止:1.9)</u></h5>
+<div class=i>
+<p>jQuery 1.3 で追加されました。bind() と似た動作ですが、bind() がその時点でマッチする要素に対してのみハンドラを設定するのに対し、live() は live() 呼び出し後に追加された要素に対してもハンドラを設定します。引数の詳細は <a href="#bind">bind()</a> を参照してください。下記の例では、3行目で動的に追加したボタンをクリックした場合、LIVE は表示されますが、BIND は表示されません。jQuery 1.7 で非推奨となり、jQuery 1.9 で削除されました。代わりに on() を使用してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("button").bind("click", function() { console.log("Bind!"); });
+$("button").<em>live("click", function() { console.log("Live!"); })</em>;
+$(document.body).append("&lt;button&gt;OK&lt;/button&gt;");
+</pre>
+</div>
+
+<h5 id="die">◆ <i>obj</i>.die(<i>eventTypes</i>[, <i>handler</i>]) <u>(1.3/廃止:1.9)</u></h5>
+<h5>◆ <i>obj</i>.die() <u>(1.4.1/廃止:1.9)</u></h5>
+<h5>◆ <i>obj</i>.die(<i>eventObject</i>) <u>(1.4.3/廃止:1.9)</u></h5>
+<div class=i>
+<p>live() で追加したハンドラを削除します。jQuery 1.7 で非推奨となり、jQuery 1.9 で削除されました。代わりに off() を使用してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").live("click", fn1);
+$("#d1").<em>die("click", fn1)</em>;
+</pre>
+</div>
+
+<h5 id="delegate">◆ <i>obj</i>.delegate(<i>selector</i>, <i>eventType</i>, <i>handler</i>) <u>(1.4.2/廃止:3.0)</u></h5>
+<h5>◆ <i>obj</i>.delegate(<i>selector</i>, <i>eventType</i>, <i>eventData</i>, <i>handler</i>) <u>(1.4.2/廃止:3.0)</u></h5>
+<h5>◆ <i>obj</i>.delegate(<i>selector</i>, <i>events</i>) <u>(1.4.3/廃止:3.0)</u></h5>
+<div class=i>
+<p>$(document).delegate("a", "click", fn1) は $("a").live("click", fn1) と同じ意味を持ちます。$(document) の範囲を狭めることで検索対象を絞り、効率を高めることができます。引数の詳細は <a href="#bind">bind()</a> を参照してください。jQuery 1.4.2 で追加されましたが、jQuery 3.0 で廃止されました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("button").bind("click", function() { console.log("Bind!"); });
+$("button").live("click", function() { console.log("Live!"); });
+$(document).<em>delegate("button", "click", function() { console.log("Delegate!"); })</em>;
+</pre>
+</div>
+
+<h5 id="undelegate">◆ <i>obj</i>.undelegate() <u>(1.4.2)</u></h5>
+<h5>◆ <i>obj</i>.undelegate(<i>selector</i>, <i>eventTypes</i>[, <i>handler</i>]) <u>(1.4.2)</u></h5>
+<h5>◆ <i>obj</i>.undelegate(<i>selector</i>, <i>eventObject</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.undelegate(<i>namespace</i>) <u>(1.6)</u></h5>
+<div class=i>
+<p>delegate() で割り当てたイベントハンドラを削除します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(document).<em>undelegate()</em>;
+$(document).<em>undelegate("a", "click")</em>;
+$(document).<em>undelegate("a", "click", fn1)</em>;
+
+$(document).delegate("a", "click", function(event) {
+    $(document).<em>undelegate("a", event)</em>;     <span class="comment">// Delete this handler</span>
+});
+
+$(document).delegate("a", "click.myApp1", fn1);
+$(document).<em>undelegate(".myApp1")</em>;       <span class="comment">// Delete handler with namespace .app1</span>
+</pre>
+</div>
+
+<h5 id="on">◆ <i>obj</i>.on(<i>eventTypes</i>[, <i>selector</i>][, <i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.7)</u></h5>
+<h5>◆ <i>obj</i>.on(<i>eventMaps</i>[, <i>selector</i>][, <i>eventData</i>]) <u>(1.7)</u></h5>
+<div class=i>
+<p>jQuery 1.7 で追加されました。bind(), live(), delegate() の機能を再整理するものです。引数の詳細は <a href="#bind">bind()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>on("click", function() { ... })</em>;
+$("#d1").on("click", <em>".myClass1",</em> function() { ... });
+$("#d1").on("click", ".myClass1", <em>{ arg1: "AAA", arg2: "BBB" },</em> function() { ... });
+$("#d1").on(<em>{
+    click: function() { ... },
+    mouseover: function() { ... },
+    mouseout: function() { ... }
+}</em>);
+</pre>
+<p><i>obj</i> で指定した要素は on() 呼び出し以前に存在していたもののみが対象となりますが、<i>selector</i> で指定した要素は on() 呼び出し後に動的に追加された要素も対象となります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(<em>"button"</em>).on("click", function() { console.log("Click!"); });
+$(document).on("click", <em>"button"</em>, function() { console.log("Click!"); });
+$(document.body).append("&lt;button&gt;OK&lt;button&gt;");    <span class="comment">// クリックすると BBB のみが表示される</span>
+</pre>
+<p>下記の2つの例は同様な動作となりますが、前者が tr の個数分のハンドラを設定するのに対し、後者は #myTable1 に対してひとつのみハンドラを設定するため、メモリなどの使用効率が向上します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#myTable1 <em>tr</em>").on("click", function() { console.log("Click!"); });
+$("#myTable1").on("click", <em>"tr"</em>, function() { console.log("Click!"); });
+</pre>
+<p>on() で指定したハンドラが flase を返すと、自動的に event.stopPropagation() と event.preventDefault() が実行されます。また、on(<i>eventTypes</i>, false) は、false を返すハンドラを指定したとみなされます。class="disabled" が指定されたリンクのクリックを無効にします。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("a.disabled").<em>on("click", false)</em>;
+</pre>
+</div>
+
+<h5 id="off">◆ <i>obj</i>.off() <u>(1.7)</u></h5>
+<h5>◆ <i>obj</i>.off(<i>eventTypes</i>[, <i>selector</i>][, <i>handler</i>]) <u>(1.7)</u></h5>
+<h5>◆ <i>obj</i>.off(<i>eventMaps</i>[, <i>selector</i>]) <u>(1.7)</u></h5>
+<h5>◆ <i>obj</i>.off(<i>eventObject</i>) <u>(1.7)</u></h5>
+<div class=i>
+<p>on() で指定したハンドラを削除します。引数の詳細は <a href="#unbind">unbind()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>off()</em>;                                         <span class="comment">// すべてのハンドラを削除</span>
+$("#d1").off(<em>"click"</em>);                                  <span class="comment">// すべてのclickハンドラを削除</span>
+$("#d1").off(<em>"mouseover mouseout"</em>);                     <span class="comment">// 複数のハンドラを削除</span>
+$("#d1").off("click<em>.myApp1</em>");                           <span class="comment">// イベントタイプ＋namespace指定</span>
+$("#d1").off("<em>.myApp1</em>");                                <span class="comment">// namespace指定</span>
+$("#d1").off("click", <em>".myClass1"</em>);                     <span class="comment">// セレクタ指定</span>
+$("#d1").off("click", <em>fn1</em>);                             <span class="comment">// ハンドラ指定</span>
+$("#d1").off(<em>{ mouseover:fn2, mouseout:fn3 }</em>);          <span class="comment">// イベントタイプ＋ハンドラのマップ</span>
+$("#d1").on(function(event) { $("#d1").off(<em>event</em>); });  <span class="comment">// イベントオブジェクトで指定</span>
+</pre>
+</div>
+
+<h5 id="one">◆ <i>obj</i>.one(<i>eventTypes</i>[, <i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.1)</u></h5>
+<h5>◆ <i>obj</i>.one(<i>eventTypes</i>[, <i>selector</i>][, <i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.7)</u></h5>
+<h5>◆ <i>obj</i>.one(<i>eventMaps</i>[, <i>selector</i>][, <i>eventData</i>]) <u>(1.7)</u></h5>
+<div class=i>
+<p><a href="#bind">bind()</a> と似た動作をしますが、登録したハンドラが一度だけ呼び出されます。引数の詳細は <a href="#bind">bind()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>one("click", function() { console.log("!!"); })</em>;
+</pre>
+</div>
+
+<h5 id="trigger">◆ <i>obj</i>.trigger(<i>eventType</i>[, <i>extraParameters</i>]) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.trigger(<i>eventObject</i>) <u>(1.3)</u></h5>
+<div class=i>
+<p><i>obj</i> に対して <i>eventType</i> イベントを擬似的に発行させます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>trigger("click")</em>;
+</pre>
+<p><i>extraParrameters</i> にはイベントハンドラに渡す引数を指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").click(function(e, <em>arg1, arg2</em>) {
+    console.log("Click!! arg1=" + arg1 + ", arg2=" + arg2);
+});
+$("#d1").trigger("click", <em>[ "AAA", "BBB" ]</em>);
+</pre>
+<p>引数に <i>eventObject</i> を指定することも可能です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#button2").click(function(e) {
+    console.log($(this).attr("id"));
+});
+$("#button1").click(function(<em>event</em>) {
+    $("#button2").trigger(<em>event</em>);
+});
+</pre>
+</div>
+
+<h5 id="triggerHandler">◆ <i>obj</i>.triggerHandler(<i>eventType</i>[, <i>extraParameters</i>]) <u>(1.2)</u></h5>
+<div class=i>
+<p>trigger() と同様、<i>obj</i> に対して <i>eventType</i> イベントを擬似的に発行します。trigger() がフォーカスを移動したり、リンク先にジャンプしたりなど、ブラウザのデフォルトの動作を行うのに対して、triggerHandler() は設定されたハンドラのみを呼び出し、ブラウザのデフォルト動作を実施しない点が異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").<em>triggerHandler("click")</em>;
+</pre>
+</div>
+
+<h4>Event(Browser Events)</h4>
+
+<h5 id="error">◆ <i>obj</i>.error(<i>handler(eventObject)</i>) <u>(1.0/廃止:3.0)</u></h5>
+<h5>◆ <i>obj</i>.error([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3/廃止:3.0)</u></h5>
+<div class=i>
+<p>.bind("error", <i>handler(...)</i>) のショートカットです。画像の読み込みに失敗した際などに発生します。下記の例では、画像の読み込みに失敗した場合に、代わりに sorry.gif画像を表示します。$(function() { ... }); の初期化処理の中に記述しますが、画像の読み込みが失敗するタイミングと、ハンドラを設定するタイミングによって、errorイベントをキャッチできないこともあるようです。jQuery 3.0で廃止されました。代わりに <a href="#on">on("error", ...)</a> を使用してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("img").<em>error(function() {</em>
+    $(this).attr("src", "image/sorry.gif");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="resize">◆ <i>obj</i>.resize(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.resize([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.resize() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("resize", <i>handler(...)</i>) のショートカットです。ウィンドウがリサイズされた際などに発生します。下記の例では、ウィンドウがリサイズされた際にウィンドウサイズを表示します。引数を省略した場合、resizeイベントを擬似的に発生させます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(window).<em>resize(function() {</em>
+    $("#d1").html($(window).width() + ", " + $(window).height());
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="scroll">◆ <i>obj</i>.scroll(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.scroll([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.scroll() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("scroll", <i>handler(...)</i>) のショートカットです。ウインドウがスクロールされた際などに発生します。下記の例では、ウィンドウがスクロールされた際にスクロール位置を表示します。引数を省略した場合、scrollイベントを擬似的に発生させます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(window).<em>scroll(function() {</em>
+    $("#d1").html($(window).scrollTop());
+<em>});</em>
+</pre>
+</div>
+
+<h4>Event(Document Loading)</h4>
+
+<h5 id="ready">◆ <i>obj</i>.ready(<i>handler()</i>) <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("ready", <i>handler(...)</i>) のショートカットです。<a href="#jQuery-callback">$(<i>handler</i>)</a> と同じ意味を持ちます。画像等を含まないドキュメントの読み込みが完了した際に発生します。下記の例では、ドキュメントの読み込みが完了した際にメッセージを表示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(document).<em>ready(function() {</em>
+    console.log("Ready!");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="load">◆ <i>obj</i>.load(<i>handler(eventObject)</i>) <u>(1.0/廃止:1.8)</u></h5>
+<h5>◆ <i>obj</i>.load([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3/廃止:1.8)</u></h5>
+<div class=i>
+<p>.bind("load", <i>handler(...)</i>) のショートカットです。画像等を含めてページの読み込みが完了した際に発生します。下記の例では、ページの読み込みが完了した際にメッセージを表示します。jQuery 1.8 で削除されました。代わりに on("load", ...) を使用してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(window).<em>load(function() {</em>
+    console.log("Hello!");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="unload">◆ <i>obj</i>.unload(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.unload([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<div class=i>
+<p>.bind("unload", <i>handler(...)</i>) のショートカットです。ページがアンロードされる際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(window).<em>unload(function() {</em>
+    console.log("Bye!");
+<em>});</em>
+</pre>
+</div>
+
+<h4>Event(Form Events) - フォーム関連イベント</h4>
+
+<h5 id="focus">◆ <i>obj</i>.focus(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.focus([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.focus() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("focus", <i>handler(...)</i>) のショートカットです。&lt;input type="text"&gt; などのフォーム部品にフォーカスが当たった際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input:text#t1").<em>focus(function() {</em>
+    console.log("Focus!!");
+<em>});</em>
+</pre>
+<p>.focus() はオブジェクトに対して focus イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.focus();</em>
+</pre>
+</div>
+
+<h5 id="blur">◆ <i>obj</i>.blur(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.blur([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.blur() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("blur", <i>handler(...)</i>) のショートカットです。&lt;input type="text"&gt; などのフォーム部品からフォーカスが外れた際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input:text#t1").<em>blur(function() {</em>
+    console.log("Blur!!");
+<em>});</em>
+</pre>
+<p>.blur() はオブジェクトに対して blur イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.blur();</em>
+</pre>
+</div>
+
+<h5 id="change">◆ <i>obj</i>.change(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.change([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.change() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("change", <i>handler(...)</i>) のショートカットです。&lt;input type="text"&gt; などのフォーム部品の値が変更された際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input:text#t1").<em>change(function() {</em>
+    console.log("Change!!");
+<em>});</em>
+</pre>
+<p>.change() はオブジェクトに対して change イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.change();</em>
+</pre>
+</div>
+
+<h5 id="select">◆ <i>obj</i>.select(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.select([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.select() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("select", <i>handler(...)</i>) のショートカットです。&lt;input type="text"&gt; などのフォーム部品の値が選択された際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input:text#t1").<em>select(function() {</em>
+    console.log("Select!!");
+<em>});</em>
+</pre>
+<p>.select() はオブジェクトに対して select イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.select();</em>
+</pre>
+</div>
+
+<h5 id="submit">◆ <i>obj</i>.submit(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.submit([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.submit() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("submit", <i>handler(...)</i>) のショートカットです。&lt;form&gt; によるフォームがサブミットされた際に発生します。false を返すとサブミットのデフォルト動作を抑止します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("form#f1").<em>submit(function() {</em>
+    console.log("Submit!!");
+    return false;
+<em>});</em>
+</pre>
+<p>.submit() はオブジェクトに対して submit イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#form1')<em>.submit();</em>
+</pre>
+</div>
+
+<h5 id="focusin">◆ <i>obj</i>.focusin(<i>handler(eventObject)</i>) <u>(1.4)</u></h5>
+<h5>◆ <i>obj</i>.focusin([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.focusin() <u>(1.4)</u></h5>
+<div class=i>
+<p>.bind("focusin", <i>handler(...)</i>) のショートカットです。要素にフォーカスが移った際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input#text1").<em>focusin(function() {</em>
+    console.log("Focusin!!");
+<em>});</em>
+</pre>
+<p>.focusin() はオブジェクトに対して focusin イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.focusin();</em>
+</pre>
+</div>
+
+<h5 id="focusout">◆ <i>obj</i>.focusout(<i>handler(eventObject)</i>) <u>(1.4)</u></h5>
+<h5>◆ <i>obj</i>.focusout([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.focusout() <u>(1.4)</u></h5>
+<div class=i>
+<p>.bind("focusout", <i>handler(...)</i>) のショートカットです。要素からフォーカスが外れた際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input#text1").<em>focusout(function() {</em>
+    console.log("Focusout!!");
+<em>});</em>
+</pre>
+<p>.focusout() はオブジェクトに対して focusout イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.focusout();</em>
+</pre>
+</div>
+
+<h4>Event(Keyboard Events) - キーボードイベント</h4>
+
+<h5 id="keydown">◆ <i>obj</i>.keydown(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.keydown([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.keydown() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("keydown", <i>handler(...)</i>) のショートカットです。要素の上でキーが押された際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input#text1").<em>keydown(function() {</em>
+    console.log("Keydown!!");
+<em>});</em>
+</pre>
+<p>.keydown() はオブジェクトに対して keydown イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.keydown();</em>
+</pre>
+</div>
+
+<h5 id="keyup">◆ <i>obj</i>.keyup(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.keyup([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.keyup() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("keyup", <i>handler(...)</i>) のショートカットです。要素の上でキーが離された際に発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input#text1").<em>keyup(function() {</em>
+    console.log("Keyup!!");
+<em>});</em>
+</pre>
+<p>.keyup() はオブジェクトに対して keyup イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.keyup();</em>
+</pre>
+</div>
+
+<h5 id="keypress">◆ <i>obj</i>.keypress(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.keypress([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.keypress() <u>(1.0)</u></h5>
+<div class=i>
+<p>.bind("keypress", <i>handler(...)</i>) のショートカットです。要素の上でキーが押されている間発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("input#text1").<em>keypress(function() {</em>
+    console.log("Keypress!!");
+<em>});</em>
+</pre>
+<p>.keypress() はオブジェクトに対して keypress イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.keypress();</em>
+</pre>
+</div>
+
+<h4>Event(Mouse Events) - マウスイベント</h4>
+
+<h5 id="click">◆ <i>obj</i>.click(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.click([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.click() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上でクリックされた際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>click(function() {</em>
+    console.log("Click!!");
+<em>});</em>
+</pre>
+<p>.click() はオブジェクトに対して click イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.click();</em>
+</pre>
+</div>
+
+<h5 id="dblclick">◆ <i>obj</i>.dblclick(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.dblclick([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.dblclick() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上でダブルクリックされた際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>dblclick(function() {</em>
+    console.log("Double click!!");
+<em>});</em>
+</pre>
+<p>.dblclick() はオブジェクトに対して dblclick イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#d1')<em>.dblclick();</em>
+</pre>
+</div>
+
+<h5 id="contextmenu">◆ <i>obj</i>.contextmenu(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.contextmenu([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.contextmenu() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上で右クリックされた際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>contextmenu(function() {</em>
+    console.log("Contextmenu!!");
+<em>});</em>
+</pre>
+<p>.contextmenu() はオブジェクトに対して contextmenu イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#d1')<em>.contextmenu();</em>
+</pre>
+</div>
+
+<h5 id="hover">◆ <i>obj</i>.hover(<i>handlerIn(eventObject)</i>, <i>handlerOut(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.hover(<i>handlerInOut(eventObject)</i>) <u>(1.4)</u></h5>
+<div class=i>
+<p>要素の上にマウスが乗った際、離れた際に呼ばれるコールバックを指定します。<i>handlerIn()</I> は乗った際、<i>handlerOut()</I> は離れた際、<i>handlerInOut()</i> は乗った際および離れた際に呼び出されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>hover(function() {</em>
+    console.log("Hover!!");
+<em>});</em>
+</pre>
+<p>.hover() はオブジェクトに対して hover イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#d1')<em>.hover();</em>
+</pre>
+</div>
+
+<h5 id="mouseenter">◆ <i>obj</i>.mouseenter(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mouseenter([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mouseenter() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上にマウスが入った際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mouseenter(function() {</em>
+    console.log("Mouse enter!!");
+<em>});</em>
+</pre>
+<p>.mouseenter() はオブジェクトに対して mouseenter イベントを発行します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$('#t1')<em>.mouseenter();</em>
+</pre>
+</div>
+
+<h5 id="mouseleave">◆ <i>obj</i>.mouseleave(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mouseleave([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mouseleave() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上にマウスが出た際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mouseleave(function() {</em>
+    console.log("Mouse leave!!");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="mouseover">◆ <i>obj</i>.mouseover(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mouseover([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mouseover() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上にマウスが入った際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mouseover(function() {</em>
+    console.log("Mouse over!!");
+<em>});</em>
+</pre>
+<p>mouseenter と mouseover は似たイベントですが、子要素との境界における動作が異なります。下記の例で、要素 B に mouseenter, mouseover を設定した場合、mouseenter は C から B に移動した際に発生するのに対し、mouseover は、C→B、B→A、A→B に移動した際に発生します。</p>
+<div style="position: relative; width: 100px; height: 40px;">
+  <div style="position: absolute; top: 0; left: 0; width: 96px; height: 36px; border: 1px solid gray; background: #333;"></div>
+  <div style="position: absolute; top: 8px; left: 8px; width: 60px; height: 20px; border: 1px solid gray; background: #fff;"></div>
+  <div style="position: absolute; top: 10px; left: 54px;">A</div>
+  <div style="position: absolute; top: 10px; left: 80px; color: white;">B</div>
+  <div style="position: absolute; top: 10px; left: 106px;">C</div>
+</div>
+</div>
+
+<h5 id="mouseout">◆ <i>obj</i>.mouseout(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mouseout([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mouseout() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上にマウスが出た際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mouseout(function() {</em>
+    console.log("Mouse out!!");
+<em>});</em>
+</pre>
+<p>mouseleave と mouseout は似たイベントですが、子要素との境界における動作が異なります。下記の例で、要素 B に mouseleave, mouseout を設定した場合、mouseleave は B から C に移動した際に発生するのに対し、mouseout は、B→C、B→A、A→B に移動した際に発生します。</p>
+<div style="position: relative; width: 100px; height: 40px;">
+  <div style="position: absolute; top: 0; left: 0; width: 96px; height: 36px; border: 1px solid gray; background: #333;"></div>
+  <div style="position: absolute; top: 8px; left: 8px; width: 60px; height: 20px; border: 1px solid gray; background: #fff;"></div>
+  <div style="position: absolute; top: 10px; left: 54px;">A</div>
+  <div style="position: absolute; top: 10px; left: 80px; color: white;">B</div>
+  <div style="position: absolute; top: 10px; left: 106px;">C</div>
+</div>
+</div>
+
+<h5 id="mouseup">◆ <i>obj</i>.mouseup(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mouseup([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mouseup() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上でマウスボタンが離された際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mouseup(function() {</em>
+    console.log("Mouse up!!");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="mousedown">◆ <i>obj</i>.mousedown(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mousedown([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mousedown() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上でマウスボタンが押された際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mousedown(function() {</em>
+    console.log("Mouse down!!");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="mousemove">◆ <i>obj</i>.mousemove(<i>handler(eventObject)</i>) <u>(1.0)</u></h5>
+<h5>◆ <i>obj</i>.mousemove([<i>eventData</i>], <i>handler(eventObject)</i>) <u>(1.4.3)</u></h5>
+<h5>◆ <i>obj</i>.mousemove() <u>(1.0)</u></h5>
+<div class=i>
+<p>要素の上にマウスが動かされた際に呼ばれるコールバックを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("div#d1").<em>mousemove(function() {</em>
+    console.log("Mouse move!!");
+<em>});</em>
+</pre>
+</div>
+
+<h5 id="toggle">◆ <i>obj</i>.toggle(<i>func1</i>, <i>func2</i>[, <i>func3...</i>]) <u>(1.0/廃止:1.9)</u></h5>
+<div class=i>
+<p><i>obj</i> をクリックする度に <i>func1</i>, <i>func2</i>, <i>func3</i>... を順番に呼び出します。jQuery 1.8 で非推奨となり、jQuery 1.9 で削除されました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("h1").<em>toggle(</em>
+    function() { $(this).css("color", "red"); },
+    function() { $(this).css("color", "blue"); },
+    function() { $(this).css("color", "green"); }
+<em>)</em>;
+</pre>
+</div>
+
+<h4>Event(Event Object)</h4>
+
+<h5 id="type">◆ <i>event</i>.type <u>(1.0)</u></h5>
+<div class=i>
+<p>"click", "mouseover" などのイベントタイプが設定されています。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#b1")click(function(event) {
+    console.log(<em>event.type</em>);
+});
+</pre>
+</div>
+
+<h5 id="target">◆ <i>event</i>.target <u>(1.0)</u></h5>
+<div class=i>
+<p>イベントが発行された DOM要素を示します。イベントハンドラが設定された要素またはその子孫要素となります。this と target を比較することで、イベントが該当要素で発生したのか、その子要素で発生したのかを識別することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#b1")mouseover(function(event) {
+    if (<em>event.target</em> == this) {
+        <span class="comment">// この要素自体でイベントが発生した</span>
+    } else {
+        <span class="comment">// この要素の子要素でイベントが発生した</span>
+    }
+});
+</pre>
+</div>
+
+<h5 id="currentTarget">◆ <i>event</i>.currentTarget <u>(1.3)</u></h5>
+<div class=i>
+<p>通常は this と同じオブジェクトとなります。$.proxy() などで他スコープからの操作が行われた場合は、this と異なることがあります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").mouseover($.proxy(function(event) {
+    $("#log").append("this = " + this.id + "\n");                           <span class="comment">// d2</span>
+    $("#log").append("currentTarget = " + <em>event.currentTarget</em>.id + "\n");   <span class="comment">// d1</span>
+}, $("#d2").get()[0]));
+</pre>
+</div>
+
+<h5 id="relatedTarget">◆ <i>event</i>.relatedTarget <u>(1.1.4)</u></h5>
+<div class=i>
+<p>mouseover, mouseout イベントの際に、移動元、移動先のオブジェクトを示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").mouseover(function(event) {
+    $("#log").append("target = " + event.target.id + "\n");
+    $("#log").append("relatedTarget = " + <em>event.relatedTarget</em>.id + "\n");
+});
+</pre>
+</div>
+
+<h5 id="delegateTarget">◆ <i>event</i>.delegateTarget <u>(1.7)</u></h5>
+<div class=i>
+<p><a href="#delegate">delegate()</a> や <a href="#on">on()</a> でイベントの委任が行われる際、委任を行ったオブジェクトを示します。下記の例では、target は d1 になりますが、delegateTarget は BODY要素になります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$(document.body).delegate("#d1", "click", function(event) {
+    $("#log").append("delegateTarget = " + <em>event.delegateTarget</em>.nodeName + "\n");   <span class="comment">// BODY</span>
+});
+</pre>
+</div>
+
+<h5 id="data">◆ <i>event</i>.data <u>(1.1)</u></h5>
+<div class=i>
+<p>イベント設定時に指定したデータを示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").click({ a1:"AAA", a2:"BBB" }, function(event) {
+    $("#log").append("data.a1 = " + <em>event.data</em>.a1 + "\n");
+    $("#log").append("data.a2 = " + <em>event.data</em>.a2 + "\n");
+});
+</pre>
+</div>
+
+<h5 id="pageX">◆ <i>event</i>.pageX <u>(1.0.4)</u></h5>
+<h5 id="pageY">◆ <i>event</i>.pageY <u>(1.0.4)</u></h5>
+<div class=i>
+<p>マウスイベントが発生したページ上の X位置、Y位置を示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").click(function(event) {
+    $("#log").append("pageX = " + <em>event.pageX</em> + "\n");
+    $("#log").append("pageY = " + <em>event.pageY</em> + "\n");
+});
+</pre>
+</div>
+
+<h5 id="which">◆ <i>event</i>.which <u>(1.1.3)</u></h5>
+<div class=i>
+<p>キーボードイベントの場合はキーコードが、マウスイベントの場合は 1:左ボタン、2:中ボタン、3:右ボタン のいずれかが設定されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").mousedown(function(event) {
+    $("#log").append("which = " + <em>event.which</em> + "\n");
+});
+$("#d1").keypress(function(event) {
+    $("#log").append("which = " + <em>event.which</em> + "\n");
+});
+</pre>
+</div>
+
+<h5 id="result">◆ <i>event</i>.result <u>(1.3)</u></h5>
+<div class=i>
+<p>他のイベントハンドラから返却された最後の値(undefined 以外のもの)を示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").click(function(event) {
+    return "hello";
+});
+$("#d1").click(function(event) {
+    $("#log").append("result = " + <em>event.result</em> + "\n");     <span class="comment">// hello</span>
+});
+</pre>
+</div>
+
+<h5 id="metaKey">◆ <i>event</i>.metaKey <u>(1.0.4)</u></h5>
+<div class=i>
+<p>イベント発生時にメタキーが押されていたかを true / false で示します。MacOS の場合は Commandキーですが、Windows の場合は定義されていないようです。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").click(function(event) {
+    $("#log").append("metakey = " + <em>event.metakey</em> + "\n");
+});
+</pre>
+</div>
+
+<h5 id="namespace">◆ <i>event</i>.namespace <u>(1.4.3)</u></h5>
+<div class=i>
+<p>イベントのネームスペースを示します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").bind("test.myspace", function(event) {
+    $("#log").append("namespace = " + <em>event.namespace</em> + "\n");    <span class="comment">// myspace</span>
+});
+$("#d2").bind("click.myspace", function(event) {
+    $("#d1").trigger("test.myspace");
+});
+</pre>
+</div>
+
+<h5 id="timeStamp">◆ <i>event</i>.timeStamp <u>(1.2.6)</u></h5>
+<div class=i>
+<p>イベントの発生時刻を示します。1970年1月1日0時0分0秒(GMT)からの秒数で示されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#d1").click(function(event) {
+    $("#log").append("timeStamp = " + <em>event.timeStamp</em> + "\n");    <span class="comment">// 1359874113332</span>
+});
+</pre>
+</div>
+
+<h5 id="preventDefault">◆ <i>event</i>.preventDefault() <u>(1.0)</u></h5>
+<h5 id="isDefaultPrevented">◆ <i>event</i>.isDefaultPrevented() <u>(1.3)</u></h5>
+<div class=i>
+<p>preventDefault() は、イベント発生時のデフォルトの動作(リンク先にジャンプするなど)を抑止します。isDefaultPrevented() は、preventDefault() が呼び出されているか否かを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("a").click(function(event) {
+    -1.9
+    $("#log").append("Chick!\n");
+    <em>event.preventDefault();</em>
+    console.log(<em>event.isDefaultPrevented()</em>);
+});
+</pre>
+</div>
+
+<h5 id="stopPropergation">◆ <i>event</i>.stopPropagation() <u>(1.0)</u></h5>
+<h5 id="isPropagationStopped">◆ <i>event</i>.isPropagationStopped() <u>(1.3)</u></h5>
+<div class=i>
+<p>stopPropergation() は、子要素で発生したイベントが、親要素に伝播するのを抑止します。isPropergationStopped() は、stopPropergation() が呼び出されているか否かを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#parent").click(function(event) {
+    $("#log").append(this.id + "\n");
+});
+$("#child").click(function(event) {
+    $("#log").append(this.id + "\n");
+    <em>event.stopPropagation();</em>
+    $("#log").append(<em>event.isPropagationStopped()</em>);
+});
+</pre>
+</div>
+
+<h5 id="stopImmediatePropagation">◆ <i>event</i>.stopImmediatePropagation() <u>(1.3)</u></h5>
+<h5 id="isImmediatePropagationStopped">◆ <i>event</i>.isImmediatePropagationStopped() <u>(1.3)</u></h5>
+<div class=i>
+<p>stopImmediatePropergation() は、該当要素で発生したイベントが、該当要素に他に割り当てられた他のイベントハンドラに伝播するのを抑止します。isImmediatePropergationStopped() は、stopImmediatePropergation() が呼び出されているか否かを true / false で返します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#parent").click(function(event) {
+    $("#log").append("Event1\n");
+});
+$("#child").click(function(event) {
+    $("#log").append("Event2\n");
+    <em>event.stopImmidiatePropagation();</em>
+    $("#log").append(<em>event.isImmidiatePropagationStopped()</em>);
+});
+$("#child").click(function(event) {
+    $("#log").append("Event3\n");
+});
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2013-2019 杜甫々</div>
+<div>初版：2013年2月3日、最終更新：2019年5月5日</div>
+<div>http://www.tohoho-web.com/js/jquery/event.htm</div>
+</body>
+</html>

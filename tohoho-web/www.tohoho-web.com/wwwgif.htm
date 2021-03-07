@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GIFフォーマットの詳細 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>GIFフォーマットの詳細</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+GIFフォーマットの詳細
+
+<div class=i>
+<p>カウンターを作成する際にちょっとGIFファイルの仕様について勉強したので、紹介します。初心者にとってはなんのこっちゃわからないし、上級者にとっては全然情報が足りないのですが、GIF仕様書を読む際の参考程度に眺めて見てください。</p>
+</div>
+
+<h4>目次</h4>
+<ul>
+<li><a href="#GIFAbout">GIFの概要</a></li>
+<li><a href="#GIFPatent">GIFの特許に関する注意</a></li>
+<li><a href="#GIFFormat">GIF Format(89a)</a></li>
+<li><a href="#GIFHeader">GIF Header</a></li>
+<li><a href="#ImageBlock">Block: Image Block</a></li>
+<li><a href="#GraphicControlExtension">Block: Graphic Control Extension</a></li>
+<li><a href="#CommentExtension">Block: Comment Extension</a></li>
+<li><a href="#PlainTextExtension">Block: Plain Text Extension</a></li>
+<li><a href="#ApplicationExtension">Block: Application Extension</a></li>
+<li><a href="#NomalGif87a">一般的なGIF87a</a></li>
+<li><a href="#NomalGif89a">一般的なGIF89a</a></li>
+<li><a href="#InterlaceGIF">インタレースGIF</a></li>
+<li><a href="#TransparentGIF">透過GIF</a></li>
+<li><a href="#AnimatedGIF">GIFアニメーション</a></li>
+<li><a href="#GifConcatication">GIFの連結</a></li>
+<li><a href="#GifTools">GIF関連ツール</a></li>
+<li><a href="#Caution">この文書を読むにあたっての注意</a></li>
+</ul>
+
+<h4 id="GIFAbout">GIFの概要</h4>
+<div class=i>
+<p>GIFとは <b>Graphics Interchange Format</b> の略です。米国のパソコン通信 CompuServe で画像データを交換するために標準化されたフォーマットです。GIF仕様のバージョンは3種類あり、それぞれ以下の機能をサポートしています。</p>
+<table class="tb1">
+<tr><th>機能 ＼ バージョン</th><th>GIF87</th><th>GIF87a</th><th>GIF89a</th></tr>
+<tr><th>通常画像</th><td>○</td><td>○</td><td>○</td></tr>
+<tr><th>インタレースGIF</th><td>×</td><td>○</td><td>○</td></tr>
+<tr><th>透過GIF</th><td>×</td><td>×</td><td>○</td></tr>
+<tr><th>GIFアニメーション</th><td>×</td><td>×</td><td>○</td></tr>
+</table>
+</div>
+
+<h4 id="GIFPatent">GIFの特許に関する注意</h4>
+<div class=i>
+<p>GIFでは、常にUnisys社の特許問題が絡んできますので、「<a href="wwwxx051.htm" tppabs="http://www.tohoho-web.com/wwwxx051.htm">GIFの特許問題について</a>」を参照しておいてください。</p>
+</div>
+
+
+<h4 id="GIFFormat">GIF Format(GIF89a)</h4>
+<div class=i>
+<p>すべてのGIFファイルは次のようなフォーマットをしている。</p>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>GIF Header(?B)</td></tr>
+<tr class="center"><td><br>Block(?B)<br><br></td></tr>
+<tr class="center"><td><br>:<br><br></td></tr>
+<tr class="center"><td>Trailer(1B) = 0x3b</td></tr>
+</table>
+<dl class="dl1">
+<dt>GIF Header(? Bytes)</dt>
+<dd>以下参照。</dd>
+<dt>Block(? Bytes)</dt>
+<dd>以下に述べるブロックの並び。最初の1～2バイトでどのブロックかを判別する。
+<ul>
+<li><a href="#ImageBlock">Image Block(0x2c)</a></li>
+<li><a href="#GraphicControlExtension">Graphic Control Extension(0x21 0xf9)</a></li>
+<li><a href="#CommentExtension">Comment Extension(0x21 0xfe)</a></li>
+<li><a href="#PlainTextExtension">Plain Text Extension(0x21 0x01)</a></li>
+<li><a href="#ApplicationExtension">Application Extension(0x21 0xff)</a></li>
+</ul>
+</dd>
+<dt>Trailer(1 Byte)</dt>
+<dd>Blockの終わりを示す。0x3b の固定値。</dd>
+</dl>
+</div>
+
+<h4 id="GIFHeader">GIF Header</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td colspan=4>Signature(3B) = "GIF"</td></tr>
+<tr class="center"><td colspan=4>Version(3B) = "87a" or "89a"</td></tr>
+<tr class="center"><td colspan=4>Logical Screen Width(2B)</td></tr>
+<tr class="center"><td colspan=4>Logical Screen Height(2B)</td></tr>
+<tr class="center"><td>GCTF(1b)</td><td>CR(3b)</td><td>SF(1b)</td><td>SGCT(3b)</td></tr>
+<tr class="center"><td colspan=4>Background Color Index(1B)</td></tr>
+<tr class="center"><td colspan=4>Pixel Aspect Ratio(1B)</td></tr>
+<tr class="center"><td colspan=4><br>Global Color Table(0～255×3B)<br>　</td></tr>
+</table>
+<dl class="dl1">
+<dt>Signature(3 Bytes)</dt>
+<dd>0x47 0x49 0x46 の固定値。これはアスキーの "GIF" となる。</dd>
+<dt>Version(3 Bytes)</dt>
+<dd>GIF87aの場合は 0x38 0x37 0x61、GIF89aの場合は 0x38 0x39 0x61 の固定値。これらはそれぞれアスキーの "87a", "89a" となる。</dd>
+<dt>Logical Screen Width(2 Bytes)</dt>
+<dd>GIF画像全体の横幅。横幅が 0x1234 の場合は 0x34 0x12 と格納される。</dd>
+<dt>Logical Screen Height(2 Bytes)</dt>
+<dd>GIF画像全体の高さ。高さが 0x1234 の場合は 0x34 0x12 と格納される。</dd>
+<dt>Global Color Table Flag(1 Bit)</dt>
+<dd>Global Color Tableが存在する場合は1、存在しない場合は0。</dd>
+<dt>Color Resolution(3 Bits)</dt>
+<dd>この値(0～7)に1を足した値が、画像1ドットを表わすのに必要なビット数となる。</dd>
+<dt>Sort Flag(1 Bit)</dt>
+<dd>Global Color Tableがソートされている場合は1、ソートされていない場合は0。</dd>
+<dt>Size of Global Color Table(3 Bits)</dt>
+<dd>この値(0～7)に1を足した値をnとして、2のn乗がGlobal Color Tableの個数となる。</dd>
+<dt>Background Color Index(1 Byte)</dt>
+<dd>背景色のインデックス。</dd>
+<dt>Pixel Aspect Ratio(1 Byte)</dt>
+<dd>ピクセルの縦横比。この値(1～255)をnとし、(n+15)/64 が実際の比率となる。値0はこの比率情報が与えられていないことを意味する。</dd>
+<dt>Global Color Table(0～255×3 Bytes)</dt>
+<dd>Global Color Table Flagが1の場合に存在する。1つの色情報につきRGBの3バイトずつ、2の(Size of Global Color Table)乗個並ぶ。</dd>
+</dl>
+</div>
+
+<h4 id="ImageBlock">Block: Image Block</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td colspan=5>Image Separator(1B) = 0x2c</td></tr>
+<tr class="center"><td colspan=5>Image Left Position(2B)</td></tr>
+<tr class="center"><td colspan=5>Image Top Position(2B)</td></tr>
+<tr class="center"><td colspan=5>Image Width(2B)</td></tr>
+<tr class="center"><td colspan=5>Image Height(2B)</td></tr>
+<tr class="center"><td>LCTF(1b)</td><td>IF(1b)</td><td>SF(1b)</td><td>R(2b)</td><td>SLCT(3b)</td></tr>
+<tr class="center"><td colspan=5><br>Local Color Table(0～255×3B)<br>　</td></tr>
+<tr class="center"><td colspan=5>LZW Minimum Code Size(1B)</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Size(1B)</td></tr>
+<tr class="center"><td><br>Image Data(nB)<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>:</td></tr>
+<tr class="center"><td><br>:<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Terminator(1B) = 0x00</td></tr>
+</table>
+<dl class="dl1">
+<dt>Image Separator(1 Byte)</dt>
+<dd>このブロックがImage Blockであることを示す。0x2c の固定値。</dd>
+<dt>Image Left Position(2 Bytes)</dt>
+<dd>GIF画像全体に対するこのイメージブロックの左端相対位置。相対位置が 0x1234 の場合は 0x34 0x12 と格納される。</dd>
+<dt>Image Top Position(2 Bytes)</dt>
+<dd>GIF画像全体に対するこのイメージブロックの上端さ相対位置。相対位置が 0x1234 の場合は 0x34 0x12 と格納される。</dd>
+<dt>Image Width(2 Bytes)</dt>
+<dd>このイメージブロックの横幅。横幅が 0x1234 の場合は 0x34 0x12 と格納される。</dd>
+<dt>Image Height(2 Bytes)</dt>
+<dd>このイメージブロックの縦幅。縦幅が 0x1234 の場合は 0x34 0x12 と格納される。</dd>
+<dt>Local Color Table Flag(1 Bit)</dt>
+<dd>Local Color Tableが存在する場合は1、存在しない場合は0。</dd>
+<dt>Interlace Flag(1 Bit)</dt>
+<dd>インタレースする場合は1、しない場合は0。</dd>
+<dt>Sort Flag(1 Bit)</dt>
+<dd>Local Color Tableがソートされている場合は1、ソートされていない場合は0。</dd>
+<dt>Reserved(2 Bits)</dt>
+<dd>未使用。</dd>
+<dt>Size of Local Color Table(3 Bits)</dt>
+<dd>この値(0～7)に1を足した値をnとして、2のn乗がLocal Color Tableの個数となる。</dd>
+<dt>Local Color Table(0～255×3 Bytes)</dt>
+<dd>Global Color Table Flagが1の場合に存在する。1つの色情報につきRGBの3バイトずつ、2の(Size of Global Color Table)乗個並ぶ。</dd>
+<dt>LZW Minimum Code Side(1 Byte)</dt>
+<dd>LZWコードの最小ビット数。</dd>
+<dt>Block Size(1 Byte)</dt>
+<dd>Image Dataのバイト数(1～255)を表わす値。0はBlock Terminatorを表わす。</dd>
+<dt>Image Data(? Bytes)</dt>
+<dd>Block Size分のイメージデータ。LZWアルゴリズム(詳細未稿)による。</dd>
+<dt>Block Terminator(1 Byte)</dt>
+<dd>ブロック並びの終わりを表わす。0x00 固定値。</dd>
+</dl>
+</div>
+
+<h4 id="GraphicControlExtension">Block: Graphic Control Extension</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Extension Introducer(1B) = 0x21</td></tr>
+<tr class="center"><td>Graphic Control Label(1B) = 0xf9</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td colspan=4>Block Size(1B) = 0x04</td></tr>
+<tr class="center"><td>R(3b)</td><td>DM(3b)</td><td>UIF(1b)</td><td>TCF(1b)</td></tr>
+<tr class="center"><td colspan=4>Delay Time(2B)</td></tr>
+<tr class="center"><td colspan=4>Transparent Color Index(1B)</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Terminator(1B) = 0x00</td></tr>
+</table>
+<dl class="dl1">
+<dt>Extension Introducer(1 Byte)</dt>
+<dd>拡張ブロックであることを示す 0x21 固定値。</dd>
+<dt>Graphic Control Label(1 Byte)</dt>
+<dd>このブロックがGraphic Control Extensionであることを示す 0xf9 固定値。</dd>
+<dt>Block Size(1 Byte)</dt>
+<dd>ブロックサイズ。0x04 固定値。</dd>
+<dt>Reserved(3 Bits)</dt>
+<dd>未使用。</dd>
+<dt>Disposal Mothod(3 Bits)</dt>
+<dd>未稿。</dd>
+<dt>User Input Flag(1 Bit)</dt>
+<dd>未稿。</dd>
+<dt>Transparent Color Flag(1 Bit)</dt>
+<dd>透過処理を行う場合は1、行わない場合は0。</dd>
+<dt>Delay Time(2 Bytes)</dt>
+<dd>表示する際の遅延時間(100分の1秒単位)。</dd>
+<dt>Transparent Color Index(1 Byte)</dt>
+<dd>透過処理する色のインデックス。</dd>
+<dt>Block Terminator(1 Byte)</dt>
+<dd>ブロック並びの終わりを表わす。0x00 固定値。</dd>
+</dl>
+</div>
+
+<h4 id="CommentExtension">Block: Comment Extension</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Extension Introducer(1B) = 0x21</td></tr>
+<tr class="center"><td>Comment Label(1B) = 0xfe</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Size(1B)</td></tr>
+<tr class="center"><td><br>Comment Data(nB)<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>:</td></tr>
+<tr class="center"><td><br>:<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Terminator(1B) = 0x00</td></tr>
+</table>
+<dl class="dl1">
+<dt>Extension Introducer(1 Byte)</dt>
+<dd>拡張ブロックであることを示す 0x21 固定値。</dd>
+<dt>Comment Label(1 Byte)</dt>
+<dd>このブロックがComment Extensionであることを示す 0xfe 固定値。</dd>
+<dt>Block Size(1 Byte)</dt>
+<dd>Comment Dataのバイト数(1～255)を表わす値。0はBlock Terminatorを表わす。</dd>
+<dt>Comment Data(n Byte)</dt>
+<dd>コメントデータ。</dd>
+<dt>Block Terminator(1 Byte)</dt>
+<dd>ブロック並びの終わりを表わす。0x00 固定値。</dd>
+</dl>
+</div>
+
+<h4 id="PlainTextExtension">Block: Plain Text Extension</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Extension Introducer(1B) = 0x21</td></tr>
+<tr class="center"><td>Plain Text Label(1B) = 0x01</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Size #1(1B) = 0x0c</td></tr>
+<tr class="center"><td>Text Grid Left Position(2B)</td></tr>
+<tr class="center"><td>Text Grid Top Position(2B)</td></tr>
+<tr class="center"><td>Text Grid Width(2B)</td></tr>
+<tr class="center"><td>Text Grid Height(2B)</td></tr>
+<tr class="center"><td>Character Cell Width(1B)</td></tr>
+<tr class="center"><td>Character Cell Height(1B)</td></tr>
+<tr class="center"><td>Text Foreground Color Index(1B)</td></tr>
+<tr class="center"><td>Text Background Color Index(1B)</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Size(1B)</td></tr>
+<tr class="center"><td><br>Plain Text Data(nB)<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>:</td></tr>
+<tr class="center"><td><br>:<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Terminator(1B) = 0x00</td></tr>
+</table>
+<dl class="dl1">
+<dt>Extension Introducer(1 Byte)</dt>
+<dd>拡張ブロックであることを示す 0x21 固定値。</dd>
+<dt>Plain Text Label(1 Byte)</dt>
+<dd>このブロックがPlain Text Extensionであることを示す 0x01 固定値。</dd>
+<dt>Block Size #1(1 Byte)</dt>
+<dd>ブロックのサイズ。0x0c の固定値。</dd>
+<dt>Text Grid Left Position(2 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Text Grid Top Position(2 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Text Grid Width(2 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Text Grid Height(2 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Character Cell Width(1 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Character Cell Height(1 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Text Foreground Color Index(1 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Text Background Color Index(1 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Block Size #2(1 Byte)</dt>
+<dd>Plain Text Dataのバイト数(1～255)を表わす値。0はBlock Terminatorを表わす。</dd>
+<dt>Plain Text Data(n Byte)</dt>
+<dd>テキストデータ。</dd>
+<dt>Block Terminator(1 Byte)</dt>
+<dd>ブロック並びの終わりを表わす。0x00 固定値。</dd>
+</dl>
+</div>
+
+<h4 id="ApplicationExtension">Block: Application Extension</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Extension Introducer(1B) = 0x21</td></tr>
+<tr class="center"><td>Extension Label(1B) = 0xff</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Size #1(1B) = 0x0b</td></tr>
+<tr class="center"><td>Application Identifier(8B)</td></tr>
+<tr class="center"><td>Application Authentication Code(3B)</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Size #2(1B)</td></tr>
+<tr class="center"><td><br>Application Data(nB)<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>:</td></tr>
+<tr class="center"><td><br>:<br>　</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Block Terminator(1B) = 0x00</td></tr>
+</table>
+<dl class="dl1">
+<dt>Extension Introducer(1 Byte)</dt>
+<dd>拡張ブロックであることを示す 0x21 固定値。</dd>
+<dt>Extension Label(1 Byte)</dt>
+<dd>このブロックがApplication Extensionであることを示す 0xff 固定値。</dd>
+<dt>Block Size #1(1 Byte)</dt>
+<dd>ブロックのサイズ。0x0b の固定値。</dd>
+<dt>Application Identifier(8 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Application Authentication Code(3 Bytes)</dt>
+<dd>未稿。</dd>
+<dt>Block Size #2(1 Byte)</dt>
+<dd>Application Dataのバイト数(1～255)を表わす値。0はBlock Terminatorを表わす。</dd>
+<dt>Application Data(n Byte)</dt>
+<dd>アプリケーションデータ。</dd>
+<dt>Block Terminator(1 Byte)</dt>
+<dd>ブロック並びの終わりを表わす。0x00 固定値。</dd>
+</dl>
+</div>
+
+<h4 id="NomalGif87a">一般的なGIF87a</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>GIF Header</td></tr>
+<tr class="center"><td>Image Block</td></tr>
+<tr class="center"><td>Trailer</td></tr>
+</table>
+<p>一般的な GIF87a のファイルは、Block として、Image Block のみが使用される。</p>
+</div>
+
+<h4 id="NomalGif89a">一般的なGIF89a</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>GIF Header</td></tr>
+<tr class="center"><td>Graphic Control Extension</td></tr>
+<tr class="center"><td>Image Block</td></tr>
+<tr class="center"><td>Trailer</td></tr>
+</table>
+<p>一般的な GIF89a のファイルは、Graphic Control Extension と Image Block が使用される。</p>
+</div>
+
+<h4 id="InterlaceGIF">インタレースGIF</h4>
+<div class=i>
+<p>インタレースGIFは、Image Block の Interlaced Flag がオン(1)になっているものを言う。この場合、GIF画像の横線(走査線)に対して、1番目に1,9,17..本目を、2番目に5,13,21..本目を、3番目に3,7,11..本目を、最後に2,4,6..本目を格納する。これにより、1番目の捜査だけでもGIF画面全体の大まかなイメージを表示することができる。</p>
+</div>
+
+<h4 id="TransparentGIF">透過GIF</h4>
+<div class=i>
+<p>透過GIFは、Graphic Control Extension の Transparent Color Flag がオン(1)になっているものをいい、Transparent Color Index で示された Color Table の色が透明色として処理される。</p>
+</div>
+
+<h4 id="AnimatedGIF">GIFアニメーション</h4>
+<div class=i>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>GIF Header</td></tr>
+<tr class="center"><td>Application Extension</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Graphic Control Extension</td></tr>
+<tr class="center"><td>Image Block</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Graphic Control Extension</td></tr>
+<tr class="center"><td>Image Block</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>:</td></tr>
+<tr class="center"><td>:</td></tr>
+</table>
+<table class="tb0" style="width:400px;">
+<tr class="center"><td>Trailer</td></tr>
+</table>
+<p>一般的なGIFアニメーションは、GIF Header の後に Application Extension があり、その後に Graphic Control Extension と Image Block が交互に連続する。</p>
+<p>Application Extension は Netscape によって拡張された Loop Control として使用され、Application Identifier には "NETSCAPE"、Application Authentication Code には "2.0" の文字が格納される。Application Data として1バイトの 0x01 および2バイトのループ回数(0～65535)が、例えばループ回数が5回の場合は 0x01 0x05 0x00 の3バイトが格納される。</p>
+</div>
+
+<h4 id="GifConcatication">GIFの連結</h4>
+<div class=i>
+<p>「<a href="wwwcount.htm" tppabs="http://www.tohoho-web.com/wwwcount.htm">とほほのカウンター</a>」で用いているGIFファイルの連結作業は、GIF Headerの後にGraphic Control ExtensionとImage Blockの組を連結個数分並べています。もちろん最後にはTrailerをつけます。この際に、Logical Screen WidthをGIFの各横幅×連結個数分とり、Image Left PositionをGIFの各横幅分ずらしながら並べるのがミソです。</p>
+<p>通常のGIF連結に対して、GIFアニメーションをサポートしているブラウザでしか表示できないという難点がありますが、Unisys社の特許に抵触しないという利点があります。</p>
+</div>
+
+<h4 id="GifTools">GIF関連ツール</h4>
+<div class=i>
+<p>GIF関連のツールについては「<a href="wwwimage.htm" tppabs="http://www.tohoho-web.com/wwwimage.htm">画像/音/動画</a>」、および「<a href="wwwtools.htm" tppabs="http://www.tohoho-web.com/wwwtools.htm">厳選ツール集</a>」を参照。</p>
+</div>
+
+<h4 id="Caution">この文書を読むにあたっての注意</h4>
+<div class=i>
+<p>「未稿」部分も多いですし、一夜漬けで勉強したことなので、いろいろ間違いがあるかもしれません。あくまで参考程度に使用ください。</p>
+<p>わかりやすさ優先のため、仕様の原文と若干名前を変更しています。以下のようにと考えるとわかりやすいと思います。</p>
+<ul>
+<li>GIF Header = Header<br>
+　　　　　　+ Logical Screen Descriptor<br>
+　　　　　　+ Global Color Table
+<li>Image Block = Image Descriptor<br>
+　　　　　　+ Local Color Table<br>
+　　　　　　+ Table Based Image Data
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 1996-1999 杜甫々</div>
+<div>最終更新：1998年1月18日版</div>
+<div>http://www.tohoho-web.com/wwwgif.htm</div>
+</body>
+</html>

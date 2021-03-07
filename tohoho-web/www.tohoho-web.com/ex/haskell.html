@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほのHaskell入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+
+<h2>とほほのHaskell入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+とほほのHaskell入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#whatis">Haskellとは</a>
+<li><a href="#functional_language">関数型言語</a>
+<li><a href="#purely-functional">純粋関数型言語</a>
+<li><a href="#install">インストール</a>
+<li><a href="#haskell-stack">Haskell Stack</a>
+<li><a href="#hello_world">Hello world</a>
+<li><a href="#keywords">予約語</a>
+<li><a href="#comment">コメント</a>
+<li><a href="#block">ブロック</a>
+<li><a href="#layout">レイアウト</a>
+<li><a href="#in_out">入出力</a>
+<li><a href="#types">型</a>
+  <ul>
+  <li><a href="#variables">変数</a>
+  <li><a href="#number">数値</a>
+  <li><a href="#char">文字(Char)</a>
+  <li><a href="#string">文字列(String)</a>
+  <li><a href="#escape_sequence">エスケープシーケンス</a>
+  <li><a href="#list">リスト</a>
+  <li><a href="#tuple">タプル</a>
+  </ul>
+<li><a href="#operators">演算子</a>
+<li><a href="#functions">関数</a>
+  <ul>
+  <li><a href="#define-operators">演算子定義</a>
+  <li><a href="#recursive-function">再帰関数</a>
+  <li><a href="#lambda">ラムダ式</a>
+  <li><a href="#pattern_match">パターンマッチ</a>
+  <li><a href="#guard">ガード条件</a>
+  <li><a href="javascript:if(confirm('http://www.tohoho-web.com/ex/composition  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������������ļ�δ�ҵ���  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/ex/composition'" tppabs="http://www.tohoho-web.com/ex/composition">関数合成(.)</a>
+  <li><a href="#as">引数補足(@)</a>
+  </ul>
+<li><a href="#do">do文</a>
+<li><a href="#let">let文</a>
+<li><a href="#if">if文</a>
+<li><a href="#case">case文</a>
+<li><a href="#where">where文</a>
+<li><a href="#import">import文</a>
+<li><a href="#loop">ループ</a>
+<li><a href="#datatype">データ型</a>
+  <ul>
+  <li><a href="#datatype_enum">データ型(列挙型)</a>
+  <li><a href="#datatype_struct">データ型(タプル型)</a>
+  <li><a href="#datatype_union">データ型(直和型)</a>
+  </ul>
+<li><a href="#newtype">新型定義 (newtype)</a>
+<li><a href="#type">型シノニム (type)</a>
+<li><a href="#class">型クラス (class)</a>
+<li><a href="#maybe">Maybe型</a>
+<li><a href="#functor">ファンクタ(Functor)</a>
+<li><a href="#applicative">アプリケイティブ(Applicative)</a>
+<li><a href="#functor">モナド(Monad)</a>
+<li><a href="#module">モジュール (module)</a>
+<li><a href="#higher-order_function">高階関数</a>
+<li><a href="#partial_application">部分適用</a>
+<li><a href="#currying">カリー化</a>
+<li><a href="#lazy_evaluation">遅延評価</a>
+<li><a href="#foreign">Cインタフェースの呼び出し(FFI)</a>
+<li><a href="#cabal">パッケージ管理(ghc-pkg, cabal)</a>
+<li><a href="#links">リンク</a>
+</ul>
+</div>
+
+<h4 id="whatis">Haskellとは</h4>
+<div class="i">
+<ul>
+<li>「<b>ハスケル</b>」と呼びます。
+<li>数学者・論理学者の <b>Haskell Curry</b> の名前に由来しています。
+<li><b>LISP</b>, <b>ML</b> などの言語の影響を受けています。
+<li><b>関数型プログラミング言語</b> であり、特に <b>純粋関数型言語</b> に分類されます。
+<li>金融、セキュリティ、数学・科学解析、構文解析などの分野での利用例があります。
+<li>関数型プログラミングに慣れていない人にとっては、多少学習コストが高いようです。
+<li><b>遅延評価</b> を採用しており、式は記述されていても必要となるまで評価されません。
+<li>関数型言語ですが、<b>モナド</b> などを利用することにより、手続き型言語のような記述も可能です。
+<li><b>Haskell 1.0</b> (1990年)、<b>Haskell 98</b> (1999年)、<b>Haskell 2010</b> (2009年) などのバージョンがあります。
+<li>コンパイル型言語ですが、スクリプト言語の様にインタプリタで呼び出すこともできます。
+<li>処理系は、インタプリタ型で軽量な <b>Hugs</b> もありますが、コンパイルも可能な <b>GHC</b> (Glasgow Haskell Compiler) がよく利用されます。
+<li>GHC 7.0.1 から Haskell 2010 をサポートしています。
+</ul>
+</div>
+
+<h4 id="functional_language">関数型言語</h4>
+<div class="i">
+<ul>
+<li><b>Haskell</b> は <b>関数型言語</b> (functional language) に分類されます。<b>関数型言語</b> には他に LISP、ML、Erlang 等があります。
+<li>関数型言語の他には、<b>手続き型</b>(C言語, Perl...)、<b>オブジェクト指向型</b>(C++, Java, Python, Ruby, JavaScript, C#...)、<b>論理型</b>(Prolog...)などがあります。関数型＆オブジェクト指向型などの <b>マルチパラダイム言語</b>(Scala、Rust、F#...)も出てきました。
+<li>コンピューターに対する命令を1行1行記述していくのではなく、<i>x</i> = f(<i>y</i>) といった関数を組み合わせることで処理を実現します。
+<li>関数は、同じ引数で呼び出すと、常に同じ値を返すことが期待されます。これを <b>参照透過性</b> と呼びます。
+<li>関数内部から、コンソールやデータベースや他システムなどの関数外部に影響を与えたり、受け取ったりすることを <b>副作用</b> (side effect) と呼びます。コンソールに Hello world! の文字を出力することさえ、副作用と見なされます。
+<li>参照透過性を保ち、副作用を減らすことにより、レビュー・テスト・デバッグしやすいモジュールを作成することができます。
+</ul>
+<p>例えば手続き型言語では下記の様に、様々な変数の値を変化させながら計算し、最後にその結果を出力します。</p>
+<pre class="c">
+<span class="cm"># C言語ライクな仮想の手続き型言語</span>
+main() {
+  data_list = [100, 200, 300, 400]		<span class="cm">-- 計算したいデータはこれ</span>
+  total = 0					<span class="cm">-- まず total に 0 を代入しておく</span>
+  for (i = 0; i &lt; length(data_list); i++) {	<span class="cm">-- iの値を0から1ずつ増やしながら...</span>
+      total = total + data_list[i]		<span class="cm">-- 総和を計算していく</span>
+  }
+  total = total * 1.1				<span class="cm">-- 総和に税金(10%)をかける</span>
+  print(total)					<span class="cm">-- 結果を表示する</span>
+}
+</pre>
+<p>関数型では次のように最初にやりたいことを書き、その定義を関数や式として定義していくだけで目的を果たすことができます。</p>
+<pre class="c">
+<span class="cm"># Haskellライクな仮想の関数型言語</span>
+data_list = [100, 200, 300, 400]	<span class="cm">-- 計算したいデータはこれ</span>
+main() = print(total)			<span class="cm">-- 最終的な目的は結果(total)を表示すること</span>
+total = calc_total(data_list)		<span class="cm">-- totalは、calc_total関数で data_list を処理したもの</span>
+calc_total(x) = sum(x) * 1.1		<span class="cm">-- calc_total関数は、引数の総和を計算して税金分をかけたもの</span>
+</pre>
+<p>「iには1が代入されていて... totalには100が代入されていて...」といった変数状態を考えながら、コンピューター目線でデバッグするのが手続き型。変数状態を意識することなく、純粋に「定義は正しいか」でデバッグできるのが関数型言語の優位性です。</p>
+</div>
+
+<h4 id="purely-functional">純粋関数型言語</h4>
+<div class="i">
+<p>Haskell は <b>純粋関数型言語</b> (purely functional language)でもあります。純粋関数型はすべての関数で <b>副作用</b> を許しません。つまり、Haskell はコンソール、データベース、他システム等とやりとりすることはできません。...というのは嘘で、<b>モナド</b> という仕組みを使って、副作用に代替する機能を実装しています。</p>
+<p>例えば、下記の例では main 関数の中で "Hello" をコンソールに書き出しているように見えますが、Haskell の実装では「"Hello"をコンソールに書き出す」という <b>IOモナド</b> を生成し、それを main 関数の戻り値として返却することにより、あくまで、main 関数の外でコンソールに書き出している、つまり main は純粋関数であるという体裁を保っています。</p>
+<pre class="c">
+main = print "Hello"
+</pre>
+<P>Haskell では変数も参照透過性を保ち、いつも同じ値を返します。変数と呼んではいますが、一度初期化すると変更が許されない <b>イミュータブル</b>(不変)なオブジェクトです。変数の値を変動させながら手続きを記述するのではなく、純粋に関数定義のみを行うことでプログラミングしていきます。</p>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<p>コンパイラとして <b>ghc</b> があり、それをパッケージングした <b>haskell-platform</b> があります。</p>
+<pre class="c">
+<span class="cm">-- CentOS 7 --</span>
+# yum -y install epel-release
+# yum -y install <em>haskell-platform</em>
+# ghc --version
+The Glorious Glasgow Haskell Compilation System, version 7.6.3
+
+<span class="cm">-- CentOS 8 --</span>
+# dnf -y install epel-release
+# dnf -y install <em>ghc</em>
+# ghc --version
+The Glorious Glasgow Haskell Compilation System, version 8.2.2
+
+<span class="cm">-- Ubuntu 20.04 --</span>
+$ sudo apt -y install <em>haskell-platform</em>
+$ ghc --version
+The Glorious Glasgow Haskell Compilation System, version 8.6.5
+</pre>
+</div>
+
+<h4 id="haskell-stack">Haskell Stack</h4>
+<div class="i">
+<p>最近では <b>Haskell Platform</b> を個人環境にインストールし、プロジェクト管理機能も備える <b>Haskell Stack</b> が主流となっているようです。</p>
+<pre class="c">
+<span class="cm">-- CentOS 8 --</span>
+$ sudo curl -sSL https://get.haskellstack.org/ | sh
+$ stack setup
+
+<span class="cm">-- Ubuntu 20.04 --</span>
+$ sudo apt -y install <em>haskell-stack</em>	<span class="cm"># システムにstack(ちょっと古い)をインストールする</span>
+$ stack upgrade				<span class="cm"># 個人環境に新しいstackをインストールする</span>
+<span class="cm"># "no such protocol name" エラーになる場合は /etc/protocols に "tcp 6 TCP" という行を追加</span>
+$ echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
+$ source ~/.bashrc			<span class="cm"># 個人環境のstackを使用するようにする</span>
+$ stack setup				<span class="cm"># GHCなどを個人環境にインストールする</span>
+</pre>
+<p><b>Haskell Stack</b> の使用例を示します。</p>
+<pre class="c">
+$ stack new sample			<span class="cm"># サンプルプロジェクトを作成する</span>
+$ cd ./sample				<span class="cm"># プロジェクトに移動する</span>
+$ vi ./app/Main.hs			<span class="cm"># サンプルプログラムを編集する</span>
+$ stack build				<span class="cm"># ビルドする</span>
+$ stack run				<span class="cm"># 実行する</span>
+</pre>
+</div>
+
+<h4 id="hello_world">Hello world</h4>
+<div class="i">
+<p>お決まりの Hello world は次のようになります。main は最初に実行されるエントリポイント関数です。拡張子は <b>.hs</b> とします。</p>
+<pre class="c">
+<em>main = putStrLn "Hello world!"</em>
+</pre>
+<p><b>ghc</b> コマンドでコンパイルして実行します。</p>
+<pre class="c">
+$ <em>ghc Hello.hs</em>
+$ ./Hello
+Hello world!
+</pre>
+<p><b>rungpc</b> コマンドを用いてスクリプト言語のように実行することもできます。</p>
+<pre class="c">
+$ <em>runghc Hello.hs</em>
+Hello world!
+</pre>
+<p><b>ghci</b> を用いて対話的なインタプリタとして使用することもできます。<b>Prelude</b> は Haskell のスタンダードモジュールの名前です。</p>
+<pre class="c">
+$ <em>ghci</em>
+Prelude&gt; putStrLn "Hello world!"
+Hello world!
+Prelude&gt; <span class="cm">Ctrl-Dで終了</span>
+</pre>
+</div>
+
+<h4 id="keywords">予約語</h4>
+<div class="i">
+<p>Haskell の予約語を下記に示します。</p>
+<pre class="c">
+<a href="#case">case</a>		<a href="#class">class</a>		<a href="#datatype">data</a>		default		<a href="#datatype">deriving</a>
+<a href="#block">do</a>		<a href="#if">else</a>		<a href="#foreign">foreign</a>		<a href="#if">if</a>		<a href="#import">import</a>
+<a href="#let">in</a>		<a href="#define-operators">infix</a>		<a href="#define-operators">infixl</a>		<a href="#define-operators">infixr</a>		<a href="#class">instance</a>
+<a href="#let">let</a>		<a href="#module">module</a>		<a href="#newtype">newtype</a>		<a href="#case">of</a>		<a href="#if">then</a>
+<a href="#type">type</a>		<a href="#where">where</a>		_
+</pre>
+</div>
+
+<h4 id="comment">コメント</h4>
+<div class="i">
+<p><b>--</b> から行末まで、または <b>{-</b> から <b>-}</b> までがコメントとみなされます。</p>
+<pre class="c">
+<em>--</em> 1行コメント
+
+<em>{-</em>
+   複数行コメント {- ネストしても良い -}
+<em>-}</em>
+</pre>
+</div>
+
+<h4 id="block">ブロック</h4>
+<div class="i">
+<p><b>{</b> <i>expr1</i><b>;</b> <i>expr2</i><b>;</b> ... <b>}</b> は複数の式を一つの式として扱います。<b>do</b> とブロックを組み合わせることで、複数の式を実行することができます。</p>
+<pre class="c">
+main = <em>do {</em> putStrLn "Red"; putStrLn "Green"; putStrLn "Blue" <em>}</em>
+</pre>
+</div>
+
+<h4 id="layout">レイアウト</h4>
+<div class="i">
+<p>Python の様にインデントを用いることで、{ ... } ブロックの { と } を省略することができます。</p>
+<pre class="c">
+main = do putStrLn "Red"
+          putStrLn "Green"
+          putStrLn "Blue"
+</pre>
+<pre class="c">
+main = do
+  putStrLn "Red"
+  putStrLn "Green"
+  putStrLn "Blue"
+</pre>
+</div>
+
+<h4 id="in_out">入出力</h4>
+<div class="i">
+<pre class="c">
+putChar 'a'		<span class="cm">-- 文字を出力する</span>
+putStr "ABC"		<span class="cm">-- 文字列を改行無しで出力する</span>
+putStrLn "ABC"		<span class="cm">-- 文字列を改行付きで出力する</span>
+print "ABC"		<span class="cm">-- 任意の型の値を改行付きで出力する(デバッグ用)</span>
+
+x &lt;- getChar		<span class="cm">-- 1文字入力する</span>
+x &lt;- getLine		<span class="cm">-- 文字列を入力する</span>
+x &lt;- getContents	<span class="cm">-- 複数行の文字列を入力する(EOFまで)</span>
+x &lt;- readLn		<span class="cm">-- 数値や "..." 形式の文字列を入力する</span>
+</pre>
+</div>
+
+<h4 id="types">型</h4>
+<div class="i">
+<p>主な型の例として下記などがあります。</p>
+<pre class="c">
+Bool		<span class="cm">-- 真偽型。True または False</span>
+Char		<span class="cm">-- 文字型</span>
+String		<span class="cm">-- 文字列型。[Char] のシノニム</span>
+Int		<span class="cm">-- 固定長整数(最低30bits以上)</span>
+Integer		<span class="cm">-- 多倍長整数(any bits)</span>
+Float		<span class="cm">-- 単精度浮動小数点数(32bits)</span>
+Double		<span class="cm">-- 倍精度浮動小数点数(64bits)</span>
+
+[Int]		<span class="cm">-- Intのリスト</span>
+[Char]		<span class="cm">-- Charのリスト。String と等価</span>
+(Int, Char)	<span class="cm">-- Int と Char のタプル(後述)</span>
+
+Int -&gt; Int		<span class="cm">-- Int引数を受け取り、Int値を返却する関数型</span>
+Int -&gt; Int -&gt; Double	<span class="cm">-- Int引数を2つ受け取り、Double値を返却する関数型</span>
+
+a			<span class="cm">-- 任意の型</span>
+[a]			<span class="cm">-- 任意の型のリスト</span>
+</pre>
+</div>
+
+<h4 id="variables">変数</h4>
+<div class="i">
+<p>変数と呼びますが、手続き型言語の変数とは異なり、値を変更することはできません。x という変数に 123 という値を「代入」するのではなく、123 という数値に x というラベルを「<b>束縛</b>(バインディング)」すると考えます。変数名には英数字とアンダーバー(_)とシングルクォート(')を使用できます。最初の文字は小文字ではなくてなりません。</p>
+<pre class="c">
+x = 123
+main = print x
+</pre>
+<p>変数の型を明示的に指定するには下記の様に宣言します。</p>
+<pre class="c">
+<em>x :: Int</em>
+<em>y :: Int</em>
+x = 123
+y = 234
+main = print $ x + y
+</pre>
+<p>次のように束縛(binding)と型宣言を同時に行うこともできます。</p>
+<pre class="c">
+x = 123 <em>:: Int</em>
+y = 234 <em>:: Int</em>
+main = print $ x + y
+</pre>
+</div>
+
+<h4 id="number">数値</h4>
+<div class="i">
+<pre class="c">
+123 ... 10進数
+0o123 oo123 ... 8進数
+0x7fb 0X7FB ... 16進数
+1.23 ... 小数点数
+1.23e12 ... 浮動小数点数(1.23×10<sup><small>12</small></sup>)
+</pre>
+</div>
+
+<h4 id="char">文字(Char)</h4>
+<div class="i">
+<p>文字は、1文字の半角英数字記号やUnicode文字を扱うことができます。</p>
+<pre class="c">
+'a'		<span class="cm">-- 文字「a」</span>
+'あ'		<span class="cm">-- Unicodeの「あ」</span>
+'\x3042'	<span class="cm">-- Unicodeの「あ」</span>
+</pre>
+</div>
+
+<h4 id="string">文字列(String)</h4>
+<div class="i">
+<p>文字列は、文字のリストとして定義されます。<b>String</b> は <b>[Char]</b> のシノニム(同義語)です。下記のふたつは同義です。</p>
+<pre class="c">
+"ABC"			<span class="cm">-- 文字列「ABC」</span>
+['A', 'B', 'C']		<span class="cm">-- 文字列「ABC」</span>
+</pre>
+<p>末尾と継続行の先頭にバックスラッシュ(\)を入れることで、文字列を複数行に分割することができます。</p>
+<pre class="c">
+str = "Hello <em>\</em>
+  <em>\</em>world!"
+</pre>
+</div>
+
+<h4 id="escape_sequence">エスケープシーケンス</h4>
+<div class="i">
+<p>文字(Char)や文字列(String)の中では下記のエスケープシーケンスを使用できます。</p>
+<pre class="c">
+\a ... アラート
+\b ... バックスペース
+\f ... フォームフィード
+\n ... 改行
+\r ... キャリッジリターン
+\t ... タブ
+\v ... 垂直タブ
+\\ ... バックスラッシュ
+\" ... ダブルクォーテーション
+\' ... シングルクォーテーション
+\&amp; ... ヌル文字
+\o132 ... 8進数で132の文字(Z)
+\x5A ... 16進数で5Aの文字(Z)
+\90 ... 10進数で92の文字(Z)
+\&amp; ... 区切り文字 (使用例: "\x5A\&amp;123" → "Z123")
+</pre>
+<p>\LF や \ESC のような制御文字も指定できます。</p>
+<pre class="c">
+\NUL	\SOH	\STX	\ETX	\EOT	\ENQ	\ACK
+\BEL	\BS	\HT	\LF	\VT	\FF	\CR
+\SO	\SI	\DLE	\DC1	\DC2	\DC3	\DC4
+\NAK	\SYN	\ETB	\CAN	\EM	\SUB	\ESC
+\FS	\GS	\RS	\US	\SP	\DEL
+</pre>
+</div>
+
+<h4 id="list">リスト</h4>
+<div class="i">
+<p>リストは同じ型の値を一方向に並べたものです。配列とは異なり、内部的には最初の要素が次の要素へのポインタを保持するといったリスト構造で保持されています。Int のリスト型は [Int] と表します。</p>
+<pre class="c">
+[1, 2, 3]			<span class="cm">-- 整数リスト([Int])</span>
+[1..3]				<span class="cm">-- [1, 2, 3] と等価</span>
+[1, 3...9]			<span class="cm">-- [1, 3, 5, 7, 9] と等価</span>
+[3, 2..0]			<span class="cm">-- [3, 2, 1, 0] と等価</span>
+['a', 'b', 'c']			<span class="cm">-- 文字リスト([Char])。"ABC" と等価</span>
+['a'..'c']			<span class="cm">-- ['a', 'b', 'c'] と等価</span>
+["Red", "Green", "Blue"]	<span class="cm">-- 文字列リスト([String])</span>
+[1, 2, 3] !! 2			<span class="cm">-- 3 (0から数えて2番目の要素を取り出す)</span>
+[1, 2] ++ [3, 4]		<span class="cm">-- リストを連結する</span>
+length [1, 2, 3]		<span class="cm">-- 3 (要素の数を返す)</span>
+head [1, 2, 3]			<span class="cm">-- 1 (先頭の要素を返す)</span>
+last [1, 2, 3]			<span class="cm">-- 3 (最後の要素を返す)</span>
+tail [1, 2, 3]			<span class="cm">-- [2, 3] (先頭を除いた要素を返す)</span>
+init [1, 2, 3]			<span class="cm">-- [1, 2] (末尾を除いた要素を返す)</span>
+take 2 [1, 2, 3]		<span class="cm">-- [1, 2] (先頭から2個の要素を返す)</span>
+takeWhile (&lt;3) [1, 2, 3]	<span class="cm">-- [1, 2] (条件に合致する要素を返す)</span>
+drop 2 [1, 2, 3]		<span class="cm">-- [3] (先頭から2個除いた要素を返す)</span>
+dropWhile (&lt;3) [1, 2, 3]	<span class="cm">-- [3] (条件に合致しない要素を返す)</span>
+reverse [1, 2, 3]		<span class="cm">-- [3, 2, 1] (リストを逆方向にする)</span>
+map (*2) [1, 2, 3]		<span class="cm">-- [2, 4, 6] (リストに対して関数を適用する)</span>
+</pre>
+<p>[1, 2, 3] は 1:[2, 3] のように表すことができます。下記はすべて [1, 2, 3] と等価となります。</p>
+<pre class="c">
+[1, 2, 3]
+1:[2, 3]
+1:2:[3]
+1:2:3:[]
+</pre>
+<p>下記の例は、x に [1, 2, 3, 4, 5] をひとつずつ代入しながら、x * x の値を求めます。</p>
+<pre class="c">
+s = [x * x <em>|</em> x <em>&lt;-</em> [1..5]]	<span class="cm">-- [1, 4, 9, 16, 25]</span>
+</pre>
+<p>カンマ(,) の後ろにガード条件をつけることもできます。下記の例は、x が 3 と異なる場合のみ x * x を計算します。</p>
+<pre class="c">
+s = [x * x | x &lt;- [1..5]<em>, x /= 3</em>]	<span class="cm">-- [1, 4, 16, 25]</span>
+</pre>
+</div>
+
+<h4 id="tuple">タプル</h4>
+<div class="i">
+<p>タプルはリストと似ていますが、要素は同じ型である必要はありません。</p>
+<pre class="c">
+(1, 2, 3)
+(1, 'a', "ABC")
+</pre>
+<p>要素数が 0個のタプルはユニット(unit)と呼ばれます。</p>
+<pre class="c">
+func = return <em>()</em>
+</pre>
+<p>タプルの要素を取り出すには下記の様にします。3番目以降を取り出す際は変数を使用する必要があります。</p>
+<pre class="c">
+<em>fst</em> (1, 'a', "ABC")		<span class="cm">-- 1(最初の要素を取り出す)</span>
+<em>snd</em> (1, 'a', "ABC")		<span class="cm">-- 'a'(2番目要素を取り出す)</span>
+(_, _, x) =  (1, 'a', "ABC")	<span class="cm">-- x に "ABC" がバインドされる</span>
+</pre>
+</div>
+
+<h4 id="operators">演算子</h4>
+<div class="i">
+<pre class="c">
+<i>expr1</i> <em>+</em> <i>expr2</i>		<span class="cm">-- 加算</span>
+<i>expr1</i> <em>-</em> <i>expr2</i>		<span class="cm">-- 減算</span>
+<i>expr1</i> <em>*</em> <i>expr2</i>		<span class="cm">-- 乗算</span>
+<i>expr1</i> <em>/</em> <i>expr2</i>		<span class="cm">-- 除算</span>
+
+<i>expr1</i> <em>`div`</em> <i>expr2</i>	<span class="cm">-- 除算(-∞方向に丸める)</span>
+<i>expr1</i> <em>`mod`</em> <i>expr2</i>	<span class="cm">-- 除算(`div`)の余り</span>
+<i>expr1</i> <em>`rem`</em> <i>expr2</i>	<span class="cm">-- 除算(`quot`)の余り</span>
+<i>expr1</i> <em>`quot`</em> <i>expr2</i>	<span class="cm">-- 除算(0方向に丸める)</span>
+
+<i>expr1</i> <em>^</em> <i>expr2</i>		<span class="cm">-- 累乗(<i>expr2</i>は整数)</span>
+<i>expr1</i> <em>^^</em> <i>expr2</i>		<span class="cm">-- 累乗(<i>expr1</i>は実数、<i>expr2</i>は整数)</span>
+<i>expr1</i> <em>**</em> <i>expr2</i>		<span class="cm">-- 累乗(<i>expr1</i>も<i>expr2</i>も実数)</span>
+
+<i>expr1</i> <em>==</em> <i>expr2</i>		<span class="cm">-- 等しければ</span>
+<i>expr1</i> <em>/=</em> <i>expr2</i>		<span class="cm">-- 等しくなければ</span>
+<i>expr1</i> <em>&lt;</em> <i>expr2</i>		<span class="cm">-- 大きければ</span>
+<i>expr1</i> <em>&lt;=</em> <i>expr2</i>		<span class="cm">-- 以上であれば</span>
+<i>expr1</i> <em>&gt;</em> <i>expr2</i>		<span class="cm">-- 小さければ</span>
+<i>expr1</i> <em>&gt;=</em> <i>expr2</i>		<span class="cm">-- 以下であれば</span>
+
+<i>bool1</i> <em>&amp;&amp;</em> <i>bool2</i>		<span class="cm">-- かつ</span>
+<i>bool1</i> <em>||</em> <i>bool2</i>		<span class="cm">-- または</span>
+<em>not</em> <i>bool</i>		<span class="cm">-- 否定</span>
+
+<i>list</i> <em>!!</em> <i>index</i>		<span class="cm">-- リストの <i>index</i>番目の要素</span>
+<i>list1</i> <em>++</em> <i>list2</i>		<span class="cm">-- リストを連結(文字列連結にも使用可)</span>
+<i>value</i> <em>:</em> <i>list</i>		<span class="cm">-- [<i>value</i>] ++ <i>list</i> と同義</span>
+<i>expr</i> <em>`elem`</em> <i>list</i>	<span class="cm">-- <i>expr</i> が <i>list</i> に含まれていれば</span>
+<i>expr</i> <em>`notElem`</em> <i>list</i>	<span class="cm">-- <i>expr</i> が <i>list</i> に含まれていなければ</span>
+
+<i>func</i> <em>$</em> <i>expr</i>		<span class="cm">-- <i>func</i> ( <i>expr</i> ) と等価</span>
+<i>func</i> <em>$!</em> <i>expr</i>		<span class="cm">-- <i>func</i> ( <i>expr</i> ) と等価 (<i>expr</i>を即時評価する)</span>
+<i>func1</i> <em>.</em> <i>func2</i>		<span class="cm">-- 関数合成</span>
+<i>expr1</i> <em>`seq`</em> <i>expr2</i>	<span class="cm">-- 正格評価を行う(遅延評価を行わない)</span>
+
+<i>var</i> <em>&lt;-</em> <i>action</i>		<span class="cm">-- アクションから値を取り出す</span>
+<i>func</i> <em>=&lt;&lt;</em> <i>action</i>		<span class="cm">-- アクションから値を取り出し関数に引き渡す</span>
+<i>action</i> <em>&gt;&gt;=</em> <i>func</i>		<span class="cm">-- アクションから値を取り出し関数に引き渡す</span>
+
+<i>stmt1</i> <em>&gt;&gt;</em> do {<i>stmt2</i>}	<span class="cm">-- do { <i>stmt1</i>; <i>stmt2</i> } と等価</span>
+</pre>
+<p>演算子の優先度は 0 ～ 9 まであります。</p>
+<pre class="c">
+9 : !!  .
+8 : ^  ^^  **
+7 : *  /  `div`  `mod`  `rem`  `quot`
+6 : +  -
+5 : :  ++
+4 : ==  /=  &lt;  &lt;=  &gt;  &gt;=  `elem`  `notElem`
+3 : &amp;&amp;
+2 : ||
+1 : &gt;&gt; &gt;&gt;=
+0 : $  $!  `seq"
+</pre>
+<p>演算子を (...) で囲むことにより関数のように使用することができます。下記の2行は同じ意味を持ちます。</p>
+<pre class="c">
+x = y + z
+x = <em>(+)</em> y z
+</pre>
+<p>逆に、二つの引数を持つ関数名を `...` で囲むことで演算子の様に使用することができます。</p>
+<pre class="c">
+x = y <em>`add`</em> z
+</pre>
+</div>
+
+<h4 id="functions">関数</h4>
+<div class="i">
+<p>下記の例では x と y を引数として受け取り、その和を返却する関数 add を定義しています。</p>
+<pre class="c">
+<em>add</em> x y = x + y
+</pre>
+<p>関数を呼び出すには次のようにします。print add 3 5 としてしまうと、(print add) 3 5 と解釈されてしまいますので、print (add 3 5) としています。</p>
+<pre class="c">
+main = print (<em>add 3 5</em>)	<span class="cm">-- 8</span>
+</pre>
+<p>括弧の代わりに $ を用いることもできます。$ は $ から行末までを (...) で囲むのと同じ意味になります。</p>
+<pre class="c">
+main = print <em>$</em> add 3 5	<span class="cm">-- print (add 3 5) と同義</span>
+</pre>
+<p>関数の型は下記の様に表します。最初の2つの Int は引数の型を表し、最後の Int は関数の戻り値の型を表します。</p>
+<pre class="c">
+add :: <em>Int -&gt; Int -&gt; Int</em>
+</pre>
+</div>
+
+<h4 id="define-operators">演算子定義</h4>
+<div class="i">
+<p>演算子を定義することができます。下記の例では、x * 1000 + y を計算する演算子 <b>^^^</b> を定義して使用しています。</p>
+<pre class="c">
+x <em>^^^</em> y = x * 1000 +  y
+main = print $ 2 <em>^^^</em> 20		<span class="cm">-- 2020</span>
+</pre>
+<p><b>infix*</b> を用いて定義した演算子の優先度を 0～9 の間で指定することができます。<b>infixl</b> は左結合、<b>infixr</b> は右結合、<b>infix</b> は結合無しを意味します。</p>
+<pre class="c">
+x +++ y = x + y			<span class="cm">-- 加算演算子+++を定義</span>
+x *** y = x * y			<span class="cm">-- 乗算演算子***を定義</span>
+<em>infixl</em> 7 +++			<span class="cm">-- +++ の優先度を7に設定</span>
+<em>infixl</em> 6 ***			<span class="cm">-- *** の優先度を6に設定</span>
+main = print $ 10 *** 3 +++ 2	<span class="cm">-- 加算が先に計算されて 50 となる</span>
+</pre>
+<p>演算子には下記の記号を使用します。</p>
+<pre class="c">
+# $ % &amp; * + . / &lt; = &gt; ? @ \ ^ | - ~
+</pre>
+</div>
+
+<h4 id="recursive-function">再帰関数</h4>
+<div class="i">
+<p>下記は、再帰関数を用いて n! (nの階乗) を求める関数 <b>fact</b> を定義しています。n! = n × (n - 1)!、1! = 1 というルールに従っています。</p>
+<pre class="c">
+<em>fact 0 = 1</em>
+<em>fact n = n * fact (n - 1)</em>
+main = print $ fact 5
+</pre>
+</div>
+
+<h4 id="lambda">ラムダ式</h4>
+<div class="i">
+<p>ラムダ式は関数名の無い局所的な関数で、下記の形式で表されます。</p>
+<pre class="c">
+<em>\</em><i>arg</i> <em>-&gt;</em> <i>expr</i>
+<em>\</em><em>(</em><i>arg1</i>, <i>arg2</i><em>)</em> <em>-&gt;</em> <i>expr</i>
+</pre>
+<p>ラムダ式を用いた実例を下記に示します。</p>
+<pre class="c">
+main = do
+  print c				<span class="cm">-- 31</span>
+    where
+      c = a + b				<span class="cm">-- 31</span>
+      a = (<em>\</em>x <em>-&gt;</em> x * x) 5		<span class="cm">-- 25 (5 * 5)</span>
+      b = (<em>\(</em>x, y<em>)</em> <em>-&gt;</em> x * y) (2, 3)	<span class="cm">-- 6 (2 * 3)</span>
+</pre>
+</div>
+
+<h4 id="pattern_match">パターンマッチ</h4>
+<div class="i">
+<p>関数を引数の値によって別々に定義することができます。</p>
+<pre class="c">
+<em>func 1</em> = "One"
+<em>func 2</em> = "Two"
+<em>func 3</em> = "Three"
+main = print $ func 1		<span class="cm">-- "One"</span>
+</pre>
+<p>パターンマッチを用いることで、階乗を求める関数 <b>fact</b> を次のように定義することができます。</p>
+<pre class="c">
+<em>fact 0</em> = 1			<span class="cm">-- 0 の時は1を返す</span>
+<em>fact n</em> = n * fact (n - 1)	<span class="cm">-- 0 以外の時は n * fact(n - 1) を返す</span>
+main = print $ fact 5		<span class="cm">-- 120</span>
+</pre>
+</div>
+
+<h4 id="guard">ガード条件</h4>
+<div class="i">
+<p>パターンマッチと似ていますが、下記の様にガード条件を用いた関数を定義することができます。<i>condition1</i> が真の時は <i>expr1</i> を、<i>condition2</i> が真の時は <i>expr2</i> を、さもなくば <i>expr3</i> を返します。</p>
+<pre class="c">
+<i>funcname</i> <i>arg1</i>, <i>arg2</i>, ...
+  <em>|</em> <i>condition1</i> <em>=</em> <i>expr1</i>
+  <em>|</em> <i>condition2</i> <em>=</em> <i>expr2</i>
+  <em>|</em> <em>otherwise</em> <em>=</em> <i>expr3</i>
+</pre>
+<p>実際の使用例を下記に示します。</p>
+<pre class="c">
+foo x
+  <em>|</em> x == 1 = "One"
+  <em>|</em> x == 2 = "Two"
+  <em>|</em> x == 3 = "Three"
+  <em>| otherwise</em> = "More..."
+
+main = putStrLn $ foo 2
+</pre>
+<p>なぜ「ガード条件」と呼ぶかですが、下記の例では foo という関数を、引数が5以上であることを条件としてガードして呼び出しています。</p>
+<pre class="c">
+foo x <em>| x >= 5</em> = x - 5
+
+main = do
+  print $ foo 5		<span class="cm">-- 引数が5以上なので呼び出せる</span>
+  print $ foo 4		<span class="cm">-- 引数が5未満なのでエラーとなる</span>
+</pre>
+</div>
+
+<h4 id="composition">関数合成(.)</h4>
+<div class="i">
+<p><b>.</b> 演算子を用いて関数を合成することができます。例えば、下記の様な n に対して fn(n) = f(g(h(n))) のような演算を行うケースを考えます。</p>
+<pre class="c">
+f n = n * 2
+g n = n * 3
+h n = n * 4
+fn n = f(g(h(n)))
+main = print $ fn 5
+</pre>
+<p>ここで、f, g, h関数を <b>.</b> で連結することが可能です。下記の3行はいずれも同じ意味を持ちます。</p>
+<pre class="c">
+fn n = f(g(h(n)))
+fn n = (f <em>.</em> g <em>.</em> h) n
+fn = (f <em>.</em> g <em>.</em> h)
+</pre>
+</div>
+
+<h4 id="as">引数補足(@)</h4>
+<div class="i">
+<p>関数の引数は <b>@</b> を用いて複数の形式で受け取ることができます。下記では、引数の文字列全体を str として、また、先頭の文字を x、残りの文字を xs として受け取ることができます。</p>
+<pre class="c">
+func <em>str@(x:xs)</em> = do
+  print str		<span class="cm">-- "ABCDE"</span>
+  print x		<span class="cm">-- 'A'</span>
+  print xs		<span class="cm">-- "BCDE"</span>
+
+main = do
+  func "ABCDE"
+</pre>
+</div>
+
+<h4 id="do">do文</h4>
+<div class="i">
+<p><b>do</b> は式や指定した式を処理します。式には <a href="#block">ブロック</a> を指定することもできます。</p>
+<pre class="c">
+main = <em>do</em> { print "A"; print "B"; print "C" }
+</pre>
+<p>ブロックは <a href="#layout">レイアウト</a> を用いて下記の様に記述することもできます。</p>
+<pre class="c">
+main = <em>do</em>
+  print "A"
+  print "B"
+  print "C"
+</pre>
+</div>
+
+<h4 id="let">let文</h4>
+<div class="i">
+<p><b>let</b> は変数と値をバインド(束縛)します。一度バインドした変数は他の値に変更することはできません。</p>
+<pre class="c">
+main = do
+  <em>let</em> msg = "Hello"
+  putStrLn msg
+</pre>
+<p><b>in</b> ... を用いると、バインドした変数は <b>in</b> ... の中だけで有効な変数となります。</p>
+<pre class="c">
+area_of_circle r =
+  <em>let</em>
+    pi = 3.14
+  <em>in</em> do
+    r * r * pi
+main = print $ area_of_circle 1.23
+</pre>
+</div>
+
+<h4 id="if">if文</h4>
+<div class="i">
+<p><b>if</b>文は、<i>expr1</i> が真であれば <i>expr2</i> を、偽であれば <i>expr3</i> を返します。</p>
+<pre class="c">
+<em>if</em> <i>expr1</i> <em>then</em> <i>expr2</i> <em>else</em> <i>expr3</i>
+</pre>
+<p>使用例を下記に示します。</p>
+<pre class="c">
+isZero x =
+  <em>if</em> x == 0 <em>then</em>
+    "Zero"
+  <em>else</em>
+    "NotZero"
+main = putStrLn $ isZero 123
+</pre>
+</div>
+
+<h4 id="case">case文</h4>
+<div class="i">
+<p><b>case</b> 文は、<i>expr</i> が <i>pattern1</i> にマッチすれば <i>expr1</i> を、<i>pattern2</i> にマッチすれば <i>expr2</i> を、さもなくば <i>expr3</i> を返します。</p>
+<pre class="c">
+<em>case</em> <i>expr</i> <em>of</em>
+  <i>pattern1</i> <em>-&gt;</em> <i>expr1</i>
+  <i>pattern2</i> <em>-&gt;</em> <i>expr2</i>
+  <em>_</em> <em>-&gt;</em> <i>expr3</i>
+</pre>
+<p>使用例を下記に示します。</p>
+<pre class="c">
+getColor x =
+  <em>case</em> x <em>of</em>
+    1 <em>-&gt;</em> "Red"
+    2 <em>-&gt;</em> "Green"
+    3 <em>-&gt;</em> "Blue"
+    <em>_ -&gt;</em> "Unknown"
+
+main = putStrLn $ getColor 3	<span class="cm">-- "Blue"</span>
+</pre>
+</div>
+
+<h4 id="where">where文</h4>
+<div class="i">
+<p><b>where</b> 文は、変数や補助関数を局所的に定義します。</p>
+<pre class="c">
+main = print $ add x y
+  <em>where</em>
+    x = 123
+    y = 456
+    add x y = x + y
+</pre>
+</div>
+
+<h4 id="import">import文</h4>
+<div class="i">
+<p><b>import</b> はモジュールを読み込みます。</p>
+<pre class="c">
+<em>import</em> [<em>qualified</em>] <i>ModuleName</i> [<em>as</em> <i>AliasName</i>] [[<em>hiding</em>] <em>(</em><i>name</i>, ...<em>)</em>]
+</pre>
+<p>下記の例では <b>ord</b> や <b>chr</b> 関数を呼ぶために <b>Data.Char</b> モジュールをインポートしています。</p>
+<pre class="c">
+<em>import</em> Data.Char
+main = do { print $ ord 'A'; print $ chr 65 }
+</pre>
+<p><b>as</b> でモジュールの別名を指定することができます。</p>
+<pre class="c">
+import Data.Char <em>as</em> Ch
+main = do { print $ <em>Ch.</em>ord 'A'; print $ <em>Ch.</em>chr 65 }
+</pre>
+<p><b>qualified</b> をつけると、モジュール名または別名が必須となります。</p>
+<pre class="c">
+import <em>qualified</em> Data.Char as Ch
+main = print $ ord 'A'		<span class="cm">-- Ch をつけていないのでエラー</span>
+</pre>
+<p>(<i>name</i>, ...) を指定すると指定した値のみをインポートします。</p>
+<pre class="c">
+import Data.Char as Ch <em>(</em>ord<em>)</em>
+</pre>
+<p><b>hiding</b> (<i>name</i>, ...) を指定すると指定した値以外のものをインポートします。</p>
+<pre class="c">
+import Data.Char as Ch <em>hiding</em> <em>(</em>ord<em>)</em>
+</pre>
+</div>
+
+<h4 id="loop">ループ</h4>
+<div class="i">
+<p>Haskell には <b>for</b> や <b>while</b> などのループ構文はありません。下記の様な再帰関数を用いてループを実現します。下記では Hello を10回出力しています。<b>loop</b> <i>n</i> <i>action</i> は、<i>action</i> を実行し、<i>n</i> をデクリメントし、再度 loop を再起呼び出しします。<i>n</i> が 0 の時はそれ以上再起呼び出しはせず、ユニット () を返却します。</p>
+<pre class="c">
+<em>loop</em> 0 action = return ()
+<em>loop</em> n action = do { action; <em>loop</em> (n - 1) action }
+main = <em>loop</em> 10 $ putStrLn "Hello"
+</pre>
+<p>上記と同様なことを行う機能が、<b>replicateM_</b> という <b>モナド</b> として提供されています。</p>
+<pre class="c">
+<em>import Control.Monad</em>
+main = do
+  <em>replicateM_</em> 3 $ putStrLn "Hello"
+</pre>
+</div>
+
+<h4 id="datatype">データ型</h4>
+<div class="i">
+<p><b>data</b> は列挙型、タプル型、直和型などのデータ型を定義します。</p>
+<pre class="c2">
+<em>data</em> <i>TypeName</i> <em>=</em> 
+      <i>Constructor1</i>
+  [ <em>|</em> <i>Constructor2</i> ]...
+  [<em>deriving</em> <em>(</em><i>TypeClass</i>, ...<em>)</em>]
+</pre>
+<pre class="c">
+<em>data</em> <i>TypeName</i> <em>=</em>
+      <i>Constructor1</i> <i>Type1a</i> <i>Type1b</i> ...
+  [ <em>|</em> <i>Constructor2</i> <i>Type2a</i> <i>Type2b</i> ...]...
+  [<em>deriving</em> <em>(</em><i>TypeClass</i>, ...<em>)</em>]
+</pre>
+<pre class="c">
+<em>data</em> <i>TypeName</i> <em>=</em>
+      <i>Constructor1</i> { <i>fieldLabel1a</i> :: <i>Type1a</i><em>,</em> <i>fieldLabel1b</i> :: <i>Type1b</i><em>,</em> ... }
+  [ <em>|</em> <i>Constructor2</i> { <i>fieldLabel2a</i> :: <i>Type2a</i><em>,</em> <i>fieldLabel2b</i> :: <i>Type2b</i><em>,</em> ... } ]...
+  [<em>deriving</em> <em>(</em><i>TypeClass</i>, ...<em>)</em>]
+</pre>
+</div>
+
+<h4 id="datatype_enum">データ型(列挙型)</h4>
+<div class="i">
+<p>列挙型は他言語の Enum に似たデータ型です。<b>Bool</b> は <b>True</b> または <b>False</b> を値として持つ列挙型です。下記の例では、<b>Red</b>、<b>Green</b> または <b>Blue</b> を値として持つ列挙型 <b>Color</b> を次のように定義することができます。データ型は大文字で始める必要があります。</p>
+<pre class="c">
+<em>data Color =</em> Red <em>|</em> Green <em>|</em> Blue
+</pre>
+<p>データ型の値はそのままでは <b>print</b> で出力することができません。<b>deriving</b> で <b>Show</b> という <b>型クラス</b> を付与することにより出力可能になります。</p>
+<pre class="c">
+data Color = Red | Green | Blue <em>deriving Show</em>
+
+main = do
+  let c = Red
+  print c
+</pre>
+<p>また、<b>Eq</b> を付与することで <b>==</b> や <b>/=</b> で比較することが可能となります。</p>
+<pre class="c">
+data Color = Red | Green | Blue deriving (Show, <em>Eq</em>)
+
+main = do
+  let x = Red
+  let y = Green
+  if x == y then print "Equal" else print "Not Equal"
+</pre>
+<p>型クラスには次のものなどがあります。</p>
+<pre class="c">
+Show		<span class="cm">-- print で出力可能な文字列に変換される</span>
+Read		<span class="cm">-- 文字列から変換可能となる</span>
+Eq		<span class="cm">-- == や /= で比較可能となる</span>
+Ord		<span class="cm">-- &lt; や &gt; 等で大小比較可能となる</span>
+Enum		<span class="cm">-- fromEnum や toEnum で数値と相互変換可能となる</span>
+</pre>
+</div>
+
+<h4 id="datatype_struct">データ型(タプル型)</h4>
+<div class="i">
+<p>タプル型は他言語の構造体(Struct)に似たデータ型です。下記の例では、<b>Point</b> というタプル型を定義しています。コンストラクタにも同じ名前を指定しています。Int 型の二つのフィールドを持ちます。<b>deriving Show</b> により <b>print</b> で出力可能にしています。</p>
+<pre class="c">
+<em>data Point = Point Int Int</em> deriving Show
+
+addPoint (Point x1 y1) (Point x2 y2) = Point (x1 + x2) (y1 + y2)
+
+main = do
+  let a = Point 100 200
+      b = Point 300 400
+      c = addPoint a b
+  print c				<span class="cm">-- Point 400 600</span>
+</pre>
+<p>次のように、フィールド名を指定することもできます。</p>
+<pre class="c">
+data Point = Point <em>{ x, y :: Int }</em> deriving Show
+
+main = do
+  let a = Point { x = 100, y = 200 }
+  print a				<span class="cm">-- Point {x = 100, y = 200}</span>
+</pre>
+<p>型名を下記の様に記述することにより、複数の型に対応するデータ型を宣言することができます。</p>
+<pre class="c">
+data Point <em>a</em> = Point <em>a a</em> deriving Show
+
+main = do
+  print $ <em>Point 100 200</em>		<span class="cm">-- Int, Integerに対応</span>
+  print $ <em>Point 100.0 200.0</em>	<span class="cm">-- Doubleに対応</span>
+</pre>
+</div>
+
+<h4 id="datatype_union">データ型(直和型)</h4>
+<div class="i">
+<p>直和型は他言語の union に似たデータ型です。下記の例でデータ型 <b>Figure</b> は、x1, y1, x2, y2 フィールドを持つ <b>Rect</b>、または、x, y, r フィールドを持つ <b>Circle</b> のいずれかとして定義されます。</p>
+<pre class="c">
+data <em>Figure</em> = <em>Rect</em> { x1, y1, x2, y2 :: Int }
+            <em>|</em> <em>Circle</em> { x, y, r :: Int }
+            deriving Show
+main = do
+  let a = Rect { x1 = 100, y1 = 100, x2 = 200, y2 = 200 }
+      b = Circle { x = 100, y = 100, r = 100 }
+  print a	<span class="cm">-- Rect {x1 = 100, y1 = 100, x2 = 200, y2 = 200}</span>
+  print b	<span class="cm">-- Circle {x = 100, y = 100, r = 100}</span>
+</pre>
+<p><b>Rect</b> と <b>Circle</b> を <b>Figure</b> というひとつのデータ型で表現しているため、下記の様に <b>Figure</b> を引数としてその面積を返却する関数を定義することができます。</p>
+<pre class="c">
+<em>area :: Figure -> Double</em>
+area (Rect x1 y1 x2 y2) = fromIntegral ((x2 - x1) * (y2 - y1))
+area (Circle x y r) = (fromIntegral(r) * fromIntegral(r) * 3.14)
+
+main = do
+  let a = Rect { x1 = 100, y1 = 100, x2 = 200, y2 = 200 }
+      b = Circle { x = 100, y = 100, r = 50 }
+  print $ area a		<span class="cm">-- 10000.0</span>
+  print $ area b		<span class="cm">-- 7850.0</span> 
+</pre>
+</div>
+
+<h4 id="newtype">新型定義 (newtype)</h4>
+<div class="i">
+<p><b>newtype</b> は新たな型を生成します。フィールドがひとつのデータ型は <b>data</b> の代わりに <b>newtype</b> で定義することができます。<b>newtype</b> の方が効率的で高速に動作します。</p>
+<pre class="c">
+<em>newtype</em> Pixel = Pixel Int deriving Show
+
+main = do
+  let a = Pixel 300
+  print a
+</pre>
+</div>
+
+<h4 id="type">型シノニム (type)</h4>
+<div class="i">
+<p><b>type</b> は、ある型のシノニム(同義語)を生成します。例えば、<b>String</b> という型は下記の様に <b>Char</b> のリスト [Char] の型シノニムとして定義されています。</p>
+<pre class="c">
+<em>type</em> String = [Char]
+</pre>
+<p>型シノニムの定義例を下記に示します。</p>
+<pre class="c">
+<em>type</em> Person = (Name, Address)
+<em>type</em> Name = String
+<em>type</em> Address = None | Addr String
+</pre>
+</div>
+
+<h4 id="class">型クラス (class)</h4>
+<div class="i">
+<p>Haskell の <b>class</b> は他のオブジェクト指向系言語の <b>class</b> とは異なり、インタフェースに近い宣言を行います。下記の例では、型クラス <b>Foo</b> を定義しています。<b>Foo</b> 型クラスは任意の型(a)を受け取り、Stringを返却するメソッド <b>foo</b> を持ちます。<b>instance</b> を用いてそれぞれの型が引数に指定された場合の処理を実装します。</p>
+<pre class="c">
+<em>class</em> Foo a where
+    foo :: a -&gt; String
+<em>instance</em> Foo Bool where
+    foo True = "Bool: True"
+    foo False = "Bool: False"
+<em>instance</em> Foo Int where
+    foo x = "Int: " ++ show x
+<em>instance</em> Foo Char where
+    foo x = "Char: " ++ [x]
+
+main = do
+    putStrLn $ foo True		<span class="cm">-- Bool: True</span>
+    putStrLn $ foo (123::Int)	<span class="cm">-- Int: 123</span>
+    putStrLn $ foo 'A'		<span class="cm">-- Char: A</span>
+</pre>
+<p>instance Foo String where ... を定義しようとすると、String のようなシノニムに対しては定義できない旨のエラーが発生します。これを可能にするには、FlexibleInstances 拡張を宣言します。</p>
+<pre class="c">
+<em>{-# LANGUAGE FlexibleInstances #-}</em>
+
+class Foo a where
+    foo :: a -&gt; String
+instance Foo String where
+    foo x = "String: " ++ x
+
+main = do
+    putStrLn $ foo "ABC"
+</pre>
+</div>
+
+<h4 id="maybe">Maybe型</h4>
+<div class="i">
+<p><b>Maybe</b>型 (正確にはMaybeモナド)は、<b>Just</b> <i>x</i> または <b>Nothing</b> のどちらかの値を持つ型です。下記の例では関数 <b>fn</b> は、Int の引数を受け取り、Maybe String 型を返す関数です。Maybe String 型は、Just "One" だったり、Just "Two" だったり、Nothing だったりします。</p>
+<pre class="c">
+fn :: Int -&gt; <em>Maybe</em> String
+fn n
+    | n == 1 = Just "One"
+    | n == 2 = Just "Two"
+    | otherwise = Nothing
+
+main = do
+    print $ fn 1	<span class="cm">-- Just "One"</span>
+    print $ fn 2	<span class="cm">-- Just "Two"</span>
+    print $ fn 3	<span class="cm">-- Nothing</span>
+</pre>
+</div>
+
+<h4 id="functor">ファンクタ(Functor)</h4>
+<div class="i">
+<p><b>Functor</b> 型クラスは、<b>map</b> の汎用版である <b>fmap</b> クラスメソッドを持ちます。</p>
+<pre class="c">
+$ ghci
+Prelude&gt; :i <em>Functor</em>
+class Functor (f :: * -&gt; *) where
+  fmap :: (a -&gt; b) -> f a -&gt; f b
+</pre>
+<p><b>map</b> は第二引数にリストしか受け取ることができませんが、<b>fmap</b> は Maybe 型(Nothing または Just x) やタプルを受け取ることもできます。</p>
+<pre class="c">
+fn n = n * 2
+main = do
+    print $ <em>fmap</em> fn [1, 2, 3]	<span class="cm">-- [2, 4, 6]</span>
+    print $ <em>fmap</em> fn Nothing	<span class="cm">-- Nothing</span>
+    print $ <em>fmap</em> fn (Just 5)	<span class="cm">-- Just 10</span>
+    print $ <em>fmap</em> fn (2, 3)	<span class="cm">-- (4, 6)</span>
+</pre>
+<p><b>fmap</b> fn x は fn <b>&lt;$&gt;</b> x と書くこともできます。</p>
+<pre class="c">
+fn n = n * 2
+main = do
+    print $ fn <em>&lt;$&gt;</em> [1, 2, 3]	<span class="cm">-- [2, 4, 6]</span>
+    print $ fn <em>&lt;$&gt;</em> Nothing	<span class="cm">-- Nothing</span>
+    print $ fn <em>&lt;$&gt;</em> (Just 5)	<span class="cm">-- Just 10</span>
+    print $ fn <em>&lt;$&gt;</em> (2, 3)	<span class="cm">-- (4, 6)</span>
+</pre>
+<p>演算子 &lt;$&gt; は、List や Maybe などの任意の型をラッピングした値に対して、関数を適用しているとも言えます。</p>
+</div>
+
+<h4 id="applicative">アプリケイティブ(Applicative)</h4>
+<div class="i">
+<p><b>Applicative</b> 型クラスは、<b>Functor</b>型クラスの派生クラスで、<b>pure</b> メソッドと <b>&lt;*&gt;</b> 演算子を持ちます。</p>
+<pre class="c">
+Prelude&gt; :i <em>Applicative</em>
+class Functor f =&gt; Applicative (f :: * -> *) where
+  pure :: a -&gt; f a
+  (&lt;*&gt;) :: f (a -&gt; b) -&gt; f a -&gt; f b
+</pre>
+<p><b>pure</b> は関数をラッピングします。&lt;*&gt; は、ラッピングした関数を、ラッピングした値に対して適用します。</p>
+<pre class="c">
+main = do
+    print $ <em>pure</em> (*2) <em>&lt;*&gt;</em> Just 5	<span class="cm">-- Just10</span>
+    print $ <em>pure</em> (*2) <em>&lt;*&gt;</em> [1, 2, 3]	<span class="cm">-- [2, 4, 6]</span>
+</pre>
+<p>下記の様に複数の関数をリストに対して適用することも可能となります。</p>
+<pre class="c">
+main = do
+    print $ [(*2), (*3)] <em>&lt;*&gt;</em> [1, 2, 3]	<span class="cm">-- [2, 4, 6, 3, 6, 9]</span>
+</pre>
+</div>
+
+<h4 id="monad">モナド(Monad)</h4>
+<div class="i">
+<p><b>Monad</b> 型クラスは、<b>Applicative</b>型クラスの派生クラスで、<b>return</b> メソッドと、<b>&gt;&gt;=</b> 演算子を持ちます。</p>
+<pre class="c">
+class Applicative m =&gt; Monad (m :: * -&gt; *) where
+  (&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b
+  return :: a -&gt; m a
+</pre>
+<p><b>return</b> は通常の値をラッピングされた値に変換します。演算子 <b>&gt;&gt;=</b> はバインド演算と呼ばれるもので、ラッピングされた値をラッピングされた値を返す関数に渡します。</p>
+<pre class="c">
+fn x = <em>return</em> (2 * x)
+
+main = do
+    print $ [1, 2, 3] <em>&gt;&gt;=</em> fn	<span class="cm">-- [2, 4, 6]</span>
+    print $ Just 5 <em>&gt;&gt;=</em> fn	<span class="cm">-- Just 10</span>
+    print $ Nothing <em>&gt;&gt;=</em> fn	<span class="cm">-- Nothing</span>
+</pre>
+<p>モナドには次のようなものがあります。</p>
+<pre class="c">
+[]	<span class="cm">-- リスト</span>
+Maybe	<span class="cm">-- Just x または Nothing 値を持つモナド</span>
+Either	<span class="cm">-- Left a または Right b 値をもつモナド</span>
+IO	<span class="cm">-- 入出力を司るモナド</span>
+State	<span class="cm">-- 状態を扱うモナド</span>
+Reader	<span class="cm">-- 「環境」から値を読み出すモナド</span>
+Writer	<span class="cm">--  値をログに書き込むモナド</span>
+</pre>
+<p>putStrLng や print など、IO を司るものはすべてモナドとして実装されています。Haskell は純粋関数型言語なので、外部から値を読み込んだり、外部に値を書き出したりなどの副作用を持つことができません。そのため、putStrLng は値を書き出すのではなく、「値を書き出すというアクション」を返却します。Haskell のエントリポイントである main 関数が、こうした一連のアクションを返却し、GHC などの処理系が実際の入出力を行います。</p>
+</div>
+
+<h4 id="module">モジュール (module)</h4>
+<div class="i">
+<p><b>module</b> によりモジュールを定義することができます。ファイル名はモジュール名と同じ MyModule.hs とします。</p>
+<pre class="c">
+<em>module</em> MyModule where
+
+add x y = x + y
+</pre>
+<p>これを下記の様に呼び出します。</p>
+<pre class="c">
+import MyModule
+
+main = do
+    print $ add 3 5
+</pre>
+</div>
+
+<h4 id="higher-order_function">高階関数</h4>
+<div class="i">
+<p>Haskell は <b>高階関数</b> (higher-order function) をサポートします。高階関数とは、関数自体を <b>第一級オブジェクト</b> (値として代入したりできるもの) として扱い、関数の引数や戻り値で関数を引き渡しできるものをいいます。例えば map 関数は、第一引数で関数を受け取り、第二引数で受け取ったリストの各要素に対して関数を実行した結果を返します。JavaScript でもコールバック関数など、高階関数を多用しています。</p>
+<pre class="c">
+<em>fn</em> x = x * 2
+ans = map <em>fn</em> [1, 2, 3]
+main = print ans		<span class="cm">-- [2, 4, 6]</span>
+</pre>
+</div>
+
+<h4 id="partial_application">部分適用</h4>
+<div class="i">
+<p>複数の引数を受け取る関数に対して、一部の引数だけ渡しておき、後から残りを渡す方式を <b>部分適用</b> (partial application) と呼びます。</p>
+<pre class="c">
+<span class="cm">-- 部分適用を使用しない例</span>
+tax :: Double -&gt; Double -&gt; Double
+tax rate price = rate * price
+main = do
+  print $ tax 0.1 2500	<span class="cm">-- 2500円の消費税(250円)を求める</span>
+  print $ tax 0.1 3500	<span class="cm">-- 3500円の消費税(350円)を求める</span>
+</pre>
+<p>これを部分適用を用いて書き直すと下記の様になります。</p>
+<pre class="c">
+<span class="cm">-- 部分適用を使用した例</span>
+tax :: Double -&gt; Double -&gt; Double
+tax rate price = rate * price
+<em>jptax</em> = tax 0.1		<span class="cm">-- 部分適用を利用した関数を定義する(第二引数が省略されている)</span>
+main = do
+  print $ <em>jptax</em> 2500	<span class="cm">-- 2500円の消費税(250円)を求める</span>
+  print $ <em>jptax</em> 3500	<span class="cm">-- 3500円の消費税(350円)を求める</span>
+</pre>
+<p>演算子も関数と同様に使用できるので、部分適用を利用することができます。</p>
+<pre class="c">
+exp2a = (^2)
+exp2b = (2^)
+main = do
+  print $ exp2a 5	<span class="cm">-- 5^2 と解釈されて25</span>
+  print $ exp2b 5	<span class="cm">-- 2^5 と解釈されて32</span>
+</pre>
+</div>
+
+<h4 id="currying">カリー化</h4>
+<div class="i">
+<p>「複数の引数を持つ関数」を、「『元の関数の第1引数』を引数とし、『元の残りの引数を引数として結果を返す関数』を戻り値とする関数」にすることを <b>カリー化</b> (currying) といいます。Haskell の名前の元になった Haskell Curry にちなんでカリー化と呼びますが、実際に考案したのは別の人だそうです。</p>
+<p>まず、JavaScript での例を示します。add1() は3つの引数を取る関数ですが、これを、「x」を引数とし、「y, z を引数として結果を返す関数」を戻り値とする add2() にカリー化しています。呼び出しは add2(1)(2, 3) のようになります。さらにカリー化すると add3() になります。</p>
+<pre class="c">
+function add1(x, y, z) {
+  return x + y + z;
+}
+function add2(x) {
+  return function(y, z) { return x + y + z; }
+}
+function add3(x) {
+  return function(y) { return function(z) { return x + y + z; } }
+}
+console.log(add1(1, 2, 3));
+console.log(add2(1)(2, 3));
+console.log(add3(1)(2)(3));
+</pre>
+<p>Haskell の関数はデフォルトでカリー化されています。つまり、複数の引数を受け取って値を返す関数はすべて、ひとつの引数を受け取り、関数を返却する関数とみなすことができます。カリー化と部分適用は異なる概念ですが、カリー化によって部分適用が可能となります。</p>
+<pre class="c">
+add x y z = x + y + z
+main = do
+  print $ (add 1 2 3)	<span class="cm">-- 3つの引数を取る関数としても呼び出せる</span>
+  print $ (add 1) 2 3	<span class="cm">-- 1つの引数を取り、その戻り値を残りの2つを引数にする関数とみなすこともできる</span>
+</pre>
+<p>実は下記の add1 の記法は、add2 の記法の糖衣構文 (syntax sugar) です。Haskell の関数の型を、Int -&gt; Int -&gt; Int -&gt; Int のように表すのも内部的には add2 のように処理していることに関係しています。</p>
+<pre class="c">
+add1 :: Int -&gt; Int -&gt; Int -&gt; Int
+add1 x y z = x + y + z
+add2 :: Int -&gt; Int -&gt; Int -&gt; Int
+add2 = \x -&gt; \y -&gt; \z -&gt; x + y + z
+</pre>
+<p>Haskell では通常の関数はカリー化されていますが、下記の様にタプルで引数を渡すことを非カリー化と呼んでいるようです。</p>
+<pre class="c">
+add (x, y) = x + y
+main = print $ add (3, 5)
+</pre>
+</div>
+
+<h4 id="lazy_evaluation">遅延評価</h4>
+<div class="i">
+<p>多くの言語が正格評価を採用しているのに対し、Haskell は <b>遅延評価</b> (lazy evaluation) を採用しています。式はどうしても必要となるときまで評価を行いません。遅延評価の対義語は <b>正格評価</b> (strict evaluation) です。</p>
+<pre class="c">
+<span class="cm">-- 正格評価の場合：main = fn 3 7 11 が実行される</span>
+<span class="cm">-- 遅延評価の場合：main = do { print (1+2); print (3+4) } が実行される。(5+6)は評価されない</span>
+fn x y z = do { print x; print y }
+main = fn (1+2) (3+4) (5+6)
+</pre>
+<p>[1..] は [1, 2, 3, 4, ..., 1000000, ...] といった無限長のリスト、<b>take</b> <i>n</i> はリストの先頭から <i>n</i> 個の要素を取り出す関数ですが、遅延評価によりリストを無限参照してしまうリスクを低減することができます。</p>
+<pre class="c">
+<span class="cm">-- 正格評価の場合：最初に無限長リストを評価してしまうので無限ループになる</span>
+<span class="cm">-- 遅延評価の場合：リストの最初の5個のみ評価・返却される</span>
+main = print $ take 5 [1..]
+</pre>
+</div>
+
+<h4 id="foreign">Cインタフェースの呼び出し(FFI)</h4>
+<div class="i">
+<p>Foreign Function Interface (FFI) を用いて、Haskell から C言語で記述された関数を呼び出すことができます。まず、C言語で関数を用意します。</p>
+<pre class="c">
+int plus(int a)
+{
+    return a + 1;
+}
+</pre>
+<p><b>foreign</b> を用いてこれを呼び出します。</p>
+<pre class="c">
+import Foreign.C.Types
+
+<em>foreign</em> import ccall "plus" c_plus :: CInt -&gt; IO CInt
+
+plus :: Int -&gt; IO Int
+plus = fmap fromIntegral . c_plus . fromIntegral
+
+main :: IO ()
+main = do
+  print =&lt;&lt; plus 5
+</pre>
+<p>コンパイルは次のように行います。</p>
+<pre class="c">
+# gcc -c plus.c
+# ghc Main.hs plus.o
+# ./Main
+6
+</pre>
+</div>
+
+<h4 id="cabal">パッケージ管理(ghc-pkg, cabal)</h4>
+<div class="i">
+<p><b>Haskell Platform</b> にはパッケージ管理コマンド <b>cabal</b> が同梱されます。</p>
+<pre class="c">
+# ghc-pkg list			<span class="cm"># パッケージの一覧を表示する</span>
+# cabal update			<span class="cm"># パッケージをアップデートする</span>
+# cabal info <i>package</i>		<span class="cm"># パッケージの情報を表示する</span>
+# cabal install <i>package</i>		<span class="cm"># パッケージをインストールする</span>
+</pre>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.haskell.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.haskell.org/'" tppabs="https://www.haskell.org/">公式サイト</a> (英語)
+<li><a target="_top" href="javascript:if(confirm('https://wiki.haskell.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://wiki.haskell.org/'" tppabs="https://wiki.haskell.org/">Haskell Wiki</a> (英語)
+<li><a target="_top" href="javascript:if(confirm('https://www.haskell.org/tutorial/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.haskell.org/tutorial/'" tppabs="https://www.haskell.org/tutorial/">Haskell 98 Tutrial</a> (英語)
+<li><a target="_top" href="javascript:if(confirm('https://www.haskell.org/onlinereport/haskell2010/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.haskell.org/onlinereport/haskell2010/'" tppabs="https://www.haskell.org/onlinereport/haskell2010/">Haskell 2010 Language Report</a> (英語)
+<li><a target="_top" href="javascript:if(confirm('https://www.sampou.org/haskell/report-revised-j/index.html  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.sampou.org/haskell/report-revised-j/index.html'" tppabs="https://www.sampou.org/haskell/report-revised-j/index.html">Haskell 98 言語レポート</a> (和訳)
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年12月27日 最終更新:2020年12月27日</div>
+<div>http://www.tohoho-web.com/ex/haskell.html</div>
+</body>
+</html>

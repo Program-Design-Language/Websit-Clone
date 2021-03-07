@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのPython入門 - 関数 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>とほほのPython入門 -  関数</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/python/index.html">Python入門</a> &gt;
+関数
+
+<h4 id="function">関数(def)</h4>
+<div class=i>
+<p><b>def</b> 文を用いて<b>関数</b>(<b>function</b>)を定義することができます。下記の例では、x と y という二つの引数を受け取り、その合計値を表示する関数 add() を定義し、それを呼び出しています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>def</em> add(x, y)<em>:</em>
+    print x + y
+
+<em>add(3, 5)</em>            #=&gt; 8
+</pre>
+<p><b>return</b> は関数の戻り値を指定します。return 文を省略すると、関数は <b>None</b> を返します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def add(x, y):
+    ans = x + y
+    <em>return ans</em>
+
+n = add(3, 5)
+print n             #=&gt; 8
+</pre>
+<p>下記の様に、キーワード付き引数を指定することができます。キーワード付き引数は関数定義側で、デフォルトの値を指定することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def repeat_msg(msg, <em>repeat=3</em>):
+    for i in range(repeat):
+        print msg
+
+repeat_msg('Hello')                    # Hello, Hello, Hello
+repeat_msg('Yahho', <em>repeat=5</em>)          # Yahho, Yahho, Yahho, Yahho, Yahho
+</pre>
+<p><b>*</b>name は残りの順序引数を、<b>**</b>name はキーワード付き引数を辞書型で受け取ります。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def func(a1, a2, <em>*args</em>, <em>**params</em>):
+    print a1                     #=&gt; A
+    print a2                     #=&gt; B
+    print args                   #=&gt; ('C', 'D')
+    print params                 #=&gt; {'k1': 'K1', 'k2': 'K2'}
+
+
+func('A', 'B', 'C', 'D', k1='K1', k2='K2')
+</pre>
+<p>args や params を変数で渡す場合には、呼び出す側にも * や ** をつけます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+args = ('C', 'D')
+params = {'k1': 'K1', 'k2': 'K2'}
+func('A', 'B', <em>*args</em>, <em>**params</em>)     #=&gt; A, B, ('C', 'D'), {'k1': 'K1', 'k2': 'K2'}
+</pre>
+<p>関数は、複数の値を返却することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def func():
+    return 3, "ABC"
+
+<em>n, s = func()</em>
+print n, s               #=&gt; 3 ABC
+</pre>
+<p>関数定義の冒頭には、"""...""" で <a href="variables.html#docstring" tppabs="http://www.tohoho-web.com/python/variables.html#docstring">ドキュメントストリング</a> を記述することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def func(x, y):
+    <em>"""A sample function"""</em>
+    return x + y
+</pre>
+</div>
+
+<h4 id="global">グローバル変数(global)</h4>
+<div class=i>
+<p>関数の外部で定義された変数は <b>グローバル変数</b> として扱われます。関数の中でグローバル変数を参照することはできますが、代入することはできません。代入する場合は、<b>global</b> で宣言する必要があります。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+count = 0                   # グローバル変数
+
+def func():
+    print count             # 参照することはできる
+    global count            # global宣言してやれば
+    count += 1              # 代入することもできる
+</pre>
+<p><b>globals()</b> はグローバル変数、<b>locals()</b> はローカル変数の一覧を辞書として返却します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def func():
+    for k in globals().keys():
+        print "GLOBAL: %s = %s" % (k, globals()[k])
+    for k in locals().keys():
+        print "LOCAL: %s = %s" % (k, locals()[k])
+
+func()
+</pre>
+</div>
+
+<h4 id="lambda">ラムダ式(lambda)</h4>
+<div class=i>
+<p><b>ラムダ式</b>(<b>lambda</b>)式は、名前のない小さな関数を定義します。ラムダ式自体は式として扱われるため、関数の引数に指定することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+myfunc = <em>lambda x, y: x + y</em>
+print myfunc(3, 5)                 #=&gt; 8
+</pre>
+<p>lambda式は、sorted(), map(), filter()などの関数に渡す無名関数として利用されることがあります。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+a = [1, 2, 3]
+print map(lambda x: x ** 2, a)        #=&gt; [1, 4, 9]
+</pre>
+</div>
+
+<h4 id="iterator">イテレータ(iterator)</h4>
+<div class=i>
+<p><b>イテレータ</b> は <a href="control.html#for" tppabs="http://www.tohoho-web.com/python/control.html#for">for文</a> で使用することができる繰り返し機能を持つオブジェクトです。イテレータオブジェクトは、<b>__iter__()</b> で next() メソッドを持つオブジェクトを返却し、<b>next()</b> メソッドは次の要素を返却し、最後に達すると <b>StopIteration</b>例外を返すようにします。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+class MyClass:
+    def __init__(self):
+        self.data = (1, 2, 3, 4, 5)
+        self.index = 0
+    <em>def __iter__(self):</em>
+        return self
+    <em>def next(self):</em>
+        if self.index &lt; len(self.data):
+            self.index += 1
+            return self.data[self.index - 1]
+        else:
+            <em>raise StopIteration</em>
+
+for n in MyClass():
+    print n                      #=&gt; 1, 2, 3, 4, 5
+</pre>
+<p>最後の for文は、下記と同等の動作を行っています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+it = MyClass().__iter__()
+while 1:
+    n = it.next()
+    try:
+        print n                  #=&gt; 1, 2, 3, 4, 5
+    except StopIteration:
+        break
+</pre>
+</div>
+
+<h4 id="generator">ジェネレータ(yield)</h4>
+<div class=i>
+<p><b>yield</b> は、<b>イテレータ</b>を返却する<b>ジェネレータ</b>を定義する際に用いられます。まずは、yield を使用しない例を見てみます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def funcA(list):
+    ret = []
+    for n in list:
+        ret.append(n * 2)
+    return ret
+
+for n in funcA([1, 2, 3, 4, 5]):
+    print n                      #=&gt; 2, 4, 6, 8, 10
+</pre>
+<p>上記を yield によるイテレータを用いた方式に変更すると下記になります。どちらも実行結果は変わりませんが、funcA() が [2, 4, 6, 8, 10] のリストを返却するのに対し、funcB() はイテレータオブジェクトを返却します。イテレータの場合、値が参照される度に次の値が計算されて返却されます。この例では、5個程度のリストなのでパフォーマンスの差異はありませんが、100万個のリストの場合、funcA() は関数を呼び出した時点で 100万個のリストを生成してしまうのに対し、イテレータの funcB() の場合は、利用した際にのみ次の値を計算するので、メモリや処理効率が改善されます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def funcB(list):
+    for n in list:
+        <em>yield n * 2</em>
+
+for n in funcB([1, 2, 3, 4, 5]):
+    print n                      #=&gt; 2, 4, 6, 8, 10
+</pre>
+<p>もう少し例を見てみましょう。下記は、ファイルを読み込み、__END__ が出現するまでの行を表示するプログラムです。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def readfileA(f):
+    lines = []
+    for line in f:
+        lines.append(line.rstrip())
+    <em>return lines</em>
+
+f = open("test.txt")
+for line in readfileA(f):
+    if (line == "__END__"):
+        break
+    print line
+f.close()
+</pre>
+<p>yield によるイテレータを用いると下記の様になります。上記が、最初にファイルをすべて読み込んでメモリに展開してしまうのに対して、イテレータを使用した例では、1行分のメモリしか使用せず、__END__ がきた時点で残りは読み飛ばして処理を終了することができます。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+def readfileB(f):
+    for line in f:
+        <em>yield line.rstrip()</em>
+
+f = open("test.txt")
+for line in readfileB(f):
+    if (line == "__END__"):
+        break
+    print line
+f.close()
+</pre>
+</div>
+
+<h4 id="decorator">デコレータ(@)</h4>
+<div class=i>
+<p>関数を実行する前後に特殊な処理を実行したい場合、<b>@</b><b>デコレータ</b> を用いることができます。下記の例では、hello()関数を mydecolater でデコレート(装飾)しています。デコレーション関数では、関数実行前に start を、関数実行後に end を出力しています。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>def mydecolater(func):</em>        # デコレータを定義する
+    <em>def wrapper():</em>
+        print "start"         # 前処理を実行する
+        func()                # デコレート対象の関数を実行する
+        print "end"           # 後処理を実行する
+    <em>return wrapper</em>
+
+<em>@mydecolater</em>
+def hello():
+    print "hello"
+
+hello()                       #=&gt; start, hello, end
+</pre>
+<p>デコレータをもう少し汎用化したのが下記のサンプルです。ターゲット関数に @decolater を付与することで、関数の引数や戻り値を表示するサンプルです。wraps()は、ターゲット関数の関数名やドキュメントストリング(__doc__)を保持するために呼び出します。</p>
+<div class="tab">Python</div>
+<pre class=c2>
+<em>def mydecolater(func):</em>
+    <em>import functools</em>
+    <em>@functools.wraps(func)</em>
+    <em>def wrapper(*args, **kwargs):</em>
+        print "Funcname:", func.__name__
+        print "Arguments:", args
+        print "Keywords:", kwargs
+        <em>ret = func(*args, **kwargs)</em>
+        print "Return:", ret
+        <em>return ret</em>
+    <em>return wrapper</em>
+
+<em>@mydecolater</em>
+def func(msg1, msg2, flag=1, mode=2):
+    """A sample function"""
+    print "----", msg1, msg2, "----"
+    return 1234
+
+n = func("Hello", "Hello2", flag=1)
+print n
+
+print repr(func)
+print func.__doc__
+</pre>
+</div>
+
+<hr>
+<div>Copyright(C) 2014-2017 杜甫々</div>
+<div>初版：2014年12月30日、最終更新：2017年11月26日</div>
+<div>http://www.tohoho-web.com/python/function.html</div>
+</body>
+</html>
+

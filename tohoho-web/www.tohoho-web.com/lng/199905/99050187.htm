@@ -1,0 +1,66 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Cookieの読み込みと書き出し</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Cookieの読み込みと書き出し</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050186.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050186.htm">[前に]</a>
+<a href="99050188.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050188.htm">[次に]</a>
+<hr>
+<span class=name>miyu</span>
+<span class=time>1999/05/29(土) 01:55:31</span><br>
+Cookieの書き出しと読み込みについて以下のようなプログラムを<br>
+書きました．Cookieに書き込むのは，<br>
+$c_name (名前)と，$c_email (メールアドレス)です．<br>
+<br>
+----- begin -----<br>
+sub read_cookie{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#Cookieの読み込み<br>
+ @pairs&nbsp;&nbsp;= split(/; */,$ENV{'HTTP_COOKIE'});<br>
+ $buffer = shift(@pairs);<br>
+ push( @pairs, split(/&amp;/,$buffer) );<br>
+<br>
+ foreach $pair (@pairs) {<br>
+&nbsp;&nbsp;($name,$value) = split(/=/,$pair);<br>
+&nbsp;&nbsp;$value =~ tr/+/ /;<br>
+&nbsp;&nbsp;$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;<br>
+&nbsp;&nbsp;$COOKIE{$name} = $value;<br>
+ }<br>
+ $c_name&nbsp;&nbsp;= $COOKIE{'c_name'};<br>
+ $c_email = $COOKIE{'c_email'};<br>
+}<br>
+<br>
+sub write_cookie{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#Cookieの書き出し<br>
+ $c_name&nbsp;&nbsp;=~ s/(\W)/sprintf( "%%%02X", unpack("C", $1) )/eg;<br>
+ $c_email =~ s/(\W)/sprintf( "%%%02X", unpack("C", $1) )/eg;<br>
+ $tmp&nbsp;&nbsp;= "Set-Cookie: ";<br>
+ $tmp .= "c_name=$member&amp;c_email=$email; ";<br>
+ $tmp .= "expires=Thu, 1-Jan-2000 00:00:00 GMT;\n";<br>
+<br>
+ print "$tmp";<br>
+}<br>
+<br>
+とほほさんのページを参考に，<br>
+Cookieに書き出す文字列を&amp;でつなげておいて，<br>
+読み込む時にsplit(/&amp;/,$buffer)で切ろうとしています．<br>
+<br>
+ところが，環境によっては，splitが動作しないことが<br>
+分かりました．つまり，$c_maneの値がhoge&amp;c_email のようになります．<br>
+<br>
+動作OK: Netscape-Navigator 4.08 + MacOS8.1 68k<br>
+Internet Exploror4 + WindowsNT<br>
+動作NG: Netscape-Navigator 4/08 + MacOS8.5 PowerPC<br>
+<br>
+またサーバの方に原因があるのかと思い，<br>
+SunOS3 + Perl5.0002<br>
+FreeBSD + Perl5.0003<br>
+でやってみましたが，FreeBSのほうは異常ありませんでした．<br>
+なにかおかしいところがありましたらご教示ください．<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199905/index.htm">[上に]</a>
+<a href="99050186.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050186.htm">[前に]</a>
+<a href="99050188.htm" tppabs="http://www.tohoho-web.com/lng/199905/99050188.htm">[次に]</a>
+</body>
+</html>

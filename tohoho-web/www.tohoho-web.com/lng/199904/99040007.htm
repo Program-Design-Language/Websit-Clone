@@ -1,0 +1,174 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>ログファイルが管理者じゃない人にクリアされてしまいました。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>ログファイルが管理者じゃない人にクリアされてしまいました。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040006.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040006.htm">[前に]</a>
+<a href="99040008.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040008.htm">[次に]</a>
+<hr>
+<span class=name>匿名希望</span>
+<span class=time>1999/04/01(木) 21:04:58</span><br>
+自分のＨＰにチャットを設置していますが、<br>
+参加者（他人）が「ログを削除していいですか」と<br>
+発言し、次の瞬間全発言が全て消えてしまいました。<br>
+こんなことって、できるのでしょうか？<br>
+また、防止するにはどうしたらどうすれば良いですか？<br>
+<br>
+スクリプトは、管理者削除機能などついていない、<br>
+いわゆる簡易チャットを使っています。<br>
+<br>
+宜しくご教示下さい。<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1999/04/01(木) 22:10:09</span><br>
+おそらく、ログファイル、あるいはログファイルのあるディレクトリの<br>
+パーミションが、他人も書き込み可になっていたのが原因だと思われます。<br>
+chmod 666 あるいは chmod 777 としているファイルは誰でも中身を消せます。<br>
+防止するには、ちょいと技が必要かも。<br>
+<br>
+% mkdir logdir<br>
+% chmod 777 logdir<br>
+<br>
+としといて、CGI で パーミション 644 の logdir/logfile を作成する。<br>
+その後、<br>
+<br>
+% chmod 755 logdir<br>
+<br>
+として、自分以外は logfile を消せないようにする。<br>
+<hr>
+<span class=name>じょん</span>
+<span class=time>1999/04/01(木) 23:12:16</span><br>
+追加質問させてください。<br>
+その「誰でも消せる」というのは具体的にどうやって消すのでしょう？<br>
+unlinkのコマンドをどうやって実行するんでしょう？？<br>
+<br>
+もしかしてその設置したチャットそのものに、たとえば発言欄に<br>
+特定の文字を入れるとクリアする機能がついていたという事は<br>
+ないでしょうか・・・<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/01(木) 23:28:20</span><br>
+CGIが各ユーザ権限で動いているなら、moさんの書かれた方法でも<br>
+いいんでしょうが、もしnobody権限で動いているなら、根本的な<br>
+対策はないと言っていいでしょう。<br>
+<br>
+僕なら管理者に「こういう事が起こったんですが」と報告して、<br>
+cgiwrapやsuExecを使って各ユーザ権限でCGIが動くように要望を<br>
+出します。もちろん管理者がそれに応じてくれるかどうかはわかりませんが…。<br>
+<br>
+まぁ小手先の対策がないわけじゃないですけど…。<br>
+　- suidperlやsuidプログラムを使う<br>
+　- ディレクトリを711にして、その下にあるファイル名がわからないようにする<br>
+　　さらにスクリプトを見てもファイル名がばれないようにする。<br>
+<br>
+<font color="#CC8000">&gt; unlinkのコマンドをどうやって実行するんでしょう？？</font><br>
+<br>
+必ずしも消す必要はなく、ファイルを書き換える権限があれば、<br>
+ファイルをクリアできるわけです。具体的な方法は、あまり<br>
+おおっぴらに書くべきことではないと思うので略。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/01(木) 23:40:26</span><br>
+<font color="#CC8000">&gt; こんなことって、できるのでしょうか？</font><br>
+<br>
+あ、一応書いておきますが、このいたずらをしたのは、(おそらく)<br>
+あなたのサーバにアカウントを持つユーザです。<br>
+<br>
+一般的には、そのサーバに属していないユーザからは、こういうことは<br>
+できません。<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1999/04/02(金) 12:25:09</span><br>
+<font color="#CC8000">&gt;もしnobody権限で動いているなら、根本的な</font><br>
+<font color="#CC8000">&gt;対策はないと言っていいでしょう。</font><br>
+<br>
+確かに。<br>
+それにしても、こういったクラッキングが発生しているのは残念なことですね。<br>
+<hr>
+<span class=name>やま</span>
+<span class=time>1999/04/03(土) 00:35:45</span><br>
+<font color="#CC8000">&gt; 具体的な方法は、あまりおおっぴらに書くべきことではないと思うので略。</font><br>
+他人のファイルを削除する方法など必要ありませんし知りたくもありませんが、<br>
+それを阻止する方法は是非知りたいところですね。<br>
+つい最近契約したサーバでは、自分のディレクトリの権限が'755'となっていて<br>
+他人のディレクトリも覗けるようになってしまっていました。<br>
+とりあえず、'705'に変更しました。これで他人から自分のディレクトリ以下<br>
+には行けないと思いますが、勝手に削除されないようにするにはこれで完璧なん<br>
+でしょうか。ちょっと不安です。<br>
+<hr>
+<span class=name>じょん</span>
+<span class=time>1999/04/03(土) 01:24:30</span><br>
+やっぱり「誰でも消せる」というのはそのサーバに属しているユーザと言うことと理解していいんでしょうか？＞B-Cusさん<br>
+<br>
+ところで具体的に匿名希望さんの設置したチャットって具体的にどれなでしょうかね？ちょっと気になります。<br>
+<br>
+それにしても勉強になるなぁ！<br>
+<hr>
+<span class=name>うけけ</span>
+<span class=time>1999/04/03(土) 01:58:49</span><br>
+705だと、同じグループに所属する人は覗けないが、他人は覗けると思うぞ。<br>
+完璧な対応は<br>
+<font color="#CC8000">＞cgiwrapやsuExecを使って各ユーザ権限でCGIが動くように</font><br>
+する（してもらう）以外ないでしょう。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/03(土) 06:49:50</span><br>
+<font color="#CC8000">&gt; とりあえず、'705'に変更しました。</font><br>
+<br>
+ディレクトリが755や705であることが問題なのでなく、<br>
+データファイルが666や606であることが問題なのです。<br>
+<br>
+ファイルの書き換えの際には、そのディレクトリのパーミッションは<br>
+関係ありません(でもxビットは必要だけど)。そのファイル自体に<br>
+wビットが立っていれば書き換えられてしまいます。<br>
+<br>
+<font color="#CC8000">&gt; やっぱり「誰でも消せる」というのはそのサーバに属しているユーザと</font><br>
+<font color="#CC8000">&gt; 言うことと理解していいんでしょうか？＞B-Cusさん</font><br>
+<br>
+です。全ユーザのCGIが同じ権限(nobodyとか)で動いているなら、ですけど。<br>
+<br>
+<font color="#CC8000">&gt; 他人のファイルを削除する方法など必要ありませんし知りたくもありませんが、</font><br>
+<br>
+方向性としては非常によろしいんですが、セキュリティを考える上で<br>
+クラッカー(というにはレベルが低いけど)がどのような方法を使って<br>
+くるのかを知るのは とっても重要です。だって、それを知らないと<br>
+対策の立てようがないから。<br>
+<br>
+# というのと同じで、サーバをクラックされたとき、どこの穴を<br>
+# 突かれたのかわからないのが一番困りますね。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/03(土) 07:00:29</span><br>
+<font color="#CC8000">&gt; ディレクトリが755や705であることが問題なのでなく、</font><br>
+<br>
+あっと、これはちょっと言いすぎたかな。できればディレクトリは<br>
+701か711にしておきましょう。そうすれば<br>
+　- そのディレクトリの下にどういうファイル/ディレクトリがあるかわからない<br>
+　- でもファイル名を指定すれば普通に読み書きできる<br>
+となります。<br>
+<br>
+　% mkdir dir<br>
+　% echo test &gt; dir/file<br>
+　% chmod 111 dir<br>
+　% ls dir<br>
+　ls: dir: Permission denied<br>
+　% cat dir/file<br>
+　test<br>
+<br>
+でもしつこいようですけど、根本的にはcgiwrapやsuExecを(以下略)<br>
+<hr>
+<span class=name>羽崎</span>
+<span class=time>1999/04/04(日) 23:19:50</span><br>
+ちなみに、誰があなたのファイルを消したかなどのログが残っていれば、管理者に知らせて直ちに対策をとってもらったほうがあなたのサーバの今後の平和のためでもあります。（こういうログってあるのかな？）<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040006.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040006.htm">[前に]</a>
+<a href="99040008.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040008.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Ｐｅｒｌの組み込み関数localtime()について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Ｐｅｒｌの組み込み関数localtime()について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120097.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120097.htm">[前に]</a>
+<a href="98120099.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120099.htm">[次に]</a>
+<hr>
+<span class=name>ぴー</span>
+<span class=time>1998/12/16(水) 16:19:14</span><br>
+Ｐｅｒｌでlocaltime()関数を使って、日付計算の<br>
+プログラム（たとえば今日から３０日前の年月日は？）<br>
+を作りかけていて四苦八苦しています。<br>
+<br>
+とほほさんのＰｅｒｌリファレンス　localtime()では、<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;($sec, $min, $hour, $mday, $mon, $year,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$wday, $yday, $isdst) =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;localtime($tt);<br>
+$sec, $min, ...はそれぞれ、秒数(0-59)、分(0-59)、時(0-23)、<br>
+日(1-31)、月(0-11)、年(1900年からの年数(西暦の下2桁ではない))、<br>
+曜日(日(0)-土(6))、年日数(1月1日を0とする)、<br>
+$isdst(夏時間なら0以外の値)を表わす。<br>
+<br>
+となっています。<br>
+そこで、この$yearについて＜西暦の下２桁ではない＞<br>
+というところが気になっています。<br>
+つまり、２０００年になると$yearの値は100になると<br>
+いうことと考えてＯＫですか？<br>
+<br>
+今話題の２０００年問題では、下２桁でしか持ってい<br>
+ないから、どうのこうの．．．<br>
+<br>
+この部分のテストはどうすればできるのだろう．．．<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/12/16(水) 16:35:36</span><br>
+<font color="#CC8000">&gt; つまり、２０００年になると$yearの値は100になると</font><br>
+<font color="#CC8000">&gt; いうことと考えてＯＫですか？</font><br>
+<br>
+そうです。<br>
+<br>
+<font color="#CC8000">&gt; この部分のテストはどうすればできるのだろう．．．</font><br>
+<br>
+PCの時計を進めて試せばいいのでは。あるいは<br>
+<br>
+　require 'timelocal.pl';<br>
+<br>
+　# 2001年6月4日3時2分1秒の時点での1970年1月1日0時0分0秒<br>
+　# からの経過秒数を$timeに代入<br>
+　$time = &amp;timelocal(1,2,3,4,5,101);<br>
+<br>
+　# 1970年1月1日0時0分0秒から$time秒だけ経過した時点の<br>
+　# 年月日時分秒を得る<br>
+　($sec, $min, $hour, $mday, $mon, $year) = localtime($time);<br>
+<br>
+　print "$sec, $min, $hour, $mday, $mon, $year\n";<br>
+<br>
+とか。<br>
+<br>
+でもこれはtimelocalが正しい、という前提があってはじめて成り立つ<br>
+テストでしょうか。<br>
+<hr>
+<span class=name>ぴー</span>
+<span class=time>1998/12/16(水) 16:55:16</span><br>
+B-Cusさん。<br>
+大変参考になりました。<br>
+どうやら上手くできそうな気がしてきました。<br>
+ありがとうございました。<br>
+<hr>
+<span class=name>ぴー</span>
+<span class=time>1998/12/16(水) 17:05:47</span><br>
+<span class=resolv>[[解決]]</span><br>
+解決ですね。失礼しました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120097.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120097.htm">[前に]</a>
+<a href="98120099.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120099.htm">[次に]</a>
+</body>
+</html>

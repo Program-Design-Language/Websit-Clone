@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのJava入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>リスナー</h2>
+
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="layout.htm" tppabs="http://www.tohoho-web.com/java/layout.htm">[前に]</a>
+<a href="applet.htm" tppabs="http://www.tohoho-web.com/java/applet.htm">[次に]</a>
+
+<h4 id="Listener">リスナーとは</h4>
+<div class=i>
+<p><b>リスナー</b> とは、ボタンをクリックした、メニューを実行した、ウィンドウをリサイズした、マウスを動かした、キーを押したなどのイベント監視し、イベント発生時に対応するアクションを実行するオブジェクトです。主なリスナーには次のようなものがあります。</p>
+<table class="tb1">
+<tr>
+ <th>リスナー</th>
+ <th>イベント</th>
+ <th>主な監視対象</th>
+</tr>
+<tr>
+ <td>ActionListener</td>
+ <td>actionPerformed</td>
+ <td>MenuItem, List, TextField, Button, AbstructButton, JTextField, ButtonModel, JComboBox, Timer, DefaultButtonModel, ComboBoxEditor, JFileChooser, BasicComboBoxEditor</td>
+</tr>
+<tr>
+ <td>WindowListener</td>
+ <td>windowOpened<br>windowClosing<br>windowClosed<br>windowIconified<br>windowDeiconified<br>windowActivated<br>windowDeactivated</td>
+ <td>Window, JWindow, Frame, Dialog</td>
+</tr>
+<tr>
+ <td>MouseListener</td>
+ <td>mouseClicked<br>mousePressed<br>mouseReleased<br>mouseEntered<br>mouseExited</td>
+ <td>Component, Button, Canvas, Checkbox, Choice, Container, Label, List, Scrollbar, TextComponent, TextField, TextArea</td>
+</tr>
+<tr>
+ <td>MouseMotionListener</td>
+ <td>mouseDragged<br>mouseMoved</td>
+ <td>Component, Button, Canvas, Checkbox, Choice, Container, Label, List, Scrollbar, TextComponent, TextField, TextArea</td>
+</tr>
+<tr>
+ <td>KeyListener</td>
+ <td>keyPressed<br>keyReleased<br>keyTyped</td>
+ <td>Component, Button, Canvas, Checkbox, Choice, Container, Label, List, Scrollbar, TextComponent, TextField, TextArea</td>
+</tr>
+<tr>
+ <td>TextListener</td>
+ <td>textValueChanged</td>
+ <td>TextComponent, TextField, TextArea</td>
+</tr>
+<tr>
+ <td>ItemListener</td>
+ <td>itemStateChanged</td>
+ <td>Checkbox, List, Choice, ItemSelectable, CheckboxMenuItem, AbstractButton, ButtonModel, JComboBox, DefaultButtonModel</td>
+</tr>
+</table>
+</div>
+
+<h4 id="ActionListener">アクションリスナー（ActionListener）</h4>
+<div class=i>
+<p>ボタンが押されたなどのイベントを監視して、イベント発生時にアクションを実行するサンプルです。</p>
+<div class="tab">ActionListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+<em>import java.awt.event.*;</em>
+
+public class ActionListenerTest extends Frame <em>implements ActionListener</em> {
+    ActionListenerTest() {
+        super("ActionListenerTest");
+        Button b1 = new Button("BUTTON1");
+        <em>b1.addActionListener(this);</em>
+        add(b1);
+        setSize(200, 100);
+        show();
+    }
+    <em>public void actionPerformed(ActionEvent e) {
+        System.exit(0);
+    }</em>
+    public static void main(String [] args) {
+        new ActionListenerTest();
+    }
+}
+</pre>
+<p>ボタン（b1）が押されたことの監視は <b>アクションリスナオブジェクト</b> が行います。アクションリスナオブジェクトは、ActionListener インタフェースを実装（implement）したオブジェクトです。リスナーは実装すべきインタフェースが決まっています。ActionListener の場合は actionPerformed() というインタフェースを実装しなくてはなりません。サンプルでは、自分自身（this）がアクションリスナオブジェクトとなっています。イベント発生時に <b>actionPerformed()</b> インタフェースでこれを捕獲し、System.exit(0); でプログラムを終了しています。</p>
+<p>下記のように、インナークラスのインスタンスをアクションリスナオブジェクトとすることもできます。</p>
+<div class="tab">ActionListenerTest2.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class ActionListenerTest2 extends Frame {
+    ActionListenerTest2() {
+        super("ActionListenerTest2");
+        Button b1 = new Button("BUTTON1");
+        b1.addActionListener(<em>new MyActionListener()</em>);
+        add(b1);
+        setSize(200, 100);
+        show();
+    }
+    <em>class MyActionListener</em> implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
+    public static void main(String [] args) {
+        new ActionListenerTest2();
+    }
+}
+</pre>
+</div>
+
+<h4 id="WindowListener">ウィンドウリスナー（WindowListener）</h4>
+<div class=i>
+<p>ウィンドウが、開かれた、閉じようとしている、閉じた、アイコン化された、アイコン化解除された、アクティブになった、非アクティブになったというイベントを監視します。</p>
+<div class="tab">WindowListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class WindowListenerTest extends Frame <em>implements WindowListener</em> {
+    WindowListenerTest() {
+        super("WindowListenerTest");
+        <em>this.addWindowListener(this);</em>
+        setSize(200, 100);
+        show();
+    }
+    <em>public void windowOpened(WindowEvent e)</em> {       // 開かれた
+        System.out.println("windowOpened");
+    }
+    <em>public void windowClosing(WindowEvent e)</em> {      // 閉じられている
+        System.out.println("windowClosing");
+    }
+    <em>public void windowClosed(WindowEvent e)</em> {       // 閉じた
+        System.out.println("windowClosed");
+    }
+    <em>public void windowIconified(WindowEvent e)</em> {    // アイコン化された
+        System.out.println("windowIconified");
+    }
+    <em>public void windowDeiconified(WindowEvent e)</em> {  // 非アイコン化された
+        System.out.println("windowDeiconified");
+    }
+    <em>public void windowActivated(WindowEvent e)</em> {    // アクティブになった
+        System.out.println("windowActivated");
+    }
+    <em>public void windowDeactivated(WindowEvent e)</em> {  // 非アクティブになった
+        System.out.println("windowDeactivated");
+    }
+    public static void main(String [] args) {
+        new WindowListenerTest();
+    }
+}
+</pre>
+<p>7個すべてのインタフェースを実装するのが面倒なときは、<a href="#WindowAdapter">WindowAdapter</a> を用いると便利です。</p>
+</div>
+
+<h4 id="MouseListener">マウスリスナー（MouseListener）</h4>
+<div class=i>
+<p>マウスのボタンに関するイベントを監視します。</p>
+<div class="tab">MouseListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class MouseListenerTest extends Frame <em>implements MouseListener</em> {
+    MouseListenerTest() {
+        super("MouseListenerTest");
+        <em>this.addMouseListener(this);</em>
+        setSize(200, 100);
+        show();
+    }
+    <em>public void mouseClicked(MouseEvent e) {
+        System.out.println("mouseClicked");
+    }
+    public void mousePressed(MouseEvent e) {
+        System.out.println("mousePressed");
+    }
+    public void mouseReleased(MouseEvent e) {
+        System.out.println("mouseReleased");
+    }
+    public void mouseEntered(MouseEvent e) {
+        System.out.println("mouseEntered");
+    }
+    public void mouseExited(MouseEvent e) {
+        System.out.println("mouseExited");
+    }</em>
+    public static void main(String [] args) {
+        new MouseListenerTest();
+    }
+}
+</pre>
+</div>
+
+<h4 id="MouseMotionListener">マウスモーションリスナー（MouseMotionListener）</h4>
+<div class=i>
+<p>マウスの動きに関するイベントを監視します。</p>
+<div class="tab">MouseMotionListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class MouseMotionListenerTest extends Frame <em>implements MouseMotionListener</em> {
+    MouseMotionListenerTest () {
+        super("MouseMotionListenerTest");
+        <em>addMouseMotionListener(this);</em>
+        setSize(200, 100);
+        show();
+    }
+    <em>public void mouseDragged(MouseEvent e) {
+        System.out.println("D: " + e.getX() + ", " + e.getY());
+    }
+    public void mouseMoved(MouseEvent e) {
+        System.out.println("M: " + e.getX() + ", " + e.getY());
+    }</em>
+    public static void main(String [] args) {
+        new MouseMotionListenerTest();
+    }
+}
+</pre>
+</div>
+
+<h4 id="KeyListener">キーリスナー（KeyListener）</h4>
+<div class=i>
+<p>キー入力に関するイベントを監視します。</p>
+<div class="tab">KeyListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class KeyListenerTest extends Frame <em>implements KeyListener</em> {
+    KeyListenerTest() {
+        super("KeyListenerTest");
+        TextField tf1 = new TextField();
+        <em>tf1.addKeyListener(this);</em>
+        add(tf1);
+        setSize(200, 100);
+        show();
+    }
+    <em>public void keyPressed(KeyEvent e) {
+        System.out.println("Press: " + e.getKeyText(e.getKeyCode()));
+    }
+    public void keyReleased(KeyEvent e) {
+        System.out.println("Release: " + e.getKeyText(e.getKeyCode()));
+    }
+    public void keyTyped(KeyEvent e) {
+        System.out.println("Type: " + e.getKeyChar());
+    }</em>
+    public static void main(String [] args) {
+        new KeyListenerTest();
+    }
+}
+</pre>
+</div>
+
+<h4 id="TextListener">テキストリスナー（TextListener）</h4>
+<div class=i>
+<p>テキスト入力に関するイベントを監視します。Swing では DocumentListener を使用するのが一般的です。</p>
+<div class="tab">TextListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class TextListenerTest extends Frame <em>implements TextListener</em> {
+    TextListenerTest () {
+        super("TextListenerTest");
+        TextField tf1 = new TextField();
+        <em>tf1.addTextListener(this);</em>
+        add(tf1);
+        setSize(200, 100);
+        show();
+    }
+    <em>public void textValueChanged(TextEvent e) {
+        TextField tf = (TextField)e.getSource();
+        System.out.println(tf.getText());
+    }</em>
+    public static void main(String [] args) {
+        new TextListenerTest();
+    }
+}
+</pre>
+</div>
+
+<h4 id="ItemListener">アイテムリスナー（ItemListener）</h4>
+<div class=i>
+<p>チェックボックスなどのアイテムの状態を監視するリスナーです。</p>
+<div class="tab">ItemListenerTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class ItemListenerTest extends Frame <em>implements ItemListener</em> {
+    ItemListenerTest() {
+        super("ItemListenerTest");
+        Checkbox cb1 = new Checkbox("CB1");
+        <em>cb1.addItemListener(this);</em>
+        add(cb1);
+        setSize(200, 100);
+        show();
+    }
+    <em>public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            System.out.println("SELECTED");
+        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+            System.out.println("DESELECTED");
+        }
+    }</em>
+    public static void main(String [] args) {
+        new ItemListenerTest();
+    }
+}
+</pre>
+</div>
+
+<h4 id="WindowAdapter">アダプター（XxxxAdapter）</h4>
+<div class=i>
+<p>ウィンドウリスナーを実装するには、必要の有無に関わらず windowOpened など 7個のインタフェースを実装する必要があります。この面倒を簡略するために、インタフェースを複数持つものについては <b>アダプター</b> が用意されています。下記のように、ウィンドウリスナーを WindowAdapter のサブクラスとして定義することにより、必要なインタフェースのみを実装することが可能になります。</p>
+<div class="tab">WindowAdapterTest.java</div>
+<pre class=c2>
+import java.awt.*;
+import java.awt.event.*;
+
+public class WindowAdapterTest extends Frame {
+    WindowAdapterTest() {
+        super("WindowAdapterTest");
+        this.addWindowListener(new MyWindowListener());
+        setSize(200, 100);
+        show();
+    }
+    public static void main(String [] args) {
+        new WindowAdapterTest();
+    }
+}
+
+<em>class MyWindowListener extends WindowAdapter {
+    public void windowActivated(WindowEvent e) {
+        System.out.println("windowActivated");
+    }
+}</em>
+</pre>
+</div>
+
+<hr>
+<div>http://www.tohoho-web.com/java/listener.htm</div>
+<div>初版：2004年6月26日、最終更新：2004年6月26日</div>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/java/index.htm">[戻る]</a>
+<a href="layout.htm" tppabs="http://www.tohoho-web.com/java/layout.htm">[前に]</a>
+<a href="applet.htm" tppabs="http://www.tohoho-web.com/java/applet.htm">[次に]</a>
+</body>
+</html>

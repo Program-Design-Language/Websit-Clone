@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HTML5 - Indexed Database API - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>HTML5 - Indexed Database API</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/html5/index.html">HTML5</a> &gt;
+Indexed Database API
+
+<h4>Indexed Database APIとは</h4>
+<div class=i>
+<p>Indexed Database API は、<a href="../wwwcook.htm" tppabs="http://www.tohoho-web.com/wwwcook.htm">Cookie</a>, <a href="web_storage.html" tppabs="http://www.tohoho-web.com/html5/web_storage.html">Web Storage</a>, <a href="web_sql_db.html" tppabs="http://www.tohoho-web.com/html5/web_sql_db.html">Web SQLデータベース</a> と同様、アプリケーションデータをクライアント側に保存する仕組みのひとつです。下記の仕様が公開されています。</p>
+<ul>
+<li>最新版: <a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/IndexedDB-2/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/IndexedDB-2/'" tppabs="https://www.w3.org/TR/IndexedDB-2/">https://www.w3.org/TR/IndexedDB-2/</a>
+<li>V2.0: <a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/2017/PR-IndexedDB-2-20171116/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/2017/PR-IndexedDB-2-20171116/'" tppabs="https://www.w3.org/TR/2017/PR-IndexedDB-2-20171116/">https://www.w3.org/TR/2017/PR-IndexedDB-2-20171116/</a> [PR]
+<li>V1.0: <a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/2015/REC-IndexedDB-20150108/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/2015/REC-IndexedDB-20150108/'" tppabs="https://www.w3.org/TR/2015/REC-IndexedDB-20150108/">https://www.w3.org/TR/2015/REC-IndexedDB-20150108/</a> [REC]
+</ul>
+<p>Cookie や Web Storage が Key-Value形式、Web SQLデータベースが SQL をサポートするのに対し、Indexed Database API では、SQLに依存しない NoSQL に分類される方法でデータにアクセスします。</p>
+<p>Web SQLデータベースに代わり、今後の標準となる予定ですが、まだ仕様は確定しておらず、各ブラウザの実装にも非互換性がずいぶんあるようです。</p>
+<p>Indexed Database API は、下記のブラウザで部分的にサポートが始まっています。</p>
+<ul>
+<li>Internet Explorer 10(β版)
+<li>Firefox 4.0
+<li>Google Chrome 11
+</ul>
+</div>
+
+<h4>サンプル</h4>
+<div class=i>
+<p>サンプルでは、DBの作成、データの追加、データの1件参照、データの全件参照、DBの削除を実装しています。Firefox 12, Chrome 19 で、動作を確認しています。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://www.tohoho-web.com/html5/menu.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/html5/menu.htm'" tppabs="http://www.tohoho-web.com/html5/indexed_db_api_sample.html">Indexed Database API Sample</a>
+</ul>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Indexed Database API Sample&lt;/title&gt;
+&lt;style&gt;
+#message {
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid gray;
+    font: 9pt Courier;
+    white-space: pre;
+}
+&lt;/style&gt;
+&lt;script&gt;
+var ver = 201205201;
+var <em>indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;</em>
+var <em>IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;</em>
+var db = null;
+
+function print(msg) {
+    document.getElementById("message").innerHTML += msg + "\n";
+}
+
+function clearConsole() {
+    document.getElementById("message").innerHTML = "";
+}
+
+function <em>createSample()</em> {
+    print("----------------------------------------------------");
+    print("START: createSample()");
+    <em>var reqOpen = indexedDB.open("sampleDB", ver)</em>;
+
+    <em>reqOpen.onupgradeneeded</em> = function(e) {
+        print("START: reqOpen.onupgradeneeded()");
+        <em>db = reqOpen.result;</em>
+        <em>db.createObjectStore("sample", { "keyPath": "id" });</em>
+        print("EXEC : createObjectStore()");
+        print("END  : reqOpen.onupgradeneeded()");
+    <em>}</em>
+    <em>reqOpen.onsuccess</em> = function(e) {
+        print("START: reqOpen.onsuccess()");
+        <em>db = reqOpen.result;</em>
+        if (db.setVersion) {
+            var reqVersion = <em>db.setVersion(ver);</em>
+            <em>reqVersion.onsuccess</em> = function() {
+                print("START: reqVersion.onsuccess()");
+                <em>db.createObjectStore("sample", { "keyPath": "id" });</em>
+                print("EXEC : createObjectStore()");
+                print("END  : reqVersion.onsuccess()");
+            }
+        }
+        print("END  : reqOpen.onsuccess()");
+    }
+    reqOpen.onerror = function(err) { print("ERROR: " + err.code + ":" + err.message); }
+    reqOpen.onblocked = function(err) { print("INFO : BLOCKED"); }
+    print("END  : createSample()");
+}
+
+function <em>addSample()</em> {
+    print("----------------------------------------------------");
+    print("START: addSample()");
+    var userList = [
+        { "id": 1, "name": "Yamada", "age": 18, "addr": "Tokyo" },
+        { "id": 2, "name": "Suzuki", "age": 27, "addr": "Osaka" },
+        { "id": 3, "name": "Tanaka", "age": 36, "addr": "Kyoto" },
+        { "id": 4, "name": "Kimura", "age": 45, "addr": "Aichi" }
+    ];
+
+    var transaction = <em>db.transaction(["sample"], IDBTransaction.READ_WRITE);</em>
+    var store = <em>transaction.objectStore("sample");</em>
+    for (var i = 0; i &lt; userList.length; i++) {
+        var data = userList[i];
+        var reqAdd = <em>store.add(data);</em>
+        print("EXEC : add() " + data.id + " / " + data.name + " / " + data.age + " / " + data.addr);
+        reqAdd.onsuccess = function(e) { print("INFO : add() -&gt; SUCCESS"); }
+        reqAdd.onerror = function(e) { print("INFO : add() -&gt; ERROR"); }
+    }
+    print("END  : addSample()");
+}
+
+function <em>getSample()</em> {
+    print("----------------------------------------------------");
+    print("START: getSample()");
+    var transaction = <em>db.transaction(["sample"], IDBTransaction.READ_ONLY);</em>
+    var reqGet = <em>transaction.objectStore("sample").get(1);</em>
+    print("EXEC : get()");
+    reqGet.onsuccess = function(e) {
+        var data = reqGet.result;
+        print("DATA : " + data.id + " / " + data.name + " / " + data.age + " / " + data.addr);
+    }
+    reqGet.onerror = function(e) { print("ERROR: add() -&gt; " + e); }
+    print("END  : getSample()");
+}
+
+function <em>getAllSample()</em> {
+    print("----------------------------------------------------");
+    print("START: getAllSample()");
+    var transaction = <em>db.transaction(["sample"], IDBTransaction.READ_ONLY);</em>
+    var reqGet = <em>transaction.objectStore("sample").openCursor();</em>
+    print("EXEC : openCursor()");
+    reqGet.onsuccess = function(e) {
+        var cursor = <em>reqGet.result;</em>
+        var data = cursor.value;
+        print("DATA : " + cursor.key + " / " + data.name + " / " + data.age + " / " + data.addr);
+        <em>cursor.continue();</em>
+    }
+    reqGet.onerror = function(e) { print("ERROR: add() -&gt; " + e); }
+    print("END  : getAllSample()");
+}
+
+function <em>deleteSample()</em> {
+    print("----------------------------------------------------");
+    print("START: deleteSample()");
+    if (db) { db.close(); }
+    var reqDelete = <em>indexedDB.deleteDatabase("sampleDB");</em>
+    print("EXEC : deleteDatabase()");
+    reqDelete.onsuccess = function(e) { print("INFO : deleteDatabase() -&gt; SUCCESS"); }
+    reqDelete.onerror = function(e) { print("ERROR: deleteDatabase() -&gt; " + e); }
+    reqDelete.onblocked = function(e) { print("INFO : BLOCKED"); }
+    print("END  : deleteSample()");
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;button onclick="<em>createSample()</em>"&gt;CREATE&lt;/button&gt;
+&lt;button onclick="<em>addSample()</em>"&gt;ADD&lt;/button&gt;
+&lt;button onclick="<em>getSample()</em>"&gt;GET&lt;/button&gt;
+&lt;button onclick="<em>getAllSample()</em>"&gt;GET ALL&lt;/button&gt;
+&lt;button onclick="<em>deleteSample()</em>"&gt;DELETE&lt;/button&gt;
+&lt;button onclick="clearConsole()"&gt;CLEAR&lt;/button&gt;
+&lt;div id="message"&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<h4>API</h4>
+<h5>API利用の準備</h5>
+<div class=i>
+<p>まだ仕様が確定していないため、Firefox では mozIndexedDB, Chrome では webkitIndexedDB として実装しています。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;
+</pre>
+</div>
+<h5>データベースを開く</h5>
+<div class=i>
+<p>まず、データベースを開きます。第一引数にはデータベース名を指定します。第二引数は、2010年8月の仕様ではDBの説明を指定していました。2011年4月の仕様では第二引数は廃止されました。最新の 2011年12月の仕様では、第二引数は unsigned long long 型のバージョン(省略可能)を指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+reqOpen = indexedDB.open("sampleDB", 20120520);
+</pre>
+</div>
+<h5>データストアを作成する</h5>
+<div class=i>
+<p>Firefox 12 の実装では、reqOpen.onupgradeneeded イベントハンドラで createObjectStore() を呼び出します。Chrome 19 の実装では、reqOpen.onsuccess イベントハンドラで db.setVersion() を呼び出し、その reqVersion.onsuccess イベントハンドラで createObjectStore() を呼び出します。createObjectStore() の第一引数にはオブジェクトストア名を、第二引数にはキー名などを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+// Firefox 12
+reqOpen.onupgradeneeded = function(e) {
+    db = reqOpen.result;
+    db.createObjectStore("sample", { "keyPath": "id" });
+}
+// Chrome 19
+reqOpen.onsuccess = function(e) {
+    db = reqOpen.result;
+    var reqVersion = db.setVersion(ver);
+    reqVersion.onsuccess = function() {
+        db.createObjectStore("sample", { "keyPath": "id" });
+    }
+}
+</pre>
+</div>
+<h5>データを追加する</h5>
+<div class=i>
+<p>db.transaction() でトランザクションを生成し、transaction.objectStore() でオブジェクトストアを得た後、add() でデータを追加します。成功時には onsuccess, 失敗時には onerror イベントが発生します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var data = { "id": 1, "name": "Yamada", "age": 18, "addr": "Tokyo" };
+var transaction = db.transaction(["sample"], IDBTransaction.READ_WRITE);
+var store = transaction.objectStore("sample");
+var reqAdd = store.add(data);
+reqAdd.onsuccess = function(e) { ... };
+reqAdd.onerror = function(e) { ... };
+</pre>
+</div>
+<h5>データを検索する</h5>
+<div class=i>
+<p>データを検索するには get() を用います。引数にはキー値を指定します。結果は onsuccess ハンドラで参照します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var transaction = db.transaction(["sample"], IDBTransaction.READ_ONLY);
+var store = transaction.objectStore("sample");
+var reqGet = store.get(1);
+reqGet.onsuccess = function(e) {
+    var data = reqGet.result;
+    print("DATA : " + data.id + " / " + data.name + " / " + data.age + " / " + data.addr);
+}
+</pre>
+</div>
+<h5>データの一覧を得る</h5>
+<div class=i>
+<p>データの一覧を得るには openCursor() を使用します。古い仕様では getAll() メソッドが用意されていましたが、廃止されました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var transaction = db.transaction(["sample"], IDBTransaction.READ_ONLY);
+var store = transaction.objectStore("sample");
+var reqGet = store.openCursor();
+reqGet.onsuccess = function(e) {
+    var cursor = reqGet.result;
+    var key = cursor.key;
+    var value = cursor.value;
+    print("DATA : " + key + " / " + value.name + " / " + value.age + " / " + value.addr);
+    cursor.continue();
+}
+</pre>
+</div>
+<h5>データベースを削除する</h5>
+<div class=i>
+<p>データベースを削除するには deleteDatabase() を用います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var reqDelete = indexedDB.deleteDatabase("sampleDB");
+reqDelete.onsuccess = function(e) { ... };
+reqDelete.onerror = function(e) { ... };
+reqDelete.onblocked = function(e) { ... };
+</pre>
+</div>
+
+<h4>リンク</h4>
+<div class=i>
+<ul>
+<li><a href="javascript:if(confirm('http://www.w3.org/TR/IndexedDB/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.w3.org/TR/IndexedDB/'" tppabs="http://www.w3.org/TR/IndexedDB/">http://www.w3.org/TR/IndexedDB/</a>
+<li><a href="javascript:if(confirm('https://developer.mozilla.org/en/tec1.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://developer.mozilla.org/en/tec1.htm'" tppabs="https://developer.mozilla.org/en/IndexedDB">https://developer.mozilla.org/en/IndexedDB</a>
+<!--
+<li><a href="http://nparashuram.com/IndexedDB/trialtool/index.html">http://nparashuram.com/IndexedDB/trialtool/index.html</a>
+<li><a href="http://gisted.heroku.com/1045816/IndexDB-demo3.html">http://gisted.heroku.com/1045816/IndexDB-demo3.html</a>
+<li><a href="http://mzsm.me/2011/12/16/indexeddb-201112/">http://mzsm.me/2011/12/16/indexeddb-201112/</a>
+-->
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2012-2017 杜甫々</div>
+<div>初版：2012年5月17日、最終更新：2017年12月31日</div>
+<div>http://www.tohoho-web.com/html5/indexed_db_api.html</div>
+</body>
+</html>
+

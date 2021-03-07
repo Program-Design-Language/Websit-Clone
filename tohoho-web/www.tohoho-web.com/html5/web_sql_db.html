@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HTML5 - Web SQLデータベース - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>HTML5 - Web SQLデータベース</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.html" tppabs="http://www.tohoho-web.com/html5/index.html">HTML5</a> &gt;
+Web SQL Database
+
+<h4>Web SQLデータベースとは</h4>
+<div class=i>
+<p>Web SQLデータベース(Web SQL Database)は、<a href="../wwwcook.htm" tppabs="http://www.tohoho-web.com/wwwcook.htm">Cookie</a> や <a href="web_storage.html" tppabs="http://www.tohoho-web.com/html5/web_storage.html">Web Storage</a> と同様、アプリケーションデータをクライアント側に保存する仕組みのひとつです。下記の仕様書が公開されています。</p>
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://www.w3.org/TR/webdatabase/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://www.w3.org/TR/webdatabase/'" tppabs="https://www.w3.org/TR/webdatabase/">https://www.w3.org/TR/webdatabase/</a> [WGN]
+</ul>
+<p>Cookie や Web Storage が Key-Value 形式をサポートするのに対し、Web SQL Database では SQLite ベースの SQL によってデータにアクセスします。</p>
+<p>ただし、Web SQLデータベースが、特定のソフトウェア(SQLite)の実装に基づくのは中立性に欠けるとの観点から、現在では Web SQL Database の検討は停止しており、代わりに <a href="indexed_db_api.html" tppabs="http://www.tohoho-web.com/html5/indexed_db_api.html">Indexed Database API</a> を利用することが推奨されています。</p>
+<p>Web SQL Database は、下記のブラウザでサポートされています。Internet Explorer や Edge ではサポートされていません。</p>
+<ul>
+<li>Google Chrome 8
+<li>Opera 10.6
+<li>Safari 5
+</ul>
+</div>
+
+<h4>サンプル</h4>
+<div class=i>
+<p>サンプルはこちら。データベース(testDB)の中にテーブル(test)を作成し、2件のデータを INSERT し、そのデータを SELECT で読み出して表示しています。</p>
+<ul>
+<li><a href="javascript:if(confirm('http://www.tohoho-web.com/html5/main.htm  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ������, �����������, ����Ŀ����ֹͣ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.tohoho-web.com/html5/main.htm'" tppabs="http://www.tohoho-web.com/html5/web_sql_db_sample.html">Web SQL Database Sample</a>
+</ul>
+<div class="title-tab">HTML</div>
+<pre class=c2>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Web SQL Database Sample&lt;/title&gt;
+&lt;style&gt;
+#message { margin:1em; width:500px; border:1px solid gray; padding:1em; }
+&lt;/style&gt;
+&lt;script&gt;
+function print(msg) {
+    document.getElementById("message").innerHTML += msg + "&lt;br&gt;";
+}
+function test() {
+    print("FUNCSTION START");
+    <em>var db = openDatabase("testDB", "", "Test Database", 1000);</em>
+    <em>db.transaction(</em>
+        function(tr) {
+            print("TRANSACTION START");
+            print("CALLBACK START");
+            <em>tr.executeSql(</em>"DROP TABLE IF EXISTS test", [],
+                function() { print("DROP TABLE SUCCESS"); },
+                function() { print("DROP TABLE ERROR"); }
+            <em>);</em>
+            <em>tr.executeSql(</em>"CREATE TABLE test ( id, name )", [],
+                function() { print("CREATE TABLE SUCCESS"); },
+                function() { print("CREATE TABLE ERROR"); }
+            <em>);</em>
+            <em>tr.executeSql(</em>"INSERT INTO test VALUES ( ?, ? )", [ '1', 'YAMADA' ],
+                function() { print("INSERT DATA YAMADA SUCCESS"); },
+                function() { print("INSERT DATA YAMADA ERROR"); }
+            <em>);</em>
+            <em>tr.executeSql(</em>"INSERT INTO test VALUES ( ?, ? )", [ '2', 'SUZUKI' ],
+                function() { print("INSERT DATA SUZUKI SUCCESS"); },
+                function() { print("INSERT DATA SUZUKI ERROR"); }
+            <em>);</em>
+            <em>tr.executeSql(</em>"SELECT * FROM test", [],
+                function(rt, rs) {
+                    print("SELECT: SUCCESS");
+                    for (var i = 0; i &lt; rs.rows.length; i++) {
+                        var row = rs.rows.item(i);
+                        print(row.id + " / " + row.name);
+                    }
+                },
+                function() { print("SELECT: ERROR"); }
+            <em>);</em>
+            print("CALLBACK END");
+        },
+        function(err) { print("TRANSACTION ERROR"); },
+        function(   ) { print("TRANSACTION SUCCESS"); }
+    <em>);</em>
+    print("FUNCSTION END");
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;button onclick="test()"&gt;TEST&lt;/button&gt;
+&lt;div id="message"&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+
+<h4>API</h4>
+<h5>openDatabase(<i>name</i>, <i>version</i>, <i>displayName</i>, <i>size</i>, <i>callback</i>)</h5>
+<div class=i>
+<p><i>name</i> にはデータベース名を指定します。<i>version</i> にはバージョンを指定します。省略時は空文字を指定してください。<i>displayName</i> にはブラウザの管理機能で表示される表示名を指定します。<i>size</i> にはデータベースの見積もりサイズ(バイト単位)を指定します。<i>callback</i> は省略可能で、データベースが初めて作成された時に呼び出されるコールバック関数を指定します。</p>
+</div>
+<h5>transaction(<i>callback</i>, <i>errorCallback</i>, <i>successCallback</i>)</h5>
+<div class=i>
+<p>トランザクションを実行します。<i>callback</i> にはトランザクションを実行するためのコールバック関数、<i>errorCallback</i> にはトランザクションが失敗した場合に呼び出されるコールバック関数、<i>successCallback</i> にはトランザクションが成功した場合に呼び出されるコールバック関数を指定します。</p>
+</div>
+<h5>executeSql(<i>sql</i>, <i>params</i>, <i>successCallback</i>, <i>errorCallback</i>)</h5>
+<div class=i>
+<p><i>sql</i> にはSQL文を指定します。<i>params</i> には SQL文中の ? に対応するパラメータを配列で指定します。<i>successCallback</i> には成功時に呼び出されるコールバック関数を、<i>errorCallback</i> には失敗時に呼び出されるコールバック関数を指定します。</p>
+</div>
+
+<h4>ストレージされた内容を確認する方法</h4>
+<div class=i>
+<ul>
+<li>Chrome 63: [F12]→[Application]→[Web SQL] 
+<li>Opera 49: [メニュー]→[開発者]→[開発者用ツール]→[Application]→[Web SQL]
+<li>Safari 5.1: [メニュー]→[設定]→[詳細]→[メニューバーに"開発"メニューを表示]。[Ctrl+Alt+I]→[リソース]→[データベース]
+</ul>
+</div>
+
+<h4>リンク</h4>
+<div class=i>
+<ul>
+<li><a href="javascript:if(confirm('http://www.w3.org/TR/webdatabase/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='http://www.w3.org/TR/webdatabase/'" tppabs="http://www.w3.org/TR/webdatabase/">http://www.w3.org/TR/webdatabase/</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2012-2017 杜甫々</div>
+<div>初版：2012年5月13日、最終更新：2017年12月31日</div>
+<div>http://www.tohoho-web.com/html5/web_sql_db.html</div>
+</body>
+</html>

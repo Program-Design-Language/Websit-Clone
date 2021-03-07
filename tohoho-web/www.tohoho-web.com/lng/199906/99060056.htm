@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>htmlから送られてきたデータをCOOKIEに取り込むには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>htmlから送られてきたデータをCOOKIEに取り込むには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060055.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060055.htm">[前に]</a>
+<a href="99060057.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060057.htm">[次に]</a>
+<hr>
+<span class=name>ユミ</span>
+<span class=email><a href="mailto:yumi-f@ntec.ncs.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/07(月) 13:14:29</span><br>
+htmlから送られてきたデータをCOOKIEに取り込みたのですが、どうも上手くいかないのです？<br>
+どのようにすればよいのか教えて頂けないでしょうか？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/07(月) 15:28:52</span><br>
+何だか質問の意味がよく分かりませんが、<br>
+フォームからCGIに送られてきたデータをクッキーに喰わせたいなら<br>
+CGIの出力で Set-Cookie ヘッダを書けばよろしいかと。<br>
+<br>
+<a href="../../wwwcook.htm" tppabs="http://www.tohoho-web.com/wwwcook.htm">http://www.tohoho-web.com/wwwcook.htm</a><br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/08(火) 10:09:00</span><br>
+SetCookieのヘッダが表示されてしまうんです。<br>
+どのように書けばよいでしょうか？<br>
+ちなみにソースはこうです。<br>
+助言よろしくお願いします。<br>
+<br>
+#!/usr/local/bin/perl<br>
+require 'jcode.pl';<br>
+<br>
+if($ENV{"REQUEST_METHOD"} EQ 'GET'){<br>
+	$INPUT = $ENV{"QUERY_STRING"};<br>
+}<br>
+else{<br>
+	read(STDIN,$INPUT,$ENV{"CONTENT_LENGTH"});<br>
+}<br>
+print "Content-type: text/html";<br>
+<br>
+@DATA = split(/&amp;/,$INPUT);<br>
+foreach $ABC(@DATA){<br>
+($name,$value) = split(/=/,$ABC);<br>
+$value =~tr/+/ /;<br>
+$value =~s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+&amp;jcode'h2z_sjis(*value);<br>
+&amp;jcode'convert(*value,'sjis');<br>
+$form{$name} = $value;<br>
+<br>
+print "Set-Cookie: ";<br>
+print "$form{$name}; ";<br>
+print "expires=Sat, 1-Jan-2000 00:00:00 GMT; ";<br>
+print "path=/; ";<br>
+print "domain=/\n";<br>
+print "\n";<br>
+<hr>
+<span class=name>tre</span>
+<span class=email><a href="mailto:tre@echna.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/06/08(火) 13:21:27</span><br>
+確認してませんが、、<br>
+Content-type: text/htmlの前にSet-Cookieと書いたらどうなりますか？<br>
+<hr>
+<span class=name>藤本</span>
+<span class=time>1999/06/09(水) 09:14:25</span><br>
+<span class=resolv>[[解決]]</span><br>
+ソースをガラっと変えました！！<br>
+そしたら解決したんです。<br>
+すっごくうれしい！！<br>
+アドバイスしてくれた方々ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060055.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060055.htm">[前に]</a>
+<a href="99060057.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060057.htm">[次に]</a>
+</body>
+</html>

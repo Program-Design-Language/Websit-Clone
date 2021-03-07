@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>とほほのjQuery入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<link rel="stylesheet" href="jquery.css" tppabs="http://www.tohoho-web.com/js/jquery/jquery.css">
+</head>
+<body>
+<h2>jQuery入門</h2>
+<a href="../../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="index.htm" tppabs="http://www.tohoho-web.com/js/jquery/index.htm">jQuery</a> &gt;
+Ajax
+
+<h4>Ajax(Shorthand Methods)</h4>
+
+<h5 id="load">◆ <i>obj</i>.load(<i>url</i>[, <i>data</i>][, <i>complete(data, textStatus, xhr)</i>]) <u>(1.0)</u></h5>
+<div class=i>
+<p><i>url</i> で指定したリソースを Ajaxで読み込み、<i>obj</i> に流し込みます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#result").<em>load("test.php")</em>;
+</pre>
+<p><i>url</i> には、URL に続いて、セレクタを指定することも可能です。この場合、対象の URI から、指定したセレクタにマッチした要素のみを取り出します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#result").<em>load("test.php #section2")</em>;
+</pre>
+<p><i>data</i> にはフォームデータを指定します。引数を文字列で渡した場合は GET メソッド、オブジェクト形式で渡した場合は POST メソッドで HTTP通信を行います。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#result").load("test.php", <em>"t1=AAA&amp;t2=BBB&amp;t3=CCC"</em>);             <span class="comment">// GET method</span>
+$("#result").load("test.php", <em>{ t1:"AAA", t2:"BBB", t3:"CCC" }</em>);   <span class="comment">// POST method</span>
+</pre>
+<p><i>complete</i> には、Ajax通信完了時のコールバック関数を指定します。<i>data</i> には取得した文字列、<i>textStatus</i> には success, error などの状態文字列、<i>xhr</i> には XMLHttpRequest オブジェクトが渡されます。<i>xhr</i>.status は HTTP のステータスコード、<i>xhr</i>.statusText にはその意味が格納されています。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$("#result").load("test.php", <em>function(data, status, xhr) {</em>
+    $("#log").append("status = " + status + "&lt;br&gt;");                   <span class="comment">// error</span>
+    $("#log").append("xhr.status = " + xhr.status + "&lt;br&gt;");           <span class="comment">// 404</span>
+    $("#log").append("xhr.statusText = " + xhr.statusText + "&lt;br&gt;");   <span class="comment">// Not Found</span>
+<em>}</em>);
+</pre>
+</div>
+
+<h5 id="get">◆ $.get(<i>url</i>[, <i>data</i>][, <i>success(data, textStatus, xhr)</i>][, <i>dataType</i>]) <u>(1.0)</u></h5>
+<h5>◆ $.get(<i>options</i>) <u>(1.12)</u></h5>
+<div class=i>
+<p>load() と類似の動作を行いますが、<i>obj</i> への流し込みを行わないこと、<i>data</i> の指定方式に関わらず GET メソッドを用いることなどが異なります。パラメータの詳細は <a href="#load">load()</a> を参照してください。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.<em>get("test.php", function(data, status, xhr) {</em>
+    if (status == "success") {
+        $("#result").html(data);
+    }
+<em>})</em>;
+</pre>
+<p>get() メソッドは、jqXHR オブジェクトを返します。これに対して下記の様なコールバック関数を指定することができます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.get("test.php", function(data, status, xhr) { $("#result").html(data); })
+    .<em>done(</em>function(data, status, jqxhr) { $("#log").append("Done&lt;br&gt;"); }<em>)</em>
+    .<em>fail(</em>function(jqxhr, status, error) { $("#log").append("Failed&lt;br&gt;"); }<em>)</em>;
+</pre>
+<p>$.get(<i>options</i>) の形式は、パラメータリストを下記の様に渡します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$.get({
+  url: "test.php",
+  method: "POST"
+})</em>
+.done(function(data) { console.log(data); });
+</pre>
+</div>
+
+<h5 id="post">◆ $.post(<i>url</i>[, <i>data</i>][, <i>success(data, textStatus, xhr)</i>][, <i>dataType</i>]) <u>(1.0)</u></h5>
+<h5>◆ $.post(<i>options</i>) <u>(1.12)</u></h5>
+<div class=i>
+<p>$.get() と類似の動作を行いますが、<i>data</i> の指定方式に関わらず POST メソッドを用いる点が異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.<em>post("test.php", { t1:"AAA", t2:"BBB" }, function(data, status, xhr) {</em>
+    if (status == "success") {
+        $("#result").html(data);
+    }
+<em>})</em>;
+</pre>
+</div>
+
+<h5 id="getJSON">◆ $.getJSON(<i>url</i>[, <i>data</i>][, <i>success(data, textStatus, xhr)</i>]) <u>(1.XXX)</u></h5>
+<div class=i>
+<p>$.get() と類似の動作を行いますが、<i>data</i> を JSON の値として受け取る点が異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.<em>getJSON("test.php", { t1:"AAA", t2:"BBB" }, function(data, status, xhr) {</em>
+    $.each(data, function(key, val)) {
+        $("#log").append("Data: " + key + " = " + val + "&lt;br&gt;");
+    });
+});
+</pre>
+</div>
+
+<h5 id="getScript">◆ $.getScript(<i>url</i>[, <i>success(script, textStatus, xhr)</i>]) <u>(1.0)</u></h5>
+<div class=i>
+<p>$.get() と類似の動作を行いますが、JavaScript ファイルを読み込み、実行する点が異なります。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.<em>getScript("test.js", function(script, status, xhr) {</em>
+    if (status == "error") {
+        alert("Script loading error!");
+    }
+});
+</pre>
+</div>
+
+<h4>Ajax(Low-Level Interface)</h4>
+
+<h5 id="ajax">◆ $.ajax([<i>options</i>]) <u>(1.0)</u></h5>
+<h5>◆ $.ajax(<i>url</i>[, <i>options</i>]) <u>(1.5)</u></h5>
+<div class=i>
+<p>Ajax を用いて <i>url</i> を非同期に読み込みます。$.ajax() は jqXHR オブジェクトを返却します。このオブジェクトの done() メソッドでコールバック関数を指定することでデータを受け取ります。失敗した場合のコールバック関数は fail() メソッドで指定します。<i>status</i> には、"success", "notmodified", "error", "timeout", "abort", "parseerror" のいずれかの文字が設定されています。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$.ajax({</em>
+    url: "test.php",
+    type: "POST",
+    timeout: 10000
+<em>}).done(function(data, status, xhr) {</em>
+    $("#result").html(data);
+<em>}).fail(function(xhr, status, error) {</em>
+    $("#log").append("xhr.status = " + xhr.status + "&lt;br&gt;");          <span class="comment">// 例: 404</span>
+    $("#log").append("xhr.statusText = " + xhr.statusText + "&lt;br&gt;");  <span class="comment">// 例: Not Found</span>
+    $("#log").append("status = " + status + "&lt;br&gt;");                  <span class="comment">// 例: error</span>
+    $("#log").append("error = " + error + "&lt;br&gt;");                    <span class="comment">// 例: Not Found</span>
+<em>});</em>
+</pre>
+<p><i>options</i> には、下記のパラメータを指定することができます。<a href="#ajaxSetup">$.ajaxSetup()</a> を用いてあらかじめ設定しておくこともできます。</p>
+<table class="tb1 vl">
+  <tr>
+    <th>種別</th>
+    <th>名前</th>
+    <th>説明</th>
+  </tr>
+  <tr>
+    <td rowspan=5>基本</td>
+    <td><b>url</b></td>
+    <td>リソースの URL を指定します。<br>(例: <em>url: "../common/getdata.php"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>type</b></td>
+    <td>HTTP メソッドの種別を "GET" か "POST" で指定します。jQuery 1.9 以降では、type の代わりに method を使用します。<br>(例: <em>type: "POST"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>method</b></td>
+    <td>"GET", "POST", "PUT" などのリクエストメソッドを指定します。<br>(例: <em>method: "POST"</em>) <u>(1.9)</u></td>
+  </tr>
+  <tr>
+    <td><b>data</b></td>
+    <td>サーバに送信するフォームデータを指定します。<br>(例1: <em>data: { id:"tanaka", pw:"qWeRtY" }</em>)<br>(例2: <em>data: "id=tanaka&amp;pw=qWeRtY"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>timeout</b></td>
+    <td>はタイムアウト値(ミリ秒)を指定します。<br>(例: <em>timeout: 10000</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td rowspan=3>結果取得</td>
+    <td><b>success</b></td>
+    <td>通信が成功した時に呼ばれるコールバック関数を指定します。詳細は後述。 <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>error</b></td>
+    <td>通信が失敗した時に呼ばれるコールバック関数を指定します。詳細は後述。 <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>complete</b></td>
+    <td>成功・失敗に関わらず通信が完了した時に呼ばれるコールバック関数を指定します。詳細は後述。 <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td rowspan=6>送信データ処理</td>
+    <td><b>mimeType</b></td>
+    <td>リクエストの MIMEタイプを指定します。<br>(例: <em>mimeType: "application/json"</em>) <u>(1.5.1)</u></td>
+  </tr>
+  <tr>
+     <td><b>contentType</b></td>
+     <td>リクエストの Content-Type を指定します。規定値は、送信データが存在する場合は "application/x-www-form-urlencoded; charset=UTF-8" です。送信データが存在しない場合、通常は Content-Type は付加されませんが、contentType を指定した場合は強制的に付与されます。<br>(例: <em>contentType: "application/json; charset=UTF-8"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>processData</b></td>
+    <td>data で指定した送信データをパーサで処理するか否かを true / false で指定します。規定値は true で、自動的に "application/x-www-form-urlencoded" 形式に変換されますが、false を指定することで、DOMDocument や 非変換データを無変換で送信することができます。<br>(例: <em>processData: false</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>traditional</b></td>
+    <td>true を指定すると、1階層分の変換のみを行う古い形式のパラメータ変換を行います。<br>(例: <em>traditional: true</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>headers</b></td>
+    <td>追加の HTTPヘッダ情報をヘッダ名と値のマップで記述します。<br>(例: <em>headers: { "X-Oroginal-Header" : "data..." }</em>) <u>(1.5)</u></td>
+  </tr>
+  <tr>
+    <td><b>beforeSend</b></td>
+    <td>リクエスト送信前に呼び出されるコールバック関数を指定します。コールバック関数が false を返却した場合、リクエストは中断されます。<br>(例: <em>beforeSend: function(xhr, options) { ... }</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td rowspan=2>認証</td>
+    <td><b>username</b></td>
+    <td>Basic認証を用いる際のユーザ名を指定します。<br>(例: <em>username: "tanaka"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>password</b></td>
+    <td>Basic認証を用いる際のパスワードを指定します。<br>(例: <em>password: "qWeR+tYu"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td rowspan=8>受信データ処理</td>
+    <td><b>dataType</b></td>
+    <td>データの受信形式を "text", "html", "xml", "script", "json", "jsonp" のいずれかで指定します。省略時はレスポンスの MIMEタイプなどから jQuery が自動的に判断します。<br>(例: <em>dataType: "json"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>accepts</b></td>
+    <td>dataType で指定したタイプに対して、HTTP の Accept: ヘッダで送信する MIMEタイプを指定します。<br>(例: <em>accepts: { text: "text/plain", json: "application/json" }</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>contents</b></td>
+    <td>データタイプと、レスポンスの Content-Type の正規表現とのマッピングを記述します。例えば例の場合、レスポンスの Content-Type が text/x-yaml の場合、正規表現 /yaml/ にマッチし、そのデータタイプは yaml であるとみなされます。<br>(例: <em>contents: { "yaml": /yaml/, "csv":/csv/ }</em>) <u>(1.5)</u></td>
+  </tr>
+  <tr>
+    <td><b>converters</b></td>
+    <td>contents で判別したデータタイプに対するパーサ関数を指定します。これにより、未知の MIME タイプのデータでも、独自パーサで敵セスに変換した後に done() メソッドに渡すことが可能となります。<br>(例: <em>converters: { "* yaml": function(data) { ...; return convertedData; } }</em>) <u>(1.5)</u></td>
+  </tr>
+  <tr>
+    <td><b>dataFilter</b></td>
+    <td>json や xml などのパーサで解釈される前の生のレスポンスデータを参照・更新するコールバック関数を指定します。<br>(例: <em>dataFilter: function(data, type) { ... }</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>cache</b></td>
+    <td>キャッシュを利用するか否かを true / false で指定します。規定値は通常 true ですが、dataType が json や jsonp の場合は false となります。cache が false の場合、If-Modified-Since や If-None-Match などのヘッダ送信が抑制され、また、URL の末尾に ?_=タイムスタンプ を付加することで毎回異なる URL がリクエストされるようになります。<br>(例: <em>cache: false</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>ifModified</b></td>
+    <td>true を指定すると、リクエストヘッダに If-Modified-Since ヘッダが含まれ、レスポンスが 304 Not Modified の場合に、success: や done() とならず、error: や fail() にエラー番号 304が返却されます。これにより、リソースが、すでに受信炭のデータか否かを見分けることができます。ただし、レスポンスヘッダに Last-Modified ヘッダが含まれない場合はうまく機能しないようです。<br>(例: <em>ifModified: true</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>statusCode</b></td>
+    <td>レスポンスの HTTP ステータスに応じたコールバック関数を指定します。<br>(例: <em>statusCode: { 404: function() { alert("Not Found!!"); } }</em>) <u>(1.5)</u></td>
+  </tr>
+  <tr>
+    <td rowspan=4>スクリプト呼び出し</td>
+    <td><b>scriptCharset</b></td>
+    <td>type が "GET" で、dataType が "script" または "jsonp" の場合に、読み込んだスクリプトの文字コードを指定します。<br>(例: <em>scriptCharset: "UTF-8"</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>scriptAttrs</b></td>
+    <td>スクリプトに引き渡す属性リストを指定します。<u>(3.4)</u></td>
+  </tr>
+  <tr>
+    <td><b>jsonp</b></td>
+    <td>(未稿) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>jsonCallback</b></td>
+    <td>(未稿) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td rowspan=7>その他</td>
+    <td><b>async</b></td>
+    <td>false を指定すると Ajax が同期的に実行され、Ajax 処理が完了するまで次の処理を実行しません。<br>(例: <em>async: false</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>context</b></td>
+    <td>done() などのコールバック関数で $(this) として参照されるオブジェクトを指定します。<br>(例: <em>context: document.body</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>global</b></td>
+    <td>.ajaxStart() などのグローバル Ajaxイベントを実行するか否かを true / false で指定します。規定値は true です。<br>(例: <em>global: false</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>isLocal</b></td>
+    <td>処理をローカルのものとして扱うか否かを true / false で指定します。通常、プロトコルが file, *-extension, widget の時のみローカルと認識されますが、isLocal を true にすることでそれ以外の場合でもローカルと見なして扱います。設定する場合は、$.ajaxSetup() で設定します。<br>(例: <em>isLocal: true</em>) <u>(1.5.1)</u></td>
+  </tr>
+  <tr>
+    <td><b>crossDomain</b></td>
+    <td>同じドメイン上で JSONP の様なクロスドメイン要求を強制的に使用したい場合に true を指定します。例えば、他ドメインへのサーバサイドリダイレクションなどで利用されます。規定値は、同ドメインの場合は false、クロスドメインの場合は true です。<br>(例: <em>crossDomain: true</em>) <u>(1.5)</u></td>
+  </tr>
+  <tr>
+    <td><b>xhr</b></td>
+    <td>XMLHttpRequest オブジェクトを生成するためのコールバック関数を指定します。規定値では、IE の場合は ActiveXObject()、その他のブラウザでは XMLHttpRequest() が使用されます。<br>(例: <em>xhr: MyXMLHttpRequest</em>) <u>(1.0)</u></td>
+  </tr>
+  <tr>
+    <td><b>xhrFields</b></td>
+    <td>XHR オブジェクトに追加で設定する key-value マップを指定します。<br>(例: <em>xhrFields: { withCredentials: true }</em>) <u>(1.5.1)</u></td>
+  </tr>
+</table>
+<p>jQuery 1.0 では、結果やエラーを受け取るコールバック関数を下記の様に記述していました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.ajax({
+    url: "test.php",
+    <em>success: function(data, status, xhr) {</em>
+        <span class="comment">// 通信成功時の処理</span>
+    <em>},</em>
+    <em>error: function(xhr, status, error) {</em>
+        <span class="comment">// 通信失敗時の処理</span>
+    <em>},</em>
+    <em>complete: function(xhr, status) {</em>
+        <span class="comment">// 通信完了時の処理</span>
+    <em>},</em>
+</pre>
+<p>jQuery 1.5 では、下記の様に変更されましたが、この記法は jQuery 1.8 で非推奨となりました。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.ajax({
+    url: "test.php"
+}).<em>success(function(data, status, xhr) {</em>
+    <span class="comment">// 通信成功時の処理</span>
+}).<em>error(function(xhr, status, error) {</em>
+    <span class="comment">// 通信失敗時の処理</span>
+}).<em>complete(function(xhr, status) {</em>
+    <span class="comment">// 通信完了時の処理</span>
+});
+</pre>
+<p>jQuery 1.8 以降では下記の様に記述します。always() の引数は、<i>status</i> が "success" の場合は always(<i>data</i>, <i>status</i>, <i>xhr</i>) となりますが、"success" 以外の場合は always(<i>xhr</i>, <i>status</i>, <i>error</i>) となるので注意が必要です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.ajax({
+    url: "test.php"
+}).<em>done(function(data, status, xhr) {</em>
+    <span class="comment">// 通信成功時の処理</span>
+}).<em>fail(function(xhr, status, error) {</em>
+    <span class="comment">// 通信失敗時の処理</span>
+}).<em>always(function(arg1, status, arg2) {</em>
+    <span class="comment">// 通信完了時の処理</span>
+});
+</pre>
+<p>もしくは、then() を用いて下記の様に記述します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.ajax({
+    url: "test.php"
+}).then(
+    <em>function(data, status, xhr) {</em>
+        <span class="comment">// 通信成功時の処理</span>
+    },
+    <em>function(xhr, status, error) {</em>
+        <span class="comment">// 通信失敗時の処理</span>
+    }
+);
+</pre>
+</div>
+
+<h5 id="ajaxSetup">◆ $.ajaxSetup(<i>options</i>) <u>(1.1)</u></h5>
+<div class=i>
+<p><a href="#ajax">$.ajax()</a> を呼び出す際の <i>options</i> の値をあらかじめ設定しておきます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$.ajaxSetup({</em>
+    timeout: 10000,
+    type: "POST"
+<em>});</em>
+$.ajax({
+    url: "../getdata.php",
+    data: { "id": 345 },
+}).done(function(data) { ... });
+</pre>
+</div>
+
+<h5 id="ajaxPrefilter">◆ $.ajaxPrefilter([<i>dataTypes</i>], <i>handler(options, origOptions, xhr)</i>) <u>(1.5)</u></h5>
+<div class=i>
+<p><a href="#ajax">$.ajax()</a> が呼ばれる際に毎回実行されるフィルタ関数を設定します。<i>options</i> には $.ajaxSetup() や $.ajax() で設定されたオプションや規定値のオプションが含まれます。<i>origOptions</i> には $.ajax() で設定したオプションのみが含まれます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$.ajaxPrefilter(function(options, origOptions, xhr) {</em>
+    for (var key in options) {
+        $("pre#log").append(key + "=" + options[key] + "\n");
+    }
+<em>});</em>
+</pre>
+<p><i>dataTypes</i> を指定した場合、指定したデータタイプの場合のみ、フィルタ関数が呼ばれます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+$.ajaxPrefilter(<em>"json script"</em>, function(options, origOptions, xhr) {
+    :
+});
+</pre>
+</div>
+
+<h5 id="ajaxTransport">◆ $.ajaxTransport(<i>dataType</i>, <i>handler(options, origOptions, xhr)</i>) <u>(1.5)</u></h5>
+<div class=i>
+<p>$.ajax() が内部で呼び出す送信関数(send())、中断関数(abort())を置き換えます。$.ajaxPrefilter() や converter などよりも、より高度な処理の変更を行いたい場合に実装します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$.ajaxTransport("text", function(options, origOptions, xhr) {</em>
+    <em>return {</em>
+        <em>send: function(headers, completeCallback) {</em>
+            <span class="comment">// 送信処理</span>
+        <em>},</em>
+        <em>abort: function() {</em>
+            <span class="comment">// 中断処理</span>
+        <em>}</em>
+    <em>};</em>
+<em>});</em>
+</pre>
+</div>
+
+<h4>Ajax(Global Ajax Event Handlers)</h4>
+
+<h5 id="ajaxStart">◆ <i>obj</i>.ajaxStart(<i>handler()</i>) <u>(1.0)</u></h5>
+<h5 id="ajaxSend">◆ <i>obj</i>.ajaxSend(<i>handler(event, xhr, options)</i>) <u>(1.0)</u></h5>
+<h5 id="ajaxSuccess">◆ <i>obj</i>.ajaxSuccess(<i>handler(event, xhr, options)</i>) <u>(1.0)</u></h5>
+<h5 id="ajaxError">◆ <i>obj</i>.ajaxError(<i>handler(event, xhr, options, error)</i>) <u>(1.0)</u></h5>
+<h5 id="ajaxComplete">◆ <i>obj</i>.ajaxComplete(<i>handler(event, xhr, options)</i>) <u>(1.0)</u></h5>
+<h5 id="ajaxStop">◆ <i>obj</i>.ajaxStop(<i>handler()</i>) <u>(1.0)</u></h5>
+<div class=i>
+<p>Ajax処理開始時(Start)、送信開始時(Send)、通信成功時(Success)、通信失敗時(Error)、通信完了時(Complete)、Ajax処理停止時(Stop)にグローバルに呼び出されるイベントハンドラを指定します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+<em>$(document).ajaxStart(function() {</em>
+    $("#log").append("==== Start\n");
+});
+<em>$(documentg).ajaxSend(function(e, xhr, options, error) {</em>
+    $("#log").append("==== Send\n");
+});
+<em>$(documentg).ajaxSuccess(function(e, xhr, options) {</em>
+    $("#log").append("==== Success\n");
+});
+<em>$(documentg).ajaxError(function(e, xhr, options) {</em>
+    $("#log").append("==== Error\n");
+});
+<em>$(documentg).ajaxComplete(function(e, xhr, options) {</em>
+    $("#log").append("==== Complete\n");
+});
+<em>$(documentg).ajaxStop(function() {</em>
+    $("#log").append("==== Stop\n");
+});
+</pre>
+</div>
+
+<h4>Ajax(Helper Functions)</h4>
+
+<h5 id="serialize">◆ <i>obj</i>.serialize() <u>(1.0)</u></h5>
+<div class=i>
+<p>フォームデータを単一の文字列にシリアライズします。フォームに入力された値を Ajax でサーバに引き渡す際などに有用です。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var str = $("form#form1").<em>serialize()</em>;
+</pre>
+<p>例えば、下記のフォームに対して上記のスクリプトを実行したとします。</p>
+<div class="tab">HTML</div>
+<pre class=c2>
+&lt;form id="form1"&gt;
+    &lt;input type="text" name="t1" value="AAA"&gt;
+    &lt;input type="text" name="t2" value="BBB"&gt;
+    &lt;input type="text" name="t3" value="CCC"&gt;
+&lt;/form&gt;
+</pre>
+<p>serialize() の戻り値 str は下記の文字列が設定されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+t1=AAA&amp;t2=BBB&amp;t3=CCC
+</pre>
+</div>
+
+<h5 id="serializeArray">◆ <i>obj</i>.serializeArray() <u>(1.2)</u></h5>
+<div class=i>
+<p>フォームデータを名前と値の配列で取得します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var data = $("form#form1").<em>serializeArray()</em>;
+</pre>
+<p>例えば、上記の serialize() のサンプルにあるフォームに対して serializeArray() を実行すると、下記の構造の配列が返されます。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+[
+    { name: "t1", value: "AAA" },
+    { name: "t2", value: "BBB" },
+    { name: "t3", value: "CCC" }
+]
+</pre>
+</div>
+
+<h5 id="param">◆ $.param(<i>obj</i>) <u>(1.2)</u></h5>
+<h5>◆ $.param(<i>obj</i>, <i>traditional</i>) <u>(1.4)</u></h5>
+<div class=i>
+<p>URLクエリや Ajax通信のために、オブジェクトをシリアライズ化します。</p>
+<div class="tab">JavaScript</div>
+<pre class=c2>
+var obj = {
+    a: "AAA",
+    b: {
+       c: "CCC"
+    },
+    d: [ "DD1", "DD2" ]
+};
+
+str1 = <em>$.param(obj)</em>;                       <span class="comment">a=AAA&amp;b%5Bc%5D=CCC&amp;d%5B%5D=DD1&amp;d%5B%5D=DD2</span>
+str2 = decodeURIComponent(<em>$.param(obj)</em>);   <span class="comment">a=AAA&amp;b[c]=CCC&amp;d[]=DD1&amp;d[]=DD2</span>
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2013-2019 杜甫々</div>
+<div>初版：2013年2月3日、最終更新：2019年5月5日</div>
+<div>http://www.tohoho-web.com/js/jquery/ajax.htm</div>
+</body>
+</html>

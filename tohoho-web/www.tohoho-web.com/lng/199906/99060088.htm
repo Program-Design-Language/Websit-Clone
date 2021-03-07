@@ -1,0 +1,157 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>セットクッキーで最後のデータしかセットされない。</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>セットクッキーで最後のデータしかセットされない。</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060087.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060087.htm">[前に]</a>
+<a href="99060089.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060089.htm">[次に]</a>
+<hr>
+<span class=name>ユミ</span>
+<span class=email><a href="mailto:yumi-f@ntec.ncs.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/09(水) 09:17:25</span><br>
+セットクッキーでデータをセットすると最後のデータしかセットされません。<br>
+どうしてなんでしょうか？<br>
+良いアドバイスお願いします。<br>
+<hr>
+<span class=name>sekita</span>
+<span class=time>1999/06/09(水) 09:21:56</span><br>
+そのソースの関連部分のコピーを載せればすぐにわかるでしょう。<br>
+またソースをみないとこには解決できないと思います。<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/09(水) 09:25:29</span><br>
+すいません。ソースを載せてなかったですね。<br>
+うっかりしてました。<br>
+以下がソースです。よろしくお願いします。<br>
+<br>
+～～＊～～＊～～＊～～＊～～＊～～＊～～＊～～#!/usr/local/bin/perl<br>
+<br>
+print "Content-type: text/html\n";<br>
+print "Set-Cookie: ";<br>
+read(STDIN,$buffer,$ENV{'CONTENT_LENGTH'});<br>
+@pairs = split(/&amp;/,$buffer);<br>
+foreach $pair(@pairs){<br>
+	($name,$value) = split(/=/,$pair);<br>
+	$value =~ tr/+/ /;<br>
+	$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+	$FORM{$name} = $value;<br>
+	print "$name=$FORM{$name}; ";<br>
+}<br>
+	print "expires=Sat, 1-Jan-2000 00:00:00 GMT;\n";<br>
+	print "\n";<br>
+	&amp;Get_Cookie;<br>
+<br>
+sub Get_Cookie {<br>
+print "&lt;html&gt;&lt;center&gt;&lt;h1&gt;Cookie中身&lt;/h1&gt;&lt;/center&gt;&lt;hr&gt;\n";<br>
+@pairs = split(/;\s*/,$ENV{'HTTP_COOKIE'});<br>
+foreach $pair(@pairs){<br>
+	($name,$value) = split(/=/,$pair);<br>
+	print "キー：&lt;b&gt;$name&lt;/b&gt;&lt;br&gt;";<br>
+	print "実データ:&lt;b&gt;$value&lt;/b&gt;";<br>
+	}<br>
+}<br>
+print "&lt;/html&gt;\n";<br>
+<hr>
+<span class=name>sekita</span>
+<span class=email><a href="mailto:t_sekita@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/06/09(水) 11:54:30</span><br>
+上のスクリプトで<br>
+print "Set-Cookie: ";　を取って<br>
+<br>
+print "expires=Sat, 1-Jan-2000 00:00:00 GMT;\n";<br>
+print "\n";<br>
+<br>
+を次のように変えるとクッキーが表示されます。<br>
+<br>
+print "Set-Cookie: a=aa\n";<br>
+print "Set-Cookie: b=bb\n";<br>
+print "Set-Cookie: c=cc;expires=Sat, 1-Jan-2000 00:00:00 GMT\n\n";<br>
+<br>
+ということはクッキーがただしく設定されていないのでしょう。<br>
+もしかすると<br>
+<br>
+print "$name=$FORM{$name}; ";<br>
+<br>
+でクッキーがセットされると勘違いされているのでしょうか？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/09(水) 13:30:50</span><br>
+クッキー一つごとに<br>
+Set-Cookie ヘッダを書けば、複数個のクッキーを設定できます。<br>
+<br>
+foreach $pair(@pairs){<br>
+($name,$value) = split(/=/,$pair);<br>
+$value =~ tr/+/ /;<br>
+$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C",hex($1))/eg;<br>
+$FORM{$name} = $value;<br>
+print "Set-Cookie: $name=$FORM{$name};expires=Sat, 1-Jan-2000 00:00:00 GMT;\n";<br>
+}<br>
+こんな風に。<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/09(水) 13:46:46</span><br>
+sekitaさん、ふじさん、アドバイスありがとうございます。<br>
+そのように記述したのですがクッキーにセットされたのは、<br>
+Set-Cookie:<br>
+だけになってしまいました。<br>
+今度はデータが上手くセットされないんです。<br>
+セットクッキーはふじさんに教えていただいた通りに書いて他の記述はなにも変えていません。<br>
+何かアドバイスお願いします。<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/09(水) 13:50:09</span><br>
+上記に付けたしです。<br>
+クッキーの中身を見てみると<br>
+Set-Cookie:<br>
+<br>
+172.21.8.26/~fuji/futaba<br>
+0<br>
+627916800<br>
+29316075<br>
+1421998368<br>
+29277492<br>
+*<br>
+というようにセットされていました。<br>
+ちゃんとデータがセットされていないということはセットクッキーのところの記述がまずいんでしょうか？？<br>
+ぜひ、教えてください。よろしくお願いします。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/09(水) 14:59:17</span><br>
+元のソースで2行目の<br>
+print "Set-Cookie: ";<br>
+を削除しました？<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/09(水) 15:12:10</span><br>
+はい。そこはちゃんとコメントにしました。<br>
+でも、さっきのようにセットされてしまうんです。<br>
+助言よろしくお願いします。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/06/09(水) 16:30:44</span><br>
+とりあえず、ブラウザの設定で「クッキーを受け入れる時に警告を表示する」<br>
+にしておいて、（NNなら「編集」→「設定」→「詳細」、<br>
+IEなら「インターネットオプション」→「セキュリティー」）<br>
+複数回ダイアログが開いて確認を求めて来るかどうか、調べてみては。<br>
+<br>
+あと、一行目を<br>
+print "Content-type: text/html\n\n";<br>
+とすれば、Set-Cookie を書く部分がブラウザに表示されるので、<br>
+それが期待通り（Set-Cookieヘッダの行が複数）になっているかどうか。<br>
+<hr>
+<span class=name>ユミ</span>
+<span class=time>1999/06/10(木) 13:04:52</span><br>
+<span class=resolv>[[解決]]</span><br>
+ふじさんの言う通りにしてみたら、なんとデーターが入っていませんでした。<br>
+他のやり方がわからなかったので、変数に入れてデータをくっつけてSetCookieしたらうまくいきました。<br>
+みなさんどうもありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060087.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060087.htm">[前に]</a>
+<a href="99060089.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060089.htm">[次に]</a>
+</body>
+</html>

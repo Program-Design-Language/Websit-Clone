@@ -1,0 +1,125 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>body onlordとlayer</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>body onlordとlayer</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040020.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040020.htm">[前に]</a>
+<a href="99040022.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040022.htm">[次に]</a>
+<hr>
+<span class=name>まゆ</span>
+<span class=time>1999/04/04(日) 00:42:32</span><br>
+&lt;body onlord="Img(a)"&gt;などの設定をしてるページで<br>
+&lt;layer id=1 z-index=1 width="100%" height="99%" (いろいろ) &gt;&lt;/layer&gt;<br>
+&lt;layer id=1 z-index=0 width="100%" height="99%" (これもいろいろ) &gt;&lt;/layer&gt;<br>
+としている場合、javascriptエラーが出てしまい（Img(a)が見つからない）ますが、仕様のようあものでしょうか？<br>
+つまり、&lt;layer&gt;ないのオブジェクトの参照？は<br>
+その外に記述することになる&lt;body&gt;タグからはできない....<br>
+<br>
+というような関係が、このエラーをおこしているのですか？？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/04(日) 04:06:39</span><br>
+質問の内容だけでは全体像が見えないのですが・・・。<br>
+<br>
+<font color="#CC8000">&gt;（img(a)が見つからない）</font><br>
+このメッセージから判断すると，img()という関数が認識されてないようですが。<br>
+正しく定義しているのでしょうか？<br>
+＃imgなんて関数，自分で定義しないとありませんよね？<br>
+<br>
+「レイヤー内のオブジェクトの参照」は，その外側から<br>
+document.LAYERNAME.document.OBJECTNAME　（LAYERNAME,OBJECTNAMEは自分でつけたもの）<br>
+という感じでできると思います。<br>
+<br>
+質問の内容からうけた印象だと，仕様がどうこうといった以前に，imgなる関数を正しく<br>
+設定しているかどうかの，割と単純なミスのような気がするのですが。<br>
+ただ，これがまゆさんの意図している質問への答えかどうかは自信がないので。<br>
+<br>
+もう少し具体的に，どういった動作をさせようとして，どういった考え方で<br>
+スクリプトを組んだか教えていただければ，もう少し判りやすい回答ができるかも<br>
+しれません。<br>
+＃あくまで「かも」ですけど (^^;;;<br>
+<hr>
+<span class=name>まゆ</span>
+<span class=time>1999/04/04(日) 06:15:58</span><br>
+おはようございます。<br>
+Tmbさん、ご丁寧な解説をありがとうございました。<br>
+下手な文章でごめんなさいです。<br>
+どーも作文が苦手。それから、最初の私のタグで、<br>
+二つのlayerが同じid　なのは、発言の際のスペルミスです（泣）<br>
+<br>
+えっと、とほほさんのページとかで勉強して、マウスをのせると画像が変わるスクリプトを&lt;head&gt;&lt;／head&gt;ないに書きました。<br>
+それで、あらかじめ変わる画像を読み込んでいます。<br>
+&lt;layer&gt;を全部とっぱらってしまえば、ちゃんと動くんです。。<br>
+マウスをのせる画像を&lt;layer&gt;&lt;／layer&gt;のなかにかくと、エラーが出ます。<br>
+そんなわけで、&lt;layer&gt;&lt;／layer&gt;の外にめいれいを出してるのは<br>
+中にはとどかないのかしらんと思ったのです。<br>
+<br>
+<font color="#CC8000">&gt; document.LAYERNAME.document.OBJECTNAME　（LAYERNAME,OBJECTNAMEは自分でつけたもの）</font><br>
+という感じでできると思います。<br>
+<br>
+これは&lt;head&gt;ないにjavascriptとして設定するのですか？<br>
+ということは、画像が変わるスクリプトをそのようなレイヤ仕様のものに作り替えないとあかんのですね。。<br>
+<br>
+挫折しそう。。<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/04(日) 21:04:11</span><br>
+<font color="#CC8000">＞ということは、画像が変わるスクリプトをそのようなレイヤ仕様のものに作り替えないとあかんのですね。。</font><br>
+<br>
+いや，言うほど難しいことはないかと。ただ，レイヤーの中はいわば「独立したページ」なので，その中のものを指定する場合は<br>
+「レイヤーの中のものだよ」ということを明記しておく必要があるだけの話で。<br>
+ちょっと説明がややこしくなるので，テスト用に作ったスクリプトを乗っけ<br>
+ときますので，参考にして下されば。レイヤーの内／外から，内／外の画像を<br>
+参照する場合の例です。<br>
+<br>
+&lt;body&gt;<br>
+&lt;script language="JavaScript"&gt;<br>
+function changeImg(img,srcs) {<br>
+img.src=srcs;<br>
+}<br>
+&lt;/script&gt;<br>
+&lt;a href="../"&nbsp;&nbsp;onMouseOver="changeImg(document.img1,'images/update.gif');"&gt;IMG1変える&lt;/a&gt;&lt;BR&gt;<br>
+&lt;a href="../"&nbsp;&nbsp;onMouseOver="changeImg(document.layer1.document.img2,'images/update.gif');"&gt;IMG2変える&lt;/a&gt;&lt;BR&gt;<br>
+&lt;img src="images/new.gif" name="img1"&gt;<br>
+&lt;BR&gt;&lt;BR&gt;<br>
+&lt;layer name="layer1"&gt;<br>
+&lt;a href="../"&nbsp;&nbsp;onMouseOver="changeImg(parentLayer.document.img1,'images/new.gif');"&gt;IMG1戻す&lt;/a&gt;&lt;BR&gt;<br>
+&lt;a href="../"&nbsp;&nbsp;onMouseOver="changeImg(document.img2,'images/new.gif');"&gt;IMG2戻す&lt;/a&gt;&lt;BR&gt;<br>
+&lt;img src="images/new.gif" name="img2"&gt;<br>
+&lt;/a&gt;<br>
+&lt;/layer&gt;<br>
+&lt;/body&gt;<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/04/04(日) 21:06:26</span><br>
+あ，最後に消し忘れた&lt;/a&gt;が残ってました。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/04/05(月) 11:08:15</span><br>
+レイヤーを使用する場合、<br>
+画像の場所を相対的に指定しようとすると<br>
+混乱しちゃうので（私だけ？）<br>
+windowから絶対的に書いちゃえば良いと思う。<br>
+<br>
+レイヤーの中の画像を変える場合<br>
+　window.document.レイヤー名.document.イメージ名<br>
+レイヤーの外の画像を変える場合<br>
+　window.document.イメージ名<br>
+レイヤーの中のレイヤーの画像を変える場合<br>
+　window.外のレイヤー名.document.中のレイヤー名.document.イメージ名<br>
+<br>
+とりあえず、こんな感じで覚えて、慣れてきてから相対的に指定すれば<br>
+よいかと・・・（window・document・レイヤー名の省略、parentの使用等）<br>
+<br>
+＃でも私の場合、レイヤー使用できる状況では画像のsrcの変更しない<br>
+＃レイヤーの可視、不可視を切りかえた方が楽なんだもん<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040020.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040020.htm">[前に]</a>
+<a href="99040022.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040022.htm">[次に]</a>
+</body>
+</html>

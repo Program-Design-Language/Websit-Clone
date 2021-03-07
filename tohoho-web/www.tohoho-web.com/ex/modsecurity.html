@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>ModSecurity入門 - とほほのWWW入門</title>
+<meta name="viewport" content="wih4h=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>ModSecurity入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="../wwwxx.htm" tppabs="http://www.tohoho-web.com/wwwxx.htm">アラカルト</a> &gt;
+ModSecurity入門
+
+<h4>目次</h4>
+<div class="i">
+<ul>
+<li><a href="#whatis">ModSecurityとは</a></li>
+<li><a href="#install">インストール</a></li>
+<li><a href="#try">試してみる</a></li>
+<li><a href="#audit-log">監査ログ</a></li>
+<li><a href="#config">コンフィグファイル</a></li>
+<li><a href="#links">リンク</a></li>
+</ul>
+</div>
+
+<h4 id="whatis">ModSecurityとは</h4>
+<div class=i>
+<ul>
+<li>オープンソースのWAF(Web Application Firewall)です。
+<li>XSS や SQLインジェクションなどの Web に対する攻撃を検知・防御します。
+<li>Trastwave社が開発し、Apache License 2.0 で公開しています。
+<li>ホスト型の WAF と呼ばれるもので、Webサーバにインストールします。
+<li>Apache, Nginx, IIS などに組み込んで使用することができます。
+<li>攻撃パターンを定義する CRS(Core Rule Set)と組み合わせて使用します。
+<li>CRS はOWASP(Open Web Application Security Project)が公開しています。
+<li>CRS のライセンスも Apache License 2.0 です。
+<li>現時点(2020年4月)の最新版は 3.0.4 ですが、ここでは、CentOS にインストール可能な 2.x について説明します。
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<p>CentOS 7 に Apache 対応版の ModSecurity 2.9 をインストールする手順を下記に示します。</p>
+<div class="title-tab">Shell</div>
+<pre class="c2">
+# yum install -y httpd
+# yum install -y epel-release
+# yum install -y mod_security mod_security_crs
+# systemctl enable httpd
+# systemctl start httpd
+</pre>
+</div>
+
+<h4 id="try">試してみる</h4>
+<div class="i">
+<p>下記の様な簡単なフォームから 「';」 を入力して送信してください。<a href="security.html#sql-injection" tppabs="http://www.tohoho-web.com/ex/security.html#sql-injection">SQLインジェクション</a> の疑いがあるとして、403 Forbidden エラーとなればテストは成功です。</p>
+<div class="title-tab">HTML</div>
+<pre class="c2">
+&lt;form method="POST" action="test_page.html"&gt;
+  &lt;input type="text" name="data"&gt;
+  &lt;button&gt;OK&lt;/button&gt;
+&lt;/form&gt;
+</pre>
+</div>
+
+<h4 id="audit-log">監査ログ</h4>
+<div class="i">
+<p>監査ログは下記に記録されます。</p>
+<ul>
+<li>/var/log/httpd/modsec_audit.log
+</ul>
+<div class="title-tab">/var/log/httpd/modsec_audit.log</div>
+<div class="c2">
+--bd796373-A--<br>
+[12/Apr/2020:02:22:13 +0000] XpJ7VZPq2O@DCdEaiF0OawAAAAM 169.254.127.84 53499 172.17.0.2 80<br>
+--bd796373-B--<br>
+POST /index.html HTTP/1.1<br>
+Host: www.example.com<br>
+Connection: keep-alive<br>
+Content-Length: 11<br>
+Cache-Control: max-age=0<br>
+Origin: http://www.example.com<br>
+Upgrade-Insecure-Requests: 1<br>
+Content-Type: application/x-www-form-urlencoded<br>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36<br>
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9<br>
+Referer: http://www.example.com/<br>
+Accept-Encoding: gzip, deflate<br>
+Accept-Language: ja,en-US;q=0.9,en;q=0.8<br>
+<br>
+--bd796373-C--<br>
+data=%27%3B<br>
+--bd796373-F--<br>
+HTTP/1.1 403 Forbidden<br>
+Content-Length: 212<br>
+Keep-Alive: timeout=5, max=100<br>
+Connection: Keep-Alive<br>
+Content-Type: text/html; charset=iso-8859-1<br>
+<br>
+--bd796373-E--<br>
+<br>
+--bd796373-H--<br>
+Message: Access denied with code 403 (phase 2). Pattern match "(^[\"'`\xc2\xb4\xe2\x80\x99\xe2\x80\x98;]+|[\"'`\xc2\xb4\xe2\x80\x99\xe2\x80\x98;]+$)" at ARGS:data. [file "/etc/httpd/modsecurity.d/activated_rules/modsecurity_crs_41_sql_injection_attacks.conf"] [line "64"] [id "981318"] [rev "2"] [msg "SQL Injection Attack: Common Injection Testing Detected"] [data "Matched Data: '; found within ARGS:data: ';"] [severity "CRITICAL"] [ver "OWASP_CRS/2.2.9"] [maturity "9"] [accuracy "8"] [tag "OWASP_CRS/WEB_ATTACK/SQL_INJECTION"] [tag "WASCTC/WASC-19"] [tag "OWASP_TOP_10/A1"] [tag "OWASP_AppSensor/CIE1"] [tag "PCI/6.5.2"]<br>
+Apache-Error: [file "apache2_util.c"] [line 271] [level 3] [client 169.254.127.84] ModSecurity: Access denied with code 403 (phase 2). Pattern match "(^[\\\\"'`\\\\xc2\\\\xb4\\\\xe2\\\\x80\\\\x99\\\\xe2\\\\x80\\\\x98;]+|[\\\\"'`\\\\xc2\\\\xb4\\\\xe2\\\\x80\\\\x99\\\\xe2\\\\x80\\\\x98;]+$)" at ARGS:data. [file "/etc/httpd/modsecurity.d/activated_rules/modsecurity_crs_41_sql_injection_attacks.conf"] [line "64"] [<em>id "981318"</em>] [rev "2"] [<em>msg "SQL Injection Attack: Common Injection Testing Detected"</em>] [data "Matched Data: '; found within ARGS:data: ';"] [<em>severity "CRITICAL"</em>] [ver "OWASP_CRS/2.2.9"] [maturity "9"] [accuracy "8"] [tag "OWASP_CRS/WEB_ATTACK/SQL_INJECTION"] [tag "WASCTC/WASC-19"] [tag "OWASP_TOP_10/A1"] [tag "OWASP_AppSensor/CIE1"] [tag "PCI/6.5.2"] [hostname "www.example.com"] [uri "/index.html"] [unique_id "XpJ7VZPq2O@DCdEaiF0OawAAAAM"]<br>
+Action: Intercepted (phase 2)<br>
+Stopwatch: 1586658133894961 2946 (- - -)<br>
+Stopwatch2: 1586658133894961 2946; combined=1662, p1=850, p2=732, p3=0, p4=0, p5=79, sr=76, sw=1, l=0, gc=0<br>
+Response-Body-Transformed: Dechunked<br>
+Producer: ModSecurity for Apache/2.9.2 (http://www.modsecurity.org/); OWASP_CRS/2.2.9.<br>
+Server: Apache/2.4.6 (CentOS)<br>
+Engine-Mode: "ENABLED"<br>
+<br>
+--bd796373-Z--
+</div>
+<p>監査ログは、ひとつのトランザクションに対して A～Z のセクションが記録されます。<b>SecAuditLogParts</b> でどのセクションをロギングするかを制御できます。</p>
+<dl class="dl1">
+<dt>Aセクション</dt>
+<dd>監査ログのヘッダ情報。発生時刻や接続元IPアドレス情報などを含みます。</dd>
+<dt>Bセクション</dt>
+<dd>リクエストヘッダ。</dd>
+<dt>Cセクション</dt>
+<dd>リクエストボディ。</dd>
+<dt>Dセクション</dt>
+<dd>中間的なレスポンスヘッダ。ModSecurity によって変更される前のレスポンスヘッダだと思いますが、未実装です。</dd>
+<dt>Eセクション</dt>
+<dd>中間的なレスポンスボディ。ModSecurity によって変更される前のレスポンスボディだと思いますが、未実装です。</dd>
+<dt>Fセクション</dt>
+<dd>最終的なレスポンスヘッダ。</dd>
+<dt>Gセクション</dt>
+<dd>最終的なレスポンスボディ。未実装。</dd>
+<dt>Hセクション</dt>
+<dd>監査の要約情報。<b>id</b> にはルールID、<b>msg</b> にはルール名、<b>severity</b> には重要度が記録されます。</dd>
+<dt>Iセクション</dt>
+<dd>リクエストボディ。Cセクションとほぼ同様ですが、アップロードファイルの中身をロギングしない点が異なります。ただ、現状の実装では、C を指定しても、I を指定しても、ファイルの中身をロギングしない Cセクションが記録されるようです。</dd>
+<dt>Jセクション</dt>
+<dd>multipart/form-data で送信されるアップロードファイルに関する情報。</dd>
+<dt>Kセクション</dt>
+<dd>監査でマッチしたルール情報。</dd>
+<dt>Zセクション</dt>
+<dd>ひとつのトランザクションに関する監査ログの終了を示す。</dd>
+</dl>
+</div>
+
+<h4 id="config">コンフィグファイル</h4>
+<div class="i">
+<p>ModSecurity に関する設定ファイルは下記にあります。</p>
+<ul>
+<li>/etc/httpd/conf.d/mod_security.conf - ModSecurityの設定ファイル
+<li>/etc/httpd/modsecurity.d/modsecurity_crs_10_config.conf - CRSの設定ファイル
+<li>/etc/httpd/modsecurity.d/activated_rules/*.conf - CRS定義(アクティブなルール)
+<li>/usr/lib/modsecurity.d/base_rules/*.conf - CRS定義(基本ルール)
+</ul>
+<p>主な設定項目は下記の通り。注意すべき項目に <em>*</em> をつけています。</p>
+<dl class="dl1">
+<dt>SecRuleEngine<em>*</em></dt>
+<dd>ルールエンジンの動作を指定します。<b>On</b> は防御有効。<b>Off</b> は無効。<b>DetectionOnly</b> は検知(ロギング)のみを行います。デフォルトは <b>On</b> になっていますが、運用開始時は <b>DetectionOnly</b> で運用し、ログを見ながらルールの除外設定を行い、安定してから <b>On</b> にするのがお勧めです。</dd>
+<dt>SecRequestBodyAccess</dt>
+<dd>POST などのリクエストボディを解析するには <b>On</b> を指定します。</dd>
+<dt>SecRule<em>*</em></dt>
+<dd>検証ルールを指定します。詳細は別途。</dd>
+<dt>SecRequestBodyLimit<em>*</em></dt>
+<dd>検証するリクエストボディの最大バイト数を指定します。このサイズを超えるデータは POST やアップロードできなくなります。</dd>
+<dt>SecRequestBodyNoFilesLimit</dt>
+<dd>検証するリクエストボディの最大バイト数を指定します。ただし、ファイルアップロードには適用されません。</dd>
+<dt>SecRequestBodyInMemoryLimit</dt>
+<dd>オンメモリで検証するリクエストボディの最大バイト数を指定します。このサイズを超えるデータをアップロードする場合、/var/lib/mod_security/ に一時ファイルが作成されますのでパーミッションに注意してください。</dd>
+<dt>SecRequestBodyLimitAction<em>*</em></dt>
+<dd>リクエストボディの最大バイト数を超えた場合の動作を指定します。<b>Reject</b> は破棄を、<b>ProcessPartial</b> は SecRequestBodyLimit で指定したサイズまでを検証し、残りはパスさせます。</dd>
+<dt>SecPcreMatchLimit</dt>
+<dd>PCRE正規表現の最大マッチング数を指定します。</dd>
+<dt>SecPcreMatchLimitRecursion</dt>
+<dd>PCRE正規表現の最大再帰数を指定します。</dd>
+<dt>SecResponseBodyAccess</dt>
+<dd>レスポンスボディの検証を行うかどうかを指定します。</dd>
+<dt>SecDebugLog</dt>
+<dd>デバッグログファイルを指定します。</dd>
+<dt>SecDebugLogLevel</dt>
+<dd>デバッグログの出力レベルを 0～9 の範囲で指定します。0 はロギングしません。</dd>
+<dt>SecAuditEngine</dt>
+<dd>監査ログエンジンを設定します。<b>On</b> はすべてをロギングする、<b>Off</b> はすべてロギングしない。<b>RelevantOnly</b> は warning、error、または SecAuditLogRelevantStatus で定義されたステータスコードにマッチする場合のみロギングします。</dd>
+<dt>SecAuditLogRelevantStatus</dt>
+<dd>監査ログに記録するステータスコードを指定します。"^(?:5|4(?!04))" は 5 または 4 で始まるコード(ただし 404 は除外する)を意味します。</dd>
+<dt>SecAuditLogParts<em>*</em></dt>
+<dd>監査ログに記録するセクションを指定します。例えば ABIH は A(ヘッダ)、B(リクエストヘッダ)、I(リクエストボディ)、H(監査の要約情報)を記録することを意味します。</dd>
+<dt>SecAuditLogType</dt>
+<dd>監査ログの保存方法を指定します。<b>Serial</b> はひとつのファイルにシリアルに書き込みます。<b>Concurrent</b> はトランザクション毎に別々のファイルに書き込みます。</dd>
+<dt>SecAuditLogStorageDir</dt>
+<dd>SecAuditLogType に <b>Concurrent</b> を指定した際にログを保存するディレクトリを指定します。ログファイルは、YYYYMMDD/YYYYMMDD-HHMM/YYYYMMDD-HHMMSS-識別子 のファイル名で保存されます。ディレクトリのパーミッションに注意してください。</dd>
+<dt>SecAuditLog</dt>
+<dd>監査ログのファイル名を指定します。</dd>
+<dt>SecArgumentSeparator</dt>
+<dd>application/x-www-form-urlencoded で送信されるパラメータの区切り文字を指定します。</dd>
+<dt>SecCookieFormat</dt>
+<dd>Cookie形式のバージョンを指定します。通常は <b>0</b> で構いません。</dd>
+<dt>SecTmpDir</dt>
+<dd>バッファリングなどの一時ファイルを格納するディレクトリを指定します。ディレクトリのパーミッションに注意してください。</dd>
+<dt>SecDataDir</dt>
+<dd>IPアドレス情報やセッション情報などのデータを格納するディレクトリを指定します。</dd>
+<dt>SecRuleRemoveById<em>*</em></dt>
+<dd>無視するルールのルールIDを指定します。監査ログ Hセクションに記録されるルールID を指定します。例えば、特定のページに対して特定のルールを除外したい時は、下記の様に指定します。<br>
+<div class="title-tab">/etc/httpd/conf.d/mod_security.conf</div>
+<pre class="c2">
+&lt;LocationMatch "/login"&gt;
+  SetRuleRemoveById 960024 981318 
+&lt;/LocationMatch&gt;
+</pre>
+</dd>
+</dl>
+</div>
+
+<h4 id="links">リンク</h4>
+<div class="i">
+<ul>
+<li><a target="_top" href="javascript:if(confirm('https://modsecurity.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://modsecurity.org/'" tppabs="https://modsecurity.org/">ModSecurity - Home</a>
+<li><a target="_top" href="javascript:if(confirm('https://github.com/SpiderLabs/ModSecurity/btng1.gif  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://github.com/SpiderLabs/ModSecurity/btng1.gif'" tppabs="https://github.com/SpiderLabs/ModSecurity/wiki">ModSecurity - Reference Manual</a>
+<li><a target="_top" href="javascript:if(confirm('https://owasp.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://owasp.org/'" tppabs="https://owasp.org/">OWASP (Open Web Application Security Project)</a>
+<li><a target="_top" href="javascript:if(confirm('https://coreruleset.org/  \n\n���ļ��޷��� Teleport Ultra ����, ��Ϊ ����һ�����·���ⲿ������Ϊ������ʼ��ַ�ĵ�ַ��  \n\n�����ڷ������ϴ���?'))window.location='https://coreruleset.org/'" tppabs="https://coreruleset.org/">CRS(Core Rule Set)</a>
+</ul>
+</div>
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年4月12日 最終更新:2020年4月12日</div>
+<div>http://www.tohoho-web.com/ex/modsecurity.html</div>
+</body>
+</html>

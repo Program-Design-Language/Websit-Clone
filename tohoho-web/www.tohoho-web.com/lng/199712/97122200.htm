@@ -1,0 +1,130 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>フォームのCheckboxの値をオフの場合でも送信するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>フォームのCheckboxの値をオフの場合でも送信するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199712/index.htm">[上に]</a>
+<a href="97122100.htm" tppabs="http://www.tohoho-web.com/lng/199712/97122100.htm">[前に]</a>
+<a href="97122400.htm" tppabs="http://www.tohoho-web.com/lng/199712/97122400.htm">[次に]</a>
+<hr>
+<span class=name>ゆみぞお</span>
+<span class=time>1997/12/22(月) 14:09:32</span><br>
+フォームの Checkbox オブジェクトがオフの場合でもプログラム<br>
+側へ Name（Valueはなしでもよい）を送信したいと考えています。<br>
+項目が大量にあるため、Yes-No の２個の radioボタンを使うので<br>
+はなく、各項目 １個のチェックボックスで オン･オフを入力させたいのです。<br>
+JavaScript を使ったり、いろいろといじりまわしているのですが<br>
+これを実現するための簡単な方法があればアドバイスください。<br>
+よろしくお願いいたします。<br>
+<hr>
+<span class=name>かわもと</span>
+<span class=email><a href="mailto:kawamoto@ksc.co.jp">[E-Mail]</a></span>
+<span class=time>1997/12/22(月) 15:12:39</span><br>
+CheckBoxと同一Nameを持つhiddenの項目を作成し、<br>
+ValueにNullをセットしてはダメですか？<br>
+ただし、値は配列で渡る事になるため、受け取り側で<br>
+それなりの処理をする必要がありますが。<br>
+<hr>
+<span class=name>ゆみぞお</span>
+<span class=time>1997/12/22(月) 16:42:33</span><br>
+さっそくのコメントありがとうございました。<br>
+Hidden を使って、無事 Nameを送信することができました！<br>
+・・が、おっしゃる通り オンにしたときに値が配列になり<br>
+そのハンドリングではまっています。<br>
+ともあれ、一歩前進いたしました。助かりました！<br>
+<hr>
+<span class=name>のどあめ</span>
+<span class=time>1999/12/20(月) 10:59:40</span><br>
+この質問に、再度追加質問したいのですがお願い致します。<br>
+オンになった時、配列になることはわかりましたが、その配列をハンドリングする方法で私は、はまったまま抜けれません（苦笑）<br>
+どなたかPeal側で判断する方法を教えてくださいませんでしょうか。<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>The Lock</span>
+<span class=time>1999/12/20(月) 11:26:24</span><br>
+ロォック様、曰く<br>
+<br>
+HTML側でのINPUTのNAMEがhogehogeだとして<br>
+<br>
+$conv = 'sjis';	#文字コード x-euc-jp/x-sjis ／ euc/sjis<br>
+############<br>
+if ($ENV{'REQUEST_METHOD'} eq "POST") { read(STDIN,$buffer,$ENV{'CONTENT_LENGTH'}); }<br>
+else { $buffer = $ENV{'QUERY_STRING'}; }<br>
+@pairs = split(/&amp;/,$buffer);<br>
+foreach $pair (@pairs) {<br>
+	($name, $value) = split(/=/, $pair);<br>
+	$value =~ tr/+/ /;<br>
+	$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;<br>
+	&amp;jcode'convert(*value,$conv);<br>
+	if ($name eq 'hogehoge') { push(@HOGE,$value); }<br>
+	else { $FORM{$name} = $value; }<br>
+}<br>
+<br>
+入力処理を以上のようにして<br>
+後は、配列@HOGEから値をひとつづつ取り出して（あるいは、配列が２つある場合は、先頭の配列は無視するとか）処理すればよろしい！<br>
+<hr>
+<span class=name>のどあめ</span>
+<span class=time>1999/12/20(月) 13:30:59</span><br>
+The Lock さん有り難うござます。なるほど、早速やってみます！<br>
+<br>
+もう一つ悩んでいる事があるのですが、お聞きしてもよろしいでしょうか？ちょっと主題から離れてしまうので申し訳ないのですが、<br>
+今度はJavaScript側なんです。横一列にチェックボックス１０個くらい置き最後に全選択ボタン、クリアボタン、最後から2個だけ選択ボタンを作ったのですが、このパターンの列が何十通りもあるのです。<br>
+<br>
+//全選択クリック<br>
+function AllSelect_onclick() {<br>
+&nbsp;&nbsp;document.KouSin.SinBu0.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu1.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu2.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu3.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu4.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu5.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu6.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu7.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu8.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu9.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu10.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu11.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu12.checked = true;<br>
+&nbsp;&nbsp;document.KouSin.SinBu13.checked = true;<br>
+}<br>
+・・・・・・・と1行分ずつ何十個も書いていられません。<br>
+なのでLoopでクルクル回すように作りたいのですが、単純に変数に代入してもどうもObjectとして認識されません。<br>
+<br>
+for function AllSelect_onclick(){<br>
+&nbsp;&nbsp;cbs = document.KouSin.SinBu;<br>
+&nbsp;&nbsp;for (i = 0;i &lt; cbs.length; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cbs[i].checked = true;<br>
+&nbsp;&nbsp;}<br>
+}<br>
+<br>
+通常このような場合はどんな処理をしてらっしゃるのでしょうか？<br>
+初歩的な質問で申し訳ないのですが、よろしくお願いいたします。<br>
+<hr>
+<span class=name>あきゃ</span>
+<span class=email><a href="mailto:isizuaki@osk3.3web.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/12/20(月) 14:58:49</span><br>
+横やりを入れて申し訳ありません。<br>
+for文の中は<br>
+document.KouSin.elements[i].checked = true;<br>
+で、いけると思います。<br>
+<hr>
+<span class=name>のどあめ</span>
+<span class=time>1999/12/20(月) 16:39:26</span><br>
+あきゃ さん有り難うございます。<br>
+elementsも考えたのですが、なんせチェックボックスが１画面に200個くらい大量にある為に、わけがわからなくなりそうだったので、他の方法はないものかと思ったのですが～どうなんでしょう？ないのですかね？<br>
+<hr>
+<span class=name>のどあめ</span>
+<span class=time>1999/12/20(月) 19:13:00</span><br>
+<span class=resolv>[[解決]]</span><br>
+皆さん回答有り難うございました。何とかできました！<br>
+チェックボックスの配列もelementsでやってみることにしました。<br>
+本当に有り難うございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199712/index.htm">[上に]</a>
+<a href="97122100.htm" tppabs="http://www.tohoho-web.com/lng/199712/97122100.htm">[前に]</a>
+<a href="97122400.htm" tppabs="http://www.tohoho-web.com/lng/199712/97122400.htm">[次に]</a>
+</body>
+</html>

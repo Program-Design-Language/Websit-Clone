@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8"utf-8">
+<title>Flaskメモ - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+</head>
+<body>
+<h2>Flaskメモ</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+Flask
+
+<h4>環境</h4>
+<div class="i">
+<ul>
+<li>実施日: 2016年6月4日</li>
+<li>ホストOS: Windows 10</li>
+<li>ゲストOS: CentOS 6.8</li>
+<li>ハイパーバイザ: VirtualBox 5.0.12</li>
+<li>Flask: Flask 0.11</li>
+</ul>
+</div>
+
+<h4>Flask をインストールする</h4>
+<div class="i">
+<pre class="dos">
+# yum -y install python python-setuptools python-devel mysql mysql-devel gcc
+# easy_install pip
+# easy_install Flask
+# pip install MySQL-python
+</pre>
+</div>
+
+<h4>Hello world!</h4>
+<div class="i">
+<pre class="dos">
+# vi hello.py
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+  return "Hello World!\n"
+
+if __name__ == '__main__':
+  app.run()
+
+# python hello.py
+</pre>
+別のコンソールから
+<pre class="dos">
+# curl http://127.0.0.1:5000/
+</pre>
+</div>
+
+<h4>簡単な REST サーバ</h4>
+<div class="i">
+<pre class="dos">
+# mysql -h localhost -p
+mysql&gt; create database mydb;
+mysql&gt; use mydb;
+mysql&gt; create table users (
+    id int AUTO_INCREMENT,
+    user_id varchar(32) unique,
+    user_name varchar(256) unique,
+    index(id)
+  );
+mysql&gt; quit
+
+# vi users.py
+import MySQLdb
+import json
+from flask import Flask, request, jsonify
+app = Flask(__name__)
+
+passwd = "<em>パスワード</em>"
+
+def selectDb(sql, param):
+  connection = MySQLdb.connect(db="mydb", user="root", passwd=passwd)
+  cursor = connection.cursor()
+  cursor.execute(sql, param)
+  result = cursor.fetchall()
+  cursor.close()
+  connection.close()
+  return result
+
+def execDb(sql, param):
+  connection = MySQLdb.connect(db="mydb", user="root", passwd=passwd)
+  cursor = connection.cursor()
+  cursor.execute(sql, param)
+  connection.commit()
+  cursor.close()
+  connection.close()
+
+@app.route('/users', methods=['POST'])
+def createUser():
+  execDb("insert into users ( user_id, user_name ) values ( %(user_id)s, %(user_name)s )", request.json)
+  return ""
+
+@app.route('/users', methods=['GET'])
+def listUsers():
+  data = selectDb("select user_id, user_name from users", {});
+  ret = { "users" : [] }
+  for row in data:
+    ret['users'].append({ "user_id" : row[0], "user_name" : row[1] })
+  return json.dumps(ret)
+
+@app.route('/users/&lt;string:user_id&gt;', methods=['GET'])
+def getUser(user_id):
+  data = selectDb("select user_id, user_name from users where user_id = %(user_id)s", { "user_id" : user_id });
+  ret = { "user" : { "user_id" : data[0][0], "user_name" : data[0][1] } }
+  return json.dumps(ret)
+
+@app.route('/users/&lt;string:user_id&gt;', methods=['POST'])
+def updateUser(user_id):
+  execDb("update users set user_name = %(user_name)s where user_id = %(user_id)s",
+     { "user_id" : user_id, "user_name" : request.json['user_name'] })
+  return ""
+
+@app.route('/users/&lt;string:user_id&gt;', methods=['DELETE'])
+def deleteUser(user_id):
+  execDb("delete from users where user_id = %(user_id)s", { "user_id" : user_id })
+  return ""
+
+if __name__ == '__main__':
+  app.run()
+
+# python users.py
+</pre>
+<p>別のコンソールから</p>
+<pre class="dos">
+<span class="cm">ユーザの追加</span>
+# curl -s -X POST -H 'Content-Type: application/json' -d '{ "user_id": "U12345", "user_name" : "tanaka" }'  http://127.0.0.1:5000/users
+
+<span class="cm">ユーザの一覧</span>
+# curl -s -X GET http://127.0.0.1:5000/users | python -mjson.tool
+
+<span class="cm">ユーザの詳細</span>
+# curl -s -X GET http://127.0.0.1:5000/users/U12345 | python -mjson.tool
+
+<span class="cm">ユーザの変更</span>
+# curl -s -X POST -H 'Content-Type: application/json' -d '{ "user_name" : "suzuki" }'  http://127.0.0.1:5000/users/U12345
+
+<span class="cm">ユーザの削除</span>
+# curl -s -X DELETE http://127.0.0.1:5000/users/U12345
+</pre>
+</div>
+
+<hr>
+<div>Copyright (C) 2016 杜甫々</div>
+<div>初版:2016年6月4日 最終更新:2016年6月21日</div>
+<div>http://www.tohoho-web.com/ex/flask.html</div>
+</body>
+</html>

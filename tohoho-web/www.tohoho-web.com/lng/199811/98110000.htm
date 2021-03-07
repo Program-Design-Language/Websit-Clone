@@ -1,0 +1,292 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CGIで順位の比較し、エラーを返すには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CGIで順位の比較し、エラーを返すには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199811/index.htm">[上に]</a>
+[前に]
+<a href="98110001.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110001.htm">[次に]</a>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/11/01(日) 14:17:23</span><br>
+また、私事の質問ですが、<br>
+<br>
+未だ完成しないランキング表を作っているのですが<br>
+例えば1位から10位まで<br>
+<br>
+1,59,999,NAME,<br>
+<br>
+の形で、保存ファイルにデータを持たせていたとします。<br>
+<br>
+これに新規で、「2,00,000,NAME」が入ってきた場合<br>
+当然、10位以内に入らない訳ですから、保存されないはずなのですが<br>
+10位にデータが入ってしまいます。<br>
+<br>
+これを防ぐために、比較させるプログラムなどを自分なりに組んでみたものの<br>
+どれもうまくいきません。　場合によっては保存データが消える始末です。<br>
+<br>
+エラーが返り、データが保存されないようにしたいわけです。<br>
+<br>
+何か、良い方法がありましたら、教えて下さい。<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/11/01(日) 14:36:05</span><br>
+そういう場合、自分で書いたプログラムから必要な部分を<br>
+抜き出して、「こう書いたのですがどこがおかしいでしょう」<br>
+とするのが一番いいと思いません?<br>
+<br>
+<font color="#CC8000">&gt; 1,59,999,NAME</font><br>
+<font color="#CC8000">&gt; 2,00,000,NAME</font><br>
+<br>
+あと、これじゃあどの項について順位付けをするのか<br>
+わかりません。1?　1,59?　1,59,999?<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/11/01(日) 20:21:50</span><br>
+相変わらず変な質問の仕方をしてしまい、すみません。<br>
+駄目ですね、こんなことでは・・・。<br>
+<br>
+長くなりますが、書かせていただきます。<br>
+<br>
+まず、フォームから入力された値を、それぞれの変数に入れチェックをし<br>
+以前、教えていただいたプログラムを使い「file.dat」へ、入力された値を比較し<br>
+昇順でデータを入れ替え、保存されています。<br>
+<br>
+<br>
+open(IN, './file.dat');<br>
+while (&lt;IN&gt;) {<br>
+	chop;<br>
+	push(@datas,$_);<br>
+	splice(@datas,9);<br>
+}<br>
+close(IN);<br>
+<br>
+push(@datas,"$min,$sec,$msec,$dname,$machin,");<br>
+<br>
+open(OUT, '&gt;./file.dat');<br>
+		foreach ( sort @datas ) {<br>
+		print OUT "$_\n";<br>
+	}<br>
+close(OUT);<br>
+<br>
+<br>
+file.datに保存されるデータの形は<br>
+<br>
+	1,59,999,NAME,MACHIN,<br>
+<br>
+と、このようになっています。<br>
+<br>
+<br>
+このプログラムで、上から５行目の<br>
+<br>
+	splice(@datas,9);<br>
+<br>
+を入れて、10位までの形を取っています。<br>
+<br>
+これで実行すると、file.datに、10位（10行分）までのデータが存在していた場合に<br>
+新しく書き込まれたデータが、その10位以内に収まらない時、10位（10行目）の<br>
+データと書き換わってしまうのです。<br>
+<br>
+file.datのデータ内で１～１０行まであったとして<br>
+<br>
+&nbsp;&nbsp;9|1,59,999,NAME,MACHIN,<br>
+ 10|2,00,000,NAME,MACHIN,<br>
+　　　　　（左の「9|」と「10|」は行番号）<br>
+<br>
+10行（10位）まであったとして、これにフォームから入力されたデータが<br>
+<br>
+　	3,00,000,NAME,MACHIN,<br>
+<br>
+であれば、11行目に存在するデータとなるので<br>
+書き込まれないはずが、<br>
+<br>
+&nbsp;&nbsp;9|1,59,999,NAME,MACHIN,<br>
+ 10|3,00,000,NAME,MACHIN,<br>
+<br>
+と、入れ替わってしまうのです。<br>
+<br>
+これをどう解決すれば良いのか、いろいろ試しているのですが<br>
+一向に改善しません。<br>
+<br>
+今残っている組み方を、はじめに書いたプログラムに当てはめると<br>
+<br>
+close(IN);<br>
+<br>
+push(@datas,"$min,$sec,$msec,$dname,$machin,");<br>
+<br>
+if (@datas &lt; @datas[0..2]) {<br>
+	$text = "ランキングに登録出来ません";<br>
+	&amp;error_html;<br>
+}<br>
+<br>
+open(OUT, '&gt;./fzr.dat');<br>
+		foreach ( sort @datas ) {<br>
+<br>
+この「push」と「open(OUT」の間に、if文で（）内は自分の解釈で<br>
+書いてはみたのですが、これを入れると、どうフォームからデータを<br>
+入れても、「if文」を実行してしまいます。<br>
+<br>
+この「if」も、いい加減な書き方をしていると思うのですが<br>
+正直、未だに組み方を理解出来ないので、このような始末になっています。<br>
+<br>
+長くなってしまいましたが、これでお解りいただけたでしょうか？<br>
+<br>
+いろいろとご面倒おかけして、本当にすみません。<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=email><a href="mailto:jrm@fureai.or.jp">[E-Mail]</a></span>
+<span class=time>1998/11/01(日) 21:10:05</span><br>
+splice(@datas,9);<br>
+ではなく<br>
+splice(@datas,10);<br>
+だと思います<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/11/02(月) 00:54:19</span><br>
+Auraiさん、はじめまして！<br>
+<br>
+splice(@datas,10);<br>
+<br>
+これにしても、０から数えて、１０から１１に変えているだけなので<br>
+結果的に「最終行を入れ替えてしまう」ことには、変わらない訳です。<br>
+<br>
+今もいろいろやっているんですが、どうもうまく行かず<br>
+表示させるCGIで何とかしようかと思っているのですが、これもまだうまく行かず・・・。<br>
+<br>
+プログラムって難しい・・・しみじみそう感じる今日この頃です。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/11/02(月) 01:21:24</span><br>
+えっと、こう言っては失礼ですが、根本的にあまりよく<br>
+わかってらっしゃらないようです。<br>
+<br>
+以下のプログラムが参考になりますでしょうか。<br>
+<br>
+#!/usr/local/bin/perl<br>
+<br>
+@data = ("01","02","03","04","05","06","07","08","09","10"); # 元データ<br>
+$add_data = "03"; # 追加したいデータ<br>
+<br>
+push(@data,$add_data);<br>
+@sorted_data = sort @data;<br>
+<br>
+print "last number = $sorted_data[$#sorted_data]\n";<br>
+<br>
+if ( $add_data eq $sorted_data[$#sorted_data] ){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print "you cannot add data($add_data).\n"; # 成功<br>
+} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print "adding data successfully.\n"; # 失敗<br>
+}<br>
+<br>
+pop(@sorted_data); # 最後の1つを削除<br>
+<br>
+foreach ( @sorted_data ){ # 出力<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print "$_ ";<br>
+}<br>
+print "\n";<br>
+<hr>
+<span class=name>mo</span>
+<span class=email><a href="mailto:mo@goice.co.jp">[E-Mail]</a></span>
+<span class=time>1998/11/02(月) 01:35:45</span><br>
+例えば、こんな風にするのかな？<br>
+<br>
+open(IN, "file.dat");<br>
+@data = map { chomp; [split /,/] } &lt;IN&gt;;<br>
+close(IN);<br>
+@data = sort { $a-&gt;[0] &lt;=&gt; $b-&gt;[0] || # min<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$a-&gt;[1] &lt;=&gt; $b-&gt;[1] || # sec<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$a-&gt;[2] &lt;=&gt; $b-&gt;[2] }&nbsp;&nbsp;# msec<br>
+	@data, [$min, $sec, $msec, $dname, $machin];<br>
+pop(@data) if @data &gt; 10;<br>
+open(OUT, "&gt;file.dat");<br>
+for(@data)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print OUT join(',', @$_), "\n";<br>
+}<br>
+close(OUT);<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/11/02(月) 02:12:08</span><br>
+B-Cusさん、moさん、ありがとうございます。<br>
+その書いていただいたものを使ってみて、後日ここに返答します。<br>
+<br>
+ご指摘の通り、実際、プログラムの命令が「どう動いて」「どう作用」しているのか<br>
+殆ど理解していないのが、正直なところです。<br>
+<br>
+とほほさんの提供されているマニュアルや書籍などを、読んではいるのですが<br>
+理解出来ないのが大半です。<br>
+<br>
+今、この書かれたプログラムを見ても、何がどうなっているのか解りません。<br>
+また、このようなオリジナルの組み方が、どうして出来るのか不思議に感じでしまいます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1998/11/02(月) 02:48:07</span><br>
+<br>
+まず、よ～く考えましょう。アルゴリズムとしては<br>
+<br>
+1. これまでのデータ(10件のはず)を配列に読み込む<br>
+2. 配列に新データを追加<br>
+3. ソートして1～10番目(＝11番目以外)を出力<br>
+<br>
+でいいはずです。ところが、がんまさんのプログラムは<br>
+<br>
+1. これまでのデータを配列に読み込みつつ、9(10)個目以降を削除<br>
+2. 配列に新データを追加<br>
+3. ソートして出力<br>
+<br>
+となってます。これではうまくいかないですよね。<br>
+<br>
+あと、最初の数字がminute(ですよね?)ということで、<br>
+$minが二桁になったら うまくソートされないと思いますが、<br>
+そこらへんは大丈夫でしょうか。<br>
+# $minが一桁しかとらないならそれでいいんですが。<br>
+<br>
+moさんのような読み込み方法を取るとか、<br>
+　01,59,999,NAME,MACHINE,<br>
+などと固定長で扱う、などの方法がありますけど。<br>
+<br>
+<br>
+<font color="#CC8000">&gt; とほほさんの提供されているマニュアルや書籍などを、読んではいるのですが</font><br>
+<br>
+ちなみにどんな本を持ってらっしゃいます？<br>
+<br>
+僕としては「Perlプログラミング」(旧ラクダ本、赤いやつ)が<br>
+一番おすすめなんですが。<br>
+<br>
+# 初心者に「プログラミングPerl」(新ラクダ本、青いやつ)は<br>
+# お勧めしません。「新perlの国へようこそ」などもってのほか。<br>
+<hr>
+<span class=name>がんま</span>
+<span class=email><a href="mailto:gamma@pop17.odn.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/11/02(月) 21:53:07</span><br>
+<font color="#CC8000">&gt; ちなみにどんな本を持ってらっしゃいます？</font><br>
+<font color="#CC8000">&gt; 僕としては「Perlプログラミング」(旧ラクダ本、赤いやつ)が</font><br>
+<font color="#CC8000">&gt; 一番おすすめなんですが。</font><br>
+<br>
+いろいろあります（苦笑）<br>
+「Perl で作るCGI入門-基礎編」　「初めてのPerl：Learning Perl」<br>
+「CGIプログラミング入門（SHOEISHA）」などです。<br>
+<br>
+<font color="#CC8000">&gt; # 初心者に「プログラミングPerl」(新ラクダ本、青いやつ)は</font><br>
+<font color="#CC8000">&gt; # お勧めしません。「新perlの国へようこそ」などもってのほか。</font><br>
+<br>
+これらは持っていません（よかったよかった）。<br>
+<br>
+書いていただいたプログラムを試しているのですが<br>
+まだ、いまいち自分に理解力が無いため、試行錯誤しています。<br>
+<br>
+こんな私に、いろいろと手ほどきをしていただき、本当にありがとうございます。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199811/index.htm">[上に]</a>
+[前に]
+<a href="98110001.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110001.htm">[次に]</a>
+</body>
+</html>

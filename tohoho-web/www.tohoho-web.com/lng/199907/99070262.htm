@@ -1,0 +1,210 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>$xxにある文字列の、最初から特定の文字までを全て消去するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>$xxにある文字列の、最初から特定の文字までを全て消去するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070261.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070261.htm">[前に]</a>
+<a href="99070263.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070263.htm">[次に]</a>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/25(日) 23:21:37</span><br>
+$xx =~ s///;　を使い、ある特定の文字列より前の部分を全て消去<br>
+しようとしたのですが、改行が含まれていると、それより前の部分が<br>
+削除出来されません。何かいい方法はないでしょうか？<br>
+よろしくお願いしますm(__)m<br>
+<hr>
+<span class=name>Aurai</span>
+<span class=time>1999/07/25(日) 23:38:36</span><br>
+「.」じゃなくて「[\x00-\xFF]」とかを使えばいいんじゃないですか<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 00:02:19</span><br>
+Auraiさん、レスをありがとうございました。<br>
+$line =~ s/[\x00-\xFF]*&lt;!-- begin text --&gt;//;<br>
+としてみましたが、&lt;!-- begin text --&gt;のある行しか消えてくれませんでした。<br>
+書き方が悪いのでしょうか？<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/07/26(月) 00:58:36</span><br>
+$xx =~ s///s;<br>
+で出来るはず。<br>
+s オプションを付けると . が改行文字にもマッチします。<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 01:39:51</span><br>
+ふじさん、ありがとうございます。<br>
+$line =~ s/.*&lt;!-- begin text --&gt;//s;<br>
+としてみましたが、エラーが出てしまいました。<br>
+Substitution pattern not terminated in file ***.cgi at line<br>
+257, next char ^?<br>
+syntax error in file ***.cgi at line 257, next 2<br>
+tokens "s/.*&lt;!-- begin text --&gt;//s;<br>
+"<br>
+Execution of ***.cgi aborted due to compilation errors.<br>
+どこがおかしいのでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/26(月) 01:43:32</span><br>
+perl4なんて時代遅れのものを使うのはやめましょう。<br>
+perl5ならうまくいきます。<br>
+<br>
+特別な事情もないのに、今時perl4を使うことは悪いことです。<br>
+管理者に頼んでもperl5を入れてくれないなら、その管理者は無能です。<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 02:09:53</span><br>
+B-Cusさん、ありがとうございました。<br>
+perl5でやってみました。早いですね(^^;<br>
+早速cgiを全部perl5で動かすようにしました。<br>
+ですが、依然として改行から前が消去されません。<br>
+$line =~ s/.*&lt;!-- begin text --&gt;//s;<br>
+エラーは出なくなったのですが・・・。<br>
+他に原因があるのでしょうか？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/26(月) 02:45:35</span><br>
+できると思うけどなぁ。<br>
+　$_=&lt;&lt;END;<br>
+　abcXXXdef<br>
+　abc&lt;!-- begin text --&gt;def<br>
+　abcZZZdef<br>
+　END<br>
+　$_ =~ s/.*&lt;!-- begin text --&gt;//s;<br>
+　print $_;<br>
+<br>
+実行結果:<br>
+　def<br>
+　abcZZZdef<br>
+<br>
+タイプミスの可能性はないですか?<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 03:01:43</span><br>
+度々ありがとうございます。<br>
+タイプミスはないです。出来ません・・・(;_;)<br>
+検索の対象はcgiが吐き出したhtml文書なのですが、<br>
+改行コードの違い云々という可能性はないですか？<br>
+ちなみに、htmlを吐き出しているcgiは<br>
+にあさんの作っているうぇぶ会議室です。場所はここです。<br>
+<a href="javascript:if(confirm('http://www2.biglobe.ne.jp/%7Enir/  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www2.biglobe.ne.jp/%7Enir/'" tppabs="http://www2.biglobe.ne.jp/%7Enir/">http://www2.biglobe.ne.jp/%7Enir/</a><br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/26(月) 03:14:30</span><br>
+<font color="#CC8000">&gt; 改行コードの違い云々という可能性</font><br>
+さっきの発言の前に<br>
+　$data =~ s/\n/\r/g;<br>
+　$data =~ s/\n/\r\n/g;<br>
+などとして試してみましたが、それはないと思います(が、断言はできんなぁ)。<br>
+<br>
+まぁ実際の値と周辺のコードがわからんので、何とも言えませんが、<br>
+どうしてもできなかったら<br>
+　($tmp,@line) = split("&lt;!-- begin text --&gt;",$line);<br>
+　$line = join("",@line);<br>
+でしょうか。<br>
+<br>
+もし s///s がうまくいったら、原因を教えてください。<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 04:17:57</span><br>
+悩ませてしまっているみたいで恐縮ですm(__)m<br>
+($tmp,@line) = split("&lt;!-- begin text --&gt;",$line);<br>
+$line = join("",@line);<br>
+でやってみたところ、今度は全て消えてしまいました(;_;)<br>
+秘密のページなので、うっかり「ここです」とは言えないのですが、<br>
+スクリプトは、ここにあるwwwsrch.cgi v.3.04で、264行付近を<br>
+$line =~ s/.*&lt;!-- begin text --&gt;//s;<br>
+$line =~ s/($word)/&lt;font color=red&gt;$1&lt;\/font&gt;/ig;<br>
+としています。これをうぇぶ会議室に組み込んで全文検索をさせています。<br>
+検索後の、検索された語の前後の表示で、意味のない<br>
+&lt;!-- begin text --&gt;より前の部分を全てカットしたいのです。<br>
+やたらタグとか出てくるからうるさくて・・・。<br>
+とーむ、とんでもない勘違いをやらかしている気が (^^;<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/26(月) 07:26:35</span><br>
+$line が本当に<br>
+　…<br>
+　&lt;!-- begin text --&gt;<br>
+　…<br>
+となっているかどうか確認されましたか? 僕もちゃんと確認した<br>
+わけじゃないけど、$line って複数行のデータが入ってないんじゃ<br>
+ないですか?<br>
+<br>
+<font color="#CC8000">&gt; wwwsrch.cgi v.3.04で、264行付近を</font><br>
+<font color="#CC8000">&gt; $line =~ s/.*&lt;!-- begin text --&gt;//s;</font><br>
+その うぇぶ会議室とやらは、ファイル構造が<br>
+　&lt;A HREF="$CGIROOT/article.$CGI?room=$post_room"&gt;<br>
+　${NEWICON}新規記事投稿&lt;/A&gt;<br>
+　&lt;A HREF="$CGIROOT/article.$CGI?room=$post_room&amp;ref=$mes"&gt;<br>
+　${FOLLOWICON}フォロー記事投稿&lt;/A&gt;<br>
+　&lt;A HREF="$CGIROOT/cancel.$CGI?room=$post_room&amp;mes=$mes"&gt;<br>
+　${CANCELICON}記事のキャンセル&lt;/A&gt;<br>
+　&lt;HR&gt;<br>
+　From: $link<br>
+　&amp;lt;&lt;A HREF="mailto:$ids{'email'}"&gt;$ids{'email'}&lt;/A&gt;&amp;gt;&lt;BR&gt;<br>
+　Subject: $ids{'subject'}&lt;BR&gt;<br>
+　Date: $date&lt;BR&gt;<br>
+　$reference&lt;PRE&gt;<br>
+　&lt;!-- begin text --&gt;<br>
+　$text<br>
+　&lt;!-- end text --&gt;<br>
+となっているように見えるのですが、もしその通りであれば<br>
+wwwsrchに $line =~ s/.*&lt;!-- begin text --&gt;//s; を入れても<br>
+ダメでしょう。だって、$lineは一行分のデータしか入ってない<br>
+のだから。<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 09:58:26</span><br>
+<span class=resolv>[[解決]]</span><br>
+なるほどー。<br>
+$lineには数行分の文字が入っていると頭から思いこんでいたのですが、<br>
+行単位での作業を繰り返しているみたいです。<br>
+大体、lineって行って意味じゃん＞自分(^^;<br>
+wwwsrchに手を加えるのは無理だから（僕の能力では）、<br>
+うぇぶ会議室の方をいじって改行を落としたら（スマートでないと思いますが）<br>
+上手くいきました(^^)<br>
+大変勉強になりました。B-Cusさんをはじめ、お答えいただいた方、<br>
+ありがとうございました。また何かあったらよろしくお願いしますm(__)m<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/07/26(月) 10:27:47</span><br>
+言っちゃ悪いけど、がびーんな結論ですな。<br>
+　・質問する際は、確認できることは自分で確認する<br>
+　・何が原因なのかを切り分ける(自分で切り分けられないなら、<br>
+　　判断材料となる情報をできるだけ提供する)<br>
+　・情報は最初から惜しまず書く<br>
+できる範囲で、ですけどね。<br>
+<hr>
+<span class=name>y</span>
+<span class=email><a href="mailto:y____@hotmail.com">[E-Mail]</a></span>
+<span class=time>1999/07/26(月) 23:18:46</span><br>
+申し訳ないです。特に、情報を惜しまず書く、<br>
+というのが欠けていたように思います。<br>
+以後なるべく書くようにしますのでお許し下さい。<br>
+もうこういうことはしません、と断言できないのが辛いと言うか、<br>
+もどかしいのですが・・・。ただ謝るしかありませんm(__)m<br>
+<br>
+その後の経過ですが、$lineを出力する行を制限して、<br>
+&lt;!-- begin text --&gt;（１９、２０行目に出てくる）<br>
+より以前を表示させなくしました。目標は達成です。<br>
+<hr>
+<span class=name>まあー</span>
+<span class=time>1999/07/29(木) 03:07:45</span><br>
+初心者だから<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070261.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070261.htm">[前に]</a>
+<a href="99070263.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070263.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>Ｃ言語でロックするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>Ｃ言語でロックするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040148.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040148.htm">[前に]</a>
+<a href="99040150.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040150.htm">[次に]</a>
+<hr>
+<span class=name>ちか</span>
+<span class=time>1999/04/21(水) 04:59:33</span><br>
+Ｃ言語でロックする場合、どんな方法を使ってますか？<br>
+flockが使えなくて、困っています。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/21(水) 05:14:12</span><br>
+symlinkやmkdirが定番かと思います。使い方は簡単なので省略。<br>
+<hr>
+<span class=name>ちか</span>
+<span class=time>1999/04/23(金) 05:04:19</span><br>
+やはりsymlinkなどを使うしか無いのでしょうか？<br>
+symlinkを使って、自作のflockもどきを作ってみましたが、<br>
+やっぱり使いにくいのです。<br>
+<br>
+プログラム全体の表現力が落ちるというか、、、<br>
+大変読みにくいプログラムに成ってしまいます。<br>
+もっと良い方法は有りませんか？<br>
+<hr>
+<span class=name>ちか</span>
+<span class=time>1999/04/23(金) 05:05:46</span><br>
+あ、御礼を忘れてましたです。<br>
+B-Cusさん、わざわざありがとうございます。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/23(金) 13:45:02</span><br>
+そうですか? 読みにくいかなぁ。<br>
+<br>
+まぁ、ロックファイルが残ったときの処理は面倒ですが、<br>
+(perlですが)以下のような関数を作ってしまえば、あとは<br>
+lock_on、lock_offを呼ぶだけなのですが。<br>
+<br>
+sub lock_on {<br>
+　my $lock_flg = 0;<br>
+　$SIG{TERM}=$SIG{PIPE}=$SIG{INT}=$SIG{HUP}=$SIG{QUIT}=\&amp;lock_off;<br>
+　LOOP:<br>
+　foreach ( 1..3 ){<br>
+　　foreach ( 1..3 ){<br>
+　　　$lock_flg = symlink("$$",$lockfile);<br>
+　　　if ( $lock_flg ){ last LOOP; }<br>
+　　　sleep 1;<br>
+　　}<br>
+　　if ( ! $lock_flg ){<br>
+　　　if ( ! -d "/proc/".readlink($lockfile) ){<br>
+　　　　unlink($lockfile);<br>
+　　　}<br>
+　　}<br>
+　}<br>
+　if ( ! $lock_flg ){<br>
+　　print "ロックファイルを作成できませんでした。\n";<br>
+　　exit;<br>
+　}<br>
+}<br>
+<br>
+sub lock_off {<br>
+　unlink($lockfile);<br>
+}<br>
+<br>
+<br>
+<font color="#CC8000">&gt; もっと良い方法は有りませんか？</font><br>
+<br>
+socketをbindする処理も排他的なので、ロック処理はできます。<br>
+これはプロセスがこけても後には残りませんね。でもポート番号の<br>
+選択部分で苦労しそうな気もします。<br>
+<hr>
+<span class=name>コルン</span>
+<span class=time>1999/04/29(木) 02:01:56</span><br>
+　ごうに来ればごうに従え、か。<br>
+　うむ、オイラも少し前に、Ｃでつまずいた所だねぇ。<br>
+　でも取り敢えず、自分で解決しました。<br>
+　どこかのＣＧＩに使われてたとか言う訳では無いので、<br>
+動作の保証は出来ませんが。（一応、オイラはこれで<br>
+上手く行っています）<br>
+<br>
+<br>
+FILE *f_in,*f_out;<br>
+int retry=5;<br>
+<br>
+while(rename("file.dat","in.tmp")){/*ここで、ロック*/<br>
+&nbsp;&nbsp;retry--;<br>
+&nbsp;&nbsp;if(retry&lt;1){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/*エラー処理*/<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;sleep(1);<br>
+}<br>
+if(!(f_in=fopen("in.tmp","r"))){<br>
+&nbsp;&nbsp;/*エラー処理*/<br>
+}<br>
+if(!(f_out=fopen("out.tmp","w"))){<br>
+&nbsp;&nbsp;/*エラー処理*/<br>
+}<br>
+/*<br>
+&nbsp;&nbsp;ここに、f_inから読み込んで、f_outに出力するプログラムを書く<br>
+*/<br>
+fclose(f_in);<br>
+remove("s_in.tmp");<br>
+<br>
+fclose(f_out);<br>
+rename("out.tmp","file.dat");/*ここで、ロック解除*/<br>
+<br>
+<br>
+　いかがでしょうか？<br>
+　たぶん、ロックは完璧だと思うんですけど？<br>
+　ちなみに、テンポラリーファイルの名前は、ロックす<br>
+るファイルごとに違うものにして下さい。(上のプログラム<br>
+では、in.tmpとout.tmp)<br>
+　また、ファイルを全部メモリに読み込むのがイヤで考え<br>
+た方法ですので、バッファ一つで事足りる場合が多いと<br>
+思います。読み込みながら、書き込みが出来るのが、<br>
+この方法の最大の強みだと思われます。<br>
+<br>
+<br>
+　ふと思ったんですけど、ファイルを２つ同時に開くのと、<br>
+ファイルを１つ開いて、バッファを数十キロバイトも取るのって、<br>
+どっちが負担が少なくて、速いんでしょうねぇ？<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040148.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040148.htm">[前に]</a>
+<a href="99040150.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040150.htm">[次に]</a>
+</body>
+</html>

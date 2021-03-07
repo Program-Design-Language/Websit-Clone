@@ -1,0 +1,72 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CGI（perl）での日本語処理の意味を教えてください</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CGI（perl）での日本語処理の意味を教えてください</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040195.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040195.htm">[前に]</a>
+<a href="99040197.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040197.htm">[次に]</a>
+<hr>
+<span class=name>ピーコ</span>
+<span class=time>1999/04/27(火) 11:54:50</span><br>
+こんにちは。もう一つ質問があります。<br>
+フォームから受け取ったデータの２バイト文字（日本語）の処理<br>
+の意味で悩んでいます。<br>
+<br>
+たとえば富とフォームから入力すると%C9%D9になっています。<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;富&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;%C9%D9<br>
+<br>
+富は$dataに入っているとします。<br>
+これを以下の処理でコード変換を行います。<br>
+<br>
+&nbsp;&nbsp;$data =~ s/%(..)/pack("c",hex($1))/ge;<br>
+<br>
+hex($1)の$1には %C9、それともC9のどちらが渡されるのでしょうか？<br>
+hex関数を単独で実行した場合、<br>
+<br>
+hex(%C9)だとうまくいきませんが、hex(C9)だとうまくいきます。<br>
+%はどんな扱いをされているのでしょうか？<br>
+<br>
+どうぞ、よろしくお願いいたします。<br>
+<br>
+<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/04/27(火) 13:36:03</span><br>
+<font color="#CC8000">&gt;hex($1)の$1には %C9、それともC9のどちらが渡されるのでしょうか？</font><br>
+<br>
+これは正規表現の話しですね。<br>
+とりあえず、↓コレを見てもらうとして・・・<br>
+<a href="../../wwwperl1.htm#Expr" tppabs="http://www.tohoho-web.com/wwwperl1.htm#Expr">http://www.tohoho-web.com/wwwperl1.htm#Expr</a><br>
+<br>
+すると、$1には、%(..)にマッチした時の(..)の部分が入る事に<br>
+なりますので、"%C9"の場合は、"C9"が入ります。<br>
+<br>
+<font color="#CC8000">&gt;hex(%C9)だとうまくいきませんが、hex(C9)だとうまくいきます。</font><br>
+<font color="#CC8000">&gt;%はどんな扱いをされているのでしょうか？</font><br>
+<br>
+ではまず１６進数っていうモノは分かりますか？<br>
+この場合の"%C9"というのは、１６進数での"C9"を現しています。<br>
+他の言語では、"&amp;hC9"とか"0xC9"とか書いたりもします。<br>
+頭に何か付いてないと、単なる"C9"という文字との区別が<br>
+付かないですよね？それだけです。<br>
+<br>
+hex(C9)に"%"が無いのは、hex()への引数は１６進数のみなので、<br>
+他と区別する必要がないからそのまま"C9"なんだと思います。<br>
+<br>
+<hr>
+<span class=name>ピーコ</span>
+<span class=time>1999/04/27(火) 14:33:02</span><br>
+<span class=resolv>[[解決]]</span><br>
+無責任官庁さん、ありがとうございました。<br>
+すっきりしました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040195.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040195.htm">[前に]</a>
+<a href="99040197.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040197.htm">[次に]</a>
+</body>
+</html>

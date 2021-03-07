@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset=utf-8"utf-8">
+<title>とほほのGit入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script src="../lib/canvas.js" tppabs="http://www.tohoho-web.com/lib/canvas.js"></script>
+</head>
+<body>
+<h2>とほほのGit入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+とほほのGit入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#install">インストール</a>
+<li><a href="#structures">Gitの流れ</a>
+<li><a href="#init">初期化(init)</a>
+<li><a href="#clone">クローン(clone)</a>
+<li><a href="#add">追加(add)</a>
+<li><a href="#rm">削除(rm)</a>
+<li><a href="#mv">移動(mv)</a>
+<li><a href="#commit">コミット(commit)</a>
+<li><a href="#push">プッシュ(push)</a>
+<li><a href="#pull">プル(pull)</a>
+<li><a href="#fetch">フェッチ(fetch)</a>
+<li><a href="#merge">マージ(merge)</a>
+<li><a href="#diff">差分表示(diff)</a>
+<li><a href="#restore">リストア(restore)</a>
+<li><a href="#reset">リセット(reset)</a>
+<li><a href="#checkout">チェックアウト(checkout)</a>
+<li><a href="#branch">ブランチ(branch)</a>
+<li><a href="#switch">スイッチ(switch)</a>
+<li><a href="#tags">タグ(tag)</a>
+<li><a href="#origin">オリジン(orgin)</a>
+<li><a href="#configs">コンフィグ(config)</a>
+<li><a href="#status">ステータス(status)</a>
+<li><a href="#log">ログ(log)</a>
+<li><a href="#show">ショウ(show)</a>
+<li><a href="#stash">スタッシュ(stash)</a>
+<li><a href="#help">ヘルプ(help)</a>
+<li><a href="#gitignore">.gitignore</a>
+<li><a href="#feature">featureブランチ</a>
+</ul>
+</div>
+
+<h4 id="install">インストール</h4>
+<div class="i">
+<pre class="c">
+# yum -y install git		<span class="cm"># CentOS 7</span>
+# dnf -y install git		<span class="cm"># CentOS 8</span>
+# sudo apt install git		<span class="cm"># Ubuntu 20.04</span>
+</pre>
+</div>
+
+<h4 id="structures">Gitの流れ</h4>
+<div class="i">
+<p>Gitでファイルを修正するには、下記の手順で行います。</p>
+<ol>
+<li>ワーキングツリー(WORK)で実ファイルを修正する
+<li>ワーキングツリー(WORK)からステージングエリア(STAGING)、別名インデックス(INDEX)に add する
+<li>ステージング(STAGING)からローカルリポジトリ(LOCAL)に commit する
+<li>ローカルリポジトリ(LOCAL)からリモートリポジトリ(REMOTE)に push する
+</ol>
+<canvas id="cv1" width=600 height=180 style="background-color:#eee;"></canvas>
+<script>
+mx = 10; my = 10; bw = 70; bh = 160; bm = 70;
+x1 = mx; x2 = mx + (bw + bm); x3 = mx + 2 * (bw + bm); x4 = mx + 3 * (bw + bm);
+y1 = my; y2 = my + 30; y3 = my + 60; y4 = my + 90; y5 = my + 120; y6 = my + 140;
+new Canvas("cv1")
+  .box(x1, y1, bw, bh, {text: "WORK", top: 10})
+  .box(x2, y1, bw, bh, {text: "STAGING", top: 10})
+    .text("(INDEX)", x2 + 14, y1 + 30)
+  .box(x3, y1, bw, bh, {text: "LOCAL", top: 10})
+    .text("HEAD", x3 + 22, y1 + 40)
+    .text("8c2d235", x3 + 15, y1 + 50)
+    .text("f671fbe", x3 + 15, y1 + 60)
+    .text(":", x3 + 33, y1 + 70)
+  .box(x4, y1, bw, bh, {text: "REMOTE", top: 10})
+  .arrow(x1 + bw, y2, bm, 0, {text: "add"})
+  .arrow(x2 + bw, y2, bm, 0, {text: "commit"})
+  .arrow(x3 + bw, y2, bm, 0, {text: "push"})
+  .arrow(x3 + bw + bm, y3, -bm, 0, {text: "clone"})
+  .arrow(x3 + bw, y3, -(bm + bw), 0)
+  .arrow(x2 + bw, y3, -(bm + bw), 0)
+  .arrow(x3 + bw + bm, y4, -bm, 0, {text: "pull"})
+  .arrow(x3 + bw, y4, -(bm + bw), 0)
+  .arrow(x2 + bw, y4, -(bm + bw), 0)
+  .arrow(x1 + bw + bm, y5, -bm, 0, {text: "restore"})
+  .arrow(x2 + bw + bm, y5, -bm, 0, {text: "restore"})
+  .arrow(x3 + bw + bm, y5, -bm, 0, {text: "fetch"})
+  .arrow(x1 + bw + bm, y6, -bm, 0, {text: "reset"})
+  .arrow(x2 + bw + bm, y6, -bm, 0, {text: "reset"})
+</script>
+</div>
+
+<h4 id="init">初期化(init)</h4>
+<div class="i">
+<p><b>init</b> は、新規にリポジトリを作成します。</p>
+<pre class="c">
+<span class="cm"># 新規にプロジェクトを作成してプッシュする</span>
+$ mkdir myapp
+$ cd myapp
+$ git init
+$ vi README.md
+$ git add .
+$ git commit -m "Start project."
+$ git push -u http://gitlab.example.com/yamada/myapp.git master
+</pre>
+</div>
+
+<h4 id="clone">クローン(clone)</h4>
+<div class="i">
+<p><b>clone</b> は、すでに既存のリポジトリがある状態で、リモートリポジトリをローカルリポジトリに複製します。</p>
+<pre class="c">
+<span class="cm"># [LOCAL] ←(clone)─ [REMOTE]</span>
+$ git clone http://gitlab.example.com/yamada/myapp.git
+$ cd myapp
+</pre>
+</div>
+
+<h4 id="add">追加(add)</h4>
+<div class="i">
+<p><b>add</b> は、ワーキングツリーからステージングにファイルやディレクトリを追加します。</p>
+<pre class="c">
+<span class="cm"># [WORK] ─(add)→ [STAGING]</span>
+$ git add .			<span class="cm"># カレントフォルダ配下のすべてのワーキングツリーの変更をステージングに加える</span>
+$ git add ./sample.py		<span class="cm"># 指定したワーキングツリーをステージングに加える</span>
+</pre>
+</div>
+
+<h4 id="rm">削除(rm)</h4>
+<div class="i">
+<p><b>rm</b> は、ステージングやワーキングツリー上のファイルやディレクトリを削除します。</p>
+<pre class="c">
+<span class="cm"># [WORK] ─(rm)→ [STAGING]</span>
+$ git rm ./sample.py		<span class="cm"># ステージングからファイルを削除する</span>
+</pre>
+</div>
+
+<h4 id="mv">移動(mv)</h4>
+<div class="i">
+<p><b>mv</b> は、ステージングやワーキングツリー上のファイルやディレクトリを移動します。</p>
+<pre class="c">
+<span class="cm"># [WORK] ─(mv)→ [STAGING]</span>
+$ git mv A.txt B.txt		<span class="cm"># ステージング上のファイル名を変更する</span>
+$ git mv dir1/A.txt dir2	<span class="cm"># ステージング上のファイル名を変更する</span>
+</pre>
+</div>
+
+<h4 id="commit">コミット(commit)</h4>
+<div class="i">
+<p><b>commit</b> は、ステージングの変更をローカルリポジトリに反映させます。</p>
+<pre class="c">
+<span class="cm"># [STAGING] ─(commit)→ [LOCAL]</span>
+$ git commit -m "..."		<span class="cm"># ステージングの内容をローカルリポジトリにコミットする</span>
+$ git commit -a			<span class="cm"># addとcommitをまとめて行う。ただし新規ファイルはaddされない</span>
+$ git commit --amend -m "..."	<span class="cm"># 直前のコミットのコメントを修正する</span>
+</pre>
+</div>
+
+<h4 id="push">プッシュ(push)</h4>
+<div class="i">
+<p><b>push</b> は、ローカルリポジトリの変更をリモートリポジトリに反映させます。</p>
+<pre class="c">
+<span class="cm"># [LOCAL] ─(push)→ [REMOTE]</span>
+$ git push			<span class="cm"># ローカルリポジトリの変更をリモートリポジトリにプッシュする</span>
+</pre>
+</div>
+
+<h4 id="pull">プル(pull)</h4>
+<div class="i">
+<p><b>pull</b> は、リモートリポジトリの変更を、ローカルリポジトリ、ステージング、ワーキングツリーに反映させます。</p>
+<pre class="c">
+<span class="cm"># [WORK] ← [STAGING] ← [LOCAL] ←(pull)─ [REMOTE]</span>
+$ git pull			<span class="cm"># リモートリポジトリの変更をローカルリポジトリにプルする</span>
+</pre>
+</div>
+
+<h4 id="fetch">フェッチ(fetch)</h4>
+<div class="i">
+<p><b>fetch</b> は、リモートリポジトリから更新情報のみを取り込みます。
+<pre class="c">
+<span class="cm"># [LOCAL] ←(fetch)─ [REMOTE]</span>
+$ git fetch <i>remote_branch_name</i>	<span class="cm"># リモートブランチの更新情報を取り込む</span>
+$ git diff origin/master master	<span class="cm"># リモートブランチとローカルブランチの差分を表示</span>
+</pre>
+</div>
+
+<h4 id="merge">マージ(merge)</h4>
+<div class="i">
+<p><b>merge</b> は、他のユーザーが行った変更と、自分の変更をマージします。</p>
+<pre class="c">
+$ vi main.c			<span class="cm"># main.cを変更する</span>
+$ git add ./main.c		<span class="cm"># main.cをaddする</span>
+$ git commit -m "Change main.c"	<span class="cm"># main.cをcommitする</span>
+$ git push			<span class="cm"># main.cをpushする</span>
+error: failed to push some refs to 'http://gitlab.example/foo/myapp.git'	<span class="cm"># エラーが出る</span>
+$ git fetch			<span class="cm"># 他ユーザの変更をフェッチする</span>
+$ git merge			<span class="cm"># マージしてみる</span>
+CONFLICT (content): Merge conflict in main.c	<span class="cm"># main.cがコンフリクトしている</span>
+$ vi main.c			<span class="cm"># main.cの内容を見てみる</span>
+// main
+int main(int argc, char **argv) {
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+    printf("HELLO world!\n");	<span class="cm"># 自分の変更</span>
+=======
+    printf("hello WORLD!\n");	<span class="cm"># 他ユーザの変更</span>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; refs/remotes/origin/develop/v1.1
+}
+$ git add ./main.c		<span class="cm"># 再度addして</span>
+$ git commit -m "..."		<span class="cm"># commitして</span>
+$ git push			<span class="cm"># pushする</span>
+</pre>
+</div>
+
+<h4 id="diff">差分表示(diff)</h4>
+<div class="i">
+<p><b>diff</b> は、コミットやブランチの差分を表示します。<i>before</i> も <i>after</i> も省略した場合はステージングとワーキングツリーの差分、<i>after</i> を省略した場合は、ワーキングツリーとの差分を表示します。ただし、add されていない新規ファイルは比較の対象になりません。HEAD はローカルリポジトリの中の最新コミット、HEAD^ はひとつ前のコミット、origin/master は最後にリモートリポジトリと同期(push, pull, fetch)した時点のコミットを示します。</p>
+<pre class="c">
+$ git diff			<span class="cm"># [STAGING]と[WORK]の差分</span>
+$ git diff --staged		<span class="cm"># [HEAD]と[STAGING]の差分</span>
+$ git diff --cached		<span class="cm"># [HEAD]と[STAGING]の差分</span>
+$ git diff HEAD			<span class="cm"># [HEAD]と[WORK]の差分</span>
+$ git diff <i>before</i>		<span class="cm"># [<i>before</i>]と[WORK]の差分</span>
+$ git diff <i>before</i> --staged	<span class="cm"># [<i>before</i>]と[STAGING]の差分</span>
+$ git diff <i>before</i>..<i>after</i>	<span class="cm"># [<i>before</i>]と[<i>after</i>]の差分</span>
+$ git diff <i>before</i> <i>after</i>		<span class="cm"># [<i>before</i>]と[<i>after</i>]の差分</span>
+$ git diff HEAD^..HEAD		<span class="cm"># [ひとつ前のコミット(HEAD^)]と[最新コミット(HEAD)]の差分</span>
+$ git diff HEAD^		<span class="cm"># [ひとつ前のコミット(HEAD^)]と[WORK]の差分</span>
+$ git diff f671fbe 8c2d235	<span class="cm"># [コミット(f671fbe)]と[コミット(8c2d235)]の差分</span>
+$ git diff f671fbe HEAD		<span class="cm"># [コミット(f671fbe)]と[HEAD]の差分</span>
+$ git diff f671fbe		<span class="cm"># [コミット(f671fbe)]と[WORK]の差分</span>
+$ git diff origin/master HEAD	<span class="cm"># [origin/master]と[HEAD]の差分</span>
+$ git diff origin/master --staged <span class="cm"># [origin/master]と[STAGING]の差分</span>
+$ git diff origin/master	<span class="cm"># [origin/master]と[WORK]の差分</span>
+$ git diff branchA..branchB	<span class="cm"># ブランチ間の差分</span>
+$ git diff --name-only		<span class="cm"># ファイル名のみ表示</span>
+</pre>
+</div>
+
+<h4 id="restore">リストア(restore)</h4>
+<div class="i">
+<p><b>restore</b> は、Git 2.23 で <b>checkout</b> が <b>restore</b> と <b>switch</b> に分離されてできたコマンドで、ステージング上のファイルをワーキングツリーにリストアします。</p>
+<pre class="c">
+<span class="cm"># [WORK] ←(restore)─ [STAGING]</span>
+$ git restore file.txt		<span class="cm"># ステージング上のファイルをワーキングツリーにリストアする</span>
+</pre>
+</div>
+
+<h4 id="reset">リセット(reset)</h4>
+<div class="i">
+<p><b>reset</b> は、<b>commit</b> や <b>add</b> の取り消しを行います。<b>--hard</b> はステージングもワーキングツリーも戻します。<b>--soft</b> は HEAD のみを変更します。</p>
+<pre class="c">
+$ git reset --hard HEAD^	<span class="cm"># HEADとSTAGINGとWORKをひとつ前のコミット状態に戻す(commit取り消し)</span>
+$ git reset HEAD^		<span class="cm"># HEADとSTAGINGをひとつ前のコミット状態に戻す。WORKはそのまま</span>
+$ git reset --soft HEAD^	<span class="cm"># HEADをひとつ前のコミット状態に戻す。STAGINGとWORKはそのまま</span>
+$ git reset --hard HEAD		<span class="cm"># STAGINGとWORKを最後のコミット状態に戻す。HEADはそのまま(編集取り消し)</span>
+$ git reset			<span class="cm"># STAGINGを最後のコミット状態に戻す。WORKとHEADはそのまま(add取り消し)</span>
+$ git reset --hard f671fbe	<span class="cm"># HEADとSTAGINGとWORKをコミット(f671fbe )状態に戻す</span>
+$ git reset <i>file</i>		<span class="cm"># 特定のファイルやディレクトリに対してのみリセットする</span>
+</pre>
+</div>
+
+<h4 id="checkout">チェックアウト(checkout)</h4>
+<div class="i">
+<p><b>checkout</b> は、ブランチを作成したり、切り替えたり、ブランチからファイルを取り出したりするのに使用します。仕様が複雑になってきたため、2019年8月リリースの Git 2.23 からは、<b>switch</b> と <b>restore</b> に分離されました。</p>
+<pre class="c">
+$ git checkout -b <i>new_branch</i>	<span class="cm"># ブランチを作成する(古い書き方)</span>
+$ git switch -c <i>new_branch</i>	<span class="cm"># ブランチを作成する(新しい書き方)</span>
+$ git checkout <i>branch</i>		<span class="cm"># ブランチを切り替える(古い書き方)</span>
+$ git switch <i>branch</i>		<span class="cm"># ブランチを切り替える(新しい書き方)</span>
+$ git checkout <i>file</i>		<span class="cm"># WORKのファイルをSTAGING状態の内容に戻す(古い書き方)</span>
+$ git restore <i>file</i>		<span class="cm"># WORKのファイルをSTAGING状態の内容に戻す(新しい書き方)</span>
+</pre>
+</div>
+
+<h4 id="branch">ブランチ(branch)</h4>
+<div class="i">
+<p><b>branch</b> は、ブランチの一覧を表示します。ブランチの切り替えには <b>switch</b> を使用します。リモートのブランチ名を変更したい時は、一度リモートブランチを削除してから、名前変更後のブランチをプッシュします。</p>
+<pre class="c">
+$ git branch <i>new_branch</i>		<span class="cm"># ローカルリポジトリにブランチを作成する</span>
+$ git switch -c <i>new_branch</i>	<span class="cm"># ローカルリポジトリにブランチを作成する(新しい書き方)</span>
+$ git checkout -b <i>new_branch</i>	<span class="cm"># ローカルリポジトリにブランチを作成する(古い書き方)</span>
+$ git push -u origin <i>branch</i>	<span class="cm"># 新ブランチをリモートリポジトリにプッシュする</span>
+$ git branch			<span class="cm"># ブランチの一覧を表示する</span>
+$ git switch <i>branch</i>		<span class="cm"># ブランチを切り替える(新しい書き方)</span>
+$ git checkout <i>branch</i>		<span class="cm"># ブランチを切り替える(古い書き方)</span>
+$ git branch -d <i>branch</i>		<span class="cm"># ローカルブランチを削除する</span>
+$ git branch -m old new		<span class="cm"># ローカルブランチ名を変更する</span>
+$ git push -d origin <i>branch</i>	<span class="cm"># リモートブランチを削除する</span>
+</pre>
+</div>
+
+<h4 id="switch">スイッチ(switch)</h4>
+<div class="i">
+<p><b>switch</b> は、2019年8月リリースの Git 2.23 で、<b>checkout</b> が <b>switch</b> と <b>restore</b> に分離してできたコマンドです。ブランチを作成したり切り替えたりします。</p>
+<pre class="c">
+$ git switch -c <i>new_branch</i>	<span class="cm"># ローカルリポジトリに新しいブランチを作成する</span>
+$ git switch <i>branch</i>		<span class="cm"># 別のブランチに切り替える</span>
+</pre>
+</div>
+
+<h4 id="tags">タグ(tag)</h4>
+<div class="i">
+<p><b>tag</b> は、ブランチのコミット位置にタグをつけます。正式リリースしたポイントにマーク付けを行う場合などに用いられます。</p>
+<pre class="c">
+$ git tag -a <i>tagname</i> -m "<i>msg...</i>"	<span class="cm"># 現在のコミット位置にタグをつける</span>
+$ git tag -a "v1.1" -m "Ver 1.1"	<span class="cm"># 現在のコミット位置に "v1.1" という名前のタグをつける</span>
+$ git push origin <i>tagname</i>		<span class="cm"># タグ情報をリモートリポジトリにプッシュする</span>
+$ git remote add origin <i>url</i>		<span class="cm"># pushでoriginが見つからないエラーが出る時はこれを実行</span>
+</pre>
+</div>
+
+<h4 id="origin">オリジン(orgin)</h4>
+<div class="i">
+<p><b>orgin</b> は、http://gitlab.example.com/foo/myapp.git などの URL につける別名のようなものです。デフォルトの名前として origin が使用されます。</p>
+<pre class="c">
+$ git remote -v			<span class="cm"># オリジンの一覧を表示する</span>
+$ git remote add origin <i>url</i>	<span class="cm"># オリジンを作成する</span>
+</pre>
+</div>
+
+<h4 id="configs">コンフィグ(config)</h4>
+<div class="i">
+<p><b>config</b> は、Git に関する様々なパラメータを設定・参照します。</p>
+<pre class="c">
+$ git config --list
+$ git config {key} {value}
+$ git config --global {key} {value}
+$ git config --system {key} {value}
+</pre>
+<pre class="c">
+$ git config --global user.name "ユーザ名"	<span class="cm"># ユーザ名を設定する</span>
+$ git config --global user.email "メールアドレス"	<span class="cm"># メールアドレスを設定する</span>
+$ git config --global color.ui auto		<span class="cm"># カラーリングを有効化する</span>
+$ git config --global core.quotepath false	<span class="cm"># 日本語ファイル名をそのまま表示する</span>
+$ git config --global core.safecrlf true	<span class="cm"># 改行コードが混在していても変換しない</span>
+$ git config --global core.autocrlf false	<span class="cm"># チェックアウト時に改行コードを変更しない</span>
+$ git config core.ignorecase false		<span class="cm"># ファイル名の大文字・小文字を無視しない</span>
+$ git config --global core.editor vi		<span class="cm"># コミットする際に使用するエディタを指定する</span>
+$ git config --global alias.co checkout		<span class="cm"># エイリアス(co=checkout)を設定する</span>
+$ git config --global credential.helper cache	<span class="cm"># ID/PWを900秒間メモリにキャッシュする</span>
+$ git config --global credential.helper store	<span class="cm"># ID/PWをファイル($HOME/.git-credentials)にキャッシュする</span>
+$ git config --global --add merge.ff false	<span class="cm"># merge --no-ffをデフォルトにする</span>
+</pre>
+</div>
+
+<h4 id="status">ステータス(status)</h4>
+<div class="i">
+<p><b>status</b> は、Git に関するステータス情報を表示します。</p>
+<pre class="c">
+$ git status		<span class="cm"># 差分情報などのステータスを表示</span>
+$ git status -s		<span class="cm"># 簡易形式で表示</span>
+</pre>
+<p>簡易形式で表示した場合、先頭に A(addが必要)、D(deleteが必要)、M(modifyが必要)が表示されます。1カラム目はローカルリポジトリ(HEAD)とステージング(STAGING)の差分、2カラム目はステージング(STAGING)とワーキングツリー(WORK)の差分を示します。</p>
+<pre class="c">
+A  fileA.txt		<span class="cm"># ローカルリポジトリに追加が必要</span>
+D  fileB.txt		<span class="cm"># ローカルリポジトリから削除が必要</span>
+M  fileC.txt		<span class="cm"># ローカルリポジトリに変更が必要</span>
+ A fileD.txt		<span class="cm"># ステージングに追加が必要</span>
+ D fileE.txt		<span class="cm"># ステージングから削除が必要</span>
+ M fileF.txt		<span class="cm"># ステージングに変更が必要</span>
+</pre>
+</div>
+
+<h4 id="log">ログ(log)</h4>
+<div class="i">
+<p><b>log</b> は、コミット履歴を表示します。</p>
+<pre class="c">
+$ git log		<span class="cm"># コミット履歴を表示</span>
+$ git log -p		<span class="cm"># ファイルの修正内容も表示</span>
+$ git log -2		<span class="cm"># 直近の2件のみ表示</span>
+$ git log --oneline	<span class="cm"># 1行1履歴で表示</span>
+$ git log --follow <i>file</i>	<span class="cm"># 特定ファイルのログを見る</span>
+</pre>
+</div>
+
+<h4 id="show">ショウ(show)</h4>
+<div class="i">
+<p><b>show</b> は、コミットの詳細を表示します。</p>
+<pre class="c">
+$ git show f671fbe			<span class="cm"># コミット(f671fbe)の詳細を表示する</span>
+</pre>
+</div>
+
+<h4 id="stash">スタッシュ(stash)</h4>
+<div class="i">
+<p><b>stash</b> は、現在改造中の変更を中断して一時的に退避し、別の変更をコミットしてから、元の作業に戻りたい場合に使用します。</p>
+<pre class="c">
+$ git stash save		<span class="cm"># 現在の変更を一時的に退避する</span>
+$ git stash list		<span class="cm"># 退避したスタッシュの一覧を表示する</span>
+$ git stash pop			<span class="cm"># 退避していたスタッシュを元に戻す</span>
+$ git stash drop		<span class="cm"># 退避していたスタッシュを消す</span>
+$ git stash apply stash@{0}	<span class="cm"># 指定しスタッシュを元に戻す</span>
+$ git stash drop stash@{0}	<span class="cm"># 指定したスタッシュを消す</span>
+</pre>
+</div>
+
+<h4 id="help">ヘルプ(help)</h4>
+<div class="i">
+<p><b>help</b> は、ヘルプやマニュアルを表示します。</p>
+<pre class="c">
+$ git --help		<span class="cm"># gitのヘルプを表示</span>
+$ git help -a		<span class="cm"># すべてのサブコマンドを表示</span>
+$ git <i>command</i> -h	<span class="cm"># コマンドのヘルプを表示</span>
+$ git help <i>command</i>	<span class="cm"># コマンドのマニュアルを表示</span>
+</pre>
+</div>
+
+<h4 id="gitignore">.gitignore</h4>
+<div class="i">
+<p><b>.gitignore</b> ファイルには、Git で無視したいファイルを列挙します。各ディレクトリに配置することができ、<b>file</b> はそのディレクトリ配下すべてのファイルにマッチ、/<b>file</b> は、そのディレクトリ内のファイルにマッチします。</p>
+<pre class="c">
+<span class="cm"># Gitで管理したくないファイルを列挙</span>
+$ vi .gitignore
+*.bak		<span class="cm"># カレントディレクトリ以下のすべての *.bak を無視</span>
+/TODO.txt	<span class="cm"># カレントディレクトリの TODO.txt を無視</span>
+/tmp/		<span class="cm"># カレントディレクトリのtmpフォルダを無視</span>
+</pre>
+</div>
+
+<h4 id="feature">featureブランチ</h4>
+<div class="i">
+<p>本番用ブランチ(master)から、開発用ブランチ(develop)を分岐し、さらに各機能毎の機能ブランチ(feature-xxx)を分岐させて開発することがあります。まず、次のようにして develop ブランチを clone し、さらに feature-xxx ブランチを作成します。</p>
+<pre class="c">
+$ git http://gitlab.example.com/foo/myapp.git -b develop
+$ cd myapp
+$ git branch feature-103		<span class="cm"># feature-xxxブランチを作成する</span>
+$ git switch feature-103		<span class="cm"># feature-xxxブランチに移動する</span>
+$ git push -u origin feature-103	<span class="cm"># feature-xxxブランチをプッシュする</span>
+</pre>
+<p>feature-xxx ブランチの中で改造を行っていきます。</p>
+<pre class="c">
+$ vi main.c				<span class="cm"># ソースを改修する</span>
+$ git add ./main.c			<span class="cm"># ソースをaddする</span>
+$ git commit -m "..."			<span class="cm"># ソースをcommitする</span>
+$ git push				<span class="cm"># ソースをpushする</span>
+</pre>
+<p>完成したら、feature-xxx ブランチを、develop ブランチにマージして、feature-xxx ブランチを削除します。</p>
+<pre class="c">
+$ git switch develop			<span class="cm"># developブランチに移動する</span>
+$ git merge feature-103			<span class="cm"># feature-xxxブランチをマージする</span>
+$ git pull				<span class="cm"># リモートのソースをpullする</span>
+$ ...					<span class="cm"># コンフリクトが発生していたら修正してadd/commitする</span>
+$ git push				<span class="cm"># developブランチをプッシュする</span>
+$ git branch -d feature-103		<span class="cm"># ローカルのfeature-xxxブランチを削除する</span>
+$ git push -d origin feature-103	<span class="cm"># リモートのfeature-xxxブランチを削除する</span>
+</pre>
+</div>
+
+<!--
+○https://ja.wikipedia.org/wiki/Git
+・Linuxの開発者であるリーナス・トーパルズがLinuxソースコード管理のために開発
+・現在は濱野純がメンテナとして従事。
+○https://qiita.com/TaaaZyyy/items/b2b68aec99789374a204
+・-no-ff
+・git config -global -add merge.ff false
+・git config -global -add pull.ff only
+・追跡ブランチ(git branch -a)
+・untracked / modified / staged
+・git rebase [ブランチを生やすブランチ名]
+・マージ：git checkout [取込先ブランチ]
+・マージ：git merge [対象ブランチ] -no-ff
+・マージの中止：git merge -abort
+・マージの中止：git reset -hard HEAD
+○http://k.swd.cc/learnGitBranching-ja/
+・cherry-pick
+・revert
+・rebase
+・merge
+○https://qiita.com/c6tower/items/fe2aa4ecb78bef69928f
+・ブランチ名 (master / develop / release / fiature-* / hotfix-*)
+-->
+
+<hr>
+<div>Copyright (C) 2021 杜甫々</div>
+<div>初版:2021年1月31日 最終更新:2021年1月31日</div>
+<div>http://www.tohoho-web.com/ex/gitlab.html</div>
+</body>
+</html>

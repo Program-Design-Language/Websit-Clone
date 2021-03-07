@@ -1,0 +1,241 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>カウンタ表示の仕方</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>カウンタ表示の仕方</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060104.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060104.htm">[前に]</a>
+<a href="99060106.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060106.htm">[次に]</a>
+<hr>
+<span class=name>たかはし</span>
+<span class=email><a href="mailto:k_takahashi@mlk-net.co.jp">[E-Mail]</a></span>
+<span class=time>1999/06/10(木) 13:50:49</span><br>
+社内ホームページにカウンタをつけようとしたんですが<br>
+<a href="javascript:if(confirm('http:///97121902.htm  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http:///97121902.htm'" tppabs="http:///????/cgi-bin/wwwcount.cgi?gif">http://????/cgi-bin/wwwcount.cgi?gif</a>で以下のエラー<br>
+がでてしまいます。<br>
+"Internal Server Error"<br>
+以下省略<br>
+サーバーはLinuxです。Apacheのエラーログをみたんですがチンプン<br>
+カンプンです。<br>
+どなたかご存じの方は教えてください。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/10(木) 13:55:20</span><br>
+<font color="#CC8000">&gt; "Internal Server Error"</font><br>
+内部エラー。原因はログに書かれてるわけ。<br>
+<br>
+<font color="#CC8000">&gt; Apacheのエラーログをみたんですがチンプンカンプンです。</font><br>
+その内容をここに書かねば、誰もわからんでしょう。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/10(木) 14:53:24</span><br>
+すみませんでした。<br>
+ログは<br>
+exec of /???/cgi-bin/wwwcount.cgi failed, reason: No such file or directory (errno = 2)<br>
+ですから、ファイルが存在しないといっているのですが、確かに<br>
+ファイル（wwwcount.cgi）はあります。<br>
+同じディレクトリーにあるIndex.htmは表示できるのでディレクトリー<br>
+もあっていると思います。<br>
+.htaccessの内容は以下の通りです。<br>
+AddType application/x-httpd-cgi .cgi<br>
+Options ExecCGI<br>
+よろしくお願いいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/10(木) 15:00:20</span><br>
+<font color="#CC8000">&gt; reason: No such file or directory</font><br>
+スクリプト1行目のperlのパスが違ってませんか?<br>
+　#!/usr/local/bin/perl<br>
+　#!/usr/bin/perl<br>
+　....<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/10(木) 15:33:22</span><br>
+えーうちはTurboLinuxなんですが、Perlで検索したところ<br>
+/usr/bin/perlだったので<br>
+#!/usr/bin/perlに変更しています。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/10(木) 15:51:51</span><br>
+wwwcount.cgiを置いてあるディレクトリに、<br>
+　#!/bin/sh<br>
+　echo "Content-type: text/plain"<br>
+　echo<br>
+　echo "test ok"<br>
+という内容の test.cgi を作って、chmod +x test.cgi して、<br>
+httpd経由でそれを実行。同じ結果になったら、apacheの設定ミス。<br>
+ScriptAliasあたりを見直しましょう。<br>
+<br>
+test.cgiが動いたら、wwwcount.cgiの問題。コマンドラインから<br>
+実行してみるとどうなりますか。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/10(木) 16:51:51</span><br>
+<font color="#CC8000">&gt;httpd経由でそれを実行。同じ結果になったら、apacheの設定ミス。</font><br>
+同じ結果になりました^^;<br>
+<br>
+<font color="#CC8000">&gt;ScriptAliasあたりを見直しましょう。</font><br>
+追加しても同じエラーでした^^;<br>
+<br>
+どうもapacheの設定のようです。もう少しがんばります<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/12(土) 11:30:09</span><br>
+えーその後apacheを設定し直して<br>
+再度チャレンジしましたが、結局だめでした。<br>
+エラーログには<br>
+[Sat Jun 12 11:09:01 1999] access to /home/KOJI/cgi-bin/wwwcount.cgi failed for 192.168.1.130, reason: Premature end of script headers<br>
+exec of /home/KOJI/cgi-bin/test.cgi failed, reason: Exec format error (errno = 8)<br>
+となっていました。<br>
+<font color="#CC8000">＞test.cgiが動いたら、wwwcount.cgiの問題。コマンドラインから</font><br>
+<font color="#CC8000">＞実行してみるとどうなりますか。</font><br>
+のコマンドラインというのはどうすればいいのでしょう？<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/12(土) 16:28:11</span><br>
+で、test.cgiはまだ動いてない、と。<br>
+<br>
+<font color="#CC8000">&gt; Premature end of script headers</font><br>
+うーん、あのスクリプトでこうなりますか…。なんで? PATHの問題?<br>
+<br>
+<font color="#CC8000">&gt; コマンドラインというのはどうすればいいのでしょう？</font><br>
+シェル上から<br>
+　/home/KOJI/cgi-bin/test.cgi<br>
+を実行するとどうなりますか。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/12(土) 16:38:49</span><br>
+perlの問題かなと思い<br>
+「とほほのperl入門（概要編）」にあります引数指定、ファイル指定<br>
+はできました。（自己完結型はcommand not foundに<br>
+なりましたが(; ;)<br>
+<br>
+<font color="#CC8000">＞シェル上から</font><br>
+<font color="#CC8000">＞　/home/KOJI/cgi-bin/test.cgi</font><br>
+kterm上から（でいいんですよね？）<br>
+No Such File or Directoryとなりました。(; ;)<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/12(土) 16:39:12</span><br>
+perlの問題かなと思い<br>
+「とほほのperl入門（概要編）」にあります引数指定、ファイル指定<br>
+はできました。（自己完結型はcommand not foundに<br>
+なりましたが(; ;)<br>
+<br>
+<font color="#CC8000">＞シェル上から</font><br>
+<font color="#CC8000">＞　/home/KOJI/cgi-bin/test.cgi</font><br>
+kterm上から（でいいんですよね？）<br>
+No Such File or Directoryとなりました。(; ;)<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/12(土) 21:31:11</span><br>
+<font color="#CC8000">&gt; kterm上から（でいいんですよね？）</font><br>
+はい。<br>
+<br>
+<font color="#CC8000">&gt; No Such File or Directoryとなりました。(; ;)</font><br>
+スクリプトの置いてあるディレクトリに移動して、lsすると<br>
+　% ls -l test.cgi<br>
+　-rwxr-xr-x&nbsp;&nbsp;1 user&nbsp;&nbsp;group&nbsp;&nbsp;63 Jun 12 21:30 test.cgi<br>
+となりますよね。それを<br>
+　% ./test.cgi<br>
+として実行してください。それでも<br>
+　No Such File or Directory<br>
+なら、/bin/shがない、ってことになるんですが、その前に<br>
+タイプミスを疑ってください。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/13(日) 10:38:56</span><br>
+こんにちは　前回ボタンを２回押したみたいで、<br>
+２回投稿されてしまいました。すみません<br>
+<font color="#CC8000">＞　No Such File or Directory</font><br>
+<font color="#CC8000">＞なら、/bin/shがない、ってことになるんですが、その前に</font><br>
+No Such File or Directoryになりました。<br>
+/bin/shがないとはどういうことですか？<br>
+一応/bin/shを見るとバイナリーファイルであるんですが．．．<br>
+すみません初歩的なことばっかりで。。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/13(日) 11:18:36</span><br>
+どうも様子が変なのでtest4.cgiを作成して再度<br>
+./test4.cgiを実行したところ<br>
+String found where operator expected at ./test4.cgi line 2,near "echo "Content-type: text/plain""<br>
+(Do you need to predeclear echo?)<br>
+が数カ所出ました。コマンドラインからも同じです。<br>
+ブラウザ上からは"Internal Server Error"です。<br>
+エラーのログは<br>
+String found where operator expected at /home/KOJI/cgi-bin/test4.cgi line 2, near "echo "Content-type: text/plain""<br>
+	(Do you need to predeclare echo?)<br>
+syntax error at /home/KOJI/cgi-bin/test4.cgi line 2, near "echo "Content-type: text/plain""<br>
+Bareword found where operator expected at /home/KOJI/cgi-bin/test4.cgi line 3, near "echo"<br>
+	(Missing semicolon on previous line?)<br>
+Execution of /home/KOJI/cgi-bin/test4.cgi aborted due to compilation errors.<br>
+[Sun Jun 13 11:16:24 1999] access to /home/KOJI/cgi-bin/test4.cgi failed for 192.168.1.1, reason: Premature end of script headers<br>
+です。<br>
+長文になってしまい申し訳ございません。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/13(日) 14:34:15</span><br>
+test4.cgiってどんなスクリプトですか?<br>
+<br>
+<font color="#CC8000">&gt; String found where operator expected at ./test4.cgi line 2,</font><br>
+<font color="#CC8000">&gt; near "echo "Content-type: text/plain"" (Do you need to predeclear echo?)</font><br>
+・・・・・・・・・・・・・・・・・・・・・・・・・・・・・<br>
+　#!/usr/bin/perl<br>
+　echo "Content-type: text/plain"<br>
+って書いてませんか。<br>
+　#!/bin/sh<br>
+　echo "Content-type: text/plain"<br>
+なんですけど・・・・・・・・・・・・・・・・・・・・・・・。<br>
+<br>
+まぁ、いろいろ試行錯誤してみてください。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/14(月) 09:39:07</span><br>
+こんにちは<br>
+<font color="#CC8000">&gt;#!/bin/sh</font><br>
+にしたらエラーがとれました。<br>
+カウンタはまだダメですけど．．．<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/14(月) 13:26:05</span><br>
+たびたびすみません　たかはしです。<br>
+カウンタ表示のエラーログですが、<br>
+なにかおわかりになるようでしたらお教えくださいM(_ _)m<br>
+<br>
+[Mon Jun 14 12:32:31 1999] access to /home/KOJI/cgi-bin/wwwcount.cgi failed for 192.168.1.48, reason: Premature end of script headers<br>
+/home/KOJI/cgi-bin/wwwcount.cgi: =: command not found<br>
+上記エラーがあと１２個<br>
+/home/KOJI/cgi-bin/wwwcount.cgi: line 112: syntax error near unexpected token `{'<br>
+/home/KOJI/cgi-bin/wwwcount.cgi: line 112: `if ($ARGV[0] eq "test") {'<br>
+です。<br>
+すみませんよろしくお願いいたします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/14(月) 16:36:36</span><br>
+<font color="#CC8000">&gt; /home/KOJI/cgi-bin/wwwcount.cgi: =: command not found</font><br>
+…今度はperlスクリプトをshスクリプトとして実行してるし。<br>
+<br>
+/bin/sh と /usr/local/bin/perl は全くの別物です。<br>
+前にあげたshスクリプトは、ただの動作確認用スクリプトです。<br>
+<br>
+今持ってるwwwcount.cgiは捨ててください。配布されている<br>
+wwwcount.cgiを持ってきて、(必要なら)perlのパスだけいじって、<br>
+apache経由で実行、それでもダメなら wwwcount.cgi?test で<br>
+実行。それでもダメならコマンドラインから perl -c wwwboard.cgi で実行。<br>
+<hr>
+<span class=name>たかはし</span>
+<span class=time>1999/06/14(月) 17:04:06</span><br>
+<span class=resolv>[[解決]]</span><br>
+お手数おかけしました。<br>
+パーミッションを全てやり直して、<br>
+wwconunt.cgiをＤＬしなおして全てうまくいきました。（表示されました）<br>
+最後までつきあってくださいましてありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060104.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060104.htm">[前に]</a>
+<a href="99060106.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060106.htm">[次に]</a>
+</body>
+</html>

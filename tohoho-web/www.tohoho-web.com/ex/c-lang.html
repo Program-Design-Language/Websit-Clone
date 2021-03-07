@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset=utf-8"utf-8">
+<title>C言語入門 - とほほのWWW入門</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="../style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script src="../lib/canvas.js" tppabs="http://www.tohoho-web.com/lib/canvas.js"></script>
+</head>
+<body>
+<h2>C言語入門</h2>
+<a href="../www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+C言語入門
+
+<h4 id="index">目次</h4>
+<div class="i">
+<ul>
+<li><a href="#about">C言語とは</a>
+<li><a href="#hello-world">Hello world</a>
+<li><a href="#printf">printf()</a>
+<li><a href="#comments">コメント(/* */, //)</a>
+<li><a href="#keywords">キーワード</a>
+<li><a href="#types">型</a>
+  <ul>
+  <li><a href="#int">整数(char・short・int・long・long long)</a>
+  <li><a href="#unsigned">符号(signed・unsigned)</a>
+  <li><a href="#float">実数(float・double)</a>
+  <li><a href="#void">void型(void)</a>
+  </ul>
+<li><a href="#typedef">型定義(typedef)</a>
+<li><a href="#cast">キャスト</a>
+<li><a href="#var">変数・定数</a>
+  <ul>
+  <li><a href="#variables">変数</a>
+  <li><a href="#const">定数(const)</a>
+  <li><a href="#static">静的変数(static)</a>
+  <li><a href="#register">レジスタ変数(register)</a>
+  <li><a href="#auto">自動変数(auto)</a>
+  </ul>
+<li><a href="#array">配列</a>
+<li><a href="#pointer">ポインタ</a>
+<li><a href="#memory">メモリ領域</a>
+<li><a href="#string">文字列</a>
+<li><a href="#operators">演算子</a>
+<li><a href="#statements">制御構文</a>
+  <ul>
+  <li><a href="#if">もし～ならば(if・else)</a>
+  <li><a href="#while">～の間(while)</a>
+  <li><a href="#do">～の間(do・while)</a>
+  <li><a href="#for">～の間(for)</a>
+  <li><a href="#break-continue">ループの中断・繰り返し(break・continue)</a>
+  <li><a href="#goto">Goto文(goto)</a>
+  <li><a href="#switch">Switch文(switch・case・default・break)</a>
+  </ul>
+<li><a href="#preprocessor">プリプロセッサ</a>
+  <ul>
+  <li><a href="#include">インクルード(#include)</a>
+  <li><a href="#define">デファイン(#define, #undef)</a>
+  <li><a href="#ifdef">条件コンパイル(#ifdef, #else, #elif, #endif)</a>
+  </ul>
+<li><a href="#functions">関数</a>
+  <ul>
+  <li><a href="#return">関数の戻り値(return)</a>
+  <li><a href="#varargs">可変引数</a>
+  <li><a href="#call_by">値渡しと参照渡し</a>
+  </ul>
+<li><a href="#thread">スレッド</a>
+<li><a href="#struct">構造体(struct)</a>
+<li><a href="#union">共用体(union)</a>
+<li><a href="#enum">列挙型(enum)</a>
+<li><a href="#sizeof">サイズ参照(sizeof)</a>
+<li><a href="#extern">外部参照(extern)</a>
+<li><a href="#typeof">typeof演算子(typeof)</a>
+<li><a href="#volatile">揮発変数(volatile)</a>
+<li><a href="#special_valiables">特殊変数</a>
+<li><a href="#c99">C99で追加された機能</a>
+  <ul>
+  <li><a href="#bool">真偽値(_Bool)</a>
+  <li><a href="#complex">複素数(_Complex)</a>
+  <li><a href="#inline">インライン関数(inline)</a>
+  <li><a href="#restrict">制限付きポインタ(restrict)</a>
+  </ul>
+<li><a href="#c11">C11で追加された機能</a>
+  <ul>
+  <li><a href="#alignof">アラインオブ(_Alignof)</a>
+  <li><a href="#alignas">アラインアズ(_Alignas)</a>
+  <li><a href="#atomic">アトミック(_Atomic)</a>
+  <li><a href="#generic">ジェネリック(_Generic)</a>
+  <li><a href="#noreturn">ノーリターン(_Noreturn)</a>
+  <li><a href="#static_assert">静的アサート(_Static_assert)</a>
+  <li><a href="#thread_local">スレッドローカル(_Thread_local)</a>
+  </ul>
+</ul>
+</div>
+
+<h4 id="about">C言語とは</h4>
+<div class="i">
+<ul>
+<li>1972年にAT&amp;Tベル研究所で、UNIX の開発者であるのデニス・リッチーが主体となって開発しました。
+<li>元々 ALGOL という言語があり、ALGOL → B言語 → C言語の流れで「C言語」と命名されました。
+<li>K&amp;R(ブライアン・カーニハンとデニス・リッチー)の「The C Programming Language」という書籍がバイブルでした。
+<li>この書籍の冒頭に書かれた「hello, world!」を印字するプログラムは、様々なプログラミング言語学習の事始めとして広まっています。
+<li>静的型付け言語であり、コンパイル型言語です。
+<li>文字列を扱うにもメモリ配置を意識する必要があります。
+<li>ガベージコレクション機能は無く、確保したメモリはプログラマが責任をもって解放する必要があります。
+<li>解放を怠ると、使用するメモリがどんどん増えていくメモリリークの症状を起こします。
+<li>メモリ保護機能も無いため、迂闊なプログラムを書くとすぐにメモリ破壊を起こします。
+<li>メモリリークとメモリ破壊と闘いながらプログラミングしていく、高級アセンブラに近い言語仕様です。
+<li>階層的な名前空間をサポートしておらず、大規模プロジェクトでは、関数名やグローバル変数名の重複に注意する必要があります。
+<li>アセンブラに近い機能ということもあり、非常に高速なプログラムを作ることができます。
+<li>UNIX/Linue のカーネルやコマンド群を始め、数多くの OS、ミドルウェア、アプリケーションが C言語で記述されています。
+<li><b>C89</b><small>(1989年)</small>、<b>C90</b><small>(1990年)</small>、<b>C99</b><small>(1999年)</small>、<b>C11</b><small>(2011年)</small>、<b>C17</b><small>(2017年)</small> などのバージョンがあります。
+</ul>
+</div>
+
+<h4 id="hello-world">Hello world</h4>
+<div class="i">
+<p>「The C Programming Language」で紹介された Hello world は下記の様になります。プログラムは必ず <b>main()</b> という名前の関数から始まります。K&amp;R に敬意を表して「hello, world!」は上記書籍の記法にしています(h は小文字で、hello と world の間にカンマ)。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+
+main() {
+    printf("<em>hello, world!</em>\n");
+}
+</pre>
+<p>プログラムの拡張子は <b>*.c</b> です。コンパイルは <b>gcc</b> コマンドで行います。</p>
+<pre class="c">
+$ <em>gcc -o hello hello.c</em>
+$ ./hello
+hello, world!
+</pre>
+</div>
+
+<h4 id="printf">printf()</h4>
+<div class="i">
+<p><b>printf(</b><i>format</i>, <i>arg1</i>, <i>arg2</i>, ...<b>)</b> は <i>format</i> の書式に従い、<i>arg1</i> や <i>arg2</i> などの値を書き出します。<b>%s</b> は文字列の値に置き換えられます。<b>%d</b> は整数の値に置き換えられます。<b>\n</b> は改行を意味します。</p>
+<pre class="c">
+char *name = "Yamada";
+int age = 32;
+<em>printf(</em>"My name is <em>%s</em>. I'm <em>%d</em> years old.\n", name, age<em>)</em>;
+</pre>
+<p><b>%s</b> や <b>%d</b> の他には次のようなものがあります。</p>
+<pre class="c">
+<em>%c</em>		<span class="cm">// 文字(例:'a')</span>
+<em>%s</em>		<span class="cm">// 文字列(例: "abc")</span>
+<em>%d</em>		<span class="cm">// 符号付き整数(例: -123)</span>
+<em>%u</em>		<span class="cm">// 符号無し整数(例: 123)</span>
+<em>%o</em>		<span class="cm">// 8進数(例: 0755)</span>
+<em>%x</em>		<span class="cm">// 16進数(例: 0x89ab)</span>
+<em>%f</em>		<span class="cm">// 浮動小数点数(非指数表示)(例: 123.4)</span>
+<em>%e</em>		<span class="cm">// 浮動小数点数(指数表示)(例: 1.234e+2)</span>
+<em>%g</em>		<span class="cm">// 浮動小数点数(%fか%eを自動選択)(例: 123.4)</span>
+<em>%%</em>		<span class="cm">// % 自体を表示</span>
+</pre>
+<p><b>%</b> の後ろに数値をつけると桁数・文字数を示します。</p>
+<pre class="c">
+int n = 123;
+float x = 12.3;
+char *s = "ABC";
+printf("<em>%5d</em>", n);		<span class="cm">// 右詰め5桁の数値として表示(  123)</span>
+printf("<em>%-5d</em>", n);		<span class="cm">// 左詰め5桁の数値として表示(123  )</span>
+printf("<em>%05d</em>", n);		<span class="cm">// 0埋め5桁の数値として表示(00123)</span>
+printf("<em>%5.2f</em>", x);		<span class="cm">// 小数点以下2桁、全体5桁の実数として表示(12.30)</span>
+printf("<em>%5s</em>", s);		<span class="cm">// 右寄せ5文字の文字列として表示(  ABC)</span>
+printf("<em>%-5s</em>", s);		<span class="cm">// 左寄せ5文字の文字列として表示(ABC  )</span>
+</pre>
+</div>
+
+<h4 id="comments">コメント(/* */, //)</h4>
+<div class="i">
+<p>コメントは <b>/*</b> と <b>*/</b> で挟んで記述します。</p>
+<pre class="c">
+<em>/*</em> <span class="cm">ここはコメント</span> <em>*/</em>
+
+<em>/*</em>
+ * <span class="cm">複数行にまたがるコメントも</span>
+ * <span class="cm">記述できます</span>
+ <em>*/</em>
+</pre>
+<p><b>C99</b> では <b>//</b> によるコメントもサポートされました。</p>
+<pre class="c">
+<em>//</em> <span class="cm">行末までがコメントになります</span>
+</pre>
+</div>
+
+<h4 id="keywords">キーワード</h4>
+<div class="i">
+<p>キーワードには以下のものがあります。</p>
+<pre class="c">
+<a href="#auto">auto</a>		<a href="#break-continue">break</a>		<a href="#switch">case</a>		<a href="#types">char</a>
+<a href="#const">const</a>		<a href="#break-continue">continue</a>	<a href="#switch">default</a>		<a href="#do">do</a>
+<a href="#types">double</a>		<a href="#if">else</a>		<a href="#enum">enum</a>		<a href="#extern">extern</a>
+<a href="#types">float</a>		<a href="#for">for</a>		<a href="#goto">goto</a>		<a href="#if">if</a>
+<a href="#inline">inline</a>		<a href="#types">int</a>		<a href="#types">long</a>		<a href="#register">register</a>
+<a href="#restrict">restrict</a>	<a href="#return">return</a>		<a href="#types">short</a>		<a href="#types">signed</a>
+<a href="#sizeof">sizeof</a>		<a href="#static">static</a>		<a href="#struct">struct</a>		<a href="#switch">switch</a>
+<a href="#typedef">typedef</a>		<a href="#typeof">typeof</a>		<a href="#union">union</a>		<a href="#types">unsigned</a>
+<a href="#types">void</a>		<a href="#volatile">volatile</a>	<a href="#while">while</a>		<a href="#alignas">_Alignas</a>
+<a href="#alignof">_Alignof</a>	<a href="#atomic">_Atomic</a>		<a href="#bool">_Bool</a>		<a href="#complex">_Complex</a>
+<a href="#generic">_Generic</a>	<a href="#complex">_Imaginary</a>	<a href="#noreturn">_Noreturn</a>	<a href="#static_assert">_Static_assert</a>
+<a href="#thread_local">_Thread_local</a>
+</pre>
+</div>
+
+<h4 id="types">型</h4>
+<div class="i">
+<h5 id="int">整数(char・short・int・long・long long)</h5>
+<p><b>char</b> は8ビット、<b>short</b> は16ビット整数を示します。<b>int</b> はシステムが最も扱いやすいビット長の整数で、16ビットマシンでは 16ビット、32ビットマシンでは 32ビットでしたが、64ビットマシンでは互換性を考慮して 32ビットのままとするシステムが多いようです。<b>long</b> は <b>int</b> と同じかそれ以上のビット数の整数、<b>long long</b> は <b>long</b> と同じかそれ以上のビット数の整数を示します。</p>
+<pre class="c">
+<em>char</em>			<span class="cm">// 符号あり8ビット整数(-128～127)</span>
+<em>short</em>			<span class="cm">// 符号あり16ビット整数(-32768～32767)</span>
+<em>int</em>			<span class="cm">// 符号あり整数(通常32ビット)</span>
+<em>long</em>			<span class="cm">// 符号あり整数(通常32～64ビット)</span>
+<em>long long</em>		<span class="cm">// 符号あり整数(通常64ビット)</span>
+</pre>
+<h5 id="unsigned">符号(signed・unsigned)</h5>
+<p><b>signed</b> をつけると符号あり、<b>unsigned</b> をつけると符号なし、省略すると符号ありになります。</p>
+<pre class="c">
+<em>signed</em> char		<span class="cm">// 符号あり8ビット整数(-128～127)</span>
+<em>unsigned</em> char		<span class="cm">// 符号なし8ビット整数(0～255)</span>
+</pre>
+<h5 id="float">実数(float・double)</h5>
+<p><b>float</b> は単精度、<b>double</b> は倍精度の浮動小数点数を扱います。</p>
+<pre class="c">
+<em>float</em>			<span class="cm">// 単精度浮動小数点数</span>
+<em>double</em>			<span class="cm">// 倍精度浮動小数点数</span>
+</pre>
+<h5 id="void">void型(void)</h5>
+<p><b>void</b> は値が無いことを示す特別な型です。</p>
+<pre class="c">
+<em>void</em>			<span class="cm">// 値無しを示す特別な型</span>
+</pre>
+</div>
+
+<h4 id="typedef">型定義(typedef)</h4>
+<div class="i">
+<p><b>typedef</b> は既存の型に別名をつけます。下記の例では <b>unsigned int</b> という型に <b>uint</b> という別名をつけ、それを使用しています。</p>
+<pre class="c">
+<em>typedef</em> unsigned int uint;
+
+main() {
+    <em>uint</em> n = 123;
+    :
+</pre>
+<p>下記の例では <b>struct dnode</b> という型に <b>DNODE</b> という別名をつけています。</p>
+<pre class="c">
+<em>typedef</em> struct dnode {
+    int id;
+    char *data;
+} DNODE;
+
+main() {
+    <em>DNODE</em> d;
+    :
+</pre>
+</div>
+
+<h4 id="cast">キャスト</h4>
+<div class="i">
+<p>int型の変数の値を long型の変数に代入したりする場合は、暗黙的な型の変換が行われます。</p>
+<pre class="c">
+main() {
+    int int_num = 123;
+    long long_num;
+    <em>long_num = int_num;</em>		<span class="cm">// 暗黙的に int → long の型変換が行われる</span>
+    printf("%ld\n", long_num);
+}
+</pre>
+<p>(型名) をつけることで、明示的に型変換することもできます。これを <b>キャスト</b> と呼びます。</p>
+<pre class="c">
+main() {
+    int int_num = 123;
+    long long_num;
+    long_num = <em>(long)</em>int_num;		<span class="cm">// 明示的に int → long の型変換(キャスト)を行う</span>
+    printf("%ld\n", long_num);
+}
+</pre>
+</div>
+
+<h4 id="var">変数・定数</h4>
+
+<h5 id="variables">変数</h5>
+<div class="i">
+<p>C言語ではあらかじめすべての変数を定義しておく必要があります。下記では <b>int</b> 型の変数 <b>n</b> を定義しています。</p>
+<pre class="c">
+main() {
+    <em>int n</em>;
+}
+</pre>
+<p>変数には初期値を指定することができます。</p>
+<pre class="c">
+main() {
+    int n <em>= 123</em>;
+}
+</pre>
+<p>関数外部で宣言したものを <b>グローバル変数</b>、関数内部で宣言したものを <b>ローカル変数</b> と呼びます。グローバル変数はプログラムが終了するまで生存し、ファイル内すべての関数から参照できます。ローカル変数はメモリのスタック領域に確保され、関数内部でのみ参照され、関数終了時に消滅します。</p>
+<pre class="c">
+<em>int a1 = 123;</em>		<span class="cm">// グローバル変数</span>
+
+main() {
+    <em>int a2 = 123;</em>	<span class="cm">// ローカル変数</span>
+}
+</pre>
+</div>
+
+<h5 id="const">定数(const)</h5>
+<div class="i">
+<p><b>const</b> を用いて定数を定義することができます。定数を変更しようとするとコンパイルエラーになります。</p>
+<pre class="c">
+<em>const</em> float pi = 3.14;
+</pre>
+</div>
+
+<h5 id="static">静的変数(static)</h5>
+<div class="i">
+<p><b>static</b> は静的変数を定義します。通常の変数は関数が終わるとスコープアウトして消滅しますが、<b>static</b> で宣言した変数はプログラムが終了するまで維持されます。</p>
+<pre class="c">
+main() {
+    int i;
+    for (i = 0; i &lt; 10; i++) {
+        count();
+    }
+}
+
+count() {
+    <em>static</em> n = 0;
+    n++;
+    printf("%d\n", n);
+}
+</pre>
+</div>
+
+<h5 id="register">レジスタ変数(register)</h5>
+<div class="i">
+<p><b>register</b> は変数を <b>レジスタ変数</b> で扱うようにコンパイラに依頼します。通常の変数はスタック領域に割り当てられますが、<b>register</b> を指定した変数は、可能であればレジスタに割り当てられます。これにより、よく使用する変数を高速に読み書きすることが可能となります。</p>
+<pre class="c">
+<em>register</em> int n = 0;
+</pre>
+</div>
+
+<h5 id="auto">自動変数(auto)</h5>
+<div class="i">
+<p><b>auto</b> は自動変数を示します。自然変数は前述のローカル変数と同義です。これは古い言語との互換性のために残されたキーワードで、実際に使用されるケースはほとんどありません。C++ の <b>auto</b> とは別物です。</p>
+<pre class="c">
+main() {
+    <em>auto</em> int a1;		<span class="cm">// 自然変数(=ローカル変数)</span>
+    int a2;			<span class="cm">// ローカル変数(=自然変数)</span>
+}
+</pre>
+</div>
+
+<h4 id="array">配列</h4>
+<div class="i">
+<p>変数名[<i>n</i>] で配列を扱うことができます。配列のインデックスは 0 から始まります。a[3] とした場合、a[0]～a[2] の3個の要素を持つ配列を使用することができます。</p>
+<pre class="c">
+main() {
+    int a[3];
+    a[0] = 123;
+    a[1] = 456;
+    a[2] = 789;
+    printf("%d %d %d\n", a[1], a[2], a[3]);
+}
+</pre>
+<p>配列の要素数を超えるインデックスを指定した場合でもコンパイラはエラーを検出しません。メモリが破壊され、以降のプログラムが予期しない動作をすることになります。</p>
+<pre class="c">
+main() {
+    int a[3];
+    a[0] = 123;
+    a[1] = 456;
+    a[2] = 789;
+    <em>a[3] = 999;</em>		<span class="cm">// メモリ破壊</span>
+}
+</pre>
+</div>
+
+<h4 id="pointer">ポインタ</h4>
+<div class="i">
+<p><b>ポインタ</b> は変数やデータが格納されたメモリ上のアドレス(番地)を意味します。変数のポインタを得るには「<b>&amp;</b>変数名」を、ポインタの中身を参照するには 「<b>*</b>ポインタ」を使用します。「型名 <b>*</b>」は変数をポインタ変数として定義します。下記の例で、1つ目の <b>*</b> は a2 をポインタ変数として定義するもの、2つ目、3つ目の <b>*</b> は a2 ポインタの中身を参照するものです。</p>
+<pre class="c">
+main() {
+    int a1 = 123;		<span class="cm">// int変数 a1 を確保し、その値として 123 を格納</span>
+    int <em>*</em>a2 = <em>&amp;</em>a1;		<span class="cm">// ポインタ変数 a2 を確保し、その値として a1 のポインタを代入</span>
+    printf("%d\n", <em>*</em>a2);	<span class="cm">// a2 ポインタの中身(ポインタが示すメモリの中身)は 123</span>
+    <em>*</em>a2 = 321;			<span class="cm">// a2 ポインタの中身(ポインタが示すメモリの中身)を 321 に変更</span>
+    printf("%d\n", a1);		<span class="cm">// a1 の値が 321 に変わる</span>
+}
+</pre>
+<canvas id="c1" width=400 height=100></canvas>
+<script>
+new Canvas("c1")
+  .line(60, 0, 0, 100)
+  .line(190, 0, 0, 100)
+  .box(60, 25, 130, 25, {text: "a2 : d2a6c8ac"})
+  .text("d2a6c8a0", 5, 41)
+  .box(60, 50, 130, 25, {text: "a1 : 123 → 321"})
+  .text("d2a6c8ac", 5, 66)
+  .line(190, 38, 20, 0)
+  .line(210, 38, 0, 25)
+  .arrow(210, 63, -20, 0)
+</script>
+</div>
+
+<h4 id="memory">メモリ領域</h4>
+<div class="i">
+<p>メモリは、プログラム領域、スタティック領域、ヒープ領域、スタック領域に大別されます。プログラム領域にはプログラムが格納されます。スタティック領域はコンパイル時に決めることができる領域です。ヒープ領域は <b>malloc()</b>, <b>free()</b> などのメモリ関数で動的に確保・解放される領域です。スタック領域は関数の引数やローカル変数など、関数が呼び出される度に(通常下から)積み重なって確保される領域です。</p>
+<canvas id="c2" width=402 height=152></canvas>
+<script>
+new Canvas("c2")
+  .box(0, 0, 400, 25, {text: "プログラム領域：func(), main() ...", left: 10})
+  .box(0, 25, 400, 25, {text: "スタティック領域：a1(\"ABC\"), a2(int), a3(int), ...", left: 10})
+  .box(0, 50, 400, 25, {text: "ヒープ領域：a4(malloc(4)), ...", left: 10})
+  .box(0, 75, 400, 25, {text: "..."})
+  .box(0, 100, 400, 25, {text: "スタック領域(func)：func:a5(int), ...", left: 10})
+  .box(0, 125, 400, 25, {text: "スタック領域(main)：main:a6(int), ...", left: 10})
+</script>
+
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void func(int *);
+static int a2;				<span class="cm">// スタティック領域</span>
+
+void main() {				<span class="cm">// プログラム領域</span>
+    int a6;				<span class="cm">// スタック領域</span>
+    func(&amp;a6);
+}
+
+void func(int *a6) {			<span class="cm">// プログラム領域</span>
+    char *a1 = "ABC";			<span class="cm">// スタティック領域</span>
+    static int a3;			<span class="cm">// スタティック領域</span>
+    char *a4 = malloc(4);		<span class="cm">// ヒープ領域</span>
+    int a5;				<span class="cm">// スタック領域</span>
+
+    printf("f1 = %08x\n", func);	<span class="cm">// 関数名は関数のポインタを示す</span>
+    printf("f2 = %08x\n", main);	<span class="cm">// 関数名は関数のポインタを示す</span>
+    printf("a1 = %08x\n", a1);		<span class="cm">// a1はポインタ変数なのでそのまま表示</span>
+    printf("a2 = %08x\n", &amp;a2);		<span class="cm">// a2変数のポインタを表示</span>
+    printf("a3 = %08x\n", &amp;a3);		<span class="cm">// a3変数のポインタを表示</span>
+    printf("a4 = %08x\n", a4);		<span class="cm">// a4はポインタ変数なのでそのまま表示</span>
+    printf("a5 = %08x\n", &amp;a5);		<span class="cm">// a5変数のポインタを表示</span>
+    printf("a6 = %08x\n", a6);		<span class="cm">// a6はポインタ変数なのでそのまま表示</span>
+}
+</pre>
+</div>
+
+<h4 id="string">文字列</h4>
+<div class="i">
+<p>C言語には文字列という型は存在しないと言っても過言ではありません。<b>char</b> という 1バイト整数の配列を文字列とみなして処理します。0は文字列の終わりを意味します。</p>
+<pre class="c">
+main() {
+    char a[4];		<span class="cm">// 4バイトの配列</span>
+    a[0] = 'A';		<span class="cm">// 1バイト目に 'A'(0x41) を代入</span>
+    a[1] = 'B';		<span class="cm">// 2バイト目に 'B'(0x42) を代入</span>
+    a[2] = 'C';		<span class="cm">// 3バイト目に 'C'(0x43) を代入</span>
+    a[3] = 0;		<span class="cm">// 4バイト目に  0 (0x00) を代入</span>
+    printf("%s\n", a);	<span class="cm">// 0が見つかるまでを文字列とみなして印字する</span>
+}
+</pre>
+<canvas id="cv3" width=400 height=36></canvas>
+<script>
+var bw = 35, hw = 35;
+new Canvas("cv3")
+  .box(bw * 0, 0, bw, bw)
+    .text("0x41", 6, 15)
+    .text("'A'", 8, 26)
+  .box(bw * 1, 0, bw, bw)
+    .text("0x42", 41, 15)
+    .text("'B'", 43, 26)
+  .box(bw * 2, 0, bw, bw)
+    .text("0x43", 76, 15)
+    .text("'C'", 78, 26)
+  .box(bw * 3, 0, bw, bw)
+    .text("0x00", 111, 15)
+    .text("0", 120, 26);
+</script>
+
+
+<p>下記の例ではメモリ上のスタティック領域に 0x41, 0x42, 0x43, 0x00 という4バイトの領域を確保し、そのポインタを a に代入しています。</p>
+<pre class="c">
+main() {
+    char *a = "ABC";
+    printf("%s\n", a);
+}
+</pre>
+<p><b>strcpy()</b>, <b>strcat()</b>, <b>strlen()</b> などの文字列を扱う関数が用意されています。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+void main() {
+    char str[10];
+    int len;
+    <em>strcpy(</em>str, "ABC"<em>)</em>;		<span class="cm">// 文字列をコピー(copy)する</span>
+    <em>strcat(</em>str, "DEF"<em>)</em>;		<span class="cm">// 文字列を連結(concatenate)する</span>
+    len = <em>strlen(</em>str<em>)</em>;
+    printf("len=%d, str=%s\n", len, str); <span class="cm">// =&gt; len=6, str=ABCDEF</span>
+}
+</pre>
+<p><b>strcpy()</b>, <b>strcat()</b> はメモリ破壊を起こす可能性のある危険な関数のため、<b>C11</b> では代わりにメモリサイズチェック機能を加えた <b>strcpy_s()</b>, <b>strcat_s()</b> を使用することを推奨しています。</p>
+<pre class="c">
+<em>strcpy_s(</em>str, sizeof(str), "ABC"<em>)</em>;
+<em>strcat_s(</em>str, sizeof(str), "DEF"<em>)</em>;
+</pre>
+<p>ただし、<b>gcc</b> では <b>strcpy_s()</b> や <b>strcat_s()</b> をサポートしていません。類似の関数に <b>strncpy()</b> や <b>strncat()</b> がありますが、第一引数のサイズ上限をチェックする訳ではない、文字列の最後の 0 を付加しないことがあるなど、非常にバグを埋め込みやすい関数ですので、迂闊には使用しないほうがよさそうです。</p>
+<pre class="c">
+<em>strncpy(</em>str, "ABC", strlen(ABC)<em>)</em>;
+<em>strncat(</em>str, "ABC", strlen(ABC)<em>)</em>;
+</pre>
+<p>動的に長さの変わる文字列を使用するには、<b>malloc()</b>, <b>free()</b> でヒープ領域に文字列を格納する必要があります。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+<span class="cm">// 文字列を生成する</span>
+char *create_string(char *s1) {
+    char *s = (char *)malloc(strlen(s1) + 1);	<span class="cm">// 文字数＋1バイト(末尾の0のため)のメモリを確保</span>
+    strcpy(s, s1);				<span class="cm">// 確保したメモリに文字列をコピー</span>
+    return s;					<span class="cm">// 確保したメモリを返却</span>
+}
+
+<span class="cm">// 文字列を連結する</span>
+char *concat_string(char *s1, char *s2) {
+    char *s = (char *)malloc(strlen(s1) + strlen(s2) + 1);
+    strcpy(s, s1);				<span class="cm">// 確保したメモリに文字列 s1 をコピー</span>
+    strcat(s, s2);				<span class="cm">// 確保したメモリに文字列 s2 を連結コピー</span>
+    return s;					<span class="cm">// 確保したメモリを返却</span>
+}
+
+void main() {
+    char *s1 = create_string("Hello ");	<span class="cm">// 文字列 s1 を生成する</span>
+    char *s2 = create_string("world!");	<span class="cm">// 文字列 s2 を生成する</span>
+    char *s3 = concat_string(s1, s2);	<span class="cm">// s1 と s2 を連結して文字列 s3 を生成する</span>
+
+    printf("%s\n", s1);			<span class="cm">// =&gt; Hello </span>
+    printf("%s\n", s2);			<span class="cm">// =&gt; world!</span>
+    printf("%s\n", s3);			<span class="cm">// =&gt; Hello world!</span>
+
+    free(s1);				<span class="cm">// ヒープ領域のメモリは明示的な開放が必要</span>
+    free(s2);				<span class="cm">//  〃</span>
+    free(s3);				<span class="cm">//  〃</span>
+}
+</pre>
+</div>
+
+<h4 id="operators">演算子</h4>
+<div class="i">
+<p>下記の様な演算子があります。</p>
+<pre class="c">
+<i>expr1</i> <em>+</em> <i>exprt2</i>		<span class="cm">// 四則演算：加算</span>
+<i>expr1</i> <em>-</em> <i>exprt2</i>		<span class="cm">// 四則演算：減算</span>
+<i>expr1</i> <em>*</em> <i>exprt2</i>		<span class="cm">// 四則演算：乗算</span>
+<i>expr1</i> <em>/</em> <i>exprt2</i>		<span class="cm">// 四則演算：除算</span>
+<i>expr1</i> <em>%</em> <i>exprt2</i>		<span class="cm">// 四則演算：剰余</span>
+
+<i>expr1</i> <em>&amp;</em> <i>expr2</i>		<span class="cm">// ビット演算：論理積(AND)</span>
+<i>expr1</i> <em>|</em> <i>expr2</i>		<span class="cm">// ビット演算：論理和(OR)</span>
+<i>expr1</i> <em>^</em> <i>expr2</i>		<span class="cm">// ビット演算：排他的論理和(XOR)</span>
+<em>~</em><i>expr</i>			<span class="cm">// ビット演算：否定(NOT)</span>
+<i>expr1</i> <em>&lt;&lt;</em> <i>expr2</i>		<span class="cm">// ビット演算：左シフト</span>
+<i>expr1</i> <em>&gt;&gt;</em> <i>expr2</i>		<span class="cm">// ビット演算：右シフト</span>
+
+<i>expr1</i> <em>==</em> <i>expr2</i>		<span class="cm">// 比較演算：<i>expr1</i>と<i>expr2</i>が等しければ</span>
+<i>expr1</i> <em>!=</em> <i>expr2</i>		<span class="cm">// 比較演算：<i>expr1</i>と<i>expr2</i>が等しくなければ</span>
+<i>expr1</i> <em>&lt;</em> <i>expr2</i>		<span class="cm">// 比較演算：<i>expr1</i>が<i>expr2</i>より大きければ</span>
+<i>expr1</i> <em>&lt;=</em> <i>expr2</i>		<span class="cm">// 比較演算：<i>expr1</i>が<i>expr2</i>以上であれば</span>
+<i>expr1</i> <em>&gt;=</em> <i>expr2</i>		<span class="cm">// 比較演算：<i>expr1</i>が<i>expr2</i>以下であれば</span>
+<i>expr1</i> <em>&gt;</em> <i>expr2</i>		<span class="cm">// 比較演算：<i>expr1</i>が<i>expr2</i>より小さければ</span>
+
+<i>expr1</i> <em>&amp;&amp;</em> <i>expr2</i>		<span class="cm">// 論理演算：<i>expr1</i>かつ<i>expr2</i>であれば(AND)</span>
+<i>expr1</i> <em>||</em> <i>expr2</i>		<span class="cm">// 論理演算：<i>expr1</i>もしくは<i>expr2</i>であれば(OR)</span>
+<em>!</em><i>expr</i>			<span class="cm">// 論理演算：否定(NOT)</span>
+
+<i>var</i> <em>=</em> <i>expr</i>		<span class="cm">// <i>var</i>に<i>expr</i>を代入</span>
+<i>var</i> <em>+=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> + <i>expr</i> と同義</span>
+<i>var</i> <em>-=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> - <i>expr</i> と同義</span>
+<i>var</i> <em>*=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> * <i>expr</i> と同義</span>
+<i>var</i> <em>/=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> / <i>expr</i> と同義</span>
+<i>var</i> <em>%=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> % <i>expr</i> と同義</span>
+<i>var</i> <em>&amp;=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> &amp; <i>expr</i> と同義</span>
+<i>var</i> <em>|=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> | <i>expr</i> と同義</span>
+<i>var</i> <em>^=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> ^ <i>expr</i> と同義</span>
+<i>var</i> <em>&lt;&lt;=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> &lt;&lt; <i>expr</i> と同義</span>
+<i>var</i> <em>&gt;&gt;=</em> <i>expr</i>		<span class="cm">// <i>var</i> = <i>var</i> &gt;&gt; <i>expr</i> と同義</span>
+
+<i>var</i><em>++</em>			<span class="cm">// <i>var</i>の値をひとつ増やす(インクリメント)</span>
+<i>var</i><em>--</em>			<span class="cm">// <i>var</i>の値をひとつ減らす(デクリメント)</span>
+
+<i>expr1</i> <em>?</em> <i>expr2</i> <em>:</em> <i>expr3</i>	<span class="cm">// 三項演算子：<i>expr1</i>が真なら<i>expr2</i>さもなくば<i>expr3</i></span>
+</pre>
+</div>
+
+<h4 id="statements">制御構文</h4>
+
+<h5 id="if">もし～ならば(if・else)</h5>
+<div class="i">
+<p>もし n が 10 より大きければ Big! を表示します。</p>
+<pre class="c">
+<em>if (</em>n &gt; 10<em>) {</em>
+    printf("Big!\n");
+<em>}</em>
+</pre>
+<p>もし n が 10 より大きければ Big! を、さもなくば Not big! を表示します。</p>
+<pre class="c">
+<em>if (</em>n &gt; 10<em>) {</em>
+    printf("Big!\n");
+<em>} else {</em>
+    printf("Not big!\n");
+<em>}</em>
+</pre>
+<p>もし n が 10 より大きければ Big!、等しければ Equal!、さもなくば Small! を表示します。</p>
+<pre class="c">
+<em>if (</em>n &gt; 10<em>) {</em>
+    printf("Big!\n");
+<em>} else if (</em>n == 10<em>) {</em>
+    printf("Equal!\n");
+<em>} else {</em>
+    printf("Small!\n");
+<em>}</em>
+</pre>
+</div>
+
+<h5 id="while">～の間(while)</h5>
+<div class="i">
+<p>n が 10 より小さい間 { ... } の処理を繰り返します。</p>
+<pre class="c">
+int n = 0;
+<em>while (</em>n &lt; 10<em>) {</em>
+    printf("%d\n", n);
+    n++
+<em>}</em>
+</pre>
+</div>
+
+<h5 id="do">～の間(do・while)</h5>
+<div class="i">
+<p>{ ... } の処理を n が 10 より小さい間繰り返します。</p>
+<pre class="c">
+int n = 0;
+<em>do {</em>
+    printf("%d\n", n);
+    n++;
+<em>} while (</em>n &lt; 10<em>)</em>;
+</pre>
+</div>
+
+<h5 id="for">～の間(for)</h5>
+<div class="i">
+<p><b>for (</b><i>expr1</i><b>;</b> <i>expr2</i><b>;</b> <i>expr3</i><b>) {</b> ... <b>}</b> は、最初に <i>expr1</i> を実行し、<i>expr2</i> が真の間、<i>expr3</i> および { ... } を実行します。下記は i を 0～9 に変化させながら 10回ループします。</p>
+<pre class="c">
+int i;
+<em>for (</em>i = 0<em>;</em> i &lt; 10<em>;</em> i++<em>) {</em>
+    printf("%d\n", i);
+<em>}</em>
+</pre>
+<p><b>C99</b> では、for文の中で変数を定義できるようになりました。<b>gcc</b> の場合 <b>-std=c99</b> オプションをつける必要があります。</p>
+<pre class="c">
+for (<em>int</em> i = 0; i &gt; 10; i++) { ... }
+</pre>
+</div>
+
+<h5 id="break-continue">ループの中断・繰り返し(break・continue)</h5>
+<div class="i">
+<p><a href="#while">while</a>, <a href="#do">do</a>, <a href="#for">for</a> のループ処理において、<b>break</b> はループを中断して抜けます。<b>continue</b> は次のループに移ります。下記の例では i が 3 の時は printf(...) を実行せずに次のループに移り、i が 5 の時はループを抜けるため、0 1 2 4 と表示されます。</p>
+<pre class="c">
+for (i = 0; i &lt; 10; i++) {
+    if (i == 3) {
+        <em>continue</em>;
+    }
+    if (i == 5) {
+        <em>break</em>;
+    }
+    printf("%d\n", i);
+}
+</pre>
+</div>
+
+<h5 id="goto">Goto文(goto)</h5>
+<div class="i">
+<p><b>goto</b> は、<i>labelname</i><b>:</b> で定義したラベルの場所にジャンプします。</p>
+<pre class="c">
+main() {
+    int i;
+    for (i = 0; i &lt; 10; i++) {
+        if (i == 5) {
+            <em>goto done</em>;
+        }
+    }
+<em>done:</em>
+    printf("i=%d\n", i);
+}
+</pre>
+</div>
+
+<h5 id="switch">Switch文(switch・case・default・break)</h5>
+<div class="i">
+<p><b>switch (</b><i>expr</i><b>) { case</b> ... <b>}</b> は、<i>expr</i> の値によってマッチする <b>case</b> ブロックを実行します。<b>case</b> ブロックの末尾には <b>break</b> を記述します。記述しない場合は次の <b>case</b> ブロックも実行します。<b>default</b> はいずれにもマッチしなかった場合に実行する処理を記述します。下記の例は、n の値が 1 であれば One を、2 であれば Two を、さもなくば More を出力します。</p>
+<pre class="c">
+int n = 2;
+<em>switch (</em>n<em>) {</em>
+<em>case</em> 1<em>:</em>
+    printf("One\n");
+    break;
+<em>case</em> 2<em>:</em>
+    printf("Two\n");
+    break;
+<em>default:</em>
+    printf("More\n");
+    break;
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="preprocessor">プリプロセッサ</h4>
+<div class="i">
+<p>C言語では、コンパイルの前に <b>cpp</b> というプリプロセッサによる前処理を行います。</p>
+<ul>
+<li><a href="#include">インクルード(#include)</a>
+<li><a href="#define">デファイン(#define, #undef)</a>
+<li><a href="#ifdef">条件コンパイル(#ifdef, #else, #elif, #endif)</a>
+</ul>
+</div>
+
+<h4 id="include">インクルード(#include)</h4>
+<div class="i">
+<p><b>#include</b> は指定したヘッダファイル(*.h)を読み込みます。フィル名を <b>&lt;</b>...<b>&gt;</b> で囲んだ場合は ①コンパイル時の <b>-I</b> オプションで指定したディレクトリ、②<b>C_INCLUDE_PATH</b> 環境変数で指定したディレクトリ、③システム標準ディレクトリ(/usr/include など)の順で探しにいきます。ファイル名を <b>"</b>...<b>"</b> で囲んだ場合は、①②③の前にカレントディレクトリを探しに行きます。</p>
+<pre class="c">
+<em>#include</em> &lt;stdio.h&gt;
+<em>#include</em> "myheader.h"
+</pre>
+</div>
+
+<h4 id="define">デファイン(#define, #undef)</h4>
+<div class="i">
+<p><b>#define</b> は定数やマクロを定義します。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+
+<em>#define</em> MY_MESSAGE "Hello world!"	<span class="cm">// 定数を定義</span>
+<em>#define</em> print(x) printf("%s\n", x)	<span class="cm">// マクロ関数を定義</span>
+
+main() {
+    print(MY_MESSAGE);
+}
+</pre>
+<p><b>#undef</b> は定義した定数やマクロを削除します。</p>
+<pre class="c">
+<em>#undef</em> MY_MESSAGE
+<em>#undef</em> print
+</pre>
+<p>複数の文を含むマクロを定義する際は、{ ... } を省略した if 文でも使用できるように、do { ... } while(0) で囲むことが推奨されています。</p>
+<pre class="c">
+#define SWAP(a, b) <em>do</em> { int tmp = a; a = b; b = tmp; } <em>while(0)</em>
+</pre>
+</div>
+
+<h4 id="ifdef">条件コンパイル(#ifdef, #else, #elif, #endif)</h4>
+<div class="i">
+<p><b>#ifdef</b>、<b>#elif</b>、<b>#else</b>、<b>#endif</b> は条件に合致した時のみ該当箇所をコンパイルします。</p>
+<pre class="c">
+main() {
+<em>#ifdef</em> CENTOS			<span class="cm">// CENTOS が定義されていたら</span>
+    printf("CentOS\n");
+<em>#elif</em> UBUNTU			<span class="cm">// UBUNTU が定義されていたら</span>
+    printf("Ubuntu\n");
+<em>#else</em>				<span class="cm">// さもなくば</span>
+    printf("Unknown\n");
+<em>#endif</em>
+}
+</pre>
+<p>条件判断のデファインは、<b>#define</b> で定義したり、<b>gcc</b> の <b>-D</b> オプションで定義します。</p>
+<pre class="c">
+$ gcc <em>-D</em>CENTOS -o main main.c
+</pre>
+</div>
+
+<h4 id="functions">関数</h4>
+<div class="i">
+<p>関数は下記の様に定義します。下記では、int 型の引数 x と y を受け取り、その合計を int 型で返却する add() 関数を定義し、x と y に 3 と 5 を当てはめて呼び出しています。</p>
+<pre class="c">
+main() {
+    int ans;
+    ans = <em>add(</em>3, 5<em>)</em>;
+    printf("%d\n", ans);	<span class="cm">// =&gt; 8</span>
+}
+
+int <em>add(</em>int x, int y<em>) {</em>
+    int z;
+    z = x + y;
+    return z;
+<em>}</em>
+</pre>
+</div>
+
+<h4 id="return">関数の戻り値(return)</h4>
+<div class="i">
+<p><b>return</b> は結果を呼び出し元に返します。</p>
+<pre class="c">
+int add(int x, int y) {
+    int z;
+    z = x + y;
+    <em>return</em> z;
+}
+</pre>
+</div>
+
+<h4 id="varargs">可変引数</h4>
+<div class="i">
+<p><b>va_list</b>, <b>va_start()</b>, <b>va_arg()</b>, <b>va_end()</b> を用いることで可変引数の関数を定義することができます。下記の例では、第1引数に可変引数の個数を指定し、任意個数の文字列データを出力しています。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;<em>stdarg.h</em>&gt;
+
+void print(int num, ...) {
+    <em>va_list</em> ap;
+    <em>va_start(</em>ap, num<em>)</em>;
+    for (int i = 0; i &lt; num; i++) {
+        printf("%s\n", <em>va_arg(</em>ap, char *<em>)</em>);
+    }
+    <em>va_end(</em>ap<em>)</em>;
+}
+
+void main() {
+    print(3, "AAA", "BBB", "CCC");
+}
+</pre>
+</div>
+
+<h4 id="call_by">値渡しと参照渡し</h4>
+<div class="i">
+<p>関数に引数を渡す方法として <b>値渡し</b>(call by value) と <b>参照渡し</b>(call by reference) があります。下記の例で、x と y は単純に値自体を引数として渡す値渡しです。ans は、ans 変数への参照(=ポインタ)(&amp;変数名) を渡し、そのポインタの中身に答えを格納してもいらいます。int や float など小さなデータの場合は値渡し、メモリコピーが性能に影響するような大きなデータ(構造体など)の場合や、受け取る値が複数の時などは、参照渡しを利用します。</p>
+<pre class="c">
+void add(<em>int x</em>, <em>int y</em>, <em>int *ans</em>) {
+    *ans = x + y;
+}
+
+void main() {
+    int x = 3;
+    int y = 5;
+    int z;
+    add(x, y, &amp;z);
+    printf("z=%d\n", z);
+}
+</pre>
+</div>
+
+<h4 id="thread">スレッド</h4>
+<div class="i">
+<p><b>NPTL</b>(Native POSIX Thread Library) 形式のスレッドは下記の様に記述します。コンパイル時に <b>-lpthread</b> オプションをつけて libpthread とリンクします。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+
+void *thread_func(void *arg) {
+    for (int i = 0; i &lt; 10; i++) {
+        printf("%s\n", (char *)arg);
+    }
+}
+
+void main() {
+    pthread_t th1;
+    pthread_create(&amp;th1, NULL, thread_func, "ThreadA");
+    pthread_join(th1, NULL);
+}
+</pre>
+<p><b>C11</b> 形式のスレッドは下記の様に記述します。(<b>gcc</b>ではまだサポートされていない？)</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;threads.h&gt;
+
+int thread_func(void *arg) {
+    for (int i = 0; i &lt; 10; i++) {
+        printf("%s\n", (char *)arg);
+    }
+}
+
+void main() {
+    thrd_t th1;
+    thrd_create(&amp;th1, thread_func, "ThreadA");
+    thrd_join(th1, NULL);
+}
+</pre>
+</div>
+
+<h4 id="struct">構造体(struct)</h4>
+<div class="i">
+<p><b>struct</b> は構造体を定義します。オブジェクト指向言語の <b>class</b> に似ていますが、メンバ変数を定義するのみで、継承、クラスメソッド、コンストラクタ、デストラクタなどの概念はありません。</p>
+<pre class="c">
+<em>struct</em> point <em>{</em>
+    int x;
+    int y;
+<em>}</em>
+
+main() {
+    <em>struct</em> point p1;
+    p1.x = 200;
+    p1.y = 300;
+    printf("%d, %d\n", p1.x, p1.y);
+}
+</pre>
+</div>
+
+<h4 id="union">共用体(union)</h4>
+<div class="i">
+<p><b>union</b> は共用体を定義します。共用体の各変数は同じメモリを共用するため、メモリ使用量を減らすことができますが、同時には c か n か f かいずれかひとつの変数のみを使用します。共用体のサイズは、メンバ変数の内一番大きな変数のサイズとなります。</p>
+<pre class="c">
+<em>union</em> any_value <em>{</em>
+    char c;
+    int n;
+    float f;
+<em>}</em>;
+
+main() {
+    <em>union</em> any_value a1, a2, a3;
+
+    a1.c = 'A';
+    a2.n = 123;
+    a3.f = 12.3;
+    printf("%c, %d, %f\n", a1.c, a2.n, a3.f);
+}
+</pre>
+</div>
+
+<h4 id="enum">列挙型(enum)</h4>
+<div class="i">
+<p><b>enum</b> は列挙型を定義します。列挙型のメンバには 0, 1, 2, ... の数値が順に割り振られます。一連の名前定義に連番を自動的につけたい時に有効です。</p>
+<pre class="c">
+<em>enum</em> color <em>{</em>
+    color_red,
+    color_green,
+    color_blue
+<em>}</em>;
+
+main() {
+    <em>enum</em> color c = color_blue;
+
+    printf("%d\n", c);			<span class="cm">// =&gt; 2</span>
+}
+</pre>
+</div>
+
+<h4 id="sizeof">サイズ参照(sizeof)</h4>
+<div class="i">
+<p><b>sizeof()</b> は型、値、変数、構造体、共用体などのサイズ(バイト数)を返します。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+
+struct point { int x; int y; };
+
+main() {
+    int n = 123;
+    struct point p;
+    printf("%d\n", <em>sizeof(</em>int<em>)</em>);	<span class="cm">// =&gt; 4</span>
+    printf("%d\n", <em>sizeof(</em>123<em>)</em>);	<span class="cm">// =&gt; 4</span>
+    printf("%d\n", <em>sizeof(</em>n<em>)</em>);		<span class="cm">// =&gt; 4</span>
+    printf("%d\n", <em>sizeof(</em>p<em>)</em>);		<span class="cm">// =&gt; 8</span>
+}
+</pre>
+</div>
+
+<h4 id="extern">外部参照(extern)</h4>
+<div class="i">
+<p><b>extern</b> を宣言することで、別のファイルで定義されたグローバル変数や関数を、外部変数、外部関数として参照することが可能となります。下記の例では sub.c で定義されたグローバル変数 <b>g_value</b> や関数 <b>g_hello()</b> を、main.c の中で外部変数、外部関数として参照しています。</p>
+<div class="tab">sub.c</div>
+<pre class="c2">
+#include &lt;stdio.h&gt;
+
+int g_value = 123;		<span class="cm">// グローバル変数を定義</span>
+
+g_hello(char *msg) {		<span class="cm">// 関数を定義</span>
+    printf("Hello %s!\n", msg);
+}
+</pre>
+<div class="tab">main.c</div>
+<pre class="c2">
+#include &lt;stdio.h&gt;
+
+<em>extern</em> int g_value;		<span class="cm">// 外部変数として参照</span>
+<em>extern</em> void g_hello(char *);	<span class="cm">// 外部関数として参照</span>
+
+main() {
+    printf("%d\n", g_value);	<span class="cm">// =&gt; 123</span>
+    g_hello("Yamada");		<span class="cm">// =&gt; Hello Yamada!</span>
+}
+</pre>
+<p>通常は、sub.c が提供する変数や関数をヘッダファイルとして用意しておき、それを利用します。</p>
+<div class="tab">sub.h</div>
+<pre class="c2">
+<em>extern</em> int g_value;		<span class="cm">// 外部変数として参照</span>
+<em>extern</em> void g_hello(char *);	<span class="cm">// 外部関数として参照</span>
+</pre>
+<div class="tab">sub.h</div>
+<pre class="c2">
+#include &lt;stdio.h&gt;
+<em>#include &lt;sub.h&gt;</em>
+
+main() {
+    printf("%d\n", g_value);	<span class="cm">// =&gt; 123</span>
+    g_hello("Yamada");		<span class="cm">// =&gt; Hello Yamada!</span>
+}
+</pre>
+</div>
+
+<h4 id="typeof">typeof演算子(typeof)</h4>
+<div class="i">
+<p><b>typeof</b> は <b>gcc</b> による拡張機能で、型・変数・値の型を返します。</p>
+<pre class="c">
+<em>typeof(</em>int<em>)</em> a;	<span class="cm">// int a; と同義</span>
+<em>typeof(</em>a<em>)</em> b;	<span class="cm">// int b; と同義</span>
+<em>typeof(</em>123<em>)</em> c;	<span class="cm">// int c; と同義</span>
+</pre>
+<p>複数の型に対応したマクロを定義する際に便利です。</p>
+<pre class="c">
+#define SWAP(a, b) do { <em>typeof(</em>a<em>)</em> tmp = a; a = b; b = tmp; } while (0)
+</pre>
+</div>
+
+<h4 id="volatile">揮発変数(volatile)</h4>
+<div class="i">
+<p><b>volatile</b> はその変数が揮発性であることをコンパイラに伝えます。揮発性があるとは、その変数が非同期に変更される可能性があることを意味します。下記の例では別スレッドが <b>stop_flag</b> を 0 以外に変更することで無限ループを抜けますが、<b>volatile</b> を宣言しない場合、コンパイラはループの中で <b>stop_flag</b> が変化することは無いと推測し、<b>stop_flag</b> 判定を省略するような最適化を行ってしまう可能性があります。</p>
+<pre class="c">
+<em>volatile</em> int stop_flag = 0;
+
+func() {
+    while (!<em>stop_flag</em>) {
+        printf(".");
+    }
+}
+</pre>
+</div>
+
+<h4 id="special_valiables">特殊変数</h4>
+<div class="i">
+<p>特殊変数 <b>__FILE__</b> はプログラムファイル名を、<b>__LINE__</b> はその行数を、<b>__func__</b> は関数名を示します。<b>__FILE__</b> と <b>__LINE__</b> はプリプロセッサが、<b>__func__</b> はコンパイラが処理します。</p>
+<pre class="c">
+main() {
+    printf("%s(%d): %s\n", <em>__FILE__</em>, <em>__LINE__</em>, <em>__func__</em>);
+}
+</pre>
+</div>
+
+<h4 id="c99">C99で追加された機能</h4>
+<div class="i">
+<p>1999年の <b>C99</b> では下記などの機能が追加されました。</p>
+<ul>
+<li>// 形式のコメント
+<li>for (int i = 0 ...) のようなブロック先頭以外での変数定義
+<li><a href="#bool">真偽値(_Bool)</a>
+<li><a href="#complex">複素数(_Complex)</a>
+<li><a href="#inline">インライン関数(inline)</a>
+<li><a href="#restrict">制限付きポインタ(restrict)</a>
+</ul>
+</div>
+
+<h4 id="bool">真偽値(_Bool)</h4>
+<div class="i">
+<p><b>C99</b> でブーリアン型 <b>_Bool</b> が追加されました。真(<b>true</b>) または 偽(<b>false</b>) どちらかの値をとります。既存プログラムに影響を与えないように _大文字で始まる名前になっています。</p>
+<pre class="c">
+#include &lt;stdbool.h&gt;
+
+main() {
+    <em>_Bool</em> flag = <em>true</em>;
+
+    printf("flag = %d\n", flag);
+}
+</pre>
+</div>
+
+<h4 id="complex">複素数(_Complex)</h4>
+<div class="i">
+<p><b>C99</b> で複素数型 <b>_Complex</b> が追加されました。<b>creal()</b> は実数部を、<b>cimag()</b> は虚数部を参照します。虚数部を示す型として <b>_Imaginary</b> も定義されましたが、<b>gcc</b> ではまだサポートされていない？</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;complex.h&gt;
+
+main() {
+    double <em>_Complex</em> a = 1.2 + 3.4i;
+
+    printf("%f%+fi\n", <em>creal(</em>a<em>)</em>, <em>cimag(</em>a<em>)</em>);
+}
+</pre>
+</div>
+
+<h4 id="inline">インライン関数(inline)</h4>
+<div class="i">
+<p><b>inline</b> は関数をインライン関数として定義したい場合に使用します。<b>C99</b> で追加されました。インライン関数はコンパイル時に呼び出し元関数の内部処理として展開されます。何度も呼び出す小さな関数を内部処理にして高速化することが目的です。実際にインライン展開されるか否かは、コンパイラの最適化によって左右されます。</p>
+<pre class="c">
+<em>inline</em> int add(int x, int y) {
+    return x + y;
+}
+
+main() {
+    printf("%d\n", add(3, 5));
+}
+</pre>
+</div>
+
+<h4 id="restrict">制限付きポインタ(restrict)</h4>
+<div class="i">
+<p><b>restrict</b> は複数のポインタが重複する領域を含んでいないことをコンパイラに伝えます。<b>C99</b> で導入されました。<b>restrict</b> を宣言しても動作上の差異はありませんが、コンパイラは、p1 と p2 が同じ重複する領域を含んでいないことを確信して、より高速な最適化アルゴリズムを選択することができるようになります。</p>
+<pre class="c">
+func(int n, int * <em>restrict</em> p1, int * <em>restrict</em> p2) {
+	...
+}
+</pre>
+</div>
+
+<h4 id="c11">C11で追加された機能</h4>
+<div class="i">
+<p>2011年の <b>C11</b> では下記などの機能が追加されました。</p>
+<ul>
+<li><a href="#alignof">アラインオブ(_Alignof)</a>
+<li><a href="#alignas">アラインアズ(_Alignas)</a>
+<li><a href="#atomic">アトミック(_Atomic)</a>
+<li><a href="#generic">ジェネリック(_Generic)</a>
+<li><a href="#noreturn">ノーリターン(_Noreturn)</a>
+<li><a href="#static_assert">静的アサート(_Static_assert)</a>
+<li><a href="#thread_local">スレッドローカル(_Thread_local)</a>
+</ul>
+</div>
+
+<h4 id="alignof">アラインオブ(_Alignof)</h4>
+<div class="i">
+<p><b>_Alignof(</b><i>type</i><b>)</b> は <i>type</i> で指定した型のアライン値を求めます。アライン値とは、その型の変数や値がメモリ上に配置される際に、何バイトの整数倍のアドレスに配置される必要があるかという値です。例えばアライン値が 4 の場合、その型の変数や値は 4の倍数のメモリに配置される必要があります。アライン値は CPU やシステムによって異なります。<b>C11</b> で追加されたもので、既存プログラムに影響を与えないよう <b>_</b>大文字 で始まる名前になっています。<b>gcc</b> などでは <b>&lt;stdalign.h&gt;</b> で <b>_Alignof</b> の別名 <b>alignof</b> が定義されています。</p>
+<pre class="c">
+main() {
+    printf("%d\n", <em>_Alignof(</em>short<em>)</em>);	<span class="cm">// =&gt; 2 (2の倍数のアドレスに配置される必要がある)</span>
+    printf("%d\n", <em>_Alignof(</em>long<em>)</em>);	<span class="cm">// =&gt; 8 (8の倍数のアドレスに配置される必要がある)</span>
+}
+</pre>
+</div>
+
+<h4 id="alignas">アラインアズ(_Alignas)</h4>
+<div class="i">
+<p><b>_Alignas(</b><i>n</i><b>)</b> は、宣言する変数に対して <i>n</i> バイトのアライン値を要求します。下記の例では b は通常 a の次のアドレスに配置されますが、<b>_Alignas</b> によって 4の倍数のアドレスに配置されます。<b>C11</b> で追加されたもので、既存プログラムに影響を与えないよう <b>_</b>大文字 で始まる名前になっています。<b>gcc</b> などでは <b>&lt;stdalign.h&gt;</b> で <b>_Alignas</b> の別名 <b>alignas</b> が定義されています。</p>
+<pre class="c">
+struct data {
+    char a;
+    <em>_Alignas(</em>4<em>)</em> char b;
+};
+</pre>
+</div>
+
+<h4 id="atomic">アトミック(_Atomic)</h4>
+<div class="i">
+<p><b>_Atomic</b> は宣言する変数に対してアトミック性の保証を要求します。マルチスレッドプログラミングにおけるアトミック性とは、複数のスレッドが同時に参照・変更することによる不整合が生じないことを意味します。アトミック性が保証されない場合、total_count++ という処理は、①メモリからレジスタに読み込む、②レジスタの値をインクリメントする(ひとつ増やす)、③レジスタの値をメモリに書き戻すという動作となり、複数のスレッドが同時に countup() 関数を呼んだ場合、countup() が呼ばれた回数より total_count の値が小さくなることがあります。<b>_Atomic</b> はこの問題を防ぎます。初期化には <b>&lt;stdatomic.h&gt;</b> で定義される <b>ATOMIC_VAR_INIT()</b> を用いるなどいくつかの制約があります。<b>C11</b> で追加されました。</p>
+<pre class="c">
+#include &lt;stdatomic.h&gt;
+
+<em>_Atomic</em> int total_count = <em>ATOMIC_VAR_INIT(</em>0<em>)</em>;
+
+void countup() {
+    total_count++;
+}
+</pre>
+</div>
+
+<h4 id="generic">ジェネリック(_Generic)</h4>
+<div class="i">
+<p><b>_Generic</b> は <b>C11</b> で追加されたもので、複数の型に対応したマクロを定義することができます。下記の例では、引数の型が int の時には print_int() を、double の時には print_double() を、char * の時には print_string() を呼び出します。<b>gcc</b> 4.9 からサポートされています。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+
+void print_int(int x) { printf("%d\n", x); }
+void print_double(double x) { printf("%f\n", x); }
+void print_string(char *x) { printf("%s\n", x); }
+
+#define print(x) <em>_Generic(</em>(x), \
+    int:    print_int, \
+    double: print_double, \
+    char *: print_string \
+<em>)(</em>x<em>)</em>
+
+void main() {
+    print(123);		<span class="cm">// =&gt; 123</span>
+    print(1.23);	<span class="cm">// =&gt; 1.230000</span>
+    print("ABC");	<span class="cm">// =&gt; ABC</span>
+}
+</pre>
+</div>
+
+<h4 id="noreturn">ノーリターン(_Noreturn)</h4>
+<div class="i">
+<p><b>_Noreturn</b> 指示子は <b>C11</b> で追加されたもので、関数が戻らないことをコンパイラに伝えます。これによりコンパイラは、警告を抑制したりより効率の良い最適化を行うことがあります。</p>
+<pre class="c">
+<em>_Noreturn</em> void myexit() {
+    exit(0);
+}
+
+main() {
+    myexit();
+}
+</pre>
+</div>
+
+<h4 id="static_assert">静的アサート(_Static_assert)</h4>
+<div class="i">
+<p><b>_Static_assert</b> は <b>C11</b> で追加されたもので、コンパイル時のチェック(アサーション)を行います。第1引数には論理式、第2引数にはエラーメッセージを記述します。論理式にはコンパイル時に判断できるものである必要があります。</p>
+<pre class="c">
+int f(int x) {
+    <em>_Static_assert(</em>sizeof(x) == 8, "Size of x is not 8"<em>)</em>;
+    return x;
+}
+
+main() {
+    f(123);
+}
+</pre>
+</div>
+
+<h4 id="thread_local">スレッドローカル(_Thread_local)</h4>
+<div class="i">
+<p><b>_Thread_local</b> は <b>C11</b> で追加されたもので、指定した変数の存在期間をスレッドの存在期間に限定します。<b>gcc</b> では <b>__thread</b> として実装しているようです。</p>
+<pre class="c">
+#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+
+void *thread_func(void *param) {
+    static int a1 = 0;
+    static <em>_Thread_local</em> int a2 = 0;
+    for (int i = 0; i &lt; 10; i++) {
+        printf("%d %d\n", a1++, a2++);
+    }
+}
+
+void main() {
+    pthread_t th1, th2;
+    pthread_create(&amp;th1, NULL, thread_func, "ThreadA");
+    pthread_create(&amp;th2, NULL, thread_func, "ThreadB");
+    pthread_join(th1, NULL);
+    pthread_join(th2, NULL);
+}
+</pre>
+</div>
+
+<!--
+●コメント
+●ポインタ
+●文字列
+●<< >> <<= >> 演算子
+●三項演算子
+●配列
+●キャスト
+●#define
+●#include
+●#ifdef
+●__FILE__
+●__LINE__
+●__func__
+○return
+○可変引数
+○参照渡し
+-->
+
+<hr>
+<div>Copyright (C) 2020 杜甫々</div>
+<div>初版:2020年7月26日 最終更新:2020年7月26日</div>
+<div>http://www.tohoho-web.com/ex/c-lang.html</div>
+</body>
+</html>

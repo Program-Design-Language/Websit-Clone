@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>数字のみであることをはんだんするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>数字のみであることをはんだんするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060236.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060236.htm">[前に]</a>
+<a href="99060238.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060238.htm">[次に]</a>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/24(木) 12:52:05</span><br>
+以前、半角英数字のみであることを判断するにはという質問が<br>
+あったのですが、数字のみであることを判断するには<br>
+どうしたらよいのですか？<br>
+<a href="../199811/98110064.htm" tppabs="http://www.tohoho-web.com/lng/199811/98110064.htm">../199811/98110064.htm</a><br>
+<br>
+以下のようにしてみたのですが、駄目ですよね。<br>
+a=parent.No1.NowObj.value<br>
+if($a=~/[^\0-9]/) {<br>
+alert("ダメ")<br>
+}<br>
+else {<br>
+alert("ＯＫ")<br>
+}<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/24(木) 13:02:48</span><br>
+この条件式はPerlのものですよね？　JavaScriptではisNaN()で可能です。<br>
+<br>
+<a href="../../js/builtin.htm#isNaN" tppabs="http://www.tohoho-web.com/js/builtin.htm#isNaN">http://www.tohoho-web.com/js/builtin.htm#isNaN</a><br>
+<hr>
+<span class=name>ばーばぱぱ</span>
+<span class=time>1999/06/24(木) 13:19:23</span><br>
+<span class=resolv>[[解決]]</span><br>
+Tmbさんありがとうございます。<br>
+無事解決しました。<br>
+JavaScriptとPerlをごちゃまぜにして考えていました。<br>
+勉強不足ですね・・・（涙）<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 11:40:45</span><br>
+カンマ処理をやってて気付いたのですが，NN3では例えば<br>
+parseFloat("100,000")やparseFloat("100abc")は，最初に数字以外の<br>
+文字が現れるまでの文字列を判断するらしく，共に100を返してしまい<br>
+isNaNでの判断が上手くできないようです。<br>
+<br>
+回避法として<br>
+Num=parseFloat(str)<br>
+if (Num.toString() != str )alert("Not a Number!")<br>
+というのを考えました。<br>
+これなら大抵の場合は問題ないのですが，今度は例えば<br>
+str="1.000"<br>
+などの場合，parseFloat(str)=1　と，小数部がなくなってしまうことで<br>
+はじかれてしまうという問題が。<br>
+<br>
+何かいい解決法がないでしょうかね。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/25(金) 17:04:00</span><br>
+for(i=0;i&lt;hoge.length;i++){<br>
+if(-1!='0123456789'.indexOf(hoge.charAt(i)))continue;<br>
+alert('Error!!!');<br>
+return;<br>
+}<br>
+return hoge;<br>
+<br>
+数字としてでなく、文字で扱うとこうなりますが、いかがでしょう？<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/25(金) 17:13:30</span><br>
+<font color="#CC8000">&gt;文字で扱う</font><br>
+やっぱこれしかないですかね。使用可能文字にピリオドと負号を加えて。<br>
+<br>
+この手も考えはしたんですけど "1.2.3.4"なんて場合に対応してくれないので。<br>
+これと上のを組み合わせれば一応可能でしょうけど，それも何となく野暮ったく<br>
+思えるので，他に何かいい手はないかと思いまして。<br>
+<hr>
+<span class=name>たこすけ</span>
+<span class=time>1999/06/25(金) 19:11:58</span><br>
+if(str*0 != 0) alert("No");<br>
+<br>
+0を掛けた結果が0なら数字。<br>
+しかも、NN3だと数字以外を計算させた瞬間<br>
+アラートより先にエラーを出してくれる。（←駄目じゃん）<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/06/26(土) 00:53:06</span><br>
+<br>
+先にピリオドだけ見るっていう手もある。<br>
+２つ見つかった時点でアウト。<br>
+あんまりきれいじゃないけど。<br>
+<br>
+ついでで申し訳ないですが、１６進数のチェックはどうやってます？<br>
+僕はこの方法（文字扱い）を使っていたので、大文字を見逃したりしたんですが（笑）<br>
+<hr>
+<span class=name>Tmb</span>
+<span class=time>1999/06/29(火) 10:39:14</span><br>
+ピリオドの数を見るなら .lastIndexOf(".") != .indexOf(".") もいいかもしれませんね。<br>
+でもそれだと・・・うーん，例外を考えていくと肥大していきそう。<br>
+str != Num.toString() を基調にするのが，いちばん例外が少なそうですね。<br>
+普段はそれを使うとして，後はケースバイケースで考えるのがいいのかな。<br>
+<br>
+16進数チェックはおっしゃる通り文字列でチェックする方が簡単かも。ピリオドもないし（笑）<br>
+もちろん比較用の文字列を0123456789aAbB・・・とするか，toLowerCase()などを<br>
+付けての話ですが。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060236.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060236.htm">[前に]</a>
+<a href="99060238.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060238.htm">[次に]</a>
+</body>
+</html>

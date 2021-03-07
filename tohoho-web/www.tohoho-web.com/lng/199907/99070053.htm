@@ -1,0 +1,176 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>リセットボタンを制御するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>リセットボタンを制御するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070052.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070052.htm">[前に]</a>
+<a href="99070054.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070054.htm">[次に]</a>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/07/07(水) 08:53:48</span><br>
+こんにちは、いつもお世話になってます。<br>
+UNIX環境で掲示板を作成しているのですが、Win98+InternetExplorer5.0<br>
+の環境で使用した場合、入力フィールドに入力中に[ESC]を押すと、リセ<br>
+ットボタンがハイライトされてしまいます。この動作を回避する方法が、<br>
+何かあるんでしょうか？<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/07/07(水) 13:59:50</span><br>
+ふと思いついて、ここで[ESC]を押すと「取消」されてしまいました。（Win95+IE4.01SP1）<br>
+今まで１度もやった事なかったんですが・・・必要な機能でしょうか？<br>
+注意書きにとどめておくほうが良いと思います。<br>
+<br>
+回避できるとすれば、スクリプトに頼らざるを得ないでしょうが・・・。<br>
+スクリプトをオフにしてる人もいるみたいだしね・・・<br>
+使うとしても[ESC]をキャンセルするわけだから、「onkeydown」か「onkeypress」でイベントからキーコードを読むくらいしか思いつかない。<br>
+日本語入力は大丈夫なのかなぁ・・・<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/07/07(水) 14:25:50</span><br>
+<font color="#CC8000">&gt; リセットボタンがハイライトされてしまいます</font><br>
+<br>
+リセット動作そのものを止めたいのでしょうか？<br>
+単にフォーカスを外すだけなら、onFocusで、blur()入れるとか(^_^;)<br>
+<br>
+ちなみに、フォーム上にリセットボタンがある場合は、<br>
+ＥＳＣを押すとリセット動作になり、リセットボタンにフォーカスが行きます。<br>
+動作そのものを止めたいなら、Nobu3の話のように・・・なるのかな。<br>
+（私はそのへんは知りませんので・・・）<br>
+<br>
+が、リセットボタンを配置せずに、同等の機能のボタン、<br>
+&lt;input type=button onClick="document.form1.reset();" value="取り消し"&gt;<br>
+↑こんなのを置いておくと、<br>
+ＥＳＣキーはＵＮＤＯのような動作になるようです。<br>
+（いっぺんに全部のリセットはしなくなる）<br>
+当然、フォーカスはあたりません。<br>
+<br>
+参考にはならなかったかな？(^^ゞ<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/07/07(水) 15:06:42</span><br>
+Nobu3さん、無責任官庁さん、どうもありがとうございます。<br>
+<br>
+<font color="#CC8000">＞ふと思いついて、ここで[ESC]を押すと「取消」されてしまいました。（Win95+IE4.01SP1）</font><br>
+IEを使用するとみんな、こうなるのですか？<br>
+<br>
+<font color="#CC8000">＞ちなみに、フォーム上にリセットボタンがある場合は、</font><br>
+<font color="#CC8000">＞ＥＳＣを押すとリセット動作になり、リセットボタンにフォーカスが行きます。</font><br>
+私が使用している環境は、WS、Mac(ともにNS)なんですが、ESCがリセットの動作に<br>
+はならないんです。他の方が、Win98+IE5.0の環境で使用していて、「漢字変換ミス<br>
+の修正時にESCを１回余計に押してしまうだけで、内容が消えてしまうのは困る。」<br>
+といわれてしまい、私も困ってしまいました。(;_;)<br>
+<br>
+<font color="#CC8000">＞リセット動作そのものを止めたいのでしょうか？</font><br>
+送信にはsubmit、取消しにはresetを用いています。<br>
+送信、取消しともにボタンがクリックされたときのみ動作して欲しくて、<br>
+ESCによるリセット動作を止めたいのですが・・・。<br>
+<br>
+こういう場合どうするのが良いのでしょうか？<br>
+<hr>
+<span class=name>無責任官庁</span>
+<span class=time>1999/07/07(水) 16:15:12</span><br>
+とりあえずNobu3の話をカタチにすると・・・<br>
+&lt;form action="..." onKeyDown="if(event.keyCode==27){return false;}"&gt;<br>
+<br>
+↑こんな風になるのかな？<br>
+&lt;form&gt;タグに、onKeyDownの部分を追加したモノです。<br>
+細かいチェックはしてないので、保証できませんが。<br>
+とりあえずＥＳＣキーの動作はキャンセルされる・・・と思います。<br>
+<br>
+＃関係ないハナシですが・・・<br>
+＃Nobu3＝のぶさん、で、いいんですよね(^_^;)<br>
+＃Nobu3さんって書くと、のぶさんさんって変かなぁ・・・なんて。<br>
+＃あ、気にしないで下さい。(^_^;;)<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/07/07(水) 16:46:46</span><br>
+<font color="#CC8000">&gt;＃Nobu3＝のぶさん、で、いいんですよね(^_^;)</font><br>
+<font color="#CC8000">&gt;＃Nobu3さんって書くと、のぶさんさんって変かなぁ・・・なんて。</font><br>
+えっ、そうなんですかぁ？(^o^)<br>
+<br>
+<font color="#CC8000">&gt;&lt;form action="..." onKeyDown="if(event.keyCode==27){return false;}"&gt;</font><br>
+これの event.keyCode==27 ってESCのコードなんですか？<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/07/07(水) 16:57:44</span><br>
+<br>
+&lt;input type=text value="" onKeyDown="this.value=window.event.keyCode"&gt;<br>
+↑こう書けばフォームでコードを調べる事ができます。[ESC]を押すと・・・27ですね。<br>
+で、調子に乗ってもう１度押すと・・・消えた！<br>
+・・・だめみたい・・・<br>
+<br>
+＃名前は誰なのかがわかればいいです（笑）<br>
+＃それにしても「＃」のニュアンスって難しいです。<br>
+＃「余談」とかいう意味らしいですが、（独り言みたいなもので）<br>
+＃「レスをつけてはいけない」と言う人もいたり・・・<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/07/07(水) 17:14:11</span><br>
+<font color="#CC8000">&gt;・・・だめみたい・・・</font><br>
+だめですか・・・。<br>
+っていうのはESCを２回以上押すとってことですか？<br>
+自分で動作確認することができないので・・・すみません。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/07/07(水) 17:28:55</span><br>
+Win95+IE4.01SP1では、無責任官庁さんの方法は無理みたいです。<br>
+念のため、テキストボックスにも書いて試してみましたが、無理でした。<br>
+さらに、「onkeypress」も同時に使いましたが、結果は同じ・・・。<br>
+<br>
+この動作は日本語入力後１回、変換キャンセル後１回押した状況です。<br>
+<br>
+コードを調べるスクリプトは１回目は成功ですが、２回目はリセットです。<br>
+<hr>
+<span class=name>Nobu3</span>
+<span class=time>1999/07/08(木) 00:20:20</span><br>
+Win98+IE5.0では、完璧ですね。<br>
+問題なく動作しました。っていうか動作しませんでした（笑）<br>
+<br>
+まぁIE5だけでも救われたということで・・・<br>
+<hr>
+<span class=name>さっち</span>
+<span class=time>1999/07/08(木) 08:47:16</span><br>
+Nobu3さん、無責任官庁さんどうもありがとうございました。<br>
+この方法で、やっていきたいと思います。<br>
+動作確認や記述方法を教えてくださって、本当に助かりました。<br>
+でもまだ、[解決]マークは取りあえず押さないでおいときますので<br>
+また何か、方法がありましたらよろしくお願いします。m(_ _)m<br>
+<hr>
+<span class=name>匿名</span>
+<span class=time>1999/07/11(日) 00:54:44</span><br>
+俺もNSなんで知らなかった！<br>
+<br>
+で、方法だけど。<br>
+ヘッダーに<br>
+&lt;meta http-equiv="Pragma" content="no-cache"&gt;<br>
+を加えて、<br>
+<br>
+本文のフォームの部分を<br>
+&lt;FORM ACTION="form.html"&gt;<br>
+&lt;INPUT TYPE=TEXT&gt;&lt;BR&gt;<br>
+&lt;INPUT TYPE=submit VALUE=" 送信 "&gt;<br>
+&lt;/FORM&gt;<br>
+<br>
+&lt;FORM ACTION="form.html"&gt;<br>
+&lt;INPUT TYPE=submit VALUE=" 取消 "&gt;<br>
+&lt;/FORM&gt;<br>
+<br>
+こんな感じに分けてみたら？<br>
+「取消」押せば再読み込み掛かるからもしかしたら<br>
+これでいけるかも。<br>
+でも試してないんでダメだったらゴメン<br>
+<hr>
+<span class=name>匿名</span>
+<span class=time>1999/07/11(日) 00:56:43</span><br>
+あやっ違った、１つ目の&lt;FORM&gt;は実際に送るCGIなどで<br>
+２つ目の&lt;FORM&gt;は、自分自身のページね。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199907/index.htm">[上に]</a>
+<a href="99070052.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070052.htm">[前に]</a>
+<a href="99070054.htm" tppabs="http://www.tohoho-web.com/lng/199907/99070054.htm">[次に]</a>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>CGIでの検索について</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>CGIでの検索について</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040120.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040120.htm">[前に]</a>
+<a href="99040122.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040122.htm">[次に]</a>
+<hr>
+<span class=name>kawa</span>
+<span class=email><a href="mailto:yujinkan@aaw.mtci.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/17(土) 12:38:10</span><br>
+if ($FORM{'???'} ne 'all') {<br>
+if ($??? eq $FORM{'???'}) { ; } else { next; }<br>
+}<br>
+<br>
+にhtmlの検索ページから<br>
+&lt;option value="????"&gt;　<br>
+を代入して条件検索を作っているのですが、<br>
+この場合だと一つの条件のみしか検索できません。<br>
+例えばAとBを同時に検索対象にする場合には、<br>
+検索ページの<br>
+&lt;option value="????"&gt;　<br>
+の????の部分を複数にするにはどうしたらよいのでしょうか？<br>
+<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/17(土) 12:58:17</span><br>
+　<a href="javascript:if(confirm('http://www.jp.freebsd.org/filter  \n\nｸﾃﾎﾄｼﾎﾞｷｨﾓﾃ Teleport Ultra ﾏﾂﾔﾘ, ﾒｪ ﾋ�ﾊﾇﾒｻｸｷｾｶﾍ箚ｿｱｻﾉ靹ﾃﾎｪﾋ�ｵﾄﾆｼｵﾘﾖｷｵﾄｵﾘﾖｷ｡｣  \n\nﾄ耘�ﾔﾚｷﾎﾏｴｪﾋ�?'))window.location='http://www.jp.freebsd.org/filter#doc'" tppabs="http://www.jp.freebsd.org/search.html#doc">http://www.jp.freebsd.org/search.html#doc</a><br>
+のように、checkboxを使って、<br>
+　&lt;input type="checkbox" name="hoge" value="data1"&gt;<br>
+　&lt;input type="checkbox" name="hoge" value="data2"&gt;<br>
+　&lt;input type="checkbox" name="hoge" value="data3"&gt;<br>
+など書きます。例えばここで data1と data3をチェックしたなら<br>
+　hoge=data1&amp;hoge=data3<br>
+というデータがCGIに送られるので、それを適当に解析すればいいです。<br>
+<br>
+あと、もうちょっと第三者がすぐ理解できるような質問の仕方を<br>
+した方がいいと思います。特にこの部分。<br>
+　&gt; if ($FORM{'???'} ne 'all') {<br>
+　&gt; if ($??? eq $FORM{'???'}) { ; } else { next; }<br>
+　&gt; }<br>
+<hr>
+<span class=name>kawa</span>
+<span class=email><a href="mailto:yujinkan@aaw.mtci.ne.jp">[E-Mail]</a></span>
+<span class=time>1999/04/17(土) 13:36:27</span><br>
+ご助言ありがとうございます。確かに、説明不足でした。すいませんでした。長くなりますが、もう一度説明させていただきます。<br>
+登録事項は年齢なのですが、HTMLからの<br>
+&lt;select name="AGE" size="1"&gt;<br>
+&lt;option VALUE="１"&gt;　１歳<br>
+&lt;option VALUE="２"&gt;　２歳<br>
+　　　　｜　<br>
+&lt;option VALUE="１００"&gt;　１００歳　<br>
+&lt;/select&gt;<br>
+で行っていて、<br>
+このデータをCGIに渡し、<br>
+open(FILE, "$file");<br>
+@data = &lt;FILE&gt;;<br>
+close(FILE);<br>
+unshift(@data,"\,$FORM{'AGE'}\n");<br>
+open(FILE, "&gt;$file");<br>
+print FILE @data;<br>
+close(FILE);<br>
+としてデータファイルに書き込んでいます。<br>
+<br>
+そして検索するのには<br>
+HTMLにて<br>
+&lt;select name="AGE" size="1"&gt;<br>
+&lt;option VALUE="１０～１９"&gt;　１０歳代<br>
+&lt;option VALUE="２０～２９"&gt;　２０歳代<br>
+　　　　｜　<br>
+&lt;option VALUE="６０～１００"&gt;　６０歳以上　<br>
+&lt;/select&gt;<br>
+としたいうふうに登録時とは異なり、一定のデータを一つにまとめて検索出来るようにしたいのです。<br>
+現在の検索CGIでは、<br>
+if ($FORM{'AGE'} ne 'all') {<br>
+if ($AGE eq $FORM{'AGE'}) { ; } else { next; }<br>
+}<br>
+となっているのですが、現状では年齢データ数字を一致させなければヒットしません。<br>
+どのように変更したらよろしいのでしょうか？<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/17(土) 13:59:55</span><br>
+ああ、checkboxは関係なかったのですね。<br>
+<br>
+<font color="#CC8000">&gt; &lt;option VALUE="１"&gt;　１歳</font><br>
+<font color="#CC8000">&gt; &lt;option VALUE="１０～１９"&gt;　１０歳代</font><br>
+<br>
+まず、全角数字を使わないようにしましょう。なぜなら半角数字の方が<br>
+検索が楽だからです。以下は半角に直したものとして説明します。<br>
+<br>
+ファイルに<br>
+　12<br>
+　35<br>
+　8<br>
+という3つの年齢が入っているとします。ここで10～19を検索すると<br>
+「12」が出て来て欲しいわけです。検索用HTMLは<br>
+　&lt;select name="AGE" size="1"&gt;<br>
+　&lt;option VALUE="10-19"&gt;　１０歳代<br>
+と書きます。すると<br>
+　$FORM{'AGE'} eq "10-19"<br>
+になります。ここで、検索したい年齢の下限を AGE_START、<br>
+上限を AGE_END とします。例えば<br>
+　($AGE_START,$AGE_END} = split(/-/,$FORM{'AGE'})<br>
+で、$AGE_START と $AGE_ENDには、それぞれ10と19が代入されます。<br>
+<br>
+そしたら後は、ファイルを読んで、上限と下限の間の年齢をリストアップ<br>
+するだけです。<br>
+　open(FILE, "$file");<br>
+　while (&lt;FILE&gt;){<br>
+　　chop;<br>
+　　if ( $AGE_START &lt;= $_ &amp;&amp; $_ &lt;= $AGE_END ){<br>
+　　　見つかった。<br>
+　　}<br>
+　}<br>
+こういう風にすると、<br>
+　&lt;input type="text" name="AGE_START"&gt;歳から<br>
+　&lt;input type="text" name="AGE_END"&gt;歳まで検索<br>
+と書くことで、検索幅を自由に決めることもできます。<br>
+<br>
+<br>
+まぁ、いろんなやり方があるでしょうが、あくまでも一例ということで。<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/17(土) 15:26:40</span><br>
+ご助言ありがとうございます。<br>
+<br>
+まず、登録フォームの数字を半角にいたしまして、再登録してみました<br>
+。<br>
+そして、検索CGIを下記のように変更しましたが、<br>
+サーバーエラーになってしまいます。<br>
+CGIに関しては全くのド素人なので、どこがまずいのかわかりません。<br>
+パーミッションは変更してあるのですが。。<br>
+お願いします。<br>
+<br>
+if ($FORM{'AGE'} ne 'all') {<br>
+if ($AGE_START,$AGE_END} = split(/-/,$FORM{'AGE'}) { ; } else { next; }<br>
+}<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/17(土) 15:31:08</span><br>
+ちなみに元のスクリプトはWeb裏技の簡易データーベースです。<br>
+<hr>
+<span class=name>ふじ</span>
+<span class=time>1999/04/17(土) 15:39:06</span><br>
+2行目の $AGE_END} は $AGE_END) では？<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/17(土) 16:01:41</span><br>
+ご意見ありがとうございます。<br>
+ご指摘のように、<br>
+<br>
+if ($FORM{'AGE'} ne 'all') {<br>
+if ($AGE_START,$AGE_END) = split(/-/,$FORM{'AGE'})&nbsp;&nbsp;{ ; } else { next; }<br>
+}<br>
+<br>
+としましたが、やはりサーバーエラーになってしまいます。<br>
+<br>
+<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/17(土) 16:33:36</span><br>
+<br>
+if ($FORM{'AGE'} ne 'all') {<br>
+if (($AGE_START,$AGE_END) = split(/-/,$FORM{'AGE'})) { ; } else { next; }<br>
+}<br>
+にするとエラーはなく一応表示されるのですが、<br>
+どの年齢で検索しても表示されてしまいます。<br>
+なぜ？？<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/17(土) 17:33:58</span><br>
+追加情報です。<br>
+関連すると思われる部分を下記にあげてみました。<br>
+<br>
+$data = $data2 = $BASE[$num];<br>
+&amp;jcode'convert(*data,'euc');<br>
+($d,$AGE,$PREF) = split(/\,/,$data);<br>
+<br>
+# 都道府県(一致)<br>
+if ($FORM{'PREF'} ne 'all') {<br>
+if ($PREF eq $FORM{'PREF'}) { ; } else { next; }<br>
+}<br>
+<br>
+# 年齢(一致)<br>
+if ($FORM{'AGE'} ne 'all') {<br>
+if (($AGE_START,$AGE_END) = split(/-/,$FORM{'AGE'})) { ; } else { next; }<br>
+}<br>
+<br>
+<br>
+よろしくお願いします。<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/18(日) 06:36:25</span><br>
+どなたかお願いします。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/18(日) 07:32:43</span><br>
+<font color="#CC8000">&gt; どなたかお願いします。</font><br>
+<br>
+まぁそう急がずに ;-)<br>
+<br>
+適当な場所($FORM{AGE}が設定された後 &amp; ループの前)に<br>
+　($AGE_START,$AGE_END} = split(/-/,$FORM{'AGE'});<br>
+を追加して、<br>
+　if ($FORM{'AGE'} ne 'all') {<br>
+　if (($AGE_START,$AGE_END) = split(/-/,$FORM{'AGE'})) { ; } else { next; }<br>
+　}<br>
+の部分を<br>
+　if ($FORM{'AGE'} ne 'all') {<br>
+　if ( $AGE_START &lt;= $_ &amp;&amp; $_ &lt;= $AGE_END ){ ; } else { next; }<br>
+　}<br>
+に変えればいいでしょう。<br>
+<br>
+各行の意味をよーく考え、どこに書くべきかを考えてください。<br>
+そんなに難しいことをしているわけではないので、これでわからなければ<br>
+まずはperlの勉強から始めましょう。<br>
+<br>
+ところでsplitの意味はご存知ですか?<br>
+# 当然ですが、「知っている」あるいは「知らなかったので調べてみた」<br>
+# という回答を期待しています。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/04/18(日) 07:43:46</span><br>
+追加。<br>
+<br>
+<font color="#CC8000">&gt; ちなみに元のスクリプトはWeb裏技の簡易データーベースです。</font><br>
+<br>
+このプログラムを僕は知らないし、どこで配布されているかも<br>
+知らないので、上の通りにしても動作しないかもしれません。<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/18(日) 09:19:59</span><br>
+何度もすいません。<br>
+エラーは起きないのですが、<br>
+やはりどの年齢で検索しても表示されてしまいます。<br>
+<br>
+<font color="#CC8000">&gt;ところでsplitの意味はご存知ですか?</font><br>
+知りませんでした。<br>
+調べてみましたら、文字列を区切り文字で分割する、とありました。<br>
+ということは、<br>
+登録HTMLを、<br>
+&lt;option VALUE="0-1"&gt;　１歳<br>
+&lt;option VALUE="0-2"&gt;　２歳<br>
+　　　　｜　<br>
+&lt;option VALUE="2-25&gt; ２５歳　<br>
+として、"-"の前の数字で検索するようにしてもよいのでしょうか。<br>
+<hr>
+<span class=name>kawa</span>
+<span class=time>1999/04/18(日) 12:46:44</span><br>
+<span class=resolv>[[解決]]</span><br>
+何とか解決しました。<br>
+B-Cusさん、 ふじさん、 ご助言ありがとうございました。<br>
+<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199904/index.htm">[上に]</a>
+<a href="99040120.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040120.htm">[前に]</a>
+<a href="99040122.htm" tppabs="http://www.tohoho-web.com/lng/199904/99040122.htm">[次に]</a>
+</body>
+</html>

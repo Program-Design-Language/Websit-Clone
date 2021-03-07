@@ -1,0 +1,61 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>変数値の再評価は？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>変数値の再評価は？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060096.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060096.htm">[前に]</a>
+<a href="99060098.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060098.htm">[次に]</a>
+<hr>
+<span class=name>きゅんべる</span>
+<span class=time>1999/06/10(木) 01:01:10</span><br>
+例えば、<br>
+$var = '$a';<br>
+$a = 'hello';<br>
+<br>
+といった状況で、$varをつかって、'hello'を得たいのですが、<br>
+どうすればいいのでしょう？<br>
+<br>
+ $var =~ s/\$([a-zA-Z_]\w*)/sprintf(${$1})/ge;<br>
+<br>
+とかやって見たんですけど、Perl 4 ではうまくいきません。<br>
+（Perl 5 では OKみたいです。）<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/10(木) 01:05:30</span><br>
+1. エバる。perl4/5両方で可。<br>
+　　$var = '$a';<br>
+　　$a = 'hello';<br>
+　　print eval($var);<br>
+2. リファレンス。perl5のみ。<br>
+　　$var = \$a;<br>
+　　$a = 'hello';<br>
+　　print $$var;<br>
+　これ↑は…シンボリックリファレンスだったかな、それともハード<br>
+　リファレンスだったかな…? とにかく青いラクダ本を見るべし。<br>
+<hr>
+<span class=name>B-Cus</span>
+<span class=time>1999/06/10(木) 01:10:16</span><br>
+ああ、そっか。これ↓がシンボリック。さっきのはハード。<br>
+　$var = 'a';<br>
+　print ${$var};<br>
+あと、型グロブを使う方法もあったっけ。<br>
+<hr>
+<span class=name>きゅんべる</span>
+<span class=time>1999/06/10(木) 01:23:19</span><br>
+<span class=resolv>[[解決]]</span><br>
+　なるほど、エバればいいのかっ<br>
+<br>
+　３時間くらい悩んだのに、１０分で答えが分かってしまうとは、<br>
+いや、なんか癖になりそうです。<br>
+<br>
+　どうも、ありがとうございました。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199906/index.htm">[上に]</a>
+<a href="99060096.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060096.htm">[前に]</a>
+<a href="99060098.htm" tppabs="http://www.tohoho-web.com/lng/199906/99060098.htm">[次に]</a>
+</body>
+</html>

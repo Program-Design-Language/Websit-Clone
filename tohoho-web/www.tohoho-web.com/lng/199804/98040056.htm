@@ -1,0 +1,124 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>最下からスクロールアップをするには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>最下からスクロールアップをするには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040055.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040055.htm">[前に]</a>
+<a href="98040057.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040057.htm">[次に]</a>
+<hr>
+<span class=name>Omi</span>
+<span class=email><a href="mailto:omi@07.alphatec.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/16(木) 18:22:08</span><br>
+function scr(){<br>
+&nbsp;&nbsp;if ( y &gt; 0 ) { y-=2; scroll( 0, y); setTimeout('scr()', 10 ); }<br>
+}<br>
+y=99 ; scr();<br>
+<br>
+を実行すると、99pxから0pxまでスクロールしますが、<br>
+例えば y=window.height;が有効であれば<br>
+bottom から top まで動くのですが。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/04/17(金) 01:00:48</span><br>
+NN4.0だったら、最下行に&lt;A NAME="END"&gt;～&lt;/A&gt;を指定しておき、<br>
+　　location = "#END";<br>
+　　y = window.YOffset;<br>
+なんていう手もありますね。IE4.0も似たような感じでできるかな。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/04/17(金) 01:01:25</span><br>
+ごめんなさい。y = window.pageYOffset; でした。<br>
+<hr>
+<span class=name>ywai</span>
+<span class=email><a href="mailto:miyakita@marinet.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/17(金) 03:13:02</span><br>
+4.0のみなら<br>
+var NN4 = (navigator.appName=="Netscape");<br>
+var dh = (NN4)? document.height : document.body.scrollHeight;<br>
+var wh = (NN4)? innerHeight : document.body.clientHeight;<br>
+y=dh-wh;<br>
+scr();<br>
+とかも可能かと思います。<br>
+3.0の場合は全体を&lt;TABLE&gt;で囲んで、高さを固定するしかないかな。<br>
+<hr>
+<span class=name>Omi</span>
+<span class=email><a href="mailto:omi@07.alphatec.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/17(金) 05:57:41</span><br>
+<span class=resolv>[[解決]]</span><br>
+とほほさん、ywai さん ありがとうございました。<br>
+<br>
+私の ダウンロードした N.Communicator 4.04では<br>
+y = window.pageYoffset; は undefined になります。<br>
+document.height、<br>
+innerHeight、document.body.clientHeight、 は有効なので<br>
+NN4では、バッチリです。 でも、<br>
+iE の document.body.scrollHeight がおかしいので、<br>
+あきらめに近づいています。<br>
+<hr>
+<span class=name>ywai</span>
+<span class=email><a href="mailto:miyakita@marinet.or.jp">[E-Mail]</a></span>
+<span class=time>1998/04/17(金) 09:49:25</span><br>
+pageYOffset はOが小文字になっていませんか？<br>
+それから、IEはタイミングをすこしずらしてみてはどうでしょうか。<br>
+function init(){上記の式}<br>
+&lt;BODY onLoad="setTimeout('init()',200)"&gt;<br>
+<hr>
+<span class=name>Omi</span>
+<span class=time>1998/04/19(日) 07:13:41</span><br>
+ywai さん ありがとうございます。<br>
+iE 4 でも、バッチリ動くようになりました。＼(^o^)／<br>
+<br>
+以下でテストしました。<br>
+iE 4 の document.body.srollHeight って、表示途中でも何かの値を出すんですね。<br>
+NN4の window.pageYOffset は、リロードのタイミングでおかしな値を出します。<br>
+あー 疲れた。&nbsp;&nbsp;ぜったい 使ってやるぞー。<br>
+<br>
+&lt;HTML&gt;<br>
+&lt;HEAD&gt;<br>
+&lt;TITLE&gt;自動スクロール&lt;/TITLE&gt;<br>
+&lt;SCRIPT&gt;<br>
+function init(){<br>
+	wh = ( N)? innerHeight : document.body.clientHeight;<br>
+	dh = ( N)? document.height : document.body.scrollHeight;<br>
+	yp=1; y9=dh-wh;<br>
+	a&nbsp;&nbsp;= ( N)?1196 : 1306&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//不要<br>
+	P = ( N)? window.pageYOffset : '' ;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//不要<br>
+	alert("docHeight&nbsp;&nbsp;innerHeight 送量 page\n"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//不要<br>
+	+d1+"、"+dh+"&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;"+wh+"&nbsp;&nbsp;&nbsp;= "+y9+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+P+"\n"+&nbsp;&nbsp;&nbsp;//不要<br>
+	"&nbsp;&nbsp;&nbsp;"+a+"期待値" );&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//不要<br>
+	scr();<br>
+}<br>
+function scr(){<br>
+	if ( yp &lt; y9 ) { yp+=1; scroll( 0, yp); T1=setTimeout('scr()', 1 ); }<br>
+//	else{ alert("END"); location="#TOP"; }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//不要<br>
+	status = yp+" /"+y9;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//不要<br>
+}<br>
+&lt;/SCRIPT&gt;<br>
+&lt;/HEAD&gt;<br>
+&lt;BODY&gt;<br>
+&lt;SCRIPT&gt;<br>
+	N = ( navigator.appName.charAt(0) =="N");<br>
+	d1 = ( N)? document.height : document.body.scrollHeight;&nbsp;&nbsp;//不要<br>
+	setTimeout( 'init()', 22 )<br>
+&lt;/SCRIPT&gt;<br>
+&lt;A name="TOP"&gt;■top&lt;/a&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#" onMouseOver="yp=y9"&gt;(^_^)&lt;/A&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#" onMouseOver="yp=y9"&gt;(^｡^)&lt;/A&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#" onMouseOver="yp=y9"&gt;(^o^)&lt;/A&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#" onMouseOver="yp=y9"&gt;(^｡^)ノ&lt;/A&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#" onMouseOver="yp=y9"&gt;(^o^)ノ&lt;/A&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#" onMouseOver="yp=y9"&gt;＼(^o^)／&lt;/A&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;&lt;BR&gt;<br>
+&lt;A href="#"&gt;(^｡^)/~~&lt;/A&gt;&lt;BR&gt;<br>
+&lt;A name="END"&gt;■ END ■&lt;/a&gt;&lt;/p&gt;<br>
+&lt;/BODY&gt;<br>
+&lt;/HTML&gt;<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199804/index.htm">[上に]</a>
+<a href="98040055.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040055.htm">[前に]</a>
+<a href="98040057.htm" tppabs="http://www.tohoho-web.com/lng/199804/98040057.htm">[次に]</a>
+</body>
+</html>

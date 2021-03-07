@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>半角カナを全角カナに変換するには＆フォーム送信時の文字コード</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>半角カナを全角カナに変換するには＆フォーム送信時の文字コード</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199802/index.htm">[上に]</a>
+<a href="98022701.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022701.htm">[前に]</a>
+<a href="98022703.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022703.htm">[次に]</a>
+<hr>
+<span class=name>いけちゃん</span>
+<span class=time>1998/02/27(金) 10:26:21</span><br>
+たびたびすみません、また質問させてください。<br>
+＃　排他処理はまだやってないのに.....。<br>
+<br>
+現在、イントラネットみたいなことをしているのですが、<br>
+フォームで半角カナを入力されることが多く、ネスケとＩＥでは相互に<br>
+表示されない（ネスケでフォームに入力すると、ネスケしか表示できず、<br>
+ＩＥでは化ける。逆も同じ）ので、半角カナは全て全角カナに変換する<br>
+ことにしました。<br>
+<br>
+そこで、jcode.pl内の&amp;jcode'z2h_jisを利用して、変換することにしたのですが、<br>
+ネスケで入力した分は変換できるものの、ＩＥで入力した分は変換できません。<br>
+ＩＥで利用されている半角カナはいったいなんなのでしょう？？<br>
+&amp;jcode'z2h_sjisや&amp;jcode'z2h_eucも試したのですが、ダメでした。<br>
+なお、半角「アイウエオ」をＵＲＬエンコードしたものは次の通りでした。<br>
+ネスケ：%1B%28I12345%1B%28B<br>
+ＩＥ　　　：%0E12345%0F<br>
+これをデコードすれば、文字コードがわかりそうですが、<br>
+私にはその力がない.....。.申し訳ないですが、よろしくお願いします。<br>
+<br>
+また、フォームに関して、もう一つ基本的なことで質問させてください。<br>
+フォーム送信時の文字コードはどのように決まるのでしょうか？<br>
+＃　こんなことも知らずにフォームのページを作っているとは<br>
+　　自分でも恐ろしいのですが。<br>
+私の経験則では、フォームを記入するページの文字コードに適合しているのでは<br>
+ないかと思っているのですが。<br>
+だから、現在作ってるイントラネットらいくなものもフォームを記入するページが<br>
+ＪＩＳで書いているので、フォームで送信された内容もＪＩＳだと思いこんでいるのですが、<br>
+これはとってもやばいでしょうか？<br>
+ブラウザによって、違う場合もありうるのかな？<br>
+<br>
+どうぞよろしくお願いします。<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/02/28(土) 05:16:13</span><br>
+jcode.pl をちゃんと読んだ訳ではなく、雰囲気だけで書いているのですが、まず、フォームから受け取った文字列をデコードして $line に格納し、<br>
+　&amp;jcode'convert(*line,'sjis');<br>
+で、文字コードを Shift-JIS に統一します（ここでは、jcode.pl がうまくShift-JISの半角カナに変換してくれることを期待してます）。それから、<br>
+　&amp;jcode'h2z_sjis(*line);<br>
+で、全角カナへの変換を行うというのではいかがでしょう（z2h_sjisではない）。<br>
+<br>
+<font color="#CC8000">&gt;私の経験則では、フォームを記入するページの文字コードに適合しているのでは</font><br>
+<font color="#CC8000">&gt;ないかと思っているのですが。</font><br>
+私の勘では(^^;)、そんなことはないと思うのですが、どのような「経験則」によるものなのでしょうか？<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/01(日) 01:38:27</span><br>
+　やっぱり勘だけでものを言ってはいけませんね(^^;)<br>
+　うちの環境(Windows95のNN4.01とIE3.02)でShift-JISとJISとEUCのページのFORMがCGIに渡す文字コードを調べてみたら、いけちゃんさんの「経験則」どおり、FORMのページの文字コードでURL符号化してました。疑って申し訳ありません。（あまりに意外なんで驚いてます）<br>
+　それから、文字コードが JIS で IE の場合は、上の方法も使えませんでした。半角カナを7bit化した文字列(アイウエオ→12345)をSO(%0E)とSI(%OF)で囲むのが正しいのかどうかは分かりませんが、とりあえず IE でも全角カナに変換するために、下のような方法ではいかがでしょうか。# for IE の行で、SO(%0E)とSI(%OF)に挟まれた7bitJISの半角カナを8bitJISの半角カナ（Shift-JISも同じ）に変換しています。<br>
+<br>
+&amp;jcode'convert(*line,'sjis');&nbsp;&nbsp;# Shift-JIS に変換<br>
+$line =~ s/\x0e([^\x0f]+)\x0f/&amp;j7k2j8k($1)/ge; # for IE<br>
+&amp;jcode'h2z_sjis(*line); # 半角カナ→全角変換<br>
+<br>
+sub j7k2j8k {<br>
+	local(@s ,$s,$c) = split(//,$_[0]);<br>
+	$s .= pack("C",unpack("C",$c)+0x80) while $c = shift(@s);<br>
+	return $s;<br>
+}<br>
+<hr>
+<span class=name>miyasiro</span>
+<span class=time>1998/03/01(日) 02:13:39</span><br>
+またまたオオボケでした(^^;)<br>
+いけちゃんさんは、NN なら変換できるって仰ってるんだから、IE で入力したものも NN の形式に変換してやればいい訳ですよね。<br>
+ということで、$line の半角カナを全角カナに変換する前に、下記を挿入してみて下さい。<br>
+$line =~ s/\x0e/\e(I/g;<br>
+$line =~ s/\x0f/\e(B/g;<br>
+<hr>
+<span class=name>いけちゃん</span>
+<span class=time>1998/03/02(月) 11:11:05</span><br>
+<span class=resolv>[[解決]]</span><br>
+ありがとうございました！<br>
+$line の半角カナを全角カナに変換する前に、<br>
+$line =~ s/\x0e/\e(I/g;<br>
+$line =~ s/\x0f/\e(B/g;<br>
+を挿入したら、うまく変換することができました。<br>
+<br>
+結局、ＪＩＳコードの半角カナは、ＮＮでは８ビット半角カナとして、ＩＥでは７ビット半角カナとして扱っているため、変換がうまくいかなかったのですね。<br>
+よくわかりました。<br>
+<br>
+本当に助かりました。<br>
+また、質問すると思いますが、どうぞよろしくお願いします。<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199802/index.htm">[上に]</a>
+<a href="98022701.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022701.htm">[前に]</a>
+<a href="98022703.htm" tppabs="http://www.tohoho-web.com/lng/199802/98022703.htm">[次に]</a>
+</body>
+</html>

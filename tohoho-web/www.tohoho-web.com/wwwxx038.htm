@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>テーブルをソートする - とほほのWWW入門</title>
+<style>
+#table1 {
+  width: 200px;
+  border-collapse: collapse;
+}
+#table1 th,
+#table1 td {
+  border: 1px solid gray;
+}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="style3.css" tppabs="http://www.tohoho-web.com/style3.css">
+<script>
+var oTRs;      // TRオブジェクトリスト
+var nColId;    // ソート対象のカラムID
+var sType;     // ソート方式（n:数値、s:文字列）
+
+// idで指定されるテーブルの colId番目のカラムをソートする
+// typeには、s（文字列）か、n（数値）を指定する。
+function SortTable(id, colId, type) {
+  var i, nRow, nCol;
+  var oTABLE, oTBODY, oTDs;
+  var aCells = new Array();
+  var nRowIDs = new Array();
+
+  if (!document.getElementById) { return; }
+
+  nColId = colId;
+  sType = type;
+  oTABLE = document.getElementById(id);
+  oTBODY = oTABLE.getElementsByTagName("TBODY")[0];
+  oTRs = oTBODY.getElementsByTagName("TR");
+
+  for (nRow = 0; nRow < oTRs.length; nRow++) {
+    nRowIDs[nRow] = nRow;
+    oTDs = oTRs[nRow].getElementsByTagName("*");
+    aCells[nRow] = new Array();
+    for (nCol = 0; nCol < oTDs.length; nCol++) {
+      aCells[nRow][nCol] = oTDs[nCol].firstChild.nodeValue;
+    }
+  }
+
+  nRowIDs.sort(CompareRows);
+
+  for (nRow = 0; nRow < oTRs.length; nRow++) {
+    oTDs = oTRs[nRow].getElementsByTagName("*");
+    for (nCol = 0; nCol < oTDs.length; nCol++) {
+      oTDs[nCol].firstChild.nodeValue = aCells[nRowIDs[nRow]][nCol];
+    }
+  }
+}
+
+// テーブルソートのための比較関数
+function CompareRows(a, b) {
+  var sA = oTRs[a].getElementsByTagName("*")[nColId].firstChild.nodeValue;
+  var sB = oTRs[b].getElementsByTagName("*")[nColId].firstChild.nodeValue;
+  if (sA == sB) {
+    return 0;
+  } else if (sA > sB) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+</script>
+</head>
+<body>
+<h2>テーブルをソートする</h2>
+<a href="www.htm" tppabs="http://www.tohoho-web.com/www.htm">トップ</a> &gt;
+<a href="wwwhowto.htm" tppabs="http://www.tohoho-web.com/wwwhowto.htm">How To</a> &gt;
+テーブルをソートする
+<h4>説明</h4>
+<div class=i>
+<p>DOM（Document Object Model）を用いて、ヘッダクリックによりテーブルをソートする方法を紹介します。</p>
+</div>
+<h4>実例</h4>
+<div class=i>
+<table id="table1">
+ <thead>
+  <tr>
+   <th onclick="SortTable('table1', 0, 's')">名前</th>
+   <th onclick="SortTable('table1', 1, 'n')">年齢</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr><td>Cyndy</td><td>48</td></tr>
+  <tr><td>Daisy</td><td>24</td></tr>
+  <tr><td>Alice</td><td>36</td></tr>
+  <tr><td>Ellen</td><td>18</td></tr>
+  <tr><td>Barbara</td><td>52</td></tr>
+ </tbody>
+</table>
+</div>
+<h4>ソース</h4>
+<div class=i>
+<pre class=c>
+&lt;style&gt;
+#table1 {
+  width: 200px;
+  border-collapse: collapse;
+}
+#table1 th,
+#table1 td {
+  border: 1px solid gray;
+}
+&lt;/style&gt;
+&lt;script&gt;
+var oTRs;      // TRオブジェクトリスト
+var nColId;    // ソート対象のカラムID
+var sType;     // ソート方式（n:数値、s:文字列）
+
+// idで指定されるテーブルの colId番目のカラムをソートする
+// typeには n（数値）か s（文字列）のいずれかを指定する
+function SortTable(id, colId, type) {
+  var i, nRow, nCol;
+  var oTABLE, oTBODY, oTDs;
+  var aCells = new Array();
+  var nRowIDs = new Array();
+
+  // DOMをサポートしていなければ無視
+  if (!document.getElementById) { return; }
+
+  // カラム番号とソート方式を外部変数に覚えておく
+  nColId = colId;
+  sType = type;
+
+  // TR要素のリストを取り出す
+  oTABLE = document.getElementById(id);
+  oTBODY = oTABLE.getElementsByTagName("TBODY")[0];
+  oTRs = oTBODY.getElementsByTagName("TR");
+
+  // テーブルの内容を覚えておく
+  for (nRow = 0; nRow &lt; oTRs.length; nRow++) {
+    nRowIDs[nRow] = nRow;
+    oTDs = oTRs[nRow].getElementsByTagName("*");
+    aCells[nRow] = new Array();
+    for (nCol = 0; nCol &lt; oTDs.length; nCol++) {
+      aCells[nRow][nCol] = oTDs[nCol].firstChild.nodeValue;
+    }
+  }
+
+  // ソートする
+  nRowIDs.sort(CompareRows);
+
+  // 覚えていた内容をテーブルに書き戻す
+  for (nRow = 0; nRow &lt; oTRs.length; nRow++) {
+    oTDs = oTRs[nRow].getElementsByTagName("*");
+    for (nCol = 0; nCol &lt; oTDs.length; nCol++) {
+      oTDs[nCol].firstChild.nodeValue = aCells[nRowIDs[nRow]][nCol];
+    }
+  }
+}
+
+// テーブルソートのための比較関数
+function CompareRows(a, b) {
+  var sA = oTRs[a].getElementsByTagName("*")[nColId].firstChild.nodeValue;
+  var sB = oTRs[b].getElementsByTagName("*")[nColId].firstChild.nodeValue;
+  if (sType == "n") {
+    sA = eval(sA);
+    sB = eval(sB);
+  }
+  if (sA == sB) {
+    return 0;
+  } else if (sA &gt; sB) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+&lt;/script&gt;
+&lt;table id="table1"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th onclick="SortTable('table1', 0, 's')"&gt;名前&lt;/th&gt;
+   &lt;th onclick="SortTable('table1', 1, 'n')"&gt;年齢&lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+  &lt;tr&gt;&lt;td&gt;Cyndy&lt;/td&gt;&lt;td&gt;48&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Daisy&lt;/td&gt;&lt;td&gt;24&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Alice&lt;/td&gt;&lt;td&gt;36&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Ellen&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Barbara&lt;/td&gt;&lt;td&gt;52&lt;/td&gt;&lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+</div>
+<hr>
+<div>Copyright (C) 2002 杜甫々</div>
+<div>初版：2002年11月10日、最終更新：2003年2月2日</div>
+<div>http://www.tohoho-web.com/wwwxx038.htm</div>
+</body>
+</html>

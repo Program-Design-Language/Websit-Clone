@@ -1,0 +1,120 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>JavaScriptで開いたページの文字コードを指定するには？</title>
+<link rel="stylesheet" href="../style.css" tppabs="http://www.tohoho-web.com/lng/style.css">
+</head>
+<body>
+<h3>JavaScriptで開いたページの文字コードを指定するには？</h3>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120078.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120078.htm">[前に]</a>
+<a href="98120080.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120080.htm">[次に]</a>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/12/13(日) 18:49:55</span><br>
+IE4.0のJavaScriptでページを開いて、そのページのフォームからCGI<br>
+を起動したのですが、文字化けしてしまいます。JavaScriptのopen()<br>
+で開いたページの文字コードが「ユニバーサル文字」になってしまうの<br>
+が原因ではないかと思うのですが、回避策をご存知の方はいませんか？<br>
+（ラウンジで使おうと思ったのに・・・・(;_;)<br>
+<br>
+function func() {<br>
+&nbsp;&nbsp;w = window.open("index.htm");<br>
+&nbsp;&nbsp;with (w.document) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;open();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;writeln("&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;テスト&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;writeln("&lt;FORM METHOD=POST ACTION='xxx.cgi'&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;writeln("&lt;INPUT TYPE=text NAME='NAME'&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;writeln("&lt;INPUT TYPE=submit VALUE='OK'&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;writeln("&lt;/FORM&gt;&lt;/BODY&gt;&lt;/HTML&gt;");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;close();<br>
+&nbsp;&nbsp;}<br>
+}<br>
+<hr>
+<span class=name>ちはる</span>
+<span class=email><a href="mailto:chi_fji@mvb.biglobe.ne.jp">[E-Mail]</a></span>
+<span class=time>1998/12/15(火) 01:56:51</span><br>
+これだとうまく行きますけど、どうでしょう？<br>
+<br>
+function func2() {<br>
+ w = window.open();<br>
+ with (w.document) {<br>
+&nbsp;&nbsp;writeln("&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;テスト&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY&gt;");<br>
+&nbsp;&nbsp;writeln("&lt;FORM METHOD=POST ACTION='xxxx.cgi'&gt;");<br>
+&nbsp;&nbsp;writeln("&lt;INPUT TYPE=text NAME='NAME'&gt;");<br>
+&nbsp;&nbsp;writeln("&lt;INPUT TYPE=submit VALUE='OK'&gt;");<br>
+&nbsp;&nbsp;writeln("日本語が表示できるかな？");<br>
+&nbsp;&nbsp;writeln("&lt;/FORM&gt;&lt;/BODY&gt;&lt;/HTML&gt;");<br>
+&nbsp;&nbsp;close();<br>
+ }<br>
+}<br>
+<br>
+index.htmを取り払ってますが。。。無いとダメなんでしょうか？新しいwindowを開いて、そこにJavaScriptでフォームを書くという事ですよね？？（間違ってたらすいません）<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/12/16(水) 01:37:40</span><br>
+うーん、どうも、私の環境ではうまく動作しないのですが・・・<br>
+テキストフィールドに日本語を入力して[OK]すると、jcode.plで解釈<br>
+できないような妙な漢字コードがxxx.cgiに渡されてしまうのです。<br>
+ちはるさんの環境はどんな環境ですか？<br>
+<hr>
+<span class=name>omi</span>
+<span class=time>1998/12/16(水) 10:50:18</span><br>
+回避策にはほど遠いのですが、<br>
+writeln("&lt;INPUT TYPE=submit value='OK' onClick=\"document.cookie='NAME='+ document.Form.NAME.value +'; expires=Fri, 11-Nov-2011 02:11:11; ';\"&gt;");<br>
+で送れば、漢字もそのまま表示されます。ウソのようなホントの話。<br>
+~ s/%([　～　　pack("C",hex($1))/eg;　　、も必要ナシです。<br>
+例えば、<br>
+&lt;INPUT type=text name='NAME' value='123愛あイルabc'&gt;&nbsp;&nbsp;、とすれば<br>
+$ENV{'HTTP_COOKIE'}　、の値は、NAME=123愛あイルabc 、でした。<br>
+文字化けは、<br>
+$ENV{'QUERY_STRING'}　、も、$ENV{'QUERY_STRING'}　、も<br>
+123abc諢帙≠縺・ と大化けしています。<br>
+NNでは、123abc%88%A4%82%A0%82%A2 と化けないのにねー。<br>
+クッキーは、益ます手放せません。<br>
+<hr>
+<span class=name>omi</span>
+<span class=time>1998/12/16(水) 11:39:21</span><br>
+ANhttpd1.02 iE4.72.3110.1 だけのテストなので問題アリですね。<br>
+漢字がそのまま送られると、オンライン上で化けないはずハズがないですね。<br>
+escape()をすると、Unicode で送られるらしく、B-Cus さんのお話では、<br>
+変換が大変そうです。<br>
+airnet にあるログの漢字を見る分には、文字化けしてません。<br>
+<br>
+訂正、'123愛あイルabc' は '123abc愛あい' です。<br>
+<hr>
+<span class=name>とほほ</span>
+<span class=time>1998/12/17(木) 00:47:45</span><br>
+おぉ!! すごい!! Cookieとは気づきませんでした。でも、Cookieだと、<br>
+シェルに食われてしまう文字とか、文字数問題とか、問題もありそうで、<br>
+ちょっと恐いですね。(このラウンジの発言を送信しようとしているの<br>
+です。)　うーむ。<br>
+<hr>
+<span class=name>ちはる</span>
+<span class=time>1998/12/17(木) 01:12:49</span><br>
+あっすいません、そういう事だったのですね。。送信文字列がunicodeになってしまう。。<br>
+ちょっと余談になるんですけど、マック版のIE4で、Javascriptで、<br>
+document.write("あああああ"); これはそのまま表示されますが、<br>
+arrayに文字列をT_array[0]="ああああ" としておいて、<br>
+document.write(T_array[0]); をやると、同様（？）に<br>
+化けてしまいます。ちょっと似てますね。<br>
+この場合、T_arrayには、unicodeでエンコードした%u5044・・・<br>
+みたいな文字列を入れておいてunescape()するとうまく行きます。。<br>
+<hr>
+<span class=name>ちはる</span>
+<span class=time>1998/12/17(木) 02:05:13</span><br>
+回避策になるかどうか、わかんないですが、<br>
+もう一つ別のウィンドウを開いておいて、<br>
+そちらにはhtmlでフォームをっておき、<br>
+（たとえばwindow名をsub,そこに作ったフォームの名前をxxとします)<br>
+<br>
+&lt;INPUT TYPE=button VALUE="変換" onClick="sub.document.xx.text.value=document.form.text.value)"&gt;<br>
+等として、そちらに渡すと、そちらはSJISの状態で文字がはいりますから、<br>
+こちらで送信してしまうっていうのはどうかなぁ。。<br>
+（いまいちスマートでないですが）<br>
+<hr>
+<a href="index.htm" tppabs="http://www.tohoho-web.com/lng/199812/index.htm">[上に]</a>
+<a href="98120078.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120078.htm">[前に]</a>
+<a href="98120080.htm" tppabs="http://www.tohoho-web.com/lng/199812/98120080.htm">[次に]</a>
+</body>
+</html>
